@@ -1,0 +1,303 @@
+[
+  {
+    "PacketDescriptor": 5,
+    "Id": 2576,
+    "Priority": 1,
+    "Seconds": 131176,
+    "USeconds": 2435760640,
+    "TimeBase": 2418,
+    "Context": 210,
+    "ProcTypes": 0,
+    "UserData": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "DpState": 0,
+    "DataSize": 1212,
+    "headerHash": 2646027546,
+    "dataHash": 4072048964
+  },
+  {
+    "dataId": 2578,
+    "data": "Test string"
+  },
+  {
+    "dataId": 2579,
+    "data": true
+  },
+  {
+    "dataId": 2580,
+    "data": -100
+  },
+  {
+    "dataId": 2581,
+    "data": 1.25
+  },
+  {
+    "dataId": 2582,
+    "data": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "dataId": 2583,
+    "data": [
+      1.100000023841858,
+      2.200000047683716,
+      3.299999952316284
+    ]
+  },
+  {
+    "dataId": 2584,
+    "data": [
+      true,
+      false
+    ]
+  },
+  {
+    "dataId": 2586,
+    "size": 3,
+    "data": [
+      "String array element 0",
+      "String array element 1",
+      "String array element 2"
+    ]
+  },
+  {
+    "dataId": 2588,
+    "size": 1,
+    "data": [
+      [
+        "0 - String array record element 0",
+        "0 - String array record element 1"
+      ]
+    ]
+  },
+  {
+    "dataId": 2587,
+    "size": 2,
+    "data": [
+      [
+        {
+          "stringMember": "0 - String member"
+        },
+        {
+          "stringArrayMember": [
+            "0 - String array element 0",
+            "0 - String array element 1"
+          ]
+        }
+      ],
+      [
+        {
+          "stringMember": "1 - String member"
+        },
+        {
+          "stringArrayMember": [
+            "1 - String array element 0",
+            "1 - String array element 1"
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "dataId": 2589,
+    "data": [
+      [
+        "0 - String array element 0",
+        "0 - String array element 1"
+      ],
+      [
+        "1 - String array element 0",
+        "1 - String array element 1"
+      ],
+      [
+        "2 - String array element 0",
+        "2 - String array element 1"
+      ]
+    ]
+  },
+  {
+    "dataId": 2591,
+    "data": [
+      [
+        {
+          "stringMember": "0 - String member"
+        },
+        {
+          "stringArrayMember": [
+            "0 - String array element 0",
+            "0 - String array element 1"
+          ]
+        }
+      ],
+      [
+        {
+          "stringMember": "1 - String member"
+        },
+        {
+          "stringArrayMember": [
+            "1 - String array element 0",
+            "1 - String array element 1"
+          ]
+        }
+      ],
+      [
+        {
+          "stringMember": "2 - String member"
+        },
+        {
+          "stringArrayMember": [
+            "2 - String array element 0",
+            "2 - String array element 1"
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "dataId": 2585,
+    "data": [
+      "RED",
+      "GREEN",
+      "BLUE"
+    ]
+  },
+  {
+    "dataId": 2590,
+    "data": [
+      {
+        "integerMember": -1
+      },
+      {
+        "floatMember": 2.5
+      },
+      {
+        "stringMember": "String Member"
+      },
+      {
+        "booleanMember": false
+      },
+      {
+        "enumMember": "RED"
+      },
+      {
+        "arrayMemberU32": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "arrayMemberU32": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      {
+        "F32Array": [
+          4.400000095367432,
+          5.5,
+          6.599999904632568
+        ]
+      },
+      {
+        "U32Array": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      {
+        "enumArray": [
+          "RED",
+          "GREEN",
+          "BLUE"
+        ]
+      },
+      {
+        "stringArray": [
+          "String array element 0",
+          "String array element 1"
+        ]
+      },
+      {
+        "booleanArray": [
+          true,
+          false
+        ]
+      },
+      {
+        "structWithStrings": [
+          {
+            "stringMember": "String member"
+          },
+          {
+            "stringArrayMember": [
+              "String array element 0",
+              "String array element 1"
+            ]
+          }
+        ]
+      },
+      {
+        "nestedArrays": [
+          [
+            "0 - String array element 0",
+            "0 - String array element 1"
+          ],
+          [
+            "1 - String array element 0",
+            "1 - String array element 1"
+          ],
+          [
+            "2 - String array element 0",
+            "2 - String array element 1"
+          ]
+        ]
+      }
+    ]
+  }
+]

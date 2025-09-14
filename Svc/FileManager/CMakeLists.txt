@@ -6,22 +6,23 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FileManager.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FileManager.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FileManager.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FileManager.cpp"
+  DEPENDS
+    Os
+    Fw_FilePacket
+    Utils_Hash
+    CFDP_Checksum
 )
-set(MOD_DEPS
-  Os
-  Fw/FilePacket
-  Utils/Hash
-  CFDP/Checksum
-)
-register_fprime_module()
 
-### UTs ###
-set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/FileManager/FileManager.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerMain.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/FileManager/FileManager.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerMain.cpp"
+  UT_AUTO_HELPERS
 )
-register_fprime_ut()

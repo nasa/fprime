@@ -19,149 +19,124 @@
 #define COM_BUFFER_LENGTH 4
 #define MAX_ENTRIES_PER_FILE 5
 #define SIZE_TYPE U32
-#define MAX_BYTES_PER_FILE \
-  (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE*sizeof(SIZE_TYPE))
+#define MAX_BYTES_PER_FILE (MAX_ENTRIES_PER_FILE * COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE * sizeof(SIZE_TYPE))
 
 namespace Svc {
 
-  class BufferLoggerTester :
-    public BufferLoggerGTestBase
-  {
+class BufferLoggerTester : public BufferLoggerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object BufferLoggerTester
+    //!
+    BufferLoggerTester(bool doInitLog = true);
 
-    public:
+    //! Destroy object BufferLoggerTester
+    //!
+    ~BufferLoggerTester();
 
-      //! Construct object BufferLoggerTester
-      //!
-      BufferLoggerTester(
-          bool doInitLog = true
-      );
+    // ----------------------------------------------------------------------
+    // Tests (rest are in Errors, Health, and Logging classes)
+    // ----------------------------------------------------------------------
 
-      //! Destroy object BufferLoggerTester
-      //!
-      ~BufferLoggerTester();
+  public:
+    //! No-one called initLog
+    void LogNoInit();
 
-      // ----------------------------------------------------------------------
-      // Tests (rest are in Errors, Health, and Logging classes)
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Handler for from_bufferSendOut
+    //!
+    void from_bufferSendOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                    Fw::Buffer& fwBuffer);
 
-      //! No-one called initLog
-      void LogNoInit();
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
+                              U32 key                    /*!< Value to return to pinger*/
+    );
 
-    private:
+  protected:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Dispatch one message on the queue
+    void dispatchOne();
 
-      //! Handler for from_bufferSendOut
-      //!
-      void from_bufferSendOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          Fw::Buffer& fwBuffer
-      );
+    //! Dispatch all messages on the queue
+    void dispatchAll();
 
-      //! Handler for from_pingOut
-      //!
-      void from_pingOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
+    //! Generate a test time
+    Fw::Time generateTestTime(const U32 seconds  //!< The seconds value
+    );
 
-    protected:
+    //! Set test time seconds
+    void setTestTimeSeconds(const U32 seconds  //!< The seconds value
+    );
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Send com buffers to comIn
+    void sendComBuffers(const U32 n  //!< The number of buffers to send
+    );
 
-      //! Dispatch one message on the queue
-      void dispatchOne();
+    //! Send managed buffers to bufferSendIn
+    void sendManagedBuffers(const U32 n  //!< The number of buffers to send
+    );
 
-      //! Dispatch all messages on the queue
-      void dispatchAll();
+    //! Check that file exists
+    void checkFileExists(const Fw::StringBase& fileName  //!< The file name
+    );
 
-      //! Generate a test time
-      Fw::Time generateTestTime(
-          const U32 seconds //!< The seconds value
-      );
+    //! Check that hash file exists
+    void checkHashFileExists(const Fw::StringBase& fileName  //!< The file name
+    );
 
-      //! Set test time seconds
-      void setTestTimeSeconds(
-          const U32 seconds //!< The seconds value
-      );
+    //! Check the integrity of a log file
+    void checkLogFileIntegrity(const char* const fileName,   //!< The file name
+                               const U32 expectedSize,       //!< The expected file size in bytes
+                               const U32 expectedNumBuffers  //!< The expected number of buffers
+    );
 
-      //! Send com buffers to comIn
-      void sendComBuffers(
-          const U32 n //!< The number of buffers to send
-      );
+    //! Check file validation
+    void checkFileValidation(const char* const fileName  //!< The file name
+    );
 
-      //! Send managed buffers to bufferSendIn
-      void sendManagedBuffers(
-          const U32 n //!< The number of buffers to send
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! Check that file exists
-      void checkFileExists(
-          const Fw::StringBase& fileName //!< The file name
-      );
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Check that hash file exists
-      void checkHashFileExists(
-          const Fw::StringBase& fileName //!< The file name
-      );
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Check the integrity of a log file
-      void checkLogFileIntegrity(
-          const char *const fileName, //!< The file name
-          const U32 expectedSize, //!< The expected file size in bytes
-          const U32 expectedNumBuffers //!< The expected number of buffers
-      );
+  protected:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Check file validation
-      void checkFileValidation(
-          const char *const fileName //!< The file name
-      );
+    //! The component under test
+    //!
+    BufferLogger component;
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Data for input buffers
+    static U8 data[COM_BUFFER_LENGTH];
+};
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    protected:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      BufferLogger component;
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! Data for input buffers
-      static U8 data[COM_BUFFER_LENGTH];
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

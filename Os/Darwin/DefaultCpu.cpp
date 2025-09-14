@@ -10,4 +10,4 @@ namespace Os {
 CpuInterface* CpuInterface::getDelegate(CpuHandleStorage& aligned_new_memory) {
     return Os::Delegate::makeDelegate<CpuInterface, Os::Darwin::Cpu::DarwinCpu>(aligned_new_memory);
 }
-}
+}  // namespace Os

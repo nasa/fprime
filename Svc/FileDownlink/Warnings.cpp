@@ -12,23 +12,14 @@
 
 namespace Svc {
 
-  void FileDownlink::Warnings ::
-    fileOpenError()
-  {
-    this->m_fileDownlink->log_WARNING_HI_FileOpenError(
-        this->m_fileDownlink->m_file.getSourceName()
-    );
+void FileDownlink::Warnings ::fileOpenError() {
+    this->m_fileDownlink->log_WARNING_HI_FileOpenError(this->m_fileDownlink->m_file.getSourceName());
     this->warning();
-  }
-
-  void FileDownlink::Warnings ::
-    fileRead(const Os::File::Status status)
-  {
-    this->m_fileDownlink->log_WARNING_HI_FileReadError(
-        this->m_fileDownlink->m_file.getSourceName(),
-		    status
-    );
-    this->warning();
-  }
-
 }
+
+void FileDownlink::Warnings ::fileRead(const Os::File::Status status) {
+    this->m_fileDownlink->log_WARNING_HI_FileReadError(this->m_fileDownlink->m_file.getSourceName(), status);
+    this->warning();
+}
+
+}  // namespace Svc

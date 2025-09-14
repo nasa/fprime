@@ -70,7 +70,7 @@ module Svc {
 
     @ Received buffer is too small to hold a data product packet
     event BufferTooSmallForPacket(
-                          bufferSize: U32 @< The incoming buffer size
+                          bufferSize: FwSizeType @< The incoming buffer size
                           minSize: U32 @< The minimum required size
                         ) \
       severity warning high \
@@ -79,7 +79,7 @@ module Svc {
 
     @ The received buffer has an invalid header hash
     event InvalidHeaderHash(
-                             bufferSize: U32 @< The incoming buffer size
+                             bufferSize: FwSizeType @< The incoming buffer size
                              storedHash: U32 @< The stored hash value
                              computedHash: U32 @< The computed hash value
                            ) \
@@ -89,7 +89,7 @@ module Svc {
 
     @ Error occurred when deserializing the packet header
     event InvalidHeader(
-                         bufferSize: U32 @< The incoming buffer size
+                         bufferSize: FwSizeType @< The incoming buffer size
                          errorCode: U32 @< The error code
                        ) \
       severity warning high \
@@ -98,7 +98,7 @@ module Svc {
 
     @ Received buffer is too small to hold the data specified in the header
     event BufferTooSmallForData(
-                          bufferSize: U32 @< The incoming buffer size
+                          bufferSize: FwSizeType @< The incoming buffer size
                           minSize: U32 @< The minimum required size
                         ) \
       severity warning high \

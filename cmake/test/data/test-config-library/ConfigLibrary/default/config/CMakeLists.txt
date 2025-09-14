@@ -1,0 +1,9 @@
+register_fprime_config(
+        library_config
+    CONFIGURATION_OVERRIDES
+        "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryConfig.hpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/config.hpp"
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/config.cpp"
+)

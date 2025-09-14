@@ -9,8 +9,8 @@
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 
 #include "Fw/Buffer/Buffer.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Utils/Hash/Hash.hpp"
-#include "config/FpConfig.h"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
 #include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"

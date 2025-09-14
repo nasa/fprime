@@ -11,6 +11,10 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 jobs:
   fpptest:
@@ -27,17 +31,17 @@ jobs:
           pip3 install -r ./requirements.txt
         shell: bash
       - name: "Generate UT build cache"
-        working-directory: ./FppTest
+        working-directory: ./FppTestProject
         run: |
           fprime-util generate --ut
         shell: bash
       - name: "Build UTs"
-        working-directory: ./FppTest
+        working-directory: ./FppTestProject/FppTest
         run: |
           fprime-util build --ut
         shell: bash
       - name: "Run UTs"
-        working-directory: ./FppTest
+        working-directory: ./FppTestProject/FppTest
         run: |
           fprime-util check
         shell: bash
@@ -46,5 +50,5 @@ jobs:
         if: always()
         with:
           name: FppTest-Logs
-          path: ./FppTest/build-fprime-automatic-native-ut/Testing/Temporary/*.log
+          path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
           retention-days: 5

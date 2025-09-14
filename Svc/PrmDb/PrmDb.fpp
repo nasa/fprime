@@ -87,7 +87,7 @@ module Svc {
 
     @ Parameter ID not found in database.
     event PrmIdNotFound(
-                         Id: U32 @< The parameter ID
+                         Id: FwPrmIdType @< The parameter ID
                        ) \
       severity warning low \
       id 0 \
@@ -96,7 +96,7 @@ module Svc {
 
     @ Parameter ID updated in database
     event PrmIdUpdated(
-                        Id: U32 @< The parameter ID
+                        Id: FwPrmIdType @< The parameter ID
                       ) \
       severity activity high \
       id 1 \
@@ -104,7 +104,7 @@ module Svc {
 
     @ Parameter database is full
     event PrmDbFull(
-                     Id: U32 @< The parameter ID
+                     Id: FwPrmIdType @< The parameter ID
                    ) \
       severity fatal \
       id 2 \
@@ -113,7 +113,7 @@ module Svc {
 
     @ Parameter ID added to database
     event PrmIdAdded(
-                      Id: U32 @< The parameter ID
+                      Id: FwPrmIdType @< The parameter ID
                     ) \
       severity activity high \
       id 3 \

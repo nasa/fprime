@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Headers.hpp
 // \author Rob Bocchino
 // \brief  AMPCS sequence file headers
@@ -15,29 +15,27 @@
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    namespace AMPCS {
+namespace AMPCS {
 
-      namespace Headers {
+namespace Headers {
 
-        //! Serialize a header with a standard U32 value
-        void serialize(
-            Fw::SerializeBufferBase& buffer //!< The destination buffer
-        );
+//! Serialize a header with a standard U32 value
+void serialize(Fw::SerializeBufferBase& buffer  //!< The destination buffer
+);
 
-        //! Serialize a header from a U32 value
-        void serialize(
-            const U32 value, //!< The value
-            Fw::SerializeBufferBase& buffer //!< The destination buffer
-        );
+//! Serialize a header from a U32 value
+void serialize(const U32 value,                 //!< The value
+               Fw::SerializeBufferBase& buffer  //!< The destination buffer
+);
 
-      }
+}  // namespace Headers
 
-    }
+}  // namespace AMPCS
 
-  }
+}  // namespace SequenceFiles
 
-}
+}  // namespace Svc
 
 #endif

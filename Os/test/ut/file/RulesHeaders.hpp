@@ -9,22 +9,22 @@
 #include <cstdio>
 #include <map>
 #include "Os/File.hpp"
+#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
-#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 
 namespace Os {
 namespace Test {
-namespace File {
+namespace FileTest {
 
 struct Tester {
     //! State data for an open OS file.
     //!
     struct FileState {
-        FwSignedSizeType size = -1;
-        FwSignedSizeType position = -1;
+        FwSizeType size = std::numeric_limits<FwSizeType>::max();
+        FwSizeType position = std::numeric_limits<FwSizeType>::max();
     };
 
     //! Assert in File.cpp for searching death text
@@ -54,7 +54,8 @@ struct Tester {
 
     //! Performs the "open" action on the shadow state.
     //!
-    Os::File::Status shadow_open(const std::string &path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
+    Os::File::Status shadow_open(const std::string& path,
+                                 Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
                                  bool overwrite = false);
 
     //! Perform the "close" action on the shadow state.
@@ -64,7 +65,7 @@ struct Tester {
     //! Perform the "read" action on the shadow state returning the read data.
     //! \return data read
     //!
-    std::vector<U8> shadow_read(FwSignedSizeType size);
+    std::vector<U8> shadow_read(FwSizeType size);
 
     //! Perform the "write" action on the shadow state given the data.
     //!
@@ -76,7 +77,7 @@ struct Tester {
 
     //! Perform the "preallocate" action on the shadow state.
     //!
-    void shadow_preallocate(const FwSignedSizeType offset, const FwSignedSizeType length);
+    void shadow_preallocate(const FwSizeType offset, const FwSizeType length);
 
     //! Perform the "flush" action on the shadow state.
     //!
@@ -90,7 +91,7 @@ struct Tester {
     //! Perform the "incremental crc" action on the shadow state.
     //! \param crc: output for CRC value
     //!
-    void shadow_partial_crc(FwSignedSizeType& size);
+    void shadow_partial_crc(FwSizeType& size);
 
     //! Perform the "crc finalize" action on the shadow state.
     //! \param crc: output for CRC value
@@ -114,7 +115,9 @@ struct Tester {
 
     //! Assert that the file is opened
     //!
-    void assert_file_opened(const std::string& path="", Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
+    void assert_file_opened(const std::string& path = "",
+                            Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
+                            bool overwrite = false);
 
     //! Assert that the file is closed
     //!
@@ -122,15 +125,15 @@ struct Tester {
 
     //! Assert a file read
     //!
-    void assert_file_read(const std::vector<U8>& state_data, const unsigned char* read_data, FwSignedSizeType size_read);
+    void assert_file_read(const std::vector<U8>& state_data, const unsigned char* read_data, FwSizeType size_read);
 
     //! Assert a file write
     //!
-    void assert_file_write(const std::vector<U8>& write_data, FwSignedSizeType size_written);
+    void assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written);
 
     //! Assert a file seek
     //!
-    void assert_file_seek(const FwSignedSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute);
+    void assert_file_seek(const FwSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute);
 
     //! File under test
     Os::File m_file;
@@ -153,8 +156,8 @@ struct Tester {
 //! Get the tester implementation for the given backend.
 //! \return pointer to tester subclass implementation
 //!
-std::unique_ptr<Os::Test::File::Tester> get_tester_implementation();
-}  // namespace File
+std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation();
+}  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
 #endif  // __RULES_HEADERS__

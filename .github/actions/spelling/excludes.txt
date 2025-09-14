@@ -101,3 +101,4 @@
 ^\QSvc/FileUplink/test/ut/dest.bin\E$
 ignore$
 mlc-config.json
+Autocoders/

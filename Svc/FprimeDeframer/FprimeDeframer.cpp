@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/FprimeDeframer/FprimeDeframer.hpp"
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
@@ -25,11 +25,11 @@ FprimeDeframer ::~FprimeDeframer() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context) {
+void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
         this->log_WARNING_HI_InvalidBufferReceived();
-        this->bufferDeallocate_out(0, data); // drop the frame
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
 
@@ -39,34 +39,46 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
 
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
-    Fw::SerializeStatus status = header.deserialize(data.getSerializeRepr());
+    auto deserializer = data.getDeserializer();
+    Fw::SerializeStatus status = header.deserialize(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
     const FprimeProtocol::FrameHeader defaultValue;
-    if (header.getstartWord() != defaultValue.getstartWord()) {
+    if (header.get_startWord() != defaultValue.get_startWord()) {
         this->log_WARNING_HI_InvalidStartWord();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
-    const FwSizeType expectedFrameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField() +
+    const FwSizeType expectedFrameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
                                          FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     if (data.getSize() < expectedFrameSize) {
         this->log_WARNING_HI_InvalidLengthReceived();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
+    }
+    // -------- Attempt to extract APID from Payload --------
+    // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
+    // and let downstream components (e.g. custom router) handle it
+    FwPacketDescriptorType packetDescriptor;
+    status = deserializer.deserialize(packetDescriptor);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+    ComCfg::FrameContext contextCopy = context;
+    // If a valid descriptor is deserialized, set it in the context
+    if (packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED) {
+        contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
     }
 
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
-    status = data.getSerializeRepr().moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField());
+    status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-    status = trailer.deserialize(data.getSerializeRepr());
+    status = trailer.deserialize(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Compute CRC over the transmitted data (header + body)
     Utils::Hash hash;
     Utils::HashBuffer computedCrc;
-    FwSizeType fieldToHashSize = header.getlengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    FwSizeType fieldToHashSize = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
     // Add byte by byte to the hash
     for (FwSizeType i = 0; i < fieldToHashSize; i++) {
@@ -74,9 +86,9 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     }
     hash.final(computedCrc);
     // Check that the CRC in the trailer of the frame matches the computed CRC
-    if (trailer.getcrcField() != computedCrc.asBigEndianU32()) {
+    if (trailer.get_crcField() != computedCrc.asBigEndianU32()) {
         this->log_WARNING_HI_InvalidChecksum();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
 
@@ -87,7 +99,13 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
-    this->deframedOut_out(0, data, context);
+    this->dataOut_out(0, data, contextCopy);
+}
+
+void FprimeDeframer ::dataReturnIn_handler(FwIndexType portNum,
+                                           Fw::Buffer& fwBuffer,
+                                           const ComCfg::FrameContext& context) {
+    this->dataReturnOut_out(0, fwBuffer, context);
 }
 
 }  // namespace Svc

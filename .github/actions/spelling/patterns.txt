@@ -137,3 +137,12 @@ TeX/AMS
 
 # ignore long runs of a single character:
 \b([A-Za-z])\g{-1}{3,}\b
+
+
+##########################################
+###### F Prime specific patterns    ######
+##########################################
+
+# .get...() .set...() autocoded functions
+\.get\w+\(
+\.set\w+\(

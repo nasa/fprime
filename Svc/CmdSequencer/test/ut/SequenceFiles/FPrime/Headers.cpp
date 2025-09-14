@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Headers.cpp
 // \author Rob Bocchino
 // \brief  F Prime sequence file headers
@@ -8,34 +8,32 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include "gtest/gtest.h"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/Headers.hpp"
+#include "gtest/gtest.h"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    namespace FPrime {
+namespace FPrime {
 
-      namespace Headers {
+namespace Headers {
 
-        void serialize(
-            U32 dataSize,
-            U32 numRecords,
-            FwTimeBaseStoreType timeBase,
-            FwTimeContextStoreType timeContext,
-            Fw::SerializeBufferBase& destBuffer
-        ) {
-          ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(dataSize));
-          ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(numRecords));
-          ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeBase));
-          ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeContext));
-        }
-
-      }
-
-    }
-
-  }
-
+void serialize(U32 dataSize,
+               U32 numRecords,
+               FwTimeBaseStoreType timeBase,
+               FwTimeContextStoreType timeContext,
+               Fw::SerializeBufferBase& destBuffer) {
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(dataSize));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(numRecords));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeBase));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeContext));
 }
+
+}  // namespace Headers
+
+}  // namespace FPrime
+
+}  // namespace SequenceFiles
+
+}  // namespace Svc

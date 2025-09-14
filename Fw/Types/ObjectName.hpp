@@ -7,9 +7,9 @@
 #ifndef FW_OBJECT_NAME_HPP
 #define FW_OBJECT_NAME_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
@@ -24,9 +24,9 @@ class ObjectName final : public StringBase {
 
     ObjectName() : StringBase() { *this = ""; }
 
-    explicit ObjectName(const ObjectName& src) : StringBase() { *this = src; }
+    ObjectName(const ObjectName& src) : StringBase() { *this = src; }
 
-    explicit ObjectName(const StringBase& src) : StringBase() { *this = src; }
+    ObjectName(const StringBase& src) : StringBase() { *this = src; }
 
     explicit ObjectName(const char* src) : StringBase() { *this = src; }
 

@@ -2,22 +2,21 @@
 // Created by mstarch on 12/7/20.
 //
 #include <gtest/gtest.h>
-#include <Drv/Ip/TcpClientSocket.hpp>
-#include <Drv/Ip/TcpServerSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketComponentHelper.hpp>
-#include <Os/Console.hpp>
-#include <Fw/Logger/Logger.hpp>
+#include <Drv/Ip/TcpClientSocket.hpp>
+#include <Drv/Ip/TcpServerSocket.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
+#include <Fw/Logger/Logger.hpp>
+#include <Os/Console.hpp>
 
 Os::Console logger;
-
 
 void test_with_loop(U32 iterations) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
-    U16 port = 0; // Choose a port
+    U16 port = 0;  // Choose a port
     Drv::TcpServerSocket server;
     Drv::SocketDescriptor server_fd;
     Drv::SocketDescriptor client_fd;
@@ -28,7 +27,7 @@ void test_with_loop(U32 iterations) {
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
         Drv::TcpClientSocket client;
-        client.configure("127.0.0.1", server.getListenPort(),0,100);
+        client.configure("127.0.0.1", server.getListenPort(), 0, 100);
         // client_fd gets assigned a real value here
         status1 = client.open(client_fd);
         EXPECT_EQ(status1, Drv::SOCK_SUCCESS) << "With errno: " << errno;
@@ -36,7 +35,6 @@ void test_with_loop(U32 iterations) {
         // client_fd gets assigned a real value here
         status2 = server.open(server_fd);
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-
 
         // If all the opens worked, then run this
         if (Drv::SOCK_SUCCESS == status1 && Drv::SOCK_SUCCESS == status2) {
@@ -54,7 +52,6 @@ void test_with_loop(U32 iterations) {
     }
     server.terminate(server_fd);
 }
-
 
 TEST(Nominal, TestNominalTcp) {
     test_with_loop(1);

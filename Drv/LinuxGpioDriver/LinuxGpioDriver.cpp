@@ -10,7 +10,7 @@
 //
 // ======================================================================
 #include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/Posix/File.hpp>
@@ -24,8 +24,7 @@
 
 namespace Drv {
 
-
-Os::File::Status errno_to_file_status(PlatformIntType errno_input) {
+Os::File::Status errno_to_file_status(int errno_input) {
     Os::File::Status status = Os::File::Status::OTHER_ERROR;
     switch (errno_input) {
         case 0:
@@ -61,7 +60,7 @@ Os::File::Status errno_to_file_status(PlatformIntType errno_input) {
     return status;
 }
 
-Drv::GpioStatus errno_to_gpio_status(PlatformIntType errno_input) {
+Drv::GpioStatus errno_to_gpio_status(int errno_input) {
     Drv::GpioStatus status = Drv::GpioStatus::T::UNKNOWN_ERROR;
     switch (errno_input) {
         case EBADF:
@@ -123,22 +122,22 @@ U32 configuration_to_event_flags(Drv::LinuxGpioDriver::GpioConfiguration configu
 }
 
 LinuxGpioDriver ::~LinuxGpioDriver() {
-    (void) ::close(this->m_fd);
+    (void)::close(this->m_fd);
 }
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineHandle(const int chip_descriptor,
                                                    const U32 gpio,
                                                    const GpioConfiguration& configuration,
                                                    const Fw::Logic& default_state,
-                                                   PlatformIntType& fd) {
+                                                   int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpiohandle_request request;
-    (void) ::memset(&request, 0, sizeof request);
+    (void)::memset(&request, 0, sizeof request);
     request.lineoffsets[0] = gpio;
     Fw::StringUtils::string_copy(request.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof request.consumer_label));
@@ -148,7 +147,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     request.flags = configuration_to_handler_flags(configuration);
 
     errno = 0;
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
     fd = request.fd;
     if (return_value != 0) {
         status = errno_to_file_status(errno);
@@ -157,14 +156,14 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     return status;
 }
 
-Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
                                                   const U32 gpio,
                                                   const GpioConfiguration& configuration,
-                                                  PlatformIntType& fd) {
+                                                  int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpioevent_request event;
-    (void) ::memset(&event, 0, sizeof event);
+    (void)::memset(&event, 0, sizeof event);
     event.lineoffset = gpio;
     Fw::StringUtils::string_copy(event.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof event.consumer_label));
@@ -172,7 +171,7 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_des
     event.handleflags = configuration_to_handler_flags(configuration);
     event.eventflags = configuration_to_event_flags(configuration);
     errno = 0;
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_LINEEVENT_IOCTL, &event);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_LINEEVENT_IOCTL, &event);
     fd = event.fd;
     if (return_value != 0) {
         status = errno_to_file_status(errno);
@@ -188,7 +187,8 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     Os::File::Status status = Os::File::OP_OK;
     Os::File chip_file;
     FW_ASSERT(device != nullptr);
-    FW_ASSERT(configuration < MAX_GPIO_CONFIGURATION and configuration >= 0, static_cast<FwAssertArgType>(configuration));
+    FW_ASSERT(configuration < MAX_GPIO_CONFIGURATION and configuration >= 0,
+              static_cast<FwAssertArgType>(configuration));
 
     // Open chip file and check for success
     status = chip_file.open(device, Os::File::Mode::OPEN_WRITE);
@@ -197,11 +197,10 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         return status;
     }
     // Read chip information and check for correctness
-    PlatformIntType chip_descriptor =
-        reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
+    int chip_descriptor = reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
     struct gpiochip_info chip_info;
-    (void) ::memset(&chip_info, 0, sizeof chip_info);
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
+    (void)::memset(&chip_info, 0, sizeof chip_info);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
     if (return_value != 0) {
         status = errno_to_file_status(errno);
         this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
@@ -215,17 +214,17 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     }
     Fw::String pin_message("Unknown");
     struct gpioline_info pin_info;
-    (void) ::memset(&pin_info, 0, sizeof pin_info);
+    (void)::memset(&pin_info, 0, sizeof pin_info);
     pin_info.line_offset = gpio;
     return_value = ioctl(chip_descriptor, GPIO_GET_LINEINFO_IOCTL, &pin_info);
     if (return_value == 0) {
         const bool has_consumer = pin_info.consumer[0] != '\0';
         pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
-			   has_consumer ? pin_info.consumer : "");
+                           has_consumer ? pin_info.consumer : "");
     }
 
     // Set up pin and set file descriptor for it
-    PlatformIntType pin_fd = -1;
+    int pin_fd = -1;
     switch (configuration) {
         // Cascade intended
         case GPIO_OUTPUT:
@@ -247,8 +246,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, pin_message,
                                           Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
     } else {
-        this->log_DIAGNOSTIC_OpenChip(Fw::String(chip_info.name), Fw::String(chip_info.label),
-			              gpio, pin_message);
+        this->log_DIAGNOSTIC_OpenChip(Fw::String(chip_info.name), Fw::String(chip_info.label), gpio, pin_message);
         this->m_fd = pin_fd;
         this->m_configuration = configuration;
     }
@@ -259,8 +257,8 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
-        (void) ::memset(&values, 0, sizeof values);
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &values);
+        (void)::memset(&values, 0, sizeof values);
+        int return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -275,9 +273,9 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const FwIndexType portNum, c
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_OUTPUT) {
         struct gpiohandle_data values;
-        (void) ::memset(&values, 0, sizeof values);
+        (void)::memset(&values, 0, sizeof values);
         values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &values);
+        int return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -291,20 +289,23 @@ void LinuxGpioDriver ::pollLoop() {
     // Ensure size of FwSizeType is large enough to fit the necessary ranges
     // NOTE: casts to unsigned types for int and ssize_t are made to avoid sign-compare warning;
     //       in both cases the cast is safe because max() returns nonnegative value.
-    static_assert(GPIO_POLL_TIMEOUT < static_cast<unsigned int>(std::numeric_limits<int>::max()), "Poll timeout would overflow");
+    static_assert(GPIO_POLL_TIMEOUT < static_cast<unsigned int>(std::numeric_limits<int>::max()),
+                  "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     using unsigned_ssize_t = std::make_unsigned<ssize_t>::type;
-    static_assert(static_cast<unsigned_ssize_t>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
+    static_assert(
+        static_cast<unsigned_ssize_t>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(),
+        "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever
     while (this->getRunning()) {
         // Setup polling
-        (void) ::memset(file_descriptors, 0, sizeof file_descriptors);
+        (void)::memset(file_descriptors, 0, sizeof file_descriptors);
         file_descriptors[0].fd = this->m_fd;
         file_descriptors[0].events = POLLIN;  // Ask for read data available
         // Poll for fd bing ready
-        PlatformIntType status = ::poll(file_descriptors, 1, static_cast<int>(GPIO_POLL_TIMEOUT));
+        int status = ::poll(file_descriptors, 1, static_cast<int>(GPIO_POLL_TIMEOUT));
         // Check for some file descriptor to be ready
         if (status > 0) {
             struct gpioevent_data event_data;

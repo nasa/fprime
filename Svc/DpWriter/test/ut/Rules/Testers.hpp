@@ -20,20 +20,20 @@
 
 namespace Svc {
 
-  namespace Testers {
+namespace Testers {
 
-    extern BufferSendIn::Tester bufferSendIn;
+extern BufferSendIn::Tester bufferSendIn;
 
-    extern CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
+extern CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
 
-    extern FileOpenStatus::Tester fileOpenStatus;
+extern FileOpenStatus::Tester fileOpenStatus;
 
-    extern FileWriteStatus::Tester fileWriteStatus;
+extern FileWriteStatus::Tester fileWriteStatus;
 
-    extern SchedIn::Tester schedIn;
+extern SchedIn::Tester schedIn;
 
-  }
+}  // namespace Testers
 
-}
+}  // namespace Svc
 
 #endif

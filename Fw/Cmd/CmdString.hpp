@@ -7,9 +7,9 @@
 #ifndef FW_CMD_STRING_HPP
 #define FW_CMD_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
@@ -24,9 +24,9 @@ class CmdStringArg final : public StringBase {
 
     CmdStringArg() : StringBase() { *this = ""; }
 
-    explicit CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
+    CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
 
-    explicit CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
+    CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
 
     explicit CmdStringArg(const char* src) : StringBase() { *this = src; }
 

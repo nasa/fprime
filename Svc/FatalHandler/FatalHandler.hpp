@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef FatalHandlerComponentImpl FatalHandler;
+typedef FatalHandlerComponentImpl FatalHandler;
 
 }
 

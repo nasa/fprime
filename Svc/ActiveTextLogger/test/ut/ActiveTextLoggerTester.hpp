@@ -11,60 +11,52 @@
 
 namespace Svc {
 
-  class ActiveTextLoggerTester :
-    public ActiveTextLoggerGTestBase
-  {
+class ActiveTextLoggerTester : public ActiveTextLoggerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object ActiveTextLoggerTester
+    //!
+    ActiveTextLoggerTester();
 
-    public:
+    //! Destroy object ActiveTextLoggerTester
+    //!
+    ~ActiveTextLoggerTester();
 
-      //! Construct object ActiveTextLoggerTester
-      //!
-      ActiveTextLoggerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object ActiveTextLoggerTester
-      //!
-      ~ActiveTextLoggerTester();
+    void runNominalTest();
+    void runOffNominalTest();
+    void testWorkstationTimestamp();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      void runNominalTest();
-      void runOffNominalTest();
-      void testWorkstationTimestamp();
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    ActiveTextLogger component;
+};
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      ActiveTextLogger component;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

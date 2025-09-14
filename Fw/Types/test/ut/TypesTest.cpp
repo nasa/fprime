@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
@@ -26,6 +26,7 @@
 #define DEBUG_VERBOSE 0
 
 #include <gtest/gtest.h>
+#include "SerializeBufferBaseTester.hpp"
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
   public:
@@ -62,13 +63,12 @@ TEST(SerializationTest, Serialization1) {
 
     // Test chars
     buff.resetSer();
-    stat1 = buff.serialize(u8t1);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(0xAB, ptr[0]);
-    ASSERT_EQ(1, buff.m_serLoc);
-    stat2 = buff.deserialize(u8t2);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(1, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::assertResetState(buff);
+
+    Fw::SerializeBufferBaseTester::verifyU8Serialization(buff, u8t1);
+    ASSERT_EQ(0xAB, ptr[0]);  // Verify the actual byte value in the buffer
+
+    Fw::SerializeBufferBaseTester::verifyU8Deserialization(buff, u8t2, u8t1);
 
     ASSERT_EQ(u8t2, u8t1);
 
@@ -78,36 +78,34 @@ TEST(SerializationTest, Serialization1) {
 #endif
 
     buff.resetSer();
-    ASSERT_EQ(0, buff.m_serLoc);
-    ASSERT_EQ(0, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::assertResetState(buff);
 
     I8 i8t1 = static_cast<I8>(0xFF);
     I8 i8t2 = 0;
 
-    stat1 = buff.serialize(i8t1);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(1, buff.m_serLoc);
-    ASSERT_EQ(0xFF, ptr[0]);
-    stat2 = buff.deserialize(i8t2);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    // Use the tester to verify I8 serialization
+    Fw::SerializeBufferBaseTester::verifyI8Serialization(buff, i8t1);
+    ASSERT_EQ(0xFF, ptr[0]);  // Verify the actual byte value in the buffer
+
+    // Use the tester to verify I8 deserialization
+    Fw::SerializeBufferBaseTester::verifyI8Deserialization(buff, i8t2, i8t1);
+
     ASSERT_EQ(i8t1, i8t2);
-    ASSERT_EQ(1, buff.m_deserLoc);
 
     buff.resetSer();
-    ASSERT_EQ(0, buff.m_serLoc);
-    ASSERT_EQ(0, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::assertResetState(buff);
 
     // double check negative numbers
     i8t1 = -100;
     i8t2 = 0;
 
-    stat1 = buff.serialize(i8t1);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(1, buff.m_serLoc);
-    stat2 = buff.deserialize(i8t2);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    // Use the tester to verify I8 serialization with negative number
+    Fw::SerializeBufferBaseTester::verifyI8Serialization(buff, i8t1);
+
+    // Use the tester to verify I8 deserialization with negative number
+    Fw::SerializeBufferBaseTester::verifyI8Deserialization(buff, i8t2, i8t1);
+
     ASSERT_EQ(i8t1, i8t2);
-    ASSERT_EQ(1, buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i8t1, i8t2, stat1, stat2);
@@ -122,13 +120,13 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(2, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     stat2 = buff.deserialize(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u16t1, u16t2);
-    ASSERT_EQ(2, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u16t1, u16t2, stat1, stat2);
@@ -141,14 +139,14 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(2, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
     // 2s complement
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     stat2 = buff.deserialize(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
-    ASSERT_EQ(2, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
 
     // double check negative number
     i16t1 = -1000;
@@ -157,11 +155,11 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(2, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
     stat2 = buff.deserialize(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
-    ASSERT_EQ(2, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1, stat2);
@@ -177,7 +175,7 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(4, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     ASSERT_EQ(0xEF, ptr[2]);
@@ -185,7 +183,7 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserialize(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t1, u32t2);
-    ASSERT_EQ(4, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u32t1, u32t2, stat1, stat2);
@@ -198,14 +196,14 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(4, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     ASSERT_EQ(0xEF, ptr[2]);
     ASSERT_EQ(0x12, ptr[3]);
     stat2 = buff.deserialize(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(4, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
     ASSERT_EQ(i32t1, i32t2);
 
     // double check negative number
@@ -215,10 +213,10 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(4, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     stat2 = buff.deserialize(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(4, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
     ASSERT_EQ(i32t1, i32t2);
 
 #if DEBUG_VERBOSE
@@ -235,7 +233,7 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(8, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x01, ptr[0]);
     ASSERT_EQ(0x23, ptr[1]);
     ASSERT_EQ(0x45, ptr[2]);
@@ -247,7 +245,7 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserialize(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
-    ASSERT_EQ(8, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", u64t1, u64t2, stat1, stat2);
@@ -260,7 +258,7 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(8, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x01, ptr[0]);
     ASSERT_EQ(0x23, ptr[1]);
     ASSERT_EQ(0x45, ptr[2]);
@@ -272,7 +270,7 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserialize(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
-    ASSERT_EQ(8, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
 
     // double check negative number
     i64t1 = -1000000000000;
@@ -281,11 +279,11 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(8, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     stat2 = buff.deserialize(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
-    ASSERT_EQ(8, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1, stat2);
@@ -301,7 +299,7 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(4, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xBF, ptr[0]);
     ASSERT_EQ(0x9D, ptr[1]);
     ASSERT_EQ(0x70, ptr[2]);
@@ -309,7 +307,7 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserialize(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_FLOAT_EQ(f32t1, f32t2);
-    ASSERT_EQ(4, buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %f out: %f stat1: %d stat2: %d\n", f32t1, f32t2, stat1, stat2);
@@ -322,7 +320,7 @@ TEST(SerializationTest, Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    ASSERT_EQ(8, buff.m_serLoc);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x40, ptr[0]);
     ASSERT_EQ(0x59, ptr[1]);
     ASSERT_EQ(0x0E, ptr[2]);
@@ -333,8 +331,8 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0xA6, ptr[7]);
     stat2 = buff.deserialize(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_DOUBLE_EQ(f32t1, f32t2);
-    ASSERT_EQ(8, buff.m_deserLoc);
+    ASSERT_DOUBLE_EQ(f64t1, f64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lf out: %lf stat1: %d stat2: %d\n", f64t1, f64t2, stat1, stat2);
@@ -385,7 +383,7 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserializeSize(size2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
-    ASSERT_EQ(sizeof(FwSizeStoreType), buff.m_deserLoc);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE
     printf("Val: in: %" PRI_FwSizeType " out: %" PRI_FwSizeType " stat1: %d stat2: %d\n", size1, size2, stat1, stat2);
@@ -627,7 +625,7 @@ struct TestStruct {
 
 class MySerializable : public Fw::Serializable {
   public:
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const {
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
         buffer.serialize(m_testStruct.m_u32);
         buffer.serialize(m_testStruct.m_u16);
         buffer.serialize(m_testStruct.m_u8);
@@ -636,7 +634,7 @@ class MySerializable : public Fw::Serializable {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
         buffer.serialize(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         buffer.serialize(m_testStruct.m_f32);
         buffer.serialize(m_testStruct.m_u8);
@@ -660,8 +658,8 @@ TEST(PerformanceTest, SerPerfTest) {
 
     I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
-        in.serialize(buff);
-        out.deserialize(buff);
+        in.serializeTo(buff);
+        out.deserializeFrom(buff);
     }
 
     timer.stop();
@@ -1153,7 +1151,6 @@ TEST(TypesTest, StringTest) {
 
     ASSERT_EQ(es, es2);
     ASSERT_EQ(es2, "ExternalString");
-
 }
 
 TEST(TypesTest, ObjectNameTest) {
@@ -1203,7 +1200,7 @@ TEST(TypesTest, FormatSpecifierTest) {
     str.format("I8: %" PRI_I8, numI8);
     ASSERT_STREQ(str.toChar(), "I8: -10");
 
-    #if FW_HAS_16_BIT
+#if FW_HAS_16_BIT
     U16 numU16 = 10;
     str.format("U16: %" PRI_U16, numU16);
     ASSERT_STREQ(str.toChar(), "U16: 10");
@@ -1211,9 +1208,9 @@ TEST(TypesTest, FormatSpecifierTest) {
     I16 numI16 = -10;
     str.format("I16: %" PRI_I16, numI16);
     ASSERT_STREQ(str.toChar(), "I16: -10");
-    #endif
+#endif
 
-    #if FW_HAS_32_BIT
+#if FW_HAS_32_BIT
     U32 numU32 = 10;
     str.format("U32: %" PRI_U32, numU32);
     ASSERT_STREQ(str.toChar(), "U32: 10");
@@ -1221,9 +1218,9 @@ TEST(TypesTest, FormatSpecifierTest) {
     I32 numI32 = -10;
     str.format("I32: %" PRI_I32, numI32);
     ASSERT_STREQ(str.toChar(), "I32: -10");
-    #endif
+#endif
 
-    #if FW_HAS_64_BIT
+#if FW_HAS_64_BIT
     U64 numU64 = 10;
     str.format("U64: %" PRI_U64, numU64);
     ASSERT_STREQ(str.toChar(), "U64: 10");
@@ -1231,17 +1228,17 @@ TEST(TypesTest, FormatSpecifierTest) {
     I64 numI64 = -10;
     str.format("I64: %" PRI_I64, numI64);
     ASSERT_STREQ(str.toChar(), "I64: -10");
-    #endif
+#endif
 
     F32 numF32 = 12.3456789;
     str.format("F32: %" PRI_F64, static_cast<double>(numF32));
     ASSERT_STREQ(str.toChar(), "F32: 12.345679");
 
-    #if FW_HAS_F64
+#if FW_HAS_F64
     F64 numF64 = 12.3456789;
     str.format("F64: %" PRI_F64, numF64);
     ASSERT_STREQ(str.toChar(), "F64: 12.345679");
-    #endif
+#endif
 
     char c = 'A';
     str.format("CHAR: %" PRI_CHAR, c);
@@ -1295,7 +1292,8 @@ TEST(Nominal, string_copy) {
     char buffer_out_truth[10];
 
     char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
+    char* out_test =
+        Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1321,7 +1319,8 @@ TEST(OffNominal, string_copy) {
     char buffer_out_truth[sizeof(copy_string) - 1];
 
     char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
+    char* out_test =
+        Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1353,63 +1352,62 @@ TEST(OffNominal, string_len_zero) {
 TEST(OffNominal, sub_string_no_match) {
     const char* source_string = "abc123";
     const char* sub_string = "456";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(Nominal, sub_string_match_begin) {
     const char* source_string = "abc123";
     const char* sub_string = "abc";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 0);
 }
 
 TEST(Nominal, sub_string_match_end) {
     const char* source_string = "abc123";
     const char* sub_string = "123";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),3);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 3);
 }
 
 TEST(Nominal, sub_string_match_partway_1) {
     const char* source_string = "abc123";
     const char* sub_string = "c12";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),2);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 2);
 }
 
 TEST(OffNominal, sub_string_partial_match_begin) {
     const char* source_string = "abc123";
     const char* sub_string = "ab1";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_partial_match_middle) {
     const char* source_string = "abc123";
     const char* sub_string = "c13";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_partial_match_end) {
     const char* source_string = "abc123";
     const char* sub_string = "234";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(Nominal, sub_string_exact_match) {
     const char* source_string = "abc123";
     const char* sub_string = "abc123";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 0);
 }
 
 TEST(OffNominal, sub_string_source_zero_size) {
     const char* source_string = "";
     const char* sub_string = "234";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,0,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 0, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string = "";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,0),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
 }
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

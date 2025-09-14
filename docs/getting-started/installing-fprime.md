@@ -23,9 +23,8 @@ Requirements:
 
 1. Linux, macOS, or WSL on Windows
 2. git
-3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
+3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
+4. [Python 3.9+](https://www.python.org/downloads/), virtual environments, and PIP
 
 > [!NOTE]
 > Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
@@ -33,8 +32,6 @@ Requirements:
 > For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 >
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
->
-> macOS users must ensure the [CMake command line utility is on their path](#macos-and-cmake-command-not-found)
 >
 > Other OS-specific notes are in the [Troubleshooting](#troubleshooting) section below.
 
@@ -60,10 +57,10 @@ The entrypoint to developing with F´ is creating a new project. This will clone
 fprime-bootstrap project
 ```
 
-
 This command will ask for some input. Sample responses are below:
 ```
-  [1/1] Project name (MyProject): MyProject
+  [1/2] Project repository name [my-fprime-project]: my-project
+  [2/2] Project top-level namespace [MyFprimeProject]: MyProject
 ```
 
 1.  This commands perform the following actions:
@@ -76,13 +73,13 @@ This command will ask for some input. Sample responses are below:
 Once the project is created, activate the virtual environment to use the F´ tool suite.
 
 ```
-cd MyProject
+cd my-project
 . fprime-venv/bin/activate
 ```
 > [!WARNING]
 > Always remember to activate the virtual environment whenever you work with this F´  project.
 
-[Next steps: HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/){ .md-button .md-button--primary }
+[Next steps: HelloWorld Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
 
 ## Working With An Existing Project
 
@@ -110,11 +107,13 @@ This section will add some known hints to trouble-shooting with the installation
 * [Recommended PIP Versions](#recommended-pip-versions)
 * [fprime-util: command not found](#fprime-util-command-not-found)
 * [Helper script fpp-redirect-helper exited with reason: Permission denied](#helper-script-fpp-redirect-helper-exited-with-reason-permission-denied)
+### Windows
+* [Windows Subsystem for Linux (WSL) Version 1: Bad CPIU Error](#windows-subsystem-for-linux-wsl-version-1-bad-cpiu-error)
 ### Linux
 * [Ubuntu, Debian, Java and Python PIP](#ubuntu-debian-java-and-python-pip)
 ### macOS
-* [CMake Command Not Found](#macos-and-cmake-command-not-found)
 * [SSL Error with Python 3.8+](#ssl-error-with-python-38-on-macos)
+* [Apple Silicon: Bad CPIU Error](#apple-silicon-bad-cpiu-error)
 
 ### Recommended PIP Versions
 Some of the F´ Python packages are built in a way that it is recommended to install them with modern versions of PIP. Systems not recommended or pip versions less than recommended will require Java and run slower versions of FPP tools. The recommended versions are described below:
@@ -146,19 +145,16 @@ If it is not executable, add the permission back.
 
 `chmod 700 fpp-redirect-helper`
 
+### Windows Subsystem for Linux (WSL) Version 1: Bad CPIU Error
+
+WSL 1 is no longer supported. Users running WSL1 will experience very slow generation and builds.  Often a `Bad CPIU Error` will occur. Users who must use WSL1 will need to [install FPP directly](https://github.com/nasa/fpp/tree/main/compiler).
+
 ### Ubuntu, Debian, Java and Python PIP
 Ubuntu and possibly other Debian variants don’t include the pip packages in the default Python 3 installation. To get fully functional, use these commands on Ubuntu and Debian based systems:
 ```
 sudo apt install git cmake default-jre python3 python3-pip python3-venv
 ```
 Now you should be able to run the installation without trouble.
-
-### macOS and CMake Command Not Found
-If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake command-line tools must be added to the user’s PATH or default system libraries. The quickest command to do that is:
-```
-sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
-```
-See [installing cmake command line tools on a mac](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac).   
 
 ### SSL Error with Python 3.8+ on macOS
 This fix will not work for Python installed via Homebrew. Try installing Python published at python.org.
@@ -173,3 +169,6 @@ cd /Applications/Python\ 3.X/
 ```
 After running above command, re-try installing `fprime-bootstrap`.
 
+### Apple Silicon: Bad CPIU Error
+
+Macintosh users who have not installed Rosetta software will experience a "Bad CPIU Error".  Users should [install Rosetta](https://support.apple.com/en-us/102527) or [install FPP directly](https://github.com/nasa/fpp/tree/main/compiler).

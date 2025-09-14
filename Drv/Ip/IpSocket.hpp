@@ -12,15 +12,15 @@
 #ifndef DRV_IP_IPHELPER_HPP_
 #define DRV_IP_IPHELPER_HPP_
 
-#include <FpConfig.hpp>
-#include <IpCfg.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Mutex.hpp>
+#include <config/IpCfg.hpp>
 
 namespace Drv {
 
 struct SocketDescriptor final {
-    PlatformIntType fd = -1; //!< Used for all sockets to track the communication file descriptor
-    PlatformIntType serverFd = -1; //!< Used for server sockets to track the listening file descriptor
+    int fd = -1;        //!< Used for all sockets to track the communication file descriptor
+    int serverFd = -1;  //!< Used for server sockets to track the listening file descriptor
 };
 
 /**
@@ -57,7 +57,7 @@ enum SocketIpStatus {
 class IpSocket {
   public:
     IpSocket();
-    virtual ~IpSocket(){};
+    virtual ~IpSocket() {};
     /**
      * \brief configure the ip socket with host and transmission timeouts
      *
@@ -76,7 +76,9 @@ class IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    virtual SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    virtual SocketIpStatus configure(const char* hostname,
+                                     const U16 port,
+                                     const U32 send_timeout_seconds,
                                      const U32 send_timeout_microseconds);
 
     /**
@@ -114,7 +116,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
+    virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -131,14 +133,14 @@ class IpSocket {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, U32& size);
+    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, FwSizeType& size);
 
     /**
      * \brief closes the socket
      *
      * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
      * port but will close the active client connection.
-     * 
+     *
      * \param socketDescriptor: socket descriptor to close
      */
     void close(const SocketDescriptor& socketDescriptor);
@@ -151,12 +153,12 @@ class IpSocket {
      *
      * A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and
      * it is safe to close the socket once a recv with 0 size has returned or an appropriate timeout has been reached.
-     * 
+     *
      * \param socketDescriptor: socket descriptor to shutdown
      */
     void shutdown(const SocketDescriptor& socketDescriptor);
 
-  PROTECTED:
+  protected:
     /**
      * \brief Check if the given port is valid for the socket
      *
@@ -173,8 +175,8 @@ class IpSocket {
      * \brief setup the socket timeout properties of the opened outgoing socket
      * \param socketDescriptor: socket descriptor to setup
      * \return status of timeout setup
-    */
-    SocketIpStatus setupTimeouts(PlatformIntType socketFd);
+     */
+    SocketIpStatus setupTimeouts(int socketFd);
 
     /**
      * \brief converts a given address in dot form x.x.x.x to an ip address. ONLY works for IPv4.
@@ -196,20 +198,35 @@ class IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    virtual I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) = 0;
+    virtual FwSignedSizeType sendProtocol(const SocketDescriptor& socketDescriptor,
+                                          const U8* const data,
+                                          const FwSizeType size) = 0;
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
-     * \param socket: socket descriptor to recv from
+     * \param socketDescriptor: socket descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    virtual I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) = 0;
+    virtual FwSignedSizeType recvProtocol(const SocketDescriptor& socketDescriptor,
+                                          U8* const data,
+                                          const FwSizeType size) = 0;
+
+    /**
+     * \brief Handle zero return from recvProtocol
+     *
+     * This method is called when recvProtocol returns 0. The default implementation
+     * treats this as a disconnection (appropriate for TCP). Subclasses can override
+     * this to provide different behavior.
+     *
+     * @return SocketIpStatus Status to return from recv
+     */
+    virtual SocketIpStatus handleZeroReturn();
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
-    U16 m_port;  //!< IP address port used
+    U16 m_port;                                 //!< IP address port used
     char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
 };
 }  // namespace Drv

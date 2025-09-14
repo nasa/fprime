@@ -4,7 +4,7 @@
 // ======================================================================
 #ifndef OS_OS_HPP_
 #define OS_OS_HPP_
-#include "FpConfig.h"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 //! Storage type for OSAL handles
 typedef U8 QueueHandleStorage[FW_QUEUE_HANDLE_MAX_SIZE];
@@ -23,17 +23,17 @@ namespace Os {
 namespace Generic {
 //! Generic OK/ERROR status
 enum Status {
-    OP_OK, //!< Operation succeeded
-    ERROR, //!< Operation failed
+    OP_OK,  //!< Operation succeeded
+    ERROR,  //!< Operation failed
 };
 
 //! Generic used/total struct
 struct UsedTotal {
-    FwSizeType used; //!< Used amount
-    FwSizeType total; //!< Total amount
+    FwSizeType used;   //!< Used amount
+    FwSizeType total;  //!< Total amount
 };
 
-}
+}  // namespace Generic
 
 //! \brief Initialize the OS Abstraction Layer (OSAL)
 //!

@@ -49,7 +49,7 @@ TEST(Interface, Ticks) {
     ASSERT_EQ(ticks_copy.used, ticks.used);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

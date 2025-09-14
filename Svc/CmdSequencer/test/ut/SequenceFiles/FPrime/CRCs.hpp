@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CRCs.hpp
 // \author Rob Bocchino
 // \brief  F Prime sequence file CRCs
@@ -15,29 +15,28 @@
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    namespace FPrime {
+namespace FPrime {
 
-      namespace CRCs {
+namespace CRCs {
 
-        enum Constants {
-          //! CRC size
-          SIZE = sizeof(U32)
-        };
+enum Constants {
+    //! CRC size
+    SIZE = sizeof(U32)
+};
 
-        //! Compute and serialize a CRC
-        //! destBuffer contains the input data; CRC gets added to the end
-        void serialize(
-            Fw::SerializeBufferBase& destBuffer //!< The buffer
-        );
+//! Compute and serialize a CRC
+//! destBuffer contains the input data; CRC gets added to the end
+void serialize(Fw::SerializeBufferBase& destBuffer  //!< The buffer
+);
 
-      }
+}  // namespace CRCs
 
-    }
+}  // namespace FPrime
 
-  }
+}  // namespace SequenceFiles
 
-}
+}  // namespace Svc
 
 #endif

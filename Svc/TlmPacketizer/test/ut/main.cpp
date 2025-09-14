@@ -69,6 +69,12 @@ TEST(TestOffNominal, NonPacketizedChannelTest) {
     tester.nonPacketizedChannelTest();
 }
 
+TEST(TestNominal, TlmGetTest) {
+    TEST_CASE(100.1.8, "Get telemetry channel");
+    Svc::TlmPacketizerTester tester;
+    tester.getChannelValueTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

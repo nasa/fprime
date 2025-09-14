@@ -29,13 +29,12 @@ Os::MutexInterface::Status TestMutex::release() {
     return StaticData::data.releaseStatus;
 }
 
-Os::MutexHandle *TestMutex::getHandle() {
+Os::MutexHandle* TestMutex::getHandle() {
     StaticData::data.lastCalled = StaticData::LastFn::GET_HANDLE_FN;
     return nullptr;
 }
 
-
-}
-}
-}
-}
+}  // namespace Test
+}  // namespace Mutex
+}  // namespace Stub
+}  // namespace Os

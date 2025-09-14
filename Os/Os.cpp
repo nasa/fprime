@@ -3,7 +3,7 @@
 // \brief common definitions for the OSAL layer
 // ======================================================================
 #include "Os/Os.hpp"
-#include "FpConfig.h"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Os/Console.hpp"
 #include "Os/Cpu.hpp"
 #include "Os/FileSystem.hpp"

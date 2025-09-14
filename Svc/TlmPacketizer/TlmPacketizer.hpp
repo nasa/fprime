@@ -14,7 +14,7 @@
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
-#include "TlmPacketizerCfg.hpp"
+#include "config/TlmPacketizerCfg.hpp"
 
 namespace Svc {
 
@@ -32,13 +32,13 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     void setPacketList(
         const TlmPacketizerPacketList& packetList,   // channels to packetize
         const Svc::TlmPacketizerPacket& ignoreList,  // channels to ignore (i.e. no warning event if not packetized)
-        const FwChanIdType startLevel);          // starting level of packets to send
+        const FwChanIdType startLevel);              // starting level of packets to send
 
     //! Destroy object TlmPacketizer
     //!
     ~TlmPacketizer(void);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -46,36 +46,44 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //! Handler implementation for TlmRecv
     //!
     void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
-                         FwChanIdType id,               /*!< Telemetry Channel ID*/
-                         Fw::Time& timeTag,             /*!< Time Tag*/
-                         Fw::TlmBuffer& val             /*!< Buffer containing serialized telemetry value*/
-    );
+                         FwChanIdType id,           /*!< Telemetry Channel ID*/
+                         Fw::Time& timeTag,         /*!< Time Tag*/
+                         Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value*/
+                         ) override;
 
     //! Handler implementation for Run
     //!
     void Run_handler(const FwIndexType portNum, /*!< The port number*/
-                     U32 context                    /*!< The call order*/
-    );
+                     U32 context                /*!< The call order*/
+                     ) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
-                        U32 key                        /*!< Value to return to pinger*/
-    );
+                        U32 key                    /*!< Value to return to pinger*/
+                        ) override;
+
+    //! Handler for input port TlmGet
+    Fw::TlmValid TlmGet_handler(FwIndexType portNum,  //!< The port number
+                                FwChanIdType id,      //!< Telemetry Channel ID
+                                Fw::Time& timeTag,    //!< Time Tag
+                                Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                                                      //!< Size set to 0 if channel not found.
+                                ) override;
 
     //! Implementation for SET_LEVEL command handler
     //! Set telemetry send leve
     void SET_LEVEL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                               const U32 cmdSeq,          /*!< The command sequence number*/
-                              U32 level                  /*!< The I32 command argument*/
-    );
+                              FwChanIdType level         /*!< The I32 command argument*/
+                              ) override;
 
     //! Implementation for SEND_PKT command handler
     //! Force a packet to be sent
     void SEND_PKT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                              const U32 cmdSeq,          /*!< The command sequence number*/
                              U32 id                     /*!< The packet ID*/
-    );
+                             ) override;
 
     // number of packets to fill
     FwChanIdType m_numPackets;
@@ -83,12 +91,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     // Double-buffered to fill one while sending one
 
     struct BufferEntry {
-        Fw::ComBuffer buffer;    //!< buffer for packetized channels
-        Fw::Time latestTime;     //!< latest update time
-        FwChanIdType id;     //!< channel id
-        FwChanIdType level;  //!< channel level
-        bool updated;            //!< if packet had any updates during last cycle
-        bool requested;          //!< if the packet was requested with SEND_PKT in the last cycle
+        Fw::ComBuffer buffer;  //!< buffer for packetized channels
+        Fw::Time latestTime;   //!< latest update time
+        FwChanIdType id;       //!< channel id
+        FwChanIdType level;    //!< channel level
+        bool updated;          //!< if packet had any updates during last cycle
+        bool requested;        //!< if the packet was requested with SEND_PKT in the last cycle
     };
 
     // buffers for filling with telemetry
@@ -101,16 +109,18 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         // Offsets into packet buffers.
         // -1 means that channel is not in that packet
         FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
-        TlmEntry* next;             //!< pointer to next bucket in table
-        bool used;                  //!< if entry has been used
-        bool ignored;               //!< ignored packet id
-        FwChanIdType bucketNo;  //!< for testing
+        FwSizeType channelSize;  //!< max serialized size of the channel in bytes
+        TlmEntry* next;          //!< pointer to next bucket in table
+        bool used;               //!< if entry has been used
+        bool ignored;            //!< ignored packet id
+        bool hasValue;           //!< if the entry has received a value at least once
+        FwChanIdType bucketNo;   //!< for testing
     };
 
     struct TlmSet {
         TlmEntry* slots[TLMPACKETIZER_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMPACKETIZER_HASH_BUCKETS];       //!< set of buckets used in hash table
-        FwChanIdType free;                              //!< next free bucket
+        FwChanIdType free;                                  //!< next free bucket
     } m_tlmEntries;
 
     // hash function for looking up telemetry channel

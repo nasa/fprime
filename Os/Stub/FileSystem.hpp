@@ -25,7 +25,6 @@ class StubFileSystem : public FileSystemInterface {
     //! \brief destructor
     ~StubFileSystem() override = default;
 
-
     // ------------------------------------------------------------
     // Implementation-specific FileSystem member functions
     // ------------------------------------------------------------
@@ -47,7 +46,7 @@ class StubFileSystem : public FileSystemInterface {
     Status _removeFile(const char* path) override;
 
     //! \brief Rename a file from source to destination
-    //! 
+    //!
     //! If the rename fails due to a cross-device operation, this function should return EXDEV_ERROR
     //! and moveFile can be used instead to force a copy-and-remove.
     //!
@@ -89,8 +88,6 @@ class StubFileSystem : public FileSystemInterface {
     //! \return Status of the operation
     Status _changeWorkingDirectory(const char* path) override;
 
-
-
     //! \brief returns the raw fileSystem handle
     //!
     //! Gets the raw fileSystem handle from the implementation. Note: users must include the implementation specific
@@ -98,15 +95,23 @@ class StubFileSystem : public FileSystemInterface {
     //!
     //! \return raw fileSystem handle
     //!
-    FileSystemHandle *getHandle() override;
+    FileSystemHandle* getHandle() override;
 
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    Status _getPathType(const char* path, PathType& pathType) override;
 
-private:
+  private:
     //! FileSystem handle for PosixFileSystem
     StubFileSystemHandle m_handle;
 };
 
-} // namespace FileSystem
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_FILESYSTEM_HPP
+}  // namespace FileSystem
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_FILESYSTEM_HPP

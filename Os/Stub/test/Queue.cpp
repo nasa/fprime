@@ -1,8 +1,8 @@
 //
 // Created by Michael Starch on 8/27/24.
 //
-#include <cstring>
 #include "Queue.hpp"
+#include <cstring>
 #include "Fw/Types/Assert.hpp"
 
 namespace Os {
@@ -11,9 +11,10 @@ namespace Queue {
 namespace Test {
 
 StaticData StaticData::data;
+U64 InjectableStlQueueHandle::Message::order_counter = 0;
 
-InjectableStlQueueHandle::InjectableStlQueueHandle() :
-      // Creates the necessary handle on the heap to keep the handle size small
+InjectableStlQueueHandle::InjectableStlQueueHandle()
+    :  // Creates the necessary handle on the heap to keep the handle size small
       m_storage(*new std::priority_queue<Message, std::deque<Message>, Message::LessMessage>),
       m_high_water(0),
       m_max_depth(0) {}
@@ -31,7 +32,9 @@ InjectableStlQueue::~InjectableStlQueue() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-QueueInterface::Status InjectableStlQueue::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status InjectableStlQueue::create(const Fw::StringBase& name,
+                                                  FwSizeType depth,
+                                                  FwSizeType messageSize) {
     StaticData::data.lastCalled = StaticData::LastFn::CREATE_FN;
     // This must be the case or this test queue will not work
     if (StaticData::data.sendStatus != QueueInterface::Status::OP_OK) {
@@ -44,8 +47,10 @@ QueueInterface::Status InjectableStlQueue::create(const Fw::StringBase& name, Fw
     return StaticData::data.createStatus;
 }
 
-
-QueueInterface::Status InjectableStlQueue::send(const U8* buffer, FwSizeType size, FwQueuePriorityType priority, QueueInterface::BlockingType blockType) {
+QueueInterface::Status InjectableStlQueue::send(const U8* buffer,
+                                                FwSizeType size,
+                                                FwQueuePriorityType priority,
+                                                QueueInterface::BlockingType blockType) {
     StaticData::data.lastCalled = StaticData::LastFn::SEND_FN;
     StaticData::data.buffer = const_cast<U8*>(buffer);
     StaticData::data.size = size;
@@ -60,19 +65,20 @@ QueueInterface::Status InjectableStlQueue::send(const U8* buffer, FwSizeType siz
     }
 
     InjectableStlQueueHandle::Message message;
-    (void) std::memcpy(message.data, buffer, static_cast<size_t>(size));
+    (void)std::memcpy(message.data, buffer, static_cast<size_t>(size));
     message.priority = priority;
     message.size = size;
+    message.order = InjectableStlQueueHandle::Message::order_counter++;
     this->m_handle.m_storage.push(message);
     this->m_handle.m_high_water = FW_MAX(this->m_handle.m_high_water, this->m_handle.m_storage.size());
     return QueueInterface::Status::OP_OK;
 }
 
 QueueInterface::Status InjectableStlQueue::receive(U8* destination,
-               FwSizeType capacity,
-               QueueInterface::BlockingType blockType,
-               FwSizeType& actualSize,
-               FwQueuePriorityType& priority) {
+                                                   FwSizeType capacity,
+                                                   QueueInterface::BlockingType blockType,
+                                                   FwSizeType& actualSize,
+                                                   FwQueuePriorityType& priority) {
     StaticData::data.lastCalled = StaticData::LastFn::RECEIVE_FN;
     StaticData::data.buffer = const_cast<U8*>(destination);
     StaticData::data.capacity = capacity;
@@ -120,7 +126,6 @@ QueueHandle* InjectableStlQueue::getHandle() {
     StaticData::data.handle = &this->m_handle;
     return &this->m_handle;
 }
-
 
 }  // namespace Test
 }  // namespace Queue

@@ -17,79 +17,53 @@
 
 namespace Fw {
 
-  void FilePacket::EndPacket ::
-    initialize(
-        const U32 sequenceIndex,
-        const CFDP::Checksum& checksum
-    )
-  {
+void FilePacket::EndPacket ::initialize(const U32 sequenceIndex, const CFDP::Checksum& checksum) {
     this->m_header.initialize(FilePacket::T_END, sequenceIndex);
     this->setChecksum(checksum);
-  }
+}
 
-  U32 FilePacket::EndPacket ::
-    bufferSize() const
-  {
+U32 FilePacket::EndPacket ::bufferSize() const {
     return static_cast<U32>(this->m_header.bufferSize() + sizeof(this->m_checksumValue));
-  }
+}
 
-  SerializeStatus FilePacket::EndPacket ::
-    toBuffer(Buffer& buffer) const
-  {
-    SerialBuffer serialBuffer(
-        buffer.getData(),
-        buffer.getSize()
-    );
+SerializeStatus FilePacket::EndPacket ::toBuffer(Buffer& buffer) const {
+    SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
     return this->toSerialBuffer(serialBuffer);
-  }
+}
 
-  void FilePacket::EndPacket ::
-    setChecksum(const CFDP::Checksum& checksum)
-  {
+void FilePacket::EndPacket ::setChecksum(const CFDP::Checksum& checksum) {
     this->m_checksumValue = checksum.getValue();
-  }
+}
 
-
-  void FilePacket::EndPacket ::
-    getChecksum(CFDP::Checksum& checksum) const
-  {
+void FilePacket::EndPacket ::getChecksum(CFDP::Checksum& checksum) const {
     CFDP::Checksum c(this->m_checksumValue);
     checksum = c;
-  }
+}
 
-  SerializeStatus FilePacket::EndPacket ::
-    fromSerialBuffer(SerialBuffer& serialBuffer)
-  {
-
+SerializeStatus FilePacket::EndPacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_END);
 
-    const SerializeStatus status =
-      serialBuffer.deserialize(this->m_checksumValue);
+    const SerializeStatus status = serialBuffer.deserialize(this->m_checksumValue);
 
     return status;
+}
 
-  }
-
-  SerializeStatus FilePacket::EndPacket ::
-    toSerialBuffer(SerialBuffer& serialBuffer) const
-  {
-
+SerializeStatus FilePacket::EndPacket ::toSerialBuffer(SerialBuffer& serialBuffer) const {
     FW_ASSERT(this->m_header.m_type == T_END);
 
     SerializeStatus status;
 
     status = this->m_header.toSerialBuffer(serialBuffer);
     if (status != FW_SERIALIZE_OK) {
-      return status;
+        return status;
     }
 
     status = serialBuffer.serialize(this->m_checksumValue);
     if (status != FW_SERIALIZE_OK) {
-      return status;
+        return status;
     }
 
     return FW_SERIALIZE_OK;
-
-  }
-
 }
+
+}  // namespace Fw

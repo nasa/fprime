@@ -43,6 +43,9 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
     //! Test receiving a nominal frame
     void testNominalFrame();
 
+    //! Test receiving a nominal frame that contains a valid packet (with APID)
+    void testNominalFrameApid();
+
     //! Test receiving a truncated frame
     void testTruncatedFrame();
 
@@ -57,6 +60,9 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
 
     //! Test receiving a frame with an incorrect Crc field
     void testIncorrectCrc();
+
+    //! Test bufferReturn passthrough
+    void testDataReturn();
 
   private:
     // ----------------------------------------------------------------------
@@ -75,7 +81,6 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
 
     //! Sends a buffer of supplied data and size on the component input port
     void mockReceiveData(U8* data, FwSizeType size);
-
 
   private:
     // ----------------------------------------------------------------------

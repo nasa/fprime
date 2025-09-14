@@ -21,11 +21,11 @@ struct LockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::Mutex::Tester &state  //!< The test state
+    bool precondition(const Os::Test::Mutex::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::Mutex::Tester &state  //!< The test state
+    void action(Os::Test::Mutex::Tester& state  //!< The test state
     );
 };
 
@@ -33,7 +33,6 @@ struct LockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 // Rule:  UnlockMutex: Unlock a mutex that is locked successfully
 // ------------------------------------------------------------------------------------------------------
 struct UnlockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
-
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -46,17 +45,13 @@ struct UnlockMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(
-            const Os::Test::Mutex::Tester &state //!< The test state
+    bool precondition(const Os::Test::Mutex::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(
-            Os::Test::Mutex::Tester &state //!< The test state
+    void action(Os::Test::Mutex::Tester& state  //!< The test state
     );
-
 };
-
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  TakeMutex: Take a mutex successfully
@@ -74,14 +69,13 @@ struct TakeMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::Mutex::Tester &state  //!< The test state
+    bool precondition(const Os::Test::Mutex::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::Mutex::Tester &state  //!< The test state
+    void action(Os::Test::Mutex::Tester& state  //!< The test state
     );
 };
-
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  ReleaseMutex: Take a mutex successfully
@@ -99,11 +93,11 @@ struct ReleaseMutex : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::Mutex::Tester &state  //!< The test state
+    bool precondition(const Os::Test::Mutex::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::Mutex::Tester &state  //!< The test state
+    void action(Os::Test::Mutex::Tester& state  //!< The test state
     );
 };
 
@@ -111,7 +105,6 @@ struct ReleaseMutex : public STest::Rule<Os::Test::Mutex::Tester> {
 // Rule:  ProtectDataCheck: Check that data is protected by a mutex (running another task in parallel)
 // ------------------------------------------------------------------------------------------------------
 struct ProtectDataCheck : public STest::Rule<Os::Test::Mutex::Tester> {
-
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -124,13 +117,10 @@ struct ProtectDataCheck : public STest::Rule<Os::Test::Mutex::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(
-            const Os::Test::Mutex::Tester &state //!< The test state
+    bool precondition(const Os::Test::Mutex::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(
-            Os::Test::Mutex::Tester &state //!< The test state
+    void action(Os::Test::Mutex::Tester& state  //!< The test state
     );
-
 };

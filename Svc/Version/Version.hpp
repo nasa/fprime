@@ -27,7 +27,7 @@ class Version final : public VersionComponentBase {
     //! configure version's verbosity and startup
     void config(bool enable);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -35,19 +35,19 @@ class Version final : public VersionComponentBase {
     //! Handler implementation for getVersion
     //!
     //! Mutexed Port to get values
-    void getVersion_handler(FwIndexType portNum,                                    //!< The port number
-                            const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Fw::StringBase& version_string,                         //!< The value to be passed
-                            Svc::VersionStatus& status                              //!< The command response argument
+    void getVersion_handler(FwIndexType portNum,                             //!< The port number
+                            const Svc::VersionCfg::VersionEnum& version_id,  //!< The entry to access
+                            Fw::StringBase& version_string,                  //!< The value to be passed
+                            Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
     //! Handler implementation for setVersion
     //!
     //! Mutexed Port to set values
-    void setVersion_handler(FwIndexType portNum,                                    //!< The port number
-                            const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Fw::StringBase& version_string,                         //!< The value to be passed
-                            Svc::VersionStatus& status                              //!< The command response argument
+    void setVersion_handler(FwIndexType portNum,                             //!< The port number
+                            const Svc::VersionCfg::VersionEnum& version_id,  //!< The entry to access
+                            Fw::StringBase& version_string,                  //!< The value to be passed
+                            Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
     //! \struct verId_db
@@ -79,8 +79,8 @@ class Version final : public VersionComponentBase {
                             Svc::VersionType version_type  //!< which version type event is requested
                             ) override;
 
-  PRIVATE:
-            // An enumeration for TLM slot access
+  private:
+    // An enumeration for TLM slot access
     enum VersionSlot {
         VER_SLOT_00 = 0,
         VER_SLOT_01 = 1,
@@ -95,15 +95,15 @@ class Version final : public VersionComponentBase {
     };
 
     // function to log framework version events and channels
-    void fwVersion_tlm(); 
+    void fwVersion_tlm();
     // function to log project version events and channels
-    void projectVersion_tlm(); 
+    void projectVersion_tlm();
     // function to log library version events and channels
     void libraryVersion_tlm();
     // function to log custom version events and channels
     void customVersion_tlm(VersionSlot custom_slot);
     void customVersion_tlm_all();
-    bool m_enable; /*!<Send TLM when true>*/
+    bool m_enable;             /*!<Send TLM when true>*/
     U8 m_num_custom_elements;  // number of custom versions
 };
 

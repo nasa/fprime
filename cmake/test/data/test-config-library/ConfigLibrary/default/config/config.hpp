@@ -1,0 +1,1 @@
+const bool MY_LIBRARY_CONFIG = true;

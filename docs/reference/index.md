@@ -24,7 +24,7 @@ Technical reference for the F Prime C++ API, CMake API, FPP language specificati
 
     Software Design Documents (SDD) capture the design of the F´ core components.
 
-    [View F´ Components SDDs](sdd.md){ .md-button .md-button--primary }
+    Please use the left navigation panel to browse the SDDs.
 
 -   <span class="card-title">__FPP Language Specification__</span>
 
@@ -40,7 +40,7 @@ Technical reference for the F Prime C++ API, CMake API, FPP language specificati
 
     This section of the documentation captures step by step how tos for various F´ development tasks.
 
-    [View CMake User API Documentation](../user-manual/build-system/cmake-api.md){ .md-button .md-button--primary }
+    [View CMake User API Documentation](./api/cmake/API.md){ .md-button .md-button--primary }
 
 
 </div>

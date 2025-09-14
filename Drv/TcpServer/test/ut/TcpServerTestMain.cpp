@@ -4,6 +4,11 @@
 
 #include "TcpServerTester.hpp"
 
+TEST(Nominal, TcpServerBufferDeallocation) {
+    Drv::TcpServerTester tester;
+    tester.test_buffer_deallocation();
+}
+
 TEST(Nominal, TcpServerBasicMessaging) {
     Drv::TcpServerTester tester;
     tester.test_basic_messaging();
@@ -33,7 +38,6 @@ TEST(AutoConnect, AutoConnectOnRecvOff) {
     Drv::TcpServerTester tester;
     tester.test_no_automatic_recv_connection();
 }
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

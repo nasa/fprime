@@ -1,4 +1,4 @@
-# The Discerning User's Guide to the F´ GDS CLI
+# The F´ GDS CLI
 
 This guide will give you a quick introduction to the F´ Ground Data System  Command Line Interface (`fprime-cli`),
 how it can be used, and a detailed reference for interested users. `fprime-cli` allows for use of the most common F´ GDS
@@ -6,7 +6,7 @@ features without the need for a graphical environment. This enables projects eas
 in more environments.
 
 > [!NOTE]
-> Developer documentation is available in the [developer's CLI guide](../../reference/gds-cli-dev.md).
+> Developer documentation is available in the [developer's CLI guide](gds-dev-guide.md).
 
 - [What is `fprime-cli`?](#what-is-fprime-cli)
 - [Getting Started](#getting-started)
@@ -153,12 +153,11 @@ Retrieval Options:
 
 As mentioned, these CLI commands let you interact with the GDS through events and commands, and telemetry channels.
 Through a *project F´ dictionary* the CLI can understand what commands, events and telemetry channels are available.
-Every F´ project deployment will have a `*Dictionary.xml` file that's created when the project's deployment is built
-In the `Ref` example project, it'll be the `Ref/Top/RefTopologyAppDictionary.xml` file.  By reading this file, the CLI
-tool knows what to look for when it's reading or sending data to the GDS. If it doesn't know where the dictionary is,
-then the CLI tool can't do much beyond printing out help messages.
+Every F´ project deployment will have a `*Dictionary.json` file that's created when the project's deployment is built
+By reading this file, the CLI tool knows what to look for when it's reading or sending data to the GDS. If it doesn't
+know where the dictionary is, then the CLI tool can't do much beyond printing out help messages.
 
-When you run one of the CLI commands, the tool will automatically look for files ending in `Dictionary.xml` in your
+When you run one of the CLI commands, the tool will automatically look for files ending in `Dictionary.json` in your
 current working directory and use the first one it can find. This behavior is similar to how `fprime-gds` searches for
 dictionaries it uses to construct the browser GUI. If it can't find any dictionaries, it will print out an error message
 like this:
@@ -169,7 +168,8 @@ fprime-cli: error: No valid project dictionary found
 
 Running commands from your project folder (e.g. inside `fprime/Ref`) should work to find a dictionary, but if you want
 to run commands for a different deployment or project, you can specify the dictionary file exactly using the
-`--dictionary` option with the file's path. `fprime-cli command-send --dictionary Ref/Top/RefTopologyAppDictionary.xml`.
+`--dictionary` option with the file's path.
+`fprime-cli command-send --dictionary build-artifacts/Linux/Ref/Top/RefTopologyDictionary.json`.
 
 ### Using the Tools
 

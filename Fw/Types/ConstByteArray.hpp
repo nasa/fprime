@@ -13,7 +13,7 @@
 #ifndef Fw_ConstByteArray_HPP
 #define Fw_ConstByteArray_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
 

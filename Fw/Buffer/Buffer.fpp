@@ -13,11 +13,7 @@ module Fw {
   @ Returns the buffer
   port BufferGet(
                   @ The requested size
-                  $size: U32
+                  $size: FwSizeType
                 ) -> Fw.Buffer
 
-
-    @ Port for sending data buffer along with context buffer
-    @ This is useful for passing data that needs context to be interpreted
-    port DataWithContext(ref data: Fw.Buffer, ref context: Fw.Buffer)
 }

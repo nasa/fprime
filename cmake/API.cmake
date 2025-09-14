@@ -13,6 +13,10 @@
 ####
 include_guard()
 include(utilities)
+include(module)
+include(config_assembler)
+include(sub-build/sub-build)
+include(fprime-util)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -25,7 +29,7 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 # and should be skipped.
 ####
 macro(skip_on_sub_build)
-    if (DEFINED FPRIME_SUB_BUILD_TARGETS)
+    if (FPRIME_IS_SUB_BUILD)
         return()
     endif()
 endmacro()
@@ -64,7 +68,7 @@ macro(restrict_platforms)
         endif()
     endforeach()
     # Each of these empty if blocks are the valid-case, that is, the platform is supported.
-    # However, the reason why this is necessary is that this function is a macro and not a function.
+    # However, the reason why this is necessary is that this is implemented as a macro and not a function.
     # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
     # The return call  in the else block returns from the calling context (i.e. a restricted CMakeList.txt will
     # return and not process the component setup). We do not want this return when the platform is allowed.
@@ -118,385 +122,435 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
         set(${VARIABLE} PARENT_SCOPE)
     endforeach()
+    get_filename_component(ABSOLUTE_SOURCE_PATH "${FP_SOURCE_DIR}" ABSOLUTE)
+    file(RELATIVE_PATH NEW_BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}" "${ABSOLUTE_SOURCE_PATH}")
 
     # Check if the binary and source directory are in agreement. If they agree, then normally add
     # the directory, as no adjustments need be made.
     get_filename_component(CBD_NAME "${CMAKE_CURRENT_BINARY_DIR}" NAME)
     get_filename_component(CSD_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
     if ("${CBD_NAME}" STREQUAL "${CSD_NAME}")
+        fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${NEW_BIN_DIR}")
         add_subdirectory(${ARGV}) # List of all args, not just extras
         return()
     endif()
     if (${ARGC} GREATER 2)
         message(FATAL_ERROR "Cannot use 'add_fprime_subdirectory' with [binary_dir] argument.")
     endif()
+    # Make the path resolved: absolute, links resolved, etc.
+    # This allows the relative path commands (below) to work correctly.
+    resolve_path_variables(FP_SOURCE_DIR)
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
     # Add component subdirectories using normal add_subdirectory with overridden binary_dir
+    fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${NEW_BIN_DIR}")
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
 
 ####
+# Function `fprime_attach_custom_targets`:
+#
+# Attaches custom fprime targets (cmake/targets) and their associated autocoding to the supplied build
+# target. This is done automatically by the `register_fprime_*` family of functions and provides deferred
+# target setup for use with `fprime_add_*_build_target` family functions.
+#
+# **BUILD_TARGET_NAME:** name of build target to attach targets and autocoding to
+#
+####
+function(fprime_attach_custom_targets BUILD_TARGET_NAME)
+    setup_module_targets("${BUILD_TARGET_NAME}")
+endfunction()
+
+####
+# Function `register_fprime_library`:
+#
+# Registers a library using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The first argument is the name of this module and will become the build target
+# name. Sources, autocoder inputs, link dependencies, and headers are each passed in after the directives
+# SOURCES, AUTOCODER_INPUTS, DEPENDS, and HEADERS, respectively.  Each directive may be used one time and
+# dictates the contents of arguments until the next directive.
+#
+# **Example:**
+#
+# ```
+# register_fprime_library(
+#         MyFprimeModule
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     DEPENDS
+#         -lm
+#     HEADERS
+#         module.h
+# )
+# ```
+#
+# > [!NOTE]
+# > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(register_fprime_library)
+    fprime_add_library_build_target(${ARGN})
+    clear_historical_variables()
+    # Set up target/ targets for this module
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
+endfunction(register_fprime_library)
+
+####
 # Function `register_fprime_module`:
 #
-# Registers a module using the fprime build system. This comes with dependency management and fprime
-# autocoding capabilities. The caller should first set two variables before calling this function to define the
-# autocoding and source inputs, and (optionally) any non-standard link dependencies.
+# See `register_fprime_library`. This provides the same capability as `register_fprime_library` using the
+# backwards-compatible name.
 #
-# Required variables (defined in calling scope):
+# > [!NOTE]
+# > Variables SOURCE_FILES, MOD_DEPS, etc. are still supported but are no longer recommended.  Users are
+# > encouraged to update at their convenience.
 #
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*.fpp", "*.c", "*.cpp"
-#   etc files here. This list will be split into autocoder inputs, and hand-coded sources based on the name/type.
-#
-# **i.e.:**
-# ```
-# set(SOURCE_FILES
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
-# ```
-# - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
-#   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
-#   the autocoder inputs to the module. If not set or supplied, only fprime inferable dependencies will be available.
-#   Link flags like "-lpthread" can be added here as well. Do NOT supply executable targets in MOD_DEPS. See:
-#   `register_fprime_executable` for alternatives.
-#
-# **i.e.:**
-# ```
-# set(MOD_DEPS
-#     Os
-#     Module1
-#     Module2
-#     -lpthread)
-# ```
-#
-# ### Standard `add_fprime_module` Example ###
-#
-# Standard modules don't require extra modules, and define both autocoder inputs and standard source
-# files. Thus, only the SOURCE_FILE variable needs to be set and then the register call can be made.
-# This is the only required lines in a module CMakeLists.txt.
-#
-# ```
-# set(SOURCE_FILE
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
-#
-# register_fprime_module()
-# ```
-#
-# ### Non-Autocoded and Autocode-Only Modules Example ###
-#
-# Modules that do not require autocoding need not specify *.xml files as source. Thus, code-only modules just define
-# *.cpp. **Note:** dependency inference is only done when autocoder inputs (.fpp, .xml) are supplied.
-#
-# ```
-# set(SOURCE_FILE
-#     SomeFile1.cpp
-#     Another2.cpp)
-#
-# register_fprime_module()
-# ```
-# Modules requiring only autocoding may just specify *.xml files.
-#
-# ```
-# set(SOURCE_FILE
-#     MyComponent.fpp)
-#
-# register_fprime_module()
-# ```
-#
-# ### Specific Dependencies and Linking in Modules Example ###
-#
-# Some modules need to pick a specific set of dependencies and link flags. This can be done
-# with the `MOD_DEPS` variable. This feature can be used to pick specific implementations
-# for some fprime modules that implement to a generic interface like the console logger implementation.
-# 
-# ```
-# set(SOURCE_FILE
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
-#
-# set(MOD_DEPS
-#     Module1
-#     -lpthread)
-#
-# register_fprime_module()
-# ```
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
 #
 ####
 function(register_fprime_module)
-    if(NOT DEFINED SOURCE_FILES)
-        message(FATAL_ERROR "'SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    if (${ARGC} GREATER 0)
-        set(MODULE_NAME ${ARGV0})
-    else()
-        # Check to be sure before using
-        if (NOT DEFINED FPRIME_CURRENT_MODULE)
-            message(FATAL_ERROR "FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_module()")
-        endif()
-
-        set(MODULE_NAME ${FPRIME_CURRENT_MODULE})
-    endif()
-    # Explicit call to module register
-    generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
-    if (TARGET "${MODULE_NAME}")
-        add_dependencies("${MODULE_NAME}" config)
-    endif()
+    register_fprime_library(${ARGN})
 endfunction(register_fprime_module)
+
+####
+# Function `fprime_add_library_build_target`:
+#
+# Registers a library using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_library`.
+#
+# > [!NOTE]
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_library_build_target)
+    fprime__internal_add_build_target("Library" "INTERFACE;OBJECT" ${ARGN})
+    clear_historical_variables()
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
 
 ####
 # Function `register_fprime_executable`:
 #
-# Registers an executable using the fprime build system. This comes with dependency management and
-# fprime autocoding capabilities. This requires three variables to define the executable name,
-# autocoding and source inputs, and (optionally) any non-standard link dependencies.
+# Registers an executable using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The call format is identical to `register_fprime_library`.
 #
-# Note: this is not intended for deployment executables (e.g. an fprime binary) but rather for utilities,
-# helper executables and tools. To register a deployment binary see `register_fprime_deployment`.
+# **Example:**
 #
-# Executables will automatically install itself and its dependencies into the out-of-cache build
-# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built.
-#
-# Required variables (defined in calling scope):
-#
-#
-# - **EXECUTABLE_NAME:** (optional) executable name supplied. If not set, nor passed in, then
-#                     FPRIME_CURRENT_MODULE from the CMake definitions is used.
-#
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*.fpp", "*.c", "*.cpp"
-#                  etc. files here. This list will be split into autocoder inputs and sources.
-# **i.e.:**
 # ```
-# set(SOURCE_FILES
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
+# register_fprime_executable(
+#         MyFprimeExecutable
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     DEPENDS
+#         -lm
+#     HEADERS
+#         module.h
+# )
 # ```
 #
-# - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
-#   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
-#   the autocoder inputs to the module. If not set or supplied, only fprime
-#   inferable dependencies will be available. Link flags like "-lpthread" can be here.
+# > [!NOTE]
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
 #
-# **i.e.:**
-# ```
-# set(MOD_DEPS
-#     Module1
-#     Module2
-#     -lpthread)
-# ```
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
 #
-# **Note:** this operates almost identically to `register_fprime_module` with respect to the variable definitions. The
-#           difference is this call will yield an optionally named linked binary executable.
-#
-# ### Caveats ###
-#
-# Executable targets should not be supplied as dependencies through MOD_DEPS  (e.g. to register_fprime_deployment).
-# Doing so may cause problems with final linking of other executables due to multiple main function definitions. A
-# better model would be to add a CMake only dependency without using MOD_DEPS.
-#
-# **Note:** these errors are definition order dependent and thus users should not supply executables through MOD_DEPS
-# even if it seems to work correctly.
-#
-#  **i.e.:**
-# ```
-# set(SOURCE_FILES "tool.c")
-# register_fprime_executable(TOOL)
-# ...
-# ...
-# register_fprime_deployment(MY_DEPLOYMENT)
-# add_dependencies(MY_DEPLOYMENT TOOL) # CMake only dependency
-# ```
 ####
 function(register_fprime_executable)
-    if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
-        message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
-    elseif (NOT DEFINED EXECUTABLE_NAME AND ARGC LESS 1 AND TARGET "${FPRIME_CURRENT_MODULE}")
-        message(FATAL_ERROR "EXECUTABLE_NAME must be set or passed in. Use register_fprime_deployment() for deployments")
+    if (DEFINED EXECUTABLE_NAME)
+        fprime_cmake_fatal_error("EXECUTABLE_NAME variable no longer supported")
     endif()
-    # MODULE_NAME is used for the executable name, unless otherwise specified.
-    if(NOT DEFINED EXECUTABLE_NAME AND ARGC GREATER 0)
-        set(EXECUTABLE_NAME "${ARGV0}")
-    elseif(NOT DEFINED EXECUTABLE_NAME)
-        # Check to be sure before using
-        if (NOT DEFINED FPRIME_CURRENT_MODULE)
-            message(FATAL_ERROR "FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_executable()")
-        endif()
-        set(EXECUTABLE_NAME "${FPRIME_CURRENT_MODULE}")
-    endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    generate_executable("${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    fprime_add_executable_build_target(${ARGN})
+
+    # Set up target/ targets for this module
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_executable)
 
+####
+# Function `fprime_add_executable_build_target`:
+#
+# Registers a executable using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_executable`.
+#
+# > [!NOTE]
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_executable_build_target)
+    fprime__internal_add_build_target("Executable" "CHOOSES_IMPLEMENTATIONS" ${ARGN})
+    clear_historical_variables()
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
 
 ####
 # Function `register_fprime_deployment`:
 #
-# Registers an deployment using the fprime build system. This comes with dependency management and
-# fprime autocoding capabilities. This requires two variables to define autocoding and source inputs, and
-# (optionally) any non-standard link dependencies.
+# Registers a deployment using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The call format is identical to `register_fprime_library`. Deployments come
+# with custom target and autocoding support that allows them to run "targets" across their dependency
+# trees (i.e. run all unit tests for components used in this deployment).
 #
-# An executable will be created and automatically install itself and its dependencies into the out-of-cache build
-# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. This will automatically run all
-# deployment targets such that the standard deployment will be built (e.g. the dictionary will be built).
-#
-# This is typically called from within the top-level CMakeLists.txt file that defines a deployment.
-#
-# Required variables (defined in calling scope):
-#
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*.fpp", "*.c", "*.cpp"
-#                     etc. files here. This list will be split into autocoder inputs and sources.
-# **i.e.:**
-# ```
-# set(SOURCE_FILES
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
-# ```
-#
-# - **MOD_DEPS:** cmake list of extra link dependencies. This is almost always required to supply the topology module.
-#                 Other entries are only needed when they cannot be inferred from the model (e.g. linker flags). Do NOT
-#                 supply executable targets in MOD_DEPS. See: `register_fprime_executable` for alternatives.
-#
-# **i.e.:**
-# ```
-# set(MOD_DEPS
-#     ${FPRIME_CURRENT_MODULE}/Top
-#     Module1
-#     Module2
-#     -lpthread)
-# ```
-#
-# **Note:** this operates almost identically to `register_fprime_executable` and `register_fprime_module` with respect
-# to the variable definitions. The difference is deployment targets will be run (e.g. dictionary generation), and the
-# executable binary will be named after the module, or if project when defined directly in a project CMakeLists.txt
-#
-# ### Standard fprime Deployment Example ###
-#
-# To create a standard fprime deployment, the user must call `register_fprime_deployment()` after defining
-# SOURCE_FILES and MOD_DEPS.
+# **Example:**
 #
 # ```
-# set(SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+# register_fprime_deployment(
+#         MyFprimeDeployment
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     DEPENDS
+#         MyFprimeDeployment_Top
+#     HEADERS
+#         module.h
 # )
-# # Note: supply dependencies that cannot be detected via the model here.
-# set(MOD_DEPS
-#   ${FPRIME_CURRENT_MODULE}/Top
-# )
-# register_fprime_deployment()
 # ```
+#
+# > [!NOTE]
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
 ####
 function(register_fprime_deployment)
-    if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
-        message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
-    endif()
     # Fallback to PROJECT_NAME when it is not set
     if (NOT DEFINED FPRIME_CURRENT_MODULE)
         set(FPRIME_CURRENT_MODULE "${PROJECT_NAME}")
     endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    generate_deployment("${FPRIME_CURRENT_MODULE}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    fprime_add_deployment_build_target(${ARGN})
+
+    # Set up target/ targets for this module
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_deployment)
 
+####
+# Function `fprime_add_deployment_build_target`:
+#
+# Registers a deployment using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_deployment`.
+#
+# > [!NOTE]
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_deployment_build_target)
+    fprime__internal_add_build_target("Deployment" "CHOOSES_IMPLEMENTATIONS" ${ARGN})
+    clear_historical_variables()
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
+####
+# Function `register_fprime_config`:
+#
+# Registers a configuration build target using the fprime build system. This comes with dependency management and
+# fprime autocoding capabilities. The call format is identical to `register_fprime_library` and additionally supports
+# the CONFIGURATION_OVERRIDES directive. This allows users to override the configuration files supplied by previous
+# configuration modules supplied by the build (e.g. fprime default configuration and library configuration). DEPENDS
+# and EXCLUDE_FROM_ALL are not supported.
+#
+# All configuration module sources (SOURCES, HEADERS, and AUTOCODER_INPUTS) are copied into the build cache.
+# Overrides are copied into the original module's build that the file overrides as this preserves the original build
+# module set up. Overrides only work in order of detection within the CMakeList.txt tree:
+#
+#    platform -> fprime config -> library -> project.
+#
+#
+# > [!WARNING]
+# > Specifying headers in this command is crucial to providing as configuration.
+#
+# > [!NOTE]
+# > Configuration is built as a series of STATIC libraries in order to allow for interdependencies between config and
+# > Fw_Types regardless of the Fw_Types library type.
+#
+# Example:
+# ```
+# register_fprime_config(
+#         MyFprimeConfig
+#     SOURCES
+#         config.cpp
+#     AUTOCODER_INPUTS
+#         config.fpp
+#     HEADERS
+#         config.hpp
+#     CONFIGURATION_OVERRIDES
+#         FpConfig.fpp
+#         FpConfig.hpp
+# ```
+####
+function(register_fprime_config)
+    fprime_add_config_build_target(${ARGN})
+    # Clear the historical variables and set up autocode
+    clear_historical_variables()
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
+endfunction()
+
+####
+# Function `fprime_add_config_build_target`:
+#
+# Registers config using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_config`.
+#
+# > [!NOTE]
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_config_build_target)
+    set(ARGN_PASS ${ARGN})
+    # Ensure library is STATIC when supplying SOURCE or AUTOCODER_INPUTS
+    if (SOURCE IN_LIST ARGN_PASS OR AUTOCODER_INPUTS IN_LIST ARGN_PASS)
+        if (NOT "STATIC" IN_LIST ARGN_PASS AND NOT INTERFACE IN_LIST ARGN_PASS)
+            list(APPEND ARGN_PASS STATIC)
+        endif()
+    endif()
+    #### Split module processing ####
+    #
+    # Configuration works by copying sources into the build cache. These new copied sources are
+    # substituted for the original sources. Thus the module processing must happen before the
+    # configuration processing, which is before the build target processing.
+    #
+    # This implies:
+    # 1. The helper cannot be used as it combines module and build target processing
+    # 2. Configuration processing must be called in-between
+    ####
+    fprime__process_module_setup("Library"
+        "CONFIGURATION_OVERRIDES;STATIC;INTERFACE;CHOOSES_IMPLEMENTATIONS;BASE_CONFIG" ${ARGN_PASS})
+    fprime__internal_process_configuration_sources(
+        "${INTERNAL_MODULE_NAME}"
+        "${INTERNAL_SOURCES}"
+        "${INTERNAL_AUTOCODER_INPUTS}"
+        "${INTERNAL_HEADERS}"
+        "${INTERNAL_CONFIGURATION_OVERRIDES}"
+        "${INTERNAL_DEPENDS}"
+    )
+    fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}"
+                                             "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
+                                             "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
+
+    # The new module should include the root configuration directory
+    fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")
+    # The configuration target should depend on the new module
+    if (INTERNAL_BASE_CONFIG)
+        target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+    endif()
+    # Set up the new module to be marked as FPRIME_CONFIGURATION
+    append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
+    set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+    # Targets likely do not exist yet, so just aggregate the complete list of chosen implementations
+    # for processing later
+    append_list_property("${INTERNAL_CHOOSES_IMPLEMENTATIONS}" TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CHOSEN_IMPLEMENTATIONS)
+
+    # Static libraries must be position independent when building shared libraries
+    get_target_property(CONFIG_LIBRARY_TYPE "${INTERNAL_MODULE_NAME}" TYPE)
+    if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC_LIBRARY")
+        target_compile_options(${INTERNAL_MODULE_NAME} PRIVATE -fPIC)
+    endif()
+    # Set INTERNAL_MODULE_NAME for caller
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
 
 ####
 # Function `register_fprime_ut`:
 #
-# Registers an executable unit-test using the fprime build system. This comes with dependency
-# management and fprime autocoding capabilities. This requires three variables defining the
-# unit test name, autocoding and source inputs for the unit test, and (optionally) any
-# non-standard link dependencies.
 #
-# **Note:** This is ONLY run when the BUILD_TESTING is enabled. Unit testing is restricted to this build type as fprime
-#           sets additional flags when building for unit tests.
+# Registers a unit test using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The call format is identical to `register_fprime_library`. Unit tests come
+# with custom target and autocoding support.
 #
-# Required variables (defined in calling scope):
+# This function only creates a target when unit test support is enabled on the build.
 #
-# 
-# - **UT_NAME:** (optional) executable name supplied. If not supplied, or passed in, then
-#   the <MODULE_NAME>_ut_exe will be used.
-#
-# - **UT_SOURCE_FILES:** cmake list of UT source files. Place any "*.fpp", "*.c", "*.cpp"
-#   etc. files here. This list will be split into autocoder inputs or sources. These sources only apply to the unit
-#   test.
-#
-#  **i.e.:**
-# ```
-# set(UT_SOURCE_FILES
-#     MyComponent.fpp
-#     SomeFile.cpp
-#     MyComponentImpl.cpp)
-# ```
-#
-# - **UT_MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
-#   needed if non-standard link dependencies are used. If not set or supplied, only
-#   fprime detectable dependencies will be available. Link flags like "-lpthread"
-#   can be supplied here.
-#
-# **i.e.:**
-# ```
-# set(UT_MOD_DEPS
-#     Module1
-#     Module2
-#     -lpthread)
-# ```
-#  **Note:** this is typically called after any other register calls in the module.
-#
-# - **UT_AUTO_HELPERS:** (optional) When set ON, a test helper file will be generated that auto-codes the connect ports
-#   and init components methods. This removes the maintenance overhead for these functions. ON additionally adds test
-#   source directories to the include path for the unit test target. When set to OFF, this helper file will be created
-#   when generating implementation templates allowing users to modify these files. Default: OFF
-#
-# ### Unit-Test Example ###
-#
-# A standard unit test defines only UT_SOURCES. These sources have the test cpp files and the model
-# .fpp of the module being tested. This is used to generate the GTest harness.
+# **Example:**
 #
 # ```
-# set(UT_SOURCE_FILES
-#   "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcher.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
+# register_fprime_ut(
+#         MyUnitTest
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     DEPENDS
+#         MyFprimeModule
+#     HEADERS
+#         module.h
 # )
-# register_fprime_ut()
 # ```
+#
+# > [!NOTE]
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
 ####
 function(register_fprime_ut)
-    #### CHECK UT BUILD ####
+    # Bail out if not doing a unit test build
+    # TODO: should this add a fake target?
     if (NOT BUILD_TESTING OR __FPRIME_NO_UT_GEN__)
         return()
-    elseif(NOT DEFINED UT_SOURCE_FILES)
-        message(FATAL_ERROR "UT_SOURCE_FILES not defined. Cannot register unittest without sources")
-    elseif(${ARGC} GREATER 1)
-        message(FATAL_ERROR "register_fprime_ut accepts only one optional argument: test name")
     endif()
-    get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    # UT name is passed in or is the module name with _ut_exe added
-    if (${ARGC} GREATER 0)
-        set(UT_NAME "${ARGV0}")
-    elseif (NOT DEFINED UT_NAME)
-        set(UT_NAME "${MODULE_NAME}_ut_exe")
-    endif()
-    set(MD_IFS ${MODULE_NAME} ${UT_MOD_DEPS})
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Turn allow turning GTest on/off
-    set(INCLUDE_GTEST ON)
-    if (DEFINED UT_INCLUDE_GTEST)
-        set(INCLUDE_GTEST ${UT_INCLUDE_GTEST})
-    endif()
-    # Check no multiple UTs
-    if (TARGET UT_NAME)
-        message(FATAL_ERROR "${UT_NAME} already used. Please supply a unique name using 'register_fprime_ut(NAME)'")
-    endif()
-
-    # Explicit call to module register
-    generate_ut("${UT_NAME}" "${UT_SOURCE_FILES}" "${MD_IFS}")
+    fprime_add_unit_test_build_target(${ARGN})
+    # Set up target/ targets for this module
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_ut)
+
+####
+# Function `fprime_add_unit_test_build_target`:
+#
+# Registers a unit test using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_ut`.
+#
+# > [!NOTE]
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_unit_test_build_target)
+    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST;UT_AUTO_HELPERS;CHOOSES_IMPLEMENTATIONS;TESTED_MODULE" ${ARGN})
+    clear_historical_variables()
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
 
 ####
 # Macro `register_fprime_target`:
@@ -565,12 +619,12 @@ endmacro(register_fprime_list_helper)
 
 ####
 # Macro `register_fprime_build_autocoder`:
-# 
+#
 # This function allows users to register custom autocoders into the build system. These autocoders will execute during
 # the build process. An autocoder is defined in a CMake file and must do three things:
 # 1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
-# 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
-# 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2. 
+# 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source
+# 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2.
 #
 # This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
@@ -599,49 +653,63 @@ function (create_implementation_interface IMPLEMENTATION)
     add_library("${IMPLEMENTATION}" INTERFACE)
 endfunction()
 
-
-####
-# Function `require_fprime_implementation`:
-#
-# Designates that the current module requires a separate implementation in order for it to function properly. As an
-# example, Os requires an implementation of `Os_Task`. These implementations must be set via
-# `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
-#
-# **IMPLEMENTATION:** implementation module name that must be covered
-# **REQUESTER:** (optional) the requester of the implementation. Default: ${FPRIME_CURRENT_MODULE}
-####
-function(require_fprime_implementation IMPLEMENTATION)
-    if (ARGC EQUAL 2)
-        set(REQUESTER "${ARGV1}")
-    elseif (FPRIME_CURRENT_MODULE)
-        set(REQUESTER "${FPRIME_CURRENT_MODULE}")
-    else ()
-        message(FATAL_ERROR "Cannot determine current module, please supply as second argument")
-    endif()
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(REQUESTER "${REQUESTER}")
-    create_implementation_interface("${IMPLEMENTATION}")
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
-endfunction()
-
 ####
 # Function `register_fprime_implementation`:
 #
-# Designates that the given implementor implements the required implementation. As an example Os_Task_Posix implements
-# Os_Task. These implementations must be set via
-## `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+# Designates that the given implementor implements the required implementation and registers it as a library. This
+# library will always be of type OBJECT to ensure that it will override at link time as expected. The call format is
+# identical to `register_fprime_library`, but requires the IMPLEMENTS <implementation interface> directive to indicate
+# which implementation is being implemented.
 #
-# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
-# **IMPLEMENTOR:** implementor of IMPLEMENTATION
-# **ARGN:** (optional) list of source files required to build the implementor
+# > [!WARNING]
+# > The result of this call will always be an OBJECT library.
+#
+# **Example:**
+#
+# ```
+# register_fprime_implementation(
+#         MyImplementation
+#     IMPLEMENTS
+#         SomeImplementationInterface
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     HEADERS
+#         module.h
+# )
+# ```
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
 ####
-function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    create_implementation_interface("${IMPLEMENTATION}")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
-    append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
+function(register_fprime_implementation)
+    # Update ARGN to include OBJECT and EX
+    set(ARGN_PASS "${ARGN}")
+    if (NOT "OBJECT" IN_LIST ARGN_PASS AND NOT INTERFACE IN_LIST ARGN_PASS)
+        list(APPEND ARGN_PASS OBJECT)
+    endif()
+    fprime__internal_add_build_target("Library" "IMPLEMENTS;OBJECT;INTERFACE" ${ARGN_PASS})
+
+    #### Special implementation handling ####
+
+    # Validate the number of implementations passed to "IMPLEMENTS"
+    list(LENGTH INTERNAL_IMPLEMENTS INTERNAL_IMPLEMENTS_LENGTH)
+    if (NOT INTERNAL_IMPLEMENTS_LENGTH EQUAL 1 OR "${INTERNAL_IMPLEMENTS}" STREQUAL "TRUE")
+        fprime_cmake_fatal_error("Must supply exactly 1 argument to the IMPLEMENTS directive")
+    endif()
+    # Check implementation properties still in-sync before setting the target-driven equivalents
+    get_property(OLD_IMPLEMENTS GLOBAL PROPERTY FPRIME_${INTERNAL_MODULE_NAME}_IMPLEMENTS)
+    fprime_cmake_ASSERT(
+        "${INTERNAL_MODULE_NAME} implementation changed from: ${OLD_IMPLEMENTS} to ${INTERNAL_IMPLEMENTS}"
+        NOT OLD_IMPLEMENTS OR OLD_IMPLEMENTS STREQUAL INTERNAL_IMPLEMENTS
+    )
+    set_target_properties("${INTERNAL_MODULE_NAME}" PROPERTIES FPRIME_IMPLEMENTS "${INTERNAL_IMPLEMENTS}")
+    append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_${INTERNAL_IMPLEMENTS}_IMPLEMENTORS")
+
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction()
 
 ####
@@ -661,36 +729,6 @@ endfunction()
 ####
 function(register_os_implementation NAMES SUFFIX)
     add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
-endfunction()
-
-####
-# Function `choose_fprime_implementation`:
-#
-# Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
-# this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
-# a specific implementor for any needed implementation. FRAMEWORK_DEFAULT may be supplied to indicate a default choice
-# set by the framework, which can be overridden by the platform and module selections.
-#
-# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
-# **IMPLEMENTOR:** implementor of IMPLEMENTATION
-####
-function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    # Check for passed in module name
-    if (ARGC EQUAL 3)
-        set(ACTIVE_MODULE "${ARGV2}")
-    elseif (FPRIME_CURRENT_MODULE)
-        set(ACTIVE_MODULE "${FPRIME_CURRENT_MODULE}")
-    elseif(FPRIME_PLATFORM)
-        set(ACTIVE_MODULE "${FPRIME_PLATFORM}")
-    else()
-        message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
-    endif()
-    create_implementation_interface("${IMPLEMENTATION}")
-    # Add this implementation in the case it has not been added
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    set_property(GLOBAL PROPERTY "${ACTIVE_MODULE}_${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
 
 #### Documentation links

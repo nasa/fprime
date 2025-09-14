@@ -23,9 +23,6 @@ Tutorials walk through the essentials of F Prime development, starting with the 
 
     The LED Blinker tutorial shows how to develop an F Prime project that runs on embedded hardware. It covers manager components, hardware drivers, and cross compilation, with the goal of blinking an LED on ARM hardware. This tutorial introduces the F Prime concepts of events, telemetry, commands, and parameters.
 
-    > [!NOTE]
-    > This tutorial can be run without hardware with the exception of section 6 “Running on Hardware”.
-
     [View LED Blinker Tutorial](../../tutorials-led-blinker/docs/led-blinker.md){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Math Component__</span>

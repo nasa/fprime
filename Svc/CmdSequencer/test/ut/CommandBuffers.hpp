@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CommandBuffers.hpp
 // \author Canham/Bocchino
 // \brief  Command buffers for testing sequences
@@ -15,17 +15,16 @@
 
 namespace Svc {
 
-  namespace CommandBuffers {
+namespace CommandBuffers {
 
-    //! Create a command buffer with an opcode and one U32 argument
-    void create(
-        Fw::ComBuffer& comBuff, //!< The com buffer
-        const FwOpcodeType opcode, //!< The opcode
-        const U32 argument //!< The argument
-    );
+//! Create a command buffer with an opcode and one U32 argument
+void create(Fw::ComBuffer& comBuff,     //!< The com buffer
+            const FwOpcodeType opcode,  //!< The opcode
+            const U32 argument          //!< The argument
+);
 
-  }
+}  // namespace CommandBuffers
 
-}
+}  // namespace Svc
 
 #endif

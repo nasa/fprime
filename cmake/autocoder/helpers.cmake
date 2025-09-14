@@ -6,14 +6,13 @@
 ####
 include_guard()
 include("utilities")
-set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
+
 ####
 # Macro `autocoder_support_by_suffix`:
 #
 # This sets up an autocoder to handle files based on a suffix. For example, passing in "*.fpp" will support all files
-# ending in ".fpp" i.e. FPP files or passing in "ComponentAi.xml" will support all component XMLs. It is implemented as
-# a macro such that users need not do anything other than call it with the suffix to setup the system correctly. This
-# performs raw ascii comparison, not regular expression matching.
+# ending in ".fpp" i.e. FPP files. It is implemented as a macro such that users need not do anything other than call it
+# with the suffix to setup the system correctly. This performs raw ascii comparison, not regular expression matching.
 #
 # **Note:** this will set the appropriate variable in PARENT_SCOPE and since it is macro this will be the parent scope
 # of the caller.
@@ -46,12 +45,9 @@ endmacro()
 # `AC_INPUT_FILE`: file to mark as tracked
 ####
 function(requires_regeneration AC_INPUT_FILE)
-    get_property(RECONFIGURE_LIST GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
-    get_filename_component(REAL_FILE "${AC_INPUT_FILE}" REALPATH)
-    if (NOT "${REAL_FILE}" IN_LIST RECONFIGURE_LIST)
+    get_source_file_property(IS_GENERATED "${AC_INPUT_FILE}" GENERATED)
+    if (NOT IS_GENERATED)
         set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${AC_INPUT_FILE}")
-        list(APPEND RECONFIGURE_LIST "${REAL_FILE}")
-        set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST "${RECONFIGURE_LIST}")
     endif()
 endfunction()
 

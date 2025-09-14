@@ -4,8 +4,8 @@
 // \brief  cpp file for DpManager component implementation class
 // ======================================================================
 
-#include "FpConfig.hpp"
 #include "Svc/DpManager/DpManager.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Svc {
 

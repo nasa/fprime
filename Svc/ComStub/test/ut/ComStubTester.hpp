@@ -13,6 +13,14 @@
 namespace Svc {
 
 class ComStubTester : public ComStubGTestBase {
+  public:
+    enum class TestMode { UNSPECIFIED, SYNC, ASYNC };
+
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 30;
+
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -20,11 +28,11 @@ class ComStubTester : public ComStubGTestBase {
   public:
     //! Construct object ComStubTester
     //!
-    ComStubTester();
+    ComStubTester(TestMode mode = TestMode::UNSPECIFIED);  //!< Constructor with test mode
 
     //! Destroy object ComStubTester
     //!
-    ~ComStubTester();
+    ~ComStubTester() = default;
 
   public:
     //! Buffer to fill with data
@@ -47,43 +55,37 @@ class ComStubTester : public ComStubGTestBase {
     void test_fail();
 
     //! Tests the basic failure retry component
+    void test_retry_async();
+    void test_retry_sync();
+
+    //! Tests the retry -> reset -> retry again
     //!
-    void test_retry();
+    void test_retry_reset_async();
+    void test_retry_reset_sync();
+
+    //! Tests buffer is returned
+    //!
+    void test_buffer_return();
 
   private:
     // ----------------------------------------------------------------------
-    // Handlers for typed from ports
+    // Handlers for typed from ports (test harness)
     // ----------------------------------------------------------------------
 
-    //! Handler for from_comDataOut
-    //!
-    void from_comDataOut_handler(const FwIndexType portNum, //!< The port number
-                                 Fw::Buffer& recvBuffer,
-                                 const Drv::RecvStatus& recvStatus);
-
-    //! Handler for from_comStatus
-    //!
-    void from_comStatus_handler(const FwIndexType portNum, //!< The port number
-                                Fw::Success& condition         //!< Status of communication state
-    );
-
-    //! Handler for from_drvDataOut
-    //!
-    Drv::SendStatus from_drvDataOut_handler(const FwIndexType portNum, //!< The port number
-                                            Fw::Buffer& sendBuffer);
+    //! Handler for from_drvSendOut
+    Drv::ByteStreamStatus from_drvSendOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer);
 
   private:
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
 
-    //! Connect ports
+    //! Connect ports based on test mode. Unspecified connects all ports.
     //!
-    void connectPorts();
+    void connectPortsWithTestMode(TestMode mode);
 
-    //! Initialize components
-    //!
-    void initComponents();
+    void connectPorts();    //!< Connects all ports for the component under test
+    void initComponents();  //!< Initializes the component under test
 
   private:
     // ----------------------------------------------------------------------
@@ -92,9 +94,11 @@ class ComStubTester : public ComStubGTestBase {
 
     //! The component under test
     //!
-    ComStub m_component;
-    Drv::SendStatus m_send_mode;  //! Send mode
-    U32 m_retries; //! Number of retries to test
+    ComStub component;
+    Drv::ByteStreamStatus m_sync_send_status;  //! Next return value for a sync send operation
+    TestMode m_test_mode;                      //! Test mode
+    FwIndexType m_retries;                     // Number of retries to test
+    bool m_retry_fail = false;                 // Whether to keep failing after max retries are hit
 };
 
 }  // end namespace Svc

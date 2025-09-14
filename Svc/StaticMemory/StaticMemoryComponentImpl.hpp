@@ -13,12 +13,14 @@
 #ifndef StaticMemory_HPP
 #define StaticMemory_HPP
 
-#include "StaticMemoryConfig.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentAc.hpp"
+#include "config/StaticMemoryConfig.hpp"
 
 namespace Svc {
 
 class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
+    friend class StaticMemoryTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -33,8 +35,7 @@ class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
     //!
     ~StaticMemoryComponentImpl();
 
-  PRIVATE:
-
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -47,7 +48,7 @@ class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
     //! Handler implementation for bufferAllocate
     //!
     Fw::Buffer bufferAllocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                      U32 size);
+                                      FwSizeType size);
 
     bool m_allocated[NUM_BUFFERALLOCATE_INPUT_PORTS];
     U8 m_static_memory[NUM_BUFFERALLOCATE_INPUT_PORTS][STATIC_MEMORY_ALLOCATION_SIZE];

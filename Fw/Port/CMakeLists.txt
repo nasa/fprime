@@ -13,7 +13,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PortBase.cpp"
 )
 set(MOD_DEPS
-  Fw/Cfg
   Fw/Types
   Fw/Logger
   Fw/Obj

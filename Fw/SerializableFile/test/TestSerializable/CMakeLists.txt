@@ -9,7 +9,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TestSerializable.fpp"
 )
 set(MOD_DEPS
-  Fw/Cfg
   Fw/Types
   Fw/Comp
   Fw/Port

@@ -8,15 +8,17 @@
 #define TESTER_HPP
 
 #include "ComQueueGTestBase.hpp"
+#include "Fw/Com/ComPacket.hpp"
 #include "Svc/ComQueue/ComQueue.hpp"
-#define BUFFER_LENGTH 3u
+
+#define BUFFER_LENGTH 7u
+#define BUFFER_DATA {0x00, 0x00, 0x00, 0x01, 0xad, 0xbe, 0xde}  // First 4 bytes are the ComPacketType
+#define BUFFER_DATA_OFFSET sizeof(Fw::ComPacketType)
 
 namespace Svc {
 
 class ComQueueTester : public ComQueueGTestBase {
-
   public:
-
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
@@ -51,17 +53,11 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
     void configure();
 
-    void sendByQueueNumber(Fw::Buffer& buffer,
-                           FwIndexType queueNumber,
-                           FwIndexType& portNum,
-                           QueueType& queueType);
+    void sendByQueueNumber(Fw::Buffer& buffer, FwIndexType queueNumber, FwIndexType& portNum, QueueType& queueType);
 
     void emitOne();
 
-    void emitOneAndCheck(FwIndexType expectedIndex,
-                         QueueType expectedType,
-                         Fw::ComBuffer& expectedCom,
-                         Fw::Buffer& expectedBuff);
+    void emitOneAndCheck(FwIndexType expectedIndex, U8* expectedData, FwSizeType expectedDataSize);
 
     // ----------------------------------------------------------------------
     // Tests
@@ -79,22 +75,9 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testReadyFirst();
 
-  private:
-    // ----------------------------------------------------------------------
-    // Handlers for typed from ports
-    // ----------------------------------------------------------------------
+    void testContextData();
 
-    //! Handler for from_buffQueueSend
-    //!
-    void from_buffQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-                                    Fw::Buffer& fwBuffer);
-
-    //! Handler for from_comQueueSend
-    //!
-    void from_comQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-                                   Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                                   U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    void testBufferQueueReturn();
 
   private:
     // ----------------------------------------------------------------------

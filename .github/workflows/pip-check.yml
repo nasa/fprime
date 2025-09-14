@@ -10,13 +10,17 @@ on:
   pull_request:
     paths:
       - 'requirements.txt'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 jobs:
   pip-install:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         # macos-13 is the last Intel-family runner; macos-latest is ARM
         runner: [macos-13, macos-latest, ubuntu-22.04, ubuntu-latest]
     steps:

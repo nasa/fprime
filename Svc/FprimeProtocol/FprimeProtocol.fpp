@@ -1,9 +1,12 @@
+module Svc {
 module FprimeProtocol {
+
+    type TokenType = U32
 
     @ Describes the frame header format for the F Prime communications protocol
     struct FrameHeader {
-        startWord: U32,
-        lengthField: U32,
+        startWord: TokenType,
+        lengthField: TokenType,
     } default {
         startWord = 0xdeadbeef
     }
@@ -13,4 +16,5 @@ module FprimeProtocol {
         crcField: U32
     }
 
+}
 }

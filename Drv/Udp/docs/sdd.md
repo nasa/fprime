@@ -9,30 +9,7 @@ For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverMode
 
 ## Design
 
-The manager component (typically the ground interface) initiates the transfer of send data by calling the "send" port.
-The caller will provide a `Fw::Buffer` containing the data to send and the port call will return a status of that send.
-These responses are an enumeration whose values are described in the following table:
-
-| Value | Description |
-|---|---|
-| Drv::SEND_OK    | Send functioned normally. |
-| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return SEND_OK. |
-| Drv::SEND_ERROR | Send produced an error, future sends likely to fail. |
-
-This data is immediately sent out to the remote UDP server with a configured send timeout. See Usage described below.
-
-**Callback Formation**
-
-![Callback](../../ByteStreamDriverModel/docs/img/canvas-callback.png)
-
-In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
-"readCallback" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
-This status is an enumeration whose values are described in the following table:
-
-| Value | Description |
-|---|---|
-| Drv::RECV_OK    | Receive functioned normally buffer contains valid data. |
-| Drv::RECV_ERROR | Receive produced an error and buffer contains no valid data. |
+The TcpClient component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
 ## Usage
 
@@ -49,6 +26,15 @@ wait for the thread to exit using `join`.
 
 Since UDP support single or bidirectional communication, configuring each direction is done separately using the two
 methods `configureSend` and `configureRecv`. The user must call at least one of the configure methods and may call both.
+
+### Ephemeral Port Support
+
+The Drv::UdpComponentImpl supports ephemeral ports for receiving data. This is done by setting the port number to 0
+when calling `configureRecv`. The port number will be returned when the socket is opened.
+
+When configured as a receiver-only the Drv::UdpComponentImpl can also be set up to send a response back to the sender and use the
+response port that the sender has indicated in the UDP datagram. This is done by setting the port number to 0 when calling
+`configureSend`.
 
 ```c++
 Drv::UdpComponentImpl comm = Drv::UdpComponentImpl("UDP Client");
@@ -71,9 +57,6 @@ void exitTasks() {
     (void) comm.join();
 }
 ```
-## Class Diagram
-
-![classdiagram](./img/class_diagram_udp.png)
 
 ## Requirements
 

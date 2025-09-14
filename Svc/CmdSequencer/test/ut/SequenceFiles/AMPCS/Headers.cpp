@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Headers.cpp
 // \author Rob Bocchino
 // \brief  AMPCS sequence file headers
@@ -8,32 +8,29 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include "gtest/gtest.h"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/Headers.hpp"
+#include "gtest/gtest.h"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    namespace AMPCS {
+namespace AMPCS {
 
-      namespace Headers {
+namespace Headers {
 
-        void serialize(Fw::SerializeBufferBase& buffer) {
-          serialize(0x11223344, buffer);
-        }
-
-        void serialize(
-            const U32 value,
-            Fw::SerializeBufferBase& buffer
-        ) {
-          ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(value));
-        }
-
-      }
-
-    }
-
-  }
-
+void serialize(Fw::SerializeBufferBase& buffer) {
+    serialize(0x11223344, buffer);
 }
+
+void serialize(const U32 value, Fw::SerializeBufferBase& buffer) {
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(value));
+}
+
+}  // namespace Headers
+
+}  // namespace AMPCS
+
+}  // namespace SequenceFiles
+
+}  // namespace Svc

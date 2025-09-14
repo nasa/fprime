@@ -8,7 +8,13 @@
 namespace Os {
 namespace Test {
 
-SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
+SyntheticFile::~SyntheticFile() {
+    this->close();
+}
+
+SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path,
+                                                        const Os::File::Mode open_mode,
+                                                        const File::OverwriteType overwrite) {
     SyntheticFileSystem::OpenData return_value;
     std::string path = char_path;
     bool exists = (this->m_filesystem.count(path) > 0);
@@ -36,7 +42,9 @@ SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, c
         if (truncate) {
             return_value.file->m_data.clear();
         }
+
         return_value.file->m_pointer = 0;
+
         return_value.file->m_mode = open_mode;
         return_value.file->m_path = path;
         // Checks on the shadow data to ensure consistency
@@ -59,7 +67,8 @@ void SyntheticFileSystem::remove(const CHAR* char_path) {
     this->m_filesystem.erase(path);
 }
 
-std::unique_ptr<SyntheticFileSystem> SyntheticFile::s_file_system = std::unique_ptr<SyntheticFileSystem>(new SyntheticFileSystem());
+std::unique_ptr<SyntheticFileSystem> SyntheticFile::s_file_system =
+    std::unique_ptr<SyntheticFileSystem>(new SyntheticFileSystem());
 
 void SyntheticFile::setFileSystem(std::unique_ptr<SyntheticFileSystem> new_file_system) {
     s_file_system = std::move(new_file_system);
@@ -70,7 +79,9 @@ void SyntheticFile::remove(const CHAR* char_path) {
     s_file_system->remove(char_path);
 }
 
-File::Status SyntheticFile::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
+File::Status SyntheticFile::open(const CHAR* char_path,
+                                 const Os::File::Mode open_mode,
+                                 const File::OverwriteType overwrite) {
     SyntheticFileSystem::OpenData data = s_file_system->open(char_path, open_mode, overwrite);
     if (data.status == Os::File::Status::OP_OK) {
         this->m_data = data.file;
@@ -83,17 +94,18 @@ void SyntheticFile::close() {
     if (this->m_data != nullptr) {
         this->m_data->m_mode = Os::File::Mode::OPEN_NO_MODE;
         this->m_data->m_path.clear();
+        this->m_data->m_pointer = 0;
         // Checks on the shadow data to ensure consistency
         FW_ASSERT(this->m_data->m_mode == Os::File::Mode::OPEN_NO_MODE);
         FW_ASSERT(this->m_data->m_path.empty());
+        FW_ASSERT(this->m_data->m_pointer == 0);
     }
 }
 
-Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitType wait) {
-    (void) wait;
+Os::File::Status SyntheticFile::read(U8* buffer, FwSizeType& size, WaitType wait) {
+    (void)wait;
     FW_ASSERT(this->m_data != nullptr);
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
@@ -104,13 +116,13 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
         return Os::File::Status::INVALID_MODE;
     }
     std::vector<U8> output;
-    FwSignedSizeType original_pointer = this->m_data->m_pointer;
-    FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
+    FwSizeType original_pointer = this->m_data->m_pointer;
+    FwSizeType original_size = static_cast<FwSizeType>(this->m_data->m_data.size());
     // Check expected read bytes
-    FwSignedSizeType i = 0;
+    FwSizeType i = 0;
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
         // End of file
-        if (this->m_data->m_pointer >= static_cast<FwSignedSizeType>(this->m_data->m_data.size())) {
+        if (this->m_data->m_pointer >= static_cast<FwSizeType>(this->m_data->m_data.size())) {
             break;
         }
         buffer[i] = this->m_data->m_data.at(static_cast<std::vector<U8>::size_type>(this->m_data->m_pointer));
@@ -118,16 +130,16 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSignedSizeType& size, WaitTyp
     size = i;
     // Checks on the shadow data to ensure consistency
     FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(original_size));
-    FW_ASSERT(this->m_data->m_pointer == ((original_pointer > original_size) ? original_pointer : FW_MIN(original_pointer + size, original_size)));
+    FW_ASSERT(this->m_data->m_pointer ==
+              ((original_pointer > original_size) ? original_pointer : FW_MIN(original_pointer + size, original_size)));
     FW_ASSERT(size == ((original_pointer > original_size) ? 0 : FW_MIN(size, original_size - original_pointer)));
     return Os::File::Status::OP_OK;
 }
 
-Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, WaitType wait) {
-    (void) wait;
+Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitType wait) {
+    (void)wait;
     FW_ASSERT(this->m_data != nullptr);
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
@@ -137,30 +149,33 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, 
         size = 0;
         return Os::File::Status::INVALID_MODE;
     }
-    FwSignedSizeType original_position = this->m_data->m_pointer;
-    FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
+    FwSizeType original_position = this->m_data->m_pointer;
+    FwSizeType original_size = static_cast<FwSizeType>(this->m_data->m_data.size());
     const U8* write_data = reinterpret_cast<const U8*>(buffer);
 
     // Appends seek to end before writing
     if (Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) {
-        this->m_data->m_pointer = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
+        this->m_data->m_pointer = static_cast<FwSizeType>(this->m_data->m_data.size());
     }
 
     // First add in zeros to account for a pointer past the end of the file
-    const FwSignedSizeType zeros = static_cast<FwSignedSizeType>(this->m_data->m_pointer) - static_cast<FwSignedSizeType>(this->m_data->m_data.size());
-    for (FwSignedSizeType i = 0; i < zeros; i++) {
+    const FwSizeType zeros = (this->m_data->m_pointer < this->m_data->m_data.size())
+                                 ? 0
+                                 : this->m_data->m_pointer - this->m_data->m_data.size();
+    for (FwSizeType i = 0; i < zeros; i++) {
         this->m_data->m_data.push_back(0);
     }
     // Interim checks to ensure zeroing performed correctly
     FW_ASSERT(static_cast<size_t>(this->m_data->m_pointer) <= this->m_data->m_data.size());
-    FW_ASSERT(this->m_data->m_data.size() ==
-              static_cast<size_t>((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) ? original_size : FW_MAX(original_position, original_size)));
+    FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode)
+                                                                     ? original_size
+                                                                     : FW_MAX(original_position, original_size)));
 
-    FwSignedSizeType pre_write_position = this->m_data->m_pointer;
-    FwSignedSizeType pre_write_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
+    FwSizeType pre_write_position = this->m_data->m_pointer;
+    FwSizeType pre_write_size = static_cast<FwSizeType>(this->m_data->m_data.size());
 
     // Next write data
-    FwSignedSizeType i = 0;
+    FwSizeType i = 0;
     for (i = 0; i < size; i++, this->m_data->m_pointer++) {
         // Overwrite case
         if (static_cast<size_t>(this->m_data->m_pointer) < this->m_data->m_data.size()) {
@@ -173,8 +188,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSignedSizeType& size, 
     }
     size = i;
     // Checks on the shadow data to ensure consistency
-    FW_ASSERT(this->m_data->m_data.size() ==
-              static_cast<size_t>(FW_MAX(pre_write_position + size, pre_write_size)));
+    FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(FW_MAX(pre_write_position + size, pre_write_size)));
     FW_ASSERT(this->m_data->m_pointer ==
               ((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) ? pre_write_size : pre_write_position) + size);
     return Os::File::Status::OP_OK;
@@ -190,21 +204,31 @@ Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekTy
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
         status = Os::File::Status::NOT_OPENED;
     } else {
-        FwSignedSizeType new_offset = (absolute) ? offset : (offset + this->m_data->m_pointer);
-        if (new_offset >= 0) {
-            this->m_data->m_pointer = new_offset;
-        } else {
+        if (absolute) {
+            this->m_data->m_pointer = static_cast<FwSizeType>(offset);
+        }
+        // Seek to < 0
+        else if ((offset < 0) && ((static_cast<FwSizeType>(-1 * offset) > this->m_data->m_pointer) ||
+                                  (offset == std::numeric_limits<FwSignedSizeType>::min()))) {
             status = Os::File::Status::INVALID_ARGUMENT;
+        }
+        // Other negative offsets
+        else if (offset < 0) {
+            this->m_data->m_pointer -= static_cast<FwSizeType>(-1 * offset);
+        }
+        // Overflow
+        else if ((std::numeric_limits<FwSizeType>::max() - this->m_data->m_pointer) < static_cast<FwSizeType>(offset)) {
+            status = Os::File::Status::BAD_SIZE;
+        } else {
+            this->m_data->m_pointer += static_cast<FwSizeType>(offset);
         }
     }
     return status;
 }
 
-Os::File::Status SyntheticFile::preallocate(const FwSignedSizeType offset, const FwSignedSizeType length) {
+Os::File::Status SyntheticFile::preallocate(const FwSizeType offset, const FwSizeType length) {
     FW_ASSERT(this->m_data != nullptr);
     Os::File::Status status = Os::File::Status::OP_OK;
-    FW_ASSERT(offset >= 0);
-    FW_ASSERT(length >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
@@ -212,10 +236,10 @@ Os::File::Status SyntheticFile::preallocate(const FwSignedSizeType offset, const
     } else if (Os::File::Mode::OPEN_READ == this->m_data->m_mode) {
         status = Os::File::Status::INVALID_MODE;
     } else {
-        const FwSignedSizeType original_size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
-        const FwSignedSizeType new_length = offset + length;
+        const FwSizeType original_size = static_cast<FwSizeType>(this->m_data->m_data.size());
+        const FwSizeType new_length = offset + length;
         // Loop from existing size to new size adding zeros
-        for (FwSignedSizeType i = static_cast<FwSignedSizeType>(this->m_data->m_data.size()); i < new_length; i++) {
+        for (FwSizeType i = static_cast<FwSizeType>(this->m_data->m_data.size()); i < new_length; i++) {
             this->m_data->m_data.push_back(0);
         }
         FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(FW_MAX(offset + length, original_size)));
@@ -236,13 +260,13 @@ Os::File::Status SyntheticFile::flush() {
     return status;
 }
 
-Os::File::Status SyntheticFile::position(FwSignedSizeType &position) {
+Os::File::Status SyntheticFile::position(FwSizeType& position) {
     position = this->m_data->m_pointer;
     return Os::File::OP_OK;
 }
 
-Os::File::Status SyntheticFile::size(FwSignedSizeType &size) {
-    size = static_cast<FwSignedSizeType>(this->m_data->m_data.size());
+Os::File::Status SyntheticFile::size(FwSizeType& size) {
+    size = static_cast<FwSizeType>(this->m_data->m_data.size());
     return Os::File::OP_OK;
 }
 
@@ -254,5 +278,5 @@ bool SyntheticFile::exists(const CHAR* path) {
     return s_file_system->exists(path);
 }
 
-} // namespace Test
-} // namespace Os
+}  // namespace Test
+}  // namespace Os

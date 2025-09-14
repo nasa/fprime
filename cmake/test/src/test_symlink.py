@@ -7,12 +7,10 @@
 import os
 import shutil
 import tempfile
-
 import pytest
-import settings
-
-import cmake
 from pathlib import Path
+from . import cmake
+from . import settings
 
 
 SYMLINK_PATH = Path(tempfile.mkdtemp()) / "fprime-link"
@@ -22,8 +20,8 @@ os.symlink(settings.REF_APP_PATH.parent, SYMLINK_PATH)
 _ = cmake.get_build(
     "SYMLINKED_UT_BUILD",
     SYMLINK_PATH / "Ref",
-    cmake_arguments={"BUILD_TESTING": "ON"},
-    make_targets=["Ref", "ut_exe"],
+    cmake_arguments={"BUILD_TESTING": "ON", "CMAKE_DEBUG_OUTPUT": "ON"},
+    make_targets=["Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 

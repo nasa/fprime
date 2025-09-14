@@ -18,14 +18,14 @@ autocoder_setup_for_multiple_sources()
 ####
 function(locate_fpp_tools)
     # Loop through each tool, looking if it was found and check the version
-    foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS FPP_TO_DICT)
+    get_expected_tool_version("fprime-fpp" FPP_VERSION)
+    foreach(TOOL FPP_DEPEND FPP_TO_CPP FPP_LOCATE_DEFS FPP_TO_DICT)
         # Skipped already defined tools
         if (${TOOL})
             continue()
         endif ()
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
-        get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
 
         # Clear any previous version of this find and search in this order: install dir, system path
         unset(${TOOL} CACHE)
@@ -65,7 +65,7 @@ endfunction(locate_fpp_tools)
 ####
 # Function `is_supported`:
 #
-# Required function, processes ComponentAi.xml files.
+# Required function, processes FPP files.
 # `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(fpp_is_supported AC_INPUT_FILE)
@@ -83,13 +83,14 @@ endfunction(fpp_is_supported)
 # FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
 ####
 function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
+    get_target_property(FPRIME_IS_CONFIG "${MODULE_NAME}" FPRIME_CONFIGURATION)
     # Subset the framework dependencies, or where possible use the Fw interface target
-    if (MODULE_NAME STREQUAL "config")
-        # config has no automatic dependencies
+    if (FPRIME_IS_CONFIG)
+        # config modules have no automatic dependencies
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
-        message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
-    elseif (MODULE_NAME STREQUAL Fw_Cfg)
-        # Skip Fw_Cfg as it is the root dependency 
+        fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
+    elseif (MODULE_NAME STREQUAL Fw_Types)
+        # Skip Fw_Types as it is the root dependency
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
@@ -110,14 +111,14 @@ endfunction(fpp_get_framework_dependency_helper)
 # - GENERATED_FILES: a list of files generated for the given input sources
 # - MODULE_DEPENDENCIES: inter-module dependencies determined from the given input sources
 # - FILE_DEPENDENCIES: specific file dependencies of the given input sources
-# - FPP_IMPORTS: The fpp model dependencies, which end up being the input to the -i flag for the fpp-to-cpp and fpp-to-xml tools
+# - FPP_IMPORTS: The fpp model dependencies, which end up being the input to the -i flag for the fpp-to-cpp tool
 #
 # Note: although this function is only required to set `GENERATED_FILES`, the remaining information is also set as
 # setting this information now will prevent a duplicated call to the tooling.
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(fpp_info AC_INPUT_FILES)
+function(fpp_info MODULE_NAME AC_INPUT_FILES)
     find_program(FPP_DEPEND fpp-depend)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
@@ -168,7 +169,7 @@ function(fpp_info AC_INPUT_FILES)
             list(APPEND FILTERED_DIRECT_DEPENDENCIES "${ITEM}")
         endif()
     endforeach()
-    fpp_to_modules("${FILTERED_DIRECT_DEPENDENCIES}" MODULE_DEPENDENCIES)
+    fpp_to_modules("${MODULE_NAME}" "${FILTERED_DIRECT_DEPENDENCIES}" MODULE_DEPENDENCIES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
     # File dependencies are any files that this depends on
@@ -190,74 +191,68 @@ endfunction(fpp_info)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(fpp_setup_autocode AC_INPUT_FILES)
-    if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
+function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
+    if (DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    fpp_info("${AC_INPUT_FILES}")
+    fpp_info("${MODULE_NAME}" "${AC_INPUT_FILES}")
     set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
     set(CMAKE_CURRENT_BINARY_DIR_RESOLVED "${CMAKE_CURRENT_BINARY_DIR}")
-    resolve_path_variables(
-            AC_INPUT_FILES FPRIME_BUILD_LOCATIONS FPP_IMPORTS CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
+    resolve_path_variables(CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
     set(IMPORTS)
     if (FPP_IMPORTS_COMMA_SEP)
         set(IMPORTS "-i" "${FPP_IMPORTS_COMMA_SEP}")
     endif()
-    # Separate the source files into the CPP and XML steps
-    set(GENERATED_AI)
+    # Separate the source files into the CPP
     set(GENERATED_CPP)
     set(GENERATED_DICT)
     foreach(GENERATED IN LISTS GENERATED_FILES)
         if (GENERATED MATCHES ".*TopologyDictionary\.json")
             list(APPEND GENERATED_DICT "${GENERATED}")
-        elseif (GENERATED MATCHES ".*\\.xml")
-            list(APPEND GENERATED_AI "${GENERATED}")
+        # XML outputs from FPP are discarded
+        elseif(GENERATED MATCHES ".*\.xml$")
         else()
             list(APPEND GENERATED_CPP "${GENERATED}")
         endif()
     endforeach()
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-import-list" "${FPP_IMPORTS}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-source-list" "${AC_INPUT_FILES}")
-    # Add in steps for Ai.xml generation
-    if (GENERATED_AI)
-        add_custom_command(
-                OUTPUT  ${GENERATED_AI}
-                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
-                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP}"
-                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
-        )
-    endif()
+
+    # Mark included files (.fppi) as regenerators like their .fpp parents
+    foreach (INCLUDED_FILE IN LISTS FILE_DEPENDENCIES)
+        requires_regeneration("${INCLUDED_FILE}")
+    endforeach()
+
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT ${GENERATED_CPP}
                 COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR_RESOLVED}"
-                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                DEPENDS ${FILE_DEPENDENCIES}
         )
     endif()
     # Add in dictionary generation
     if (GENERATED_DICT)
-        set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
         set(FPRIME_JSON_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.json")
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
             COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
                 "--executable" "${FPP_TO_DICT}"
-                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
+                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}"
                 "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
-            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
+            DEPENDS ${FILE_DEPENDENCIES}
                     ${FPRIME_JSON_VERSION_FILE}
-                    version
+                    version_generate
         )
-endif()
-    set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} ${GENERATED_DICT})
-    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    endif()
+
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_BUILD_SOURCES "${GENERATED_CPP}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_OTHER "${GENERATED_DICT}" PARENT_SCOPE)
 endfunction(fpp_setup_autocode)
 
 ####
@@ -268,20 +263,18 @@ endfunction(fpp_setup_autocode)
 # FILE_LIST: list of files
 # OUTPUT_VAR: output variable to set with result
 ####
-function(fpp_to_modules FILE_LIST OUTPUT_VAR)
+function(fpp_to_modules CURRENT_MODULE FILE_LIST OUTPUT_VAR)
     init_variables(OUTPUT_DATA)
-    get_module_name("${CMAKE_CURRENT_SOURCE_DIR}")
-    set(CURRENT_MODULE "${MODULE_NAME}")
     foreach(INCLUDE IN LISTS FILE_LIST)
-        get_module_name(${INCLUDE})
-        # Here we are adding a module to the modules list if all of the following are true:
-        #  1. Not present already (deduplication)
-        #  2. Not the current module directory as learned by the path to the autocoder inputs
-        #  3. Not within the config directory. Config dependencies are attached to every module automatically.
-        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
+        get_property(MODULE_OF_INCLUDE GLOBAL PROPERTY "FPRIME_${INCLUDE}_MODULE")
+        fprime_cmake_ASSERT("File module not set in sub-build: ${INCLUDE}"
+            NOT "${MODULE_OF_INCLUDE}" STREQUAL "NOTFOUND")
+        # Do not add current module
+        if (CURRENT_MODULE STREQUAL MODULE_OF_INCLUDE)
             continue() # Skip adding to module list
         endif()
-        list(APPEND OUTPUT_DATA "${MODULE_NAME}")
+        list(APPEND OUTPUT_DATA "${MODULE_OF_INCLUDE}")
+        list(REMOVE_DUPLICATES OUTPUT_DATA)
     endforeach()
     set(${OUTPUT_VAR} "${OUTPUT_DATA}" PARENT_SCOPE)
 endfunction(fpp_to_modules)

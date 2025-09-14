@@ -21,11 +21,11 @@ struct SelfDiffIsZero : public STest::Rule<Os::Test::RawTime::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::RawTime::Tester &state  //!< The test state
+    bool precondition(const Os::Test::RawTime::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::RawTime::Tester &state  //!< The test state
+    void action(Os::Test::RawTime::Tester& state  //!< The test state
     );
 };
 
@@ -34,8 +34,8 @@ struct SelfDiffIsZero : public STest::Rule<Os::Test::RawTime::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct Now : public STest::Rule<Os::Test::RawTime::Tester> {
     Now();
-    bool precondition(const Os::Test::RawTime::Tester &state);
-    void action(Os::Test::RawTime::Tester &state);
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ struct Now : public STest::Rule<Os::Test::RawTime::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct GetTimeDiffU32 : public STest::Rule<Os::Test::RawTime::Tester> {
     GetTimeDiffU32();
-    bool precondition(const Os::Test::RawTime::Tester &state);
-    void action(Os::Test::RawTime::Tester &state);
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -52,8 +52,8 @@ struct GetTimeDiffU32 : public STest::Rule<Os::Test::RawTime::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct GetTimeInterval : public STest::Rule<Os::Test::RawTime::Tester> {
     GetTimeInterval();
-    bool precondition(const Os::Test::RawTime::Tester &state);
-    void action(Os::Test::RawTime::Tester &state);
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ struct GetTimeInterval : public STest::Rule<Os::Test::RawTime::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct Serialization : public STest::Rule<Os::Test::RawTime::Tester> {
     Serialization();
-    bool precondition(const Os::Test::RawTime::Tester &state);
-    void action(Os::Test::RawTime::Tester &state);
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -70,6 +70,6 @@ struct Serialization : public STest::Rule<Os::Test::RawTime::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct DiffU32Overflow : public STest::Rule<Os::Test::RawTime::Tester> {
     DiffU32Overflow();
-    bool precondition(const Os::Test::RawTime::Tester &state);
-    void action(Os::Test::RawTime::Tester &state);
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
 };

@@ -36,7 +36,6 @@
 //
 // See below for detailed descriptions
 
-
 // SEND_CMD
 //
 // Send a command and expect a response status. This command essentially calls
@@ -50,13 +49,12 @@
 //   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::CmdResponse::OK, channel, dutyCycle);
 //   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::COMMAND_EXECUTION_ERROR, illegalChannel);
 //
-#define SEND_CMD(cmd, status, ...) \
-  SEND_CMD_COMP(TEST_COMP, cmd, status, ## __VA_ARGS__)
+#define SEND_CMD(cmd, status, ...) SEND_CMD_COMP(TEST_COMP, cmd, status, ##__VA_ARGS__)
 
-#define SEND_CMD_COMP(comp, cmd, status, ...) \
-  this->sendCmd_ ## cmd(INSTANCE, CMD_SEQ, ## __VA_ARGS__); \
-  this->component.doDispatch(); \
-  ASSERT_LAST_CMD(cmd, status);
+#define SEND_CMD_COMP(comp, cmd, status, ...)              \
+    this->sendCmd_##cmd(INSTANCE, CMD_SEQ, ##__VA_ARGS__); \
+    this->component.doDispatch();                          \
+    ASSERT_LAST_CMD(cmd, status);
 
 // SEND_CMD_NO_EXPECT
 //
@@ -67,12 +65,11 @@
 //   SEND_CMD_NO_EXPECT(FILE_DWN_SEND_APID, 100, 0, 0, 0);
 //   // ...
 //
-#define SEND_CMD_NO_EXPECT(cmd, ...) \
-  SEND_CMD_COMP_NO_EXPECT(TEST_COMP, cmd, ## __VA_ARGS__)
+#define SEND_CMD_NO_EXPECT(cmd, ...) SEND_CMD_COMP_NO_EXPECT(TEST_COMP, cmd, ##__VA_ARGS__)
 
-#define SEND_CMD_COMP_NO_EXPECT(comp, cmd, ...) \
-  this->sendCmd_ ## cmd(INSTANCE, CMD_SEQ, ## __VA_ARGS__); \
-  this->component.doDispatch();
+#define SEND_CMD_COMP_NO_EXPECT(comp, cmd, ...)            \
+    this->sendCmd_##cmd(INSTANCE, CMD_SEQ, ##__VA_ARGS__); \
+    this->component.doDispatch();
 
 // ASSERT_LAST_CMD
 //
@@ -86,12 +83,11 @@
 //   // ...
 //   ASSERT_LAST_CMD(FILE_DWN_SEND_APID, Fw::CmdResponse::OK);
 //
-#define ASSERT_LAST_CMD(cmd, status) \
-  ASSERT_LAST_CMD_COMP(TEST_COMP, cmd, status)
+#define ASSERT_LAST_CMD(cmd, status) ASSERT_LAST_CMD_COMP(TEST_COMP, cmd, status)
 
-#define ASSERT_LAST_CMD_COMP(comp, cmd, status) \
-  ASSERT_GT(this->cmdResponseHistory->size(), 0); \
-  ASSERT_CMD_RESPONSE(this->cmdResponseHistory->size()-1, comp::OPCODE_ ## cmd, CMD_SEQ, status);
+#define ASSERT_LAST_CMD_COMP(comp, cmd, status)     \
+    ASSERT_GT(this->cmdResponseHistory->size(), 0); \
+    ASSERT_CMD_RESPONSE(this->cmdResponseHistory->size() - 1, comp::OPCODE_##cmd, CMD_SEQ, status);
 
 // ASSERT_LAST_TLM
 //
@@ -102,9 +98,9 @@
 //   ASSERT_LAST_TLM(NeaCamManager_ImageDataSize, dataSize);
 //   ASSERT_LAST_TLM(NeaCamManager_PatternDataSize, 0);
 //
-#define ASSERT_LAST_TLM(name, value) \
-  ASSERT_GT(this->tlmHistory_ ## name->size(), 0); \
-  ASSERT_TLM_ ## name(this->tlmHistory_ ## name->size()-1, value);
+#define ASSERT_LAST_TLM(name, value)               \
+    ASSERT_GT(this->tlmHistory_##name->size(), 0); \
+    ASSERT_TLM_##name(this->tlmHistory_##name->size() - 1, value);
 
 // ASSERT_LAST_EVENT
 //
@@ -115,9 +111,9 @@
 //   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::COMMAND_VALIDATION_ERROR, 0, 0);
 //   ASSERT_LAST_EVENT(PwrSwitchManager_DutyCyclingNotEnabled, i);
 //
-#define ASSERT_LAST_EVENT(name, ...) \
-  ASSERT_GT(this->eventHistory_ ## name->size(), 0); \
-  ASSERT_EVENTS_ ## name(this->eventHistory_ ## name->size()-1, ## __VA_ARGS__);
+#define ASSERT_LAST_EVENT(name, ...)                 \
+    ASSERT_GT(this->eventHistory_##name->size(), 0); \
+    ASSERT_EVENTS_##name(this->eventHistory_##name->size() - 1, ##__VA_ARGS__);
 
 // ASSERT_LAST_PORT_OUT
 //
@@ -129,9 +125,8 @@
 //   this->component.doDispatch();
 //   ASSERT_LAST_PORT_OUT(PingResponse, 0, 0xDEADBEEF);
 //
-#define ASSERT_LAST_PORT_OUT(port, ...) \
-  ASSERT_GT(this->fromPortHistory_ ## port->size(), 0); \
-  ASSERT_from_ ## port(__VA_ARGS__);
-
+#define ASSERT_LAST_PORT_OUT(port, ...)                 \
+    ASSERT_GT(this->fromPortHistory_##port->size(), 0); \
+    ASSERT_from_##port(__VA_ARGS__);
 
 #endif

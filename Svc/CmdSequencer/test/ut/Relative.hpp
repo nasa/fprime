@@ -16,55 +16,46 @@
 
 namespace Svc {
 
-  namespace Relative {
+namespace Relative {
 
-    //! Test sequences with immediate commands followed by a marker
-    class CmdSequencerTester :
-      public MixedRelativeBase::CmdSequencerTester
-    {
+//! Test sequences with immediate commands followed by a marker
+class CmdSequencerTester : public MixedRelativeBase::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format =
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Run an automatic sequence by command
+    void AutoByCommand();
 
-      public:
+    //! Validate a sequence file
+    void Validate();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper methods
+    // ----------------------------------------------------------------------
 
-        //! Run an automatic sequence by command
-        void AutoByCommand();
+    //! Execute sequence commands for an automatic sequence
+    void executeCommandsAuto(const char* const fileName,  //!< The file name
+                             const U32 numCommands,       //!< The number of commands in the sequence
+                             const U32 bound,             //!< The number of commands to run
+                             const CmdExecMode::t mode    //!< The mode
+    );
+};
 
-        //! Validate a sequence file
-        void Validate();
+}  // namespace Relative
 
-      private:
-
-        // ----------------------------------------------------------------------
-        // Private helper methods
-        // ----------------------------------------------------------------------
-
-        //! Execute sequence commands for an automatic sequence
-        void executeCommandsAuto(
-            const char *const fileName, //!< The file name
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound, //!< The number of commands to run
-            const CmdExecMode::t mode //!< The mode
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

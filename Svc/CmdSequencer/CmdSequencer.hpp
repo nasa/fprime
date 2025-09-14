@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef CmdSequencerComponentImpl CmdSequencer;
+typedef CmdSequencerComponentImpl CmdSequencer;
 
 }
 

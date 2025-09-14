@@ -16,87 +16,61 @@
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  StaticMemoryTester ::
-    StaticMemoryTester() :
-      StaticMemoryGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("StaticMemory")
-  {
+StaticMemoryTester ::StaticMemoryTester()
+    : StaticMemoryGTestBase("Tester", MAX_HISTORY_SIZE), component("StaticMemory") {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  StaticMemoryTester ::
-    ~StaticMemoryTester()
-  {
+StaticMemoryTester ::~StaticMemoryTester() {}
 
-  }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+void StaticMemoryTester ::test_allocate() {
+    Fw::Buffer allocations[StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS];
+    for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
+        U32 random_size = STest::Pick::lowerUpper(1, StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE);
+        allocations[i] = invoke_to_bufferAllocate(i, random_size);
+        // Test allocated, correct pointer
+        ASSERT_TRUE(component.m_allocated[i]) << "Did not mark buffer as allocated";
+        ASSERT_EQ(allocations[i].getData(), component.m_static_memory[i]) << "Sent incorrect buffer";
+        ASSERT_GE(allocations[i].getSize(), random_size) << "Did not allocate enough";
+    }
+    for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
+        // Set size to zero, and adjust the data pointer to ensure user can modify these values
+        allocations[i].setSize(0);
+        allocations[i].setData(allocations[i].getData() + 1);
+        invoke_to_bufferDeallocate(i, allocations[i]);
+        // Test allocated, correct pointer
+        ASSERT_FALSE(component.m_allocated[i]) << "Did not mark buffer as allocated";
+    }
+}
 
-  void StaticMemoryTester ::
-      test_allocate()
-  {
-     Fw::Buffer allocations[StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS];
-      for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
-          U32 random_size = STest::Pick::lowerUpper(1, StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE);
-          allocations[i] = invoke_to_bufferAllocate(i, random_size);
-          // Test allocated, correct pointer
-          ASSERT_TRUE(component.m_allocated[i]) << "Did not mark buffer as allocated";
-          ASSERT_EQ(allocations[i].getData(), component.m_static_memory[i]) << "Sent incorrect buffer";
-          ASSERT_GE(allocations[i].getSize(), random_size) << "Did not allocate enough";
-      }
-      for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
-          // Set size to zero, and adjust the data pointer to ensure user can modify these values
-          allocations[i].setSize(0);
-          allocations[i].setData(allocations[i].getData() + 1);
-          invoke_to_bufferDeallocate(i, allocations[i]);
-          // Test allocated, correct pointer
-          ASSERT_FALSE(component.m_allocated[i]) << "Did not mark buffer as allocated";
-      }
-  }
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
-
-  void StaticMemoryTester ::
-    connectPorts()
-  {
-
+void StaticMemoryTester ::connectPorts() {
     // bufferDeallocate
     for (FwIndexType i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
-      this->connect_to_bufferDeallocate(
-          i,
-          this->component.get_bufferDeallocate_InputPort(i)
-      );
+        this->connect_to_bufferDeallocate(i, this->component.get_bufferDeallocate_InputPort(i));
     }
 
     // bufferAllocate
     for (FwIndexType i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
-      this->connect_to_bufferAllocate(
-          i,
-          this->component.get_bufferAllocate_InputPort(i)
-      );
+        this->connect_to_bufferAllocate(i, this->component.get_bufferAllocate_InputPort(i));
     }
+}
 
-
-
-
-  }
-
-  void StaticMemoryTester ::
-    initComponents()
-  {
+void StaticMemoryTester ::initComponents() {
     this->init();
-    this->component.init(
-        INSTANCE
-    );
-  }
+    this->component.init(INSTANCE);
+}
 
-} // end namespace Svc
+}  // end namespace Svc

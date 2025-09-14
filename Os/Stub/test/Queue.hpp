@@ -1,10 +1,11 @@
 
 #ifndef OS_STUB_TEST_QUEUE_HPP
 #define OS_STUB_TEST_QUEUE_HPP
-#include "Os/Queue.hpp"
-#include <queue>
+#include <cassert>
 #include <deque>
-
+#include <limits>
+#include <queue>
+#include "Os/Queue.hpp"
 
 namespace Os {
 namespace Stub {
@@ -55,17 +56,25 @@ struct StaticData {
     static StaticData data;
 };
 
-
 struct InjectableStlQueueHandle : public QueueHandle {
     //! \brief message type
     struct Message {
         U8 data[STUB_QUEUE_TEST_MESSAGE_MAX_SIZE];
         FwQueuePriorityType priority;
         FwSizeType size;
+        U64 order;
+        static U64 order_counter;
         //! \brief comparison utility for messages
         struct LessMessage {
             bool operator()(const Message& a, const Message& b) {
-                return std::greater<FwQueuePriorityType>()(a.priority, b.priority);
+                // Compare priority for unequal priority
+                if (a.priority != b.priority) {
+                    return std::greater<FwQueuePriorityType>()(a.priority, b.priority);
+                }
+                // Cannot have like ordered items
+                assert(a.order != b.order);
+                // Compare received order for unequal received orders
+                return a.order > b.order;
             }
         };
     };
@@ -130,10 +139,10 @@ class InjectableStlQueue : public QueueInterface {
     //! \param priority: (output) priority of message read
     //! \return: status of the send
     Status receive(U8* destination,
-                           FwSizeType capacity,
-                           BlockingType blockType,
-                           FwSizeType& actualSize,
-                           FwQueuePriorityType& priority) override;
+                   FwSizeType capacity,
+                   BlockingType blockType,
+                   FwSizeType& actualSize,
+                   FwQueuePriorityType& priority) override;
 
     //! \brief get number of messages available
     //!

@@ -91,22 +91,6 @@ if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHED
 endif()
 
 ####
-# `FPRIME_ENABLE_UTIL_TARGETS`:
-#
-# Enables the targets required to run using `fprime-util`.  These include: check and refresh_cache.
-# This switch defaults to "ON" providing those targets, but may be set to off when running within an
-# IDE where limiting the number of targets is desirable. Note: unit test targets are still only generated when running
-# with -DBUILD_TESTING=ON.
-#
-# **Values:**
-# - ON: (default) generate all targets
-# - OFF: only generate executable, and library targets
-#
-# e.g. `-DFPRIME_ENABLE_UTIL_TARGETS=ON`
-####
-option(FPRIME_ENABLE_UTIL_TARGETS "Enable fprime-util targets" ON)
-
-####
 # `FPRIME_ENABLE_FRAMEWORK_UTS`:
 #
 # Allow a project to run fprime UTs from the core framework. Default: on,  run fprime framework UTs. This
@@ -265,7 +249,7 @@ option(BUILD_TESTING "Enable unit testing in the build" OFF)
 include(CTest)
 
 ####
-# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`, and `FPRIME_CONFIG_DIR`:
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, and `FPRIME_LIBRARY_LOCATIONS`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -339,13 +323,6 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
-
-# Settings for F config directory
-if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
-endif()
-set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
-
 
 # Set FPRIME_TOOLCHAIN_NAME when not set by toolchain directly
 if (NOT DEFINED FPRIME_TOOLCHAIN_NAME)

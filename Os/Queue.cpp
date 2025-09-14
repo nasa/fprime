@@ -9,7 +9,9 @@
 namespace Os {
 
 FwSizeType Queue::s_queueCount = 0;
+#if FW_QUEUE_REGISTRATION
 QueueRegistry* Queue::s_queueRegistry = nullptr;
+#endif
 
 Queue::Queue() : m_name(""), m_depth(0), m_size(0), m_delegate(*QueueInterface::getDelegate(m_handle_storage)) {}
 
@@ -32,16 +34,18 @@ QueueInterface::Status Queue ::create(const Fw::StringBase& name, FwSizeType dep
         this->m_size = messageSize;
         ScopeLock lock(Queue::getStaticMutex());
         Queue::s_queueCount++;
+#if FW_QUEUE_REGISTRATION
         if (Queue::s_queueRegistry != nullptr) {
             Queue::s_queueRegistry->registerQueue(this);
         }
+#endif
     }
     return status;
 }
 
 QueueInterface::Status Queue::send(const U8* buffer,
                                    FwSizeType size,
-                                   PlatformIntType priority,
+                                   FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
@@ -60,7 +64,7 @@ QueueInterface::Status Queue::receive(U8* destination,
                                       FwSizeType capacity,
                                       QueueInterface::BlockingType blockType,
                                       FwSizeType& actualSize,
-                                      PlatformIntType& priority) {
+                                      FwQueuePriorityType& priority) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(destination != nullptr);
     // Check if initialized
@@ -84,20 +88,20 @@ FwSizeType Queue::getMessageHighWaterMark() const {
     return this->m_delegate.getMessageHighWaterMark();
 }
 
-QueueHandle* Queue::getHandle(){
+QueueHandle* Queue::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const QueueInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 
 QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
-                                   PlatformIntType priority,
+                                   FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
     return this->send(message.getBuffAddr(), message.getBuffLength(), priority, blockType);
 }
 
 QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
                                       QueueInterface::BlockingType blockType,
-                                      PlatformIntType& priority) {
+                                      FwQueuePriorityType& priority) {
     FwSizeType actualSize = 0;
     destination.resetSer();  // Reset the buffer
     QueueInterface::Status status =

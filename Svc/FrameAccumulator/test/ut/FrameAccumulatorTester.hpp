@@ -63,6 +63,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test accumulation of multiple random-size buffer into frames successively
     void testAccumulateBuffersEmitManyFrames();
 
+    //! Test returning ownership of a buffer
+    void testBufferReturnDeallocation();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -84,7 +87,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // Port handler overrides
     // ----------------------------------------------------------------------
     //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -119,7 +122,6 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[2048];
 };
-
 
 }  // namespace Svc
 

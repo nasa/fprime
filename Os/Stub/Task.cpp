@@ -7,9 +7,7 @@ namespace Os {
 namespace Stub {
 namespace Task {
 
-void StubTask::onStart() {
-
-}
+void StubTask::onStart() {}
 
 Os::TaskInterface::Status StubTask::join() {
     return Os::TaskInterface::Status::UNKNOWN_ERROR;
@@ -19,11 +17,11 @@ void StubTask::suspend(Os::TaskInterface::SuspensionType suspensionType) {}
 
 void StubTask::resume() {}
 
-Os::TaskHandle *StubTask::getHandle() {
+Os::TaskHandle* StubTask::getHandle() {
     return nullptr;
 }
 
-Os::TaskInterface::Status StubTask::start(const Os::TaskInterface::Arguments &arguments) {
+Os::TaskInterface::Status StubTask::start(const Os::TaskInterface::Arguments& arguments) {
     return Os::TaskInterface::Status::UNKNOWN_ERROR;
 }
 
@@ -36,7 +34,6 @@ Os::Task::Status StubTask::_delay(Fw::TimeInterval interval) {
     return Os::Task::Status::UNKNOWN_ERROR;
 }
 
-
-}
-}
-}
+}  // namespace Task
+}  // namespace Stub
+}  // namespace Os

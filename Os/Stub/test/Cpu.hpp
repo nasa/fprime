@@ -2,8 +2,8 @@
 // \title Os/Stub/test/Cpu.hpp
 // \brief test stub implementation for Os::Cpu, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Cpu.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Test_Cpu_HPP
 #define OS_Stub_Test_Cpu_HPP
 
@@ -17,14 +17,7 @@ class TestCpu;
 //! Data that supports the stubbed File implementation.
 //!/
 struct StaticData {
-    enum LastFn {
-        NONE_FN,
-        CONSTRUCT_FN,
-        DESTRUCT_FN,
-        COUNT_FN,
-        TICKS_FN,
-        HANDLE_FN
-    };
+    enum LastFn { NONE_FN, CONSTRUCT_FN, DESTRUCT_FN, COUNT_FN, TICKS_FN, HANDLE_FN };
     //! Last function called
     LastFn lastCalled = NONE_FN;
 
@@ -45,8 +38,7 @@ struct StaticData {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct TestCpuHandle : public CpuHandle {
-};
+struct TestCpuHandle : public CpuHandle {};
 
 //! \brief stub implementation of Os::CpuInterface
 //!
@@ -103,9 +95,9 @@ class TestCpu : public CpuInterface {
     //! File handle for PosixFile
     TestCpuHandle m_handle;
 };
-} // namespace Test
-} // namespace Cpu
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Cpu
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Test_Cpu_HPP
+#endif  // OS_Stub_Test_Cpu_HPP

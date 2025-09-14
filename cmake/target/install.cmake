@@ -18,8 +18,11 @@ function(_install_real_helper OUTPUT FULL_DEPENDENCIES)
     set(OUTPUT_LIST)
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         is_target_real(IS_REAL "${DEPENDENCY}")
+        get_target_property(ALIASED_TARGET "${DEPENDENCY}" ALIASED_TARGET)
         if (IS_REAL)
             list(APPEND OUTPUT_LIST "${DEPENDENCY}")
+        elseif (ALIASED_TARGET)
+            list(APPEND OUTPUT_LIST "${ALIASED_TARGET}")
         endif()
     endforeach()
     set("${OUTPUT}" "${OUTPUT_LIST}" PARENT_SCOPE)
@@ -50,7 +53,9 @@ function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_D
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static
             COMPONENT ${MODULE}
     )
-    install(FILES ${FPRIME_CURRENT_DICTIONARY_FILE} ${FPRIME_CURRENT_DICTIONARY_FILE_JSON} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT ${MODULE})
+    install(FILES ${CMAKE_BINARY_DIR}/hashes.txt DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT ${MODULE})
+
+    # Set up installation
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_INSTALL_COMPONENT=${MODULE} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
 endfunction()

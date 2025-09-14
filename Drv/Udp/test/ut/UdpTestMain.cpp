@@ -24,6 +24,11 @@ TEST(Reconnect, UdpReceiveThreadReconnect) {
     tester.test_advanced_reconnect();
 }
 
+TEST(Reconnect, UdpBufferDeallocation) {
+    Drv::UdpTester tester;
+    tester.test_buffer_deallocation();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

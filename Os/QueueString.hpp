@@ -7,7 +7,7 @@
 #ifndef OS_QUEUE_STRING_HPP
 #define OS_QUEUE_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/StringBase.hpp"
 
@@ -19,9 +19,9 @@ class QueueString final : public Fw::StringBase {
 
     QueueString() : StringBase() { *this = ""; }
 
-    explicit QueueString(const QueueString& src) : StringBase() { *this = src; }
+    QueueString(const QueueString& src) : StringBase() { *this = src; }
 
-    explicit QueueString(const StringBase& src) : StringBase() { *this = src; }
+    QueueString(const StringBase& src) : StringBase() { *this = src; }
 
     explicit QueueString(const char* src) : StringBase() { *this = src; }
 

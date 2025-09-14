@@ -16,78 +16,69 @@
 
 namespace Svc {
 
-  namespace ImmediateEOS {
+namespace ImmediateEOS {
 
-    //! Test sequences with immediate commands followed by an EOS marker
-    class CmdSequencerTester :
-      public ImmediateBase::CmdSequencerTester
-    {
+//! Test sequences with immediate commands followed by an EOS marker
+class CmdSequencerTester : public ImmediateBase::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format =
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Inject file errors
+    void FileErrors();
 
-      public:
+    //! Run a complete sequence and then issue a command response
+    void UnexpectedCommandResponse();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Run a sequence and, while it is running, start a new sequence
+    //! The new sequence should cause an error
+    void NewSequence();
 
-        //! Inject file errors
-        void FileErrors();
+    //! Run a sequence manually
+    void Manual();
 
-        //! Run a complete sequence and then issue a command response
-        void UnexpectedCommandResponse();
+    //! Run an automatic sequence by command
+    void AutoByCommand();
 
-        //! Run a sequence and, while it is running, start a new sequence
-        //! The new sequence should cause an error
-        void NewSequence();
+    //! Run an automatic sequence through a port call
+    void AutoByPort();
 
-        //! Run a sequence manually
-        void Manual();
+    //! Send invalid manual commands while a sequence is running
+    void InvalidManualCommands();
 
-        //! Run an automatic sequence by command
-        void AutoByCommand();
+    //! Sequence timeout
+    void SequenceTimeout();
 
-        //! Run an automatic sequence through a port call
-        void AutoByPort();
+    //! Start and cancel a sequence
+    void Cancel();
 
-        //! Send invalid manual commands while a sequence is running
-        void InvalidManualCommands();
+    //! Validate a sequence file
+    void Validate();
 
-        //! Sequence timeout
-        void SequenceTimeout();
+    // ----------------------------------------------------------------------
+    // Private helper methods
+    // ----------------------------------------------------------------------
 
-        //! Start and cancel a sequence
-        void Cancel();
+  private:
+    //! Execute commands for a manual sequence
+    void executeCommandsManual(const char* const fileName,  //!< The file name
+                               const U32 numCommands        //!< The number of commands in the sequence
+    );
+};
 
-        //! Validate a sequence file
-        void Validate();
+}  // namespace ImmediateEOS
 
-        // ----------------------------------------------------------------------
-        // Private helper methods
-        // ----------------------------------------------------------------------
-
-      private:
-
-        //! Execute commands for a manual sequence
-        void executeCommandsManual(
-            const char *const fileName, //!< The file name
-            const U32 numCommands //!< The number of commands in the sequence
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

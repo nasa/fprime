@@ -14,7 +14,7 @@
 #define Fw_GTest_Bytes_HPP
 
 #include <gtest/gtest.h>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
 

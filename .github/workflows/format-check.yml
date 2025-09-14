@@ -1,0 +1,47 @@
+name: "Code Format Check"
+
+on:
+  push:
+    branches: [ devel, release/**, ci/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  cpp-formatting:
+    name: C++ Formatting
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - uses: ./.github/actions/setup
+      - name: "Check C++ Formatting"
+        env:
+          # Svc is currently listing all but Svc/FpySequencer
+          CHECKED_DIRS: >-
+            CFDP
+            default
+            Drv
+            FppTestProject
+            Fw
+            Os
+            Ref
+            Svc
+            TestUtils
+            Utils
+
+        run: |
+          fprime-util format --check --dirs $CHECKED_DIRS
+        shell: bash

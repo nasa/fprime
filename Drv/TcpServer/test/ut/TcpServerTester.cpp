@@ -10,10 +10,10 @@
 //
 // ======================================================================
 #include "TcpServerTester.hpp"
-#include "STest/Pick/Pick.hpp"
-#include "Os/Console.hpp"
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
+#include "Os/Console.hpp"
+#include "STest/Pick/Pick.hpp"
 
 Os::Console logger;
 
@@ -23,9 +23,9 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
+void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect, bool expect_started) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
-    U16 port =  0;
+    U16 port = 0;
     EXPECT_FALSE(component.isStarted());
     status1 = this->component.configure("127.0.0.1", port, 0, 100);
     EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
@@ -33,12 +33,15 @@ void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
     if (recv_thread) {
         Os::TaskString name("receiver thread");
         this->component.setAutomaticOpen(reconnect);
-        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
     // Component should always launch the listening server on configure
-    // The thread will retry if the configure fails
-    EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms()/10 + 1));
-    EXPECT_TRUE(component.isStarted());
+    // The thread will retry if the configure fails. When we do not expect it to be started, we must wait for it to
+    // stop.
+    if (expect_started) {
+        EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms() / 10 + 1));
+        EXPECT_TRUE(component.isStarted());
+    }
 }
 
 void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
@@ -55,39 +58,34 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
         status2 = client.open(client_fd);
         EXPECT_EQ(status2, Drv::SocketIpStatus::SOCK_SUCCESS) << "Failed to connect client";
-        U32 size = sizeof(m_data_storage);
+        FwSizeType size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
             status1 = this->component.open();
         } else {
-            EXPECT_TRUE(this->wait_on_change(true, Drv::Test::get_configured_delay_ms()/10 + 1)) <<
-                "On iteration: " << i << " and receive thread: " << recv_thread;
+            EXPECT_TRUE(this->wait_on_change(true, Drv::Test::get_configured_delay_ms() / 10 + 1))
+                << "On iteration: " << i << " and receive thread: " << recv_thread;
         }
-        EXPECT_TRUE(this->component.isOpened()) <<
-            "On iteration: " << i << " and receive thread: " << recv_thread;
+        EXPECT_TRUE(this->component.isOpened()) << "On iteration: " << i << " and receive thread: " << recv_thread;
 
-        EXPECT_EQ(status1, Drv::SOCK_SUCCESS) <<
-            "On iteration: " << i << " and receive thread: " << recv_thread;
-        EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
-            "On iteration: " << i << " and receive thread: " << recv_thread;
+        EXPECT_EQ(status1, Drv::SOCK_SUCCESS) << "On iteration: " << i << " and receive thread: " << recv_thread;
+        EXPECT_EQ(status2, Drv::SOCK_SUCCESS) << "On iteration: " << i << " and receive thread: " << recv_thread;
 
         // If all the opens worked, then run this
-        if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
-            (this->component.isOpened())) {
+        if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) && (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
             Drv::Test::force_recv_timeout(this->component.m_descriptor.fd, this->component.getSocketHandler());
             Drv::Test::force_recv_timeout(client_fd.fd, client);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK) <<
-                "On iteration: " << i << " and receive thread: " << recv_thread;
+            Drv::ByteStreamStatus status = invoke_to_send(0, m_data_buffer);
+            EXPECT_EQ(status, ByteStreamStatus::OP_OK)
+                << "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::receive_all(client, client_fd, buffer, size);
-            EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
-                "On iteration: " << i << " and receive thread: " << recv_thread << " and errno " << errno;
-            EXPECT_EQ(size, m_data_buffer.getSize()) <<
-                "On iteration: " << i << " and receive thread: " << recv_thread;
+            EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
+                << "On iteration: " << i << " and receive thread: " << recv_thread << " and errno " << errno;
+            EXPECT_EQ(size, m_data_buffer.getSize()) << "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
 
             // If receive thread is live, try the other way
@@ -95,10 +93,11 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
                 status2 = client.send(client_fd, m_data_buffer.getData(), m_data_buffer.getSize());
-                EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
-                    "On iteration: " << i << " and receive thread: " << recv_thread;
+                EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
+                    << "On iteration: " << i << " and receive thread: " << recv_thread;
                 if (status2 == Drv::SOCK_SUCCESS) {
-                    while (not m_spinner) {}
+                    while (not m_spinner) {
+                    }
                 }
             }
         }
@@ -132,7 +131,6 @@ bool TcpServerTester::wait_on_change(bool open, U32 iterations) {
     return false;
 }
 
-
 bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         if (open == this->component.isStarted()) {
@@ -146,7 +144,8 @@ bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
 TcpServerTester ::TcpServerTester()
     : TcpServerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TcpServer"),
-      m_data_buffer(m_data_storage, 0), m_spinner(true) {
+      m_data_buffer(m_data_storage, 0),
+      m_spinner(true) {
     this->initComponents();
     this->connectPorts();
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
@@ -171,15 +170,15 @@ void TcpServerTester ::test_receive_thread() {
 }
 
 void TcpServerTester ::test_advanced_reconnect() {
-    test_with_loop(10, true); // Up to 10 * RECONNECT_MS
+    test_with_loop(10, true);  // Up to 10 * RECONNECT_MS
 }
 
 void TcpServerTester ::test_no_automatic_send_connection() {
     Drv::TcpClientSocket client;
     Drv::SocketDescriptor client_fd;
-    
-    // Set up the server without automatic connection
-    this->setup_helper(false, true);
+
+    // Set up the server without automatic connection, and don't expect it to stay started
+    this->setup_helper(false, true, false);
     this->component.setAutomaticOpen(false);
     Drv::Test::force_recv_timeout(client_fd.fd, client);
 
@@ -200,12 +199,13 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     Drv::TcpClientSocket client;
     Drv::SocketDescriptor client_fd;
 
-    // Set up the server without automatic connection
-    this->setup_helper(true, false);
+    // Set up the server without automatic connection, and don't expect it to stay started
+    this->setup_helper(true, false, false);
 
     // Connect a client to the server so it is waiting in the "listen" queue
     // The read thread should not automatically connect and will thus exit with a failure
     client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
+    ASSERT_TRUE(this->wait_on_started(false, Drv::Test::get_configured_delay_ms() / 10 + 1));
     ASSERT_EQ(client.open(client_fd), Drv::SOCK_FAILED_TO_CONNECT);
     ASSERT_FALSE(this->component.isOpened());
 
@@ -214,14 +214,25 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     this->component.terminate();
 }
 
+void TcpServerTester ::test_buffer_deallocation() {
+    U8 data[1];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_recvReturnIn(0, buffer);
+    ASSERT_from_deallocate_SIZE(1);  // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void TcpServerTester ::from_recv_handler(const FwIndexType portNum,
+                                         Fw::Buffer& recvBuffer,
+                                         const ByteStreamStatus& recvStatus) {
     // this function will still receive a status of error because the recv port is always called
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if (recvStatus == RecvStatus::RECV_OK) {
+    if (recvStatus == ByteStreamStatus::OP_OK) {
         // Make sure we can get to unblocking the spinner
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
@@ -230,27 +241,10 @@ void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& 
     delete[] recvBuffer.getData();
 }
 
-void TcpServerTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
-}
-
-Fw::Buffer TcpServerTester ::
-    from_allocate_handler(
-        const FwIndexType portNum,
-        U32 size
-    )
-  {
+Fw::Buffer TcpServerTester ::from_allocate_handler(const FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_allocate(size);
     Fw::Buffer buffer(new U8[size], size);
     return buffer;
-  }
+}
 
-  void TcpServerTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
-  }
 }  // end namespace Drv

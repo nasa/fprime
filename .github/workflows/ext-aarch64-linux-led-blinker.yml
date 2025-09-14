@@ -1,0 +1,112 @@
+# Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker
+# Runs integration tests on aarch64-linux
+
+name: "External Repo: AArch64 Linux LedBlinker"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+env:
+  AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
+  AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  ARM_TOOLS_PATH: /tmp/aarch64-toolchain
+  FPRIME_LOCATION: ./lib/fprime
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-workshop-led-blinker
+
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: fprime-community/fprime-workshop-led-blinker
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ${{ env.FPRIME_LOCATION }}
+          fetch-depth: 0
+      - uses: ./lib/fprime/.github/actions/setup
+        with:
+          location: ${{ env.FPRIME_LOCATION }}
+      - name: "Download and Setup AArch64 Linux Toolchain"
+        run: |
+          mkdir -p ${AARCH64_TOOLCHAIN_DIR}
+          wget -q ${AARCH64_TOOLCHAIN_URL}
+          tar -xf $(basename ${AARCH64_TOOLCHAIN_URL}) -C ${AARCH64_TOOLCHAIN_DIR} --strip-components 1
+          echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
+      - name: "Generate AArch64 Linux Build Cache"
+        run: |
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p aarch64-linux-artifacts
+          cp -r ./build-artifacts aarch64-linux-artifacts
+          cp -r Components/Led/test/int aarch64-linux-artifacts
+      - name: 'Archive Build Artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
+          retention-days: 5
+
+  aarch64-integration:
+    name: "AArch64 Linux Integration Tests"
+    runs-on: [self-hosted, aarch64-linux]
+    needs: cross-compilation
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
+      - name: "Setup environment"
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-artifacts
+      - name: Run Integration Tests
+        run: |
+          . venv/bin/activate
+          mkdir -p ci-logs
+          chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
+          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
+          sleep 10
+          pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
+      - name: 'Archive logs'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aarch64-linux-logs
+          path: ci-logs
+          retention-days: 5

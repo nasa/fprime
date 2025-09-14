@@ -13,8 +13,7 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
 
-#include <algorithm> // for std::find
-
+#include <algorithm>  // for std::find
 
 namespace Os {
 namespace Test {
@@ -25,8 +24,8 @@ struct Tester {
     //!
     enum DirectoryState {
         UNINITIALIZED,  //!< Directory is uninitialized
-        OPEN,   //!< Directory is open
-        CLOSED  //!< Directory is closed
+        OPEN,           //!< Directory is open
+        CLOSED          //!< Directory is closed
     };
 
     // Constructors that ensures the directory is always valid
@@ -46,7 +45,6 @@ struct Tester {
     std::vector<std::string> m_filenames;
     //! Tracks the seek position of directory, for testing purposes
     FwIndexType m_seek_position = 0;
-
 
     //! \brief Check if filename is in the list of test m_filenames created for the tested directory
     bool is_valid_filename(const std::string& filename) const {

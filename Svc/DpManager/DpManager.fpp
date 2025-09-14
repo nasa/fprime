@@ -74,7 +74,7 @@ module Svc {
 
     @ Buffer allocation failed
     event BufferAllocationFailed(
-                                  $id: U32 @< The container ID
+                                  $id: FwDpIdType @< The container ID
                                 ) \
       severity warning high \
       format "Buffer allocation failed for container id {}" \

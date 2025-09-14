@@ -85,7 +85,7 @@ void VersionTester ::test_enable() {
     this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::DISABLED);
     ASSERT_CMD_RESPONSE(0, 0, 9, Fw::CmdResponse::OK);
     VersionTester::test_setVer(false);
-    //When verbosity is disabled, events are still generated but not EHAs
+    // When verbosity is disabled, events are still generated but not EHAs
     ASSERT_EVENTS_CustomVersions_SIZE(10);
     ASSERT_TLM_CustomVersion01_SIZE(0);
     ASSERT_TLM_CustomVersion02_SIZE(0);
@@ -102,7 +102,7 @@ void VersionTester ::test_enable() {
     this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::ENABLED);
     ASSERT_CMD_RESPONSE(0, 0, 9, Fw::CmdResponse::OK);
     VersionTester::test_setVer(true);
-    //When verbosity is enabled, events and EHAs are generated
+    // When verbosity is enabled, events and EHAs are generated
     ASSERT_EVENTS_CustomVersions_SIZE(10);
     ASSERT_TLM_CustomVersion01_SIZE(1);
     ASSERT_TLM_CustomVersion02_SIZE(1);
@@ -194,22 +194,26 @@ void VersionTester ::test_versions() {
     ASSERT_EVENTS_CustomVersions_SIZE(10);
 
     ASSERT_EVENTS_CustomVersions(2, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, "ver_2");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, Fw::String("ver_2"), Svc::VersionStatus::OK);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_02, Fw::String("ver_2"),
+                           Svc::VersionStatus::OK);
     ASSERT_TLM_CustomVersion03(0, custom_data_struct);
     ASSERT_TLM_CustomVersion03_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(3, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "ver_3");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, Fw::String("ver_3"), Svc::VersionStatus::FAILURE);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, Fw::String("ver_3"),
+                           Svc::VersionStatus::FAILURE);
     ASSERT_TLM_CustomVersion04(0, custom_data_struct);
     ASSERT_TLM_CustomVersion04_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(6, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, "ver_6");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, Fw::String("ver_6"), Svc::VersionStatus::FAILURE);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_06, Fw::String("ver_6"),
+                           Svc::VersionStatus::FAILURE);
     ASSERT_TLM_CustomVersion07(0, custom_data_struct);
     ASSERT_TLM_CustomVersion07_SIZE(1);
 
     ASSERT_EVENTS_CustomVersions(9, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, "ver_9");
-    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, Fw::String("ver_9"), Svc::VersionStatus::OK);
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, Fw::String("ver_9"),
+                           Svc::VersionStatus::OK);
     ASSERT_TLM_CustomVersion10(0, custom_data_struct);
     ASSERT_TLM_CustomVersion10_SIZE(1);
 

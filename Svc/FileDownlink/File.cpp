@@ -10,20 +10,14 @@
 //
 // ======================================================================
 
-#include <Svc/FileDownlink/FileDownlink.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
 #include <Os/FileSystem.hpp>
+#include <Svc/FileDownlink/FileDownlink.hpp>
 
 namespace Svc {
 
-  Os::File::Status FileDownlink::File ::
-    open(
-        const char *const sourceFileName,
-        const char *const destFileName
-    )
-  {
-
+Os::File::Status FileDownlink::File ::open(const char* const sourceFileName, const char* const destFileName) {
     // Set source name
     Fw::LogStringArg sourceLogStringArg(sourceFileName);
     this->m_sourceName = sourceLogStringArg;
@@ -33,14 +27,13 @@ namespace Svc {
     this->m_destName = destLogStringArg;
 
     // Set size
-    FwSignedSizeType file_size;
-    const Os::FileSystem::Status status =
-      Os::FileSystem::getFileSize(sourceFileName, file_size);
+    FwSizeType file_size;
+    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(sourceFileName, file_size);
     if (status != Os::FileSystem::OP_OK) {
-      return Os::File::BAD_SIZE;
+        return Os::File::BAD_SIZE;
     }
     // If the size does not cast cleanly to the desired U32 type, return size error
-    if (static_cast<FwSignedSizeType>(static_cast<U32>(file_size)) != file_size) {
+    if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
         return Os::File::BAD_SIZE;
     }
     this->m_size = static_cast<U32>(file_size);
@@ -51,24 +44,16 @@ namespace Svc {
 
     // Open osFile for reading
     return this->m_osFile.open(sourceFileName, Os::File::OPEN_READ);
+}
 
-  }
-
-  Os::File::Status FileDownlink::File ::
-    read(
-        U8 *const data,
-        const U32 byteOffset,
-        const U32 size
-    )
-  {
-
+Os::File::Status FileDownlink::File ::read(U8* const data, const U32 byteOffset, const U32 size) {
     Os::File::Status status;
     status = this->m_osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {
         return status;
     }
 
-    FwSignedSizeType intSize = size;
+    FwSizeType intSize = size;
     status = this->m_osFile.read(data, intSize);
 
     if (status != Os::File::OP_OK) {
@@ -81,6 +66,5 @@ namespace Svc {
     this->m_checksum.update(data, byteOffset, size);
 
     return Os::File::OP_OK;
-
-  }
 }
+}  // namespace Svc

@@ -2,13 +2,13 @@
 // \title Os/Darwin/Cpu.cpp
 // \brief Darwin implementation for Os::Cpu
 // ======================================================================
-#include <Os/Darwin/Cpu.hpp>
-#include <Fw/Types/Assert.hpp>
 #include <mach/mach_error.h>
 #include <mach/mach_host.h>
 #include <mach/mach_init.h>
 #include <mach/mach_types.h>
 #include <mach/message.h>
+#include <Fw/Types/Assert.hpp>
+#include <Os/Darwin/Cpu.hpp>
 
 namespace Os {
 namespace Darwin {
@@ -27,8 +27,9 @@ kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, FwSizeTy
                   "FwSizeType cannot hold natural_t values");
     natural_t cpu_count_natural;
     mach_msg_type_number_t processor_msg_count;
-    kern_return_t stat = host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO, &cpu_count_natural,
-                                             reinterpret_cast<processor_info_array_t*>(&cpu_load_info), &processor_msg_count);
+    kern_return_t stat =
+        host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO, &cpu_count_natural,
+                            reinterpret_cast<processor_info_array_t*>(&cpu_load_info), &processor_msg_count);
     cpu_count = cpu_count_natural;
     return stat;
 }
@@ -88,6 +89,6 @@ CpuHandle* DarwinCpu::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Cpu
-} // namespace Darwin
-} // namespace Os
+}  // namespace Cpu
+}  // namespace Darwin
+}  // namespace Os

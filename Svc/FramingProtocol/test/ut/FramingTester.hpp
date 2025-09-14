@@ -73,7 +73,7 @@ class FramingTester {
     // ----------------------------------------------------------------------
 
     //! Construct a FramingTester
-    FramingTester(Fw::ComPacket::ComPacketType a_packetType  //!< The packet type
+    FramingTester(Fw::ComPacketType a_packetType  //!< The packet type
     );
 
   public:
@@ -121,7 +121,7 @@ class FramingTester {
     const U32 dataSize;
 
     //! The packet type
-    Fw::ComPacket::ComPacketType packetType;
+    Fw::ComPacketType packetType;
 
     //! Storage for the buffer
     U8 bufferStorage[MAX_BUFFER_SIZE];

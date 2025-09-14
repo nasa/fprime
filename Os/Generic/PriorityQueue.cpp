@@ -53,20 +53,20 @@ QueueInterface::Status PriorityQueue::create(const Fw::StringBase& name, FwSizeT
     // Allocate indices list
     FwSizeType* indices = new (std::nothrow) FwSizeType[depth];
     if (indices == nullptr) {
-        return QueueInterface::Status::UNKNOWN_ERROR;
+        return QueueInterface::Status::ALLOCATION_FAILED;
     }
     // Allocate sizes list or clean-up
     FwSizeType* sizes = new (std::nothrow) FwSizeType[depth];
     if (sizes == nullptr) {
         delete[] indices;
-        return QueueInterface::Status::UNKNOWN_ERROR;
+        return QueueInterface::Status::ALLOCATION_FAILED;
     }
     // Allocate sizes list or clean-up
     U8* data = new (std::nothrow) U8[depth * messageSize];
     if (data == nullptr) {
         delete[] indices;
         delete[] sizes;
-        return QueueInterface::Status::UNKNOWN_ERROR;
+        return QueueInterface::Status::ALLOCATION_FAILED;
     }
     // Allocate max heap or clean-up
     bool created = this->m_handle.m_heap.create(depth);
@@ -74,7 +74,7 @@ QueueInterface::Status PriorityQueue::create(const Fw::StringBase& name, FwSizeT
         delete[] indices;
         delete[] sizes;
         delete[] data;
-        return QueueInterface::Status::UNKNOWN_ERROR;
+        return QueueInterface::Status::ALLOCATION_FAILED;
     }
     // Assign initial indices and sizes
     for (FwSizeType i = 0; i < depth; i++) {

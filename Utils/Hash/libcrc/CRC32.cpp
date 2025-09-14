@@ -14,80 +14,62 @@
 
 static_assert(sizeof(unsigned long) >= sizeof(U32), "CRC32 cannot fit in CRC32 library chosen types");
 
-
 namespace Utils {
 
-    Hash ::
-        Hash()
-    {
-        this->init();
-    }
+Hash ::Hash() {
+    this->init();
+}
 
-    Hash ::
-        ~Hash()
-    {
-    }
+Hash ::~Hash() {}
 
-    void Hash ::
-        hash(const void *const data, const FwSizeType len, HashBuffer& buffer)
-    {
-        HASH_HANDLE_TYPE local_hash_handle;
-        local_hash_handle = 0xffffffffL;
-        FW_ASSERT(data);
-        char c;
-        for(FwSizeType index = 0; index < len; index++) {
-            c = static_cast<const char*>(data)[index];
-            local_hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(local_hash_handle, c));
-        }
-        HashBuffer bufferOut;
-        // For CRC32 we need to return the one's complement of the result:
-        Fw::SerializeStatus status = bufferOut.serialize(~(local_hash_handle));
-        FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
-        buffer = bufferOut;
+void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffer) {
+    HASH_HANDLE_TYPE local_hash_handle;
+    local_hash_handle = 0xffffffffL;
+    FW_ASSERT(data);
+    char c;
+    for (FwSizeType index = 0; index < len; index++) {
+        c = static_cast<const char*>(data)[index];
+        local_hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(local_hash_handle, c));
     }
+    HashBuffer bufferOut;
+    // For CRC32 we need to return the one's complement of the result:
+    Fw::SerializeStatus status = bufferOut.serialize(~(local_hash_handle));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
+    buffer = bufferOut;
+}
 
-    void Hash ::
-        init()
-    {
-        this->hash_handle = 0xffffffffL;
-    }
+void Hash ::init() {
+    this->hash_handle = 0xffffffffL;
+}
 
-    void Hash ::
-        update(const void *const data, FwSizeType len)
-    {
-        FW_ASSERT(data);
-        char c;
-        for(FwSizeType index = 0; index < len; index++) {
-            c = static_cast<const char*>(data)[index];
-            this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
-        }
-    }
-
-    void Hash ::
-        final(HashBuffer& buffer)
-    {
-        HashBuffer bufferOut;
-        // For CRC32 we need to return the one's complement of the result:
-        Fw::SerializeStatus status = bufferOut.serialize(~(this->hash_handle));
-        FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
-        buffer = bufferOut;
-    }
-
-    void Hash ::
-      final(U32 &hashvalue)
-    {
-      FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
-      // For CRC32 we need to return the one's complement of the result:
-      hashvalue = ~(this->hash_handle);
-    }
-
-    void Hash ::
-      setHashValue(HashBuffer &value)
-    {
-      Fw::SerializeStatus status = value.deserialize(this->hash_handle);
-      FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
-      // Expecting `value` to already be one's complement; so doing one's complement
-      // here for correct hash updates
-      this->hash_handle = ~this->hash_handle;
+void Hash ::update(const void* const data, FwSizeType len) {
+    FW_ASSERT(data);
+    char c;
+    for (FwSizeType index = 0; index < len; index++) {
+        c = static_cast<const char*>(data)[index];
+        this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
     }
 }
+
+void Hash ::final(HashBuffer& buffer) {
+    HashBuffer bufferOut;
+    // For CRC32 we need to return the one's complement of the result:
+    Fw::SerializeStatus status = bufferOut.serialize(~(this->hash_handle));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
+    buffer = bufferOut;
+}
+
+void Hash ::final(U32& hashvalue) {
+    FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
+    // For CRC32 we need to return the one's complement of the result:
+    hashvalue = ~(this->hash_handle);
+}
+
+void Hash ::setHashValue(HashBuffer& value) {
+    Fw::SerializeStatus status = value.deserialize(this->hash_handle);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
+    // Expecting `value` to already be one's complement; so doing one's complement
+    // here for correct hash updates
+    this->hash_handle = ~this->hash_handle;
+}
+}  // namespace Utils

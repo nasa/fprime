@@ -6,16 +6,14 @@
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__
 #include <gtest/gtest.h>
-#include <vector>
 #include <chrono>
+#include <vector>
 
 #include "Os/RawTime.hpp"
-#include "STest/Rule/Rule.hpp"
 #include "STest/Pick/Pick.hpp"
-#include "STest/Scenario/RandomScenario.hpp"
+#include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
-
-
+#include "STest/Scenario/RandomScenario.hpp"
 
 namespace Os {
 namespace Test {
@@ -42,11 +40,10 @@ struct Tester {
     std::vector<std::chrono::time_point<std::chrono::system_clock>> m_shadow_times;
 
     //! Get time for shadow state, at specified index
-    void shadow_now(FwIndexType index) {
-        this->m_shadow_times[index] = std::chrono::system_clock::now();
-    }
+    void shadow_now(FwIndexType index) { this->m_shadow_times[index] = std::chrono::system_clock::now(); }
 
-    U32 shadow_getDiffUsec(std::chrono::time_point<std::chrono::system_clock>& t1, std::chrono::time_point<std::chrono::system_clock>& t2) const {
+    U32 shadow_getDiffUsec(std::chrono::time_point<std::chrono::system_clock>& t1,
+                           std::chrono::time_point<std::chrono::system_clock>& t2) const {
         // Signedness is important here so we compare and substract accordingly
         if (t1 < t2) {
             return std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
@@ -77,8 +74,7 @@ struct Tester {
             result = Fw::TimeInterval::sub(interval, shadow_interval);
         }
         // Check that difference between 2 intervals is less than threshold
-        ASSERT_TRUE(result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD)) 
-            << "Interval difference: " << result;
+        ASSERT_TRUE(result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD)) << "Interval difference: " << result;
     }
 
     void shadow_validate_diff_result(U32 result, U32 shadow_result) {
@@ -92,9 +88,7 @@ struct Tester {
             << "Difference between results: " << result_diff << " microseconds";
     }
 
-    FwIndexType pick_random_index() const {
-        return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1);;
-    }
+    FwIndexType pick_random_index() const { return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1); }
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "RawTimeRules.hpp"

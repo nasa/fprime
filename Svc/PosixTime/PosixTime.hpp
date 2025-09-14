@@ -13,17 +13,18 @@
 namespace Svc {
 
 class PosixTime final : public PosixTimeComponentBase {
-    public:
-        explicit PosixTime(const char* compName);
-        virtual ~PosixTime();
-    protected:
-        void timeGetPort_handler(
-                FwIndexType portNum, /*!< The port number*/
-                Fw::Time &time /*!< The U32 cmd argument*/
-            );
-    private:
+  public:
+    explicit PosixTime(const char* compName);
+    virtual ~PosixTime();
+
+  protected:
+    void timeGetPort_handler(FwIndexType portNum, /*!< The port number*/
+                             Fw::Time& time       /*!< The U32 cmd argument*/
+    );
+
+  private:
 };
 
-}
+}  // namespace Svc
 
 #endif /* POSIX_TIME_HPP_ */

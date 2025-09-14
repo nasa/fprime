@@ -13,8 +13,8 @@
 #ifndef SVC_FRAMING_PROTOCOL_HPP
 #define SVC_FRAMING_PROTOCOL_HPP
 
-#include "Svc/FramingProtocol/FramingProtocolInterface.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/FramingProtocol/FramingProtocolInterface.hpp"
 
 namespace Svc {
 /**
@@ -33,7 +33,7 @@ class FramingProtocol {
     //! \brief constructor
     //!
     FramingProtocol();
-    virtual ~FramingProtocol(){};
+    virtual ~FramingProtocol() {};
 
     //! \brief setup function called to supply the interface used for allocation and sending
     //! \param interface: interface implementation, normally FramerComponentImpl
@@ -43,10 +43,10 @@ class FramingProtocol {
     //! \param data: pointer to a set of bytes to be framed
     //! \param size: size of data pointed to by `data`
     //! \param packet_type: type of data supplied for File downlink packets
-    virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
+    virtual void frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) = 0;
 
-  PROTECTED:
+  protected:
     FramingProtocolInterface* m_interface;
 };
-}
+}  // namespace Svc
 #endif  // SVC_FRAMING_PROTOCOL_HPP

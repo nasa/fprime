@@ -8,6 +8,9 @@ represent concepts in the system (e.g. size) and are configured to use a specifi
 
 This document describes: fixed-width types and logical types.
 
+> [!TIP]
+> Many APIs (e.g. POSIX APIs) use types such as `int` or `long`. Projects should use those types when interfacing with the API and convert into fixed-width or logical types within the calling code.
+
 ## Fixed Width Types
 
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen
@@ -76,8 +79,6 @@ functions.
 | PlatformSignedSizeType  | Signed sizes                  | PRI_PlatformSignedSizeType  | Yes    | Minimum 4 Bytes |
 | PlatformPointerCastType | Pointers stored as integers   | PRI_PlatformPointerCastType | No     | sizeof(void*)   |
 | PlatformAssertArgType   | Argument to FW_ASSERT         | PRI_PlatformAssertArgType   | Yes/No | Any             |
-| PlatformIntType         | Deprecated (see note)         | PRI_PlatformIntType         | Yes    | sizeof(int)     |
-| PlatformUIntType        | Deprecated (see note)         | PRI_PlatformUIntType        | Yes    | sizeof(int)     |
 
 > [!WARNING]
 > `PlatformPointerCastType` values shall never be sent nor used outside the address space where a value was initialized because these values represent pointers only valid in a single address space.

@@ -3,33 +3,8 @@
 #
 # Functions supporting the F prime target additions. These targets allow building against modules
 # and top-level targets. This allows for multi-part builds like `sloc` or `dict` where some part
-# applies to the module and is rolled up into some global command. Target files must define two
-# functions `add_module_target` and `add_global_target`.
+# applies to the module and is rolled up into some global command. 
 #
-# ### `add_global_target` Specification:
-#
-# Adds a global target for the custom target. This handles the top-level target for the build.
-# Think `make dict`. It is the global root for all of the children module defines. This should call
-# CMake's `add_custom_target("${TARGET_NAME}" ...)` at some point in the function. Also pass the
-# `ALL` argument if it should be built as part of a standard build i.e. `make`.
-#
-# **Arguments passed in:**
-#  - **TARGET_NAME:** target name to be added. **Must** be passed to a call to `add_custom_target`
-#
-# ### `add_module_target` Specification:
-#
-# Adds a module-by-module target for this given target. Any subtargets for each module and their
-# commands should be registered via CMake's `add_custom_target("${TARGET_NAME}" ...)`. This command
-# is supplied with all of the modules knowledge. Add a `DEPENDS` call on AC_OUTPUTS to come after
-# the autocoding step.
-#
-# **Arguments passed in:**
-#  - **MODULE_NAME:** name of the module being built.
-#  - **TARGET_NAME:** target name to be added. **Must** be passed to a call to `add_custom_target`
-#  - **AC_INPUTS:** list of autocoder inputs. These are Ai.xml files
-#  - **SOURCE_FILES:** list of source file inputs. These are handwritten *.cpp and *.hpp.
-#  - **AC_OUTPUTS:** list of autocoder outputs. These are Ac.cpp and Ac.hpp files.
-#  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
 include_guard()
 
@@ -75,6 +50,37 @@ function(setup_global_targets)
     endif ()
 endfunction(setup_global_targets)
 
+####
+# Function `check_unknown_links`:
+#
+# Checks all ARGN supplied arguments to determine if they **should have** existed for deployment recursion to work
+# properly. If an argument is a file (i.e. a library or other file), a linker flag (-*), a generator expression
+# ($*) then these are passed. Anything else results in an error.
+#
+# - **DEPLOYMENT_NAME:** name of deployment being recursed for cleaner error messages
+# - **ARGN:** list of unknown targets to check
+####
+function(check_unknown_links DEPLOYMENT_NAME)
+    # Check all links that they exist or are valid
+    foreach(LINK IN LISTS ARGN)
+        # When a link is not a file, not a link flag, and not a generator expression then the target must already exist
+        # as a target in the CMake system to be used as part of recursive dependency lists.
+        if (EXISTS "${LINK}" AND NOT IS_DIRECTORY "${LINK}")
+            # File detected, skip dependency
+        elseif("${LINK}" MATCHES "^[-$].*")
+            # Link library of some form detected
+        else()
+            # Internal dependency name, must exist thus a failure
+            fprime_cmake_fatal_error(
+                "F Prime/CMake target '${LINK}' not available to deployment '${DEPLOYMENT_NAME}'. '${LINK}' must:\n"
+                "    1. Must be defined somewhere in the F Prime project\n"
+                "    2. Must be defined before '${DEPLOYMENT_NAME}' deployment (register_fprime_deployment)\n"
+                "'${LINK}' is undefined, or included via `add_fprime_subdirectory` after `register_fprime_deployment`."
+            )
+        endif()
+    endforeach()
+endfunction()
+
 
 ####
 # Function `setup_global_target`:
@@ -110,18 +116,31 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[target] Setting up '${TARGET_NAME}' on all module ${MODULE}")
     endif()
-    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+    get_target_property(MODULE_TYPE "${MODULE}" FPRIME_TYPE)
 
     if (NOT MODULE_TYPE STREQUAL "Deployment")
         cmake_language(CALL "${TARGET_NAME}_add_module_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
-        get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
-        if (NOT RECURSIVE_DEPENDENCIES)
-            resolve_dependencies(RESOLVED ${DEPENDENCIES})
-            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${RESOLVED})
-            set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
+        get_target_property(TRANSITIVE_DEPENDENCIES "${MODULE}" TRANSITIVE_DEPENDENCIES)
+        # Recalculate recursive dependencies
+        if (NOT TRANSITIVE_DEPENDENCIES)
+            set(RECURSED_PROPERTY_NAMES FPRIME_DEPENDENCIES)
+            recurse_target_properties("${MODULE}" "${RECURSED_PROPERTY_NAMES}" KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
+            
+            # Report all detected recursive dependencies
+            if (CMAKE_DEBUG_OUTPUT)
+                foreach(LIST_PRINT IN ITEMS EXTERNAL_LINKS KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
+                    message(STATUS "[target] '${MODULE}' Recursive Links: ${LIST_PRINT}")
+                    foreach(ITEM_PRINT IN LISTS ${LIST_PRINT})
+                        message(STATUS "[target]    ${ITEM_PRINT}")
+                    endforeach()
+                endforeach()
+            endif()
+            check_unknown_links("${MODULE}" ${UNKNOWN_LINKS})
+            set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")
+            set(TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")
         endif()
-        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
+        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${TRANSITIVE_DEPENDENCIES}")
     endif()
 endfunction(setup_single_target)
 
@@ -135,60 +154,36 @@ endfunction(setup_single_target)
 # - SOURCES: sources specified with `set(SOURCE_FILES ...)` in module's CMakeLists.txt
 # - DEPENDENCIES: dependencies and link libraries specified with `set(MOD_DEPS ...)` in module's CMakeLists.txt
 ####
-function(setup_module_targets MODULE SOURCES DEPENDENCIES)
+function(setup_module_targets BUILD_TARGET)
     # Grab the list of targets
     set(LIST_NAME FPRIME_TARGET_LIST)
-    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+
+    # Read target properties
+    foreach(PROPERTY IN ITEMS FPRIME_TYPE SOURCES LINK_LIBRARIES INTERFACE_LINK_LIBRARIES)
+        get_target_property("MODULE_${PROPERTY}" "${BUILD_TARGET}" "${PROPERTY}")
+        if (NOT MODULE_${PROPERTY})
+            set("MODULE_${PROPERTY}")
+        endif()
+    endforeach()
+
 
     # Get both normal and ut target lists
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
     get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
     # UT targets are the only targets run on unit tests, and are included in deployments
-    if (MODULE_TYPE STREQUAL "Deployment")
+    if (MODULE_FPRIME_TYPE STREQUAL "Deployment")
         list(APPEND TARGETS ${UT_TARGETS})
-    elseif (MODULE_TYPE STREQUAL "Unit Test")
+    elseif (MODULE_FPRIME_TYPE STREQUAL "Unit Test")
         set(TARGETS "${UT_TARGETS}")
     endif()
 
     # Now run through each of the determined targets
-    foreach(TARGET IN LISTS TARGETS)
-        setup_single_target("${TARGET}" "${MODULE}" "${SOURCES}" "${DEPENDENCIES}")
+    set(DEPENDENCIES ${MODULE_LINK_LIBRARIES} ${MODULE_INTERFACE_LINK_LIBRARIES})
+    list(REMOVE_DUPLICATES DEPENDENCIES)
+    foreach(FPRIME_TARGET IN LISTS TARGETS)
+        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${DEPENDENCIES}")
     endforeach()
 endfunction(setup_module_targets)
-
-####
-# Function `recurse_targets`:
-#
-# A helper that pulls out module dependencies that are also fprime modules.
-####
-function(recurse_targets TARGET OUTPUT BOUND)
-    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    set(TARGET_DEPENDENCIES)
-    if (TARGET "${TARGET}")
-        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
-    endif()
-    # Extra dependencies
-    list(APPEND TARGET_DEPENDENCIES ${ARGN})
-    if (TARGET_DEPENDENCIES)
-        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
-    endif()
-
-    set(RESULTS_LOCAL)
-    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
-        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
-            list(APPEND BOUND "${NEW_TARGET}")
-            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
-            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
-            set(BOUND "${__BOUND__INTERNAL__}")
-        endif()
-    endforeach()
-    if (RESULTS_LOCAL)
-        list(REMOVE_DUPLICATES RESULTS_LOCAL)
-    endif()
-    set(__BOUND__INTERNAL__ "${BOUND}" PARENT_SCOPE)
-    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
-endfunction()
-
 #### Documentation links
 # See Also:
 #  - API: [API](../API.md) describes the `register_fprime_target` function

@@ -1,36 +1,27 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Port/InputPortBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
 namespace Fw {
 
-    InputPortBase::InputPortBase() :
-                    PortBase(),
-                    m_comp(nullptr),
-                    m_portNum(-1) {
-    }
+InputPortBase::InputPortBase() : PortBase(), m_comp(nullptr), m_portNum(-1) {}
 
-    InputPortBase::~InputPortBase() {
+InputPortBase::~InputPortBase() {}
 
-    }
-
-    void InputPortBase::init() {
-        PortBase::init();
-
-    }
-
-    void InputPortBase::setPortNum(FwIndexType portNum) {
-        FW_ASSERT(portNum >= 0,portNum);
-        this->m_portNum = portNum;
-    }
-
-#if FW_OBJECT_TO_STRING == 1
-    const char* InputPortBase::getToStringFormatString() {
-        return "Input Port: %s %s->(%s)";
-    }
-#endif
-
-
+void InputPortBase::init() {
+    PortBase::init();
 }
 
+void InputPortBase::setPortNum(FwIndexType portNum) {
+    FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+    this->m_portNum = portNum;
+}
+
+#if FW_OBJECT_TO_STRING == 1
+const char* InputPortBase::getToStringFormatString() {
+    return "Input Port: %s %s->(%s)";
+}
+#endif
+
+}  // namespace Fw

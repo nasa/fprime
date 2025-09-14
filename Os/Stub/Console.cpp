@@ -8,16 +8,12 @@ namespace Os {
 namespace Stub {
 namespace Console {
 
-
-void StubConsole::writeMessage(const CHAR *message, const FwSizeType size) {
-}
+void StubConsole::writeMessage(const CHAR* message, const FwSizeType size) {}
 
 ConsoleHandle* StubConsole::getHandle() {
     return &this->m_handle;
 }
 
-
-
-} // namespace Console
-} // namespace Stub
-} // namespace Os
+}  // namespace Console
+}  // namespace Stub
+}  // namespace Os

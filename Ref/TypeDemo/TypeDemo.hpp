@@ -26,7 +26,7 @@ class TypeDemo : public TypeDemoComponentBase {
     //!
     ~TypeDemo() = default;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Command handler implementations
     // ----------------------------------------------------------------------

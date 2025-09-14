@@ -14,9 +14,14 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
+  FPRIME_LOCATION: ./lib/fprime
 
 jobs:
   get-branch:
@@ -40,11 +45,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
-          path: ./fprime
+          path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
-      - uses: ./fprime/.github/actions/setup
+      - uses: ./lib/fprime/.github/actions/setup
         with:
-          location: ./fprime
+          location: ${{ env.FPRIME_LOCATION }}
       - name: "Setup RPI Toolchain"
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
@@ -67,13 +72,14 @@ jobs:
 
   RPI-integration:
     name: "RPI Integration Tests"
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
       - name: "Setup environment"
         run: |
           python -m venv venv

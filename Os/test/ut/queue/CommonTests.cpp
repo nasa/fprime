@@ -15,6 +15,7 @@ namespace Os {
 namespace Test {
 namespace Queue {
 FwSizeType Tester::QueueState::queues = 0;
+U64 Tester::QueueMessage::order_counter = 0;
 
 PriorityCompare const Tester::QueueMessageComparer::HELPER = PriorityCompare();
 
@@ -38,6 +39,10 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
     QueueMessage qm;
     qm.priority = priority;
     qm.size = size;
+    qm.order = QueueMessage::order_counter++;
+    // Overflow imminent, fail now!
+    assert(QueueMessage::order_counter != std::numeric_limits<U64>::max());
+
     std::memcpy(qm.data, buffer, static_cast<size_t>(size));
     if (size > this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;
@@ -113,7 +118,7 @@ TEST(InterfaceUninitialized, SendPointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     U8 buffer[messageSize];
 
     Os::QueueInterface::Status status =
@@ -125,7 +130,7 @@ TEST(InterfaceUninitialized, SendBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     U8 storage[messageSize];
     Fw::ExternalSerializeBuffer buffer(storage, sizeof storage);
 
@@ -173,7 +178,7 @@ TEST(InterfaceInvalid, SendPointerNull) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, Os::QueueInterface::BlockingType::BLOCKING),
                               "Assert:.*Queue\\.cpp");
 }
@@ -182,7 +187,7 @@ TEST(InterfaceInvalid, SendInvalidEnum) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, blockingType), "Assert:.*Queue\\.cpp");

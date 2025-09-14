@@ -16,71 +16,64 @@
 
 namespace Svc {
 
-  namespace InvalidFiles {
+namespace InvalidFiles {
 
-    //! Test sequences with immediate commands followed by an EOS marker
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+//! Test sequences with immediate commands followed by an EOS marker
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format =
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Bad CRC
+    void BadCRC();
 
-      public:
+    //! Bad record descriptor
+    void BadRecordDescriptor();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Bad time base
+    void BadTimeBase();
 
-        //! Bad CRC
-        void BadCRC();
+    //! Bad time context
+    void BadTimeContext();
 
-        //! Bad record descriptor
-        void BadRecordDescriptor();
+    //! Empty file
+    void EmptyFile();
 
-        //! Bad time base
-        void BadTimeBase();
+    //! Extra data after command records
+    void DataAfterRecords();
 
-        //! Bad time context
-        void BadTimeContext();
+    //! File too large
+    void FileTooLarge();
 
-        //! Empty file
-        void EmptyFile();
+    //! Microseconds field too short
+    void USecFieldTooShort();
 
-        //! Extra data after command records
-        void DataAfterRecords();
+    //! Missing CRC
+    void MissingCRC();
 
-        //! File too large
-        void FileTooLarge();
+    //! Missing file
+    void MissingFile();
 
-        //! Microseconds field too short
-        void USecFieldTooShort();
+    //! Size field too large
+    void SizeFieldTooLarge();
 
-        //! Missing CRC
-        void MissingCRC();
+    //! Size field too small
+    void SizeFieldTooSmall();
+};
 
-        //! Missing file
-        void MissingFile();
+}  // namespace InvalidFiles
 
-        //! Size field too large
-        void SizeFieldTooLarge();
-
-        //! Size field too small
-        void SizeFieldTooSmall();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

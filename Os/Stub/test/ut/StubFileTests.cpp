@@ -3,15 +3,15 @@
 // \brief tests using stub implementation for Os::File interface testing
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/Os.hpp"
 #include "Os/File.hpp"
+#include "Os/Os.hpp"
 #include "Os/Stub/test/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
 #include "Os/test/ut/file/RulesHeaders.hpp"
 
 namespace Os {
 namespace Test {
-namespace File {
+namespace FileTest {
 
 //! Set up for the test ensures that the test can run at all
 //!
@@ -31,7 +31,7 @@ class StubsTester : public Tester {
     //! Check if the test file exists.
     //! \return true if it exists, false otherwise.
     //!
-    bool exists(const std::string &filename) const override {
+    bool exists(const std::string& filename) const override {
         for (size_t i = 0; i < FILES.size(); i++) {
             if (filename == *FILES.at(i)) {
                 return true;
@@ -45,7 +45,8 @@ class StubsTester : public Tester {
     //! \return: filename to use for testing
     //!
     std::shared_ptr<const std::string> get_filename(bool random) const override {
-        std::shared_ptr<const std::string> filename = std::shared_ptr<const std::string>(new std::string("DOES-NOT-MATTER"), std::default_delete<std::string>());
+        std::shared_ptr<const std::string> filename =
+            std::shared_ptr<const std::string>(new std::string("DOES-NOT-MATTER"), std::default_delete<std::string>());
         FILES.push_back(filename);
         return filename;
     }
@@ -53,20 +54,16 @@ class StubsTester : public Tester {
     //! Posix tester is fully functional
     //! \return true
     //!
-    bool functional() const override {
-        return false;
-    }
-
+    bool functional() const override { return false; }
 };
 
-std::unique_ptr<Os::Test::File::Tester> get_tester_implementation() {
-    return std::unique_ptr<Os::Test::File::Tester>(new Os::Test::File::StubsTester());
+std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation() {
+    return std::unique_ptr<Os::Test::FileTest::Tester>(new Os::Test::FileTest::StubsTester());
 }
 
-
-} // namespace File
-} // namespace Test
-} // namespace Os
+}  // namespace FileTest
+}  // namespace Test
+}  // namespace Os
 
 // Ensure that Os::File properly routes constructor calls to the `constructInternal` function.
 TEST_F(Interface, Construction) {
@@ -95,17 +92,19 @@ TEST_F(Interface, Open) {
 TEST_F(Interface, Close) {
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     file.close();
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::CLOSE_FN);
 }
 
 // Ensure that Os::File properly routes close calls to the `sizeInternal` function.
 TEST_F(Interface, Size) {
-    FwSignedSizeType sizeResult = -1;
+    FwSizeType sizeResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     Os::Stub::File::Test::StaticData::setSizeResult(30);
     ASSERT_EQ(file.size(sizeResult), Os::File::OP_OK);
     ASSERT_EQ(sizeResult, 30);
@@ -114,10 +113,11 @@ TEST_F(Interface, Size) {
 
 // Ensure that Os::File properly routes close calls to the `positionInternal` function.
 TEST_F(Interface, Position) {
-    FwSignedSizeType positionResult = -1;
+    FwSizeType positionResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     Os::Stub::File::Test::StaticData::setPositionResult(50);
     ASSERT_EQ(file.position(positionResult), Os::File::OP_OK);
     ASSERT_EQ(positionResult, 50);
@@ -128,20 +128,21 @@ TEST_F(Interface, Position) {
 TEST_F(Interface, Preallocate) {
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.preallocate(0, 0), Os::File::Status::OTHER_ERROR);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::PREALLOCATE_FN);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.preallocateOffset, 0);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.preallocateLength, 0);
-
 }
 
 // Ensure that Os::File properly routes seek calls to the `seekInternal` function.
 TEST_F(Interface, Seek) {
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.seek(0, Os::File::SeekType::ABSOLUTE), Os::File::Status::OTHER_ERROR);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::SEEK_FN);
@@ -153,7 +154,8 @@ TEST_F(Interface, Seek) {
 TEST_F(Interface, Flush) {
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
-    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::OP_OK);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OTHER_ERROR);
     ASSERT_EQ(file.flush(), Os::File::Status::OTHER_ERROR);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.lastCalled, Os::Stub::File::Test::StaticData::FLUSH_FN);
@@ -162,8 +164,8 @@ TEST_F(Interface, Flush) {
 // Ensure that Os::File properly routes flush calls to the `flushInternal` function.
 TEST_F(Interface, Read) {
     U8 buffer[] = {0xab, 0xcd, 0xef};
-    FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
-    FwSignedSizeType original_size = size;
+    FwSizeType size = static_cast<FwSizeType>(sizeof buffer);
+    FwSizeType original_size = size;
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_READ, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -178,8 +180,8 @@ TEST_F(Interface, Read) {
 // Ensure that Os::File properly routes statuses returned from the `flushInternal` function back to the caller.
 TEST_F(Interface, Write) {
     U8 buffer[] = {0xab, 0xcd, 0xef};
-    FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
-    FwSignedSizeType original_size = size;
+    FwSizeType size = static_cast<FwSizeType>(sizeof buffer);
+    FwSizeType original_size = size;
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_WRITE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -191,7 +193,7 @@ TEST_F(Interface, Write) {
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeWait, Os::File::WaitType::WAIT);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

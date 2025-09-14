@@ -20,13 +20,13 @@ namespace Svc {
 namespace Accumulate {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  //! Send some buffers
-  void OK(void);
+    //! Send some buffers
+    void OK(void);
 };
 
 }  // namespace Accumulate

@@ -108,26 +108,23 @@ have access to a clock correlated to external operations. It can transition thro
 radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system that
 can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
-Time contexts are another value associated with time.
+Time contexts are another value associated with time. By default time context is NOT used in Time comparisons, in
+other words Times having the same TimeBase are comparable regardless of what the context value is set to. This also
+means by default when doing mathematical operations on Fw:Time objects (i.e. add, subtract), by default it is NOT
+checked that the time contexts match. If they do match, math results will preserve the (matching) time context,
+otherwise it will be set to 0.
 
-> [!WARNING]
-> Changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most projects don't modify these settings just like the types defined above.
+Time base and time context are now always used in the Fw::Time class implementation. The TimeBase enum defines the
+possible time base values used by the system and is set in the FpConfig.fpp file.
 
-```cpp
-enum TimeBase {
-    TB_NONE, //!< No time base has been established
-    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
-    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
-    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
-};
-```
+The following time base options are required:
 
-Time base and time context usage may be turned on and off using the macros shown below:
+| Enum | Description |
+|------|-------------|
+| TB_NONE | No time base has been established |
+| TB_WORKSTATION_TIME | Time as reported on workstation where software is running. For testing. |
+| TB_DONT_CARE | Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed |
 
-| Macro                    | Definition                                  | Default | Valid Values      |
-| ------------------------ | ------------------------------------------- |---------|-------------------|
-| FW_USE_TIME_BASE         | Enables the time base Fw::time field        | 1 (on)  | 0 (off) 1 (on)    |
-| FW_USE_TIME_CONTEXT      | Enables the time context Fw::time field     | 1 (on)  | 0 (off) 1 (on)    |
 
 ### Object Settings
 
@@ -267,7 +264,7 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 
 ### Serializable Type ID
 
-As described [in serializable types](../overview/enum-arr-ser.md), serializable types can be defined for use in the code.
+As described [in serializable types](../overview/05-enum-arr-ser.md), serializable types can be defined for use in the code.
 When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
 data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
 will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
@@ -331,7 +328,7 @@ are less restrictive in size.
 
 | Macro                      | Definition                                                 | Default | Valid Values     |
 | -------------------------- | -----------------------------------------------------------|---------|------------------|
-| FW_FILE_BUFFER_MAX_SIZE    | Defines buffer and chunk size for file uplink and downlink | 255     | Positive integer |
+| FW_FILE_BUFFER_MAX_SIZE    | Defines buffer and chunk size for file uplink and downlink | `FW_COM_BUFFER_MAX_SIZE`     | Positive integer |
 | FW_INTERNAL_INTERFACE_STRING_MAX_SIZE | Maximum size for interface string               | 40      | Positive integer |
 
 ### Text Logging
@@ -379,15 +376,6 @@ Table 47 describes other user settings.
 
 > [!NOTE]
 > The following settings are defined by the build system and are in `FpConfig.hpp` to provide a default off value. These must be set by the build system as the setting works in unison with other modules that the build system includes when enabling these settings.
-
-Table 48 describes settings defined by the build system that should never be hand-set.
-
-**Table 48.** Macros for use by build system only
-
-| Macro                       | Definition                                              | Default | Valid Values     |
-| --------------------------- | --------------------------------------------------------|---------|------------------|
-| FW_BAREMETAL_SCHEDULER      | Enables baremetal scheduler hooks in active components  | 0 (off) | 0 (off) 1 (on)   |
-
 
 ## Component Configuration
 

@@ -17,47 +17,42 @@
 
 namespace Svc {
 
-  namespace FileWriteStatus {
+namespace FileWriteStatus {
 
-    class Tester {
+class Tester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! OK
+    void OK();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Error
+    void Error();
 
-        //! OK
-        void OK();
+  public:
+    // ----------------------------------------------------------------------
+    // Rules
+    // ----------------------------------------------------------------------
 
-        //! Error
-        void Error();
+    //! Rule FileWriteStatus::OK
+    Rules::FileWriteStatus::OK ruleOK;
 
-      public:
+    //! Rule FileWriteStatus::Error
+    Rules::FileWriteStatus::Error ruleError;
 
-        // ----------------------------------------------------------------------
-        // Rules
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Public member variables
+    // ----------------------------------------------------------------------
 
-        //! Rule FileWriteStatus::OK
-        Rules::FileWriteStatus::OK ruleOK;
+    //! Test state
+    TestState testState;
+};
 
-        //! Rule FileWriteStatus::Error
-        Rules::FileWriteStatus::Error ruleError;
+}  // namespace FileWriteStatus
 
-      private:
-
-        // ----------------------------------------------------------------------
-        // Public member variables
-        // ----------------------------------------------------------------------
-
-        //! Test state
-        TestState testState;
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

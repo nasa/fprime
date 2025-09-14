@@ -15,6 +15,8 @@
 namespace Svc {
 
 class FrameAccumulator final : public FrameAccumulatorComponentBase {
+    friend class FrameAccumulatorTester;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -32,7 +34,7 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! Takes in parameters used in the Fw::MemAllocator pattern and configures a memory allocation for storing the
     //! circular buffer.
     void configure(const FrameDetector& detector,  //!< Frame detector helper instance
-                   FwEnumStoreType allocationId,  //!< Identifier used  when dealing with the Fw::MemAllocator
+                   FwEnumStoreType allocationId,   //!< Identifier used  when dealing with the Fw::MemAllocator
                    Fw::MemAllocator& allocator,    //!< Fw::MemAllocator used to acquire memory
                    FwSizeType store_size           //!< Size to request for circular buffer
     );
@@ -40,20 +42,27 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! \brief Deallocate internal resources (set up by configure() call)
     void cleanup();
 
-
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
     //! Handler implementation for dataIn
     //!
-    //! Receives raw data from a ByteStreamDriver, ComStub, or other buffer producing component
+    //! Receive stream of bytes from a ComInterface component
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& recvBuffer,
-                        const Drv::RecvStatus& recvStatus) override;
+                        const ComCfg::FrameContext& context) override;
 
-  PRIVATE:
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Port receiving ownership back of buffers sent on dataOut
+    void dataReturnIn_handler(FwIndexType portNum,                 //!< The port number
+                              Fw::Buffer& fwBuffer,                //!< The buffer
+                              const ComCfg::FrameContext& context  //!< The context object
+                              ) override;
+
+  private:
     //! \brief process raw buffer
     //! \return raw data buffer
     void processBuffer(Fw::Buffer& buffer);

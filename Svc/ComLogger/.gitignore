@@ -1,0 +1,5 @@
+# Ignore Test Outputs
+test_*.com
+test_*.com.CRC32
+good_*.com
+good_*.com.CRC32

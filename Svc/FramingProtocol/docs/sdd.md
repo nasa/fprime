@@ -144,7 +144,7 @@ To implement `FramingProtocol`, you must implement the following pure
 virtual method:
 
 ```c++
-virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
+virtual void frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) = 0;
 ```
 
 This method is called with the following arguments:
@@ -255,7 +255,7 @@ The F Prime framing protocol operates as follows:
 
 1. Compute the size of the data stored in the frame (the "frame data size")
 
-   1. If `packet_type` is `Fw::ComPacket::FW_PACKET_UNKNOWN`, then the frame data
+   1. If `packet_type` is `Fw::ComPacketType::FW_PACKET_UNKNOWN`, then the frame data
 size is the size of the provided data.
 
    1. Otherwise the frame data size is the size of the provided data plus four

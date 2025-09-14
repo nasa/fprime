@@ -16,8 +16,8 @@ register_fprime_module()
 
 # Specifies the sources specifically associated with unit tests in this module
 set(UT_SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTester.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupImplTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.fpp"
 )
 

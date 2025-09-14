@@ -12,8 +12,8 @@ namespace Posix {
 namespace Mutex {
 
 PosixConditionVariable::PosixConditionVariable() {
-    PlatformIntType status = pthread_cond_init(&this->m_handle.m_condition, nullptr);
-    FW_ASSERT(status == 0, status);  // If this fails, something horrible happened.
+    int status = pthread_cond_init(&this->m_handle.m_condition, nullptr);
+    FW_ASSERT(status == 0, static_cast<FwAssertArgType>(status));  // If this fails, something horrible happened.
 }
 PosixConditionVariable::~PosixConditionVariable() {
     (void)pthread_cond_destroy(&this->m_handle.m_condition);
@@ -21,7 +21,7 @@ PosixConditionVariable::~PosixConditionVariable() {
 
 PosixConditionVariable::Status PosixConditionVariable::pend(Os::Mutex& mutex) {
     PosixMutexHandle* mutex_handle = reinterpret_cast<PosixMutexHandle*>(mutex.getHandle());
-    PlatformIntType status = pthread_cond_wait(&this->m_handle.m_condition, &mutex_handle->m_mutex_descriptor);
+    int status = pthread_cond_wait(&this->m_handle.m_condition, &mutex_handle->m_mutex_descriptor);
     return posix_status_to_conditional_status(status);
 }
 void PosixConditionVariable::notify() {

@@ -4,7 +4,7 @@
 # A target used to add SBOM generation to the build. Will be invoked when running the "all" target
 # and installed into the build_artifacts directory underneath the platform folder.
 ####
-set(REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
+set(FPRIME__INTERNAL_SBOM_REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 
 ####
 # sbom_add_global_target:
@@ -19,7 +19,7 @@ function(sbom_add_global_target TARGET)
         add_custom_target("${TARGET}" ALL
             COMMAND
             # Redirect to cleanly capture standard out
-            ${PYTHON} ${REDIRECTOR} "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_sbom.json"
+            ${PYTHON} ${FPRIME__INTERNAL_SBOM_REDIRECTOR} "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_sbom.json"
             # syft arguments
             "${SYFT}" "dir:${FPRIME_PROJECT_ROOT}" -o spdx-json
             # Excludes .github paths not in the root of the project as those should not be activated by the project

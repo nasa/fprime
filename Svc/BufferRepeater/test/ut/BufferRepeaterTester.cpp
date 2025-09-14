@@ -104,7 +104,7 @@ void BufferRepeaterTester ::testFailure(BufferRepeater::BufferRepeaterFailureOpt
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const FwIndexType portNum, U32 size) {
+Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_allocate(size);
     Fw::Buffer new_buffer;
 

@@ -8,82 +8,45 @@
 
 namespace Svc {
 
-    // ----------------------------------------------------------------------
-    // Helper functions
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Helper functions
+// ----------------------------------------------------------------------
 
-    void DpCatalogTester ::
-        connectPorts()
-    {
-        // Connect special input ports
+void DpCatalogTester ::connectPorts() {
+    // Connect special input ports
 
-        this->connect_to_CmdDisp(
-            0,
-            this->component.get_CmdDisp_InputPort(0)
-        );
+    this->connect_to_CmdDisp(0, this->component.get_CmdDisp_InputPort(0));
 
-        // Connect special output ports
+    // Connect special output ports
 
-        this->component.set_CmdReg_OutputPort(
-            0,
-            this->get_from_CmdReg(0)
-        );
+    this->component.set_CmdReg_OutputPort(0, this->get_from_CmdReg(0));
 
-        this->component.set_CmdStatus_OutputPort(
-            0,
-            this->get_from_CmdStatus(0)
-        );
+    this->component.set_CmdStatus_OutputPort(0, this->get_from_CmdStatus(0));
 
-        this->component.set_Log_OutputPort(
-            0,
-            this->get_from_Log(0)
-        );
+    this->component.set_Log_OutputPort(0, this->get_from_Log(0));
 
-        this->component.set_LogText_OutputPort(
-            0,
-            this->get_from_LogText(0)
-        );
+    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
 
-        this->component.set_Time_OutputPort(
-            0,
-            this->get_from_Time(0)
-        );
+    this->component.set_Time_OutputPort(0, this->get_from_Time(0));
 
-        this->component.set_Tlm_OutputPort(
-            0,
-            this->get_from_Tlm(0)
-        );
+    this->component.set_Tlm_OutputPort(0, this->get_from_Tlm(0));
 
-        // Connect typed input ports
+    // Connect typed input ports
 
-        this->connect_to_fileDone(
-            0,
-            this->component.get_fileDone_InputPort(0)
-        );
+    this->connect_to_fileDone(0, this->component.get_fileDone_InputPort(0));
 
-        this->connect_to_pingIn(
-            0,
-            this->component.get_pingIn_InputPort(0)
-        );
+    this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
 
-        // Connect typed output ports
+    // Connect typed output ports
 
-        this->component.set_fileOut_OutputPort(
-            0,
-            this->get_from_fileOut(0)
-        );
+    this->component.set_fileOut_OutputPort(0, this->get_from_fileOut(0));
 
-        this->component.set_pingOut_OutputPort(
-            0,
-            this->get_from_pingOut(0)
-        );
-    }
-
-    void DpCatalogTester ::
-        initComponents()
-    {
-        this->init();
-        this->component.init(DpCatalogTester::TEST_INSTANCE_QUEUE_DEPTH, DpCatalogTester::TEST_INSTANCE_ID);
-    }
-
+    this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
 }
+
+void DpCatalogTester ::initComponents() {
+    this->init();
+    this->component.init(DpCatalogTester::TEST_INSTANCE_QUEUE_DEPTH, DpCatalogTester::TEST_INSTANCE_ID);
+}
+
+}  // namespace Svc

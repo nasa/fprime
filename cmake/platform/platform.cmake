@@ -40,8 +40,7 @@ foreach(ROOT ${FPRIME_PROJECT_ROOT};${FPRIME_LIBRARY_LOCATIONS};${FPRIME_FRAMEWO
     set(EXPECTED_PLATFORM_FILE "${ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
     # Include host machine settings
     if (EXISTS "${EXPECTED_PLATFORM_FILE}")
-        message(STATUS "Including ${EXPECTED_PLATFORM_FILE}")
-        include("${EXPECTED_PLATFORM_FILE}")
+        set_property(GLOBAL PROPERTY FPRIME_PLATFORM_FILE "${EXPECTED_PLATFORM_FILE}")
         break()
     endif()
 endforeach()
@@ -49,3 +48,15 @@ endforeach()
 if (NOT EXISTS "${EXPECTED_PLATFORM_FILE}")
   message(FATAL_ERROR "\n[F-PRIME] No platform config for '${FPRIME_PLATFORM}'. Please create: '${FPRIME_PLATFORM}.cmake'\n")
 endif()
+####
+# Macro `fprime__include_platform_file`:
+#
+# Callback function to include the platform file and set up the platform specific module. Defined as a macro so the set variables
+# exist in calling scope.
+#
+####
+macro(fprime__include_platform_file)
+    get_property(EXPECTED_PLATFORM_FILE GLOBAL PROPERTY FPRIME_PLATFORM_FILE)
+    message(STATUS "Including ${EXPECTED_PLATFORM_FILE}")
+    include("${EXPECTED_PLATFORM_FILE}")
+endmacro()

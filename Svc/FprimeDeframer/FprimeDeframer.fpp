@@ -8,10 +8,7 @@ module Svc {
     # Deframer interface
     # ----------------------------------------------------------------------
 
-    include "../Interfaces/DeframerInterface.fppi"
-
-    @ Port for deallocating dropped frames
-    output port bufferDeallocate: Fw.BufferSend
+    import Deframer
 
     @ An invalid frame was received (too short to be a frame)
     event InvalidBufferReceived \

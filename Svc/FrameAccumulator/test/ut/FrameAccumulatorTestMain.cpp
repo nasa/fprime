@@ -42,6 +42,10 @@ TEST(FrameAccumulator, testAccumulateBuffersEmitManyFrames) {
     tester.testAccumulateBuffersEmitManyFrames();
 }
 
+TEST(FrameAccumulator, testBufferReturnDeallocation) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testBufferReturnDeallocation();
+}
 
 int main(int argc, char** argv) {
     STest::Random::seed();

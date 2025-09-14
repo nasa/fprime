@@ -8,34 +8,18 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
+
 // Provides access to autocoded functions
-#include <Ref/Top/RefPacketsAc.hpp>
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
-#include <Os/Console.hpp>
-#include <Svc/FramingProtocol/FprimeProtocol.hpp>
-#include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
-
-// Used for 1Hz synthetic cycling
-#include <Os/Mutex.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
-// Instantiate a system logger that will handle Fw::Logger::log calls
-Os::Console logger;
-
-// The reference topology uses a malloc-based allocator for components that need to allocate memory during the
-// initialization phase.
+// Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
-
-// The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
-// framing and deframing implementations.
-Svc::FprimeFraming framing;
-Svc::FrameDetectors::FprimeFrameDetector frameDetector;
-
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -47,25 +31,8 @@ U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
-// A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
-    CMD_SEQ_BUFFER_SIZE = 5 * 1024,
-    FILE_DOWNLINK_TIMEOUT = 1000,
-    FILE_DOWNLINK_COOLDOWN = 1000,
-    FILE_DOWNLINK_CYCLE_TIME = 1000,
-    FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
-    HEALTH_WATCHDOG_CODE = 0x123,
     COMM_PRIORITY = 100,
-    // Buffer manager for Uplink/Downlink
-    COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-    COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
-    COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-    COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
-    COMMS_BUFFER_MANAGER_ID = 200,
-    // Buffer manager for Data Products
-    DP_BUFFER_MANAGER_STORE_SIZE = 10000,
-    DP_BUFFER_MANAGER_STORE_COUNT = 10,
-    DP_BUFFER_MANAGER_ID = 300,
 };
 
 /**
@@ -76,9 +43,6 @@ enum TopologyConstants {
  * desired, but is extracted here for clarity.
  */
 void configureTopology() {
-    // Command sequencer needs to allocate memory to hold contents of command sequences
-    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
-
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
@@ -87,48 +51,8 @@ void configureTopology() {
     rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
 
-    // File downlink requires some project-derived properties.
-    fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
-                           FILE_DOWNLINK_FILE_QUEUE_DEPTH);
-
-    // Parameter database is configured with a database file name, and that file must be initially read.
-    prmDb.configure("PrmDb.dat");
-    prmDb.readParamFile();
-
-    // Health is supplied a set of ping entires.
-    health.setPingEntries(ConfigObjects::Ref_health::pingEntries,
-                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::Ref_health::pingEntries), HEALTH_WATCHDOG_CODE);
-
-    // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins commsBuffMgrBins;
-    memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
-    commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
-    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
-    commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-    commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-    commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
-
-    Svc::BufferManager::BufferBins dpBuffMgrBins;
-    memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
-    dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
-    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
-    dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
-
-    // Framer and Deframer components need to be passed a protocol handler
-    framer.setup(framing);
-    frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
-
-    Fw::FileNameString dpDir("./DpCat");
-    Fw::FileNameString dpState("./DpCat/DpState.dat");
-
-    // create the DP directory if it doesn't exist
-    Os::FileSystem::createDirectory(dpDir.toChar());
-
-    dpCat.configure(&dpDir,1,dpState,0,mallocator);
-    dpWriter.configure(dpDir);
-
-    // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+    // Command sequencer needs to allocate memory to hold contents of command sequences
+    cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -145,7 +69,7 @@ void setupTopology(const TopologyState& state) {
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
-        comm.configure(state.hostname, state.port);
+        comDriver.configure(state.hostname, state.port);
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
@@ -153,40 +77,23 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-    // Startup TLM and Config verbosity for Versions
-    version.config(true);
     // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
-        // Uplink is configured for receive so a socket task is started
-        comm.start(name, COMM_PRIORITY, Default::STACK_SIZE);
+        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
-// Variables used for cycle simulation
-Os::Mutex cycleLock;
-volatile bool cycleFlag = true;
-
-void startSimulatedCycle(Fw::TimeInterval interval) {
-    cycleLock.lock();
-    bool cycling = cycleFlag;
-    cycleLock.unLock();
-
-    // Main loop
-    while (cycling) {
-        Ref::blockDrv.callIsr();
-        Os::Task::delay(interval);
-
-        cycleLock.lock();
-        cycling = cycleFlag;
-        cycleLock.unLock();
-    }
+void startRateGroups(const Fw::TimeInterval& interval) {
+    // This timer drives the fundamental tick rate of the system.
+    // Svc::RateGroupDriver will divide this down to the slower rate groups.
+    // This call will block until the stopRateGroups() call is made.
+    // For this Linux demo, that call is made from a signal handler.
+    linuxTimer.startTimer(interval);
 }
 
-void stopSimulatedCycle() {
-    cycleLock.lock();
-    cycleFlag = false;
-    cycleLock.unLock();
+void stopRateGroups() {
+    linuxTimer.quit();
 }
 
 void teardownTopology(const TopologyState& state) {
@@ -194,13 +101,12 @@ void teardownTopology(const TopologyState& state) {
     stopTasks(state);
     freeThreads(state);
 
-    // Other task clean-up.
-    comm.stop();
-    (void)comm.join();
+    // Stop the comDriver component, free thread
+    comDriver.stop();
+    (void)comDriver.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
-    commsBufferManager.cleanup();
-    frameAccumulator.cleanup();
+    tearDownComponents(state);
 }
-};  // namespace Ref
+}  // namespace Ref

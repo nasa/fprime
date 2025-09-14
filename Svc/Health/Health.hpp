@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef HealthImpl Health;
+typedef HealthImpl Health;
 
 }
 

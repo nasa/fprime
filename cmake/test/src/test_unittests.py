@@ -6,17 +6,15 @@
 ####
 import platform
 import tempfile
-
-import settings
-
-import cmake
 from pathlib import Path
+from . import cmake
+from . import settings
 
 _ = cmake.get_build(
     "UT_BUILD",
     settings.REF_APP_PATH,
     cmake_arguments={"BUILD_TESTING": "ON"},
-    make_targets=["Ref", "ut_exe"],
+    make_targets=["all", "Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 MODULES = settings.FRAMEWORK_MODULES + settings.STANDARD_MODULES
@@ -35,7 +33,7 @@ UNIT_TESTS = [
     "Fw_Types_ut_exe",
     "Os_ut_exe",
     "Ref_SignalGen_ut_exe",
-    "Svc_ActiveLogger_ut_exe",
+    "Svc_EventManager_ut_exe",
     "Svc_ActiveRateGroup_ut_exe",
     "Svc_ActiveTextLogger_ut_exe",
     "Svc_AssertFatalAdapter_ut_exe",
@@ -48,7 +46,7 @@ UNIT_TESTS = [
     "Svc_FileDownlink_ut_exe",
     "Svc_FileManager_ut_exe",
     "Svc_FileUplink_ut_exe",
-    "Svc_Framer_ut_exe",
+    "Svc_FprimeFramer_ut_exe",
     "Svc_GenericHub_ut_exe",
     "Svc_Health_ut_exe",
     "Svc_PosixTime_ut_exe",
@@ -97,82 +95,3 @@ def test_unittest_installation(UT_BUILD):
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
     output_path = UT_BUILD["install"] / platform.system() / "Ref" / "bin" / "Ref"
     assert output_path.exists(), "Failed to locate Ref in build output"
-
-
-def test_unittest_dictionary(UT_BUILD):
-    """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(UT_BUILD, errors_ok=True)
-    output_path = (
-        UT_BUILD["install"]
-        / platform.system()
-        / "Ref"
-        / "dict"
-        / "RefTopologyAppDictionary.xml"
-    )
-    assert output_path.exists(), "Failed to locate Ref in build output"
-
-
-def test_unittest_module_ut_info(UT_BUILD):
-    """Run reference and assert module-ut-info.txt was created"""
-    cmake.assert_process_success(UT_BUILD, errors_ok=True)
-    txt_path = UT_BUILD["build"] / "Ref" / "SignalGen" / "module-ut-info.txt"
-    assert txt_path.exists(), "Failed to locate module-info.txt under SignalGen"
-
-    with open(txt_path, "r") as file_path:
-        lines = file_path.readlines()
-    assert len(lines) == 5, "Module info not correct number of lines"
-    headers, sources, generated, ac_sources, dependencies = [
-        line.strip().split(";") for line in lines
-    ]
-    assert ["SignalGenTester.hpp"] == [
-        Path(header).name for header in headers
-    ], "Did not find expected headers"
-    assert sorted(["SignalGenTester.cpp", "SignalGenTestMain.cpp"]) == sorted(
-        [Path(source).name for source in sources]
-    ), "Did not find expected sources"
-    expected_ac = [
-        "SignalGen.fpp",
-        "Commands.fppi",
-        "Events.fppi",
-        "Telemetry.fppi",
-        "CommandInterface.fppi",
-        "ChannelInterface.fppi",
-        "EventInterface.fppi",
-    ]
-    actual_ac = [Path(source).name for source in ac_sources]
-    assert sorted(expected_ac) == sorted(
-        actual_ac
-    ), "Did not find expected autocoder sources"
-    expected_gen = [
-        "SignalGenComponentAi.xml",
-        "SignalInfoSerializableAi.xml",
-        "SignalPairSerializableAi.xml",
-        "SignalPairSetArrayAi.xml",
-        "SignalSetArrayAi.xml",
-        "SignalTypeEnumAi.xml",
-        "SignalGenComponentAc.cpp",
-        "SignalGenComponentAc.hpp",
-        "SignalInfoSerializableAc.cpp",
-        "SignalInfoSerializableAc.hpp",
-        "SignalPairSerializableAc.cpp",
-        "SignalPairSerializableAc.hpp",
-        "SignalPairSetArrayAc.cpp",
-        "SignalPairSetArrayAc.hpp",
-        "SignalSetArrayAc.cpp",
-        "SignalSetArrayAc.hpp",
-        "SignalTypeEnumAc.cpp",
-        "SignalTypeEnumAc.hpp",
-        "SignalGenGTestBase.cpp",
-        "SignalGenGTestBase.hpp",
-        "SignalGenTesterBase.cpp",
-        "SignalGenTesterBase.hpp",
-        "SignalGenTesterHelpers.cpp",
-        "SignalGen_DpReqTypeEnumAc.cpp",
-        "SignalGen_DpReqTypeEnumAc.hpp",
-        "SignalGen_DpReqTypeEnumAi.xml",
-    ]
-    actual_gen = [Path(source).name for source in generated]
-    assert sorted(expected_gen) == sorted(
-        actual_gen
-    ), "Did not find expected autocoder generated sources"
-    assert dependencies == ["Ref_SignalGen"], "Did not find expected dependencies"

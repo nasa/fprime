@@ -12,7 +12,7 @@
  */
 #ifndef _UTILS_TYPES_QUEUE_HPP
 #define _UTILS_TYPES_QUEUE_HPP
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Utils/Types/CircularBuffer.hpp>

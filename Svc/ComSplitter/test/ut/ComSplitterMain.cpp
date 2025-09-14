@@ -5,20 +5,16 @@
  *      Author: Gorang Gandhi
  */
 
-#include "ComSplitterTester.hpp"
-#include <Svc/ComSplitter/ComSplitter.hpp>
-#include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <gtest/gtest.h>
+#include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Test/UnitTest.hpp>
+#include <Svc/ComSplitter/ComSplitter.hpp>
+#include "ComSplitterTester.hpp"
 
-
-TEST(TestNominal,Nominal) {
-
+TEST(TestNominal, Nominal) {
     Svc::ComSplitterTester tester;
     tester.test_nominal();
-
 }
-
 
 #ifndef TGT_OS_TYPE_VXWORKS
 int main(int argc, char* argv[]) {
@@ -29,4 +25,3 @@ int main(int argc, char* argv[]) {
 }
 
 #endif
-

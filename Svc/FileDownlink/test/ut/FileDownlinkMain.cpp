@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------
-// Main.cpp 
+// Main.cpp
 // ----------------------------------------------------------------------
 
 #include "FileDownlinkTester.hpp"
 
 TEST(FileDownlink, Downlink) {
-  Svc::FileDownlinkTester tester;
-  tester.downlink();
+    Svc::FileDownlinkTester tester;
+    tester.downlink();
 }
 
 TEST(FileDownlink, FileOpenError) {
-  Svc::FileDownlinkTester tester;
-  tester.fileOpenError();
+    Svc::FileDownlinkTester tester;
+    tester.fileOpenError();
 }
 
 TEST(FileDownlink, CancelDownlink) {
-  Svc::FileDownlinkTester tester;
-  tester.cancelDownlink();
+    Svc::FileDownlinkTester tester;
+    tester.cancelDownlink();
 }
 
 TEST(FileDownlink, CancelInIdleMode) {
-  Svc::FileDownlinkTester tester;
-  tester.cancelInIdleMode();
+    Svc::FileDownlinkTester tester;
+    tester.cancelInIdleMode();
 }
 
 TEST(FileDownlink, DownlinkPartial) {
-  Svc::FileDownlinkTester tester;
-  tester.downlinkPartial();
+    Svc::FileDownlinkTester tester;
+    tester.downlinkPartial();
 }
 
 TEST(FileDownlink, DownlinkTimeout) {
@@ -39,7 +39,7 @@ TEST(FileDownlink, SendFilePort) {
     tester.sendFilePort();
 }
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

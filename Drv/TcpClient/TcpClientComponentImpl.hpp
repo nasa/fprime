@@ -21,6 +21,8 @@
 namespace Drv {
 
 class TcpClientComponentImpl final : public TcpClientComponentBase, public SocketComponentHelper {
+    friend class TcpClientTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -63,7 +65,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS,
                              FwSizeType buffer_size = 1024);
 
-  PROTECTED:
+  protected:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------
@@ -76,7 +78,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      *
      * \return IpSocket reference
      */
-    IpSocket& getSocketHandler();
+    IpSocket& getSocketHandler() override;
 
     /**
      * \brief returns a buffer to fill with data
@@ -86,7 +88,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      *
      * \return Fw::Buffer to fill with data
      */
-    Fw::Buffer getBuffer();
+    Fw::Buffer getBuffer() override;
 
     /**
      * \brief sends a buffer to be filled with data
@@ -96,16 +98,14 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      *
      * \return Fw::Buffer filled with data to send out
      */
-    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
+    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
     /**
      * \brief called when the IPv4 system has been connected
-    */
-    void connected();
+     */
+    void connected() override;
 
-
-  PRIVATE:
-
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -115,7 +115,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      *
      * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
      * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
-     * transmissions should be retried. SEND_ERROR indicates an unresolvable error. SEND_OK is returned when the data
+     * transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when the data
      * has been sent.
      *
      * Note: this component delegates the reopening of the socket to the read thread and thus the caller should retry
@@ -123,11 +123,17 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      *
      * \param portNum: fprime port number of the incoming port call
      * \param fwBuffer: buffer containing data to be sent
-     * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer);
+    Drv::ByteStreamStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
-    Drv::TcpClientSocket m_socket; //!< Socket implementation
+    //! Handler implementation for recvReturnIn
+    //!
+    //! Port receiving back ownership of data sent out on $recv port
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
+                              Fw::Buffer& fwBuffer  //!< The buffer
+                              ) override;
+
+    Drv::TcpClientSocket m_socket;  //!< Socket implementation
 
     // Member variable to store the buffer size
     FwSizeType m_allocation_size;
@@ -135,4 +141,4 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
 
 }  // end namespace Drv
 
-#endif // end TcpClientComponentImpl
+#endif  // end TcpClientComponentImpl

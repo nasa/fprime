@@ -15,7 +15,7 @@ static const FwChanIdType TEST_CHAN_SIZE = sizeof(FwChanIdType) + Fw::Time::SERI
 static const FwChanIdType CHANS_PER_COMBUFFER =
     (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType)) / TEST_CHAN_SIZE;
 static constexpr FwSizeType INTEGER_DIVISION_ROUNDED_UP(FwSizeType a, FwSizeType b) {
-  return ((a % b) == 0) ? (a / b) : (a / b) + 1;
+    return ((a % b) == 0) ? (a / b) : (a / b) + 1;
 }
 
 namespace Svc {
@@ -70,7 +70,7 @@ void TlmChanTester::runMultiChannel() {
     this->clearBuffs();
     // send all updates
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
-        this->sendBuff(ID_0[n], n);
+        this->sendBuff(ID_0[n], static_cast<U32>(n));
     }
 
     ASSERT_EQ(0, this->component.m_activeBuffer);
@@ -84,7 +84,7 @@ void TlmChanTester::runMultiChannel() {
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
         // printf("#: %d\n",n);
-        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_0), ID_0[n], n);
+        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_0), ID_0[n], static_cast<U32>(n));
     }
 
     // send another set
@@ -97,7 +97,7 @@ void TlmChanTester::runMultiChannel() {
     this->clearBuffs();
     // send all updates
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
-        this->sendBuff(ID_1[n], n);
+        this->sendBuff(ID_1[n], static_cast<U32>(n));
     }
 
     ASSERT_EQ(1, this->component.m_activeBuffer);
@@ -111,7 +111,7 @@ void TlmChanTester::runMultiChannel() {
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
         // printf("#: %d\n",n);
-        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_1), ID_1[n], n);
+        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_1), ID_1[n], static_cast<U32>(n));
     }
 }
 
@@ -128,8 +128,9 @@ void TlmChanTester::runOffNominal() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
     // Read back value
-    this->invoke_to_TlmGet(0, 10, timeTag, buff);
+    Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, timeTag, buff);
     ASSERT_EQ(0u, buff.getBuffLength());
+    ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 }
 
 // ----------------------------------------------------------------------
@@ -183,24 +184,24 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
         this->m_rcvdBuffer[packet].resetDeser();
         // first piece should be tlm packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_rcvdBuffer[packet].deserialize(desc);
+        stat = this->m_rcvdBuffer[packet].deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-        ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
+        ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID
             FwEventIdType sentId;
-            stat = this->m_rcvdBuffer[packet].deserialize(sentId);
+            stat = this->m_rcvdBuffer[packet].deserializeTo(sentId);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             // next piece is time tag
-            Fw::Time recTimeTag(TB_NONE, 0, 0);
+            Fw::Time recTimeTag(TimeBase::TB_NONE, 0, 0);
             stat = this->m_rcvdBuffer[packet].deserialize(recTimeTag);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
             ASSERT_TRUE(timeTag == recTimeTag);
             // next piece is event argument
             U32 readVal;
-            stat = this->m_rcvdBuffer[packet].deserialize(readVal);
+            stat = this->m_rcvdBuffer[packet].deserializeTo(readVal);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             if (chanNum == currentChan) {
@@ -249,11 +250,12 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
         tlc002 = true;
     }
 
-    this->invoke_to_TlmGet(0, id, timeTag, readBack);
+    Fw::TlmValid valid = this->invoke_to_TlmGet(0, id, timeTag, readBack);
     // deserialize value
     retestVal = 0;
-    readBack.deserialize(retestVal);
+    readBack.deserializeTo(retestVal);
     ASSERT_EQ(retestVal, val);
+    ASSERT_EQ(valid, Fw::TlmValid::VALID);
 }
 
 void TlmChanTester::clearBuffs() {
@@ -267,16 +269,14 @@ void TlmChanTester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
     printf(
         "Entry "
         " Ptr: %p"
-        " id: 0x%08X"
-        " bucket: %d"
-        " next: %p\n",
+        " id: 0x%" PRI_FwChanIdType " bucket: %" PRI_FwChanIdType " next: %p\n",
         static_cast<void*>(entry), entry->id, entry->bucketNo, static_cast<void*>(entry->next));
 }
 
 void TlmChanTester::dumpHash() {
     //        printf("**Buffer 0\n");
     for (FwChanIdType slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
-        printf("Slot: %d\n", slot);
+        printf("Slot: %" PRI_FwChanIdType "\n", slot);
         if (this->component.m_tlmEntries[0].slots[slot]) {
             TlmChan::TlmEntry* entry = component.m_tlmEntries[0].slots[slot];
             for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {

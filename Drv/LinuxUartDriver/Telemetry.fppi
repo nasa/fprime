@@ -1,5 +1,5 @@
 @ Bytes Sent
-telemetry BytesSent: U32 id 0
+telemetry BytesSent: FwSizeType id 0
 
 @ Bytes Received
-telemetry BytesRecv: U32 id 1
+telemetry BytesRecv: FwSizeType id 1

@@ -1,0 +1,40 @@
+name: "fpp-to-json Test"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+jobs:
+  fpp-to-json-ref:
+    name: Ref Deployment
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: "Generate Ref Deployment"
+        working-directory: ./Ref
+        run: |
+          fprime-util generate
+        shell: bash
+      - name: "Run fpp-to-json on Ref topology"
+        working-directory: ./Ref/Top
+        run: |
+          DEPENDENCIES=$(fpp-depend ../build-fprime-automatic-native/locs.fpp *.fpp)
+          fpp-to-json ${DEPENDENCIES} *.fpp
+        shell: bash

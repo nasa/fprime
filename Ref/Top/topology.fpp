@@ -4,113 +4,89 @@ module Ref {
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
 
-    enum Ports_RateGroups {
-      rateGroup1
-      rateGroup2
-      rateGroup3
-    }
+  enum Ports_RateGroups {
+    rateGroup1
+    rateGroup2
+    rateGroup3
+  }
+
+
 
   topology Ref {
+    # ----------------------------------------------------------------------
+    # Subtopology imports
+    # ----------------------------------------------------------------------
+    import CdhCore.Subtopology
+    import ComCcsds.Subtopology
+    import FileHandling.Subtopology
+    import DataProducts.Subtopology
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
     # ----------------------------------------------------------------------
 
-    instance $health
     instance SG1
     instance SG2
     instance SG3
     instance SG4
     instance SG5
     instance blockDrv
-    instance tlmSend
-    instance cmdDisp
-    instance cmdSeq
-    instance comm
-    instance deframer
-    instance eventLogger
-    instance fatalAdapter
-    instance fatalHandler
-    instance fileDownlink
-    instance fileManager
-    instance fileUplink
-    instance commsBufferManager
-    instance frameAccumulator
-    instance framer
     instance posixTime
     instance pingRcvr
-    instance prmDb
     instance rateGroup1Comp
     instance rateGroup2Comp
     instance rateGroup3Comp
     instance rateGroupDriverComp
     instance recvBuffComp
-    instance fprimeRouter
     instance sendBuffComp
-    instance textLogger
     instance typeDemo
     instance systemResources
-    instance dpCat
-    instance dpMgr
-    instance dpWriter
-    instance dpBufferManager
-    instance version
+    instance dpDemo
+    instance linuxTimer
+    instance comDriver
+    instance cmdSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
     # ----------------------------------------------------------------------
 
-    command connections instance cmdDisp
+    command connections instance CdhCore.cmdDisp
 
-    event connections instance eventLogger
+    event connections instance CdhCore.events
 
-    param connections instance prmDb
+    telemetry connections instance CdhCore.tlmSend
 
-    telemetry connections instance tlmSend
+    text event connections instance CdhCore.textLogger
 
-    text event connections instance textLogger
+    health connections instance CdhCore.$health
+
+    param connections instance FileHandling.prmDb
 
     time connections instance posixTime
 
-    health connections instance $health
+    # ----------------------------------------------------------------------
+    # Telemetry packets
+    # ----------------------------------------------------------------------
+
+    include "RefPackets.fppi"
 
     # ----------------------------------------------------------------------
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
-    connections Downlink {
-
-      tlmSend.PktSend -> framer.comIn
-      eventLogger.PktSend -> framer.comIn
-      fileDownlink.bufferSendOut -> framer.bufferIn
-
-      framer.framedAllocate -> commsBufferManager.bufferGetCallee
-      framer.framedOut -> comm.$send
-      framer.bufferDeallocate -> fileDownlink.bufferReturn
-
-      comm.deallocate -> commsBufferManager.bufferSendIn
-
-      dpCat.fileOut -> fileDownlink.SendFile
-      fileDownlink.FileComplete -> dpCat.fileDone
-
-    }
-
-    connections FaultProtection {
-      eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
-    }
-
     connections RateGroups {
 
-      # Block driver
-      blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
+      # Linux timer to drive cycle
+      linuxTimer.CycleOut -> rateGroupDriverComp.CycleIn
 
       # Rate group 1
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
-      rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
-      rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
+      rateGroup1Comp.RateGroupMemberOut[2] -> CdhCore.tlmSend.Run
+      rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.comQueue.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -118,65 +94,82 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
+      rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
+      #connection to FileManager listing feature command for sequencing
+      rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.fileManager.schedIn
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
-      rateGroup3Comp.RateGroupMemberOut[0] -> $health.Run
+      rateGroup3Comp.RateGroupMemberOut[0] -> CdhCore.$health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> commsBufferManager.schedIn
-      rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
-      rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
-      rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
+      rateGroup3Comp.RateGroupMemberOut[3] -> ComCcsds.commsBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.dpBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.dpWriter.schedIn
+      rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.dpMgr.schedIn
+    }
+
+    connections Communications {
+      # ComDriver buffer allocations
+      comDriver.allocate      -> ComCcsds.commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> ComCcsds.commsBufferManager.bufferSendIn
+      
+      # ComDriver <-> ComStub (Uplink)
+      comDriver.$recv                     -> ComCcsds.comStub.drvReceiveIn
+      ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      
+      # ComStub <-> ComDriver (Downlink)
+      ComCcsds.comStub.drvSendOut      -> comDriver.$send
+      comDriver.ready         -> ComCcsds.comStub.drvConnected
     }
 
     connections Ref {
       sendBuffComp.Data -> blockDrv.BufferIn
       blockDrv.BufferOut -> recvBuffComp.Data
-    }
 
-    connections Sequencer {
-      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
-    }
-
-    connections Uplink {
-
-      comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.$recv -> frameAccumulator.dataIn
-
-      frameAccumulator.frameOut -> deframer.framedIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.deframedOut -> fprimeRouter.dataIn
-
-      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
-      fprimeRouter.fileOut -> fileUplink.bufferSendIn
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-
-      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
-
-      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-
-    }
-
-    connections DataProducts {
-      # DpMgr and DpWriter connections. Have explicit port indexes for demo
-      dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
-      dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
-      dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
-
-      # Component DP connections
-      
+      ### Moved this out of DataProducts Subtopology --> anything specific to deployment should live in Ref connections
       # Synchronous request. Will have both request kinds for demo purposes, not typical
-      SG1.productGetOut -> dpMgr.productGetIn[0]
+      SG1.productGetOut -> DataProducts.dpMgr.productGetIn
       # Asynchronous request
-      SG1.productRequestOut -> dpMgr.productRequestIn[0]
-      dpMgr.productResponseOut[0] -> SG1.productRecvIn
+      SG1.productRequestOut -> DataProducts.dpMgr.productRequestIn
+      DataProducts.dpMgr.productResponseOut -> SG1.productRecvIn
       # Send filled DP
-      SG1.productSendOut -> dpMgr.productSendIn[0]
+      SG1.productSendOut -> DataProducts.dpMgr.productSendIn
+      # Synchronous request
+      dpDemo.productGetOut -> DataProducts.dpMgr.productGetIn
+      # Send filled DP
+      dpDemo.productSendOut -> DataProducts.dpMgr.productSendIn
+      # Asynchronous request
+      dpDemo.productRequestOut -> DataProducts.dpMgr.productRequestIn
+      DataProducts.dpMgr.productResponseOut -> dpDemo.productRecvIn
+    }
+
+    connections ComCcsds_CdhCore{
+      # events and telemetry to comQueue
+      CdhCore.events.PktSend        -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.tlmSend.PktSend            -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+
+      # Router <-> CmdDispatcher
+      ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
+      CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
+      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
+      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+    }
+
+    connections ComCcsds_FileHandling {
+      # File Downlink <-> ComQueue
+      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
       
+      # Router <-> FileUplink
+      ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
+      FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn
+    }
+
+    connections FileHandling_DataProducts{
+      # Data Products
+      DataProducts.dpCat.fileOut             -> FileHandling.fileDownlink.SendFile
+      FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
     }
 
   }

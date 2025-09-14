@@ -4,7 +4,6 @@
 
 #include "TcpClientTester.hpp"
 
-
 TEST(Nominal, TcpClientBasicMessaging) {
     Drv::TcpClientTester tester;
     tester.test_basic_messaging();
@@ -13,6 +12,11 @@ TEST(Nominal, TcpClientBasicMessaging) {
 TEST(Nominal, TcpClientBasicReceiveThread) {
     Drv::TcpClientTester tester;
     tester.test_receive_thread();
+}
+
+TEST(Nominal, TcpClientBufferDeallocation) {
+    Drv::TcpClientTester tester;
+    tester.test_buffer_deallocation();
 }
 
 TEST(Reconnect, TcpClientMultiMessaging) {

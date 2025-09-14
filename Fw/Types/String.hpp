@@ -7,9 +7,9 @@
 #ifndef FW_STRING_HPP
 #define FW_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
@@ -24,9 +24,9 @@ class String final : public StringBase {
 
     String() : StringBase() { *this = ""; }
 
-    explicit String(const String& src) : StringBase() { *this = src; }
+    String(const String& src) : StringBase() { *this = src; }
 
-    explicit String(const StringBase& src) : StringBase() { *this = src; }
+    String(const StringBase& src) : StringBase() { *this = src; }
 
     String(const char* src) : StringBase() { *this = src; }
 

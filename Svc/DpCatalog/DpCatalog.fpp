@@ -16,7 +16,7 @@ module Svc {
 
   @ Data structure representing a data product.
   struct DpRecord {
-    $id: U32 # The ID of the data product
+    $id: FwDpIdType # The ID of the data product
     tSec: U32 # Generation time in seconds
     tSub: U32 # Generation time in subseconds
     $priority: U32 # Priority of the data product

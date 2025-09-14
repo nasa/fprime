@@ -7,24 +7,22 @@
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/ByteArray.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
-#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/FramingProtocol/DeframingProtocol.hpp"
+#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "Utils/Types/CircularBuffer.hpp"
 
 namespace Svc {
 
-  //! A harness for checking deframing
-  class DeframingTester {
+//! A harness for checking deframing
+class DeframingTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants and types
+    // ----------------------------------------------------------------------
 
-    public:
-
-      // ----------------------------------------------------------------------
-      // Constants and types
-      // ----------------------------------------------------------------------
-
-      //! Constants
-      enum Constants {
+    //! Constants
+    enum Constants {
         //! The maximum frame size
         MAX_FRAME_SIZE = 1024,
         //! The size of non-packet data in a frame
@@ -34,141 +32,114 @@ namespace Svc {
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
         //! The offset of the packet size in an F Prime protocol frame
-        PACKET_SIZE_OFFSET = START_WORD_OFFSET +
-          sizeof FpFrameHeader::START_WORD,
-      };
+        PACKET_SIZE_OFFSET = START_WORD_OFFSET + sizeof FpFrameHeader::START_WORD,
+    };
 
-      //! The deframing protocol interface
-      class Interface :
-        public DeframingProtocolInterface
-      {
+    //! The deframing protocol interface
+    class Interface : public DeframingProtocolInterface {
+      public:
+        //! Construct an Interface
+        Interface(DeframingTester& a_deframingTester  //!< The enclosing DeframingTester
+                  )
+            : deframingTester(a_deframingTester) {}
 
-        public:
-
-          //! Construct an Interface
-          Interface(
-              DeframingTester& a_deframingTester //!< The enclosing DeframingTester
-          ) :
-            deframingTester(a_deframingTester)
-          {
-
-          }
-
-        public:
-
-          //! Allocate the buffer
-          Fw::Buffer allocate(const U32 size) {
+      public:
+        //! Allocate the buffer
+        Fw::Buffer allocate(const U32 size) {
             FW_ASSERT(size <= MAX_FRAME_SIZE);
             Fw::Buffer buffer(this->deframingTester.bufferStorage, size);
             return buffer;
-          }
+        }
 
-          //! Route the buffer
-          void route(Fw::Buffer& data) {
-            this->routedBuffer = data;
-          }
+        //! Route the buffer
+        void route(Fw::Buffer& data) { this->routedBuffer = data; }
 
-          //! Get the routed buffer
-          Fw::Buffer getRoutedBuffer() {
-            return this->routedBuffer;
-          }
+        //! Get the routed buffer
+        Fw::Buffer getRoutedBuffer() { return this->routedBuffer; }
 
-        private:
+      private:
+        //! The enclosing DeframingTester
+        DeframingTester& deframingTester;
 
-          //! The enclosing DeframingTester
-          DeframingTester& deframingTester;
+        //! The routed buffer
+        Fw::Buffer routedBuffer;
+    };
 
-          //! The routed buffer
-          Fw::Buffer routedBuffer;
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      };
+    //! Construct a DeframingTester
+    DeframingTester(U32 cbStoreSize = MAX_FRAME_SIZE  //!< The circular buffer store size
+    );
 
-    public:
+    //! Destroy a DeframingTester
+    ~DeframingTester();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
 
-      //! Construct a DeframingTester
-      DeframingTester(
-          U32 cbStoreSize = MAX_FRAME_SIZE //!< The circular buffer store size
-      );
+    //! Call the deframe function of the deframer
+    DeframingProtocol::DeframingStatus deframe(U32& needed  //!< The number of bytes needed (output)
+    );
 
-      //! Destroy a DeframingTester
-      ~DeframingTester();
+    //! Serialize a value of token type into the circular buffer
+    void serializeTokenType(FpFrameHeader::TokenType v  //!< The value
+    );
 
-    public:
+    //! Construct a random frame
+    //! \return An array pointing to frame data owned by DeframingTester.
+    Fw::ByteArray constructRandomFrame(U32 packetSize  //!< The packet size
+    );
 
-      // ----------------------------------------------------------------------
-      // Public member functions
-      // ----------------------------------------------------------------------
+    //! Push a frame onto the circular buffer
+    void pushFrameOntoCB(Fw::ByteArray frame  //!< The frame
+    );
 
-      //! Call the deframe function of the deframer
-      DeframingProtocol::DeframingStatus deframe(
-          U32& needed //!< The number of bytes needed (output)
-      );
+    //! Get the stored frame
+    //! \return The frame
+    Fw::ByteArray getFrame();
 
-      //! Serialize a value of token type into the circular buffer
-      void serializeTokenType(
-          FpFrameHeader::TokenType v //!< The value
-      );
+    //! Check the packet data
+    void checkPacketData();
 
-      //! Construct a random frame
-      //! \return An array pointing to frame data owned by DeframingTester.
-      Fw::ByteArray constructRandomFrame(
-          U32 packetSize //!< The packet size
-      );
+    //! Test nominal deframing with a valid frame containing random
+    //! packet data
+    void testNominalDeframing(U32 packetSize  //!< The packet size
+    );
 
-      //! Push a frame onto the circular buffer
-      void pushFrameOntoCB(
-          Fw::ByteArray frame //!< The frame
-      );
+    //! Test deframing with a frame containing a bad checksum
+    void testBadChecksum(U32 packetSize  //!< The packet size
+    );
 
-      //! Get the stored frame
-      //! \return The frame
-      Fw::ByteArray getFrame();
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
 
-      //! Check the packet data
-      void checkPacketData();
+    //! Storage for the buffer
+    U8 bufferStorage[MAX_FRAME_SIZE];
 
-      //! Test nominal deframing with a valid frame containing random
-      //! packet data
-      void testNominalDeframing(
-          U32 packetSize //!< The packet size
-      );
+    //! The frame data
+    U8 frameData[MAX_FRAME_SIZE];
 
-      //! Test deframing with a frame containing a bad checksum
-      void testBadChecksum(
-          U32 packetSize //!< The packet size
-      );
+    //! The frame size
+    FwSizeType frameSize;
 
-    private:
+    //! Storage for the circular buffer
+    U8* cbStorage;
 
-      // ----------------------------------------------------------------------
-      // Private member variables
-      // ----------------------------------------------------------------------
+    //! The circular buffer
+    Types::CircularBuffer circularBuffer;
 
-      //! Storage for the buffer
-      U8 bufferStorage[MAX_FRAME_SIZE];
+    //! The framing protocol interface
+    Interface interface;
 
-      //! The frame data
-      U8 frameData[MAX_FRAME_SIZE];
+    //! The F Prime framing protocol
+    FprimeDeframing fprimeDeframing;
+};
 
-      //! The frame size
-      FwSizeType frameSize;
-
-      //! Storage for the circular buffer
-      U8* cbStorage;
-
-      //! The circular buffer
-      Types::CircularBuffer circularBuffer;
-
-      //! The framing protocol interface
-      Interface interface;
-
-      //! The F Prime framing protocol
-      FprimeDeframing fprimeDeframing;
-
-  };
-
-}
+}  // namespace Svc

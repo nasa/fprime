@@ -2,8 +2,8 @@
 // \title Os/Stub/test/Console.hpp
 // \brief test stub implementation for Os::Console, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Console.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Test_Console_HPP
 #define OS_Stub_Test_Console_HPP
 
@@ -41,8 +41,7 @@ struct StaticData {
 
 //! ConsoleHandle class definition for stub implementations.
 //!
-struct TestConsoleHandle : public ConsoleHandle {
-};
+struct TestConsoleHandle : public ConsoleHandle {};
 
 //! \brief stub implementation of Os::ConsoleInterface
 //!
@@ -90,9 +89,9 @@ class TestConsole : public ConsoleInterface {
     //! File handle for PosixFile
     TestConsoleHandle m_handle;
 };
-} // namespace Test
-} // namespace Console
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Console
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Test_Console_HPP
+#endif  // OS_Stub_Test_Console_HPP

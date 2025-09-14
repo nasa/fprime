@@ -7,9 +7,9 @@
 #ifndef FW_TEST_STRING_HPP
 #define FW_TEST_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Test {
@@ -51,6 +51,6 @@ class String : public Fw::StringBase {
   private:
     char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
-}  // namespace Fw
+}  // namespace Test
 
 #endif

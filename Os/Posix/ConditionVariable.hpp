@@ -12,7 +12,7 @@ namespace Posix {
 namespace Mutex {
 
 struct PosixConditionVariableHandle : public ConditionVariableHandle {
-    pthread_cond_t m_condition; //! The condition variable
+    pthread_cond_t m_condition;  //! The condition variable
 };
 
 //! \brief Posix implementation of Os::ConditionVariable

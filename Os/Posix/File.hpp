@@ -13,11 +13,11 @@ namespace File {
 //! FileHandle class definition for posix implementations.
 //!
 struct PosixFileHandle : public FileHandle {
-    static constexpr PlatformIntType INVALID_FILE_DESCRIPTOR = -1;
-    static constexpr PlatformIntType ERROR_RETURN_VALUE = -1;
+    static constexpr int INVALID_FILE_DESCRIPTOR = -1;
+    static constexpr int ERROR_RETURN_VALUE = -1;
 
     //! Posix file descriptor
-    PlatformIntType m_file_descriptor = INVALID_FILE_DESCRIPTOR;
+    int m_file_descriptor = INVALID_FILE_DESCRIPTOR;
 };
 
 //! \brief posix implementation of Os::File
@@ -77,7 +77,7 @@ class PosixFile : public FileInterface {
     //! \param size: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status size(FwSignedSizeType& size_result) override;
+    Status size(FwSizeType& size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
@@ -85,7 +85,7 @@ class PosixFile : public FileInterface {
     //! \param position: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status position(FwSignedSizeType& position_result) override;
+    Status position(FwSizeType& position_result) override;
 
     //! \brief pre-allocate file storage
     //!
@@ -99,15 +99,15 @@ class PosixFile : public FileInterface {
     //! \param length: length after offset to preallocate
     //! \return OP_OK on success otherwise error status
     //!
-    Status preallocate(FwSignedSizeType offset, FwSignedSizeType length) override;
+    Status preallocate(FwSizeType offset, FwSizeType length) override;
 
     //! \brief seek the file pointer to the given offset
     //!
     //! Seek the file pointer to the given `offset`. If `seekType` is set to `ABSOLUTE` then the offset is calculated
-    //! from the start of the file, and if it is set to `CURRENT` it is calculated from the current position.
+    //! from the start of the file, and if it is set to `RELATIVE` it is calculated from the current position.
     //!
     //! \param offset: offset to seek to
-    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
+    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
     //! \return OP_OK on success otherwise error status
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
@@ -139,7 +139,7 @@ class PosixFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status read(U8* buffer, FwSignedSizeType& size, WaitType wait) override;
+    Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -159,7 +159,7 @@ class PosixFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status write(const U8* buffer, FwSignedSizeType& size, WaitType wait) override;
+    Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief returns the raw file handle
     //!

@@ -5,7 +5,7 @@
 #ifndef _IntervalTimer_hpp_
 #define _IntervalTimer_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/RawTime.hpp>
 
 namespace Os {
@@ -63,7 +63,7 @@ class IntervalTimer {
     //! \return bool: True if the interval was successfully calculated, false otherwise.
     Os::RawTime::Status getTimeInterval(Fw::TimeInterval& interval) const;
 
-  PRIVATE:
+  private:
     RawTime m_startTime;  //!< Stored start time
     RawTime m_stopTime;   //!< Stored end time
 

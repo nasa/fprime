@@ -12,8 +12,7 @@ namespace Memory {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct LinuxMemoryHandle : public MemoryHandle {
-};
+struct LinuxMemoryHandle : public MemoryHandle {};
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
@@ -39,7 +38,6 @@ class LinuxMemory : public MemoryInterface {
     // Functions overrides
     // ------------------------------------
   public:
-
     //! \brief get system memory usage
     //!
     //! This method delegates to the underlying implementation.
@@ -55,13 +53,14 @@ class LinuxMemory : public MemoryInterface {
     //!
     //! \return raw console handle
     //!
-    MemoryHandle *getHandle() override;
+    MemoryHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     LinuxMemoryHandle m_handle;
 };
-} // namespace Memory
-} // namespace Linux
-} // namespace Os
+}  // namespace Memory
+}  // namespace Linux
+}  // namespace Os
 
-#endif // OS_Linux_Memory_HPP
+#endif  // OS_Linux_Memory_HPP

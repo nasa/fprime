@@ -132,7 +132,8 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
-    random_fill(m_buffer.getSerializeRepr(), max_random_size);
+    auto serializer = m_buffer.getSerializer();
+    random_fill(serializer, max_random_size);
     m_buffer.setSize(max_random_size);
     m_current_port = port;
     invoke_to_buffersIn(m_current_port, m_buffer);
@@ -150,17 +151,17 @@ void GenericHubTester ::send_random_buffer(U32 port) {
 // ----------------------------------------------------------------------
 
 void GenericHubTester ::from_LogSend_handler(const FwIndexType portNum,
-                                   FwEventIdType id,
-                                   Fw::Time& timeTag,
-                                   const Fw::LogSeverity& severity,
-                                   Fw::LogBuffer& args) {
+                                             FwEventIdType id,
+                                             Fw::Time& timeTag,
+                                             const Fw::LogSeverity& severity,
+                                             Fw::LogBuffer& args) {
     this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
 }
 
 void GenericHubTester ::from_TlmSend_handler(const FwIndexType portNum,
-                                   FwChanIdType id,
-                                   Fw::Time& timeTag,
-                                   Fw::TlmBuffer& val) {
+                                             FwChanIdType id,
+                                             Fw::Time& timeTag,
+                                             Fw::TlmBuffer& val) {
     this->pushFromPortEntry_TlmSend(id, timeTag, val);
 }
 
@@ -192,8 +193,8 @@ void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::B
     this->from_dataInDeallocate_handler(0, fwBuffer);
 }
 
-void GenericHubTester ::from_portOut_handler(FwIndexType portNum,        /*!< The port number*/
-                                   Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
+                                             Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
     // Assert the buffer came through exactly on the right port
@@ -205,7 +206,7 @@ void GenericHubTester ::from_portOut_handler(FwIndexType portNum,        /*!< Th
     ASSERT_from_buffersOut_SIZE(0);
 }
 
-Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const U32 size) {
+Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const FwSizeType size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
     EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
     m_allocate.set(m_data_for_allocation, size);

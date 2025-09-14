@@ -31,7 +31,7 @@ TestDirectory::Status TestDirectory::rewind() {
     return Status::OP_OK;
 }
 
-TestDirectory::Status TestDirectory::read(char * fileNameBuffer, FwSizeType bufSize) {
+TestDirectory::Status TestDirectory::read(char* fileNameBuffer, FwSizeType bufSize) {
     StaticData::data.lastCalled = StaticData::LastFn::READ_FN;
     return Status::OP_OK;
 }
@@ -40,14 +40,12 @@ void TestDirectory::close() {
     StaticData::data.lastCalled = StaticData::LastFn::CLOSE_FN;
 }
 
-
-Os::DirectoryHandle *TestDirectory::getHandle() {
+Os::DirectoryHandle* TestDirectory::getHandle() {
     StaticData::data.lastCalled = StaticData::LastFn::GET_HANDLE_FN;
     return nullptr;
 }
 
-
-}
-}
-}
-}
+}  // namespace Test
+}  // namespace Directory
+}  // namespace Stub
+}  // namespace Os

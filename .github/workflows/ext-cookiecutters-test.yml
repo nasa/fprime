@@ -1,0 +1,115 @@
+name: "External Repo: Cookiecutters Tests"
+
+on:
+ push:
+   branches: [ devel, release/** ]
+ pull_request:
+   # The branches below must be a subset of the branches above
+   branches: [ devel, release/** ]
+   paths-ignore:
+     - 'docs/**'
+     - '**.md'
+     - '.github/actions/spelling/**'
+     - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+
+
+# This workflow tests the project bootstrapping and cookiecutter templates by creating 
+# a new project, deployment and component and building them
+# This uses the `expect` utility to feed input into the various cookiecutter prompts
+
+jobs:
+
+  # -------- Retrieve target branches for fprime-tools and fprime-bootstrap --------
+  get-tools-branch:
+    name: "Get fprime-tools target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: nasa/fprime-tools
+
+  get-bootstrap-branch:
+    name: "Get fprime-bootstrap target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-bootstrap
+
+  # -------- Install target versions of the cookiecutter templates and validate -------
+  Validate:
+    runs-on: ubuntu-latest
+    needs: [ get-tools-branch, get-bootstrap-branch ]
+    steps:
+      # Checkout only the bootstrap.expect file, since the full F´ repo will be 
+      # checked out as part of the fprime-bootstrap process
+      - name: "Retrieve bootstrap.expect file"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/cookiecutter-check/bootstrap.expect
+          sparse-checkout-cone-mode: false
+          fetch-depth: 0
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: "Install expect and fprime-bootstrap"
+        run: |
+             sudo apt-get update
+             sudo apt-get install expect
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@${{ needs.get-bootstrap-branch.outputs.target-branch }}
+
+      - name: "Bootstrap Project"
+        run: |
+             expect .github/actions/cookiecutter-check/bootstrap.expect
+
+      # Overlay fprime@current_rev in new project so that we build with it in the tests
+      # current_rev is devel on the devel branch and the PR revision in PR checks
+      - name: "Overlay fprime@current_rev in new project"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./my-project/lib/fprime
+          fetch-depth: 0
+
+      - name: "Update dependencies and install fprime-tools"
+        run: |
+             cd my-project
+             . fprime-venv/bin/activate
+             pip install -U -r ./requirements.txt
+             pip install git+https://github.com/nasa/fprime-tools@${{ needs.get-tools-branch.outputs.target-branch }}
+
+      - name: "Version Check"
+        run: |
+             cd my-project
+             . fprime-venv/bin/activate
+             fprime-util version-check
+
+      - name: "Test Generate and Build Project"
+        run: |  
+             cd my-project
+             . fprime-venv/bin/activate
+             fprime-util generate
+             fprime-util build -j4
+
+      - name: "Test New Deployment and Build"
+        run: |
+             cd my-project
+             . fprime-venv/bin/activate
+             cd MyProject
+             expect ../lib/fprime/.github/actions/cookiecutter-check/deployment.expect
+             cd MyDeployment
+             fprime-util build -j4
+
+      - name: "Test New Component and Build"
+        run: |
+             cd my-project
+             . fprime-venv/bin/activate
+             cd MyProject
+             expect ../lib/fprime/.github/actions/cookiecutter-check/component.expect
+             cd MyComponent
+             fprime-util build -j4

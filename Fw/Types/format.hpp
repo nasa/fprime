@@ -10,17 +10,17 @@
 // ======================================================================
 #ifndef FW_TYPES_FORMAT_HPP_
 #define FW_TYPES_FORMAT_HPP_
-#include <FpConfig.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <cstdarg>
 namespace Fw {
 
 //! \brief status of string format calls
 enum class FormatStatus {
-    SUCCESS, //!< Format worked
-    OVERFLOWED, //!< Format overflowed
-    INVALID_FORMAT_STRING, //!< Format provided invalid format string
-    SIZE_OVERFLOW, //!< FwSizeType overflowed the range of size_t
-    OTHER_ERROR //!< An error was returned from an underlying call
+    SUCCESS,                //!< Format worked
+    OVERFLOWED,             //!< Format overflowed
+    INVALID_FORMAT_STRING,  //!< Format provided invalid format string
+    SIZE_OVERFLOW,          //!< FwSizeType overflowed the range of size_t
+    OTHER_ERROR             //!< An error was returned from an underlying call
 };
 
 //! \brief format a c-string
@@ -39,7 +39,7 @@ enum class FormatStatus {
 //! \param formatString: format string to fill
 //! \param ...: variable arguments inputs
 //! \return: SUCCESS on successful formatting, OVERFLOWED on overflow, and something else on any error
-    FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, ...);
+FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, ...);
 
 //! \brief format a c-string
 //!
@@ -60,7 +60,5 @@ enum class FormatStatus {
 //! \param args: variable arguments list
 //! \return: SUCCESS on successful formatting, OVERFLOWED on overflow, and something else on any error
 FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, va_list args);
-}
-#endif // FW_TYPES_FORMAT_HPP_
-
-
+}  // namespace Fw
+#endif  // FW_TYPES_FORMAT_HPP_
