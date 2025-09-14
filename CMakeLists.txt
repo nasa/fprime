@@ -34,3 +34,4 @@ add_compile_options(
     -Wno-vla
 )
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TestMyFprime/")

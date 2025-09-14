@@ -879,6 +879,12 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_CMD_RESPONSE_SIZE(0);
 }
 
+void CommandDispatcherTester::runCommandQueueOverflow(){ 
+
+        
+}
+
+
 void CommandDispatcherTester::from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                    U32 key                    /*!< Value to return to pinger*/
 ) {}

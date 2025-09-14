@@ -121,6 +121,16 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param cmdSeq the assigned sequence number for the command
     void CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
 
+    //!  \brief Called when the command sequence queue overflows
+    //!
+    //!  Generate event to the user that the command queue overflowed and the
+    //!  command will not be processed.
+    //!
+    //!  \param portNum the number of the incoming port.
+    //!  \param data the buffer containing the command.
+    //!  \param context call value defined by user
+    void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context);
+
     //! \struct DispatchEntry
     //! \brief table used to store opcode to port mappings
     //!
@@ -163,6 +173,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
+    U32 m_numCmdsDropped;     //!< number of commands dropped due to buffer overflow
 };
 }  // namespace Svc
 

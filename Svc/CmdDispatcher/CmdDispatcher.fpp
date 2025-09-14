@@ -21,7 +21,7 @@ module Svc {
     output port seqCmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
 
     @ Command buffer input port for sequencers or other sources of command buffers
-    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com
+    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com hook
 
     @ Ping input port
     async input port pingIn: Svc.Ping
@@ -184,6 +184,15 @@ module Svc {
       id 10 \
       format "Opcode 0x{x} is already registered to port {}"
 
+    @ This log event reports the Command Sequence Buffer port queue has overflowed.
+    event CommandDroppedQueueOverflow(
+                              OpCode: U32 @< The command opcode dropped
+                              Context: U32 @< The call order
+                            ) \
+      severity activity high \
+      id 11 \
+      format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" 
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
@@ -194,6 +203,8 @@ module Svc {
     @ Number of command errors
     telemetry CommandErrors: U32 id 1 update on change
 
+    @ Number of commands drooped due to buffer overflow
+    telemetry CommandsDropped: U32 id 2 update on change
   }
 
 }
