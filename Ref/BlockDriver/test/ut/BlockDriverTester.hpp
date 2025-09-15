@@ -7,80 +7,71 @@
 #ifndef Ref_BlockDriverTester_HPP
 #define Ref_BlockDriverTester_HPP
 
-#include "Ref/BlockDriver/BlockDriverGTestBase.hpp"
 #include "Ref/BlockDriver/BlockDriver.hpp"
+#include "Ref/BlockDriver/BlockDriverGTestBase.hpp"
 
 namespace Ref {
 
-  class BlockDriverTester final :
-    public BlockDriverGTestBase
-  {
+class BlockDriverTester final : public BlockDriverGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
-    public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 10;
 
-      // ----------------------------------------------------------------------
-      // Constants
-      // ----------------------------------------------------------------------
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const FwSizeType MAX_HISTORY_SIZE = 10;
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-      // Instance ID supplied to the component instance under test
-      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // Queue depth supplied to the component instance under test
-      static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+    //! Construct object BlockDriverTester
+    BlockDriverTester();
 
-    public:
+    //! Destroy object BlockDriverTester
+    ~BlockDriverTester();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Construct object BlockDriverTester
-      BlockDriverTester();
+    //! Test data loop back port
+    void testDataLoopBack();
 
-      //! Destroy object BlockDriverTester
-      ~BlockDriverTester();
+    //! Test Ping port
+    void testPing();
 
-    public:
+    //! Test ISR cycle increment
+    void testCycleIncrement();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
 
-      //! Test data loop back port
-      void testDataLoopBack();
+    //! Connect ports
+    void connectPorts();
 
-      //! Test Ping port
-      void testPing();
+    //! Initialize components
+    void initComponents();
 
-      //! Test ISR cycle increment
-      void testCycleIncrement();
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
 
-    private:
+    //! The component under test
+    BlockDriver component;
+};
 
-      // ----------------------------------------------------------------------
-      // Helper functions
-      // ----------------------------------------------------------------------
-
-      //! Connect ports
-      void connectPorts();
-
-      //! Initialize components
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Member variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      BlockDriver component;
-
-  };
-
-}
+}  // namespace Ref
 
 #endif

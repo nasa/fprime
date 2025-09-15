@@ -139,7 +139,7 @@ def test_seqgen(fprime_test_api):
         subprocess.run(
             [
                 "fprime-seqgen",
-                "-d",
+                "--dictionary",
                 str(fprime_test_api.pipeline.dictionary_path),
                 str(sequence),
                 "ref_test_seq.bin",

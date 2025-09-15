@@ -57,10 +57,10 @@ The entrypoint to developing with F´ is creating a new project. This will clone
 fprime-bootstrap project
 ```
 
-
 This command will ask for some input. Sample responses are below:
 ```
-  [1/1] Project name (MyProject): MyProject
+  [1/2] Project repository name [my-fprime-project]: my-project
+  [2/2] Project top-level namespace [MyFprimeProject]: MyProject
 ```
 
 1.  This commands perform the following actions:
@@ -73,7 +73,7 @@ This command will ask for some input. Sample responses are below:
 Once the project is created, activate the virtual environment to use the F´ tool suite.
 
 ```
-cd MyProject
+cd my-project
 . fprime-venv/bin/activate
 ```
 > [!WARNING]

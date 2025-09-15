@@ -10,6 +10,9 @@ module Svc {
     @ Ping input port
     async input port pingIn: Svc.Ping
 
+    @ Scheduler input port for rate group operations
+    async input port schedIn: Sched
+
     @ Ping output port
     output port pingOut: Svc.Ping
 
@@ -57,5 +60,4 @@ module Svc {
     include "Events.fppi"
 
   }
-
 }

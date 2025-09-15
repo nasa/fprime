@@ -23,5 +23,4 @@ enum IpCfg {
 };
 static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
 
-
-#endif //REF_IPCFG_HPP
+#endif  // REF_IPCFG_HPP

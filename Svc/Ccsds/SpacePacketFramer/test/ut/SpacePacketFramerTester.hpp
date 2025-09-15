@@ -62,7 +62,7 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
     // Test Harness: output port overrides
     // ----------------------------------------------------------------------
     U16 from_getApidSeqCount_handler(FwIndexType portNum,  //!< The port number
-                                     const ComCfg::APID& apid,
+                                     const ComCfg::Apid& apid,
                                      U16 sequenceCount) override;
 
     Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;

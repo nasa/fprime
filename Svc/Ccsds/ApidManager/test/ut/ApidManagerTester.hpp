@@ -59,20 +59,20 @@ class ApidManagerTester : public ApidManagerGTestBase {
     ApidManager component;
 
     // Shadow test state
-    std::map<ComCfg::APID::T, U16> shadow_seqCounts;  //!< Map to hold expected sequence counts for APIDs
+    std::map<ComCfg::Apid::T, U16> shadow_seqCounts;  //!< Map to hold expected sequence counts for APIDs
     bool shadow_isTableFull = false;
 
     // ----------------------------------------------------------------------
     // Helpers for tracking the shadow test state
     // ----------------------------------------------------------------------
 
-    U16 shadow_getAndIncrementSeqCount(ComCfg::APID::T apid);
+    U16 shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid);
 
-    void shadow_validateApidSeqCount(ComCfg::APID::T apid, U16 expectedSeqCount);
+    void shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 expectedSeqCount);
 
-    ComCfg::APID::T shadow_getRandomTrackedApid();
+    ComCfg::Apid::T shadow_getRandomTrackedApid();
 
-    ComCfg::APID::T shadow_getRandomUntrackedApid();
+    ComCfg::Apid::T shadow_getRandomUntrackedApid();
 
     // ----------------------------------------------------------------------
     // Tests: Rule Based Testing

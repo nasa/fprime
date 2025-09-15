@@ -14,6 +14,17 @@ A reference implementation of a custom framing protocol (the "Decaf Protocol") i
 
 This guide is divided into two main sections: flight software implementation and GDS integration. Note that if you are aiming to integrate with another GDS and do not wish to use the F´ GDS, you can skip the GDS section.
 
+## Prerequisites: Understanding Subtopologies
+
+**Important**: Before implementing custom framing protocols, you should familiarize yourself with F´ subtopologies. Modern F´ deployments ship with the `Svc.ComCcsds` subtopology by default, which provides a standard communication stack including framing/deframing components.
+
+To implement custom framing protocols, you will typically need to:
+1. **Understand the existing communication subtopology**: Review how the default `Svc.ComCcsds` subtopology is structured and integrated into your deployment
+2. **Manually import components**: Copy the relevant topology code from the subtopology into your main topology so you can modify the component connections as needed, and remove the old `import Svc.ComCcsds` statement.
+3. **Replace standard components**: Substitute the default framer/deframer components with your custom implementations
+
+For more information on working with subtopologies, see the [Subtopologies Guide](../user-manual/design-patterns/subtopologies.md). This understanding is essential before proceeding with custom framing implementation.
+
 ## Flight Software Implementation
 
 To implement a custom framing protocol in F´, will need to implement the following:
@@ -30,7 +41,7 @@ The following examples will walk through the implementation of a custom framer a
    In  `MyCustomFramer.fpp`:
    ```
     passive component MyCustomFramer {
-        include "path/to/fprime/Svc/Interfaces/FramerInterface.fppi"
+        import Svc.Framer
         [...]
     }
    ```
@@ -38,7 +49,7 @@ The following examples will walk through the implementation of a custom framer a
    ```
     @ Deframer implementation for MyCustomProtocol
     passive component MyCustomDeframer {
-        include "path/to/fprime/Svc/Interfaces/DeframerInterface.fppi"
+        import Svc.Deframer
         [...]
     }
    ```
@@ -78,7 +89,27 @@ The following examples will walk through the implementation of a custom framer a
    // ...existing code...
    ```
 
-4. **(Optional) Implement a Frame Detector**
+4. **Integrate Components into Your Topology**
+
+    After implementing the framer, deframer, and optionally the frame detector, integrate these components into your main topology. This typically involves:
+    - Removing the import statement for the existing communication subtopology (e.g., `import Svc.ComCcsds`).
+    - Manually adding the topology code from the subtopology as needed. See [ComFprime.fpp](https://github.com/nasa/fprime/blob/devel/Svc/Subtopologies/ComFprime/ComFprime.fpp) for a reference code to add to your topology. You should be copy-pasting most of this code into your own topology, and adapt the C++ phase code as necessary.
+    - Updating the `framer` and `deframer` instances to use your custom implementations.
+    
+    Example snippet from `Top/Topology.fpp`:
+    ```fpp
+    // Remove or comment out the existing subtopology import
+    // import Svc.ComCcsds
+
+    // Manually add topology code from the subtopology as needed
+    // ...
+
+    // Replace instances of custom framer and deframer
+    instance framer: MyCustomFramer base id 0x1000
+    instance deframer: MyCustomDeframer base id 0x2000
+    ```
+
+5. **(Optional) Implement a Frame Detector**
 
    _When is this not needed?_  
    If your communications manager component always receives complete frames, you do not need to implement frame detection. This can be the case when using radios with built-in frame synchronization or when another subsystem handles frame delimiting.

@@ -8,7 +8,7 @@
 #define Svc_Ccsds_SpacePacketFramer_HPP
 
 #include "Svc/Ccsds/SpacePacketFramer/SpacePacketFramerComponentAc.hpp"
-#include "config/APIDEnumAc.hpp"
+#include "config/ApidEnumAc.hpp"
 
 namespace Svc {
 

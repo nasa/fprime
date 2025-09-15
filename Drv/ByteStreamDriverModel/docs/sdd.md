@@ -37,7 +37,7 @@ The following components implement the byte stream model using the synchronous i
 - [`Drv::TcpClient`](../../TcpClient/docs/sdd.md): a F´ component wrapper of the tcp client
 - [`Drv::TcpServer`](../../TcpServer/docs/sdd.md): a F´ component wrapper of the tcp server
 - [`Drv::Udp`](../../Udp/docs/sdd.md): a F´ component wrapper of the udp
-- `Drv::LinuxUartDriver`
+- [`Drv::LinuxUartDriver`](../../LinuxUartDriver/docs/sdd.md): a F´ component wrapper of the Linux UART driver
 
 
 ## Requirements

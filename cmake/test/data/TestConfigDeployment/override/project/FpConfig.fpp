@@ -67,9 +67,6 @@ type FwEventIdType = FwIdType
 @ The type of a command opcode
 type FwOpcodeType = FwIdType
 
-@ The type of a com packet descriptor
-type FwPacketDescriptorType = FwIdType
-
 @ The type of a parameter identifier
 type FwPrmIdType = FwIdType
 
