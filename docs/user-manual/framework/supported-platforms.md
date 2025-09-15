@@ -19,19 +19,19 @@ These are platforms that the F Prime community or core team is actively working 
 
 | Hardware | OS        | Architecture | Status              | Reference Project             | Delivery Date |
 | -------- | --------- | ------------ | ------------------- | ---------------- |----------------|
-| 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | 3PySquared | Zephyr  | ARM | In development | |TBD|
 | GR712RC | VxWorks 7 | SPARC V8 | Not started | |TBD|
 | GR740 | VxWorks 7 | SPARC V8 | Not started | |TBD|
-| HPSC | Linux | RISC-V | In development | | 9/30/2025 |
-| HPSC | VxWorks 7 | RISC-V | In development | | 9/30/2025 |
-| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
-| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| HPSC | Linux | RISC-V | In development | | TBD |
+| HPSC | VxWorks 7 | RISC-V | In development | | TBD |
+| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
+| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | PolarFire SoC  | Linux | RISC-V | Not started | |TBD|
-| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | Snapdragon CoProcessor | Linux | ARM | Not started | |TBD|
 | Vorago | Baremetal | ARM | In development | |TBD|
-| VOXL2 | Linux | ARM64 | In development | | 9/30/2025 |
+| VOXL2 | Linux | ARM64 | In development | | TBD |
 
 ## What does "Supported Platform" Mean?
 
