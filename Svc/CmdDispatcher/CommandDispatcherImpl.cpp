@@ -157,7 +157,6 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 }
 
 void CommandDispatcherImpl::CMD_NO_OP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    Fw::LogStringArg no_op_string("Hello, World!");
     // Log event for NO_OP here.
     this->log_ACTIVITY_HI_NoOpReceived();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
