@@ -8,6 +8,7 @@
 #define Svc_PassiveCmdDispatcher_HPP
 
 #include <Svc/PassiveCmdDispatcher/PassiveCmdDispatcherComponentAc.hpp>
+#include <config/CommandDispatcherImplCfg.hpp>
 
 namespace Svc {
 
@@ -71,6 +72,29 @@ class PassiveCmdDispatcher final : public PassiveCmdDispatcherComponentBase {
     void CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                        U32 cmdSeq            //!< The command sequence number
                                        ) override;
+
+    struct DispatchEntry {
+        bool used;            //!< if entry has been used yet
+        FwOpcodeType opcode;  //!< opcode of entry
+        FwIndexType port;     //!< which port the entry invokes
+    };
+
+    struct SequenceTracker {
+        bool used;               //!< if this slot is used
+        U32 seq;                 //!< command sequence number
+        FwOpcodeType opCode;     //!< opcode being tracked
+        U32 context;             //!< context passed by user
+        FwIndexType callerPort;  //!< port command source port
+    };
+
+    //!< Current command sequence number
+    U32 m_seq;
+    //! Dispatch entry table: maps incoming opcodes to the port connected to the component that
+    //! implements the command
+    DispatchEntry m_entryTable[CMD_DISPATCHER_DISPATCH_TABLE_SIZE];
+    //! Sequence tracker table: tracks commands that are being executed but are not yet complete
+    // FIXME: is this necessary since we are synchronous?
+    SequenceTracker m_sequenceTracker[CMD_DISPATCHER_SEQUENCER_TABLE_SIZE];
 };
 
 }  // namespace Svc

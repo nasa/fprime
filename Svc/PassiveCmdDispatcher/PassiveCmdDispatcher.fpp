@@ -49,10 +49,16 @@ module Svc {
             id 0x4 \
             format "Invalid opcode 0x{x} received"
 
+        @ Exceeded the number of commands that can be executed simultaneously
+        event TooManyCommands($opcode: FwOpcodeType) \
+            severity warning high \
+            id 0x5 \
+            format "Too many outstanding commands. Opcode: 0x{x}"
+
         @ Received a NO_OP command
         event NoOpReceived \
             severity activity high \
-            id 0x5 \
+            id 0x6 \
             format "Received a NO_OP command"
 
         ###############################################################################

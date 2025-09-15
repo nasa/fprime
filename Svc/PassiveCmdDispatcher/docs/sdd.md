@@ -1,6 +1,6 @@
 # Svc::PassiveCmdDispatcher
 
-A passive component for dispatchign commands
+A passive component for dispatching commands.
 
 ## Usage Examples
 Add usage examples here
