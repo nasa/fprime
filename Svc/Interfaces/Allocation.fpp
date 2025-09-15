@@ -1,5 +1,6 @@
 module Svc {
-    interface Allocation {
+    @ Interface for allocating and deallocating buffers
+    interface BufferAllocation {
         @ Allocation request to buffer manager
         output port allocate: Fw.BufferGet
 
