@@ -69,12 +69,12 @@ bool Time::operator<(const Time& other) const {
 
 bool Time::operator>=(const Time& other) const {
     Time::Comparison c = Time::compare(*this, other);
-    return ((GT == c) || (EQ == c));
+    return ((GT == c) or (EQ == c));
 }
 
 bool Time::operator<=(const Time& other) const {
     Time::Comparison c = Time::compare(*this, other);
-    return ((LT == c) || (EQ == c));
+    return ((LT == c) or (EQ == c));
 }
 
 SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {

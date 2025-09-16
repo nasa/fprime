@@ -83,7 +83,7 @@ static_assert(std::numeric_limits<PlatformSignedSizeType>::max() >= std::numeric
 static_assert(std::numeric_limits<PlatformSignedSizeType>::min() <= std::numeric_limits<int>::min(),
               "PlatformSignedSizeType must be at least as small as int");
 static_assert(std::numeric_limits<PlatformIndexType>::is_signed, "PlatformIndexType must be signed");
-static_assert(!std::numeric_limits<PlatformSizeType>::is_signed, "PlatformSizeType must be unsigned");
+static_assert(not std::numeric_limits<PlatformSizeType>::is_signed, "PlatformSizeType must be unsigned");
 static_assert(std::numeric_limits<PlatformSignedSizeType>::is_signed, "PlatformSignedSizeType must be signed");
 static_assert(std::numeric_limits<PlatformSizeType>::max() >= std::numeric_limits<U32>::max(),
               "PlatformSizeType must be at least as large as U32");

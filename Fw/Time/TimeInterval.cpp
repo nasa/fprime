@@ -41,12 +41,12 @@ bool TimeInterval::operator<(const TimeInterval& other) const {
 
 bool TimeInterval::operator>=(const TimeInterval& other) const {
     TimeInterval::Comparison c = TimeInterval::compare(*this, other);
-    return ((GT == c) || (EQ == c));
+    return ((GT == c) or (EQ == c));
 }
 
 bool TimeInterval::operator<=(const TimeInterval& other) const {
     TimeInterval::Comparison c = TimeInterval::compare(*this, other);
-    return ((LT == c) || (EQ == c));
+    return ((LT == c) or (EQ == c));
 }
 
 SerializeStatus TimeInterval::serializeTo(SerializeBufferBase& buffer) const {
