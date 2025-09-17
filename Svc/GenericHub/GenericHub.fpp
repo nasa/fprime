@@ -57,15 +57,20 @@ module Svc {
     sync input port TlmRecv: Fw.Tlm
 
     @ Ports for sending serial data to the hub
-    @ You can connect any typed output port to these input ports
+    @ You can connect any typed output ports to these input ports, so
+    @ long as the data carried by the ports is serialized by value.
+    @ Do not connect ports that emit Fw.Buffer objects, because these objects
+    @ store pointers to data that is not serialized across the port
+    @ interface. To connect output ports that emit buffers, use
+    @ buffersIn below.
     @ TODO: Rename these ports serialIn
     sync input port portIn: [GenericHubInputPorts] serial
 
     @ Ports for sending buffer data to the hub
-    @ Output ports connected to these ports must emit buffers.
+    @ Output ports connected to these ports must emit Fw.Buffer objects.
     @ On invocation, each of these ports allocates a new buffer B, copies the
     @ data from the incoming buffer to B, and returns the incoming
-    @ buffer.
+    @ buffer to the sender for deallocation.
     @ TODO: Rename these ports bufferIn
     sync input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
 
@@ -100,7 +105,7 @@ module Svc {
     # 1. Unpack the incoming buffer into hub message type, port number, and data.
     # 2. If the hub message type is event, telemetry, or serial,
     #    then pass the data by value to the receiver and call dataInDeallocate
-    #    to return the incoming buffer.
+    #    to return the incoming buffer for deallocation.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
     #    to the data, and emit the same buffer. Do not return it.
     # ----------------------------------------------------------------------
