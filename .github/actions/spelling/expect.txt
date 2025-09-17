@@ -18,7 +18,6 @@ arduino
 ARef
 argcomplete
 ARGN
-binaryfile
 ARINC
 arpa
 ASize
@@ -35,6 +34,7 @@ BDV
 bfree
 bibtex
 Bies
+binaryfile
 BINDIR
 bitmaps
 bitshifts
@@ -42,6 +42,7 @@ bitwidth
 bocchino
 boolt
 bsd
+BSDI
 BUFFERALLOCATE
 BUFFERALLOCATIONFAILED
 BUFFERGETOUT
@@ -277,6 +278,7 @@ gpiochip
 gpioevent
 gpiohandle
 gpioline
+GPT
 Graphviz
 grayscales
 GROUNDINTERFACERULES
@@ -286,7 +288,6 @@ gtest
 gtimeout
 Guire
 GVCID
-GPT
 HACKSM
 Handcoded
 handleflags
@@ -689,8 +690,8 @@ tparam
 TPP
 trinomials
 tts
-typedef'ed
 typedef
+typedef'ed
 uart
 udiv
 UDPSOCKET
