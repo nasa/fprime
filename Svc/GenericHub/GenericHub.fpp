@@ -87,8 +87,9 @@ module Svc {
     # * For the sync BSDI, there should be an output port of type Drv.ByteStreamSend.
     # * For the async BSDI, we need to keep the output port of type Fw.BufferSend
     #   for sending data, add an input port of type Drv.ByteStreamData for
-    #   receiving returned buffers, and add an output port of type Fw.BufferSend
-    #   for deallocating the returned buffers.
+    #   receiving returned buffers.
+    # * For both sync and async BSDI, there should be an output port of type
+    #   Fw.BufferSend for deallocating the buffers allocated on dataOutAllocate.
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on dataOut
