@@ -1,28 +1,46 @@
 module Svc {
 
-  @ A generic hub component
-  @
-  @ In F Prime, a hub is a mechanism for implementing logical port connections
-  @ that physically span two F Prime deployments. This component provides a generic
-  @ capability for implementing a hub. Typically there is one instance of this
-  @ component in each deployment, and each instance is paired with a driver for
-  @ communicating between the deployments. Sending data between the deployments
-  @ looks like this:
-  @
-  @   FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
-  @
-  @ The notation ~~> represents data transport between deployments,
-  @ e.g., via shared memory or across a network connection.
-  @ The Driver is specific to the transport mechanism.
-  @ The GenericHub may be paired with any driver that conforms to
-  @ its interface, and so can support any transport mechanism.
+  @|---------------------------------------------------------------------- 
+  @|A generic hub component
+  @|---------------------------------------------------------------------- 
+  @|In F Prime, a *hub* is a mechanism for implementing logical port connections
+  @|that physically span two F Prime deployments. The pattern is called a "hub"
+  @|because any number of logical connections may be multiplexed through a single
+  @|pair of hubs. For example, a pair of logical connections like this
+  @|
+  @|            A1 --> B1
+  @|            A2 --> B2,
+  @|
+  @|where An and Bn are component instances in separate deployments A and B,
+  @|can be implemented using hubs H1 and H2 like this:
+  @|
+  @|    A1 -->--+       +-->-- B1
+  @|            |       |
+  @|            H1 ~~> H2
+  @|            |       |
+  @|    A1 -->--+       +-->-- B2
+  @|
+  @|The notation ~~> represents data transport between deployments,
+  @|e.g., via shared memory or across a network connection.
+  @|
+  @|The GenericHub component provides a generic capability for implementing a
+  @|hub. Typically there is a pair of instances of GenericHub, one in each
+  @|deployment, and each instance is paired with a driver for doing the
+  @|communication. Sending data between the deployments looks like this:
+  @|
+  @|    FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
+  @|
+  @|The Driver is specific to the transport mechanism.
+  @|The GenericHub may be paired with any driver that conforms to
+  @|its interface, and so can support any transport mechanism.
+  @|---------------------------------------------------------------------- 
   passive component GenericHub {
 
     # ----------------------------------------------------------------------
-    # Ports for sending data to the hub
+    # Ports for sending data from FSW to the hub
     # ----------------------------------------------------------------------
     # These ports establish the "send" interface from the rest of FSW to the hub.
-    #
+    # ----------------------------------------------------------------------
     # Each of these ports has the following behavior:
     # 1. Invoke dataOutAllocate to allocate a buffer B.
     # 2. Serialize the hub message type (event, telemetry, serial, buffer),
@@ -40,28 +58,32 @@ module Svc {
 
     @ Ports for sending serial data to the hub
     @ You can connect any typed output port to this input port
-    @ TODO: Rename this these ports serialIn
+    @ TODO: Rename these ports serialIn
     sync input port portIn: [GenericHubInputPorts] serial
 
     @ Ports for sending buffer data to the hub
     @ Output ports connected to this port must emit buffers.
     @ On invocation, each of these ports allocates a new buffer B, copies the
-    @ data from the incoming buffer to B, and deallocates the incoming
+    @ data from the incoming buffer to B, and returns the incoming
     @ buffer.
     @ TODO: Rename these ports bufferIn
     sync input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
 
-    @ Port for deallocating buffers sent on buffersIn
+    @ Port for returning buffers arriving on buffersIn
+    @ TODO: Rename this port bufferInReturn
     output port bufferDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Ports for sending data to a driver
+    # Ports for sending data from the hub to a driver
     # ----------------------------------------------------------------------
     # These ports establish the "send" interface from the hub to a driver.
     #
     # TODO: Make this interface conform to the Byte Stream Driver Interface (BSDI)
-    # * For the sync BSDI, there should be an output port of type Drv.ByteStreamSend
-    # * For the async BSDI, there should be an input port of type Drv.ByteStreamData
+    # * For the sync BSDI, there should be an output port of type Drv.ByteStreamSend.
+    # * For the async BSDI, we need to keep the output port of type Fw.BufferSend
+    #   for sending data, add an input port of type Drv.ByteStreamData for
+    #   receiving returned buffers, and add an output port of type Fw.BufferSend
+    #   for deallocating the returned buffers.
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on dataOut
@@ -71,16 +93,16 @@ module Svc {
     output port dataOut: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Ports for receiving data from a driver
+    # Ports for receiving data from a driver to the hub
     # ----------------------------------------------------------------------
     # These ports establish the "receive" interface from a driver to the hub.
     # Each of these ports has the following behavior:
     # 1. Unpack the incoming buffer into hub message type, port number, and data.
     # 2. If the hub message type is event, telemetry, or serial,
-    #    then pass the data by value and call dataInDeallocate to deallocate
-    #    the incoming buffer.
+    #    then pass the data by value to the receiver and call dataInDeallocate
+    #    to return the incoming buffer.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
-    #    to the data, and emit the same buffer. Do not deallocate it.
+    #    to the data, and emit the same buffer. Do not return it.
     # ----------------------------------------------------------------------
 
     @ Port for receiving buffers from a driver
@@ -88,33 +110,38 @@ module Svc {
     @ The type should be Drv.ByteStreamData.
     sync input port dataIn: Fw.BufferSend
 
-    @ Port for returning buffers received on dataIn
+    @ Port for returning buffers arriving on dataIn
+    @ TODO: Rename this port dataInReturn
     output port dataInDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Ports for receiving data from the hub
+    # Ports for receiving data from the hub to FSW
+    # ----------------------------------------------------------------------
     # These ports establish the "receive" interface from the hub to FSW
     # ----------------------------------------------------------------------
 
     @ Port for receiving events
-    @ Data emitted on this port is copied from a buffer received on dataIn
+    @ Data emitted on this port is copied from a buffer received on dataIn,
+    @ and the buffer is returned.
     @ TODO: Rename this port eventOut
     output port LogSend:  Fw.Log
 
     @ Port for receiving telemetry channels
-    @ Data emitted on this port is copied from a buffer received on dataIn
+    @ Data emitted on this port is copied from a buffer received on dataIn,
+    @ and the buffer is returned.
     @ TODO: Rename this port tlmOut
     output port TlmSend: Fw.Tlm
 
-    @ Ports for receiving serial data by value
-    @ You can connect each of these output ports to any typed input port
-    @ Data emitted on one of these ports is copied from a buffer received on dataIn
+    @ Ports for receiving serial data
+    @ You can connect each of these output ports to any typed input port.
+    @ Data emitted on one of these ports is copied from a buffer received on dataIn,
+    @ and the buffer is returned.
     @ TODO: Rename this port serialOut
     output port portOut: [GenericHubOutputPorts] serial
 
-    @ Ports for receiving buffer data by reference
+    @ Ports for receiving buffer data
     @ A buffer emitted on one of these ports is a buffer received on dataIn,
-    @ With adjusted metadata to point to the data stored in the buffer
+    @ With adjusted metadata to point to the data stored in the buffer.
     @ TODO: Rename this port bufferOut
     output port buffersOut: [GenericHubOutputBuffers] Fw.BufferSend
 
