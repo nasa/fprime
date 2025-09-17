@@ -57,12 +57,12 @@ module Svc {
     sync input port TlmRecv: Fw.Tlm
 
     @ Ports for sending serial data to the hub
-    @ You can connect any typed output port to this input port
+    @ You can connect any typed output port to these input ports
     @ TODO: Rename these ports serialIn
     sync input port portIn: [GenericHubInputPorts] serial
 
     @ Ports for sending buffer data to the hub
-    @ Output ports connected to this port must emit buffers.
+    @ Output ports connected to these ports must emit buffers.
     @ On invocation, each of these ports allocates a new buffer B, copies the
     @ data from the incoming buffer to B, and returns the incoming
     @ buffer.
