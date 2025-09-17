@@ -31,11 +31,11 @@ The `Svc::CmdDispatcher` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | cmdSend | Output | n/a | Send commands to components
+[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | compCmdSend | Output | n/a | Send commands to components
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | compCmdStat | Input | Asynchronous | Port for components to report command status
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | seqCmdStatus | Output | n/a | Send command status to command buffer source
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | seqCmdBuff | Input | Asynchronous | Receive command buffer
-[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | cmdReg | Input | Synchronous | Command Registration
+[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | compCmdReg | Input | Synchronous | Command Registration
 
 ### 3.2 Functional Description
 
