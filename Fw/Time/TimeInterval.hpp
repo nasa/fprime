@@ -2,6 +2,7 @@
 #define FW_TIME_INTERVAL_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Time/Time.hpp>
 #include <Fw/Time/TimeIntervalValueSerializableAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
@@ -24,6 +25,7 @@ class TimeInterval : public Serializable {
     ~TimeInterval() = default;                // !< Default destructor
     TimeInterval(const TimeInterval& other);  // !< Copy constructor
     TimeInterval(U32 seconds, U32 useconds);  // !< Constructor with member values as arguments
+    TimeInterval(Time start, Time end);       // !< Constructor with start / end times as arguments
     void set(U32 seconds, U32 useconds);      // !< Sets value of time stored
     U32 getSeconds() const;                   // !< Gets seconds part of time
     U32 getUSeconds() const;                  // !< Gets microseconds part of time
