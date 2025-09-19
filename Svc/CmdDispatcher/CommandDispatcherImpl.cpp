@@ -202,6 +202,8 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
     this->log_ACTIVITY_HI_CommandDroppedQueueOverflow(opcode,context);
     this->m_numCmdsDropped++;
     this->tlmWrite_CommandsDropped(this->m_numCmdsDropped);
+
+    printf("^^^^^^^ This Space For Rent ^^^^^^^ \n");
 }
 
 }  // namespace Svc

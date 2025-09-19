@@ -670,7 +670,6 @@ void CommandDispatcherTester::runOverflowCommands() {
     }
 
     // verify sequence tracker table is empty
-
     for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
     }
@@ -880,7 +879,71 @@ void CommandDispatcherTester::runClearCommandTracking() {
 }
 
 void CommandDispatcherTester::runCommandQueueOverflow(){ 
+    
+    U8 testNumCmdsToSend = 15;
 
+    // verify dispatch table is empty
+    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
+    }
+
+    // verify sequence tracker table is empty
+
+    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
+    }
+    // clear reg events
+    this->clearEvents();
+    // register built-in commands
+    this->m_impl.regCommands();
+    // verify registrations
+    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
+    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
+    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
+    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
+    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
+
+    // verify event
+    printTextLogHistory(stdout);
+    ASSERT_EVENTS_SIZE(4);
+    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
+    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
+    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
+    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
+    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+
+    // register our own command
+    FwOpcodeType testOpCode = 0x50;
+
+    this->clearEvents();
+    this->invoke_to_compCmdReg(0, 0x50);
+    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
+    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+
+    // verify registration event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+
+    
+    printf("---------------------------------------------------\n");
+    printf(" -- eventHistory_OpCodeDispatched event count = %d\n",
+           this->eventHistory_OpCodeDispatched->size());
+    printf(" -- eventHistory_OpCodeCompleted event count = %d\n",
+           this->eventHistory_OpCodeCompleted->size());
+    printf(" -- CommandDroppedQueueOverflow event count = %d\n",
+           this->eventHistory_CommandDroppedQueueOverflow->size());
         
 }
 

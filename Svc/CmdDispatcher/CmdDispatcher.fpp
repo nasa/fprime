@@ -191,7 +191,8 @@ module Svc {
                             ) \
       severity activity high \
       id 11 \
-      format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" 
+      format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" \
+      throttle 5
 
     # ----------------------------------------------------------------------
     # Telemetry
