@@ -936,15 +936,25 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
 
-    
-    printf("---------------------------------------------------\n");
-    printf(" -- eventHistory_OpCodeDispatched event count = %d\n",
-           this->eventHistory_OpCodeDispatched->size());
-    printf(" -- eventHistory_OpCodeCompleted event count = %d\n",
-           this->eventHistory_OpCodeCompleted->size());
-    printf(" -- CommandDroppedQueueOverflow event count = %d\n",
-           this->eventHistory_CommandDroppedQueueOverflow->size());
-        
+    // Flood CmdDispatcher with a series of NOOP commands until the command queue overlfows
+    for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++){
+
+        // send NO_OP command
+        this->m_seqStatusRcvd = false;
+        Fw::ComBuffer buff;
+        ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+                  Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),
+                  Fw::FW_SERIALIZE_OK);
+
+        this->clearEvents();
+        this->invoke_to_seqCmdBuff(0, buff, 12);
+        ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    }
+
+    // Verify at least one Queue Overflow event was generated
+    ASSERT_GT(this->eventHistory_CommandDroppedQueueOverflow->size(), 0);
+    printf("CommandDroppedQueueOverflow->size() = %d\n", this->eventHistory_CommandDroppedQueueOverflow->size());
 }
 
 
