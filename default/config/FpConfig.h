@@ -198,11 +198,12 @@ extern "C" {
 // Serialized size of time to use when calculating available space in Fw::ComBuffer 
 #ifndef FW_TIME_SERIALIZED_SIZE
 #define FW_TIME_SERIALIZED_SIZE (11)
-#endif 
+#endif
 
 // Specifies the size of the buffer that contains the serialized log arguments.
 #ifndef FW_LOG_BUFFER_MAX_SIZE
-#define FW_LOG_BUFFER_MAX_SIZE (FW_COM_BUFFER_MAX_SIZE - FW_TIME_SERIALIZED_SIZE - sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))
+#define FW_LOG_BUFFER_MAX_SIZE \
+    (FW_COM_BUFFER_MAX_SIZE - FW_TIME_SERIALIZED_SIZE - sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))
 #endif
 
 // Specifies the maximum size of a string in a log event
@@ -213,7 +214,8 @@ extern "C" {
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
 #ifndef FW_TLM_BUFFER_MAX_SIZE
-#define FW_TLM_BUFFER_MAX_SIZE (FW_COM_BUFFER_MAX_SIZE - FW_TIME_SERIALIZED_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))
+#define FW_TLM_BUFFER_MAX_SIZE \
+    (FW_COM_BUFFER_MAX_SIZE - FW_TIME_SERIALIZED_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))
 #endif
 
 // Specifies the size of the buffer that contains statement args for the FpySequencer
