@@ -115,8 +115,8 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
     header.set_packetDataLength(lengthToken);
 
     Fw::ExternalSerializeBuffer serializer(static_cast<U8*>(this->m_packetBuffer), sizeof(this->m_packetBuffer));
-    serializer.serialize(header);
-    serializer.serialize(packetData, packetDataLen, Fw::Serialization::OMIT_LENGTH);
+    serializer.serializeFrom(header);
+    serializer.serializeFrom(packetData, packetDataLen, Fw::Serialization::OMIT_LENGTH);
     return Fw::Buffer(this->m_packetBuffer,
                       static_cast<Fw::Buffer::SizeType>(packetDataLen + SpacePacketHeader::SERIALIZED_SIZE));
 }

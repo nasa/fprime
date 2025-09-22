@@ -133,7 +133,7 @@ void CommandDispatcherTester::runNominalDispatch() {
     ASSERT_EQ(this->m_cmdSendCmdSeq, 0);
     // check argument
     U32 checkVal;
-    ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(checkVal, testCmdArg);
 
     this->clearEvents();
@@ -494,7 +494,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(currSeq, this->m_cmdSendCmdSeq);
     // check argument
     U32 checkVal;
-    ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(checkVal, testCmdArg);
 
     this->clearEvents();
@@ -547,7 +547,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(this->m_cmdSendOpCode, testOpCode);
     ASSERT_EQ(currSeq, this->m_cmdSendCmdSeq);
     // check argument
-    ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(checkVal, testCmdArg);
 
     this->clearEvents();
@@ -601,7 +601,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(this->m_cmdSendOpCode, testOpCode);
     ASSERT_EQ(currSeq, this->m_cmdSendCmdSeq);
     // check argument
-    ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(checkVal, testCmdArg);
 
     this->clearEvents();
@@ -750,7 +750,7 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EQ(disp, this->m_cmdSendCmdSeq);
             // check argument
             U32 checkVal;
-            ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(checkVal, testCmdArg);
         } else {
             // verify failed to find slot
@@ -843,7 +843,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_EQ(0u, this->m_cmdSendCmdSeq);
     // check argument
     U32 checkVal;
-    ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(checkVal, testCmdArg);
     this->clearEvents();
 

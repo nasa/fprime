@@ -124,7 +124,7 @@ void TlmChanTester::runOffNominal() {
 
     // create Telemetry item and put dummy data in to make sure it gets erased
     buff.resetSer();
-    stat = buff.serialize(val);
+    stat = buff.serializeFrom(val);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
     // Read back value
@@ -196,7 +196,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
 
             // next piece is time tag
             Fw::Time recTimeTag(TimeBase::TB_NONE, 0, 0);
-            stat = this->m_rcvdBuffer[packet].deserialize(recTimeTag);
+            stat = this->m_rcvdBuffer[packet].deserializeTo(recTimeTag);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
             ASSERT_TRUE(timeTag == recTimeTag);
             // next piece is event argument
@@ -231,7 +231,7 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
 
     // create telemetry item
     buff.resetSer();
-    stat = buff.serialize(val);
+    stat = buff.serializeFrom(val);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
     static bool tlc001 = false;

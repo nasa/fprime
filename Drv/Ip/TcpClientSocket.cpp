@@ -69,6 +69,11 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
         return SOCK_INVALID_IP_ADDRESS;
     };
 
+    if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
+        ::close(socketFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {
         ::close(socketFd);

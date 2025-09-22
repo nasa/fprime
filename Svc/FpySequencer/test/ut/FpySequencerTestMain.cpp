@@ -201,10 +201,10 @@ TEST_F(FpySequencerTester, cmd) {
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
 
     Fw::ComBuffer expected;
-    ASSERT_EQ(expected.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+    ASSERT_EQ(expected.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
               Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(directive.get_opCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
+    ASSERT_EQ(expected.serializeFrom(directive.get_opCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serializeFrom(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
               Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);
     ASSERT_from_cmdOut(0, expected, 0);
@@ -1273,7 +1273,7 @@ TEST_F(FpySequencerTester, readHeader) {
     header.set_schemaVersion(Fpy::SCHEMA_VERSION);
     header.set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
 
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     ASSERT_EQ(tester_readHeader(), Fw::Success::SUCCESS);
     ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_header(), header);
@@ -1287,7 +1287,7 @@ TEST_F(FpySequencerTester, readHeader) {
     // check wrong schema version
     tester_get_m_sequenceBuffer_ptr()->resetSer();
     header.set_schemaVersion(Fpy::SCHEMA_VERSION + 1);
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(tester_readHeader(), Fw::Success::FAILURE);
     ASSERT_EVENTS_WrongSchemaVersion_SIZE(1);
     header.set_schemaVersion(Fpy::SCHEMA_VERSION);
@@ -1296,7 +1296,7 @@ TEST_F(FpySequencerTester, readHeader) {
     // check too many args
     tester_get_m_sequenceBuffer_ptr()->resetSer();
     header.set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT + 1);
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(tester_readHeader(), Fw::Success::FAILURE);
     ASSERT_EVENTS_TooManySequenceArgs_SIZE(1);
     header.set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
@@ -1304,7 +1304,7 @@ TEST_F(FpySequencerTester, readHeader) {
     // check too many stmts
     tester_get_m_sequenceBuffer_ptr()->resetSer();
     header.set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT + 1);
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(tester_readHeader(), Fw::Success::FAILURE);
     ASSERT_EVENTS_TooManySequenceStatements_SIZE(1);
 }
@@ -1316,13 +1316,13 @@ TEST_F(FpySequencerTester, readBody) {
     // write some args mappings
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
         // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     // write some statements
     Fpy::Statement stmt(Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
@@ -1342,7 +1342,7 @@ TEST_F(FpySequencerTester, readBody) {
     // now see what happens if we don't write enough args
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
         // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     // don't write any stmts otherwise their bytes will be interpreted as arg mappings and it will trigger
@@ -1355,12 +1355,12 @@ TEST_F(FpySequencerTester, readBody) {
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
         // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     // the -1 here is the intended mistake
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT - 1; ii++) {
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     ASSERT_EQ(tester_readBody(), Fw::Success::FAILURE);
 }
@@ -1372,7 +1372,7 @@ TEST_F(FpySequencerTester, readFooter) {
 
     tester_set_m_computedCRC(0x12345678);
     Fpy::Footer footer(static_cast<U32>(~0x12345678));
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(footer), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(footer), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     ASSERT_EQ(tester_readFooter(), Fw::Success::SUCCESS);
     ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_footer(), footer);
@@ -1546,7 +1546,7 @@ TEST_F(FpySequencerTester, deserialize_waitRel) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.waitRel, waitRel);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1565,7 +1565,7 @@ TEST_F(FpySequencerTester, deserialize_waitAbs) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.waitAbs, waitAbs);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1585,7 +1585,7 @@ TEST_F(FpySequencerTester, deserialize_goto) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.gotoDirective, gotoDir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1605,7 +1605,7 @@ TEST_F(FpySequencerTester, deserialize_if) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.ifDirective, ifDir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1625,7 +1625,7 @@ TEST_F(FpySequencerTester, deserialize_noOp) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.noOp, noOp);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1644,7 +1644,7 @@ TEST_F(FpySequencerTester, deserialize_storeTlmVal) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.storeTlmVal, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1664,7 +1664,7 @@ TEST_F(FpySequencerTester, deserialize_storePrm) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.storePrm, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1684,7 +1684,7 @@ TEST_F(FpySequencerTester, deserialize_stackOp) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.stackOp, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     // caught two bugs (one here, and it reminded me of this somewhere else)
     ASSERT_EQ(result, Fw::Success::FAILURE);
@@ -1705,7 +1705,7 @@ TEST_F(FpySequencerTester, deserialize_exit) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.exit, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1725,7 +1725,7 @@ TEST_F(FpySequencerTester, deserialize_discard) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.discard, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1745,7 +1745,7 @@ TEST_F(FpySequencerTester, deserialize_stackCmd) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.stackCmd, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
@@ -1765,7 +1765,7 @@ TEST_F(FpySequencerTester, deserialize_memCmp) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.memCmp, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
