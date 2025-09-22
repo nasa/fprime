@@ -58,15 +58,18 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         return;
     }
     // -------- Attempt to extract APID from Payload --------
-    // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
-    // and let downstream components (e.g. custom router) handle it
-    FwPacketDescriptorType packetDescriptor;
-    status = deserializer.deserialize(packetDescriptor);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     ComCfg::FrameContext contextCopy = context;
-    // If a valid descriptor is deserialized, set it in the context
-    if (packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED) {
-        contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+    // Skip if the framed data is too short to contain a FwPacketDescriptor
+    if (deserializer.getBuffLeft() >= FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
+        // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
+        // and let downstream components (e.g. custom router) handle it
+        FwPacketDescriptorType packetDescriptor;
+        status = deserializer.deserialize(packetDescriptor);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+        // If a valid descriptor is deserialized, set it in the context
+        if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
+            contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+        }
     }
 
     // ---------------- Validate Frame Trailer ----------------
