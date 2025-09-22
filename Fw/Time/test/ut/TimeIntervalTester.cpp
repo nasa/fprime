@@ -1,4 +1,5 @@
 #include "TimeIntervalTester.hpp"
+#include <Fw/Time/Time.hpp>
 #include <iostream>
 
 namespace Fw {
@@ -25,6 +26,11 @@ void TimeIntervalTester::test_TimeIntervalInstantiateTest() {
     ASSERT_EQ(time.getSeconds(), 1);
     ASSERT_EQ(time.getUSeconds(), 2);
     std::cout << time2 << std::endl;
+
+    Fw::TimeInterval time3(Fw::Time(10, 20), Fw::Time(20, 40));
+    ASSERT_EQ(time3.getSeconds(), 10);
+    ASSERT_EQ(time3.getUSeconds(), 20);
+    std::cout << time3 << std::endl;
 }
 
 void TimeIntervalTester::test_TimeIntervalComparisonTest() {

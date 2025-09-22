@@ -89,10 +89,10 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // clear contents
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
-        Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serialize(
+        Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
             static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-        stat = this->m_fillBuffers[pktEntry].buffer.serialize(packetList.list[pktEntry]->id);
+        stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packetList.list[pktEntry]->id);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
         // set packet buffer length
         stat = this->m_fillBuffers[pktEntry].buffer.setBuffLen(packetLen);
@@ -363,7 +363,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
                 &this->m_sendBuffers[pkt]
                      .buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
                 Fw::Time::SERIALIZED_SIZE);
-            Fw::SerializeStatus stat = buff.serialize(this->m_sendBuffers[pkt].latestTime);
+            Fw::SerializeStatus stat = buff.serializeFrom(this->m_sendBuffers[pkt].latestTime);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
 
             this->PktSend_out(0, this->m_sendBuffers[pkt].buffer, 0);

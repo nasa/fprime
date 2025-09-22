@@ -69,7 +69,7 @@ void FprimeFramerTester ::testNominalFraming() {
     // Check header
     FprimeProtocol::FrameHeader defaultHeader;
     FprimeProtocol::FrameHeader outputHeader;
-    outputBuffer.getDeserializer().deserialize(outputHeader);
+    outputBuffer.getDeserializer().deserializeTo(outputHeader);
     ASSERT_EQ(outputHeader.get_startWord(), defaultHeader.get_startWord());
     ASSERT_EQ(outputHeader.get_lengthField(), sizeof(bufferData));
     // Check data

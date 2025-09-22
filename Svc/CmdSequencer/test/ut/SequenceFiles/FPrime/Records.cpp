@@ -24,7 +24,7 @@ void serialize(Records::Descriptor desc,
                const Fw::ComBuffer& opcodeAndArgument,
                Fw::SerializeBufferBase& destBuffer) {
     const U8 descU8 = desc;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(descU8));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(descU8));
     if (desc != CmdSequencerComponentImpl::Sequence::Record::END_OF_SEQUENCE) {
         const U8* const buffAddr = opcodeAndArgument.getBuffAddr();
         const U32 size = opcodeAndArgument.getBuffLength();
@@ -32,11 +32,11 @@ void serialize(Records::Descriptor desc,
         const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
         const U32 seconds = time.getSeconds();
         const U32 uSeconds = time.getUSeconds();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(seconds));
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(uSeconds));
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(recSize));
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(cmdDescriptor));
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(buffAddr, size, Fw::Serialization::OMIT_LENGTH));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(seconds));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(uSeconds));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(recSize));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(cmdDescriptor));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(buffAddr, size, Fw::Serialization::OMIT_LENGTH));
     }
 }
 
@@ -46,8 +46,8 @@ void serialize(Descriptor desc,
                const U32 argument,
                Fw::SerializeBufferBase& destBuffer) {
     Fw::ComBuffer opcodeAndArgument;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serialize(opcode));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serialize(argument));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serializeFrom(opcode));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serializeFrom(argument));
     Records::serialize(desc, time, opcodeAndArgument, destBuffer);
 }
 

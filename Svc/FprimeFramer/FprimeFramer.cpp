@@ -42,18 +42,18 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     // Serialize the header
     // 0xDEADBEEF is already set as the default value for the header startWord field in the FPP type definition
     header.set_lengthField(static_cast<FprimeProtocol::TokenType>(data.getSize()));
-    status = frameSerializer.serialize(header);
+    status = frameSerializer.serializeFrom(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Serialize the data
-    status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Serialize the trailer (with CRC computation)
     Utils::HashBuffer hashBuffer;
     Utils::Hash::hash(frameBuffer.getData(), frameSize - HASH_DIGEST_LENGTH, hashBuffer);
     trailer.set_crcField(hashBuffer.asBigEndianU32());
-    status = frameSerializer.serialize(trailer);
+    status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Send the full frame out - this port shall always be connected

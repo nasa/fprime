@@ -181,7 +181,7 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
     if (this->m_storeBufferLength) {
         U8 buffer[sizeof(size)];
         Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
-        serialLength.serialize(size);
+        serialLength.serializeFrom(size);
         if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getBuffLength()))) {
             this->m_byteCount += static_cast<U32>(serialLength.getBuffLength());
         } else {

@@ -168,7 +168,7 @@ bool AMPCSSequence ::readCRC() {
 
 bool AMPCSSequence ::deserializeCRC() {
     bool status = true;
-    Fw::SerializeStatus serializeStatus = this->m_buffer.deserialize(this->m_crc.m_stored);
+    Fw::SerializeStatus serializeStatus = this->m_buffer.deserializeTo(this->m_crc.m_stored);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::READ_SEQ_CRC, serializeStatus);
         status = false;
@@ -338,7 +338,7 @@ Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, c
     U8* const addr = comBuffer.getBuffAddr();
     FW_ASSERT(addr != nullptr);
     // true means "don't serialize the length"
-    status = buffer.deserialize(&addr[fixedBuffLen], size, Fw::Serialization::OMIT_LENGTH);
+    status = buffer.deserializeTo(&addr[fixedBuffLen], size, Fw::Serialization::OMIT_LENGTH);
     return status;
 }
 

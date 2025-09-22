@@ -143,7 +143,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::deserializeHeader() {
     Header& header = this->m_header;
 
     // File size
-    Fw::SerializeStatus serializeStatus = buffer.deserialize(header.m_fileSize);
+    Fw::SerializeStatus serializeStatus = buffer.deserializeTo(header.m_fileSize);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::DESER_SIZE, serializeStatus);
         return false;
@@ -153,21 +153,21 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::deserializeHeader() {
         return false;
     }
     // Number of records
-    serializeStatus = buffer.deserialize(header.m_numRecords);
+    serializeStatus = buffer.deserializeTo(header.m_numRecords);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::DESER_NUM_RECORDS, serializeStatus);
         return false;
     }
     // Time base
     TimeBase tbase;
-    serializeStatus = buffer.deserialize(tbase);
+    serializeStatus = buffer.deserializeTo(tbase);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::DESER_TIME_BASE, serializeStatus);
         return false;
     }
     header.m_timeBase = (tbase);
     // Time context
-    serializeStatus = buffer.deserialize(header.m_timeContext);
+    serializeStatus = buffer.deserializeTo(header.m_timeContext);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::DESER_TIME_CONTEXT, serializeStatus);
         return false;
@@ -217,7 +217,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::extractCRC() {
     Fw::SerializeStatus status = crcBuff.setBuffLen(crcSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Deserialize the CRC from the CRC buffer
-    status = crcBuff.deserialize(crc);
+    status = crcBuff.deserializeTo(crc);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Set the main buffer size to the data size
     status = buffer.setBuffLen(dataSize);
@@ -251,7 +251,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescr
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     U8 descEntry;
 
-    Fw::SerializeStatus status = buffer.deserialize(descEntry);
+    Fw::SerializeStatus status = buffer.deserializeTo(descEntry);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -267,9 +267,9 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescr
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeTag(Fw::Time& timeTag) {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     U32 seconds, useconds;
-    Fw::SerializeStatus status = buffer.deserialize(seconds);
+    Fw::SerializeStatus status = buffer.deserializeTo(seconds);
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = buffer.deserialize(useconds);
+        status = buffer.deserializeTo(useconds);
     }
     if (status == Fw::FW_SERIALIZE_OK) {
         timeTag.set(seconds, useconds);
@@ -279,7 +279,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeT
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecordSize(U32& recordSize) {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
-    Fw::SerializeStatus status = buffer.deserialize(recordSize);
+    Fw::SerializeStatus status = buffer.deserializeTo(recordSize);
     if (status == Fw::FW_SERIALIZE_OK and recordSize > buffer.getBuffLeft()) {
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
@@ -299,7 +299,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::copyCommand(Fw::
     FwSizeType size = recordSize;
     Fw::SerializeStatus status = comBuffer.setBuffLen(recordSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = buffer.deserialize(comBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
+    status = buffer.deserializeTo(comBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     return status;
 }
 

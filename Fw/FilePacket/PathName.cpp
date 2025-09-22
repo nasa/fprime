@@ -30,7 +30,7 @@ U32 FilePacket::PathName ::bufferSize() const {
 
 SerializeStatus FilePacket::PathName ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     {
-        const SerializeStatus status = serialBuffer.deserialize(this->m_length);
+        const SerializeStatus status = serialBuffer.deserializeTo(this->m_length);
 
         if (status != FW_SERIALIZE_OK) {
             return status;
@@ -54,7 +54,7 @@ SerializeStatus FilePacket::PathName ::fromSerialBuffer(SerialBuffer& serialBuff
 
 SerializeStatus FilePacket::PathName ::toSerialBuffer(SerialBuffer& serialBuffer) const {
     {
-        const SerializeStatus status = serialBuffer.serialize(this->m_length);
+        const SerializeStatus status = serialBuffer.serializeFrom(this->m_length);
 
         if (status != FW_SERIALIZE_OK) {
             return status;

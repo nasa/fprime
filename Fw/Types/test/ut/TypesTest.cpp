@@ -118,12 +118,12 @@ TEST(SerializationTest, Serialization1) {
     // Test shorts
 
     buff.resetSer();
-    stat1 = buff.serialize(u16t1);
+    stat1 = buff.serializeFrom(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
-    stat2 = buff.deserialize(u16t2);
+    stat2 = buff.deserializeTo(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u16t1, u16t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
@@ -137,13 +137,13 @@ TEST(SerializationTest, Serialization1) {
     I16 i16t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i16t1);
+    stat1 = buff.serializeFrom(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
     // 2s complement
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
-    stat2 = buff.deserialize(i16t2);
+    stat2 = buff.deserializeTo(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
@@ -153,10 +153,10 @@ TEST(SerializationTest, Serialization1) {
     i16t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i16t1);
+    stat1 = buff.serializeFrom(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
-    stat2 = buff.deserialize(i16t2);
+    stat2 = buff.deserializeTo(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
@@ -173,14 +173,14 @@ TEST(SerializationTest, Serialization1) {
     // Test ints
 
     buff.resetSer();
-    stat1 = buff.serialize(u32t1);
+    stat1 = buff.serializeFrom(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     ASSERT_EQ(0xEF, ptr[2]);
     ASSERT_EQ(0x12, ptr[3]);
-    stat2 = buff.deserialize(u32t2);
+    stat2 = buff.deserializeTo(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t1, u32t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
@@ -194,14 +194,14 @@ TEST(SerializationTest, Serialization1) {
     I32 i32t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i32t1);
+    stat1 = buff.serializeFrom(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xAB, ptr[0]);
     ASSERT_EQ(0xCD, ptr[1]);
     ASSERT_EQ(0xEF, ptr[2]);
     ASSERT_EQ(0x12, ptr[3]);
-    stat2 = buff.deserialize(i32t2);
+    stat2 = buff.deserializeTo(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
     ASSERT_EQ(i32t1, i32t2);
@@ -211,10 +211,10 @@ TEST(SerializationTest, Serialization1) {
     i32t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i32t1);
+    stat1 = buff.serializeFrom(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
-    stat2 = buff.deserialize(i32t2);
+    stat2 = buff.deserializeTo(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
     ASSERT_EQ(i32t1, i32t2);
@@ -231,7 +231,7 @@ TEST(SerializationTest, Serialization1) {
     // Test ints
 
     buff.resetSer();
-    stat1 = buff.serialize(u64t1);
+    stat1 = buff.serializeFrom(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x01, ptr[0]);
@@ -242,7 +242,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0xAB, ptr[5]);
     ASSERT_EQ(0xCD, ptr[6]);
     ASSERT_EQ(0xEF, ptr[7]);
-    stat2 = buff.deserialize(u64t2);
+    stat2 = buff.deserializeTo(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -256,7 +256,7 @@ TEST(SerializationTest, Serialization1) {
     I64 i64t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i64t1);
+    stat1 = buff.serializeFrom(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x01, ptr[0]);
@@ -267,7 +267,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0xAB, ptr[5]);
     ASSERT_EQ(0xCD, ptr[6]);
     ASSERT_EQ(0xEF, ptr[7]);
-    stat2 = buff.deserialize(i64t2);
+    stat2 = buff.deserializeTo(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -277,10 +277,10 @@ TEST(SerializationTest, Serialization1) {
     i64t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(i64t1);
+    stat1 = buff.serializeFrom(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
-    stat2 = buff.deserialize(i64t2);
+    stat2 = buff.deserializeTo(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -297,14 +297,14 @@ TEST(SerializationTest, Serialization1) {
     // Test ints
 
     buff.resetSer();
-    stat1 = buff.serialize(f32t1);
+    stat1 = buff.serializeFrom(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
     ASSERT_EQ(0xBF, ptr[0]);
     ASSERT_EQ(0x9D, ptr[1]);
     ASSERT_EQ(0x70, ptr[2]);
     ASSERT_EQ(0xA4, ptr[3]);
-    stat2 = buff.deserialize(f32t2);
+    stat2 = buff.deserializeTo(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_FLOAT_EQ(f32t1, f32t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
@@ -318,7 +318,7 @@ TEST(SerializationTest, Serialization1) {
     F64 f64t2 = 0;
 
     buff.resetSer();
-    stat1 = buff.serialize(f64t1);
+    stat1 = buff.serializeFrom(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
     ASSERT_EQ(0x40, ptr[0]);
@@ -329,7 +329,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0x26, ptr[5]);
     ASSERT_EQ(0x8B, ptr[6]);
     ASSERT_EQ(0xA6, ptr[7]);
-    stat2 = buff.deserialize(f64t2);
+    stat2 = buff.deserializeTo(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_DOUBLE_EQ(f64t1, f64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -343,9 +343,9 @@ TEST(SerializationTest, Serialization1) {
     bool boolt2 = false;
 
     buff.resetSer();
-    stat1 = buff.serialize(boolt1);
+    stat1 = buff.serializeFrom(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat2 = buff.deserialize(boolt2);
+    stat2 = buff.deserializeTo(boolt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(boolt1, boolt2);
 
@@ -360,9 +360,9 @@ TEST(SerializationTest, Serialization1) {
     void* ptrt2 = nullptr;
 
     buff.resetSer();
-    stat1 = buff.serialize(ptrt1);
+    stat1 = buff.serializeFrom(ptrt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat2 = buff.deserialize(ptrt2);
+    stat2 = buff.deserializeTo(ptrt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(ptrt1, ptrt2);
 
@@ -393,9 +393,9 @@ TEST(SerializationTest, Serialization1) {
     // Test skipping:
 
     buff.resetSer();
-    stat1 = buff.serialize(u32t1);
+    stat1 = buff.serializeFrom(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat2 = buff.serialize(u32t2);
+    stat2 = buff.serializeFrom(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
 
     // should fail:
@@ -417,7 +417,7 @@ TEST(SerializationTest, Serialization1) {
     stat1 = buff.deserializeSkip(4);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     U32 u32val;
-    stat2 = buff.deserialize(u32val);
+    stat2 = buff.deserializeTo(u32val);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t2, u32val);
 
@@ -442,29 +442,29 @@ TEST(SerializationTest, Serialization1) {
     ptrt2 = nullptr;
 
     buff.resetSer();
-    stat1 = buff.serialize(u8t1);
+    stat1 = buff.serializeFrom(u8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(i8t1);
+    stat1 = buff.serializeFrom(i8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(u16t1);
+    stat1 = buff.serializeFrom(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(i16t1);
+    stat1 = buff.serializeFrom(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(u32t1);
+    stat1 = buff.serializeFrom(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(i32t1);
+    stat1 = buff.serializeFrom(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(u64t1);
+    stat1 = buff.serializeFrom(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(i64t1);
+    stat1 = buff.serializeFrom(i64t1);
     printf("i64t1 in stat: %d\n", stat1);
-    stat1 = buff.serialize(f32t1);
+    stat1 = buff.serializeFrom(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(f64t1);
+    stat1 = buff.serializeFrom(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(boolt1);
+    stat1 = buff.serializeFrom(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff.serialize(ptrt1);
+    stat1 = buff.serializeFrom(ptrt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
 
     // TKC - commented out due to fprime-util choking on output
@@ -472,69 +472,69 @@ TEST(SerializationTest, Serialization1) {
 
     // Serialize second buffer and test for equality
     buff2.resetSer();
-    stat1 = buff2.serialize(u8t1);
+    stat1 = buff2.serializeFrom(u8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(i8t1);
+    stat1 = buff2.serializeFrom(i8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(u16t1);
+    stat1 = buff2.serializeFrom(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(i16t1);
+    stat1 = buff2.serializeFrom(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(u32t1);
+    stat1 = buff2.serializeFrom(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(i32t1);
+    stat1 = buff2.serializeFrom(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(u64t1);
+    stat1 = buff2.serializeFrom(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(i64t1);
+    stat1 = buff2.serializeFrom(i64t1);
     printf("i64t1 in stat: %d\n", stat1);
-    stat1 = buff2.serialize(f32t1);
+    stat1 = buff2.serializeFrom(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(f64t1);
+    stat1 = buff2.serializeFrom(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(boolt1);
+    stat1 = buff2.serializeFrom(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
-    stat1 = buff2.serialize(ptrt1);
+    stat1 = buff2.serializeFrom(ptrt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
 
     ASSERT_EQ(buff, buff2);
 
     // deserialize
 
-    stat2 = buff.deserialize(u8t2);
+    stat2 = buff.deserializeTo(u8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u8t1, u8t2);
-    stat2 = buff.deserialize(i8t2);
+    stat2 = buff.deserializeTo(i8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i8t1, i8t2);
-    stat2 = buff.deserialize(u16t2);
+    stat2 = buff.deserializeTo(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u16t1, u16t2);
-    stat2 = buff.deserialize(i16t2);
+    stat2 = buff.deserializeTo(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
-    stat2 = buff.deserialize(u32t2);
+    stat2 = buff.deserializeTo(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t1, u32t2);
-    stat2 = buff.deserialize(i32t2);
+    stat2 = buff.deserializeTo(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i32t1, i32t2);
-    stat2 = buff.deserialize(u64t2);
+    stat2 = buff.deserializeTo(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
-    stat2 = buff.deserialize(i64t2);
+    stat2 = buff.deserializeTo(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
-    stat2 = buff.deserialize(f32t2);
+    stat2 = buff.deserializeTo(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_FLOAT_EQ(f32t1, f32t2);
-    stat2 = buff.deserialize(f64t2);
+    stat2 = buff.deserializeTo(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_DOUBLE_EQ(f64t1, f64t2);
-    stat2 = buff.deserialize(boolt2);
+    stat2 = buff.deserializeTo(boolt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(boolt1, boolt2);
-    stat2 = buff.deserialize(ptrt2);
+    stat2 = buff.deserializeTo(ptrt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(ptrt1, ptrt2);
 
@@ -558,40 +558,40 @@ TEST(SerializationTest, Serialization1) {
     boolt2 = false;
     ptrt2 = nullptr;
 
-    stat2 = buff.deserialize(u8t2);
+    stat2 = buff.deserializeTo(u8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u8t1, u8t2);
-    stat2 = buff.deserialize(i8t2);
+    stat2 = buff.deserializeTo(i8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i8t1, i8t2);
-    stat2 = buff.deserialize(u16t2);
+    stat2 = buff.deserializeTo(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u16t1, u16t2);
-    stat2 = buff.deserialize(i16t2);
+    stat2 = buff.deserializeTo(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i16t1, i16t2);
-    stat2 = buff.deserialize(u32t2);
+    stat2 = buff.deserializeTo(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t1, u32t2);
-    stat2 = buff.deserialize(i32t2);
+    stat2 = buff.deserializeTo(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i32t1, i32t2);
-    stat2 = buff.deserialize(u64t2);
+    stat2 = buff.deserializeTo(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
-    stat2 = buff.deserialize(i64t2);
+    stat2 = buff.deserializeTo(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(i64t1, i64t2);
-    stat2 = buff.deserialize(f32t2);
+    stat2 = buff.deserializeTo(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_FLOAT_EQ(f32t1, f32t2);
-    stat2 = buff.deserialize(f64t2);
+    stat2 = buff.deserializeTo(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_DOUBLE_EQ(f64t1, f64t2);
-    stat2 = buff.deserialize(boolt2);
+    stat2 = buff.deserializeTo(boolt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(boolt1, boolt2);
-    stat2 = buff.deserialize(ptrt2);
+    stat2 = buff.deserializeTo(ptrt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(ptrt1, ptrt2);
 
@@ -602,16 +602,16 @@ TEST(SerializationTest, Serialization1) {
     str1 = "Foo";
     str2 = "BarBlat";
     buff.resetSer();
-    str1.serialize(buff);
-    str2.deserialize(buff);
+    str1.serializeTo(buff);
+    str2.deserializeFrom(buff);
     ASSERT_EQ(str1, str2);
 
     // serialize string template
     Fw::StringTemplate<80> strTmpl1("Foo");
     Fw::StringTemplate<80> strTmpl2("Bar");
     buff.resetSer();
-    strTmpl1.serialize(buff);
-    strTmpl2.deserialize(buff);
+    strTmpl1.serializeTo(buff);
+    strTmpl2.deserializeFrom(buff);
     ASSERT_EQ(strTmpl1, strTmpl2);
 }
 
@@ -626,20 +626,20 @@ struct TestStruct {
 class MySerializable : public Fw::Serializable {
   public:
     Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
-        buffer.serialize(m_testStruct.m_u32);
-        buffer.serialize(m_testStruct.m_u16);
-        buffer.serialize(m_testStruct.m_u8);
-        buffer.serialize(m_testStruct.m_f32);
-        buffer.serialize(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
+        buffer.serializeFrom(m_testStruct.m_u32);
+        buffer.serializeFrom(m_testStruct.m_u16);
+        buffer.serializeFrom(m_testStruct.m_u8);
+        buffer.serializeFrom(m_testStruct.m_f32);
+        buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         return Fw::FW_SERIALIZE_OK;
     }
 
     Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
-        buffer.serialize(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
-        buffer.serialize(m_testStruct.m_f32);
-        buffer.serialize(m_testStruct.m_u8);
-        buffer.serialize(m_testStruct.m_u16);
-        buffer.serialize(m_testStruct.m_u32);
+        buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
+        buffer.serializeFrom(m_testStruct.m_f32);
+        buffer.serializeFrom(m_testStruct.m_u8);
+        buffer.serializeFrom(m_testStruct.m_u16);
+        buffer.serializeFrom(m_testStruct.m_u32);
         return Fw::FW_SERIALIZE_OK;
     }
 
@@ -1262,8 +1262,8 @@ TEST(PerformanceTest, F64SerPerfTest) {
 
     for (FwSizeType iter = 0; iter < iters; iter++) {
         buff.resetSer();
-        buff.serialize(in);
-        buff.deserialize(out);
+        buff.serializeFrom(in);
+        buff.deserializeTo(out);
     }
 
     timer.stop();
