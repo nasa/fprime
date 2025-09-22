@@ -2,6 +2,10 @@
 #include <Fw/Time/Time.hpp>
 
 namespace Fw {
+#ifdef FW_TIME_SERIALIZED_SIZE
+static_assert(FW_TIME_SERIALIZED_SIZE == Fw::Time::SERIALIZED_SIZE, "FW_TIME_SERIALIZED_SIZE macro is wrong");
+#endif 
+
 const Time ZERO_TIME = Time();
 
 Time::Time() : m_val() {

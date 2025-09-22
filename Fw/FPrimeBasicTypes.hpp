@@ -50,7 +50,7 @@ static_assert(FW_CMD_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_CMD_ARG_BUF
               "FW_CMD_STRING_MAX_SIZE cannot be larger than FW_CMD_ARG_BUFFER_MAX_SIZE");
 static_assert(FW_LOG_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_LOG_BUFFER_MAX_SIZE,
               "FW_LOG_STRING_MAX_SIZE cannot be larger than FW_LOG_BUFFER_MAX_SIZE");
-static_assert(FW_TLM_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_TLM_BUFFER_MAX_SIZE,
+static_assert(FW_TLM_STRING_MAX_SIZE + sizeof(FwTlmPacketizeIdType) <= FW_TLM_BUFFER_MAX_SIZE,
               "FW_TLM_STRING_MAX_SIZE cannot be larger than FW_TLM_BUFFER_MAX_SIZE");
 static_assert(FW_PARAM_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_PARAM_BUFFER_MAX_SIZE,
               "FW_PARAM_STRING_MAX_SIZE cannot be larger than FW_PARAM_BUFFER_MAX_SIZE");
