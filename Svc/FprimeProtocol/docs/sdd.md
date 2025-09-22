@@ -5,7 +5,7 @@ The F Prime protocol is a minimal communications protocol that is used by defaul
 A frame for F Prime protocol consists of 4 fields:
 - Start word: A 32-bit start word that is used to identify the start of a frame. The start word is always `0xDEADBEEF`.
 - Payload length: A 32-bit field that specifies the length of the payload data in bytes.
-- Payload data: A variable-length field that contains the payload data (usually an [F Prime packet](../../../Fw/Com/ComPacket.hpp)), of length specified by the payload length field.
+- Payload data: A variable-length field that contains the payload data in the form of an [F Prime packet](../../../Fw/Com/ComPacket.hpp), of length specified by the payload length field. Note: an F Prime packet contains always at least a (configurable width) `FwPacketDescriptorType` field, which is used to identify the type of packet.
 - CRC: A 32-bit CRC field that is used to verify the integrity of the frame.
 
 ## F Prime frame format
