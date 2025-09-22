@@ -214,4 +214,14 @@ SocketIpStatus IpSocket::handleZeroReturn() {
     return SOCK_DISCONNECTED;
 }
 
+SocketIpStatus IpSocket::setupSocketOptions(int socketFd) {
+    // Iterate over the socket options and set them
+    for (const auto& options : IP_SOCKET_OPTIONS) {
+        if (setsockopt(socketFd, options.level, options.option, &options.value, sizeof(options.value))) {
+            return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+        }
+    }
+    return SOCK_SUCCESS;
+}
+
 }  // namespace Drv

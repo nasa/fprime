@@ -1,3 +1,4 @@
+// clang-format off
 #include "lib_crc.h"
 
 

@@ -22,7 +22,7 @@
 
 #ifndef FPRIME_INTEGER_CONFIG_H
 #define FPRIME_INTEGER_CONFIG_H
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -31,8 +31,7 @@ extern "C" {
 #define FW_HAS_16_BIT 1                   //!< Architecture supports 16 bit integers
 #define SKIP_FLOAT_IEEE_754_COMPLIANCE 0  //!<  Check IEEE 754 compliance of floating point arithmetic
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 #endif  // FPRIME_INTEGER_CONFIG_H
-

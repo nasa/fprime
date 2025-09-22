@@ -197,7 +197,7 @@ void BufferLoggerTester ::checkLogFileIntegrity(const char* const fileName,
         Fw::SerialBuffer comBuffLength(buf, length);
         comBuffLength.fill();
         SIZE_TYPE bufferSize;
-        const Fw::SerializeStatus serializeStatus = comBuffLength.deserialize(bufferSize);
+        const Fw::SerializeStatus serializeStatus = comBuffLength.deserializeTo(bufferSize);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, serializeStatus);
         ASSERT_EQ(sizeof(data), bufferSize);
         // Read and check the buffer

@@ -16,7 +16,9 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/ExternalString.hpp"
+#include "Os/Directory.hpp"
 #include "Svc/FileManager/FileManager.hpp"
+#include "config/FileManagerConfig.hpp"
 
 namespace Svc {
 
@@ -26,7 +28,13 @@ namespace Svc {
 
 FileManager ::FileManager(const char* const compName  //!< The component name
                           )
-    : FileManagerComponentBase(compName), commandCount(0), errorCount(0) {}
+    : FileManagerComponentBase(compName),
+      commandCount(0),
+      errorCount(0),
+      m_listState(IDLE),
+      m_totalEntries(0),
+      m_currentOpCode(0),
+      m_currentCmdSeq(0) {}
 
 FileManager ::~FileManager() {}
 
@@ -149,17 +157,109 @@ void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(logStringFileName, status);
     } else {
-        U64 size = static_cast<U64>(size_arg);
-        this->log_ACTIVITY_HI_FileSizeSucceeded(logStringFileName, size);
+        this->log_ACTIVITY_HI_FileSizeSucceeded(logStringFileName, size_arg);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
+}
+
+void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
+                                            const U32 cmdSeq,
+                                            const Fw::CmdStringArg& dirName) {
+    // Check if we're already listing a directory
+    if (m_listState == LISTING_IN_PROGRESS) {
+        this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(Os::Directory::OTHER_ERROR));
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
+
+    this->log_ACTIVITY_HI_ListDirectoryStarted(dirName);
+
+    // Open the directory for reading
+    Os::Directory::Status status = m_currentDir.open(dirName.toChar(), Os::Directory::OpenMode::READ);
+
+    if (status != Os::Directory::OP_OK) {
+        this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(status));
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
+
+    // Initialize state machine for asynchronous processing
+    m_listState = LISTING_IN_PROGRESS;
+    m_currentDirName = dirName;
+    m_currentOpCode = opCode;
+    m_currentCmdSeq = cmdSeq;
+    m_totalEntries = 0;
+
+    // Directory listing will be processed asynchronously by the rate group.
+    // The schedIn_handler will process FILES_PER_RATE_TICK directory entries per rate tick to
+    // prevent event flooding while maintaining configurable performance.
+    // Command response will be sent when listing completes.
 }
 
 void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }
+
+void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
+    // Only process if we're in the middle of a directory listing
+    if (m_listState == LISTING_IN_PROGRESS) {
+        // Process multiple files per rate tick based on configuration
+        for (U32 fileCount = 0; fileCount < Svc::FileManagerConfig::FILES_PER_RATE_TICK; fileCount++) {
+            Fw::String filename;
+            Os::Directory::Status status = m_currentDir.read(filename);
+
+            if (status == Os::Directory::NO_MORE_FILES) {
+                // We're done listing - close directory and send response
+                m_currentDir.close();
+                m_listState = IDLE;
+
+                this->log_ACTIVITY_HI_ListDirectorySucceeded(m_currentDirName, m_totalEntries);
+                this->emitTelemetry(Os::FileSystem::OP_OK);
+                this->sendCommandResponse(m_currentOpCode, m_currentCmdSeq, Os::FileSystem::OP_OK);
+                break;  // Exit the loop since we're done
+
+            } else if (status == Os::Directory::OP_OK) {
+                // Construct full path for type checking
+                Fw::String fullPath;
+                fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
+
+                // Determine entry type
+                Os::FileSystem::PathType pathType = Os::FileSystem::getPathType(fullPath.toChar());
+
+                if (pathType == Os::FileSystem::FILE) {
+                    // Regular file: get size and emit file event
+                    FwSizeType fileSize;
+                    Os::FileSystem::Status sizeStatus = Os::FileSystem::getFileSize(fullPath.toChar(), fileSize);
+                    this->log_ACTIVITY_HI_DirectoryListing(
+                        m_currentDirName, filename,
+                        (sizeStatus == Os::FileSystem::OP_OK) ? fileSize : static_cast<FwSizeType>(0));
+                } else if (pathType == Os::FileSystem::DIRECTORY) {
+                    // Subdirectory: emit subdirectory event
+                    this->log_ACTIVITY_HI_DirectoryListingSubdir(m_currentDirName, filename);
+                } else {
+                    // Special file or inaccessible: treat as file with 0 size
+                    this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, filename, static_cast<FwSizeType>(0));
+                }
+
+                m_totalEntries++;
+
+            } else {
+                // Error reading directory - close and send error response
+                m_currentDir.close();
+                m_listState = IDLE;
+
+                this->log_WARNING_HI_ListDirectoryError(m_currentDirName, static_cast<U32>(status));
+                this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+                this->sendCommandResponse(m_currentOpCode, m_currentCmdSeq, Os::FileSystem::OTHER_ERROR);
+                break;  // Exit the loop since we had an error
+            }
+        }
+    }
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

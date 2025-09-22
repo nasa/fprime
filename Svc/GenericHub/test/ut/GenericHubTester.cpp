@@ -84,7 +84,7 @@ void GenericHubTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_siz
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
-        buffer.serialize(static_cast<U8>(STest::Pick::any()));
+        buffer.serializeFrom(static_cast<U8>(STest::Pick::any()));
     }
 }
 

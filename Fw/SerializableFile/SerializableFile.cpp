@@ -51,7 +51,7 @@ SerializableFile::Status SerializableFile::load(const char* fileName, Serializab
     SerializeStatus serStatus;
     serStatus = this->m_buffer.setBuffLen(length);
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
-    serStatus = serializable.deserialize(this->m_buffer);
+    serStatus = serializable.deserializeFrom(this->m_buffer);
     if (FW_SERIALIZE_OK != serStatus) {
         return DESERIALIZATION_ERROR;
     }
@@ -61,7 +61,7 @@ SerializableFile::Status SerializableFile::load(const char* fileName, Serializab
 
 SerializableFile::Status SerializableFile::save(const char* fileName, Serializable& serializable) {
     this->reset();
-    SerializeStatus serStatus = serializable.serialize(this->m_buffer);
+    SerializeStatus serStatus = serializable.serializeTo(this->m_buffer);
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
 
     Os::File file;

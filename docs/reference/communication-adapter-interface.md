@@ -1,7 +1,7 @@
 # Communication Adapter Interface
 
 Any communication component (e.g. a radio component) that is intended for use with the standard F´ uplink and downlink
-stack should implement the *Communication Adapter Interface* [`ComInterface.fppi`](../../Svc/Interfaces/ComInterface.fppi). This interface specifies both the ports and protocols used
+stack should implement the *Communication Adapter Interface* [`Com.fpp`](../../Svc/Interfaces/Com.fpp). This interface specifies both the ports and protocols used
 to operate with the standard F´ uplink and downlink components.
 
 Implementors of this interface are referred to as *Communication Adapters*.
@@ -10,6 +10,18 @@ Implementors of this interface are referred to as *Communication Adapters*.
 
 The communication adapter interface protocol is designed to work alongside the framer status protocol and the com queue
 protocol to ensure that data messages do not overload a communication interface. These protocols are discussed below.
+
+## Usage
+
+Components implementing the *Communication Adapter Interface* should include the following in the FPP model:
+
+```
+... component ... {
+    import Svc.Com
+}
+```
+
+This can be seen in [`Svc.ComStub`](https://github.com/nasa/fprime/blob/fff0e0bf77d8e03b2005e02e5095571a20048f4a/Svc/ComStub/ComStub.fpp#L6).
 
 ## Ports
 

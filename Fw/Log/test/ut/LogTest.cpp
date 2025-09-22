@@ -8,7 +8,7 @@ TEST(FwLogTest, LogPacketSerialize) {
 
     Fw::LogPacket pktIn;
     Fw::LogBuffer buffIn;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serialize(static_cast<U32>(12)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(12)));
     Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME, 10, 11);
 
     pktIn.setId(10);
@@ -16,20 +16,20 @@ TEST(FwLogTest, LogPacketSerialize) {
     pktIn.setLogBuffer(buffIn);
 
     Fw::ComBuffer comBuff;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(pktIn));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(pktIn));
 
     // Deserialize data
     Fw::LogPacket pktOut;
     Fw::LogBuffer buffOut;
     Fw::Time timeOut(TimeBase::TB_WORKSTATION_TIME, 10, 11);
 
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.deserialize(pktOut));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.deserializeTo(pktOut));
     ASSERT_EQ(pktOut.getId(), 10u);
     ASSERT_EQ(pktOut.getTimeTag(), timeOut);
     U32 valOut = 0;
     buffOut = pktOut.getLogBuffer();
     buffOut.resetDeser();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserialize(valOut));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserializeTo(valOut));
     ASSERT_EQ(valOut, 12u);
 
     // serialize string
@@ -38,8 +38,8 @@ TEST(FwLogTest, LogPacketSerialize) {
 
     str1 = "Foo";
     buffOut.resetSer();
-    str1.serialize(buffOut);
-    str2.deserialize(buffOut);
+    str1.serializeTo(buffOut);
+    str2.deserializeFrom(buffOut);
     ASSERT_EQ(str1, str2);
 }
 

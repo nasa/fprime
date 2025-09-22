@@ -14,57 +14,50 @@
 #ifndef TOKENBUCKETTESTER_HPP
 #define TOKENBUCKETTESTER_HPP
 
-#include "Utils/TokenBucket.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
+#include "Utils/TokenBucket.hpp"
 #include "gtest/gtest.h"
 
 namespace Utils {
 
-  class TokenBucketTester
-  {
+class TokenBucketTester {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object TokenBucketTester
+    //!
+    TokenBucketTester();
 
-    public:
+    //! Destroy object TokenBucketTester
+    //!
+    ~TokenBucketTester();
 
-      //! Construct object TokenBucketTester
-      //!
-      TokenBucketTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object TokenBucketTester
-      //!
-      ~TokenBucketTester();
+    void testTriggering();
+    void testReconfiguring();
+    void testInitialSettings();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents();
 
-      void testTriggering();
-      void testReconfiguring();
-      void testInitialSettings();
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-  };
-
-} // end namespace Utils
+}  // end namespace Utils
 
 #endif

@@ -38,7 +38,7 @@ SerializeStatus FilePacket::StartPacket ::fromSerialBuffer(SerialBuffer& serialB
     FW_ASSERT(this->m_header.m_type == T_START);
 
     {
-        const SerializeStatus status = serialBuffer.deserialize(this->m_fileSize);
+        const SerializeStatus status = serialBuffer.deserializeTo(this->m_fileSize);
 
         if (status != FW_SERIALIZE_OK) {
             return status;
@@ -76,7 +76,7 @@ SerializeStatus FilePacket::StartPacket ::toSerialBuffer(SerialBuffer& serialBuf
     }
 
     {
-        const SerializeStatus status = serialBuffer.serialize(this->m_fileSize);
+        const SerializeStatus status = serialBuffer.serializeFrom(this->m_fileSize);
 
         if (status != FW_SERIALIZE_OK) {
             return status;

@@ -32,5 +32,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CRCCheckerConfig.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/FileManagerConfig.hpp"
     BASE_CONFIG
 )

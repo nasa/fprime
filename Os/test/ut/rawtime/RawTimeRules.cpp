@@ -108,12 +108,12 @@ void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester&
 
     auto serializer = buffer.getSerializer();
 
-    state.m_times[index].serialize(serializer);
+    state.m_times[index].serializeTo(serializer);
 
     auto deserializer = buffer.getDeserializer();
 
     Os::RawTime raw_time;
-    raw_time.deserialize(deserializer);
+    raw_time.deserializeFrom(deserializer);
 
     // We make sure that serialization and deserialization are successful by deserializing
     // into a new Os::RawTime object and comparing the difference between the original RawTime

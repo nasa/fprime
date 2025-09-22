@@ -38,12 +38,12 @@ SerializeStatus FilePacket::DataPacket ::toBuffer(Buffer& buffer) const {
 SerializeStatus FilePacket::DataPacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_DATA);
 
-    SerializeStatus status = serialBuffer.deserialize(this->m_byteOffset);
+    SerializeStatus status = serialBuffer.deserializeTo(this->m_byteOffset);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.deserialize(this->m_dataSize);
+    status = serialBuffer.deserializeTo(this->m_dataSize);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }
@@ -72,12 +72,12 @@ SerializeStatus FilePacket::DataPacket ::toSerialBuffer(SerialBuffer& serialBuff
         return status;
     }
 
-    status = serialBuffer.serialize(this->m_byteOffset);
+    status = serialBuffer.serializeFrom(this->m_byteOffset);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.serialize(this->m_dataSize);
+    status = serialBuffer.serializeFrom(this->m_dataSize);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }

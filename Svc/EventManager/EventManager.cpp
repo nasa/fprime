@@ -110,7 +110,7 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
     this->m_logPacket.setTimeTag(timeTag);
     this->m_logPacket.setLogBuffer(args);
     this->m_comBuffer.resetSer();
-    Fw::SerializeStatus stat = this->m_logPacket.serialize(this->m_comBuffer);
+    Fw::SerializeStatus stat = this->m_logPacket.serializeTo(this->m_comBuffer);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 
     if (this->isConnected_PktSend_OutputPort(0)) {

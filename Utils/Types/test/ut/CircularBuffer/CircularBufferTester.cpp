@@ -6,7 +6,4 @@
 
 #include "CircularBufferTester.hpp"
 
-
-namespace Types {
-
-}
+namespace Types {}

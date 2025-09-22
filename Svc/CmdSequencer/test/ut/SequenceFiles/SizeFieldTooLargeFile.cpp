@@ -35,13 +35,13 @@ void SizeFieldTooLargeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     {
         // Descriptor
         const FPrime::Records::Descriptor descriptor = CmdSequencerComponentImpl::Sequence::Record::RELATIVE;
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U8>(descriptor)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U8>(descriptor)));
         // Seconds
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U32>(0)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U32>(0)));
         // Microseconds
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U32>(0)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U32>(0)));
         // Record size
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U32>(2 * this->bufferSize)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U32>(2 * this->bufferSize)));
     }
     // CRC
     FPrime::CRCs::serialize(buffer);

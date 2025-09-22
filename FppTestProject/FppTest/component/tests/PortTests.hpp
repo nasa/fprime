@@ -288,7 +288,7 @@
         U8 invalidData2[sizeof(U32)];                                                                               \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
                                                                                                                     \
-        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        status = invalidBuf2.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf2);                               \
@@ -299,10 +299,10 @@
         U8 invalidData3[sizeof(U32) * 2];                                                                           \
         Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                           \
                                                                                                                     \
-        status = invalidBuf3.serialize(port.args.val1);                                                             \
+        status = invalidBuf3.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf3.serialize(port.args.val2);                                                             \
+        status = invalidBuf3.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf3);                               \
@@ -313,13 +313,13 @@
         U8 invalidData4[(sizeof(U32) * 2) + sizeof(F32)];                                                           \
         Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                           \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val1);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val2);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val3);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val3);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf4);                               \
@@ -330,16 +330,16 @@
         U8 invalidData5[(sizeof(U32) * 2) + (sizeof(F32) * 2)];                                                     \
         Fw::SerialBuffer invalidBuf5(invalidData5, sizeof(invalidData5));                                           \
                                                                                                                     \
-        status = invalidBuf5.serialize(port.args.val1);                                                             \
+        status = invalidBuf5.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf5.serialize(port.args.val2);                                                             \
+        status = invalidBuf5.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf5.serialize(port.args.val3);                                                             \
+        status = invalidBuf5.serializeFrom(port.args.val3);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf5.serialize(port.args.val4);                                                             \
+        status = invalidBuf5.serializeFrom(port.args.val4);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf5);                               \
@@ -350,19 +350,19 @@
         U8 invalidData6[(sizeof(U32) * 2) + (sizeof(F32) * 2) + sizeof(U8)];                                        \
         Fw::SerialBuffer invalidBuf6(invalidData6, sizeof(invalidData6));                                           \
                                                                                                                     \
-        status = invalidBuf6.serialize(port.args.val1);                                                             \
+        status = invalidBuf6.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf6.serialize(port.args.val2);                                                             \
+        status = invalidBuf6.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf6.serialize(port.args.val3);                                                             \
+        status = invalidBuf6.serializeFrom(port.args.val3);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf6.serialize(port.args.val4);                                                             \
+        status = invalidBuf6.serializeFrom(port.args.val4);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf6.serialize(port.args.val5);                                                             \
+        status = invalidBuf6.serializeFrom(port.args.val5);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf6);                               \
@@ -373,22 +373,22 @@
         U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];                                                           \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
-        status = buf.serialize(port.args.val1);                                                                     \
+        status = buf.serializeFrom(port.args.val1);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val2);                                                                     \
+        status = buf.serializeFrom(port.args.val2);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val3);                                                                     \
+        status = buf.serializeFrom(port.args.val3);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val4);                                                                     \
+        status = buf.serializeFrom(port.args.val4);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val5);                                                                     \
+        status = buf.serializeFrom(port.args.val5);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val6);                                                                     \
+        status = buf.serializeFrom(port.args.val6);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, buf);                                       \
@@ -413,7 +413,7 @@
         U8 invalidData2[FppTest::Types::String1::SERIALIZED_SIZE];                                                  \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
                                                                                                                     \
-        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        status = invalidBuf2.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf2);                                  \
@@ -424,10 +424,10 @@
         U8 invalidData3[FppTest::Types::String1::SERIALIZED_SIZE * 2];                                              \
         Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                           \
                                                                                                                     \
-        status = invalidBuf3.serialize(port.args.val1);                                                             \
+        status = invalidBuf3.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf3.serialize(port.args.val2);                                                             \
+        status = invalidBuf3.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf3);                                  \
@@ -438,13 +438,13 @@
         U8 invalidData4[(FppTest::Types::String1::SERIALIZED_SIZE * 2) + FppTest::Types::String2::SERIALIZED_SIZE]; \
         Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                           \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val1);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val2);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val2);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = invalidBuf4.serialize(port.args.val3);                                                             \
+        status = invalidBuf4.serializeFrom(port.args.val3);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf4);                                  \
@@ -455,16 +455,16 @@
         U8 data[InputStringArgsPort::SERIALIZED_SIZE];                                                              \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
-        status = buf.serialize(port.args.val1);                                                                     \
+        status = buf.serializeFrom(port.args.val1);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val2);                                                                     \
+        status = buf.serializeFrom(port.args.val2);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val3);                                                                     \
+        status = buf.serializeFrom(port.args.val3);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val4);                                                                     \
+        status = buf.serializeFrom(port.args.val4);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, buf);                                          \
@@ -489,7 +489,7 @@
         U8 invalidData2[FormalParamEnum::SERIALIZED_SIZE];                                                          \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
                                                                                                                     \
-        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        status = invalidBuf2.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf2);                                    \
@@ -500,16 +500,16 @@
         U8 data[InputEnumArgsPort::SERIALIZED_SIZE];                                                                \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
-        status = buf.serialize(port.args.val1);                                                                     \
+        status = buf.serializeFrom(port.args.val1);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val2);                                                                     \
+        status = buf.serializeFrom(port.args.val2);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val3);                                                                     \
+        status = buf.serializeFrom(port.args.val3);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val4);                                                                     \
+        status = buf.serializeFrom(port.args.val4);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, buf);                                            \
@@ -534,7 +534,7 @@
         U8 invalidData2[FormalParamArray::SERIALIZED_SIZE];                                                         \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
                                                                                                                     \
-        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        status = invalidBuf2.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf2);                                   \
@@ -544,22 +544,22 @@
         U8 data[InputArrayArgsPort::SERIALIZED_SIZE];                                                               \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
-        status = buf.serialize(port.args.val1);                                                                     \
+        status = buf.serializeFrom(port.args.val1);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val2);                                                                     \
+        status = buf.serializeFrom(port.args.val2);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val3);                                                                     \
+        status = buf.serializeFrom(port.args.val3);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val4);                                                                     \
+        status = buf.serializeFrom(port.args.val4);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val5);                                                                     \
+        status = buf.serializeFrom(port.args.val5);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val6);                                                                     \
+        status = buf.serializeFrom(port.args.val6);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, buf);                                           \
@@ -584,7 +584,7 @@
         U8 invalidData2[FormalParamStruct::SERIALIZED_SIZE];                                                        \
         Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
                                                                                                                     \
-        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        status = invalidBuf2.serializeFrom(port.args.val1);                                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf2);                                  \
@@ -594,10 +594,10 @@
         U8 data[InputStructArgsPort::SERIALIZED_SIZE];                                                              \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
-        status = buf.serialize(port.args.val1);                                                                     \
+        status = buf.serializeFrom(port.args.val1);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
-        status = buf.serialize(port.args.val2);                                                                     \
+        status = buf.serializeFrom(port.args.val2);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, buf);                                          \
@@ -707,22 +707,22 @@
         F32 f32, f32Ref;                                                                     \
         bool b, bRef;                                                                        \
                                                                                              \
-        status = this->primitiveBuf.deserialize(u32);                                        \
+        status = this->primitiveBuf.deserializeTo(u32);                                      \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->primitiveBuf.deserialize(u32Ref);                                     \
+        status = this->primitiveBuf.deserializeTo(u32Ref);                                   \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->primitiveBuf.deserialize(f32);                                        \
+        status = this->primitiveBuf.deserializeTo(f32);                                      \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->primitiveBuf.deserialize(f32Ref);                                     \
+        status = this->primitiveBuf.deserializeTo(f32Ref);                                   \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->primitiveBuf.deserialize(b);                                          \
+        status = this->primitiveBuf.deserializeTo(b);                                        \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->primitiveBuf.deserialize(bRef);                                       \
+        status = this->primitiveBuf.deserializeTo(bRef);                                     \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
         ASSERT_EQ(u32, port.args.val1);                                                      \
@@ -738,16 +738,16 @@
         FppTest::Types::String1 str80, str80Ref;                                             \
         FppTest::Types::String2 str100, str100Ref;                                           \
                                                                                              \
-        status = this->stringBuf.deserialize(str80);                                         \
+        status = this->stringBuf.deserializeTo(str80);                                       \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->stringBuf.deserialize(str80Ref);                                      \
+        status = this->stringBuf.deserializeTo(str80Ref);                                    \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->stringBuf.deserialize(str100);                                        \
+        status = this->stringBuf.deserializeTo(str100);                                      \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->stringBuf.deserialize(str100Ref);                                     \
+        status = this->stringBuf.deserializeTo(str100Ref);                                   \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
         ASSERT_EQ(str80, port.args.val1);                                                    \
@@ -760,10 +760,10 @@
         Fw::SerializeStatus status;                                                          \
         FormalParamEnum en, enRef;                                                           \
                                                                                              \
-        status = this->enumBuf.deserialize(en);                                              \
+        status = this->enumBuf.deserializeTo(en);                                            \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->enumBuf.deserialize(enRef);                                           \
+        status = this->enumBuf.deserializeTo(enRef);                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
         ASSERT_EQ(en, port.args.val1);                                                       \
@@ -774,10 +774,10 @@
         Fw::SerializeStatus status;                                                          \
         FormalParamArray a, aRef;                                                            \
                                                                                              \
-        status = this->arrayBuf.deserialize(a);                                              \
+        status = this->arrayBuf.deserializeTo(a);                                            \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->arrayBuf.deserialize(aRef);                                           \
+        status = this->arrayBuf.deserializeTo(aRef);                                         \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
         ASSERT_EQ(a, port.args.val1);                                                        \
@@ -788,10 +788,10 @@
         Fw::SerializeStatus status;                                                          \
         FormalParamStruct s, sRef;                                                           \
                                                                                              \
-        status = this->structBuf.deserialize(s);                                             \
+        status = this->structBuf.deserializeTo(s);                                           \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
-        status = this->structBuf.deserialize(sRef);                                          \
+        status = this->structBuf.deserializeTo(sRef);                                        \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
         ASSERT_EQ(s, port.args.val1);                                                        \
