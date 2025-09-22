@@ -952,9 +952,10 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     }
 
-    // Verify at least one Queue Overflow event was generated
+    // Verify at least one Queue Overflow event was generated and the
+    // CommandsDropped telemetry channel is not 0
     ASSERT_GT(this->eventHistory_CommandDroppedQueueOverflow->size(), 0);
-    printf("CommandDroppedQueueOverflow->size() = %d\n", this->eventHistory_CommandDroppedQueueOverflow->size());
+    ASSERT_GT(this->tlmHistory_CommandsDropped->size(), 0);
 }
 
 
