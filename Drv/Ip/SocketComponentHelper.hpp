@@ -49,15 +49,25 @@ class SocketComponentHelper {
      *        default behavior is to automatically open connections.
      *
      * \param name: name of the task
-     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not
+     * \param priority: priority of the started read task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not
      * prioritized
-     * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
-     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
+     * \param stack: stack size provided to the read task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads
+     * default
+     * \param cpuAffinity: cpu affinity provided to read task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
+     * \param priorityReconnect: priority of the started reconnect task. See: Os::Task::start. Default:
+     * TASK_PRIORITY_DEFAULT, not prioritized
+     * \param stackReconnect: stack size provided to the reconnect task. See: Os::Task::start. Default: TASK_DEFAULT,
+     * posix threads default
+     * \param cpuAffinityReconnect: cpu affinity provided to reconnect task. See: Os::Task::start. Default:
+     * TASK_DEFAULT, don't care
      */
     void start(const Fw::StringBase& name,
                const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
-               const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
+               const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,
+               const FwTaskPriorityType priorityReconnect = Os::Task::TASK_PRIORITY_DEFAULT,
+               const Os::Task::ParamType stackReconnect = Os::Task::TASK_DEFAULT,
+               const Os::Task::ParamType cpuAffinityReconnect = Os::Task::TASK_DEFAULT);
 
     /**
      * \brief open the socket for communications
@@ -264,8 +274,6 @@ class SocketComponentHelper {
      * \return status of reconnect, SOCK_SUCCESS for success, something else on error
      */
     SocketIpStatus reopen();
-
-    void threadSafeDelay(const Fw::TimeInterval& interval);
 
   protected:
     bool m_reopen = true;  //!< Force reopen on disconnect

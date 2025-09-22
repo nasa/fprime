@@ -24,15 +24,18 @@ SocketComponentHelper::~SocketComponentHelper() {}
 void SocketComponentHelper::start(const Fw::StringBase& name,
                                   const FwTaskPriorityType priority,
                                   const Os::Task::ParamType stack,
-                                  const Os::Task::ParamType cpuAffinity) {
+                                  const Os::Task::ParamType cpuAffinity,
+                                  const FwTaskPriorityType priorityReconnect,
+                                  const Os::Task::ParamType stackReconnect,
+                                  const Os::Task::ParamType cpuAffinityReconnect) {
     // Reconnect Thread
     FW_ASSERT(m_reconnectTask.getState() ==
               Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_reconnectStop = false;
     Fw::String reconnectName;
     reconnectName.format("%s_reconnect", name.toChar());
-    Os::Task::Arguments reconnectArguments(reconnectName, SocketComponentHelper::reconnectTask, this, priority, stack,
-                                           cpuAffinity);
+    Os::Task::Arguments reconnectArguments(reconnectName, SocketComponentHelper::reconnectTask, this, priorityReconnect,
+                                           stackReconnect, cpuAffinityReconnect);
     Os::Task::Status reconnectStat = m_reconnectTask.start(reconnectArguments);
     FW_ASSERT(Os::Task::OP_OK == reconnectStat, static_cast<FwAssertArgType>(reconnectStat));
 
