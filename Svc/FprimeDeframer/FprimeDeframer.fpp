@@ -30,6 +30,11 @@ module Svc {
       severity warning high \
       format "Frame dropped: The transmitted frame checksum does not match that computed by the receiver"
 
+    @ An invalid frame was received (not enough data to contain a valid FwPacketDescriptor type)
+    event PayloadTooShort \
+      severity warning low \
+      format "The received buffer is too short to contain a valid FwPacketDescriptor"
+
     ###############################################################################
     # Standard AC Ports for Events 
     ###############################################################################
