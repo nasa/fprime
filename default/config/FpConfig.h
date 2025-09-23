@@ -195,7 +195,7 @@ extern "C" {
 #define FW_CMD_CHECK_RESIDUAL 1  //!< Check for leftover command bytes
 #endif
 
-// Serialized size of time to use when calculating available space in Fw::ComBuffer 
+// Serialized size of time to use when calculating available space in Fw::ComBuffer
 #ifndef FW_TIME_SERIALIZED_SIZE
 #define FW_TIME_SERIALIZED_SIZE (11)
 #endif
