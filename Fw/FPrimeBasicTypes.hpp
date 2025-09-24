@@ -17,7 +17,6 @@
 #ifndef FPRIME_BASIC_TYPES_HPP
 #define FPRIME_BASIC_TYPES_HPP
 #include <limits>
-#include <cstddef>
 extern "C" {
 #include <Fw/FPrimeBasicTypes.h>
 }
@@ -36,13 +35,13 @@ extern "C" {
 // Check that Fw::String is big enough to hold any string that can be given a
 // default value in FPP.
 
-static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<size_t>(FW_CMD_STRING_MAX_SIZE),
+static_assert(static_cast<StringBase::SizeType>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<StringBase::SizeType>(FW_CMD_STRING_MAX_SIZE),
               "A generic string should be able to hold a command string");
-static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<size_t>(FW_LOG_STRING_MAX_SIZE),
+static_assert(static_cast<StringBase::SizeType>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<StringBase::SizeType>(FW_LOG_STRING_MAX_SIZE),
               "A generic string should be able to hold an event string");
-static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<size_t>(FW_TLM_STRING_MAX_SIZE),
+static_assert(static_cast<StringBase::SizeType>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<StringBase::SizeType>(FW_TLM_STRING_MAX_SIZE),
               "A generic string should be able to hold a telemetry string");
-static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<size_t>(FW_PARAM_STRING_MAX_SIZE),
+static_assert(static_cast<StringBase::SizeType>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<StringBase::SizeType>(FW_PARAM_STRING_MAX_SIZE),
               "A generic string should be able to hold a parameter string");
 
 // Check that command/telemetry strings are not larger than an argument buffer
