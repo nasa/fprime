@@ -36,7 +36,6 @@ extern "C" {
 #endif
 #include <config/FPrimeNumericalConfig.h>
 #include <inttypes.h>  // Standard integer types and printf macros
-#include <cstddef>
 
 // Compiler checks
 #if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
@@ -89,8 +88,8 @@ typedef double F64;  //!< 64-bit floating point (double). Required for compiler-
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
-#define FW_MAX(a, b) ((static_cast<size_t>(a) > (b)) ? (static_cast<size_t>(a) : (b)))                 //!< MAX macro
-#define FW_MIN(a, b) ((static_cast<size_t>(a) < (b)) ? (static_cast<size_t>(a) : (b)))                 //!< MIN macro
+#define FW_MAX(a, b) (((a) > static_cast<StringBase::SizeType>(b)) ? static_cast<StringBase::SizeType>(a) : (b))                 //!< MAX macro
+#define FW_MIN(a, b) (((a) < static_cast<StringBase::SizeType>(b)) ? static_cast<StringBase::SizeType>(a) : (b))                 //!< MIN macro
 
 #define FW_NO_ASSERT 1  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
