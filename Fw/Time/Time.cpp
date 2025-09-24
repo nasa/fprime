@@ -4,7 +4,7 @@
 namespace Fw {
 #ifdef FW_TIME_SERIALIZED_SIZE
 static_assert(FW_TIME_SERIALIZED_SIZE == Fw::Time::SERIALIZED_SIZE, "FW_TIME_SERIALIZED_SIZE macro is wrong");
-static_assert(Fw::Time::SERIALIZED_SIZE == Fw::TimeValue::SERIALIZED_SIZE, "Time sizes mismatched!");
+static_assert(FW_TIME_SERIALIZED_SIZE == Fw::TimeValue::SERIALIZED_SIZE, "Time sizes mismatched!");
 #endif
 
 const Time ZERO_TIME = Time();
