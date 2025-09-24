@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <cstddef>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -26,9 +27,9 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max()
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U32>::max(), "Max stack size must be below U32 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<StringBase::SizeType>(FW_TLM_BUFFER_MAX_SIZE),
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<size_t>(FW_TLM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max tlm buffer size");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<StringBase::SizeType>(FW_PARAM_BUFFER_MAX_SIZE),
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<size_t>(FW_PARAM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max prm buffer size");
 
 namespace Svc {
