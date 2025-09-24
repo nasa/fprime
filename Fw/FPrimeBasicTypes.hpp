@@ -21,7 +21,7 @@ extern "C" {
 #include <Fw/FPrimeBasicTypes.h>
 }
 #include <Fw/Types/BasicTypes.hpp>
-// Needed for FwAssertTextSize
+// Needed for FwAssertTextSize and specific constants previously defined as macro constants in FpConfig.h
 #include <config/FppConstantsAc.hpp>
 
 // Define max length of assert string
@@ -35,13 +35,13 @@ extern "C" {
 // Check that Fw::String is big enough to hold any string that can be given a
 // default value in FPP.
 
-static_assert(FW_FIXED_LENGTH_STRING_SIZE >= FW_CMD_STRING_MAX_SIZE,
+static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<int>(FW_CMD_STRING_MAX_SIZE),
               "A generic string should be able to hold a command string");
-static_assert(FW_FIXED_LENGTH_STRING_SIZE >= FW_LOG_STRING_MAX_SIZE,
+static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<int>(FW_LOG_STRING_MAX_SIZE),
               "A generic string should be able to hold an event string");
-static_assert(FW_FIXED_LENGTH_STRING_SIZE >= FW_TLM_STRING_MAX_SIZE,
+static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<int>(FW_TLM_STRING_MAX_SIZE),
               "A generic string should be able to hold a telemetry string");
-static_assert(FW_FIXED_LENGTH_STRING_SIZE >= FW_PARAM_STRING_MAX_SIZE,
+static_assert(static_cast<int>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cast<int>(FW_PARAM_STRING_MAX_SIZE),
               "A generic string should be able to hold a parameter string");
 
 // Check that command/telemetry strings are not larger than an argument buffer
