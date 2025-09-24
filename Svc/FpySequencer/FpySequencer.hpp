@@ -20,16 +20,15 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "config/FppConstantsAc.hpp"
-#include <cstddef>
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U32>::max(), "Max stack size must be below U32 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<size_t>(FW_TLM_BUFFER_MAX_SIZE),
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<StringBase::SizeType>(FW_TLM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max tlm buffer size");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<size_t>(FW_PARAM_BUFFER_MAX_SIZE),
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<StringBase::SizeType>(FW_PARAM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max prm buffer size");
 
 namespace Svc {
