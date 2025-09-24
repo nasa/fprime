@@ -197,6 +197,7 @@ class ComQueue final : public ComQueueComponentBase {
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
+    Fw::ComBuffer m_dequeued_com_buffer;                //!< Store a dequeued com buffer so it does not leave scope
     Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles

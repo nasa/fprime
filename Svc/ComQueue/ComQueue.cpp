@@ -301,9 +301,10 @@ void ComQueue::processQueue() {
 
         // Send out the message based on the type
         if (entry.index < COM_PORT_COUNT) {
-            Fw::ComBuffer comBuffer;
-            queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
-            this->sendComBuffer(comBuffer, entry.index);
+            // Dequeue is reading the whole persisted Fw::ComBuffer object from the queue's storage.
+            // thus it takes an address to the object to fill and the size of the actual object.
+            queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
+            this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
             Fw::Buffer buffer;
             queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
