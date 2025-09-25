@@ -47,6 +47,8 @@ jobs:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
     steps:
+      - name: "Make Space"
+        uses: nasa/fprime-actions/make-space@devel
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
