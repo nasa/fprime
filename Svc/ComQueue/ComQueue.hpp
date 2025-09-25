@@ -22,6 +22,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 class ComQueue final : public ComQueueComponentBase {
+    //! State of the currently transmitted buffer
+    enum BufferState { OWNED, UNOWNED };
+
   public:
     //!< Count of Fw::Com input ports and thus Fw::Com queues
     static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMPACKETQUEUEIN_INPUT_PORTS;
@@ -202,6 +205,7 @@ class ComQueue final : public ComQueueComponentBase {
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
     SendState m_state;                                  //!< State of the component
+    BufferState m_buffer_state;                         //!< Ownership state of buffer
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID
