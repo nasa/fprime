@@ -309,13 +309,16 @@ void ComQueue::processQueue() {
             // Dequeue is reading the whole persisted Fw::ComBuffer object from the queue's storage.
             // thus it takes an address to the object to fill and the size of the actual object.
             FW_ASSERT(this->m_buffer_state == OWNED);
-            auto dequeue_status = queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
-            FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(dequeue_status));
+            auto dequeue_status =
+                queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
+            FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
+                      static_cast<FwAssertArgType>(dequeue_status));
             this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
             Fw::Buffer buffer;
             auto dequeue_status = queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
-            FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(dequeue_status));
+            FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
+                      static_cast<FwAssertArgType>(dequeue_status));
             this->sendBuffer(buffer, entry.index);
         }
 
