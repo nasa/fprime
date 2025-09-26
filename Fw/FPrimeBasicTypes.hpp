@@ -16,6 +16,7 @@
 // ======================================================================
 #ifndef FPRIME_BASIC_TYPES_HPP
 #define FPRIME_BASIC_TYPES_HPP
+
 #include <limits>
 #include <cstddef>
 extern "C" {
