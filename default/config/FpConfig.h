@@ -18,8 +18,22 @@ extern "C" {
 #include <Platform/PlatformTypes.h>
 
 // ----------------------------------------------------------------------
+// Type aliases
+// ----------------------------------------------------------------------
+#define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
+
+// ----------------------------------------------------------------------
 // Configuration switches
 // ----------------------------------------------------------------------
+
+// Boolean values for serialization
+#ifndef FW_SERIALIZE_TRUE_VALUE
+#define FW_SERIALIZE_TRUE_VALUE (0xFF)  //!< Value encoded during serialization for boolean true
+#endif
+
+#ifndef FW_SERIALIZE_FALSE_VALUE
+#define FW_SERIALIZE_FALSE_VALUE (0x00)  //!< Value encoded during serialization for boolean false
+#endif
 
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
@@ -55,6 +69,14 @@ extern "C" {
 
 #ifndef FW_QUEUE_REGISTRATION
 #define FW_QUEUE_REGISTRATION 1  //!< Indicates whether or not queue registration is used
+#endif
+
+// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
+// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
+// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
+// unchanged.
+#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
+#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING 1
 #endif
 
 // Port Facilities
@@ -113,6 +135,16 @@ extern "C" {
 #endif
 #endif
 
+// Normally when a command is deserialized, the handler checks to see if there are any leftover
+// bytes in the buffer. If there are, it assumes that the command was corrupted somehow since
+// the serialized size should match the serialized size of the argument list. In some cases,
+// command buffers are padded so the data can be larger than the serialized size of the command.
+// Setting the below to zero will disable the check at the cost of not detecting commands that
+// are too large.
+#ifndef FW_CMD_CHECK_RESIDUAL
+#define FW_CMD_CHECK_RESIDUAL 1  //!< Check for leftover command bytes
+#endif
+
 // Enables text logging of events as well as data logging. Adds a second logging port for text output.
 // In order to set this to 0, FPRIME_ENABLE_TEXT_LOGGERS must be set to OFF.
 #ifndef FW_ENABLE_TEXT_LOGGING
@@ -123,6 +155,11 @@ extern "C" {
 // string constants. Must be enabled if text logging enabled
 #ifndef FW_SERIALIZABLE_TO_STRING
 #define FW_SERIALIZABLE_TO_STRING 1  //!< Indicates if autocoded serializables have toString() methods
+#endif
+
+// Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
+#ifndef FW_AMPCS_COMPATIBLE
+#define FW_AMPCS_COMPATIBLE 0  //!< Whether or not JPL AMPCS ground system support is enabled.
 #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
