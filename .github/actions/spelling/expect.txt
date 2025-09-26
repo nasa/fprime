@@ -182,6 +182,7 @@ DPWRITER
 DRAINBUFFERS
 drv
 drvtcpserversocket
+DSL
 dspal
 DSSC
 Dstate
