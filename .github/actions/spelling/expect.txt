@@ -499,6 +499,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+prescaler
 prioritization
 PRIORITYQUEUE
 prm
