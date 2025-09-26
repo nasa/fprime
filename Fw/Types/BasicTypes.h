@@ -89,11 +89,9 @@ typedef double F64;  //!< 64-bit floating point (double). Required for compiler-
 /*----------------------------------------------------------------------------*/
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
 #define FW_MAX(a, b) \
-    (((static_cast<U32>(a)) > (static_cast<U32>(b))) ? (static_cast<U32>(a)) : (static_cast<U32>(b)))
-        //!< MAX macro
+    (((static_cast<U32>(a)) > (static_cast<U32>(b))) ? (static_cast<U32>(a)) : (static_cast<U32>(b)))  //!< MAX macro
 #define FW_MIN(a, b) \
-    (((static_cast<U32>(a)) < (static_cast<U32>(b))) ? (static_cast<U32>(a)) : (static_cast<U32>(b)))
-        //!< MIN macro
+    (((static_cast<U32>(a)) < (static_cast<U32>(b))) ? (static_cast<U32>(a)) : (static_cast<U32>(b)))  //!< MIN macro
 
 #define FW_NO_ASSERT 1  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
