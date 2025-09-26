@@ -73,19 +73,6 @@ constant GenericHubOutputBuffers = 10
 # Constants ported from FpConfig.h
 # ----------------------------------------------------------------------
 
-@ Dont care value for time contexts in sequences
-constant FW_CONTEXT_DONT_CARE = 0xFF
-
-@ Boolean values for serialization
-constant FW_SERIALIZE_TRUE_VALUE = 0xFF                         # Value encoded during serialization for boolean true
-constant FW_SERIALIZE_FALSE_VALUE = 0x00                        # Value encoded during serialization for boolean false
-
-@ On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
-@ space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
-@ program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
-@ unchanged.
-constant FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING = 1
-
 @ For the simple object registry provided with the framework, this specifies how many objects the registry will store.
 constant FW_OBJ_SIMPLE_REG_ENTRIES = 500                        # Number of objects stored in simple object registry
 
@@ -114,14 +101,6 @@ constant FW_CMD_ARG_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)
 
 @ Specifies the maximum size of a string in a command argument
 constant FW_CMD_STRING_MAX_SIZE = 40                            # Max character size of command string arguments
-
-@ Normally when a command is deserialized, the handler checks to see if there are any leftover
-@ bytes in the buffer. If there are, it assumes that the command was corrupted somehow since
-@ the serialized size should match the serialized size of the argument list. In some cases,
-@ command buffers are padded so the data can be larger than the serialized size of the command.
-@ Setting the below to zero will disable the check at the cost of not detecting commands that
-@ are too large.
-constant FW_CMD_CHECK_RESIDUAL = 1                              # Check for leftover command bytes
 
 @ Specifies the size of the buffer that contains the serialized log arguments
 # FW_LOG_BUFFER_MAX_SIZE (FW_COM_BUFFER_MAX_SIZE - sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))
@@ -154,9 +133,6 @@ constant FW_INTERNAL_INTERFACE_STRING_MAX_SIZE = 256            # Max size of in
 
 @ Defines the size of the text log string buffer. Should be large enough for format string and arguments
 constant FW_LOG_TEXT_BUFFER_SIZE = 256                          # Max size of string for text log message
-
-@ Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
-constant FW_AMPCS_COMPATIBLE = 0                                # Whether or not JPL AMPCS ground system support is enabled
 
 @ Configuration for Fw::String
 @ Note: FPrimeBasicTypes.hpp needs to be updated to sync enum
