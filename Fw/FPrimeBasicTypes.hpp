@@ -16,15 +16,14 @@
 // ======================================================================
 #ifndef FPRIME_BASIC_TYPES_HPP
 #define FPRIME_BASIC_TYPES_HPP
-
 #include <limits>
-#include <cstddef>
 extern "C" {
 #include <Fw/FPrimeBasicTypes.h>
 }
 #include <Fw/Types/BasicTypes.hpp>
 // Needed for FwAssertTextSize and specific constants previously defined in FpConfig.h
 #include <config/FppConstantsAc.hpp>
+#include <cstddef>
 
 // Define max length of assert string
 // Note: This constant truncates file names in assertion failure event reports
