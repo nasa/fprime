@@ -191,16 +191,16 @@ void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
 void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context){
     // Extract command opcode
     Fw::CmdPacket cmdPkt;
-    Fw::SerializeStatus stat = cmdPkt.deserialize(data);
-    U32 opcode = 0xDEADBEEF; // Note: 0xDEADBEEF = unable to extract cmd opcode       
+    Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
+    FwOpcodeType opcode = 0; // Note: 0 = Reserved opcode    
 
     if (stat == Fw::FW_SERIALIZE_OK){
         opcode = cmdPkt.getOpCode();
     }
     
     // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
-    this->log_ACTIVITY_HI_CommandDroppedQueueOverflow(opcode,context);
     this->m_numCmdsDropped++;
+    this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode,context);
     this->tlmWrite_CommandsDropped(this->m_numCmdsDropped);
 }
 

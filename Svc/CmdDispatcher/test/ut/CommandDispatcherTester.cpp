@@ -880,7 +880,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
 
 void CommandDispatcherTester::runCommandQueueOverflow(){ 
     
-    U8 testNumCmdsToSend = 15;
+    U8 testNumCmdsToSend = 19;
 
     // verify dispatch table is empty
     for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -947,17 +947,16 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
         ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),
                   Fw::FW_SERIALIZE_OK);
 
-        this->clearEvents();
         this->invoke_to_seqCmdBuff(0, buff, 12);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     }
-
-    // Verify at least one Queue Overflow event was generated and the
-    // CommandsDropped telemetry channel is not 0
-    ASSERT_GT(this->eventHistory_CommandDroppedQueueOverflow->size(), 0);
-    ASSERT_GT(this->tlmHistory_CommandsDropped->size(), 0);
+ 
+    // Verify CommandsDropped Tlm channel incremented by 6, while the CommandDroppedQueueOverflow
+    // event count incremented by 5. This verifies the CommandDroppedQueueOverflow is being
+    // properly throttled.   
+    ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(5);
+    ASSERT_TLM_CommandsDropped_SIZE(6);
 }
-
 
 void CommandDispatcherTester::from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                    U32 key                    /*!< Value to return to pinger*/

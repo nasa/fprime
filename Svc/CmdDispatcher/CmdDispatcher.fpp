@@ -186,10 +186,10 @@ module Svc {
 
     @ This log event reports the Command Sequence Buffer port queue has overflowed.
     event CommandDroppedQueueOverflow(
-                              OpCode: U32 @< The command opcode dropped
+                              OpCode: FwOpcodeType @< The command opcode dropped
                               Context: U32 @< The call order
                             ) \
-      severity activity high \
+      severity warning high \
       id 11 \
       format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" \
       throttle 5
