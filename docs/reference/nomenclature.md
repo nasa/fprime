@@ -7,7 +7,7 @@ The representation can be in both long and short forms.
  
 ### Long form name representation: F Prime
 Application: All Communication.  
-Notes:  Capital F, capital P, with space in between. No dashes, underscores, lower case ‘f’ and ‘p’ or missing space unless being used as a variable or filename or similar.
+Notes:  Capital F, capital P, with space in between. No dashes, underscores, lower case ‘f’ and ‘p’ or missing space.
  
 ### Short form name representation - formal: F′
 Application: All Communication, notably presentations, papers, posters, user guides, proposals, etc.  
@@ -16,10 +16,13 @@ Notes: Capital F followed by the prime symbol. You can add a [prime symbol](http
 ### Short form name representation – informal: F’
 Application: Informal communication like email.  
 Notes: Capital F followed by apostrophe.
+
+### Software slug representation – software tokens: fprime
+Application: Software tokens.
+Notes: All lowercase 'fprime'. For use in software identifiers, repository names, etc.
  
 ### Usage
-Generally the long and short forms can be used interchangeably, with a couple exceptions. In formal narrative documents (like papers or presentations), the first use of the name should be in the long form with subsequent uses in the short form as one would use an acronym (or can stick with the long form throughout). In major headers or banners where it is likely that the name will be seen for the first time by a wide audience, use the full name (long form) only.
- 
+Generally the long and short forms can be used interchangeably, with a couple exceptions. In formal narrative documents (like papers or presentations), the first use of the name should be in the long form with subsequent uses in the short form as one would use an acronym (or can stick with the long form throughout). In major headers or banners where it is likely that the name will be seen for the first time by a wide audience, use the full name (long form) only. The software slug representation is only to be used as a token for software development i.e. as an identifier, part of a repository name, or anwhere else where spaces and special characters are prohibited.
  
 ## F Prime Prime Nomenclature Reference
 
