@@ -14,6 +14,7 @@ CD-001 | The `Svc::CmdDispatcher` component shall accept command buffers and dec
 CD-002 | The `Svc::CmdDispatcher` component shall dispatch commands to components | Unit Test
 CD-003 | The `Svc::CmdDispatcher` component shall provide an interface to register commands | Inspection
 CD-004 | The `Svc::CmdDispatcher` component shall process command status from components and report the results to the command buffer sender. | Unit Test
+CD-005 | The `Svc::CmdDispatcher` component shall drop incoming commands to avert a queue overflow (DOS attack). | Unit Test
 
 ## 3. Design
 
@@ -36,6 +37,7 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | seqCmdStatus | Output | n/a | Send command status to command buffer source
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | seqCmdBuff | Input | Asynchronous | Receive command buffer
 [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | cmdReg | Input | Synchronous | Command Registration
+[`Svc::Sched`](../../Sched/docs/sdd.md) | run | Input | Asynchronous | Report telemetry
 
 ### 3.2 Functional Description
 
