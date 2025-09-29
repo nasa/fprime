@@ -190,19 +190,19 @@ void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context){
+void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     // Extract command opcode
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
-    FwOpcodeType opcode = 0; // Note: 0 = Reserved opcode    
+    FwOpcodeType opcode = 0;  // Note: 0 = Reserved opcode
 
-    if (stat == Fw::FW_SERIALIZE_OK){
+    if (stat == Fw::FW_SERIALIZE_OK) {
         opcode = cmdPkt.getOpCode();
     }
-    
+
     // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
     this->m_numCmdsDropped++;
-    this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode,context);
+    this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode, context);
 }
 
 }  // namespace Svc

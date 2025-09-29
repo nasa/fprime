@@ -878,8 +878,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_CMD_RESPONSE_SIZE(0);
 }
 
-void CommandDispatcherTester::runCommandQueueOverflow(){ 
-    
+void CommandDispatcherTester::runCommandQueueOverflow() {
     U8 testNumCmdsToSend = 19;
 
     // verify dispatch table is empty
@@ -937,8 +936,7 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
     ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
 
     // Flood CmdDispatcher with a series of NOOP commands until the command queue overlfows
-    for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++){
-
+    for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++) {
         // send NO_OP command
         this->m_seqStatusRcvd = false;
         Fw::ComBuffer buff;
@@ -951,10 +949,10 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     }
     this->dispatchCurrentMessages(this->m_impl);
-    
+
     // Verify CommandsDropped Tlm channel incremented by 6, while the CommandDroppedQueueOverflow
     // event count incremented by 5. This verifies the CommandDroppedQueueOverflow is being
-    // properly throttled.   
+    // properly throttled.
     ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(5);
 
     // Telemetry is emitted via the run call, thus no output is had before the call, and one value

@@ -185,24 +185,23 @@ TEST(CmdDispTestOffNominal, ClearSequenceTracker) {
     tester.runClearCommandTracking();
 }
 
-TEST(CmdDispTestOffNominal,CommandQueueOverflow) {
-
-    TEST_CASE(102.2.5,"Off-nominal Command QueueOverflow");
+TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
+    TEST_CASE(102.2.5, "Off-nominal Command QueueOverflow");
     COMMENT("Verify error case where the seqCmdBuff port queue overflows and does not ASSERT.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
 
-    impl.init(10,0);
+    impl.init(10, 0);
 
     Svc::CommandDispatcherTester tester(impl);
 
     tester.init();
-    
+
     // connect ports
-    connectPorts(impl,tester);
+    connectPorts(impl, tester);
 
     tester.runCommandQueueOverflow();
-} 
+}
 
 #ifndef TGT_OS_TYPE_VXWORKS
 int main(int argc, char* argv[]) {
