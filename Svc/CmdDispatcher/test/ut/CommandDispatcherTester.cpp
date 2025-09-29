@@ -950,12 +950,20 @@ void CommandDispatcherTester::runCommandQueueOverflow(){
         this->invoke_to_seqCmdBuff(0, buff, 12);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     }
- 
+    this->dispatchCurrentMessages(this->m_impl);
+    
     // Verify CommandsDropped Tlm channel incremented by 6, while the CommandDroppedQueueOverflow
     // event count incremented by 5. This verifies the CommandDroppedQueueOverflow is being
     // properly throttled.   
     ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(5);
-    ASSERT_TLM_CommandsDropped_SIZE(6);
+
+    // Telemetry is emitted via the run call, thus no output is had before the call, and one value
+    // is seen after the call.  This value is 6 as discussed above.
+    ASSERT_TLM_CommandsDropped_SIZE(0);
+    this->invoke_to_run(0, 0);
+    this->dispatchCurrentMessages(this->m_impl);
+    ASSERT_TLM_CommandsDropped_SIZE(1);
+    ASSERT_TLM_CommandsDropped(0, 6);
 }
 
 void CommandDispatcherTester::from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
