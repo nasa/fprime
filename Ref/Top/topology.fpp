@@ -87,6 +87,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
       rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.comQueue.run
+      rateGroup1Comp.RateGroupMemberOut[6] -> CdhCore.cmdDisp.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
