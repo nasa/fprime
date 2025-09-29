@@ -22,7 +22,7 @@ Application: Software tokens.
 Notes: All lowercase 'fprime'. For use in software identifiers, repository names, etc.
  
 ### Usage
-Generally the long and short forms can be used interchangeably, with a couple exceptions. In formal narrative documents (like papers or presentations), the first use of the name should be in the long form with subsequent uses in the short form as one would use an acronym (or can stick with the long form throughout). In major headers or banners where it is likely that the name will be seen for the first time by a wide audience, use the full name (long form) only. The software slug representation is only to be used as a token for software development i.e. as an identifier, part of a repository name, or anwhere else where spaces and special characters are prohibited.
+Generally the long and short forms can be used interchangeably, with a couple exceptions. In formal narrative documents (like papers or presentations), the first use of the name should be in the long form with subsequent uses in the short form as one would use an acronym (or can stick with the long form throughout). In major headers or banners where it is likely that the name will be seen for the first time by a wide audience, use the full name (long form) only. The software slug representation is only to be used as a token for software development i.e. as an identifier, part of a repository name, or anywhere else where spaces and special characters are prohibited.
  
 ## F Prime Prime Nomenclature Reference
 
