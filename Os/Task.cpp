@@ -94,6 +94,11 @@ Task::Status Task::start(const Fw::StringBase& name,
 }
 
 Task::Status Task::start(const Task::Arguments& arguments) {
+    Task::init();
+    // init call above is to ensure singleton is initialized in a thread-safe
+    // manner and such that the address sanitizer does not inadvertently
+    // result in a stack overflow when multiple calls to getSingleton are made
+    // simultaneously from different threads. (As was observed in UT runs.)
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;

@@ -61,7 +61,7 @@ void BasicGuardTestAbsTypeTester::smStateBasicGuardTestAbsType_stateMachineOverf
     ASSERT_EQ(smId, SmId::smStateBasicGuardTestAbsType);
     ASSERT_EQ(static_cast<SmState_BasicGuardTestAbsType::Signal>(signal), SmState_BasicGuardTestAbsType::Signal::s);
     SmHarness::TestAbsType value;
-    const auto status = buffer.deserialize(value);
+    const auto status = buffer.deserializeTo(value);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buffer.getBuffLeft(), 0);
     ASSERT_EQ(value, this->m_value);

@@ -86,7 +86,7 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
 
 void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::CmdPacket cmdPkt;
-    Fw::SerializeStatus stat = cmdPkt.deserialize(data);
+    Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
 
     if (stat != Fw::FW_SERIALIZE_OK) {
         Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));

@@ -63,9 +63,9 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Create frame Fw::Buffer using member data field
     Fw::Buffer frameBuffer = Fw::Buffer(this->m_frameBuffer, sizeof(this->m_frameBuffer));
     auto frameSerializer = frameBuffer.getSerializer();
-    status = frameSerializer.serialize(header);
+    status = frameSerializer.serializeFrom(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
@@ -82,7 +82,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     trailer.set_fecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
     frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
-    status = frameSerializer.serialize(trailer);
+    status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     this->m_bufferState = BufferOwnershipState::NOT_OWNED;
@@ -122,9 +122,9 @@ void TmFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.set_packetDataLength(lengthToken);
     // Serialize header and idle data into the frame
-    serializer.serialize(header);
+    serializer.serializeFrom(header);
     for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
-        serializer.serialize(IDLE_DATA_PATTERN);  // Idle data
+        serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
     }
 }
 }  // namespace Ccsds

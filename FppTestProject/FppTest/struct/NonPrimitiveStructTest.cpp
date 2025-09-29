@@ -71,11 +71,11 @@ class NonPrimitiveStructTest : public ::testing::Test {
         Fw::SerializeStatus status;
 
         // Serialize
-        status = buf.serialize(s);
+        status = buf.serializeFrom(s);
         ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
 
         // Deserialize
-        status = buf.deserialize(s);
+        status = buf.deserializeTo(s);
         ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
     }
 
@@ -256,13 +256,13 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
     Fw::SerialBuffer buf(data, sizeof(data));
 
     // Serialize
-    status = buf.serialize(s);
+    status = buf.serializeFrom(s);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getBuffLength(), serializedSize);
 
     // Deserialize
-    status = buf.deserialize(sCopy);
+    status = buf.deserializeTo(sCopy);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(s, sCopy);

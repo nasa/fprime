@@ -165,23 +165,23 @@ TYPED_TEST_P(EnumTest, Serialization) {
     Fw::SerialBuffer buf(data, sizeof(data));
 
     // Serialize the enums
-    status = buf.serialize(validEnum);
+    status = buf.serializeFrom(validEnum);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getBuffLength(), sizeof(typename TypeParam::SerialType));
 
-    status = buf.serialize(invalidEnum);
+    status = buf.serializeFrom(invalidEnum);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getBuffLength(), sizeof(typename TypeParam::SerialType) * 2);
 
     // Deserialize the enums
-    status = buf.deserialize(validEnumCopy);
+    status = buf.deserializeTo(validEnumCopy);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(validEnumCopy, validEnum);
 
-    status = buf.deserialize(invalidEnumCopy);
+    status = buf.deserializeTo(invalidEnumCopy);
 
     ASSERT_EQ(status, Fw::FW_DESERIALIZE_FORMAT_ERROR);
 }

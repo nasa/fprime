@@ -40,7 +40,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
     auto deserializer = data.getDeserializer();
-    Fw::SerializeStatus status = header.deserialize(deserializer);
+    Fw::SerializeStatus status = header.deserializeFrom(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
     const FprimeProtocol::FrameHeader defaultValue;
@@ -58,22 +58,27 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         return;
     }
     // -------- Attempt to extract APID from Payload --------
-    // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
-    // and let downstream components (e.g. custom router) handle it
-    FwPacketDescriptorType packetDescriptor;
-    status = deserializer.deserialize(packetDescriptor);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     ComCfg::FrameContext contextCopy = context;
-    // If a valid descriptor is deserialized, set it in the context
-    if (packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED) {
-        contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+    if (deserializer.getBuffLeft() < FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
+        // Not enough data to read a valid FwPacketDescriptor, emit event and skip attempting to read an APID
+        this->log_WARNING_LO_PayloadTooShort();
+    } else {
+        // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
+        // and let downstream components (e.g. custom router) handle it
+        FwPacketDescriptorType packetDescriptor;
+        status = deserializer.deserializeTo(packetDescriptor);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+        // If a valid descriptor is deserialized, set it in the context
+        if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
+            contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+        }
     }
 
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
     status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-    status = trailer.deserialize(deserializer);
+    status = trailer.deserializeFrom(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Compute CRC over the transmitted data (header + body)
     Utils::Hash hash;

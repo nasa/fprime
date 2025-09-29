@@ -92,7 +92,9 @@ void ComQueueTester ::testQueueSend() {
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         invoke_to_bufferQueueIn(portNum, buffer);
         emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
+        ASSERT_from_bufferReturnOut(portNum, buffer);
     }
+    ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
     clearFromPortHistory();
     component.cleanup();
 }
@@ -122,7 +124,9 @@ void ComQueueTester ::testQueuePause() {
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
         emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
+        ASSERT_from_bufferReturnOut(portNum, buffer);
     }
+    ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
     clearFromPortHistory();
     component.cleanup();
 }
@@ -226,9 +230,9 @@ void ComQueueTester::testExternalQueueOverflow() {
         dispatchAll();
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
-            // Third message overflowed, so third bufferReturnOut
-            ASSERT_from_bufferReturnOut_SIZE(3);
-            ASSERT_from_bufferReturnOut(2, buffer);
+            // Third message overflowed, emitOne yielded a return, so fourth bufferReturnOut
+            ASSERT_from_bufferReturnOut_SIZE(4);
+            ASSERT_from_bufferReturnOut(3, buffer);
         }
 
         // emitOne() reset the throttle, then overflow again. So expect a second overflow event
@@ -344,26 +348,9 @@ void ComQueueTester ::testContextData() {
     component.cleanup();
 }
 
-void ComQueueTester ::testBufferQueueReturn() {
-    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
-    Fw::Buffer buffer(&data[0], sizeof(data));
-    ComCfg::FrameContext context;
-    configure();
-
-    for (FwIndexType portNum = 0; portNum < ComQueue::TOTAL_PORT_COUNT; portNum++) {
-        clearFromPortHistory();
-        context.set_comQueueIndex(portNum);
-        invoke_to_dataReturnIn(0, buffer, context);
-        // APIDs that correspond to an buffer originating from a Fw.Com port
-        // do no get deallocated – APIDs that correspond to a Fw.Buffer do
-        if (portNum < ComQueue::COM_PORT_COUNT) {
-            ASSERT_from_bufferReturnOut_SIZE(0);
-        } else {
-            ASSERT_from_bufferReturnOut_SIZE(1);
-            ASSERT_from_bufferReturnOut(0, buffer);
-        }
-    }
-    component.cleanup();
+void ComQueueTester ::from_dataOut_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    this->pushFromPortEntry_dataOut(data, context);
+    this->invoke_to_dataReturnIn(0, data, context);
 }
 
 }  // end namespace Svc

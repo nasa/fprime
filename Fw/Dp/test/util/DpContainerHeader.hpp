@@ -52,34 +52,34 @@ struct DpContainerHeader {
         FwPacketDescriptorType packetDescriptor = Fw::ComPacketType::FW_PACKET_UNKNOWN;
         // Deserialize the packet descriptor
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PACKET_DESCRIPTOR_OFFSET);
-        Fw::SerializeStatus status = deserializer.deserialize(packetDescriptor);
+        Fw::SerializeStatus status = deserializer.deserializeTo(packetDescriptor);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(packetDescriptor, Fw::ComPacketType::FW_PACKET_DP);
         // Deserialize the container id
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::ID_OFFSET);
-        status = deserializer.deserialize(this->m_id);
+        status = deserializer.deserializeTo(this->m_id);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the priority
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PRIORITY_OFFSET);
-        status = deserializer.deserialize(this->m_priority);
+        status = deserializer.deserializeTo(this->m_priority);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the time tag
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::TIME_TAG_OFFSET);
-        status = deserializer.deserialize(this->m_timeTag);
+        status = deserializer.deserializeTo(this->m_timeTag);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the processing type
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PROC_TYPES_OFFSET);
-        status = deserializer.deserialize(this->m_procTypes);
+        status = deserializer.deserializeTo(this->m_procTypes);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the user data
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::USER_DATA_OFFSET);
         FwSizeType size = sizeof this->m_userData;
-        status = deserializer.deserialize(this->m_userData, size, Fw::Serialization::OMIT_LENGTH);
+        status = deserializer.deserializeTo(this->m_userData, size, Fw::Serialization::OMIT_LENGTH);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(size, sizeof this->m_userData);
         // Deserialize the data product state
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DP_STATE_OFFSET);
-        status = deserializer.deserialize(this->m_dpState);
+        status = deserializer.deserializeTo(this->m_dpState);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the data size
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DATA_SIZE_OFFSET);

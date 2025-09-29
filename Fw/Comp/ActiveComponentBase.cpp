@@ -52,7 +52,7 @@ void ActiveComponentBase::start(FwTaskPriorityType priority,
 
 void ActiveComponentBase::exit() {
     ActiveComponentExitSerializableBuffer exitBuff;
-    SerializeStatus stat = exitBuff.serialize(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
+    SerializeStatus stat = exitBuff.serializeFrom(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     (void)this->m_queue.send(exitBuff, 0, Os::Queue::BlockingType::NONBLOCKING);
 }
