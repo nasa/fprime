@@ -935,7 +935,7 @@ void CommandDispatcherTester::runCommandQueueOverflow() {
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
 
-    // Flood CmdDispatcher with a series of NOOP commands until the command queue overlfows
+    // Flood CmdDispatcher with a series of NOOP commands until the command queue overflows
     for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++) {
         // send NO_OP command
         this->m_seqStatusRcvd = false;
