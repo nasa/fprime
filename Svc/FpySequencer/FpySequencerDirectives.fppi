@@ -38,6 +38,13 @@ struct StoreTlmValDirective {
     lvarOffset: Fpy.StackSizeType
 }
 
+@ pushes a tlm buffer to the stack, and then pushes the time 
+@ of the tlm meas to the stack
+struct PushTlmValAndTimeDirective {
+    @ the tlm channel id to get the time and value of
+    chanId: FwChanIdType
+}
+
 @ stores a prm buffer in the lvar array
 struct StorePrmDirective {
     @ the param id to get the value of
@@ -117,6 +124,8 @@ internal port directive_if(directive: IfDirective) priority 6 assert
 internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 
 internal port directive_storeTlmVal(directive: StoreTlmValDirective) priority 6 assert
+
+internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) priority 6 assert
 
 internal port directive_storePrm(directive: StorePrmDirective) priority 6 assert
 

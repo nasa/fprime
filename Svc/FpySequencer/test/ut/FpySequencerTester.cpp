@@ -172,6 +172,16 @@ void FpySequencerTester::add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir
     addDirective(Fpy::DirectiveId::STORE_TLM_VAL, buf);
 }
 
+void FpySequencerTester::add_PUSH_TLM_VAL_AND_TIME(FwChanIdType id) {
+    add_PUSH_TLM_VAL_AND_TIME(FpySequencer_PushTlmValAndTimeDirective(id));
+}
+
+void FpySequencerTester::add_PUSH_TLM_VAL_AND_TIME(FpySequencer_PushTlmValAndTimeDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, buf);
+}
+
 void FpySequencerTester::add_STORE_PRM(FwPrmIdType id, Fpy::StackSizeType lvarOffset) {
     add_STORE_PRM(FpySequencer_StorePrmDirective(id, lvarOffset));
 }
@@ -353,6 +363,12 @@ Signal FpySequencerTester::tester_storePrm_directiveHandler(const FpySequencer_S
 Signal FpySequencerTester::tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive,
                                                                DirectiveError& err) {
     return this->cmp.storeTlmVal_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_pushTlmValAndTime_directiveHandler(
+    const FpySequencer_PushTlmValAndTimeDirective& directive,
+    DirectiveError& err) {
+    return this->cmp.pushTlmValAndTime_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive,
