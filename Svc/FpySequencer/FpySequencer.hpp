@@ -25,7 +25,8 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max()
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<Svc::Fpy::StackSizeType>::max(), "Max stack size must be below Svc::Fpy::StackSizeType max");
+static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<Svc::Fpy::StackSizeType>::max(),
+              "Max stack size must be below Svc::Fpy::StackSizeType max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
@@ -644,7 +645,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
     Signal storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error);
-    Signal pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive, DirectiveError& error);
+    Signal pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
+                                              DirectiveError& error);
     Signal storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error);
     Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
     Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
