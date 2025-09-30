@@ -26,30 +26,34 @@ async command RUN_VALIDATED(
 async command CANCEL() \
     opcode 3 priority 8 assert
 
-@ Sets the debugging breakpoint which will pause the execution of the sequencer when
-@ reached, until unpaused by the DEBUG_CONTINUE command. Will pause just before 
-@ dispatching the specified statement. This command is valid in all states. Debug 
+@ Sets the breakpoint which will pause the execution of the sequencer when
+@ reached, until unpaused by the CONTINUE command. Will pause just before 
+@ dispatching the specified statement. This command is valid in all states. Breakpoint
 @ settings are cleared after a sequence ends execution.
-async command DEBUG_SET_BREAKPOINT(
+async command SET_BREAKPOINT(
     stmtIdx: U32 @< The statement index to pause execution before.
     breakOnce: bool @< Whether or not to break only once at this breakpoint
 ) \
     opcode 4 priority 7 assert
 
 @ Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
-@ until unpaused by the DEBUG_CONTINUE command. This command is only valid in the RUNNING state.
-@ Debug settings are cleared after a sequence ends execution.
-async command DEBUG_BREAK(
+@ until unpaused by the CONTINUE command. This command is only valid in the RUNNING state.
+@ Breakpoint settings are cleared after a sequence ends execution.
+async command BREAK(
     breakOnce: bool @< Whether or not to break only once at this breakpoint
 ) \
     opcode 5 priority 7 assert
 
-@ Continues the execution of the sequence after it has been paused by a debug break. This command
-@ is only valid in the RUNNING.DEBUG_BROKEN state.
-async command DEBUG_CONTINUE() \
+@ Continues the execution of the sequence after it has been paused. This command
+@ is only valid in the RUNNING.PAUSED state.
+async command CONTINUE() \
     opcode 6 priority 7 assert
 
-@ Clears the debugging breakpoint, but does not continue executing the sequence. This command
+@ Clears the breakpoint, but does not continue executing the sequence. This command
 @ is valid in all states. This happens automatically when a sequence ends execution.
-async command DEBUG_CLEAR_BREAKPOINT() \
+async command CLEAR_BREAKPOINT() \
     opcode 7 priority 7 assert
+
+@ Steps to the next 
+async command STEP() \
+    opcode 8 priority 7 assert

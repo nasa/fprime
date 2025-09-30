@@ -131,31 +131,31 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for command DEBUG_SET_BREAKPOINT
+//! Handler for command SET_BREAKPOINT
 //!
-//! Sets the debugging breakpoint which will pause the execution of the sequencer
-//! until unpaused by the DEBUG_CONTINUE command. Will pause just before dispatching
-//! the specified statement. This command is valid in all states. Debug settings are
-//! cleared after a sequence ends execution.
-void FpySequencer::DEBUG_SET_BREAKPOINT_cmdHandler(
+//! Sets the breakpoint which will pause the execution of the sequencer when
+//! reached, until unpaused by the CONTINUE command. Will pause just before 
+//! dispatching the specified statement. This command is valid in all states. Breakpoint
+//! settings are cleared after a sequence ends execution.
+void FpySequencer::SET_BREAKPOINT_cmdHandler(
     FwOpcodeType opCode,  //!< The opcode
     U32 cmdSeq,           //!< The command sequence number
     U32 stmtIdx,          //!< The statement index to pause execution before.
     bool breakOnce        //!< Whether or not to break only once at this breakpoint
 ) {
-    this->sequencer_sendSignal_cmd_DEBUG_SET_BREAKPOINT(FpySequencer_DebugBreakpointArgs(true, breakOnce, stmtIdx));
+    this->sequencer_sendSignal_cmd_SET_BREAKPOINT(FpySequencer_BreakpointArgs(true, breakOnce, stmtIdx));
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for command DEBUG_BREAK
+//! Handler for command BREAK
 //!
-//! Pauses the execution of the sequencer once, just before it is about to dispatch the next statement,
-//! until unpaused by the DEBUG_CONTINUE command. This command is only valid in the RUNNING state.
-//! Debug settings are cleared after a sequence ends execution.
-void FpySequencer::DEBUG_BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                          U32 cmdSeq,           //!< The command sequence number
-                                          bool breakOnce  //!< Whether or not to break only once at this breakpoint
+//! Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
+//! until unpaused by the CONTINUE command. This command is only valid in the RUNNING state.
+//! Breakpoint settings are cleared after a sequence ends execution.
+void FpySequencer::BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  bool breakOnce  //!< Whether or not to break only once at this breakpoint
 ) {
     if (!this->isRunningState(this->sequencer_getState())) {
         // can only break while running
@@ -163,39 +163,39 @@ void FpySequencer::DEBUG_BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-    this->sequencer_sendSignal_cmd_DEBUG_BREAK(
-        FpySequencer_DebugBreakpointArgs(true, breakOnce, this->m_runtime.nextStatementIndex));
+    this->sequencer_sendSignal_cmd_BREAK(
+        FpySequencer_BreakpointArgs(true, breakOnce, this->m_runtime.nextStatementIndex));
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for command DEBUG_CONTINUE
+//! Handler for command CONTINUE
 //!
-//! Continues the execution of the sequence after it has been paused by a debug break. This command
-//! is only valid in the RUNNING.DEBUG_BROKEN state.
-void FpySequencer::DEBUG_CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                             U32 cmdSeq            //!< The command sequence number
+//! Continues the execution of the sequence after it has been paused. This command
+//! is only valid in the RUNNING.PAUSED state.
+void FpySequencer::CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq            //!< The command sequence number
 ) {
-    if (this->sequencer_getState() != State::RUNNING_DEBUG_BROKEN) {
+    if (this->sequencer_getState() != State::RUNNING_PAUSED) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
-    this->sequencer_sendSignal_cmd_DEBUG_CONTINUE();
+    this->sequencer_sendSignal_cmd_CONTINUE();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for command DEBUG_CLEAR_BREAKPOINT
+//! Handler for command CLEAR_BREAKPOINT
 //!
-//! Clears the debugging breakpoint, but does not continue executing the sequence. This command
+//! Clears the breakpoint, but does not continue executing the sequence. This command
 //! is valid in all states. This happens automatically when a sequence ends execution.
-void FpySequencer::DEBUG_CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                                     U32 cmdSeq            //!< The command sequence number
+void FpySequencer::CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                       U32 cmdSeq            //!< The command sequence number
 ) {
-    this->sequencer_sendSignal_cmd_DEBUG_CLEAR_BREAKPOINT();
-    this->log_ACTIVITY_HI_DebugBreakpointCleared();
+    this->sequencer_sendSignal_cmd_CLEAR_BREAKPOINT();
+    this->log_ACTIVITY_HI_BreakpointCleared();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -343,8 +343,8 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
 }
 
 FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
-    // only send debug tlm when we are paused in debug break
-    if (this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN) {
+    // only send debug tlm when we are paused
+    if (this->sequencer_getState() == State::RUNNING_PAUSED) {
         if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.get_header().get_statementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
             return FpySequencer_DebugTelemetry(true, false, 0, 0);
@@ -394,7 +394,7 @@ bool FpySequencer::isRunningState(State state) {
 
     return this->sequencer_getState() == State::RUNNING_AWAITING_STATEMENT_RESPONSE ||
            this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT ||
-           this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN ||
+           this->sequencer_getState() == State::RUNNING_PAUSED ||
            this->sequencer_getState() == State::RUNNING_SLEEPING;
 }
 
