@@ -42,7 +42,7 @@ class CircularBuffer {
      * Note: ownership of the supplied buffer is held until the circular buffer is deallocated
      *
      * \param buffer: supplied buffer used as a data store.
-     * \param size: the of the supplied data store.
+     * \param size: the size of the supplied data store.
      */
     CircularBuffer(U8* const buffer, const FwSizeType size);
 
@@ -53,7 +53,7 @@ class CircularBuffer {
      * Note: ownership of the supplied buffer is held until the circular buffer is deallocated
      *
      * \param buffer: supplied buffer used as a data store.
-     * \param size: the of the supplied data store.
+     * \param size: the size of the supplied data store.
      */
     void setup(U8* const buffer, const FwSizeType size);
 
