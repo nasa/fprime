@@ -113,40 +113,48 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Handler for command SET_BREAKPOINT
     //!
     //! Sets the breakpoint which will pause the execution of the sequencer when
-    //! reached, until unpaused by the CONTINUE command. Will pause just before 
+    //! reached, until unpaused by the CONTINUE command. Will pause just before
     //! dispatching the specified statement. This command is valid in all states. Breakpoint
     //! settings are cleared after a sequence ends execution.
     void SET_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                         U32 cmdSeq,           //!< The command sequence number
-                                         U32 stmtIdx,          //!< The statement index to pause execution before.
-                                         bool breakOnce        //!< Whether or not to break only once at this breakpoint
-                                         ) override;
+                                   U32 cmdSeq,           //!< The command sequence number
+                                   U32 stmtIdx,          //!< The statement index to pause execution before.
+                                   bool breakOnce        //!< Whether or not to break only once at this breakpoint
+                                   ) override;
 
     //! Handler for command BREAK
     //!
     //! Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
-    //! until unpaused by the CONTINUE command. This command is only valid in the RUNNING state.
-    //! Breakpoint settings are cleared after a sequence ends execution.
+    //! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid in the
+    //! RUNNING state.
     void BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                U32 cmdSeq,           //!< The command sequence number
-                                bool breakOnce        //!< Whether or not to break only once at this breakpoint
-                                ) override;
+                          U32 cmdSeq            //!< The command sequence number
+                          ) override;
 
     //! Handler for command CONTINUE
     //!
-    //! Continues the execution of the sequence after it has been paused. This command
-    //! is only valid in the RUNNING.PAUSED state.
+    //! Continues the automatic execution of the sequence after it has been paused. If a breakpoint is still
+    //! set, it may pause again on that breakpoint. This command is only valid in the RUNNING.PAUSED state.
     void CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                   U32 cmdSeq            //!< The command sequence number
-                                   ) override;
+                             U32 cmdSeq            //!< The command sequence number
+                             ) override;
 
     //! Handler for command CLEAR_BREAKPOINT
     //!
     //! Clears the breakpoint, but does not continue executing the sequence. This command
     //! is valid in all states. This happens automatically when a sequence ends execution.
     void CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                           U32 cmdSeq            //!< The command sequence number
-                                           ) override;
+                                     U32 cmdSeq            //!< The command sequence number
+                                     ) override;
+
+    //! Handler for command STEP
+    //!
+    //! Dispatches and awaits the result of the next directive, or ends the sequence if no more directives remain.
+    //! Returns to the RUNNING.PAUSED state if the directive executes successfully. This command is only valid in the
+    //! RUNNING.PAUSED state.
+    void STEP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                         U32 cmdSeq            //!< The command sequence number
+                         ) override;
 
     // ----------------------------------------------------------------------
     // Functions to implement for internal state machine actions
@@ -313,7 +321,23 @@ class FpySequencer : public FpySequencerComponentBase {
     void Svc_FpySequencer_SequencerStateMachine_action_setBreakpoint(
         SmId smId,                                              //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_BreakpointArgs& value      //!< The value
+        const Svc::FpySequencer_BreakpointArgs& value           //!< The value
+        ) override;
+
+    //! Implementation for action setBreakOnNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the "break on next line" flag to true
+    void Svc_FpySequencer_SequencerStateMachine_action_setBreakOnNextLine(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action clearBreakOnNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the "break on next line" flag to false
+    void Svc_FpySequencer_SequencerStateMachine_action_clearBreakOnNextLine(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
@@ -518,6 +542,10 @@ class FpySequencer : public FpySequencerComponentBase {
         bool breakOnlyOnceOnBreakpoint = false;
         // the statement index at which to break, before dispatching
         U32 breakpointIndex = 0;
+        // whether or not to break before dispatching the next line,
+        // independent of what line it is.
+        // can be used in combination with breakpointIndex
+        bool breakOnNextLine = false;
     } m_debug;
 
     struct Telemetry {

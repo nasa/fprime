@@ -21,10 +21,11 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 
 | Name | Description |
 |-----|-----|
-| DEBUG_SET_BREAKPOINT | Sets the debugging breakpoint which will pause the execution of the sequencer when reached, until unpaused by the DEBUG_CONTINUE command.  |
-| DEBUG_BREAK | Pauses the execution of the sequencer, just before it is about to dispatch the next statement, until unpaused by the DEBUG_CONTINUE command. |
-| DEBUG_CONTINUE | Continues the execution of the sequence after it has been paused by a debug break. |
-| DEBUG_CLEAR_BREAKPOINT | Clears the debugging breakpoint, but does not continue executing the sequence. |
+| SET_BREAKPOINT | Sets a breakpoint at the specified statement index. When reached, execution will pause before dispatching that statement. |
+| BREAK | Immediately pauses execution before dispatching the next statement. Will break once, then continue normal execution. |
+| CONTINUE | Continues automatic execution of the sequence after it has been paused. If a breakpoint is still set, execution may pause again. |
+| CLEAR_BREAKPOINT | Clears any set breakpoint, but does not continue executing the sequence. |
+| STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
 
 ## Directives
 | Opcode | Name | Description |

@@ -134,14 +134,13 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 //! Handler for command SET_BREAKPOINT
 //!
 //! Sets the breakpoint which will pause the execution of the sequencer when
-//! reached, until unpaused by the CONTINUE command. Will pause just before 
+//! reached, until unpaused by the CONTINUE command. Will pause just before
 //! dispatching the specified statement. This command is valid in all states. Breakpoint
 //! settings are cleared after a sequence ends execution.
-void FpySequencer::SET_BREAKPOINT_cmdHandler(
-    FwOpcodeType opCode,  //!< The opcode
-    U32 cmdSeq,           //!< The command sequence number
-    U32 stmtIdx,          //!< The statement index to pause execution before.
-    bool breakOnce        //!< Whether or not to break only once at this breakpoint
+void FpySequencer::SET_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                             U32 cmdSeq,           //!< The command sequence number
+                                             U32 stmtIdx,          //!< The statement index to pause execution before.
+                                             bool breakOnce  //!< Whether or not to break only once at this breakpoint
 ) {
     this->sequencer_sendSignal_cmd_SET_BREAKPOINT(FpySequencer_BreakpointArgs(true, breakOnce, stmtIdx));
 
@@ -151,30 +150,28 @@ void FpySequencer::SET_BREAKPOINT_cmdHandler(
 //! Handler for command BREAK
 //!
 //! Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
-//! until unpaused by the CONTINUE command. This command is only valid in the RUNNING state.
-//! Breakpoint settings are cleared after a sequence ends execution.
+//! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
+//! in substates of the RUNNING state that are not RUNNING.PAUSED.
 void FpySequencer::BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                  U32 cmdSeq,           //!< The command sequence number
-                                  bool breakOnce  //!< Whether or not to break only once at this breakpoint
+                                    U32 cmdSeq            //!< The command sequence number
 ) {
-    if (!this->isRunningState(this->sequencer_getState())) {
-        // can only break while running
+    if (!this->isRunningState(this->sequencer_getState()) || this->sequencer_getState() == State::RUNNING_PAUSED) {
+        // can only break while running, and not paused
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-    this->sequencer_sendSignal_cmd_BREAK(
-        FpySequencer_BreakpointArgs(true, breakOnce, this->m_runtime.nextStatementIndex));
+    this->sequencer_sendSignal_cmd_BREAK();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 //! Handler for command CONTINUE
 //!
-//! Continues the execution of the sequence after it has been paused. This command
-//! is only valid in the RUNNING.PAUSED state.
+//! Continues the automatic execution of the sequence after it has been paused. If a breakpoint is still
+//! set, it may pause again on that breakpoint. This command is only valid in the RUNNING.PAUSED state.
 void FpySequencer::CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                     U32 cmdSeq            //!< The command sequence number
+                                       U32 cmdSeq            //!< The command sequence number
 ) {
     if (this->sequencer_getState() != State::RUNNING_PAUSED) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -192,7 +189,7 @@ void FpySequencer::CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 //! Clears the breakpoint, but does not continue executing the sequence. This command
 //! is valid in all states. This happens automatically when a sequence ends execution.
 void FpySequencer::CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                       U32 cmdSeq            //!< The command sequence number
+                                               U32 cmdSeq            //!< The command sequence number
 ) {
     this->sequencer_sendSignal_cmd_CLEAR_BREAKPOINT();
     this->log_ACTIVITY_HI_BreakpointCleared();
@@ -200,6 +197,23 @@ void FpySequencer::CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The op
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+//! Handler for command STEP
+//!
+//! Dispatches and awaits the result of the next directive, or ends the sequence if no more directives remain.
+//! Returns to the RUNNING.PAUSED state if the directive executes successfully. This command is only valid in the
+//! RUNNING.PAUSED state.
+void FpySequencer::STEP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                   U32 cmdSeq            //!< The command sequence number
+) {
+    if (this->sequencer_getState() != State::RUNNING_PAUSED) {
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    this->sequencer_sendSignal_cmd_STEP();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
 //! Handler for input port checkTimers
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
@@ -394,8 +408,7 @@ bool FpySequencer::isRunningState(State state) {
 
     return this->sequencer_getState() == State::RUNNING_AWAITING_STATEMENT_RESPONSE ||
            this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT ||
-           this->sequencer_getState() == State::RUNNING_PAUSED ||
-           this->sequencer_getState() == State::RUNNING_SLEEPING;
+           this->sequencer_getState() == State::RUNNING_PAUSED || this->sequencer_getState() == State::RUNNING_SLEEPING;
 }
 
 }  // namespace Svc

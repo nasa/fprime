@@ -249,21 +249,24 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     //! Get the OPCODE_CANCEL value
     static FwOpcodeType get_OPCODE_CANCEL() { return FpySequencerComponentBase::OPCODE_CANCEL; }
 
-    //! Get the OPCODE_DEBUG_CLEAR_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_DEBUG_CLEAR_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_CLEAR_BREAKPOINT;
+    //! Get the OPCODE_CLEAR_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_CLEAR_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_CLEAR_BREAKPOINT;
     }
 
-    //! Get the OPCODE_DEBUG_SET_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_DEBUG_SET_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_SET_BREAKPOINT;
+    //! Get the OPCODE_SET_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_SET_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_SET_BREAKPOINT;
     }
 
-    //! Get the OPCODE_DEBUG_BREAK value
-    static FwOpcodeType get_OPCODE_DEBUG_BREAK() { return FpySequencerComponentBase::OPCODE_DEBUG_BREAK; }
+    //! Get the OPCODE_BREAK value
+    static FwOpcodeType get_OPCODE_BREAK() { return FpySequencerComponentBase::OPCODE_BREAK; }
 
-    //! Get the OPCODE_DEBUG_CONTINUE value
-    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() { return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE; }
+    //! Get the OPCODE_CONTINUE value
+    static FwOpcodeType get_OPCODE_CONTINUE() { return FpySequencerComponentBase::OPCODE_CONTINUE; }
+
+    //! Get the OPCODE_STEP value
+    static FwOpcodeType get_OPCODE_STEP() { return FpySequencerComponentBase::OPCODE_STEP; }
 };
 
 class FpySequencer_SequencerStateMachineTester {
