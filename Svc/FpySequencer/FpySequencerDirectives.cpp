@@ -39,14 +39,15 @@ void FpySequencer::handleDirectiveErrorCode(Fpy::DirectiveId id, DirectiveError 
 }
 
 Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize) {
+    // Ensure ComBuffer is large enough for command serialization
+    static_assert(FW_COM_BUFFER_MAX_SIZE >= sizeof(FwPacketDescriptorType) + sizeof(FwOpcodeType),
+                  "ComBuffer too small for command packet header");
+    
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat =
         cmdBuf.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
-    // TODO should I assert here? this really shouldn't fail, I should just add a static assert
-    // on com buf size and then assert here
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        return Fw::Success::FAILURE;
-    }
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+    
     stat = cmdBuf.serializeFrom(opcode);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return Fw::Success::FAILURE;

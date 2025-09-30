@@ -138,8 +138,9 @@ Fw::Success FpySequencer::readBody() {
     // deser body:
     // deser arg mappings
     for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.get_header().get_argumentCount(); argMappingIdx++) {
-        // serializable register index of arg $argMappingIdx
-        // TODO should probably check that this serReg is inside range
+        // Validate argument index is within array bounds
+        FW_ASSERT(argMappingIdx < Fpy::MAX_SEQUENCE_ARG_COUNT, static_cast<FwAssertArgType>(argMappingIdx));
+        
         deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_args()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
