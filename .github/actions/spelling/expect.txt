@@ -632,7 +632,6 @@ subgrouping
 subhist
 subhistory
 subsecond
-subseconds
 subtopology
 suppr
 suseconds
