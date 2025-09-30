@@ -63,6 +63,7 @@ Campuzano
 carg
 CBF
 CBLOCK
+CCACHE
 CCB
 CComponent
 ccsds
@@ -183,6 +184,7 @@ DPWRITER
 DRAINBUFFERS
 drv
 drvtcpserversocket
+DSL
 dspal
 DSSC
 Dstate
@@ -505,6 +507,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+prescaler
 prioritization
 PRIORITYQUEUE
 prm

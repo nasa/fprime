@@ -21,7 +21,7 @@ ApidManager ::ApidManager(const char* const compName) : ApidManagerComponentBase
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::APID& apid, U16 receivedSeqCount) {
+U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 receivedSeqCount) {
     U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
     if (receivedSeqCount != expectedSequenceCount && receivedSeqCount != SEQUENCE_COUNT_ERROR) {
         // Likely a packet was dropped or out of order
@@ -32,7 +32,7 @@ U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComC
     return receivedSeqCount;
 }
 
-U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::APID& apid, U16 unused) {
+U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 unused) {
     return this->getAndIncrementSeqCount(apid);
 }
 
@@ -40,7 +40,7 @@ U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::A
 // Helpers
 // ----------------------------------------------------------------------
 
-U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
+U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     U16 seqCount = SEQUENCE_COUNT_ERROR;  // Default to error value
     // Search the APID in the sequence table
     for (U16 i = 0; i < MAX_TRACKED_APIDS; i++) {
@@ -54,7 +54,7 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
     }
     // If not found, search for an uninitialized entry to track this APID
     for (U16 i = 0; i < MAX_TRACKED_APIDS; i++) {
-        if (this->m_apidSequences[i].apid == ComCfg::APID::INVALID_UNINITIALIZED) {
+        if (this->m_apidSequences[i].apid == ComCfg::Apid::INVALID_UNINITIALIZED) {
             this->m_apidSequences[i].apid = apid;               // Initialize this entry with the new APID
             seqCount = this->m_apidSequences[i].sequenceCount;  // Entries default to 0 unless otherwise specified
             // Increment entry for next call
@@ -67,7 +67,7 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
     return SEQUENCE_COUNT_ERROR;
 }
 
-void ApidManager::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
+void ApidManager::setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount) {
     for (U16 i = 0; i < MAX_TRACKED_APIDS; i++) {
         if (this->m_apidSequences[i].apid == apid) {
             this->m_apidSequences[i].sequenceCount = seqCount;

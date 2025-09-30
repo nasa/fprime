@@ -91,25 +91,25 @@ class BufferTester {
         // Test serialization and that it stops before overflowing
         auto serializer = buffer.getSerializer();
         for (U32 i = 0; i < sizeof(data) / 4; i++) {
-            ASSERT_EQ(serializer.serialize(i), Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(serializer.serializeFrom(i), Fw::FW_SERIALIZE_OK);
         }
-        Fw::SerializeStatus stat = serializer.serialize(100);
+        Fw::SerializeStatus stat = serializer.serializeFrom(100);
         ASSERT_NE(stat, Fw::FW_SERIALIZE_OK);
 
         // And that another call to repr resets it
         serializer.resetSer();
-        ASSERT_EQ(serializer.serialize(0), Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(serializer.serializeFrom(0), Fw::FW_SERIALIZE_OK);
 
         // Now deserialize all the things
         auto deserializer = buffer.getDeserializer();
         U32 out;
         for (U32 i = 0; i < sizeof(data) / 4; i++) {
-            ASSERT_EQ(deserializer.deserialize(out), Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(deserializer.deserializeTo(out), Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(i, out);
         }
-        ASSERT_NE(deserializer.deserialize(out), Fw::FW_SERIALIZE_OK);
+        ASSERT_NE(deserializer.deserializeTo(out), Fw::FW_SERIALIZE_OK);
         deserializer.setBuffLen(buffer.getSize());
-        ASSERT_EQ(deserializer.deserialize(out), Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(deserializer.deserializeTo(out), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(0, out);
     }
 
@@ -123,11 +123,11 @@ class BufferTester {
         buffer.setContext(1234);
 
         Fw::ExternalSerializeBuffer externalSerializeBuffer(wire, sizeof(wire));
-        externalSerializeBuffer.serialize(buffer);
+        externalSerializeBuffer.serializeFrom(buffer);
         Fw::SerializeBufferBaseTester::verifySerLocLT(externalSerializeBuffer, sizeof(data));
 
         Fw::Buffer buffer_new;
-        externalSerializeBuffer.deserialize(buffer_new);
+        externalSerializeBuffer.deserializeTo(buffer_new);
         ASSERT_EQ(buffer_new, buffer);
     }
 };

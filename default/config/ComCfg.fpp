@@ -6,6 +6,9 @@
 # defined
 # ======================================================================
 
+@ The width of packet descriptors when they are serialized by the framework
+type FwPacketDescriptorType = U16
+
 module ComCfg {
 
     # Needed in dictionary:
@@ -16,7 +19,7 @@ module ComCfg {
     constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
-    enum APID : U16 {
+    enum Apid : FwPacketDescriptorType {
         # APIDs prefixed with FW are reserved for F Prime and need to be present
         # in the enumeration. Their values can be changed
         FW_PACKET_COMMAND        = 0x0000  @< Command packet type - incoming
@@ -35,12 +38,12 @@ module ComCfg {
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
-        apid: APID                  @< 11 bits APID in CCSDS
+        apid: Apid                  @< 11 bits APID in CCSDS
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for TC and TM
     } default {
         comQueueIndex = 0
-        apid = APID.FW_PACKET_UNKNOWN
+        apid = Apid.FW_PACKET_UNKNOWN
         sequenceCount = 0
         vcId = 1
     }

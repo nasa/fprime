@@ -93,6 +93,7 @@ module Svc {
             DISCARD = 64
             MEMCMP = 65
             STACK_CMD = 66
+            PUSH_TLM_VAL_AND_TIME = 67
         }
 
         struct Header {

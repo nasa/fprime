@@ -54,7 +54,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
 
     U8 frame_header[TCHeader::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer header_ser_buffer(frame_header, TCHeader::SERIALIZED_SIZE);
-    tcHeader.serialize(header_ser_buffer);
+    tcHeader.serializeTo(header_ser_buffer);
 
     // Serialize header and packet data into the circular buffer
     circular_buffer.serialize(frame_header, TCHeader::SERIALIZED_SIZE);
@@ -72,7 +72,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
         crc.update(byte);
     }
     tcTrailer.set_fecf(crc.finalize());
-    tcTrailer.serialize(trailer_ser_buffer);
+    tcTrailer.serializeTo(trailer_ser_buffer);
     // Serialize trailer into the circular buffer
     circular_buffer.serialize(frame_trailer, TCTrailer::SERIALIZED_SIZE);
     return total_frame_size;

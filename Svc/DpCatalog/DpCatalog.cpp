@@ -208,9 +208,9 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // the source buffer was specifically sized to hold the data
 
         // Deserialize the file directory index
-        Fw::SerializeStatus status = entryBuffer.deserialize(this->m_stateFileData[entry].entry.dir);
+        Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
-        status = entryBuffer.deserialize(this->m_stateFileData[entry].entry.record);
+        status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
         this->m_stateFileData[entry].used = true;
         this->m_stateFileData[entry].visited = false;
@@ -274,10 +274,10 @@ void DpCatalog::pruneAndWriteStateFile() {
             // reset the buffer for serializing the entry
             entryBuffer.resetSer();
             // serialize the file directory index
-            Fw::SerializeStatus serStat = entryBuffer.serialize(this->m_stateFileData[entry].entry.dir);
+            Fw::SerializeStatus serStat = entryBuffer.serializeFrom(this->m_stateFileData[entry].entry.dir);
             // Should always fit
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, serStat);
-            serStat = entryBuffer.serialize(this->m_stateFileData[entry].entry.record);
+            serStat = entryBuffer.serializeFrom(this->m_stateFileData[entry].entry.record);
             // Should always fit
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, serStat);
             // write the entry
@@ -319,10 +319,10 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     // reset the buffer for serializing the entry
     entryBuffer.resetSer();
     // serialize the file directory index
-    Fw::SerializeStatus serStat = entryBuffer.serialize(entry.dir);
+    Fw::SerializeStatus serStat = entryBuffer.serializeFrom(entry.dir);
     // should fit
     FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
-    serStat = entryBuffer.serialize(entry.record);
+    serStat = entryBuffer.serializeFrom(entry.record);
     // should fit
     FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
     // write the entry

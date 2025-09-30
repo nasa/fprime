@@ -44,7 +44,7 @@ void SendBuffImpl::SchedIn_handler(FwIndexType portNum, U32 context) {
         // reset buffer
         this->m_testBuff.resetSer();
         // serialize packet id
-        Fw::SerializeStatus serStat = this->m_testBuff.serialize(this->m_currPacketId);
+        Fw::SerializeStatus serStat = this->m_testBuff.serializeFrom(this->m_currPacketId);
         FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK);
         // increment packet id
         this->m_currPacketId++;
@@ -68,10 +68,10 @@ void SendBuffImpl::SchedIn_handler(FwIndexType portNum, U32 context) {
             this->log_WARNING_HI_PacketErrorInserted(this->m_currPacketId - 1);
         }
         // serialize data
-        serStat = this->m_testBuff.serialize(testData, dataSize);
+        serStat = this->m_testBuff.serializeFrom(testData, dataSize);
         FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK);
         // serialize checksum
-        serStat = this->m_testBuff.serialize(csum);
+        serStat = this->m_testBuff.serializeFrom(csum);
         FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK);
         // send data
         this->Data_out(0, this->m_testBuff);

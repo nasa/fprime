@@ -276,7 +276,7 @@ def test_seqgen(fprime_test_api):
         subprocess.run(
             [
                 "fprime-seqgen",
-                "-d",
+                "--dictionary",
                 str(fprime_test_api.dictionaries.dictionary_path),
                 str(sequence),
                 "/tmp/ref_test_int.bin",
@@ -286,4 +286,29 @@ def test_seqgen(fprime_test_api):
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
         "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+    )
+
+
+def test_system_resources(fprime_test_api):
+    """Test system resources telemetry meets minimum thresholds"""
+    from fprime_gds.common.testing_fw import predicates
+
+    # Test memory usage > 1KB using predicates
+    pred_greater_than_1kb = predicates.greater_than(1)
+
+    # Wait for telemetry and verify it meets thresholds
+    fprime_test_api.await_telemetry_count(
+        pred_greater_than_1kb, "Ref.systemResources.MEMORY_TOTAL", timeout=3
+    )
+
+    fprime_test_api.await_telemetry_count(
+        pred_greater_than_1kb, "Ref.systemResources.MEMORY_USED", timeout=3
+    )
+
+    fprime_test_api.await_telemetry_count(
+        pred_greater_than_1kb, "Ref.systemResources.NON_VOLATILE_TOTAL", timeout=3
+    )
+
+    fprime_test_api.await_telemetry_count(
+        predicates.greater_than(1.0), "Ref.systemResources.CPU", timeout=3
     )

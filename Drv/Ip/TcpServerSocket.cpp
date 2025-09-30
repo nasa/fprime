@@ -66,6 +66,11 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
         return SOCK_INVALID_IP_ADDRESS;
     };
 
+    if (IpSocket::setupSocketOptions(serverFd) != SOCK_SUCCESS) {
+        ::close(serverFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+
     // TCP requires bind to an address to the socket
     if (::bind(serverFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         ::close(serverFd);

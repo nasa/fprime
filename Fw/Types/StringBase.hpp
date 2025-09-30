@@ -70,8 +70,15 @@ class StringBase : public Serializable {
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const;
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
+    DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
+               "Use serializeTo(SerializeBufferBase& buffer) instead") {
+        return this->serializeTo(buffer);
+    }
+
+    DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const,
+               "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead") {
+        return this->serializeTo(buffer, maxLen);
+    }
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests

@@ -24,7 +24,7 @@ void serialize(Fw::SerializeBufferBase& buffer) {
 }
 
 void serialize(const U32 value, Fw::SerializeBufferBase& buffer) {
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(value));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(value));
 }
 
 }  // namespace Headers

@@ -10,6 +10,10 @@ TimeInterval::TimeInterval(U32 seconds, U32 useconds) : Serializable() {
     this->set(seconds, useconds);
 }
 
+TimeInterval::TimeInterval(const Time& start, const Time& end)
+    : TimeInterval(TimeInterval::sub(TimeInterval(end.getSeconds(), end.getUSeconds()),
+                                     TimeInterval(start.getSeconds(), start.getUSeconds()))) {}
+
 void TimeInterval::set(U32 seconds, U32 useconds) {
     // Assert microseconds portion is less than 10^6
     FW_ASSERT(useconds < 1000000, static_cast<FwAssertArgType>(useconds));

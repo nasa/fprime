@@ -171,7 +171,7 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_NO_ARGS, 1, Fw::CmdResponse::OK);             \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(0);                                                                                   \
+        buf.serializeFrom(0);                                                                               \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_NO_ARGS, buf);                          \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
         ASSERT_CMD_RESPONSE(1, component.OPCODE_CMD##_ASYNC##_NO_ARGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
@@ -192,37 +192,37 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test incorrect deserialization of second argument */                                             \
-        buf.serialize(data.args.val1);                                                                      \
+        buf.serializeFrom(data.args.val1);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
         ASSERT_CMD_RESPONSE(1, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test incorrect deserialization of third argument */                                              \
-        buf.serialize(data.args.val2);                                                                      \
+        buf.serializeFrom(data.args.val2);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(3);                                                                        \
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test incorrect deserialization of fourth argument */                                             \
-        buf.serialize(data.args.val3);                                                                      \
+        buf.serializeFrom(data.args.val3);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(4);                                                                        \
         ASSERT_CMD_RESPONSE(3, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test incorrect deserialization of fifth argument */                                              \
-        buf.serialize(data.args.val4);                                                                      \
+        buf.serializeFrom(data.args.val4);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(5);                                                                        \
         ASSERT_CMD_RESPONSE(4, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test incorrect deserialization of sixth argument */                                              \
-        buf.serialize(data.args.val5);                                                                      \
+        buf.serializeFrom(data.args.val5);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(6);                                                                        \
         ASSERT_CMD_RESPONSE(5, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
                                                                                                             \
         /* Test success */                                                                                  \
-        buf.serialize(data.args.val6);                                                                      \
+        buf.serializeFrom(data.args.val6);                                                                  \
         this->invoke##ASYNC##Command(data);                                                                 \
                                                                                                             \
         ASSERT_CMD_RESPONSE_SIZE(7);                                                                        \
@@ -235,7 +235,7 @@
         ASSERT_EQ(component.primitiveCmd.args.val6, data.args.val6);                                        \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(data.args.val5);                                                                      \
+        buf.serializeFrom(data.args.val5);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_PRIMITIVE, buf);                        \
         ASSERT_CMD_RESPONSE_SIZE(8);                                                                        \
         ASSERT_CMD_RESPONSE(7, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
@@ -256,13 +256,13 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_STRINGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
                                                                                                             \
         /* Test incorrect serialization of second argument */                                               \
-        buf.serialize(data.args.val1);                                                                      \
+        buf.serializeFrom(data.args.val1);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_STRINGS, buf);                          \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
         ASSERT_CMD_RESPONSE(1, component.OPCODE_CMD##_ASYNC##_STRINGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
                                                                                                             \
         /* Test success */                                                                                  \
-        buf.serialize(data.args.val2);                                                                      \
+        buf.serializeFrom(data.args.val2);                                                                  \
         this->invoke##ASYNC##Command(data);                                                                 \
                                                                                                             \
         ASSERT_CMD_RESPONSE_SIZE(3);                                                                        \
@@ -271,7 +271,7 @@
         ASSERT_EQ(component.stringCmd.args.val2, data.args.val2);                                           \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(data.args.val1);                                                                      \
+        buf.serializeFrom(data.args.val1);                                                                  \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_STRINGS, buf);                          \
         ASSERT_CMD_RESPONSE_SIZE(4);                                                                        \
         ASSERT_CMD_RESPONSE(3, component.OPCODE_CMD##_ASYNC##_STRINGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
@@ -292,7 +292,7 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_ENUM, 1, Fw::CmdResponse::FORMAT_ERROR);      \
                                                                                                             \
         /* Test success */                                                                                  \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(data);                                                                 \
                                                                                                             \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
@@ -300,7 +300,7 @@
         ASSERT_EQ(component.enumCmd.args.val, data.args.val);                                               \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_ENUM, buf);                             \
         ASSERT_CMD_RESPONSE_SIZE(3);                                                                        \
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_ENUM, 1, Fw::CmdResponse::FORMAT_ERROR);      \
@@ -321,7 +321,7 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_ARRAY, 1, Fw::CmdResponse::FORMAT_ERROR);     \
                                                                                                             \
         /* Test success */                                                                                  \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(data);                                                                 \
                                                                                                             \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
@@ -329,7 +329,7 @@
         ASSERT_EQ(component.arrayCmd.args.val, data.args.val);                                              \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_ARRAY, buf);                            \
         ASSERT_CMD_RESPONSE_SIZE(3);                                                                        \
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_ARRAY, 1, Fw::CmdResponse::FORMAT_ERROR);     \
@@ -350,7 +350,7 @@
         ASSERT_CMD_RESPONSE(0, component.OPCODE_CMD##_ASYNC##_STRUCT, 1, Fw::CmdResponse::FORMAT_ERROR);    \
                                                                                                             \
         /* Test success */                                                                                  \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(data);                                                                 \
                                                                                                             \
         ASSERT_CMD_RESPONSE_SIZE(2);                                                                        \
@@ -358,7 +358,7 @@
         ASSERT_EQ(component.structCmd.args.val, data.args.val);                                             \
                                                                                                             \
         /* Test too many arguments */                                                                       \
-        buf.serialize(data.args.val);                                                                       \
+        buf.serializeFrom(data.args.val);                                                                   \
         this->invoke##ASYNC##Command(component.OPCODE_CMD##_ASYNC##_STRUCT, buf);                           \
         ASSERT_CMD_RESPONSE_SIZE(3);                                                                        \
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_STRUCT, 1, Fw::CmdResponse::FORMAT_ERROR);    \
