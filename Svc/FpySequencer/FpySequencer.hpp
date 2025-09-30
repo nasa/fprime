@@ -616,6 +616,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
+
+    // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
     // pops a value off of the top of the stack
