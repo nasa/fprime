@@ -78,7 +78,7 @@ void writeCRC(const U32 crc, const char* const fileName) {
     Os::File file;
     U8 buffer[sizeof crc];
     Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
-    serialBuffer.serialize(crc);
+    serialBuffer.serializeFrom(crc);
     const U8* const addr = serialBuffer.getBuffAddr();
     Fw::String hashFileName(fileName);
     hashFileName += ".CRC32";

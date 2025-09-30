@@ -43,7 +43,7 @@ void FilePacket::EndPacket ::getChecksum(CFDP::Checksum& checksum) const {
 SerializeStatus FilePacket::EndPacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_END);
 
-    const SerializeStatus status = serialBuffer.deserialize(this->m_checksumValue);
+    const SerializeStatus status = serialBuffer.deserializeTo(this->m_checksumValue);
 
     return status;
 }
@@ -58,7 +58,7 @@ SerializeStatus FilePacket::EndPacket ::toSerialBuffer(SerialBuffer& serialBuffe
         return status;
     }
 
-    status = serialBuffer.serialize(this->m_checksumValue);
+    status = serialBuffer.serializeFrom(this->m_checksumValue);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }

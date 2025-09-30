@@ -34,7 +34,7 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
     Ccsds::TCHeader header;
-    status = header.deserialize(header_ser_buffer);
+    status = header.deserializeFrom(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     if (header.get_flagsAndScId() != this->m_expectedFlagsAndScIdToken) {
@@ -72,7 +72,7 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameTrailer object
     Ccsds::TCTrailer trailer;
-    status = trailer.deserialize(trailer_ser_buffer);
+    status = trailer.deserializeFrom(trailer_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     U16 transmitted_fecf = trailer.get_fecf();
     if (transmitted_fecf != computed_fecf) {

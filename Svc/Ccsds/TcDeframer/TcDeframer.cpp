@@ -55,7 +55,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
               static_cast<FwAssertArgType>(data.getSize()));
 
     TCHeader header;
-    Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
+    Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
     U16 total_frame_length = static_cast<U16>((header.get_vcIdAndLength() & TCSubfields::FrameLengthMask) + 1);
@@ -89,7 +89,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     TCTrailer trailer;
     auto deserializer = data.getDeserializer();
     deserializer.moveDeserToOffset(total_frame_length - TCTrailer::SERIALIZED_SIZE);
-    status = deserializer.deserialize(trailer);
+    status = deserializer.deserializeTo(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 transmitted_crc = trailer.get_fecf();

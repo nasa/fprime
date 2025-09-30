@@ -149,16 +149,6 @@ SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer, SizeType ma
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
-// Deprecated method for backward compatibility
-SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-// Deprecated method for backward compatibility
-SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-    return this->serializeTo(buffer, maxLength);
-}
-
 SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer) {
     // Get the max size of the deserialized string
     const SizeType maxSize = this->maxLength();

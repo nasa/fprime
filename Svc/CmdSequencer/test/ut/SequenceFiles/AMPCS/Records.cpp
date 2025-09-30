@@ -26,10 +26,10 @@ void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
     const AMPCSSequence::Record::TimeFlag::Serial::t serialTimeFlag = timeFlag;
     const AMPCSSequence::Record::CmdLength::t cmdLength = cmdField.getBuffLength();
     const U8* const addr = cmdField.getBuffAddr();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serialize(serialTimeFlag));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serialize(time));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serialize(cmdLength));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serialize(addr, cmdLength, Fw::Serialization::OMIT_LENGTH));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(serialTimeFlag));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(time));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(cmdLength));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(addr, cmdLength, Fw::Serialization::OMIT_LENGTH));
 }
 
 void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
@@ -38,8 +38,8 @@ void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
                const U32 argument,
                Fw::SerializeBufferBase& dest) {
     Fw::ComBuffer cmdField;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serialize(opcode));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serialize(argument));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serializeFrom(opcode));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serializeFrom(argument));
     Records::serialize(timeFlag, time, cmdField, dest);
 }
 

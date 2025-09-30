@@ -60,31 +60,31 @@ void TlmPacketizerTester ::pushTlmTest() {
     Fw::TlmBuffer buff;
 
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // second channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(50)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(50)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 }
 
@@ -94,32 +94,32 @@ void TlmPacketizerTester ::sendPacketsTest() {
     Fw::TlmBuffer buff;
 
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     // second channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     // third channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // fifth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     // sixth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     // seventh channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->setTestTime(this->m_testTime);
@@ -134,24 +134,24 @@ void TlmPacketizerTester ::sendPacketsTest() {
 
     Fw::ComBuffer comBuff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
@@ -162,32 +162,32 @@ void TlmPacketizerTester ::sendPacketLevelsTest() {
     Fw::TlmBuffer buff;
 
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     // second channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     // third channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // fifth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     // sixth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     // seventh channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->setTestTime(this->m_testTime);
@@ -202,24 +202,24 @@ void TlmPacketizerTester ::sendPacketLevelsTest() {
 
     Fw::ComBuffer comBuff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
@@ -240,7 +240,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     // first channel
     ts.set(100, 1000);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     this->m_testTime.add(1, 0);
@@ -252,24 +252,24 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 
@@ -277,7 +277,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     this->m_testTime.add(1, 0);
@@ -291,18 +291,18 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     this->clearFromPortHistory();
@@ -313,18 +313,18 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     this->clearFromPortHistory();
@@ -334,19 +334,19 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     this->clearFromPortHistory();
@@ -358,19 +358,19 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->clearFromPortHistory();
@@ -380,13 +380,13 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
@@ -395,7 +395,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     // first channel
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(1000)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     this->clearFromPortHistory();
@@ -405,24 +405,24 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 
@@ -430,7 +430,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(550)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(550)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     this->clearFromPortHistory();
@@ -440,18 +440,18 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(550)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(550)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(211)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(211)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     this->clearFromPortHistory();
@@ -461,18 +461,18 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(550)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(211)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(550)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(211)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(34441)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(34441)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     this->clearFromPortHistory();
@@ -482,19 +482,19 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(34441)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(34441)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(8649)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(8649)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     this->clearFromPortHistory();
@@ -504,19 +504,19 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(34441)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(8649)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(34441)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(8649)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(65)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(65)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->clearFromPortHistory();
@@ -526,13 +526,13 @@ void TlmPacketizerTester ::updatePacketsTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(1000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(34441)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(8649)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(65)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(1000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(34441)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(8649)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(65)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 }
@@ -553,7 +553,7 @@ void TlmPacketizerTester ::ignoreTest() {
 
     // first channel
     ts.set(100, 1000);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     this->m_testTime.add(1, 0);
@@ -565,24 +565,24 @@ void TlmPacketizerTester ::ignoreTest() {
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(ts));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(0)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(0)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(0)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 
@@ -590,7 +590,7 @@ void TlmPacketizerTester ::ignoreTest() {
 
     buff.resetSer();
     ts.add(1, 0);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(20)));
     this->invoke_to_TlmRecv(0, 25, ts, buff);
 
     this->m_testTime.add(1, 0);
@@ -609,32 +609,32 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     Fw::TlmBuffer buff;
 
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     // second channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     // third channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // fifth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     // sixth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     // seventh channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->setTestTime(this->m_testTime);
@@ -649,24 +649,24 @@ void TlmPacketizerTester ::sendManualPacketTest() {
 
     Fw::ComBuffer comBuff1;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff1.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U8>(14)));
+              comBuff1.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff1, static_cast<U32>(0));
 
     Fw::ComBuffer comBuff2;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff2.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serialize(static_cast<U8>(15)));
+              comBuff2.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(1, comBuff2, static_cast<U32>(0));
 
@@ -730,32 +730,32 @@ void TlmPacketizerTester ::setPacketLevelTest() {
     Fw::TlmBuffer buff;
 
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(0x20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0x20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     // second channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(0x15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     // third channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(0x14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // fifth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(0x1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0x1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     // sixth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(0x1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     // seventh channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(0x15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->setTestTime(this->m_testTime);
@@ -780,32 +780,32 @@ void TlmPacketizerTester ::setPacketLevelTest() {
 
     // send the packets
     // first channel
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U32>(0x20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0x20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 
     // second channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(0x15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x15)));
     this->invoke_to_TlmRecv(0, 100, ts, buff);
 
     // third channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(0x14)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x14)));
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // fifth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U64>(0x1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0x1000000)));
     this->invoke_to_TlmRecv(0, 13, ts, buff);
 
     // sixth channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U16>(0x1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x1010)));
     this->invoke_to_TlmRecv(0, 250, ts, buff);
 
     // seventh channel
     buff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serialize(static_cast<U8>(0x15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x15)));
     this->invoke_to_TlmRecv(0, 22, ts, buff);
 
     this->setTestTime(this->m_testTime);
@@ -821,12 +821,12 @@ void TlmPacketizerTester ::setPacketLevelTest() {
 
     Fw::ComBuffer comBuff1;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff1.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U32>(0x20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U16>(0x15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serialize(static_cast<U8>(0x14)));
+              comBuff1.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U32>(0x20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U16>(0x15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U8>(0x14)));
 
     ASSERT_from_PktSend(0, comBuff1, static_cast<U32>(0));
 
@@ -839,24 +839,24 @@ void TlmPacketizerTester ::setPacketLevelTest() {
 
     Fw::ComBuffer comBuff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(4)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(15)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(14)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(0));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(static_cast<U8>(15)));
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     ASSERT_from_PktSend(1, comBuff, static_cast<U32>(0));
 }
@@ -914,7 +914,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
 
     Fw::Time timeIn(123, 456);
     Fw::TlmBuffer valIn;
-    valIn.serialize(static_cast<I32>(789));
+    valIn.serializeFrom(static_cast<I32>(789));
     this->invoke_to_TlmRecv(0, 10, timeIn, valIn);
 
     valid = this->invoke_to_TlmGet(0, 10, time, val);

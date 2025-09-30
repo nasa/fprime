@@ -91,7 +91,7 @@ TEST(Interface, SendBuffer) {
     U8 storage[messageSize];
     Fw::ExternalSerializeBuffer buffer(storage, sizeof storage);
     Fw::String message = "hello";
-    buffer.serialize(message);
+    buffer.serializeFrom(message);
 
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(name, depth, messageSize));
     Os::Stub::Queue::Test::StaticData::data.sendStatus = Os::QueueInterface::Status::UNKNOWN_ERROR;

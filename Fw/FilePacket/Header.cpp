@@ -28,13 +28,13 @@ SerializeStatus FilePacket::Header ::fromSerialBuffer(SerialBuffer& serialBuffer
     U8 new_type;
     SerializeStatus status;
 
-    status = serialBuffer.deserialize(new_type);
+    status = serialBuffer.deserializeTo(new_type);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }
     this->m_type = static_cast<Type>(new_type);
 
-    status = serialBuffer.deserialize(this->m_sequenceIndex);
+    status = serialBuffer.deserializeTo(this->m_sequenceIndex);
 
     return status;
 }
@@ -43,12 +43,12 @@ SerializeStatus FilePacket::Header ::toSerialBuffer(SerialBuffer& serialBuffer) 
     const U8 type_casted = static_cast<U8>(this->m_type);
     SerializeStatus status;
 
-    status = serialBuffer.serialize(type_casted);
+    status = serialBuffer.serializeFrom(type_casted);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.serialize(this->m_sequenceIndex);
+    status = serialBuffer.serializeFrom(this->m_sequenceIndex);
     if (status != FW_SERIALIZE_OK) {
         return status;
     }

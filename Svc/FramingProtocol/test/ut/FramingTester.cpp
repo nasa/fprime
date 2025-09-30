@@ -58,7 +58,7 @@ FpFrameHeader::TokenType FramingTester ::getPacketSize() {
     FpFrameHeader::TokenType packetSize = 0;
     Fw::SerialBuffer sb(&this->bufferStorage[PACKET_SIZE_OFFSET], sizeof packetSize);
     sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(packetSize);
+    const Fw::SerializeStatus status = sb.deserializeTo(packetSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     return packetSize;
 }
@@ -72,7 +72,7 @@ void FramingTester ::checkPacketType() {
     SerialPacketType serialPacketType = 0;
     Fw::SerialBuffer sb(&this->bufferStorage[PACKET_TYPE_OFFSET], sizeof serialPacketType);
     sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(serialPacketType);
+    const Fw::SerializeStatus status = sb.deserializeTo(serialPacketType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     typedef Fw::ComPacketType PacketType;
     const PacketType pt = static_cast<PacketType>(serialPacketType);
@@ -83,7 +83,7 @@ void FramingTester ::checkStartWord() {
     FpFrameHeader::TokenType startWord = 0;
     Fw::SerialBuffer sb(&this->bufferStorage[START_WORD_OFFSET], sizeof startWord);
     sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(startWord);
+    const Fw::SerializeStatus status = sb.deserializeTo(startWord);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     ASSERT_EQ(startWord, FpFrameHeader::START_WORD);
 }

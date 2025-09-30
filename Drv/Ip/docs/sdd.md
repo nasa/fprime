@@ -154,11 +154,11 @@ socketBoth.configureRecv(127.0.0.1, 60212);
 ```
 ### Support for Ephemeral Ports
 
-Drv::UdpSocket supports ephemeral ports through passing a 0 as the port argument for either `Drv::UdpSocket::configureSend` 
+Drv::UdpSocket supports ephemeral ports through passing a 0 as the port argument for either `Drv::UdpSocket::configureSend`
 or `Drv::UdpSocket::configureRecv`.
 
-For `Drv::UdpSocket::configureSend` this means that you would like to set up the UdpSocket to be able to respond to the source 
-port that is indicated in the UDP datagrams you receive. Note that this configuration will set up the send port to the port 
+For `Drv::UdpSocket::configureSend` this means that you would like to set up the UdpSocket to be able to respond to the source
+port that is indicated in the UDP datagrams you receive. Note that this configuration will set up the send port to the port
 specified only in the first message received.
 
 For `Drv::UdpSocket::configureRecv` this means that you would like to be assigned an ephemeral port. This would generally be used
@@ -168,16 +168,17 @@ for setting up a sender that would like to receive responses to messages on an e
 
 The Drv::SocketComponentHelper is intended as a base class used to add in the functionality of an automatically reconnecting
 receive thread to another class (typically an F´ component) as well as an interface between the component using an IP socket
-and the IP socket library functions implemented in this folder. In order for this thread to function, the inheritor must
+and the IP socket library functions implemented in this folder. In order for the receive thread to function, the inheritor must
 implement several methods to provide the necessary interaction of this thread. These functions are described in the next
-section.
+section. The automatic reconnection is handled by a separate dedicated thread upon request from either the receive thread
+or a send request.
 
 In order to start the receiving thread a call to the `Drv::SocketComponentHelper::start` method is performed passing
-in a name, and all arguments to `Os::Task::start` to start the task. An optional parameter, reconnect, will determine if
-this read task will reconnect to sockets should a disconnect or error occur. Once started the read task will continue
+in a name, and all arguments to `Os::Task::start` to start the receive and reconnect tasks. An optional parameter, reconnect,
+will determine if this read task will request reconnects to sockets should a disconnect or error occur. Once started, the read task will continue
 until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
 `true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
-wait until the full task has finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
+wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
 provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
 a Drv::SocketComponentHelper derived class is shown below.
 
@@ -187,7 +188,7 @@ uplinkComm.start(name); // Default reconnect=true
 ...
 
 uplinkComm.stop();
-(void) uplinkComm.join();
+(void) uplinkComm.join(); // this will join the receive and reconnect tasks
 ```
 
 `Drv::SocketComponentHelper::open` and `Drv::SocketComponentHelper::close` convenience methods are also provided to open and close the

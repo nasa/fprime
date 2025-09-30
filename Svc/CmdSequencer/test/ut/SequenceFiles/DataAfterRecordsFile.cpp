@@ -44,8 +44,8 @@ void DataAfterRecordsFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     // EOS record
     FPrime::Records::serialize(CmdSequencerComponentImpl::Sequence::Record::END_OF_SEQUENCE, t, buffer);
     // Extra junk data
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U32>(0x12345678)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(static_cast<U32>(0x87654321)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U32>(0x12345678)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U32>(0x87654321)));
     // CRC
     FPrime::CRCs::serialize(buffer);
 }

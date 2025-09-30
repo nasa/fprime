@@ -42,7 +42,7 @@ void DeframingTester ::serializeTokenType(FpFrameHeader::TokenType v) {
     U8 buffer[sizeof v];
     Fw::SerialBuffer sb(buffer, sizeof buffer);
     {
-        const Fw::SerializeStatus status = sb.serialize(v);
+        const Fw::SerializeStatus status = sb.serializeFrom(v);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     }
     {
@@ -57,15 +57,15 @@ Fw::ByteArray DeframingTester ::constructRandomFrame(U32 packetSize) {
     Fw::SerialBuffer sb(this->frameData, sizeof this->frameData);
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     // Serialize the start word
-    status = sb.serialize(Svc::FpFrameHeader::START_WORD);
+    status = sb.serializeFrom(Svc::FpFrameHeader::START_WORD);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Serialize the packet size
-    status = sb.serialize(static_cast<FpFrameHeader::TokenType>(packetSize));
+    status = sb.serializeFrom(static_cast<FpFrameHeader::TokenType>(packetSize));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Construct the packet data
     for (U32 i = 0; i < packetSize; ++i) {
         const U8 byte = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
-        status = sb.serialize(byte);
+        status = sb.serializeFrom(byte);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     }
     const FwSizeType buffLength = sb.getBuffLength();

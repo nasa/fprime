@@ -24,10 +24,10 @@ void serialize(U32 dataSize,
                FwTimeBaseStoreType timeBase,
                FwTimeContextStoreType timeContext,
                Fw::SerializeBufferBase& destBuffer) {
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(dataSize));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(numRecords));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeBase));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(timeContext));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(dataSize));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(numRecords));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(timeBase));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(timeContext));
 }
 
 }  // namespace Headers

@@ -33,7 +33,7 @@ void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffe
     }
     HashBuffer bufferOut;
     // For CRC32 we need to return the one's complement of the result:
-    Fw::SerializeStatus status = bufferOut.serialize(~(local_hash_handle));
+    Fw::SerializeStatus status = bufferOut.serializeFrom(~(local_hash_handle));
     FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
     buffer = bufferOut;
 }
@@ -54,7 +54,7 @@ void Hash ::update(const void* const data, FwSizeType len) {
 void Hash ::final(HashBuffer& buffer) {
     HashBuffer bufferOut;
     // For CRC32 we need to return the one's complement of the result:
-    Fw::SerializeStatus status = bufferOut.serialize(~(this->hash_handle));
+    Fw::SerializeStatus status = bufferOut.serializeFrom(~(this->hash_handle));
     FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
     buffer = bufferOut;
 }
@@ -66,7 +66,7 @@ void Hash ::final(U32& hashvalue) {
 }
 
 void Hash ::setHashValue(HashBuffer& value) {
-    Fw::SerializeStatus status = value.deserialize(this->hash_handle);
+    Fw::SerializeStatus status = value.deserializeTo(this->hash_handle);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
     // Expecting `value` to already be one's complement; so doing one's complement
     // here for correct hash updates

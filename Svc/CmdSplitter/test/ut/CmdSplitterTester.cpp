@@ -30,18 +30,18 @@ CmdSplitterTester ::~CmdSplitterTester() {}
 
 Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcode) {
     Fw::ComBuffer comBuffer;
-    EXPECT_EQ(comBuffer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+    EXPECT_EQ(comBuffer.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
               Fw::FW_SERIALIZE_OK);
-    EXPECT_EQ(comBuffer.serialize(opcode), Fw::FW_SERIALIZE_OK);
+    EXPECT_EQ(comBuffer.serializeFrom(opcode), Fw::FW_SERIALIZE_OK);
 
     Fw::CmdArgBuffer args;
 
     U32 random_size = STest::Pick::lowerUpper(0, static_cast<U32>(args.getBuffCapacity()));
     args.resetSer();
     for (FwSizeType i = 0; i < random_size; i++) {
-        args.serialize(static_cast<U8>(STest::Pick::any()));
+        args.serializeFrom(static_cast<U8>(STest::Pick::any()));
     }
-    EXPECT_EQ(comBuffer.serialize(args), Fw::FW_SERIALIZE_OK);
+    EXPECT_EQ(comBuffer.serializeFrom(args), Fw::FW_SERIALIZE_OK);
     return comBuffer;
 }
 
