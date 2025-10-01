@@ -17,93 +17,93 @@
 
 namespace Svc {
 
-class GenericHubComponentImpl final : public GenericHubComponentBase {
-  public:
-    /**
-     * HubType:
-     *
-     * Type of serialized data on the wire. Allows for expanding them on the opposing end.
-     */
-    enum HubType {
-        HUB_TYPE_PORT,     //!< Port type transmission
-        HUB_TYPE_BUFFER,   //!< Buffer type transmission
-        HUB_TYPE_EVENT,    //!< Event transmission
-        HUB_TYPE_CHANNEL,  //!< Telemetry channel type
-        HUB_TYPE_MAX
+    class GenericHubComponentImpl final : public GenericHubComponentBase {
+    public:
+        /**
+         * HubType:
+         *
+         * Type of serialized data on the wire. Allows for expanding them on the opposing end.
+         */
+        enum HubType {
+            HUB_TYPE_PORT,     //!< Port type transmission
+            HUB_TYPE_BUFFER,   //!< Buffer type transmission
+            HUB_TYPE_EVENT,    //!< Event transmission
+            HUB_TYPE_CHANNEL,  //!< Telemetry channel type
+            HUB_TYPE_MAX
+        };
+
+        constexpr static FwSizeType GENERIC_HUB_DATA_SIZE = 1024;
+        // ----------------------------------------------------------------------
+        // Construction, initialization, and destruction
+        // ----------------------------------------------------------------------
+
+        //! Construct object GenericHub
+        //!
+        GenericHubComponentImpl(const char* const compName /*!< The component name*/
+        );
+
+        //! Destroy object GenericHub
+        //!
+        ~GenericHubComponentImpl();
+
+    private:
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined typed input ports
+        // ----------------------------------------------------------------------
+
+        //! Handler implementation for buffersIn
+        //!
+        void buffersIn_handler(const FwIndexType portNum, /*!< The port number */
+            Fw::Buffer& fwBuffer       /*!< Input buffer to forward */
+        ) override;
+
+        //! Handler implementation for bufferReturnIn
+        //!
+        void bufferReturnIn_handler(const FwIndexType portNum, /*!< The port number */
+            Fw::Buffer& fwBuffer       /*!< Buffer sent via dataOut being returned */
+        ) override;
+
+        //! Handler implementation for dataIn
+        //!
+        void dataIn_handler(const FwIndexType portNum,          /*!< The port number */
+            Fw::Buffer& fwBuffer,               /*!< Buffer from the remote hub */
+            const ComCfg::FrameContext& context /*!< Context of the returned buffer */
+        ) override;
+
+        //! Handler implementation for LogRecv
+        //!
+        void LogRecv_handler(const FwIndexType portNum,       /*!< The port number */
+            FwEventIdType id,                /*!< Log ID */
+            Fw::Time& timeTag,               /*!< Time Tag */
+            const Fw::LogSeverity& severity, /*!< The severity argument */
+            Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
+        ) override;
+
+        //! Handler implementation for TlmRecv
+        //!
+        void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
+            FwChanIdType id,           /*!< Telemetry Channel ID */
+            Fw::Time& timeTag,         /*!< Time Tag */
+            Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
+        ) override;
+
+    private:
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined serial input ports
+        // ----------------------------------------------------------------------
+
+        //! Handler implementation for portIn
+        //!
+        void portIn_handler(FwIndexType portNum,            /*!< The port number*/
+            Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+        ) override;
+
+    private:
+        // ----------------------------------------------------------------------
+        // Private helpers
+        // ----------------------------------------------------------------------
+        void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);
     };
-
-    constexpr static FwSizeType GENERIC_HUB_DATA_SIZE = 1024;
-    // ----------------------------------------------------------------------
-    // Construction, initialization, and destruction
-    // ----------------------------------------------------------------------
-
-    //! Construct object GenericHub
-    //!
-    GenericHubComponentImpl(const char* const compName /*!< The component name*/
-    );
-
-    //! Destroy object GenericHub
-    //!
-    ~GenericHubComponentImpl();
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined typed input ports
-    // ----------------------------------------------------------------------
-
-    //! Handler implementation for buffersIn
-    //!
-    void buffersIn_handler(const FwIndexType portNum, /*!< The port number */
-                           Fw::Buffer& fwBuffer       /*!< Input buffer to forward */
-    ) override;
-
-    //! Handler implementation for bufferReturnIn
-    //!
-    void bufferReturnIn_handler(const FwIndexType portNum, /*!< The port number */
-                                Fw::Buffer& fwBuffer       /*!< Buffer sent via dataOut being returned */
-    ) override;
-
-    //! Handler implementation for dataIn
-    //!
-    void dataIn_handler(const FwIndexType portNum,          /*!< The port number */
-                        Fw::Buffer& fwBuffer,               /*!< Buffer from the remote hub */
-                        const ComCfg::FrameContext& context /*!< Context of the returned buffer */
-    ) override;
-
-    //! Handler implementation for LogRecv
-    //!
-    void LogRecv_handler(const FwIndexType portNum,       /*!< The port number */
-                         FwEventIdType id,                /*!< Log ID */
-                         Fw::Time& timeTag,               /*!< Time Tag */
-                         const Fw::LogSeverity& severity, /*!< The severity argument */
-                         Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
-    ) override;
-
-    //! Handler implementation for TlmRecv
-    //!
-    void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
-                         FwChanIdType id,           /*!< Telemetry Channel ID */
-                         Fw::Time& timeTag,         /*!< Time Tag */
-                         Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
-    ) override;
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined serial input ports
-    // ----------------------------------------------------------------------
-
-    //! Handler implementation for portIn
-    //!
-    void portIn_handler(FwIndexType portNum,            /*!< The port number*/
-                        Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
-    ) override;
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private helpers
-    // ----------------------------------------------------------------------
-    void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);
-};
 
 }  // end namespace Svc
 
