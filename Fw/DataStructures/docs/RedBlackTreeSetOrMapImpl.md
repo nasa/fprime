@@ -56,7 +56,7 @@ Here is an example of a binary tree:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/tree.png" width=200/">
+<img src="diagrams/Red-Black-Trees/tree.svg" width=200/">
 </div>
 </center>
 
@@ -101,7 +101,7 @@ Here is an example of a BST:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/bst.png" width=200/">
+<img src="diagrams/Red-Black-Trees/bst.svg" width=200/">
 </div>
 </center>
 
@@ -123,7 +123,7 @@ For example, here is a red-black tree:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid.png" width=200/">
+<img src="diagrams/Red-Black-Trees/valid.svg" width=200/">
 </div>
 </center>
 
@@ -161,7 +161,7 @@ the tree shown above:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid-augmented.png" width=300/">
+<img src="diagrams/Red-Black-Trees/valid-augmented.svg" width=300/">
 </div>
 </center>
 
@@ -194,7 +194,7 @@ This tree is not a valid red-black tree because **RBT2** is not satisfied:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/rbt2-violation.png" width=200/">
+<img src="diagrams/Red-Black-Trees/rbt2-violation.svg" width=200/">
 </div>
 </center>
 
@@ -202,7 +202,7 @@ Here is the corresponding leaf-augmented tree:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/rbt2-violation-augmented.png" width=300/">
+<img src="diagrams/Red-Black-Trees/rbt2-violation-augmented.svg" width=300/">
 </div>
 </center>
 
@@ -256,7 +256,7 @@ section <a href="#red-black-colorings">**Red-Black Colorings**</a> as follows:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid-forest.png" width=200/">
+<img src="diagrams/Red-Black-Trees/valid-forest.svg" width=200/">
 </div>
 </center>
 
