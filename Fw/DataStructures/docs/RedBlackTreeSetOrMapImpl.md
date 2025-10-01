@@ -942,7 +942,7 @@ It is not permissible for `node` to be `NONE`.
 
                        <center>
                        <div>
-                       <img src="diagrams/insertNode/black-uncle-1.png" width=300/">
+                       <img src="diagrams/insertNode/black-uncle-1.svg" width=300/">
                        </div>
                        </center>
 
