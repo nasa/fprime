@@ -481,6 +481,16 @@ class RedBlackTreeSetOrMapImpl final {
         return result;
     }
 
+    //! Get the direction from the parent, i.e., the direction (left or
+    //! right) to follow from the parent of node to get to node.
+    //! node must not be NONE. The parent of node must not be NONE.
+    Direction getDirectionFromParent(Index node  //!< The node index
+    ) const {
+        const auto parent = this->m_nodes[node].m_parent;
+        const auto parentRight = m_nodes[parent].m_right;
+        return (node == parentRight) ? Direction::RIGHT : Direction::LEFT;
+    }
+
     //! Get the color of a node
     //! \return The color
     Color getNodeColor(Index index  //!< The node index
@@ -506,16 +516,6 @@ class RedBlackTreeSetOrMapImpl final {
         }
         FW_ASSERT(done == true);
         return node;
-    }
-
-    //! Get the parent direction for a node, i.e., the direction (left or
-    //! right) to follow from the parent of node to get to node. node must not be
-    //! NONE. The parent of node must not be NONE.
-    Direction getParentDirection(Index node  //!< The node index
-    ) const {
-        const auto parent = this->m_nodes[node].m_parent;
-        const auto parentRight = m_nodes[parent].m_right;
-        return (node == parentRight) ? Direction::RIGHT : Direction::LEFT;
     }
 
     //! This function inserts node into the tree as a left or right child of parent,
@@ -560,7 +560,7 @@ class RedBlackTreeSetOrMapImpl final {
                     done = true;
                     break;
                 }
-                const auto parentDirection = this->getParentDirection(parent);
+                const auto parentDirection = this->getDirectionFromParent(parent);
                 const auto parentOppositeDirection = Node::getOppositeDirection(parentDirection);
                 const auto uncle = this->m_nodes[grandparent].getChild(parentOppositeDirection);
                 if (this->getNodeColor(uncle) == Color::BLACK) {
@@ -782,7 +782,7 @@ class RedBlackTreeSetOrMapImpl final {
         // black, that node is a leaf node, and that node is not the root.
         auto parent = m_nodes[node].m_parent;
         // Since node is not the root, parent is not NONE.
-        auto direction = this->getParentDirection(node);
+        auto direction = this->getDirectionFromParent(node);
         auto oppositeDirection = Node::getOppositeDirection(direction);
         // The leaf-augmented subtree rooted at parent has this shape, assuming
         // direction == RIGHT. We use ? to represent the unknown color (red or
@@ -1490,7 +1490,7 @@ class RedBlackTreeSetOrMapImpl final {
                     done = true;
                     break;
                 } else {
-                    direction = getParentDirection(node);
+                    direction = getDirectionFromParent(node);
                     oppositeDirection = Node::getOppositeDirection(direction);
                     // The leaf-augmented subtree rooted at parent has this
                     // shape, assuming that direction == RIGHT:
@@ -1618,7 +1618,7 @@ class RedBlackTreeSetOrMapImpl final {
         if (parent == Node::NONE) {
             this->m_root = child;
         } else {
-            const auto parentDirection = this->getParentDirection(node);
+            const auto parentDirection = this->getDirectionFromParent(node);
             this->m_nodes[parent].setChild(parentDirection, child);
         }
         this->m_nodes[child].m_parent = parent;
@@ -1649,7 +1649,7 @@ class RedBlackTreeSetOrMapImpl final {
         FW_ASSERT(nodeObj.m_left == Node::NONE);
         FW_ASSERT(nodeObj.m_right == Node::NONE);
         const auto parent = nodeObj.m_parent;
-        const auto direction = this->getParentDirection(node);
+        const auto direction = this->getDirectionFromParent(node);
         this->m_nodes[parent].setChild(direction, Node::NONE);
     }
 
@@ -1676,7 +1676,7 @@ class RedBlackTreeSetOrMapImpl final {
         this->m_nodes[newRoot].setChild(direction, node);
         this->m_nodes[newRoot].m_parent = parent;
         if (parent != Node::NONE) {
-            const auto parentDirection = getParentDirection(node);
+            const auto parentDirection = getDirectionFromParent(node);
             this->m_nodes[parent].setChild(parentDirection, newRoot);
         } else {
             this->m_root = newRoot;

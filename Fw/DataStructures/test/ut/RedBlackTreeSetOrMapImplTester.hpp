@@ -205,7 +205,7 @@ class RedBlackTreeSetOrMapImplTester {
             const auto& nodeObject = this->m_impl.m_nodes[node];
             const auto parent = nodeObject.m_parent;
             if (parent != Node::NONE) {
-                const auto parentDirection = this->m_impl.getParentDirection(node);
+                const auto parentDirection = this->m_impl.getDirectionFromParent(node);
                 std::cout << directionToString(parentDirection) << " ";
             }
             Fw::String parentStr;

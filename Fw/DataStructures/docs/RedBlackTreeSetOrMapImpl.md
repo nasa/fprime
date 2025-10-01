@@ -774,7 +774,27 @@ and `node` stores the index of _N_.
 
 1. Return `result`.
 
-### 8.2. getNodeColor
+### 8.2. getDirectionFromParent
+
+```c++
+Direction getDirectionFromParent(Node::Index node) const
+```
+
+**Overview:** Get the direction from the parent, i.e.,
+the direction (left or right) to follow from the parent
+of `node` to get to `node`.
+`node` must not be `NONE`.
+The parent of `node` must not be `NONE`.
+
+**Algorithm:**
+
+1. Let `parent = m_nodes[node].parent`.
+
+1. Let `parentRight = m_nodes[parent].right`.
+
+1. Return `node == parentRight ? RIGHT : LEFT`.
+
+### 8.3. getNodeColor
 
 ```c++
 Node::Color getNodeColor(Index index) const
@@ -783,7 +803,7 @@ Node::Color getNodeColor(Index index) const
 Return `index == NONE ? BLACK : m_nodes[index].color`.
 
 <a name="getOuterNodeUnder"></a>
-### 8.3. getOuterNodeUnder
+### 8.4. getOuterNodeUnder
 
 ```c++
 Node::Index getOuterNodeUnder(Node::Index node, Direction direction) const
@@ -811,26 +831,6 @@ If `node` has no child in that direction, then the result is `node`.
 
 1. Return `node`.
 
-
-### 8.4. getParentDirection
-
-```c++
-Direction getParentDirection(Node::Index node) const
-```
-
-**Overview:** Get the parent direction for a node, i.e.,
-the direction (left or right) to follow from the parent
-of `node` to get to `node`.
-`node` must not be `NONE`.
-The parent of `node` must not be `NONE`.
-
-**Algorithm:**
-
-1. Let `parent = m_nodes[node].parent`.
-
-1. Let `parentRight = m_nodes[parent].right`.
-
-1. Return `node == parentRight ? RIGHT : LEFT`.
 
 ### 8.5. getPredecessorOfNone
 
@@ -925,7 +925,7 @@ It is not permissible for `node` to be `NONE`.
 
         1. Otherwise
 
-            1. Let `parentDirection = getParentDirection(parent)`.
+            1. Let `parentDirection = getDirectionFromParent(parent)`.
 
             1. Let `parentOppositeDirection = Node::getOppositeDirection(parentDirection)`.
 
@@ -1063,7 +1063,7 @@ It must not be `NONE`.
 1. Set `parent = m_nodes[node].parent`.
    _Since `node` is not the root, `parent` is not `NONE`._
 
-1. Set `direction = getParentDirection(node)`.
+1. Set `direction = getDirectionFromParent(node)`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
@@ -1337,7 +1337,7 @@ It must not be `NONE`.
 
         1. Otherwise
 
-            1. Set `direction = getParentDirection(node)`.
+            1. Set `direction = getDirectionFromParent(node)`.
 
             1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
@@ -1464,7 +1464,7 @@ It must not be `NONE`.
 
 1. Otherwise
 
-    1. Let `direction = getParentDirection(node)`.
+    1. Let `direction = getDirectionFromParent(node)`.
 
     1. Call `m_nodes[parent].setChild(direction, child)`.
 
@@ -1514,7 +1514,7 @@ It must not be `NONE`.
 
 1. Let `parent = m_nodes[node].parent`.
 
-1. Let `direction = getParentDirection(node)`.
+1. Let `direction = getDirectionFromParent(node)`.
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
 
@@ -1557,7 +1557,7 @@ or an assertion failure will occur:
 
 1. If `parent != NONE` then
 
-    1. Let `parentDirection = getParentDirection(node)`.
+    1. Let `parentDirection = getDirectionFromParent(node)`.
 
     1. Call `m_nodes[parent].setChild(parentDirection, newRoot)`.
 
