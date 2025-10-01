@@ -1614,7 +1614,7 @@ class RedBlackTreeSetOrMapImpl final {
                                 Direction direction  //!< The direction of the child
     ) {
         // Since the tree is a valid red-black tree, a node with exactly one
-        // child must be black.
+        // child must be black, and the child must be red.
         FW_ASSERT(this->m_nodes[node].m_color == Color::BLACK,
                   static_cast<FwAssertArgType>(this->m_nodes[node].m_color));
         const auto parent = this->m_nodes[node].m_parent;
