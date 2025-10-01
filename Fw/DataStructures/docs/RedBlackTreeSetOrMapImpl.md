@@ -1073,7 +1073,7 @@ It must not be `NONE`.
 
    <center>
    <div>
-   <img src="diagrams/removeBlackLeafNode/initial.png" width=300/">
+   <img src="diagrams/removeBlackLeafNode/initial.svg" width=300/">
    </div>
    </center>
 
@@ -1085,7 +1085,7 @@ It must not be `NONE`.
 
    <center>
    <div>
-   <img src="diagrams/removeBlackLeafNode/loop-entry.png" width=300/">
+   <img src="diagrams/removeBlackLeafNode/loop-entry.svg" width=300/">
    </div>
    </center>
 
@@ -1109,7 +1109,7 @@ It must not be `NONE`.
 
        <center>
        <div>
-       <img src="diagrams/removeBlackLeafNode/loop-invariant.png" width=400/">
+       <img src="diagrams/removeBlackLeafNode/loop-invariant.svg" width=400/">
        </div>
        </center>
 
@@ -1131,7 +1131,7 @@ It must not be `NONE`.
 
        <center>
        <div>
-       <img src="diagrams/removeBlackLeafNode/loop-invariant-a.png" width=400/">
+       <img src="diagrams/removeBlackLeafNode/loop-invariant-a.svg" width=400/">
        </div>
        </center>
 
@@ -1141,7 +1141,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-sibling-1.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-sibling-1.svg" width=500/">
            </div>
            </center>
 
@@ -1161,7 +1161,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-sibling-1a.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-sibling-1a.svg" width=500/">
            </div>
            </center>
 
@@ -1171,7 +1171,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-2.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-2.svg" width=500/">
                </div>
                </center>
 
@@ -1181,7 +1181,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-3.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-3.svg" width=500/">
                </div>
                </center>
 
@@ -1193,7 +1193,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-4.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-4.svg" width=500/">
                </div>
                </center>
 
@@ -1203,7 +1203,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-5.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-5.svg" width=500/">
                </div>
                </center>
 
@@ -1213,7 +1213,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-6.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-6.svg" width=500/">
                </div>
                </center>
 
@@ -1229,7 +1229,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-7.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-7.svg" width=500/">
                </div>
                </center>
 
@@ -1241,7 +1241,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-distant-nephew-1.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-distant-nephew-1.svg" width=500/">
            </div>
            </center>
 
@@ -1251,7 +1251,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-distant-nephew-2.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-distant-nephew-2.svg" width=500/">
            </div>
            </center>
 
@@ -1263,7 +1263,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-close-nephew-1.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-close-nephew-1.svg" width=500/">
            </div>
            </center>
 
@@ -1273,7 +1273,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-close-nephew-2.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-close-nephew-2.svg" width=500/">
            </div>
            </center>
 
@@ -1283,7 +1283,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-close-nephew-3.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-close-nephew-3.svg" width=500/">
            </div>
            </center>
 
@@ -1300,7 +1300,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-parent.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/red-parent.svg" width=500/">
            </div>
            </center>
 
@@ -1312,7 +1312,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/all-black-1.png" width=500/">
+           <img src="diagrams/removeBlackLeafNode/all-black-1.svg" width=500/">
            </div>
            </center>
 
@@ -1329,7 +1329,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/all-black-2.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/all-black-2.svg" width=500/">
                </div>
                </center>
 
@@ -1346,7 +1346,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/all-black-3.png" width=500/">
+               <img src="diagrams/removeBlackLeafNode/all-black-3.svg" width=500/">
                </div>
                </center>
 
