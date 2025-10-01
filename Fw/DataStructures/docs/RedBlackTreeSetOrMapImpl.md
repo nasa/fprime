@@ -256,7 +256,7 @@ section <a href="#red-black-colorings">**Red-Black Colorings**</a> as follows:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid-forest.svg" width=200/">
+<img src="diagrams/Red-Black-Trees/valid-forest.svg" width=150/">
 </div>
 </center>
 
