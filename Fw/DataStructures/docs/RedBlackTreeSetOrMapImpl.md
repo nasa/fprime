@@ -1573,7 +1573,7 @@ Before applying the function, the tree looks like this:
 
 <center>
 <div>
-<img src="diagrams/rotateSubtree/initial.png" width=300/">
+<img src="diagrams/rotateSubtree/initial.svg" width=300/">
 </div>
 </center>
 
@@ -1581,7 +1581,7 @@ After applying the function, the tree looks like this:
 
 <center>
 <div>
-<img src="diagrams/rotateSubtree/final.png" width=300/">
+<img src="diagrams/rotateSubtree/final.svg" width=300/">
 </div>
 </center>
 
