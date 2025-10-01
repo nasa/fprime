@@ -1185,6 +1185,8 @@ It must not be `NONE`.
                </div>
                </center>
 
+            1. Set `done = true` and break out of the loop.
+
         1. Otherwise if `getNodeColor(closeNephew) == RED`
 
             1. _The subtree has this shape:_
@@ -1215,6 +1217,8 @@ It must not be `NONE`.
                </div>
                </center>
 
+            1. Set `done = true` and break out of the loop.
+
         1. Otherwise
 
             1. Set `m_nodes[sibling].color = RED`.
@@ -1229,7 +1233,7 @@ It must not be `NONE`.
                </div>
                </center>
 
-        1. Set `done = true`.
+            1. Set `done = true` and break out of the loop.
 
     1. Otherwise if `getNodeColor(distantNephew) == RED`
 
@@ -1251,7 +1255,7 @@ It must not be `NONE`.
            </div>
            </center>
 
-        1. Set `done = true`.
+        1. Set `done = true` and break out of the loop.
 
     1. Otherwise if `getNodeColor(closeNephew) == RED`
 
@@ -1283,7 +1287,7 @@ It must not be `NONE`.
            </div>
            </center>
 
-        1. Set `done = true`.
+        1. Set `done = true` and break out of the loop.
 
     1. Otherwise if `getNodeColor(parent) == RED`
 
@@ -1300,7 +1304,7 @@ It must not be `NONE`.
            </div>
            </center>
 
-        1. Set `done = true`.
+        1. Set `done = true` and break out of the loop.
 
     1. Otherwise
 
@@ -1329,7 +1333,7 @@ It must not be `NONE`.
                </div>
                </center>
 
-            1. Set `done = true`.
+            1. Set `done = true` and break out of the loop.
 
         1. Otherwise
 
@@ -1350,8 +1354,6 @@ It must not be `NONE`.
                black height i + 3, and the right subtree has black height i + 2.
                So we need at least one more loop iteration.
                After incrementing i, the invariant at the top of the loop is satisfied._
-
-    1. If `done == true` then break out of the loop.
 
 1. Assert `done == true`.
 
