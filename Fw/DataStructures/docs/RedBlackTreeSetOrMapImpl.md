@@ -265,7 +265,7 @@ href="#valid-colorings">**Valid Colorings**</a> as follows:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/black-height-violation-forest.png" width=300/">
+<img src="diagrams/Red-Black-Trees/black-height-violation-forest.svg" width=300/">
 </div>
 </center>
 
