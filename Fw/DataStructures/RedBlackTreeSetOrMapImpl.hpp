@@ -533,12 +533,16 @@ class RedBlackTreeSetOrMapImpl final {
         // We assume (1) that the tree is a red-black tree, (2) that parent is NONE or
         // the child of parent in the direction `direction` is NONE, and (3) that
         // both children of node are NONE.
+        FW_ASSERT(this->m_nodes[node].getChild(Direction::LEFT) == Node::NONE);
+        FW_ASSERT(this->m_nodes[node].getChild(Direction::RIGHT) == Node::NONE);
         this->m_nodes[node].m_color = Color::RED;
         this->m_nodes[node].m_parent = parent;
         if (parent == Node::NONE) {
             this->m_root = node;
             // The tree was empty, and now it consists of a single red node.
         } else {
+            FW_ASSERT(this->m_nodes[parent].getChild(direction) == Node::NONE,
+                      static_cast<FwAssertArgType>(this->m_nodes[parent].getChild(direction)));
             // Set the parent
             this->m_nodes[parent].setChild(direction, node);
             const auto capacity = this->getCapacity();
@@ -1609,6 +1613,8 @@ class RedBlackTreeSetOrMapImpl final {
     void removeNodeWithOneChild(Index node,          //!< The node
                                 Direction direction  //!< The direction of the child
     ) {
+        // Since the tree is a valid red-black tree, a node with exactly one
+        // child must be black.
         FW_ASSERT(this->m_nodes[node].m_color == Color::BLACK,
                   static_cast<FwAssertArgType>(this->m_nodes[node].m_color));
         const auto parent = this->m_nodes[node].m_parent;
