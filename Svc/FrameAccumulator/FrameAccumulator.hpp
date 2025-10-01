@@ -15,8 +15,7 @@
 namespace Svc {
 
 class FrameAccumulator final : public FrameAccumulatorComponentBase {
-
-  friend class FrameAccumulatorTester;
+    friend class FrameAccumulatorTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -35,14 +34,13 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! Takes in parameters used in the Fw::MemAllocator pattern and configures a memory allocation for storing the
     //! circular buffer.
     void configure(const FrameDetector& detector,  //!< Frame detector helper instance
-                   FwEnumStoreType allocationId,  //!< Identifier used  when dealing with the Fw::MemAllocator
+                   FwEnumStoreType allocationId,   //!< Identifier used  when dealing with the Fw::MemAllocator
                    Fw::MemAllocator& allocator,    //!< Fw::MemAllocator used to acquire memory
                    FwSizeType store_size           //!< Size to request for circular buffer
     );
 
     //! \brief Deallocate internal resources (set up by configure() call)
     void cleanup();
-
 
   private:
     // ----------------------------------------------------------------------
@@ -59,9 +57,9 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! Handler implementation for bufferReturnIn
     //!
     //! Port receiving ownership back of buffers sent on dataOut
-    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& fwBuffer,  //!< The buffer
-                                const ComCfg::FrameContext& context  //!< The context object
+    void dataReturnIn_handler(FwIndexType portNum,                 //!< The port number
+                              Fw::Buffer& fwBuffer,                //!< The buffer
+                              const ComCfg::FrameContext& context  //!< The context object
                               ) override;
 
   private:

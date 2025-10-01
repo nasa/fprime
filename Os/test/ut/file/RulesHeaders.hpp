@@ -9,11 +9,11 @@
 #include <cstdio>
 #include <map>
 #include "Os/File.hpp"
+#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
-#include "Os/test/ut/file/SyntheticFileSystem.hpp"
 
 namespace Os {
 namespace Test {
@@ -28,7 +28,7 @@ struct Tester {
     };
 
     //! Assert in File.cpp for searching death text
-    static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/Os/File\\.cpp:[0-9]+\"";
+    static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/?Os/File\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the file is always valid
     Tester();
@@ -54,7 +54,8 @@ struct Tester {
 
     //! Performs the "open" action on the shadow state.
     //!
-    Os::File::Status shadow_open(const std::string &path, Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
+    Os::File::Status shadow_open(const std::string& path,
+                                 Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
                                  bool overwrite = false);
 
     //! Perform the "close" action on the shadow state.
@@ -114,7 +115,9 @@ struct Tester {
 
     //! Assert that the file is opened
     //!
-    void assert_file_opened(const std::string& path="", Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE, bool overwrite = false);
+    void assert_file_opened(const std::string& path = "",
+                            Os::File::Mode newly_opened_mode = Os::File::Mode::OPEN_NO_MODE,
+                            bool overwrite = false);
 
     //! Assert that the file is closed
     //!
@@ -154,7 +157,7 @@ struct Tester {
 //! \return pointer to tester subclass implementation
 //!
 std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation();
-}  // namespace FileTester
+}  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
 #endif  // __RULES_HEADERS__

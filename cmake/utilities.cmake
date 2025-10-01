@@ -481,8 +481,8 @@ endfunction()
 #  1. If passed a path, the module name is the '_'ed variant of the relative path from BUILD_ROOT
 #  2. If passes something which does not exist on the file system, it is just '_'ed
 #
-# i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
-#      Svc/ActiveLogger also becomes Svc_ActiveLogger
+# i.e. ${BUILD_ROOT}/Svc/EventManager becomes Svc_EventManager
+#      Svc/EventManager also becomes Svc_EventManager
 #
 # - **DIRECTORY_PATH:** (optional) path to infer MODULE_NAME from. Default: CMAKE_CURRENT_LIST_DIR
 # - **Return: MODULE_NAME** (set in parent scope)

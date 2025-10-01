@@ -18,7 +18,7 @@ In this document:
 ## `settings.ini` Settings
 
 The `settings.ini` file is written in the INI format as interpreted by the default settings of the
-Python `configparser` module. Should a user were to reference another key, the `%(other key)s` syntax should be used. The full format description is available here:
+Python `configparser` module. Should a user wish to reference another key, the `%(other key)s` syntax should be used. The full format description is available here:
 
 https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
 

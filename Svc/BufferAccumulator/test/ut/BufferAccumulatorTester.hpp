@@ -21,76 +21,73 @@
 namespace Svc {
 
 class BufferAccumulatorTester : public BufferAccumulatorGTestBase {
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
- public:
-  //! Construct object BufferAccumulatorTester
-  //!
-  explicit BufferAccumulatorTester(bool doAllocateQueue = true);
+  public:
+    //! Construct object BufferAccumulatorTester
+    //!
+    explicit BufferAccumulatorTester(bool doAllocateQueue = true);
 
-  //! Destroy object BufferAccumulatorTester
-  //!
-  ~BufferAccumulatorTester(void);
+    //! Destroy object BufferAccumulatorTester
+    //!
+    ~BufferAccumulatorTester(void);
 
- private:
-  // ----------------------------------------------------------------------
-  // Handlers for typed from ports
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-  //! Handler for from_bufferSendOutDrain
-  //!
-  void from_bufferSendOutDrain_handler(
-      const FwIndexType portNum,  //!< The port number
-      Fw::Buffer& fwBuffer);
+    //! Handler for from_bufferSendOutDrain
+    //!
+    void from_bufferSendOutDrain_handler(const FwIndexType portNum,  //!< The port number
+                                         Fw::Buffer& fwBuffer);
 
-  //! Handler for from_bufferSendOutReturn
-  //!
-  void from_bufferSendOutReturn_handler(
-      const FwIndexType portNum,  //!< The port number
-      Fw::Buffer& fwBuffer);
+    //! Handler for from_bufferSendOutReturn
+    //!
+    void from_bufferSendOutReturn_handler(const FwIndexType portNum,  //!< The port number
+                                          Fw::Buffer& fwBuffer);
 
-  //! Handler for from_pingOut
-  //!
-  void from_pingOut_handler(const FwIndexType portNum,  //!< The port number
-                            U32 key  //!< Value to return to pinger
-  );
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const FwIndexType portNum,  //!< The port number
+                              U32 key                     //!< Value to return to pinger
+    );
 
- private:
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-  //! Connect ports
-  //!
-  void connectPorts(void);
+    //! Connect ports
+    //!
+    void connectPorts(void);
 
-  //! Initialize components
-  //!
-  void initComponents(void);
+    //! Initialize components
+    //!
+    void initComponents(void);
 
- protected:
-  // ----------------------------------------------------------------------
-  // Variables
-  // ----------------------------------------------------------------------
+  protected:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-  //! The component under test
-  //!
-  BufferAccumulator component;
+    //! The component under test
+    //!
+    BufferAccumulator component;
 
-  //! Whether to allocate/deallocate a queue for the user
-  bool doAllocateQueue;
+    //! Whether to allocate/deallocate a queue for the user
+    bool doAllocateQueue;
 
+    // ----------------------------------------------------------------------
+    //  Methods
+    // ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  //  Methods
-  // ----------------------------------------------------------------------
-
-  //! Helper method to call doDispatch
-  void doDispatch(void);
+    //! Helper method to call doDispatch
+    void doDispatch(void);
 };
 
 }  // end namespace Svc
 
-#endif  //#ifndef TESTER_HPP
+#endif  // #ifndef TESTER_HPP

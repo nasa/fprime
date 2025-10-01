@@ -7,11 +7,11 @@
 #ifndef SeqDispatcher_HPP
 #define SeqDispatcher_HPP
 
+#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/WaitEnumAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
-#include "Fw/Types/WaitEnumAc.hpp"
-#include "Fw/Types/StringBase.hpp"
 
 namespace Svc {
 
@@ -31,27 +31,24 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     ~SeqDispatcher();
 
   protected:
-
     //! Handler for input port seqDoneIn
-    void
-    seqDoneIn_handler(FwIndexType portNum,         //!< The port number
-                      FwOpcodeType opCode,             //!< Command Op Code
-                      U32 cmdSeq,                      //!< Command Sequence
-                      const Fw::CmdResponse& response  //!< The command response argument
+    void seqDoneIn_handler(FwIndexType portNum,             //!< The port number
+                           FwOpcodeType opCode,             //!< Command Op Code
+                           U32 cmdSeq,                      //!< Command Sequence
+                           const Fw::CmdResponse& response  //!< The command response argument
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(FwIndexType portNum, //!< The port number
-                            const Fw::StringBase& fileName //!< The sequence file
+    void seqStartIn_handler(FwIndexType portNum,            //!< The port number
+                            const Fw::StringBase& fileName  //!< The sequence file
     );
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum, //!< The port number
-                          const Fw::StringBase& fileName //!< The sequence file
+    void seqRunIn_handler(FwIndexType portNum,            //!< The port number
+                          const Fw::StringBase& fileName  //!< The sequence file
     );
 
   private:
-
     // number of sequences dispatched (successful or otherwise)
     U32 m_dispatchedCount = 0;
     // number of errors from dispatched sequences (CmdResponse::EXECUTION_ERROR)
@@ -71,9 +68,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx,
-                     const Fw::StringBase& fileName,
-                     Fw::Wait block);
+    void runSequence(FwIndexType sequencerIdx, const Fw::StringBase& fileName, Fw::Wait block);
 
     // ----------------------------------------------------------------------
     // Command handler implementations
@@ -90,6 +85,6 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
                                const U32 cmdSeq);         /*!< The command sequence number*/
 };
 
-}  // end namespace components
+}  // namespace Svc
 
 #endif

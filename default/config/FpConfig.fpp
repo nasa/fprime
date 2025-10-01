@@ -64,17 +64,12 @@ type FwEventIdType = FwIdType
 @ The type of a command opcode
 type FwOpcodeType = FwIdType
 
-@ The type of a com packet descriptor
-type FwPacketDescriptorType = FwIdType
-
 @ The type of a parameter identifier
 type FwPrmIdType = FwIdType
 
 @ The type used to serialize a size value
 type FwSizeStoreType = U16
 
-@ The type used to serialize a time base value
-type FwTimeBaseStoreType = U16
 
 @ The type used to serialize a time context value
 type FwTimeContextStoreType = U8
@@ -88,3 +83,15 @@ type FwTraceIdType = U32
 @ The type used to serialize a C++ enumeration constant
 @ FPP enumerations are serialized according to their representation types
 type FwEnumStoreType = I32
+
+
+@ The type used to serialize a time base value
+type FwTimeBaseStoreType = U16
+
+@ Define enumeration for Time base types
+enum TimeBase : FwTimeBaseStoreType {
+    TB_NONE = 0              @< No time base has been established (Required)
+    TB_PROC_TIME = 1         @< Indicates time is processor cycle time. Not tied to external time
+    TB_WORKSTATION_TIME = 2  @< Time as reported on workstation where software is running. For testing. (Required)
+    TB_DONT_CARE = 0xFFFF    @< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed (Required)
+} default TB_NONE;

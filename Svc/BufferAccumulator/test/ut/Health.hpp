@@ -20,13 +20,13 @@ namespace Svc {
 namespace Health {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  //! Health ping test
-  void Ping(void);
+    //! Health ping test
+    void Ping(void);
 };
 
 }  // namespace Health

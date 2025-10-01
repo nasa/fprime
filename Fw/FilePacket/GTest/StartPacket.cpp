@@ -15,20 +15,16 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::StartPacket ::
-      compare(
-          const FilePacket::StartPacket& expected,
-          const FilePacket::StartPacket& actual
-      )
-    {
-      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
-      ASSERT_EQ(expected.getFileSize(), actual.getFileSize());
-      PathName::compare(expected.getSourcePath(), actual.getSourcePath());
-      PathName::compare(expected.getDestinationPath(), actual.getDestinationPath());
-    }
-
-  }
-
+void FilePackets::StartPacket ::compare(const FilePacket::StartPacket& expected,
+                                        const FilePacket::StartPacket& actual) {
+    FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
+    ASSERT_EQ(expected.getFileSize(), actual.getFileSize());
+    PathName::compare(expected.getSourcePath(), actual.getSourcePath());
+    PathName::compare(expected.getDestinationPath(), actual.getDestinationPath());
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

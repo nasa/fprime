@@ -87,5 +87,5 @@ struct LogGoodStringObject : public STest::Rule<MockLogging::FakeLogger> {
     // Log valid messages
     void action(MockLogging::FakeLogger& truth);
 };
-}       // namespace LoggerRules
+}  // namespace LoggerRules
 #endif  // FPRIME_LOGGERRULES_HPP

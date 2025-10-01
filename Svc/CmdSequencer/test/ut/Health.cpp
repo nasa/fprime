@@ -13,22 +13,20 @@
 
 namespace Svc {
 
-  namespace Health {
+namespace Health {
 
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-    void CmdSequencerTester ::
-      Ping()
-    {
-      const U32 key = 1234;
-      this->invoke_to_pingIn(0, key);
-      this->clearAndDispatch();
-      ASSERT_from_pingOut_SIZE(1);
-      ASSERT_from_pingOut(0, key);
-    }
-
-  }
-
+void CmdSequencerTester ::Ping() {
+    const U32 key = 1234;
+    this->invoke_to_pingIn(0, key);
+    this->clearAndDispatch();
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
 }
+
+}  // namespace Health
+
+}  // namespace Svc

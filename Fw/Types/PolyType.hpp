@@ -92,18 +92,19 @@ class PolyType : public Serializable {
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void toString(StringBase& dest, bool append) const;  //!< get string representation
-    void toString(StringBase& dest) const;               //!< get string representation
+    void toString(StringBase& dest) const override;      //!< get string representation
 #endif
 
-    PolyType& operator=(const PolyType& src);                      //!< PolyType operator=
-    bool operator<(const PolyType& other) const;                   //!< PolyType operator<
-    bool operator>(const PolyType& other) const;                   //!< PolyType operator>
-    bool operator>=(const PolyType& other) const;                  //!< PolyType operator>=
-    bool operator<=(const PolyType& other) const;                  //!< PolyType operator<=
-    bool operator==(const PolyType& other) const;                  //!< PolyType operator==
-    bool operator!=(const PolyType& other) const;                  //!< PolyType operator!=
-    SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< Serialize function
-    SerializeStatus deserialize(SerializeBufferBase& buffer);      //!< Deserialize function
+    PolyType& operator=(const PolyType& src);      //!< PolyType operator=
+    bool operator<(const PolyType& other) const;   //!< PolyType operator<
+    bool operator>(const PolyType& other) const;   //!< PolyType operator>
+    bool operator>=(const PolyType& other) const;  //!< PolyType operator>=
+    bool operator<=(const PolyType& other) const;  //!< PolyType operator<=
+    bool operator==(const PolyType& other) const;  //!< PolyType operator==
+    bool operator!=(const PolyType& other) const;  //!< PolyType operator!=
+
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< Serialize function
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;    //!< Deserialize function
 
   private:
     typedef enum {
@@ -122,8 +123,8 @@ class PolyType : public Serializable {
         TYPE_U64,  // !< U64 type stored
         TYPE_I64,  // !< I64 type stored
 #endif
-        TYPE_F32,  // !< F32 type stored
-        TYPE_F64,  // !< F64 type stored
+        TYPE_F32,   // !< F32 type stored
+        TYPE_F64,   // !< F64 type stored
         TYPE_BOOL,  // !< bool type stored
         TYPE_PTR    // !< pointer type stored
     } Type;
@@ -145,7 +146,7 @@ class PolyType : public Serializable {
         U64 u64Val;  //!< U64 data storage
         I64 i64Val;  //!< I64 data storage
 #endif
-        F64 f64Val;  //!< F64 data storage
+        F64 f64Val;    //!< F64 data storage
         F32 f32Val;    // !< F32 data storage
         void* ptrVal;  // !< pointer data storage
         bool boolVal;  // !< bool data storage

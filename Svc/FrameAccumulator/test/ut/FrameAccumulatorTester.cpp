@@ -8,8 +8,6 @@
 #include "STest/Random/Random.hpp"
 #include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 
-
-
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -23,7 +21,6 @@ FrameAccumulatorTester ::FrameAccumulatorTester()
     this->initComponents();
     this->connectPorts();
 }
-
 
 FrameAccumulatorTester ::~FrameAccumulatorTester() {
     component.cleanup();
@@ -44,10 +41,10 @@ void FrameAccumulatorTester ::testFrameDetected() {
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer, context);
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(1); // input buffer ownership was returned
-    ASSERT_from_dataOut_SIZE(1); // frame was sent
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // no data left in ring buffer
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), buffer_size); // all data was sent out
+    ASSERT_from_dataReturnOut_SIZE(1);                                            // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(1);                                                  // frame was sent
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);                  // no data left in ring buffer
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), buffer_size);  // all data was sent out
 }
 
 void FrameAccumulatorTester ::testMoreDataNeeded() {
@@ -61,9 +58,9 @@ void FrameAccumulatorTester ::testMoreDataNeeded() {
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer, context);
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(1); // input buffer ownership was returned
-    ASSERT_from_dataOut_SIZE(0); // frame was not sent (waiting on more data)
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), buffer_size); // data left in ring buffer
+    ASSERT_from_dataReturnOut_SIZE(1);                                      // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                                            // frame was not sent (waiting on more data)
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), buffer_size);  // data left in ring buffer
 }
 
 void FrameAccumulatorTester ::testNoFrameDetected() {
@@ -77,13 +74,12 @@ void FrameAccumulatorTester ::testNoFrameDetected() {
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer, context);
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(1); // input buffer ownership was returned
-    ASSERT_from_dataOut_SIZE(0); // No frame was sent out
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // all data was consumed and discarded
+    ASSERT_from_dataReturnOut_SIZE(1);                            // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                                  // No frame was sent out
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);  // all data was consumed and discarded
 }
 
 void FrameAccumulatorTester ::testReceiveZeroSizeBuffer() {
-
     // Prepare a zero size buffer
     U8 data[1] = {0};
     Fw::Buffer buffer(data, 0);
@@ -91,9 +87,9 @@ void FrameAccumulatorTester ::testReceiveZeroSizeBuffer() {
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer, context);
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(1); // input buffer ownership was returned
-    ASSERT_from_dataOut_SIZE(0); // No frame was sent out
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data in ring buffer
+    ASSERT_from_dataReturnOut_SIZE(1);                            // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                                  // No frame was sent out
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);  // No data in ring buffer
     ASSERT_EQ(Types::CircularBufferTester::tester_get_m_head_idx(this->component.m_inRing), 0);
 }
 
@@ -110,14 +106,14 @@ void FrameAccumulatorTester ::testAccumulateTwoBuffers() {
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer1, context);
     // Next result is detection of a full frame, size = buffer1_size + buffer2_size
-    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer1_size + buffer2_size );
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer1_size + buffer2_size);
     // Receive the buffer on dataIn
     this->invoke_to_dataIn(0, buffer2, context);
 
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(2); // both input buffers ownership were returned
-    ASSERT_from_dataOut_SIZE(1); // Exactly one frame was sent out
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data in ring buffer
+    ASSERT_from_dataReturnOut_SIZE(2);                            // both input buffers ownership were returned
+    ASSERT_from_dataOut_SIZE(1);                                  // Exactly one frame was sent out
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);  // No data in ring buffer
 }
 
 void FrameAccumulatorTester ::testAccumulateBuffersEmitFrame() {
@@ -125,10 +121,10 @@ void FrameAccumulatorTester ::testAccumulateBuffersEmitFrame() {
     U32 buffer_count = 0;
     this->mockAccumulateFullFrame(frame_size, buffer_count);
     // Checks
-    ASSERT_from_dataReturnOut_SIZE(buffer_count); // all input buffers ownership were returned
-    ASSERT_from_dataOut_SIZE(1); // Exactly one frame was sent out
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data left in ring buffer
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), frame_size); // accumulated buffer size
+    ASSERT_from_dataReturnOut_SIZE(buffer_count);                 // all input buffers ownership were returned
+    ASSERT_from_dataOut_SIZE(1);                                  // Exactly one frame was sent out
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);  // No data left in ring buffer
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), frame_size);  // accumulated buffer size
 }
 
 void FrameAccumulatorTester ::testAccumulateBuffersEmitManyFrames() {
@@ -143,15 +139,15 @@ void FrameAccumulatorTester ::testAccumulateBuffersEmitManyFrames() {
         this->mockAccumulateFullFrame(frame_size, buffer_count);
         total_buffer_received += buffer_count;
 
-        ASSERT_from_dataReturnOut_SIZE(total_buffer_received); // all input buffers returned
-        ASSERT_from_dataOut_SIZE(i+1); // Exactly one frame was sent out
-        ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data left in ring buffer
-        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).data.getSize(), frame_size); // accumulated buffer size
+        ASSERT_from_dataReturnOut_SIZE(total_buffer_received);                       // all input buffers returned
+        ASSERT_from_dataOut_SIZE(i + 1);                                             // Exactly one frame was sent out
+        ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);                 // No data left in ring buffer
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).data.getSize(), frame_size);  // accumulated buffer size
     }
     // Final checks
-    ASSERT_from_dataReturnOut_SIZE(total_buffer_received); // all input buffers returned
-    ASSERT_from_dataOut_SIZE(max_iters); // Exactly max_iters frames were sent out
-    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data left in ring buffer
+    ASSERT_from_dataReturnOut_SIZE(total_buffer_received);        // all input buffers returned
+    ASSERT_from_dataOut_SIZE(max_iters);                          // Exactly max_iters frames were sent out
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);  // No data left in ring buffer
 }
 
 void FrameAccumulatorTester ::testBufferReturnDeallocation() {
@@ -159,7 +155,7 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
     this->invoke_to_dataReturnIn(0, buffer, context);
-    ASSERT_from_bufferDeallocate_SIZE(1);     // incoming buffer should be deallocated
+    ASSERT_from_bufferDeallocate_SIZE(1);  // incoming buffer should be deallocated
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), data);
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
@@ -194,7 +190,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
     // Send last buffer with FRAME_DETECTED
     buffer_size = STest::Random::lowerUpper(1, buffer_max_size);
     buffer.setSize(buffer_size);
-    accumulated_size += buffer_size; // accumulate once more (sending last buffer below)
+    accumulated_size += buffer_size;  // accumulate once more (sending last buffer below)
     // Send last buffer with finally FRAME_DETECTED and total accumulated + last buffer
     this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, accumulated_size);
     // Receive the last buffer on dataIn
@@ -206,16 +202,12 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 // Port handler overrides
 // ----------------------------------------------------------------------
-Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(
-        FwIndexType portNum,
-        FwSizeType size
-    )
-  {
+Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);
     ::memset(this->m_buffer.getData(), 0, size);
     return this->m_buffer;
-  }
+}
 
 }  // namespace Svc

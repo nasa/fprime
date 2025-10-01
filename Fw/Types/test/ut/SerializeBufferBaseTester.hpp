@@ -7,9 +7,8 @@
 #ifndef FW_SerializeBufferBaseTester_HPP
 #define FW_SerializeBufferBaseTester_HPP
 
-#include <Fw/Types/Serializable.hpp>
 #include <gtest/gtest.h>
-
+#include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
 
@@ -36,7 +35,7 @@ class SerializeBufferBaseTester {
         FwSizeType prevSerLoc = buff.m_serLoc;
 
         // Serialize the value
-        Fw::SerializeStatus status = buff.serialize(value);
+        Fw::SerializeStatus status = buff.serializeFrom(value);
 
         // Verify serialization was successful and pointer advanced correctly
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
@@ -48,7 +47,7 @@ class SerializeBufferBaseTester {
         FwSizeType prevSerLoc = buff.m_serLoc;
 
         // Serialize the value
-        Fw::SerializeStatus status = buff.serialize(value);
+        Fw::SerializeStatus status = buff.serializeFrom(value);
 
         // Verify serialization was successful and pointer advanced correctly
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
@@ -59,7 +58,7 @@ class SerializeBufferBaseTester {
     static void verifyU8Deserialization(Fw::SerializeBufferBase& buff, U8& actualValue, U8 expectedValue) {
         FwSizeType prevDeserLoc = buff.m_deserLoc;
 
-        Fw::SerializeStatus status = buff.deserialize(actualValue);
+        Fw::SerializeStatus status = buff.deserializeTo(actualValue);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
         ASSERT_EQ(expectedValue, actualValue);
@@ -69,7 +68,7 @@ class SerializeBufferBaseTester {
     static void verifyI8Deserialization(Fw::SerializeBufferBase& buff, I8& actualValue, I8 expectedValue) {
         FwSizeType prevDeserLoc = buff.m_deserLoc;
 
-        Fw::SerializeStatus status = buff.deserialize(actualValue);
+        Fw::SerializeStatus status = buff.deserializeTo(actualValue);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
         ASSERT_EQ(expectedValue, actualValue);
@@ -90,6 +89,6 @@ class SerializeBufferBaseTester {
     }
 };
 
-}
+}  // namespace Fw
 
-#endif // FW_SerializeBufferBaseTester_HPP
+#endif  // FW_SerializeBufferBaseTester_HPP

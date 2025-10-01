@@ -2,23 +2,25 @@
 // \title Os/Task.cpp
 // \brief common function implementation for Os::Task
 // ======================================================================
-#include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Os/Task.hpp>
 
 namespace Os {
 
-TaskInterface::Arguments::Arguments(const Fw::StringBase &name, const Os::TaskInterface::taskRoutine routine,
-                                    void * const routine_argument, const FwTaskPriorityType priority,
-                                    const FwSizeType stackSize, const FwSizeType cpuAffinity,
-                                    const FwTaskIdType identifier) :
-    m_name(name),
-    m_routine(routine),
-    m_routine_argument(routine_argument),
-    m_priority(priority),
-    m_stackSize(stackSize),
-    m_cpuAffinity(cpuAffinity),
-    m_identifier(identifier)
-{
+TaskInterface::Arguments::Arguments(const Fw::StringBase& name,
+                                    const Os::TaskInterface::taskRoutine routine,
+                                    void* const routine_argument,
+                                    const FwTaskPriorityType priority,
+                                    const FwSizeType stackSize,
+                                    const FwSizeType cpuAffinity,
+                                    const FwTaskIdType identifier)
+    : m_name(name),
+      m_routine(routine),
+      m_routine_argument(routine_argument),
+      m_priority(priority),
+      m_stackSize(stackSize),
+      m_cpuAffinity(cpuAffinity),
+      m_identifier(identifier) {
     FW_ASSERT(routine != nullptr);
 }
 
@@ -79,19 +81,24 @@ Task::State Task::getState() {
     return state;
 }
 
-Task::Status Task::start(const Fw::StringBase &name, const taskRoutine routine, void* const arg,
-                         const FwTaskPriorityType priority, const ParamType stackSize, const ParamType cpuAffinity,
+Task::Status Task::start(const Fw::StringBase& name,
+                         const taskRoutine routine,
+                         void* const arg,
+                         const FwTaskPriorityType priority,
+                         const ParamType stackSize,
+                         const ParamType cpuAffinity,
                          const ParamType identifier) {
     FW_ASSERT(routine != nullptr);
-    return this->start(Task::Arguments(name, routine, arg,
-                                       priority,
-                                       stackSize,
-                                       cpuAffinity,
-                                       static_cast<FwTaskIdType>(identifier)));
+    return this->start(
+        Task::Arguments(name, routine, arg, priority, stackSize, cpuAffinity, static_cast<FwTaskIdType>(identifier)));
 }
 
-
 Task::Status Task::start(const Task::Arguments& arguments) {
+    Task::init();
+    // init call above is to ensure singleton is initialized in a thread-safe
+    // manner and such that the address sanitizer does not inadvertently
+    // result in a stack overflow when multiple calls to getSingleton are made
+    // simultaneously from different threads. (As was observed in UT runs.)
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;
@@ -152,7 +159,8 @@ void Task::suspend(Task::SuspensionType suspensionType) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     this->m_delegate.suspend(suspensionType);
     this->m_lock.lock();
-    this->m_state = (suspensionType == Task::SuspensionType::INTENTIONAL) ? State::SUSPENDED_INTENTIONALLY : State::SUSPENDED_UNINTENTIONALLY;
+    this->m_state = (suspensionType == Task::SuspensionType::INTENTIONAL) ? State::SUSPENDED_INTENTIONALLY
+                                                                          : State::SUSPENDED_UNINTENTIONALLY;
     this->m_lock.unlock();
 }
 
@@ -194,7 +202,7 @@ Os::TaskInterface::Status Task::delay(Fw::TimeInterval interval) {
 
 void Task::init() {
     // Force trigger on the fly singleton setup
-    (void) Task::getSingleton();
+    (void)Task::getSingleton();
 }
 
 Task& Task::getSingleton() {
@@ -205,4 +213,4 @@ Task& Task::getSingleton() {
 void Task::registerTaskRegistry(TaskRegistry* registry) {
     Task::s_taskRegistry = registry;
 }
-}
+}  // namespace Os

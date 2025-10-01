@@ -21,7 +21,7 @@ _ = cmake.get_build(
     "SYMLINKED_UT_BUILD",
     SYMLINK_PATH / "Ref",
     cmake_arguments={"BUILD_TESTING": "ON", "CMAKE_DEBUG_OUTPUT": "ON"},
-    make_targets=["Ref", "ut_exe"],
+    make_targets=["Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 

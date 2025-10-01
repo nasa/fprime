@@ -26,13 +26,12 @@ TestMemory::Status TestMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     return Status::ERROR;
 }
 
-
 MemoryHandle* TestMemory::getHandle() {
     StaticData::data.lastCalled = StaticData::LastFn::HANDLE_FN;
     return &this->m_handle;
 }
 
-} // namespace Test
-} // namespace Memory
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Memory
+}  // namespace Stub
+}  // namespace Os

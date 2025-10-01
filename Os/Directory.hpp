@@ -7,8 +7,8 @@
 #define _OS_DIRECTORY_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Os/Os.hpp>
 #include <Fw/Types/String.hpp>
+#include <Os/Os.hpp>
 
 namespace Os {
 
@@ -17,17 +17,17 @@ struct DirectoryHandle {};
 class DirectoryInterface {
   public:
     enum Status {
-        OP_OK, //!<  Operation was successful
-        DOESNT_EXIST, //!<  Directory doesn't exist
-        NO_PERMISSION, //!<  No permission to read directory
-        NOT_OPENED, //!<  Directory hasn't been opened yet
-        NOT_DIR, //!<  Path is not a directory
-        NO_MORE_FILES, //!<  Directory stream has no more files
-        FILE_LIMIT, //!<  Directory has more files than can be read
-        BAD_DESCRIPTOR, //!<  Directory stream descriptor is invalid
-        ALREADY_EXISTS, //!<  Directory already exists
-        NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
-        OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
+        OP_OK,           //!<  Operation was successful
+        DOESNT_EXIST,    //!<  Directory doesn't exist
+        NO_PERMISSION,   //!<  No permission to read directory
+        NOT_OPENED,      //!<  Directory hasn't been opened yet
+        NOT_DIR,         //!<  Path is not a directory
+        NO_MORE_FILES,   //!<  Directory stream has no more files
+        FILE_LIMIT,      //!<  Directory has more files than can be read
+        BAD_DESCRIPTOR,  //!<  Directory stream descriptor is invalid
+        ALREADY_EXISTS,  //!<  Directory already exists
+        NOT_SUPPORTED,   //!<  Operation is not supported by the current implementation
+        OTHER_ERROR,     //!<  A catch-all for other errors. Have to look in implementation-specific code
     };
 
     enum OpenMode {
@@ -56,7 +56,6 @@ class DirectoryInterface {
     //! \brief provide a pointer to a Directory delegate object
     static DirectoryInterface* getDelegate(DirectoryHandleStorage& aligned_new_memory);
 
-
     // -----------------------------------------------------------------
     // Directory operations to be implemented by an OSAL implementation
     // -----------------------------------------------------------------
@@ -65,7 +64,7 @@ class DirectoryInterface {
 
     //! \brief Open or create a directory
     //!
-    //! Using the path provided, this function will open or create a directory. 
+    //! Using the path provided, this function will open or create a directory.
     //! Use OpenMode::READ to open an existing directory and error if the directory is not found
     //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
     //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
@@ -96,7 +95,7 @@ class DirectoryInterface {
     //! \param fileNameBuffer: buffer to store filename
     //! \param buffSize: size of fileNameBuffer
     //! \return status of the operation
-    virtual Status read(char * fileNameBuffer, FwSizeType buffSize) = 0;
+    virtual Status read(char* fileNameBuffer, FwSizeType buffSize) = 0;
 
     //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
     //!
@@ -106,8 +105,6 @@ class DirectoryInterface {
 
     //! \brief Close directory
     virtual void close() = 0;
-
-
 };
 
 //! \brief Directory class
@@ -128,7 +125,6 @@ class Directory final : public DirectoryInterface {
     //! \return internal Directory handle representation
     DirectoryHandle* getHandle() override;
 
-
     // ------------------------------------------------------------
     // Implementation-specific Directory member functions
     // ------------------------------------------------------------
@@ -136,7 +132,7 @@ class Directory final : public DirectoryInterface {
 
     //! \brief Open or create a directory
     //!
-    //! Using the path provided, this function will open or create a directory. 
+    //! Using the path provided, this function will open or create a directory.
     //! Use OpenMode::READ to open an existing directory and error if the directory is not found
     //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
     //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
@@ -171,12 +167,10 @@ class Directory final : public DirectoryInterface {
     //! \param fileNameBuffer: buffer to store filename
     //! \param buffSize: size of fileNameBuffer
     //! \return status of the operation
-    Status read(char * fileNameBuffer, FwSizeType buffSize) override;
-
+    Status read(char* fileNameBuffer, FwSizeType buffSize) override;
 
     //! \brief Close directory
     void close() override;
-
 
     // ------------------------------------------------------------
     // Common functions built on top of OS-specific functions
@@ -211,16 +205,16 @@ class Directory final : public DirectoryInterface {
     Status getFileCount(FwSizeType& fileCount);
 
   private:
-    bool m_is_open; //!< Flag indicating if the directory has been open
+    bool m_is_open;  //!< Flag indicating if the directory has been open
 
   private:
-    // This section is used to store the implementation-defined Directory handle. To Os::Directory and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
+    // This section is used to store the implementation-defined Directory handle. To Os::Directory and fprime, this type
+    // is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
     alignas(FW_HANDLE_ALIGNMENT) DirectoryHandleStorage m_handle_storage;  //!< Directory handle storage
     DirectoryInterface& m_delegate;
 };
 
-}
+}  // namespace Os
 
 #endif

@@ -19,7 +19,6 @@
 // Used to get the Os::Console
 #include <Os/Os.hpp>
 
-
 /**
  * \brief print commandline help message
  *
@@ -82,8 +81,8 @@ int main(int argc, char* argv[]) {
     }
     // Object for communicating state to the reference topology
     Ref::TopologyState inputs;
-    inputs.comCcsds.hostname = hostname;
-    inputs.comCcsds.port = port_number;
+    inputs.hostname = hostname;
+    inputs.port = port_number;
 
     // Setup program shutdown via Ctrl-C
     signal(SIGINT, signalHandler);

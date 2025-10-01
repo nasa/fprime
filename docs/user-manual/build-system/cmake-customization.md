@@ -11,43 +11,25 @@ cannot be found herein.
 ## Build F Prime Utilities
 
 Adding a utility executable that depends on F prime code is easy. Just perform a standard call to
-`register_fprime_executable`. Care should be taken to set the variable `EXECUTABLE_NAME` before
-making this call in order to set the utility's name. This executable will then be output as part
-of the deployment's build. A separate tools deployment may be used to build only utilities.
+`register_fprime_executable`. Care should be taken to set the executable name as the first argument to that
+call. This executable will then be output as part of the deployment's build and may be built directly by name.
+A separate tools deployment may be used to build only utilities.
 
 See: [API](cmake-api.md)
 
 ## Custom Build-System Commands (Make Targets)
 
 Custom build targets that need to be built against modules and global targets can be generated
-using the hook pattern. This pattern involves creating a file with two functions - `add_global_target` and `add_module_target`. These functions are called to add targets to the top level and each module respectively.
+using the hook pattern. This pattern involves creating a file with three functions - `<target>_add_global_target`, `<target>_add_module_target`, and `<target>_add_deployment_target`. These functions are called to add targets to the top level and each module respectively.
 Then this file is registered with `register_fprime_target`.
 
-In the two add functions, the user is expected to call the `add_custom_target` CMake command in order to compose the target itself. **Note:** the user may simply call this function directly to
-add targets that don't have both per-module and global steps.
+These functions can have any code the target needs, but typically uses `add_custom_target` to register the actual target.
 
 See:
   - [add_custom_target](https://cmake.org/cmake/help/latest/command/add_custom_target.html) to view
 information on CMake targets.
   - [API](cmake-api.md) for the syntax of the register call
   - [Targets](cmake-targets.md) for information on the built-in targets
-  - [F´ standard targets](https://github.com/nasa/fprime/tree/devel/cmake/target) as an example of adding targets
-
-**Example (Raw Global Target):**
-
-```
-add_custom_target(
-            dict
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/dict/serializable ${CMAKE_SOURCE_DIR}/py_dict/serializable
-            COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/py_dict/serializable/__init__.py
-        )
-```
-**Running Example:**
-
-```
-cmake ../Ref
-make dict
-```
 
 ## Custom External Libraries With Other Build Systems
 
@@ -60,7 +42,5 @@ dependency, and `add_custom_command` is used when the system needs access to the
 Alternatively, `ExternalProject_Add` can be used if the external library requires download,
 version control, and building steps.
 
-**Supporting Documentation:**
-1. [https://cmake.org/cmake/help/latest/command/add_custom_target.html](https://cmake.org/cmake/help/latest/command/add_custom_target.html)
-2. [https://cmake.org/cmake/help/latest/command/add_custom_command.html](https://cmake.org/cmake/help/latest/command/add_custom_command.html)
-3. [https://cmake.org/cmake/help/latest/module/ExternalProject.html](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
+For a guide on integrating with another build system see:
+[How To: Integrate External Libraries](../../how-to/integrate-external-libraries.md).

@@ -123,7 +123,6 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     U8 m_buffer_slot[2048];
 };
 
-
 }  // namespace Svc
 
 #endif

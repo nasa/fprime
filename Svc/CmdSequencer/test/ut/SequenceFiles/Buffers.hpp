@@ -16,45 +16,35 @@
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    namespace Buffers {
+namespace Buffers {
 
-      //! A file buffer
-      class FileBuffer :
-        public Fw::SerializeBufferBase
-      {
+//! A file buffer
+class FileBuffer : public Fw::SerializeBufferBase {
+  public:
+    enum Constants { CAPACITY = 4096 };
 
-        public:
+  public:
+    FwSizeType getBuffCapacity() const;
 
-          enum Constants {
-            CAPACITY = 4096
-          };
+    U8* getBuffAddr();
 
-        public:
+    const U8* getBuffAddr() const;
 
-          FwSizeType getBuffCapacity() const;
+  private:
+    U8 m_buff[CAPACITY];
+};
 
-          U8* getBuffAddr();
+//! Write a buffer to a file
+void write(const Fw::SerializeBufferBase& buffer,  //!< The buffer
+           const char* fileName                    //!< The file name
+);
 
-          const U8* getBuffAddr() const;
+}  // namespace Buffers
 
-        private:
+}  // namespace SequenceFiles
 
-          U8 m_buff[CAPACITY];
-
-      };
-
-      //! Write a buffer to a file
-      void write(
-          const Fw::SerializeBufferBase& buffer, //!< The buffer
-          const char* fileName //!< The file name
-      );
-
-    }
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

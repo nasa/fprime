@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
+#include "Fw/Types/Assert.hpp"
 
 namespace Fw {
 
@@ -35,11 +35,11 @@ void SerialBuffer ::fill() {
 }
 
 SerializeStatus SerialBuffer ::pushBytes(const U8* const addr, const FwSizeType n) {
-    return this->serialize(const_cast<U8*>(addr), n, Fw::Serialization::OMIT_LENGTH);
+    return this->serializeFrom(const_cast<U8*>(addr), n, Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus SerialBuffer ::popBytes(U8* const addr, FwSizeType n) {
-    return this->deserialize(addr, n, Fw::Serialization::OMIT_LENGTH);
+    return this->deserializeTo(addr, n, Fw::Serialization::OMIT_LENGTH);
 }
 
 }  // namespace Fw

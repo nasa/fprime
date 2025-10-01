@@ -29,11 +29,19 @@ jobs:
       - uses: ./.github/actions/setup
       - name: "Check C++ Formatting"
         env:
+          # Svc is currently listing all but Svc/FpySequencer
           CHECKED_DIRS: >-
-            Fw/Buffer
-            Fw/Cmd
-            Fw/Com
-            Svc/Ccsds
+            CFDP
+            default
+            Drv
+            FppTestProject
+            Fw
+            Os
+            Ref
+            Svc
+            TestUtils
+            Utils
+
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS
         shell: bash

@@ -4,9 +4,9 @@
 #include "Fw/Types/MallocAllocator.hpp"
 
 namespace ComCcsds {
-    namespace Allocation {
-        extern Fw::MemAllocator& memAllocator;
-    }
+namespace Allocation {
+extern Fw::MemAllocator& memAllocator;
 }
+}  // namespace ComCcsds
 
-#endif 
+#endif

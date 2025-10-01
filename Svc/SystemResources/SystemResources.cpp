@@ -10,9 +10,9 @@
 //
 // ======================================================================
 
-#include <cmath>  //isnan()
-#include <Svc/SystemResources/SystemResources.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/SystemResources/SystemResources.hpp>
+#include <cmath>  //isnan()
 
 namespace Svc {
 
@@ -22,7 +22,6 @@ namespace Svc {
 
 SystemResources ::SystemResources(const char* const compName)
     : SystemResourcesComponentBase(compName), m_cpu_count(0), m_enable(true) {
-
     // Structure initializations
     m_mem.used = 0;
     m_mem.total = 0;
@@ -75,9 +74,7 @@ void SystemResources ::run_handler(const FwIndexType portNum, U32 tick_time_hz) 
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
-                                         const U32 cmdSeq,
-                                         SystemResourceEnabled enable) {
+void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, SystemResourceEnabled enable) {
     m_enable = (enable == SystemResourceEnabled::ENABLED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

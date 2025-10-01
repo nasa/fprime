@@ -69,7 +69,7 @@ class BufferRepeater final : public BufferRepeaterComponentBase {
     //! Handler implementation for portIn
     //!
     void portIn_handler(FwIndexType portNum, /*!< The port number*/
-                        Fw::Buffer& Buffer       /*!< The serialization buffer*/
+                        Fw::Buffer& Buffer   /*!< The serialization buffer*/
     );
 
     BufferRepeaterFailureOption m_allocation_failure_response;  //!< Local storage for configured response

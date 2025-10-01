@@ -18,32 +18,31 @@
 #ifndef FPRIME_BASIC_TYPES_H
 #define FPRIME_BASIC_TYPES_H
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
-#include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/BasicTypes.h>
 #include <Platform/PlatformTypes.h>
 #include <config/FpConfig.h>
-
 
 // ----------------------------------------------------------------------
 // Type aliases defined by FPP
 // ----------------------------------------------------------------------
 
-#include <config/FwIndexTypeAliasAc.h>
-#include <config/FwSizeTypeAliasAc.h>
-#include <config/FwSignedSizeTypeAliasAc.h>
 #include <config/FwAssertArgTypeAliasAc.h>
-#include <config/FwTaskPriorityTypeAliasAc.h>
-#include <config/FwTaskIdTypeAliasAc.h>
+#include <config/FwIndexTypeAliasAc.h>
 #include <config/FwQueuePriorityTypeAliasAc.h>
+#include <config/FwSignedSizeTypeAliasAc.h>
+#include <config/FwSizeTypeAliasAc.h>
+#include <config/FwTaskIdTypeAliasAc.h>
+#include <config/FwTaskPriorityTypeAliasAc.h>
 
-#include <config/FwIdTypeAliasAc.h>
 #include <config/FwChanIdTypeAliasAc.h>
 #include <config/FwDpIdTypeAliasAc.h>
 #include <config/FwDpPriorityTypeAliasAc.h>
 #include <config/FwEnumStoreTypeAliasAc.h>
 #include <config/FwEventIdTypeAliasAc.h>
+#include <config/FwIdTypeAliasAc.h>
 #include <config/FwOpcodeTypeAliasAc.h>
 #include <config/FwPacketDescriptorTypeAliasAc.h>
 #include <config/FwPrmIdTypeAliasAc.h>
@@ -58,7 +57,7 @@ extern "C" {
 typedef FwSizeStoreType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwSizeStoreType
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
-#endif // FPRIME_BASIC_TYPES_H
+#endif  // FPRIME_BASIC_TYPES_H

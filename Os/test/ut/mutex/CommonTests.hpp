@@ -2,18 +2,15 @@
 // \title Os/test/ut/mutex/CommonTests.hpp
 // \brief GoogleTest fixture definitions used in common Mutex testing
 // ======================================================================
-#include <Os/Mutex.hpp>
 #include <gtest/gtest.h>
+#include <Os/Mutex.hpp>
 #include <Os/test/ut/mutex/RulesHeaders.hpp>
 
 #ifndef OS_TEST_UT_COMMON_MUTEX_TESTS_HPP
 #define OS_TEST_UT_COMMON_MUTEX_TESTS_HPP
 namespace Os {
 namespace Test {
-namespace Mutex {
-
-
-}  // namespace Mutex
+namespace Mutex {}  // namespace Mutex
 }  // namespace Test
 }  // namespace Os
 

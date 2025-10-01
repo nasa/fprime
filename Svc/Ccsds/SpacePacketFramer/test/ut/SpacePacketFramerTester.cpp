@@ -59,10 +59,10 @@ void SpacePacketFramerTester::testNominalFraming() {
         payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
     }
     Fw::Buffer data(payload, sizeof(payload));
-    ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
+    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     ComCfg::FrameContext context;
-    context.setapid(apid);
+    context.set_apid(apid);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);
@@ -86,7 +86,7 @@ void SpacePacketFramerTester::testNominalFraming() {
 // ----------------------------------------------------------------------
 
 U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
-                                                           const ComCfg::APID& apid,
+                                                           const ComCfg::Apid& apid,
                                                            U16 sequenceCount) {
     return this->m_nextSeqCount;
 }

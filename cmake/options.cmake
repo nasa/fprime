@@ -91,22 +91,6 @@ if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHED
 endif()
 
 ####
-# `FPRIME_ENABLE_UTIL_TARGETS`:
-#
-# Enables the targets required to run using `fprime-util`.  These include: check and refresh_cache.
-# This switch defaults to "ON" providing those targets, but may be set to off when running within an
-# IDE where limiting the number of targets is desirable. Note: unit test targets are still only generated when running
-# with -DBUILD_TESTING=ON.
-#
-# **Values:**
-# - ON: (default) generate all targets
-# - OFF: only generate executable, and library targets
-#
-# e.g. `-DFPRIME_ENABLE_UTIL_TARGETS=ON`
-####
-option(FPRIME_ENABLE_UTIL_TARGETS "Enable fprime-util targets" ON)
-
-####
 # `FPRIME_ENABLE_FRAMEWORK_UTS`:
 #
 # Allow a project to run fprime UTs from the core framework. Default: on,  run fprime framework UTs. This

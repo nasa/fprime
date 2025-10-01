@@ -4,43 +4,31 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Fw/Types/String.hpp"
+#include "Os/Os.hpp"
 #include "Os/Stub/test/Task.hpp"
 #include "Os/test/ut/task/CommonTests.hpp"
 #include "Os/test/ut/task/RulesHeaders.hpp"
-#include "Os/Os.hpp"
 
 using namespace Os::Stub::Task::Test;
 
-void testMethod(void* test) {
-
-}
+void testMethod(void* test) {}
 
 // Basic file tests
 class Interface : public ::testing::Test {
-public:
+  public:
     //! Setup function delegating to UT setUp function
-    void SetUp() override {
-        StaticData::data = StaticData();
-    }
+    void SetUp() override { StaticData::data = StaticData(); }
 
     //! Setup function delegating to UT tearDown function
-    void TearDown() override {
-        StaticData::data = StaticData();
-    }
+    void TearDown() override { StaticData::data = StaticData(); }
 };
 
 struct QuickRegistry : Os::TaskRegistry {
+    void addTask(Os::Task* task) override { this->m_task = task; }
 
-    void addTask(Os::Task* task) override {
-        this->m_task = task;
-    }
-
-    void removeTask(Os::Task* task) override {
-        this->m_task = nullptr;
-    }
+    void removeTask(Os::Task* task) override { this->m_task = nullptr; }
     Os::Task* m_task = nullptr;
 };
-
 
 // Ensure that Os::Task properly calls the implementation constructor
 TEST_F(Interface, Construction) {
@@ -78,7 +66,6 @@ TEST_F(Interface, OnStart) {
     StaticData::data.startStatus = Os::Task::Status::UNKNOWN_ERROR;
     Os::Task::Arguments arguments(Fw::String("Task"), &testMethod, nullptr);
     ASSERT_EQ(task.start(arguments), StaticData::data.startStatus);
-
 }
 
 // Ensure that Os::Task properly calls the implementation suspend
@@ -129,15 +116,13 @@ TEST_F(Interface, RegistryRemove) {
     StaticData::data.startStatus = Os::Task::Status::OP_OK;
     Os::Task::Arguments arguments(Fw::String("Task"), &testMethod, nullptr);
     ASSERT_EQ(task->start(arguments), StaticData::data.startStatus);
-    Os::Test::Task::Tester::resetNumTasks(); // Reset task count for rules-based testing
+    Os::Test::Task::Tester::resetNumTasks();  // Reset task count for rules-based testing
     ASSERT_EQ(registry.m_task, task);
     delete task;
     ASSERT_EQ(registry.m_task, nullptr);
-
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

@@ -26,8 +26,8 @@ ChronoTimeTester ::~ChronoTimeTester() {}
 // ----------------------------------------------------------------------
 
 void ChronoTimeTester ::test_basic_time() {
-    const U32 SECONDS_SINCE_EPOCH_2024_11_25 = 1732492800ull; // Time since epoch as of date of writing
-    const std::string expected_epoch_time("Thu Jan  1 00:00:00 1970\n");  //std::asctime adds \n
+    const U32 SECONDS_SINCE_EPOCH_2024_11_25 = 1732492800ull;             // Time since epoch as of date of writing
+    const std::string expected_epoch_time("Thu Jan  1 00:00:00 1970\n");  // std::asctime adds \n
 
     // Calculate the system_clock epoch. This test is only valid when the system_clock uses unix epoch.
     const auto epoch = std::chrono::time_point<std::chrono::system_clock>{};

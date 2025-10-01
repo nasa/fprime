@@ -18,175 +18,172 @@
 
 namespace Svc {
 
-  class FileManagerTester :
-    public FileManagerGTestBase
-  {
+class FileManagerTester : public FileManagerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-    public:
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+    //! Construct object FileManagerTester
+    //!
+    FileManagerTester();
 
-      //! Construct object FileManagerTester
-      //!
-      FileManagerTester();
+    //! Destroy object FileManagerTester
+    //!
+    ~FileManagerTester();
 
-      //! Destroy object FileManagerTester
-      //!
-      ~FileManagerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Create directory (succeed)
+    //!
+    void createDirectorySucceed();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Create directory (fail)
+    //!
+    void createDirectoryFail();
 
-      //! Create directory (succeed)
-      //!
-      void createDirectorySucceed();
+    //! Move file (succeed)
+    //!
+    void moveFileSucceed();
 
-      //! Create directory (fail)
-      //!
-      void createDirectoryFail();
+    //! Move file (fail)
+    //!
+    void moveFileFail();
 
-      //! Move file (succeed)
-      //!
-      void moveFileSucceed();
+    //! Remove directory (succeed)
+    //!
+    void removeDirectorySucceed();
 
-      //! Move file (fail)
-      //!
-      void moveFileFail();
+    //! Remove directory (fail)
+    //!
+    void removeDirectoryFail();
 
-      //! Remove directory (succeed)
-      //!
-      void removeDirectorySucceed();
+    //! Remove file (succeed)
+    //!
+    void removeFileSucceed();
 
-      //! Remove directory (fail)
-      //!
-      void removeDirectoryFail();
+    //! Remove file (fail)
+    //!
+    void removeFileFail();
 
-      //! Remove file (succeed)
-      //!
-      void removeFileSucceed();
+    //! Shell command (succeed)
+    //!
+    void shellCommandSucceed();
 
-      //! Remove file (fail)
-      //!
-      void removeFileFail();
+    //! Shell command (fail)
+    //!
+    void shellCommandFail();
 
-      //! Shell command (succeed)
-      //!
-      void shellCommandSucceed();
+    //! Append file (succeed, append to new file)
+    //!
+    void appendFileSucceed_newFile();
 
-      //! Shell command (fail)
-      //!
-      void shellCommandFail();
+    //! Append file (succeed, append to existing file)
+    //!
+    void appendFileSucceed_existingFile();
 
-      //! Append file (succeed, append to new file)
-      //!
-      void appendFileSucceed_newFile();
+    //! Append file (fail)
+    //!
+    void appendFileFail();
 
-      //! Append file (succeed, append to existing file)
-      //!
-      void appendFileSucceed_existingFile();
+    //! File size (succeed)
+    //!
+    void fileSizeSucceed();
 
-      //! Append file (fail)
-      //!
-      void appendFileFail();
+    //! File size (fail)
+    //!
+    void fileSizeFail();
 
-      //! File size (succeed)
-      //!
-      void fileSizeSucceed();
+    //! List directory (succeed)
+    //!
+    void listDirectorySucceed();
 
-      //! File size (fail)
-      //!
-      void fileSizeFail();
+    //! List directory (fail)
+    //!
+    void listDirectoryFail();
 
-    private:
+    //! List directory with subdirectories (enhanced listing)
+    //!
+    void listDirectoryWithSubdirs();
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Initialize components
-      //!
-      void initComponents();
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Perform a system call and assert success
-      //!
-      static void system(const char *const cmd);
+    //! Perform a system call and assert success
+    //!
+    static void system(const char* const cmd);
 
-      //! Create a directory
-      void createDirectory(
-          const char *const dirName
-      );
+    //! Create a directory
+    void createDirectory(const char* const dirName);
 
-      //! Move a file
-      void moveFile(
-          const char *const sourceFileName,
-          const char *const destFileName
-      );
+    //! Move a file
+    void moveFile(const char* const sourceFileName, const char* const destFileName);
 
-      //! Remove a directory
-      void removeDirectory(
-          const char *const dirName
-      );
+    //! Remove a directory
+    void removeDirectory(const char* const dirName);
 
-      //! Remove a file
-      void removeFile(
-          const char *const fileName,
-          bool ignoreErrors
-      );
+    //! Remove a file
+    void removeFile(const char* const fileName, bool ignoreErrors);
 
-      //! Perform a shell command
-      void shellCommand(
-          const char *const command,
-          const char *const logFileName
-      );
+    //! Perform a shell command
+    void shellCommand(const char* const command, const char* const logFileName);
 
-      //! Append 2 files together
-      void appendFile(
-          const char *const source,
-          const char *const target
-      );
+    //! Append 2 files together
+    void appendFile(const char* const source, const char* const target);
 
-      //! Assert successful command execution
-      void assertSuccess(
-          const FwOpcodeType opcode,
-          const U32 eventSize = 2 // Starting event + Error or Success msg
-      ) const;
+    //! List the contents of a directory
+    void listDirectory(const char* const dirName);
 
-      //! Assert file content matches the expected string (up to the given size)
-      void assertFileContent(
-          const char *const fileName,
-          const char *const expectedString,
-          const U32 length
-      ) const;
+    //! Simulate rate group execution for asynchronous directory listing
+    //! This method simulates Rate Group 2 (0.5Hz) execution by repeatedly
+    //! calling the schedule handler until the directory listing completes.
+    //! Each cycle processes one directory entry to test the bounded execution.
+    void runRateGroupCycles(const U32 cycles);
 
-      //! Assert failed command execution
-      void assertFailure(const FwOpcodeType opcode) const;
-      //! Handler for from_pingOut
-      //!
-      void from_pingOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
-    private:
+    //! Assert successful command execution
+    void assertSuccess(const FwOpcodeType opcode,
+                       const U32 eventSize = 2  // Starting event + Error or Success msg
+    ) const;
 
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
+    //! Assert file content matches the expected string (up to the given size)
+    void assertFileContent(const char* const fileName, const char* const expectedString, const U32 length) const;
 
-      //! The component under test
-      //!
-      FileManager component;
+    //! Assert failed command execution
+    void assertFailure(const FwOpcodeType opcode) const;
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
+                              U32 key                    /*!< Value to return to pinger*/
+    );
 
-  };
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-} // end namespace Svc
+    //! The component under test
+    //!
+    FileManager component;
+};
+
+}  // end namespace Svc
 
 #endif

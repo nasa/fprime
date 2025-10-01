@@ -75,7 +75,7 @@ while a successful response moves to the next command in the sequence.
 
 Events represent a log of activities taken by the embedded system. Events can be thought of in the same way as a program
 execution log in that they enable the ability to trace the execution of the system. Events are sent out of the system via 
-the `Svc::ActiveLogger` component and components defining events should hook up the log port to it. If console logging is
+the `Svc::EventManager` component and components defining events should hook up the log port to it. If console logging is
 desired, the text log port can be hooked up to the `Svc::PassiveConsoleTextLogger` component. Events are defined per
 component and are typically used to capture what the component is doing. Events can occur sporadically; however, they 
 should all be captured for downlink. Events are defined by the following properties:
@@ -108,7 +108,7 @@ events:
 
 ### Event Logging
 
-Events first acquire a time tag to represent when they occurred and then are typically sent to the `Svc::ActiveLogger`
+Events first acquire a time tag to represent when they occurred and then are typically sent to the `Svc::EventManager`
 component on their way to be sent down to the ground. This logger component both processes the event and also recognizes
 and begins responses for FATAL severity events.
 

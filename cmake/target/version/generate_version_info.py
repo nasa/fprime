@@ -28,7 +28,7 @@ FALLBACK_VERSION = "v3.5.0"  # Keep up-to-date on release tag
 
 def get_version_str(working_dir, fallback=FALLBACK_VERSION):
     """
-    System call to get the version. It uses `git describe --tags --always` to get a standard version string as used
+    System call to get the version. It uses `git describe --tags --always --dirty --broken` to get a standard version string as used
     across fprime. The working directory should be set to a (project, library, fprime) from which to obtain the version.
 
     Args:
@@ -39,7 +39,8 @@ def get_version_str(working_dir, fallback=FALLBACK_VERSION):
     """
     try:
         output = subprocess.check_output(
-            ["git", "describe", "--tags", "--always"], cwd=working_dir
+            ["git", "describe", "--tags", "--always", "--dirty", "--broken"],
+            cwd=working_dir,
         )
         return output.strip().decode("ascii")
     except Exception:

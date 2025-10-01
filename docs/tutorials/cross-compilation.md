@@ -170,11 +170,11 @@ First, in a terminal upload the software to hardware platform. This is done with
 ```sh
 # For ARM 64-bit hardware
 # In: project root folder
-scp -r build-artifacts/aarch64-linux/<name-of-deployment> <username>@<device-address>:deployment
+scp build-artifacts/aarch64-linux/<name-of-deployment>/bin/<name-of-deployment> <username>@<device-address>:deployment
 
 # For ARM 32-bit hardware
 # In: project root folder
-scp -r build-artifacts/arm-hf-linux/<name-of-deployment> <username>@<device-address>:deployment
+scp build-artifacts/arm-hf-linux/<name-of-deployment>/bin/<name-of-deployment> <username>@<device-address>:deployment
 ```
 > Users must fill in the username and device address above.
 
@@ -188,7 +188,7 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/di
 
 # For ARM 32-bit hardware
 # In: project root folder
-fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.json --ip-client --ip-address <device-address>
+fprime-gds -n --dictionary build-artifacts/arm-hf-linux/<name-of-deployment>/dict/<App Dictionary>.json --ip-client --ip-address <device-address>
 ```
 > [!NOTE]
 > This depends on a flight software deployment that uses TcpServer as the communications driver implementation.
@@ -196,7 +196,7 @@ fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/di
 In another terminal SSH into the device and run the uploaded software:
 ```sh
 ssh <username>@<device-address>
-deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
+./deployment -a 0.0.0.0 -p 50000
 ```
 > User should fill in the username and device address above and ensure the correct executable is supplied.
 

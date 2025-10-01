@@ -16,22 +16,19 @@
 #ifndef TEST_UNITTEST_HPP_
 #define TEST_UNITTEST_HPP_
 
-#define TEST_CASE(tc, desc) \
+#define TEST_CASE(tc, desc)                                \
     printf("\n***************************************\n"); \
-    printf("TESTCASE %s: " desc "\n", #tc); \
+    printf("TESTCASE %s: " desc "\n", #tc);                \
     printf("***************************************\n")
 
-#define REQUIREMENT(str) \
+#define REQUIREMENT(str)                                   \
     printf("\n***************************************\n"); \
-    printf("(RQ)       %s\n", str); \
+    printf("(RQ)       %s\n", str);                        \
     printf("***************************************\n")
 
-#define COMMENT(str) \
+#define COMMENT(str)                                       \
     printf("\n***************************************\n"); \
-    printf("%s\n", str); \
+    printf("%s\n", str);                                   \
     printf("***************************************\n")
-
-
-
 
 #endif /* TEST_UNITTEST_HPP_ */

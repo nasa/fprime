@@ -261,9 +261,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         return;
     }
 
-    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CMD) {
+    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD &&
+        this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::STACK_CMD) {
         // we were not awaiting a cmd response, we were waiting for a directive
-        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response, this->m_runtime.currentStatementOpcode);
+        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response,
+                                                               this->m_runtime.currentStatementOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -303,17 +305,15 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->log_WARNING_HI_CommandFailed(opCode,
-                                           this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
-                                           response);
+        this->log_WARNING_HI_CommandFailed(opCode, this->currentStatementIdx(), this->m_sequenceFilePath, response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
+    // push the cmd response to the stack so we can branch off of it
+    this->push(static_cast<I32>(response.e));
 }
 
 //! Handler for input port seqRunIn
-void FpySequencer::seqRunIn_handler(FwIndexType portNum,
-                                    const Fw::StringBase& filename
-) {
+void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidSeqRunCall(static_cast<I32>(sequencer_getState()));
@@ -328,13 +328,15 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum,
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    this->tlmWrite_State(static_cast<I32>(this->sequencer_getState()));
+    this->tlmWrite_State(static_cast<FwEnumStoreType>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
+    this->tlmWrite_DirectiveErrorIdx(this->m_tlm.directiveErrorIndex);
+    this->tlmWrite_DirectiveErrorId(this->m_tlm.directiveErrorId);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
     this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
     this->tlmWrite_Debug(this->getDebugTelemetry());
@@ -343,23 +345,24 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
 FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
     // only send debug tlm when we are paused in debug break
     if (this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN) {
-        if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.getheader().getstatementCount()) {
+        if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.get_header().get_statementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
             return FpySequencer_DebugTelemetry(true, false, 0, 0);
         }
 
-        const Fpy::Statement& nextStmt = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
+        const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
         if (status != Fw::Success::SUCCESS) {
-            return FpySequencer_DebugTelemetry(false, false, nextStmt.getopCode(), 0);
+            return FpySequencer_DebugTelemetry(false, false, nextStmt.get_opCode(), 0);
         }
-        if (nextStmt.getopCode() == Fpy::DirectiveId::CMD) {
+        if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
             // send opcode of the cmd to the ground
-            return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), directiveUnion.cmd.getopCode());
+            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(),
+                                               directiveUnion.constCmd.get_opCode());
         }
 
-        return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), 0);
+        return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), 0);
     }
     // send some default tlm when we aren't in debug break
     return FpySequencer_DebugTelemetry(false, false, 0, 0);

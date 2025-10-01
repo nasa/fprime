@@ -4,9 +4,9 @@
 #include "Fw/Types/MallocAllocator.hpp"
 
 namespace ComFprime {
-    namespace Allocation {
-        extern Fw::MemAllocator& memAllocator;
-    }
+namespace Allocation {
+extern Fw::MemAllocator& memAllocator;
 }
+}  // namespace ComFprime
 
-#endif 
+#endif

@@ -2,8 +2,8 @@
 // \title Os/Stub/test/Memory.hpp
 // \brief test stub implementation for Os::Memory, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Memory.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Test_Memory_HPP
 #define OS_Stub_Test_Memory_HPP
 
@@ -17,13 +17,7 @@ class TestMemory;
 //! Data that supports the stubbed File implementation.
 //!/
 struct StaticData {
-    enum LastFn {
-        NONE_FN,
-        CONSTRUCT_FN,
-        DESTRUCT_FN,
-        USAGE_FN,
-        HANDLE_FN
-    };
+    enum LastFn { NONE_FN, CONSTRUCT_FN, DESTRUCT_FN, USAGE_FN, HANDLE_FN };
     //! Last function called
     LastFn lastCalled = NONE_FN;
 
@@ -44,8 +38,7 @@ struct StaticData {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct TestMemoryHandle : public MemoryHandle {
-};
+struct TestMemoryHandle : public MemoryHandle {};
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
@@ -88,9 +81,9 @@ class TestMemory : public MemoryInterface {
     //! File handle for PosixFile
     TestMemoryHandle m_handle;
 };
-} // namespace Test
-} // namespace Memory
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Memory
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Test_Memory_HPP
+#endif  // OS_Stub_Test_Memory_HPP

@@ -41,8 +41,7 @@ static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t),
               "FwSignedSizeType is not large enough to store values of type off_t");
 static_assert(sizeof(FwSignedSizeType) >= sizeof(ssize_t),
               "FwSignedSizeType is not large enough to store values of type ssize_t");
-static_assert(sizeof(FwSizeType) >= sizeof(size_t),
-              "FwSizeType is not large enough to store values of type size_t");
+static_assert(sizeof(FwSizeType) >= sizeof(size_t), "FwSizeType is not large enough to store values of type size_t");
 
 // Now check ranges of FwSizeType
 static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<off_t>::max(),
@@ -128,7 +127,7 @@ PosixFile::Status PosixFile::size(FwSizeType& size_result) {
             status = Os::Posix::errno_to_file_status(errno_store);
         }
         // Return to original position
-        (void) ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(current_position), SEEK_SET);
+        (void)::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(current_position), SEEK_SET);
         size_result = static_cast<FwSizeType>(end_of_file);
     }
     return status;
@@ -150,8 +149,7 @@ PosixFile::Status PosixFile::position(FwSizeType& position_result) {
 PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     PosixFile::Status status = Os::File::Status::NOT_SUPPORTED;
     // Check for larger size than posix supports
-    if ((length > OFF_T_MAX_LIMIT) ||
-        (offset > OFF_T_MAX_LIMIT) ||
+    if ((length > OFF_T_MAX_LIMIT) || (offset > OFF_T_MAX_LIMIT) ||
         (std::numeric_limits<off_t>::max() - length) < offset) {
         status = Os::File::Status::BAD_SIZE;
     }
@@ -161,7 +159,8 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     // code is engaged to synthesize this behavior.
 #if _POSIX_C_SOURCE >= 200112L
     else {
-        int errno_status = ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));
+        int errno_status =
+            ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));
         status = Os::Posix::errno_to_file_status(errno_status);
     }
 #endif
@@ -187,15 +186,16 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
                     // Fill in zeros past size of file to ensure compatibility with fallocate
                     for (FwSizeType i = 0; i < write_length; i++) {
                         FwSizeType write_size = 1;
-                        status = this->write(reinterpret_cast<const U8*>("\0"), write_size,
-                                             PosixFile::WaitType::NO_WAIT);
+                        status =
+                            this->write(reinterpret_cast<const U8*>("\0"), write_size, PosixFile::WaitType::NO_WAIT);
                         if (Status::OP_OK != status || write_size != 1) {
                             break;
                         }
                     }
                     // Return to original position
                     if (Os::File::Status::OP_OK == status) {
-                        status = this->seek(static_cast<FwSignedSizeType>(file_position), PosixFile::SeekType::ABSOLUTE);
+                        status =
+                            this->seek(static_cast<FwSignedSizeType>(file_position), PosixFile::SeekType::ABSOLUTE);
                     }
                 }
             }
@@ -209,8 +209,8 @@ PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType s
     if (offset > std::numeric_limits<off_t>::max()) {
         status = BAD_SIZE;
     } else {
-        off_t actual =
-            ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
+        off_t actual = ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset),
+                               (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
         int errno_store = errno;
         if (actual == PosixFileHandle::ERROR_RETURN_VALUE) {
             status = Os::Posix::errno_to_file_status(errno_store);
@@ -234,9 +234,8 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max() / 2))
-                                         ? std::numeric_limits<FwSizeType>::max()
-                                         : size * 2;
+    const FwSizeType maximum =
+        (size > (std::numeric_limits<FwSizeType>::max() / 2)) ? std::numeric_limits<FwSizeType>::max() : size * 2;
     // POSIX APIs are implementation dependent when dealing with sizes larger than the signed return value
     // thus we ensure a clear decision: BAD_SIZE
     if (size > SSIZE_T_MAX_LIMIT) {
@@ -275,9 +274,8 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max() / 2))
-                                         ? std::numeric_limits<FwSizeType>::max()
-                                         : size * 2;
+    const FwSizeType maximum =
+        (size > (std::numeric_limits<FwSizeType>::max() / 2)) ? std::numeric_limits<FwSizeType>::max() : size * 2;
     // POSIX APIs are implementation dependent when dealing with sizes larger than the signed return value
     // thus we ensure a clear decision: BAD_SIZE
     if (size > SSIZE_T_MAX_LIMIT) {

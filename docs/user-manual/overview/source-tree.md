@@ -157,7 +157,7 @@ methods. For these directories, each file will not be described, but a
 higher-level description of what each directory contains will be given
 instead. The descriptions are as follows.
 
-### ActiveLogger
+### EventManager
 
 This directory contains a component FPP description and implementation
 for an active component that accepts serialized log events. The input
@@ -214,7 +214,7 @@ components. The port passes a time stamp indicating when the cycle started.
 ### Fatal
 
 The directory specifies a port used to pass a notification that a FATAL
-event has occurred. It is currently produced by the ActiveLogger
+event has occurred. It is currently produced by the EventManager
 component when it receives a FATAL event from a component.
 
 ### GndIf

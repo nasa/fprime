@@ -8,6 +8,7 @@
 register_fprime_module(
     Drv_Interfaces
   AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/AsyncByteStreamDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Gpio.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/I2c.fpp"

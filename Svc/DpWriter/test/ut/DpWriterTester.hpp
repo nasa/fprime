@@ -46,8 +46,8 @@ class DpWriterTester : public DpWriterGTestBase {
 
     //! Handler implementation for procBufferSendOut
     void from_procBufferSendOut_handler(FwIndexType portNum,  //!< The port number
-                                        Fw::Buffer& fwBuffer      //!< The buffer
-    ) final;
+                                        Fw::Buffer& fwBuffer  //!< The buffer
+                                        ) final;
 
   public:
     // ----------------------------------------------------------------------
@@ -110,39 +110,29 @@ class DpWriterTester : public DpWriterGTestBase {
     void doDispatch();
 
     //! Get the EVENTID_INVALIDBUFFER_THROTTLE value
-    static FwSizeType getInvalidBufferThrottle() {
-      return DpWriterComponentBase::EVENTID_INVALIDBUFFER_THROTTLE;
-    }
+    static FwSizeType getInvalidBufferThrottle() { return DpWriterComponentBase::EVENTID_INVALIDBUFFER_THROTTLE; }
 
     //! Get the EVENTID_BUFFERTOOSMALLFORPACKET_THROTTLE value
     static FwSizeType getBufferTooSmallForPacketThrottle() {
-      return DpWriterComponentBase::EVENTID_BUFFERTOOSMALLFORPACKET_THROTTLE;
+        return DpWriterComponentBase::EVENTID_BUFFERTOOSMALLFORPACKET_THROTTLE;
     }
 
     //! Get the EVENTID_INVALIDHEADERHASH_THROTTLE value
     static FwSizeType getInvalidHeaderHashThrottle() {
-      return DpWriterComponentBase::EVENTID_INVALIDHEADERHASH_THROTTLE;
+        return DpWriterComponentBase::EVENTID_INVALIDHEADERHASH_THROTTLE;
     }
 
     //! Get the EVENTID_INVALIDHEADER_THROTTLE value
-    static FwSizeType getInvalidHeaderThrottle() {
-      return DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE;
-    }
+    static FwSizeType getInvalidHeaderThrottle() { return DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE; }
 
     //! Get the EVENTID_FILEOPENERROR_THROTTLE value
-    static FwSizeType getFileOpenErrorThrottle() {
-      return DpWriterComponentBase::EVENTID_FILEOPENERROR_THROTTLE;
-    }
+    static FwSizeType getFileOpenErrorThrottle() { return DpWriterComponentBase::EVENTID_FILEOPENERROR_THROTTLE; }
 
     //! Get the EVENTID_FILEWRITEERROR_THROTTLE value
-    static FwSizeType getFileWriteErrorThrottle() {
-      return DpWriterComponentBase::EVENTID_FILEWRITEERROR_THROTTLE;
-    }
+    static FwSizeType getFileWriteErrorThrottle() { return DpWriterComponentBase::EVENTID_FILEWRITEERROR_THROTTLE; }
 
     //! Get the OPCODE_CLEAR_EVENT_THROTTLE value
-    static FwOpcodeType getOpCodeClearEventThrottle() {
-      return DpWriterComponentBase::OPCODE_CLEAR_EVENT_THROTTLE;
-    }
+    static FwOpcodeType getOpCodeClearEventThrottle() { return DpWriterComponentBase::OPCODE_CLEAR_EVENT_THROTTLE; }
 
     //! Get the m_BufferTooSmallForDataThrottle value
     FwIndexType getBufferTooSmallForDataThrottleCount();
@@ -164,7 +154,6 @@ class DpWriterTester : public DpWriterGTestBase {
 
     //! Get the m_InvalidHeaderThrottle value
     FwIndexType getInvalidHeaderThrottleCount();
-
 };
 
 }  // namespace Svc

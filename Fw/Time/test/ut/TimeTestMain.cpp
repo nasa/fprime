@@ -5,9 +5,9 @@
  *      Author: tcanham
  */
 
-#include "TimeTester.hpp"
-#include "TimeIntervalTester.hpp"
 #include <gtest/gtest.h>
+#include "TimeIntervalTester.hpp"
+#include "TimeTester.hpp"
 
 // Time tests
 TEST(TimeTestNominal, InstantiateTest) {

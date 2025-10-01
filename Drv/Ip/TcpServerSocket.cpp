@@ -10,28 +10,28 @@
 //
 // ======================================================================
 #include <Drv/Ip/TcpServerSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
-    #include <socket.h>
-    #include <inetLib.h>
-    #include <fioLib.h>
-    #include <hostLib.h>
-    #include <ioLib.h>
-    #include <vxWorks.h>
-    #include <sockLib.h>
-    #include <taskLib.h>
-    #include <sysLib.h>
-    #include <errnoLib.h>
-    #include <cstring>
+#include <errnoLib.h>
+#include <fioLib.h>
+#include <hostLib.h>
+#include <inetLib.h>
+#include <ioLib.h>
+#include <sockLib.h>
+#include <socket.h>
+#include <sysLib.h>
+#include <taskLib.h>
+#include <vxWorks.h>
+#include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-    #include <sys/socket.h>
-    #include <unistd.h>
-    #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #else
-    #error OS not supported for IP Socket Communications
+#error OS not supported for IP Socket Communications
 #endif
 
 #include <cstring>
@@ -66,6 +66,11 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
         return SOCK_INVALID_IP_ADDRESS;
     };
 
+    if (IpSocket::setupSocketOptions(serverFd) != SOCK_SUCCESS) {
+        ::close(serverFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+
     // TCP requires bind to an address to the socket
     if (::bind(serverFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         ::close(serverFd);
@@ -73,14 +78,15 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(serverFd, reinterpret_cast<struct sockaddr *>(&address), &size) == -1) {
+    if (::getsockname(serverFd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
         ::close(serverFd);
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
-    // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument) to 1 to prevent queuing of multiple clients.
+    // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument)
+    // to 1 to prevent queuing of multiple clients.
     if (::listen(serverFd, 1) < 0) {
         ::close(serverFd);
-        return SOCK_FAILED_TO_LISTEN; // What we have here is a failure to communicate
+        return SOCK_FAILED_TO_LISTEN;  // What we have here is a failure to communicate
     }
     Fw::Logger::log("Listening for single client at %s:%hu\n", m_hostname, m_port);
     FW_ASSERT(serverFd != -1);
@@ -105,7 +111,7 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
     // TCP requires accepting on the socket to get the client socket file descriptor.
     clientFd = ::accept(serverFd, nullptr, nullptr);
     if (clientFd < 0) {
-        return SOCK_FAILED_TO_ACCEPT; // What we have here is a failure to communicate
+        return SOCK_FAILED_TO_ACCEPT;  // What we have here is a failure to communicate
     }
     // Setup client send timeouts
     if (IpSocket::setupTimeouts(clientFd) != SOCK_SUCCESS) {
@@ -118,15 +124,19 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
     return SOCK_SUCCESS;
 }
 
-I32 TcpServerSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
+FwSignedSizeType TcpServerSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
+                                               const U8* const data,
+                                               const FwSizeType size) {
+    return static_cast<FwSignedSizeType>(
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
-    I32 size_buf;
+FwSignedSizeType TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
+                                               U8* const data,
+                                               const FwSizeType size) {
     // recv will return 0 if the client has done an orderly shutdown
-    size_buf = static_cast<I32>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
-    return size_buf;
+    return static_cast<FwSignedSizeType>(
+        ::recv(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

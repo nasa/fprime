@@ -12,16 +12,7 @@ namespace Test {
 struct StaticData {
     //! Enumeration of last function called
     //!
-    enum LastFn {
-        NONE_FN,
-        CONSTRUCT_FN,
-        DESTRUCT_FN,
-        DELAY_FN,
-        JOIN_FN,
-        SUSPEND_FN,
-        RESUME_FN,
-        START_FN
-    };
+    enum LastFn { NONE_FN, CONSTRUCT_FN, DESTRUCT_FN, DELAY_FN, JOIN_FN, SUSPEND_FN, RESUME_FN, START_FN };
     StaticData() = default;
     ~StaticData() = default;
 
@@ -111,8 +102,8 @@ class TestTask : public TaskInterface {
     Status start(const Arguments& arguments) override;
 };
 
-}
-}
-}
-}
-#endif // End OS_STUB_TASK_TEST_HPP
+}  // namespace Test
+}  // namespace Task
+}  // namespace Stub
+}  // namespace Os
+#endif  // End OS_STUB_TASK_TEST_HPP

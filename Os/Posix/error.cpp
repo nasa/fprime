@@ -2,8 +2,8 @@
 // \title Os/Posix/error.cpp
 // \brief implementation for posix errno conversion
 // ======================================================================
-#include <cerrno>
 #include "Os/Posix/error.hpp"
+#include <cerrno>
 
 namespace Os {
 namespace Posix {
@@ -166,7 +166,7 @@ Task::Status posix_status_to_task_status(int posix_status) {
     return status;
 }
 
-Mutex::Status posix_status_to_mutex_status(int posix_status){
+Mutex::Status posix_status_to_mutex_status(int posix_status) {
     Mutex::Status status = Mutex::Status::ERROR_OTHER;
     switch (posix_status) {
         case 0:
@@ -192,13 +192,13 @@ ConditionVariable::Status posix_status_to_conditional_status(int posix_status) {
             status = ConditionVariable::Status::OP_OK;
             break;
         case EPERM:
-            status =  ConditionVariable::Status::ERROR_MUTEX_NOT_HELD;
+            status = ConditionVariable::Status::ERROR_MUTEX_NOT_HELD;
             break;
         default:
-            status =  ConditionVariable::Status::ERROR_OTHER;
+            status = ConditionVariable::Status::ERROR_OTHER;
             break;
     }
     return status;
 }
-}
-}
+}  // namespace Posix
+}  // namespace Os

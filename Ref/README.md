@@ -2,7 +2,7 @@
 
 The purpose of this application is to demonstrate a completely assembled application for use on Linux, and macOS.  This allows the user to get
 up and running quickly, test the installation, and work with the code before embedded hardware may be available. Should the user be interested in
-cross-compiling, please see the [RPI](../RPI/README.md) reference.
+cross-compiling, please see the [F Prime LED Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/).
 
 ## Prerequisites
 

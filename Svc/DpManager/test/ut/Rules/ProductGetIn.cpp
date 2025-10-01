@@ -31,7 +31,8 @@ void TestState::action__ProductGetIn__BufferValid() {
     this->clearHistory();
     // Send the invocation
     const auto portNum = static_cast<FwIndexType>(STest::Pick::startLength(0, DpManagerNumPorts));
-    const auto id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
+    const auto id =
+        static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     const FwSizeType size = this->abstractState.getBufferSize();
     Fw::Buffer buffer;
     const auto status = this->invoke_to_productGetIn(portNum, id, size, buffer);
@@ -60,7 +61,8 @@ void TestState ::action__ProductGetIn__BufferInvalid() {
     this->clearHistory();
     // Send the invocation
     const auto portNum = static_cast<FwIndexType>(STest::Pick::startLength(0, DpManagerNumPorts));
-    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
+    const FwDpIdType id =
+        static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     const FwSizeType size = this->abstractState.getBufferSize();
     Fw::Buffer buffer;
     const auto status = this->invoke_to_productGetIn(portNum, id, size, buffer);

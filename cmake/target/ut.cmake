@@ -4,6 +4,7 @@
 # UTs target implementation.
 ####
 include(target/build) # Borrows some implementation
+include(fprime-util)
 set(FPRIME__INTERNAL_UT_TARGET "ut_exe") # For historical reasons
 set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 
@@ -17,6 +18,7 @@ set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 function(_ut_setup_clean_file)
     set(REMOVAL_GLOB "*.gcda")
     file(WRITE "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}" "
+        message(STATUS \"Cleaning up gcda files\")
         file(GLOB_RECURSE GCDA_FILES \"${CMAKE_BINARY_DIR}/**/${REMOVAL_GLOB}\")
         if (GCDA_FILES)
             file(REMOVE \${GCDA_FILES})
@@ -33,9 +35,6 @@ endfunction(_ut_setup_clean_file)
 # Implementation defines the target using `add_custom_target` and nothing more.
 ####
 function(ut_add_global_target TARGET)
-    if (FPRIME_ENABLE_UTIL_TARGETS)
-        add_custom_target(${FPRIME__INTERNAL_UT_TARGET})
-    endif()
     _ut_setup_clean_file()
 endfunction(ut_add_global_target)
 
@@ -51,19 +50,23 @@ endfunction(ut_add_global_target)
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
-    if (NOT FPRIME_ENABLE_UTIL_TARGETS)
-        return()
-    endif()
-    set_property(DIRECTORY APPEND PROPERTY
-        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
-    )
-    add_custom_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
+    # For the deployment augment the tests in this directory to include the recursive set tests and write to the test files
+    set(DEPLOYMENT_TESTS)
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
-        get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
-        if (DEPENDENCY_UTS)
-            add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPENDENCY_UTS})
+        get_property(DEPENDENCY_UNIT_TESTS TARGET ${DEPENDENCY} PROPERTY FPRIME_UNIT_TESTS)
+        if(DEPENDENCY_UNIT_TESTS)
+            foreach(UNIT_TEST IN LISTS DEPENDENCY_UNIT_TESTS)
+                fprime_util_metadata_add_test("${UNIT_TEST}")
+                list(APPEND DEPLOYMENT_TESTS "${UNIT_TEST}")
+            endforeach()
         endif()
     endforeach()
+    add_custom_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
+    # Add dependencies if tests have been defined
+    if (DEPLOYMENT_TESTS)
+        add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPLOYMENT_TESTS})
+    endif()
+    fprime_util_metadata_add_build_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
 endfunction(ut_add_deployment_target)
 
 ####
@@ -94,6 +97,44 @@ function(ut_setup_unit_test_include_directories UT_EXE_NAME SOURCE_FILES)
 endfunction(ut_setup_unit_test_include_directories)
 
 ####
+# Function `ut_executable_build`:
+#
+# Sets up the build steps needed to build a unit test executable.
+#
+# - **UT_EXECUTABLE_TARGET:** name of target to produce
+####
+function(ut_executable_build UT_EXECUTABLE_TARGET)
+    # Run the autocoders and set up the standard build properties on the executable target
+    run_ac_set("${UT_EXECUTABLE_TARGET}" autocoder/fpp autocoder/fpp_ut)
+    fprime__internal_standard_build_target_setup("${UT_EXECUTABLE_TARGET}" "-ut")
+    target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC gtest_main)
+
+    # Automatic dependency if possible
+    is_target_library(IS_LIBRARY "${FPRIME_CURRENT_MODULE}")
+    if (IS_LIBRARY)
+        target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC "${FPRIME_CURRENT_MODULE}")
+    endif()
+    # Automatic include directories
+    ut_setup_unit_test_include_directories("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES}")
+endfunction(ut_executable_build)
+
+####
+# Function `ut_add_ctest`:
+#
+# Adds a CTEST which will run the clean script, and the test within the current source directory.
+#
+# - **UT_EXECUTABLE_TARGET:** name of target to produce
+####
+function(ut_add_ctest UT_EXECUTABLE_TARGET)
+    # Add a CTEST which will run the clean script, and the test within the current source directory
+    set_property(DIRECTORY APPEND PROPERTY
+        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
+    )
+    add_test(NAME ${UT_EXECUTABLE_TARGET} COMMAND ${UT_EXECUTABLE_TARGET} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    fprime_util_metadata_add_test("${UT_EXECUTABLE_TARGET}")
+endfunction(ut_add_ctest)
+
+####
 # Function `ut_add_module_target`:
 #
 # Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
@@ -103,41 +144,29 @@ endfunction(ut_setup_unit_test_include_directories)
 # - **SOURCE_FILES:** list of source file inputs
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+function(ut_add_module_target UT_EXECUTABLE_TARGET TARGET_NAME SOURCE_FILES DEPENDENCIES)
+    get_target_property(FPRIME_TYPE "${UT_EXECUTABLE_TARGET}" FPRIME_TYPE)
     # Protects against multiple calls to fprime_register_ut()
-    if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
+    if (NOT BUILD_TESTING OR NOT FPRIME_TYPE STREQUAL "Unit Test")
         return()
     endif()
-    # Set some local variables
-    set(UT_EXECUTABLE_TARGET "${MODULE_NAME}")
-    set(UT_MODULE_TARGET "${FPRIME_CURRENT_MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
-    message(STATUS "Adding Unit Test: ${UT_EXECUTABLE_TARGET}")
-    set_property(DIRECTORY APPEND PROPERTY
-        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
-    )
-    run_ac_set("${UT_EXECUTABLE_TARGET}" autocoder/fpp autocoder/fpp_ut)
 
-    # Create lists of hand-coded and generated sources not "consumed" by an autocoder
-    fprime__internal_standard_build_target_setup("${UT_EXECUTABLE_TARGET}" "-ut")
-    target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC gtest_main)
-    is_target_library(IS_LIBRARY "${FPRIME_CURRENT_MODULE}")
-    if (IS_LIBRARY)
-        target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC "${FPRIME_CURRENT_MODULE}")
-    endif()
-    ut_setup_unit_test_include_directories("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES}")
-    add_test(NAME ${UT_EXECUTABLE_TARGET} COMMAND ${UT_EXECUTABLE_TARGET})
+    # Set up the executable
+    ut_executable_build("${UT_EXECUTABLE_TARGET}")
 
-    # Create a module-level target if not already done
-    if (NOT TARGET "${UT_MODULE_TARGET}" AND FPRIME_ENABLE_UTIL_TARGETS)
-        add_custom_target("${UT_MODULE_TARGET}")
+    # Add the CTEST
+    ut_add_ctest("${UT_EXECUTABLE_TARGET}")
+
+    # Register the test to the tested module, assuming "current module" unless previously specified
+    get_target_property(FPRIME_TESTED_MODULE "${UT_EXECUTABLE_TARGET}" FPRIME_TESTED_MODULE)
+    if (NOT FPRIME_TESTED_MODULE)
+        set(FPRIME_TESTED_MODULE "${FPRIME_CURRENT_MODULE}")
     endif()
-    # Add module level target dependencies to this UT
-    if (FPRIME_ENABLE_UTIL_TARGETS)
-        add_dependencies("${UT_MODULE_TARGET}" "${UT_EXECUTABLE_TARGET}")
-        add_dependencies("${FPRIME__INTERNAL_UT_TARGET}" "${UT_EXECUTABLE_TARGET}")
-        set_property(TARGET "${FPRIME_CURRENT_MODULE}" APPEND PROPERTY FPRIME_UTS "${UT_MODULE_TARGET}")
+    if (TARGET "${FPRIME_TESTED_MODULE}")
+        append_list_property("${UT_EXECUTABLE_TARGET}" TARGET "${FPRIME_TESTED_MODULE}" PROPERTY FPRIME_UNIT_TESTS)
     endif()
-    # Link library list output on per-module basis
+
+    # Module introspection when in debug mode
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${UT_EXECUTABLE_TARGET}")
     endif()

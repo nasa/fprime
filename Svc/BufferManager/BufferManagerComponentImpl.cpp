@@ -10,196 +10,159 @@
 //
 // ======================================================================
 
-
-#include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Buffer/Buffer.hpp>
+#include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include <new>
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  BufferManagerComponentImpl ::
-    BufferManagerComponentImpl(
-        const char *const compName
-    ) : BufferManagerComponentBase(compName)
-    ,m_setup(false)
-    ,m_cleaned(false)
-    ,m_mgrId(0)
-    ,m_buffers(nullptr)
-    ,m_allocator(nullptr)
-    ,m_memId(0)
-    ,m_numStructs(0)
-    ,m_highWater(0)
-    ,m_currBuffs(0)
-    ,m_noBuffs(0)
-    ,m_emptyBuffs(0)
-  {
+BufferManagerComponentImpl ::BufferManagerComponentImpl(const char* const compName)
+    : BufferManagerComponentBase(compName),
+      m_setup(false),
+      m_cleaned(false),
+      m_mgrId(0),
+      m_buffers(nullptr),
+      m_allocator(nullptr),
+      m_memId(0),
+      m_numStructs(0),
+      m_highWater(0),
+      m_currBuffs(0),
+      m_noBuffs(0),
+      m_emptyBuffs(0) {}
 
-  }
+BufferManagerComponentImpl ::~BufferManagerComponentImpl() {
+    if (m_setup) {
+        this->cleanup();
+    }
+}
 
-  BufferManagerComponentImpl ::
-    ~BufferManagerComponentImpl()
-  {
-      if (m_setup) {
-          this->cleanup();
-      }
-  }
+void BufferManagerComponentImpl ::cleanup() {
+    FW_ASSERT(this->m_buffers);
+    FW_ASSERT(this->m_allocator);
 
-  void BufferManagerComponentImpl ::
-    cleanup()
-  {
-      FW_ASSERT(this->m_buffers);
-      FW_ASSERT(this->m_allocator);
+    if (not this->m_cleaned) {
+        // walk through Fw::Buffer instances and delete them
+        for (U16 entry = 0; entry < this->m_numStructs; entry++) {
+            this->m_buffers[entry].buff.~Buffer();
+        }
+        this->m_cleaned = true;
+        // release memory
+        this->m_allocator->deallocate(this->m_memId, this->m_buffers);
+        this->m_setup = false;
+    }
+}
 
-      if (not this->m_cleaned) {
-          // walk through Fw::Buffer instances and delete them
-          for (U16 entry = 0; entry < this->m_numStructs; entry++) {
-              this->m_buffers[entry].buff.~Buffer();
-          }
-          this->m_cleaned = true;
-          // release memory
-          this->m_allocator->deallocate(this->m_memId,this->m_buffers);
-          this->m_setup = false;
-      }
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
+void BufferManagerComponentImpl ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // make sure component has been set up
+    FW_ASSERT(this->m_setup);
+    FW_ASSERT(m_buffers);
+    // check for null, empty buffers - this is a warning because this component returns
+    // null, empty buffers if it can't allocate one.
+    // however, empty non-null buffers could potentially be previously allocated
+    // buffers with their size reduced. the user is allowed to make buffers smaller.
+    if (fwBuffer.getData() == nullptr && fwBuffer.getSize() == 0) {
+        this->log_WARNING_HI_NullEmptyBuffer();
+        this->m_emptyBuffs++;
+        return;
+    }
+    // use the bufferID member field to find the original slot
+    U32 context = fwBuffer.getContext();
+    U32 id = context & 0xFFFF;
+    U32 mgrId = context >> 16;
+    // check some things
+    FW_ASSERT(id < this->m_numStructs, static_cast<FwAssertArgType>(id),
+              static_cast<FwAssertArgType>(this->m_numStructs));
+    FW_ASSERT(mgrId == this->m_mgrId, static_cast<FwAssertArgType>(mgrId), static_cast<FwAssertArgType>(id),
+              static_cast<FwAssertArgType>(this->m_mgrId));
+    FW_ASSERT(true == this->m_buffers[id].allocated, static_cast<FwAssertArgType>(id),
+              static_cast<FwAssertArgType>(this->m_mgrId));
+    FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) >= this->m_buffers[id].memory, static_cast<FwAssertArgType>(id),
+              static_cast<FwAssertArgType>(this->m_mgrId));
+    FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) < (this->m_buffers[id].memory + this->m_buffers[id].size),
+              static_cast<FwAssertArgType>(id), static_cast<FwAssertArgType>(this->m_mgrId));
+    // user can make smaller for their own purposes, but it shouldn't be bigger
+    FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size, static_cast<FwAssertArgType>(id),
+              static_cast<FwAssertArgType>(this->m_mgrId));
+    // clear the allocated flag
+    this->m_buffers[id].allocated = false;
+    this->m_currBuffs--;
+}
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
+Fw::Buffer BufferManagerComponentImpl ::bufferGetCallee_handler(const FwIndexType portNum, Fw::Buffer::SizeType size) {
+    // make sure component has been set up
+    FW_ASSERT(this->m_setup);
+    FW_ASSERT(m_buffers);
+    // find smallest buffer based on size.
+    for (U16 buff = 0; buff < this->m_numStructs; buff++) {
+        if ((not this->m_buffers[buff].allocated) and (size <= this->m_buffers[buff].size)) {
+            this->m_buffers[buff].allocated = true;
+            this->m_currBuffs++;
+            if (this->m_currBuffs > this->m_highWater) {
+                this->m_highWater = this->m_currBuffs;
+            }
+            Fw::Buffer copy = this->m_buffers[buff].buff;
+            // change size to match request
+            copy.setSize(size);
+            return copy;
+        }
+    }
 
-  void BufferManagerComponentImpl ::
-    bufferSendIn_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-      // make sure component has been set up
-      FW_ASSERT(this->m_setup);
-      FW_ASSERT(m_buffers);
-      // check for null, empty buffers - this is a warning because this component returns
-      // null, empty buffers if it can't allocate one.
-      // however, empty non-null buffers could potentially be previously allocated
-      // buffers with their size reduced. the user is allowed to make buffers smaller.
-      if (fwBuffer.getData() == nullptr && fwBuffer.getSize() == 0) {
-          this->log_WARNING_HI_NullEmptyBuffer();
-          this->m_emptyBuffs++;
-          return;
-      }
-      // use the bufferID member field to find the original slot
-      U32 context = fwBuffer.getContext();
-      U32 id = context & 0xFFFF;
-      U32 mgrId = context >> 16;
-      // check some things
-      FW_ASSERT(
-        id < this->m_numStructs,
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_numStructs));
-      FW_ASSERT(
-        mgrId == this->m_mgrId,
-        static_cast<FwAssertArgType>(mgrId),
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_mgrId));
-      FW_ASSERT(
-        true == this->m_buffers[id].allocated,
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_mgrId));
-      FW_ASSERT(
-        reinterpret_cast<U8*>(fwBuffer.getData()) >= this->m_buffers[id].memory,
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_mgrId));
-      FW_ASSERT(
-        reinterpret_cast<U8*>(fwBuffer.getData()) < (this->m_buffers[id].memory + this->m_buffers[id].size),
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_mgrId));
-      // user can make smaller for their own purposes, but it shouldn't be bigger
-      FW_ASSERT(
-        fwBuffer.getSize() <= this->m_buffers[id].size,
-        static_cast<FwAssertArgType>(id),
-        static_cast<FwAssertArgType>(this->m_mgrId));
-      // clear the allocated flag
-      this->m_buffers[id].allocated = false;
-      this->m_currBuffs--;
-  }
+    // if no buffers found, return empty buffer
+    this->log_WARNING_HI_NoBuffsAvailable(size);
+    this->m_noBuffs++;
+    return Fw::Buffer();
+}
 
-  Fw::Buffer BufferManagerComponentImpl ::
-    bufferGetCallee_handler(
-        const FwIndexType portNum,
-        Fw::Buffer::SizeType size
-    )
-  {
-      // make sure component has been set up
-      FW_ASSERT(this->m_setup);
-      FW_ASSERT(m_buffers);
-      // find smallest buffer based on size.
-      for (U16 buff = 0; buff < this->m_numStructs; buff++) {
-          if ((not this->m_buffers[buff].allocated) and (size <= this->m_buffers[buff].size)) {
-              this->m_buffers[buff].allocated = true;
-              this->m_currBuffs++;
-              if (this->m_currBuffs > this->m_highWater) {
-                  this->m_highWater = this->m_currBuffs;
-              }
-              Fw::Buffer copy = this->m_buffers[buff].buff;
-              // change size to match request
-              copy.setSize(size);
-              return copy;
-          }
-      }
-
-      // if no buffers found, return empty buffer
-      this->log_WARNING_HI_NoBuffsAvailable(size);
-      this->m_noBuffs++;
-      return Fw::Buffer();
-
-  }
-
-  void BufferManagerComponentImpl::setup(
-    U16 mgrId, //!< manager ID
-    FwEnumStoreType memId, //!< Memory segment identifier
-    Fw::MemAllocator& allocator, //!< memory allocator
-    const BufferBins& bins //!< Set of user bins
-  ) {
-
+void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manager ID
+                                       FwEnumStoreType memId,        //!< Memory segment identifier
+                                       Fw::MemAllocator& allocator,  //!< memory allocator
+                                       const BufferBins& bins        //!< Set of user bins
+) {
     this->m_mgrId = mgrId;
     this->m_memId = memId;
     this->m_allocator = &allocator;
     // clear bins
-    memset(&this->m_bufferBins,0,sizeof(this->m_bufferBins));
+    memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
 
     this->m_bufferBins = bins;
 
     // compute the amount of memory needed
-    FwSizeType memorySize = 0; // track needed memory
-    this->m_numStructs = 0; // size the number of tracking structs
+    FwSizeType memorySize = 0;  // track needed memory
+    this->m_numStructs = 0;     // size the number of tracking structs
     // walk through bins and add up the sizes
     for (U16 bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
-            memorySize +=
-                (this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers) + // allocate each set of buffer memory
-                (static_cast<FwSizeType>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
+            memorySize += (this->m_bufferBins.bins[bin].bufferSize *
+                           this->m_bufferBins.bins[bin].numBuffers) +  // allocate each set of buffer memory
+                          (static_cast<FwSizeType>(sizeof(AllocatedBuffer)) *
+                           this->m_bufferBins.bins[bin].numBuffers);  // allocate the structs to track the buffers
             // Total structures is bounded by U16 maximum value to fit in half of context (U32)
-            FW_ASSERT((std::numeric_limits<U16>::max() - this->m_numStructs) >= this->m_bufferBins.bins[bin].numBuffers);
+            FW_ASSERT((std::numeric_limits<U16>::max() - this->m_numStructs) >=
+                      this->m_bufferBins.bins[bin].numBuffers);
             this->m_numStructs = static_cast<U16>(this->m_numStructs + this->m_bufferBins.bins[bin].numBuffers);
         }
     }
 
     FwSizeType allocatedSize = memorySize;
-    bool recoverable = false; //!< don't care if it is recoverable since they are a pool of user buffers
+    bool recoverable = false;  //!< don't care if it is recoverable since they are a pool of user buffers
 
     // allocate memory
-    void *memory = allocator.allocate(memId,allocatedSize,recoverable);
+    void* memory = allocator.allocate(memId, allocatedSize, recoverable);
     // make sure the memory returns was non-zero and the size requested
-    FW_ASSERT(memory != nullptr && memorySize == allocatedSize,
-      static_cast<FwAssertArgType>(mgrId),
-      static_cast<FwAssertArgType>(memId),
-      static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(memory)),
-      static_cast<FwAssertArgType>(memorySize),
-      static_cast<FwAssertArgType>(allocatedSize));
+    FW_ASSERT(memory != nullptr && memorySize == allocatedSize, static_cast<FwAssertArgType>(mgrId),
+              static_cast<FwAssertArgType>(memId),
+              static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(memory)),
+              static_cast<FwAssertArgType>(memorySize), static_cast<FwAssertArgType>(allocatedSize));
     // structs will be at beginning of memory
     this->m_buffers = static_cast<AllocatedBuffer*>(memory);
     // memory buffers will be at end of structs in memory, so compute that memory as the beginning of the
@@ -214,7 +177,8 @@ namespace Svc {
                 // placement new for Fw::Buffer instance. We don't need the new() return value,
                 // because we know where the Fw::Buffer instance is
                 U32 context = (static_cast<U32>(this->m_mgrId) << 16) | static_cast<U32>(currStruct);
-                (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(bufferMem,this->m_bufferBins.bins[bin].bufferSize,context);
+                (void)new (&this->m_buffers[currStruct].buff)
+                    Fw::Buffer(bufferMem, this->m_bufferBins.bins[bin].bufferSize, context);
                 this->m_buffers[currStruct].allocated = false;
                 this->m_buffers[currStruct].memory = bufferMem;
                 this->m_buffers[currStruct].size = this->m_bufferBins.bins[bin].bufferSize;
@@ -227,34 +191,24 @@ namespace Svc {
     // check that the initiation pointer made it to the end of allocated space
     U8* const CURR_PTR = bufferMem;
     U8* const END_PTR = static_cast<U8*>(memory) + memorySize;
-    FW_ASSERT(CURR_PTR == END_PTR,
-        static_cast<FwAssertArgType>(mgrId),
-        static_cast<FwAssertArgType>(memId),
-        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(CURR_PTR)),
-        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(END_PTR)));
+    FW_ASSERT(CURR_PTR == END_PTR, static_cast<FwAssertArgType>(mgrId), static_cast<FwAssertArgType>(memId),
+              static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(CURR_PTR)),
+              static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(END_PTR)));
     // secondary init verification
-    FW_ASSERT(
-      currStruct == this->m_numStructs,
-      static_cast<FwAssertArgType>(mgrId),
-      static_cast<FwAssertArgType>(memId),
-      static_cast<FwAssertArgType>(currStruct),
-      static_cast<FwAssertArgType>(this->m_numStructs));
+    FW_ASSERT(currStruct == this->m_numStructs, static_cast<FwAssertArgType>(mgrId),
+              static_cast<FwAssertArgType>(memId), static_cast<FwAssertArgType>(currStruct),
+              static_cast<FwAssertArgType>(this->m_numStructs));
     // indicate setup is done
     this->m_setup = true;
-  }
+}
 
-  void BufferManagerComponentImpl ::
-    schedIn_handler(
-        const FwIndexType portNum,
-        U32 context
-    )
-  {
+void BufferManagerComponentImpl ::schedIn_handler(const FwIndexType portNum, U32 context) {
     // write telemetry values
     this->tlmWrite_HiBuffs(this->m_highWater);
     this->tlmWrite_CurrBuffs(this->m_currBuffs);
     this->tlmWrite_TotalBuffs(this->m_numStructs);
     this->tlmWrite_NoBuffs(this->m_noBuffs);
     this->tlmWrite_EmptyBuffs(this->m_emptyBuffs);
-  }
+}
 
-} // end namespace Svc
+}  // end namespace Svc

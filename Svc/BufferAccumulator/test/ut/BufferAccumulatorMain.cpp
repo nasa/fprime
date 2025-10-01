@@ -11,23 +11,23 @@
 // ======================================================================
 
 #include "Accumulate.hpp"
+#include "BufferAccumulatorTester.hpp"
 #include "Drain.hpp"
 #include "Errors.hpp"
 #include "Health.hpp"
-#include "BufferAccumulatorTester.hpp"
 
 // ----------------------------------------------------------------------
 // Test Errors
 // ----------------------------------------------------------------------
 
 TEST(TestErrors, QueueFull) {
-  Svc::Errors::BufferAccumulatorTester tester;
-  tester.QueueFull();
+    Svc::Errors::BufferAccumulatorTester tester;
+    tester.QueueFull();
 }
 
 TEST(TestErrors, PartialDrain) {
-  Svc::Errors::BufferAccumulatorTester tester;
-  tester.PartialDrain();
+    Svc::Errors::BufferAccumulatorTester tester;
+    tester.PartialDrain();
 }
 
 // ----------------------------------------------------------------------
@@ -35,8 +35,8 @@ TEST(TestErrors, PartialDrain) {
 // ----------------------------------------------------------------------
 
 TEST(TestAccumulate, OK) {
-  Svc::Accumulate::BufferAccumulatorTester tester;
-  tester.OK();
+    Svc::Accumulate::BufferAccumulatorTester tester;
+    tester.OK();
 }
 
 // ----------------------------------------------------------------------
@@ -44,13 +44,13 @@ TEST(TestAccumulate, OK) {
 // ----------------------------------------------------------------------
 
 TEST(TestDrain, OK) {
-  Svc::Drain::BufferAccumulatorTester tester;
-  tester.OK();
+    Svc::Drain::BufferAccumulatorTester tester;
+    tester.OK();
 }
 
 TEST(TestPartialDrain, OK) {
-  Svc::Drain::BufferAccumulatorTester tester;
-  tester.PartialDrainOK();
+    Svc::Drain::BufferAccumulatorTester tester;
+    tester.PartialDrainOK();
 }
 
 // ----------------------------------------------------------------------
@@ -58,11 +58,11 @@ TEST(TestPartialDrain, OK) {
 // ----------------------------------------------------------------------
 
 TEST(TestHealth, Ping) {
-  Svc::Health::BufferAccumulatorTester tester;
-  tester.Ping();
+    Svc::Health::BufferAccumulatorTester tester;
+    tester.Ping();
 }
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

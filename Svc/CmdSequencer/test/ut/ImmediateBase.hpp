@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateBase.hpp
 // \author Canham/Bocchino
 // \brief  Base class for Immediate and ImmediateEOS
@@ -15,103 +15,86 @@
 
 namespace Svc {
 
-  namespace ImmediateBase {
+namespace ImmediateBase {
 
-    //! Base class for Immediate and ImmediateEOS
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+//! Base class for Immediate and ImmediateEOS
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests parameterized by file type
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format = 
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Run an automatic sequence by command
+    void parameterizedAutoByCommand(SequenceFiles::File& file,  //!< The file
+                                    const U32 numCommands,      //!< The number of commands in the sequence
+                                    const U32 bound             //!< The number of commands to execute
+    );
 
-      public:
+    //! Run an automatic sequence by port call
+    void parameterizedAutoByPort(SequenceFiles::File& file,  //!< The file
+                                 const U32 numCommands,      //!< The number of commands in the sequence
+                                 const U32 bound             //!< The number of commands to execute
+    );
 
-        // ---------------------------------------------------------------------- 
-        // Tests parameterized by file type
-        // ---------------------------------------------------------------------- 
+    //! Send invalid manual commands while a sequence is running
+    void parameterizedInvalidManualCommands(SequenceFiles::File& file  //!< The file
+    );
 
-        //! Run an automatic sequence by command
-        void parameterizedAutoByCommand(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound //!< The number of commands to execute
-        );
+    //! Run a manual sequence
+    void parameterizedManual(SequenceFiles::File& file,  //!< The file
+                             const U32 numCommands       //!< The number of commands in the sequence
+    );
 
-        //! Run an automatic sequence by port call
-        void parameterizedAutoByPort(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound //!< The number of commands to execute
-        );
+    //! Run a sequence and, while it is running, start a new sequence
+    //! The new sequence should cause an error
+    void parameterizedNewSequence(SequenceFiles::File& file,  //!< The file
+                                  const U32 numCommands,      //!< The number of commands in the sequence
+                                  const U32 bound             //!< The number of commands to execute
+    );
 
-        //! Send invalid manual commands while a sequence is running
-        void parameterizedInvalidManualCommands(
-            SequenceFiles::File& file //!< The file
-        );
+    //! Load a sequence on initialization and then run it
+    void parameterizedLoadOnInit(SequenceFiles::File& file,  //!< The file
+                                 const U32 numCommands,      //!< The number of commands in the sequence
+                                 const U32 bound             //!< The number of commands to execute
+    );
 
-        //! Run a manual sequence
-        void parameterizedManual(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands //!< The number of commands in the sequence
-        );
+    //! Load a sequence, then run a sequence, then try to run a pre-loaded
+    //! sequence
+    void parameterizedLoadRunRun(SequenceFiles::File& file,  //!< The file
+                                 const U32 numCommands,      //!< The number of commands in the sequence
+                                 const U32 bound             //!< The number of commands to execute
+    );
 
-        //! Run a sequence and, while it is running, start a new sequence
-        //! The new sequence should cause an error
-        void parameterizedNewSequence(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound //!< The number of commands to execute
-        );
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected helper methods
+    // ----------------------------------------------------------------------
 
-        //! Load a sequence on initialization and then run it
-        void parameterizedLoadOnInit(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound //!< The number of commands to execute
-        );
+    //! Execute sequence commands for an automatic sequence
+    void executeCommandsAuto(const char* const fileName,  //!< The file name
+                             const U32 numCommands,       //!< The number of commands in the sequence
+                             const U32 bound,             //!< The number of commands to run
+                             const CmdExecMode::t mode    //!< The mode
+    );
 
-        //! Load a sequence, then run a sequence, then try to run a pre-loaded 
-        //! sequence
-        void parameterizedLoadRunRun(
-            SequenceFiles::File& file, //!< The file
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound //!< The number of commands to execute
-        );
+    //! Execute sequence commands with a command response error
+    void executeCommandsError(const char* const fileName,  //!< The file name
+                              const U32 numCommands        //!< The number of commands in the sequence
+    );
+};
 
-      protected:
+}  // namespace ImmediateBase
 
-        // ---------------------------------------------------------------------- 
-        // Protected helper methods
-        // ---------------------------------------------------------------------- 
-
-        //! Execute sequence commands for an automatic sequence
-        void executeCommandsAuto(
-            const char *const fileName, //!< The file name
-            const U32 numCommands, //!< The number of commands in the sequence
-            const U32 bound, //!< The number of commands to run
-            const CmdExecMode::t mode //!< The mode
-        );
-
-        //! Execute sequence commands with a command response error
-        void executeCommandsError(
-            const char *const fileName, //!< The file name
-            const U32 numCommands //!< The number of commands in the sequence
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

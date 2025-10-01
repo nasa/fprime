@@ -65,17 +65,17 @@ serialization representation of the buffer.
 
 To use this method, get either a serializer or deserializer using the `Fw::Buffer.getSerializer()` 
 or `Fw::Buffer.getDeserializer()` methods. Both of these methods return a `Fw::ExternalSerializeBufferWithMemberCopy` 
-object which you can then call `.serialize()` or `.deserialize()` on.
+object which you can then call `.serializeFrom()` or `.deserializeTo()` on.
 
 **Example Using Serialization and Deserialization Methods**
 
 ```c++
 U32 my_value = 123;
 Fw::Buffer my_buffer = ...;
-my_buffer.getSerializer().serialize(mv_value);
+my_buffer.getSerializer().serializeFrom(mv_value);
 
 U32 my_value_again = 0;
-my_buffer.getDeserializer().deserialize(mv_value_again);
+my_buffer.getDeserializer().deserializeTo(mv_value_again);
 ```
 > [!NOTE]
 > To use this method types must inherit from `Fw::Serializable` or be basic types.

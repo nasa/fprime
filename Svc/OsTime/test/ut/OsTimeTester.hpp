@@ -7,80 +7,71 @@
 #ifndef Svc_OsTimeTester_HPP
 #define Svc_OsTimeTester_HPP
 
-#include "Svc/OsTime/OsTimeGTestBase.hpp"
 #include "Svc/OsTime/OsTime.hpp"
+#include "Svc/OsTime/OsTimeGTestBase.hpp"
 
 namespace Svc {
 
-  class OsTimeTester :
-    public OsTimeGTestBase
-  {
+class OsTimeTester : public OsTimeGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
-    public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 10;
 
-      // ----------------------------------------------------------------------
-      // Constants
-      // ----------------------------------------------------------------------
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const FwSizeType MAX_HISTORY_SIZE = 10;
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // Instance ID supplied to the component instance under test
-      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    //! Construct object OsTimeTester
+    OsTimeTester();
 
-    public:
+    //! Destroy object OsTimeTester
+    ~OsTimeTester();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Construct object OsTimeTester
-      OsTimeTester();
+    //! Zero Epoch
+    void zeroEpochTest();
 
-      //! Destroy object OsTimeTester
-      ~OsTimeTester();
+    //! Non-zero Epoch
+    void offsetEpochTest();
 
-    public:
+    //! No Epoch
+    void noEpochTest();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Update Epoch
+    void updateEpochTest();
 
-      //! Zero Epoch
-      void zeroEpochTest();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
 
-      //! Non-zero Epoch
-      void offsetEpochTest();
+    //! Connect ports
+    void connectPorts();
 
-      //! No Epoch
-      void noEpochTest();
+    //! Initialize components
+    void initComponents();
 
-      //! Update Epoch
-      void updateEpochTest();
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
 
-    private:
+    //! The component under test
+    OsTime component;
+};
 
-      // ----------------------------------------------------------------------
-      // Helper functions
-      // ----------------------------------------------------------------------
-
-      //! Connect ports
-      void connectPorts();
-
-      //! Initialize components
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Member variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      OsTime component;
-
-  };
-
-}
+}  // namespace Svc
 
 #endif

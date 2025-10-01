@@ -17,39 +17,32 @@
 
 namespace Svc {
 
-  namespace JoinWait {
+namespace JoinWait {
 
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format = 
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Test
+    void test_join_wait_without_active_seq();
 
-      public:
+    void test_join_wait_with_active_seq();
+};
 
-        // ---------------------------------------------------------------------- 
-        // Tests
-        // ---------------------------------------------------------------------- 
+}  // namespace JoinWait
 
-        //! Test
-        void test_join_wait_without_active_seq();
-
-        void test_join_wait_with_active_seq();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

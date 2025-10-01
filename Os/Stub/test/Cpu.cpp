@@ -19,11 +19,10 @@ TestCpu::~TestCpu() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-
 TestCpu::Status TestCpu::_getCount(FwSizeType& cpu_count) {
     StaticData::data.lastCalled = StaticData::LastFn::COUNT_FN;
     StaticData::data.count = cpu_count;
-    return  StaticData::data.status_out;
+    return StaticData::data.status_out;
 }
 
 TestCpu::Status TestCpu::_getTicks(Os::Cpu::Ticks& ticks, FwSizeType cpu_index) {
@@ -31,7 +30,7 @@ TestCpu::Status TestCpu::_getTicks(Os::Cpu::Ticks& ticks, FwSizeType cpu_index) 
     StaticData::data.index = cpu_index;
     StaticData::data.ticks.total = ticks.total;
     StaticData::data.ticks.used = ticks.used;
-    return  StaticData::data.status_out;
+    return StaticData::data.status_out;
 }
 
 CpuHandle* TestCpu::getHandle() {
@@ -39,7 +38,7 @@ CpuHandle* TestCpu::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Test
-} // namespace Cpu
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Cpu
+}  // namespace Stub
+}  // namespace Os

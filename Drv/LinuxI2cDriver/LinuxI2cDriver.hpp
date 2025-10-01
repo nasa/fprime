@@ -17,62 +17,51 @@
 
 namespace Drv {
 
-  class LinuxI2cDriver final :
-    public LinuxI2cDriverComponentBase
-  {
+class LinuxI2cDriver final : public LinuxI2cDriverComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object LinuxI2cDriver
+    //!
+    LinuxI2cDriver(const char* const compName);
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    bool open(const char* device);
+    //! Destroy object LinuxI2cDriver
+    //!
+    ~LinuxI2cDriver();
 
-      //! Construct object LinuxI2cDriver
-      //!
-      LinuxI2cDriver(const char *const compName);
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined typed input ports
+    // ----------------------------------------------------------------------
 
-      bool open(const char* device);
-      //! Destroy object LinuxI2cDriver
-      //!
-      ~LinuxI2cDriver();
+    //! Handler implementation for write
+    //!
+    I2cStatus write_handler(const FwIndexType portNum, /*!< The port number*/
+                            U32 addr,
+                            Fw::Buffer& serBuffer);
 
-    private:
+    //! Handler implementation for read
+    //!
+    I2cStatus read_handler(const FwIndexType portNum, /*!< The port number*/
+                           U32 addr,
+                           Fw::Buffer& serBuffer);
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    //! Handler implementation for writeRead
+    //!
+    I2cStatus writeRead_handler(const FwIndexType portNum, /*!< The port number*/
+                                U32 addr,
+                                Fw::Buffer& writeBuffer,
+                                Fw::Buffer& readBuffer);
 
-      //! Handler implementation for write
-      //!
-      I2cStatus write_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 addr,
-          Fw::Buffer &serBuffer
-      );
+// Prevent unused field error when using stub
+#ifndef STUBBED_LINUX_I2C_DRIVER
+    int m_fd;  //!< i2c file descriptor
+#endif
+};
 
-      //! Handler implementation for read
-      //!
-      I2cStatus read_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 addr,
-          Fw::Buffer &serBuffer
-      );
-
-      //! Handler implementation for writeRead
-      //!
-      I2cStatus  writeRead_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 addr,
-          Fw::Buffer &writeBuffer,
-          Fw::Buffer &readBuffer
-      );
-
-      // Prevent unused field error when using stub
-      #ifndef STUBBED_LINUX_I2C_DRIVER
-      int m_fd; //!< i2c file descriptor
-      #endif
-    };
-
-} // end namespace Drv
+}  // end namespace Drv
 
 #endif

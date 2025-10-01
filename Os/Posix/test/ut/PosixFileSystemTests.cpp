@@ -2,13 +2,13 @@
 // \title Os/Posix/test/ut/PosixFileSystemTests.cpp
 // \brief tests for posix implementation for Os::FileSystem
 // ======================================================================
-#include "Os/test/ut/filesystem/RulesHeaders.hpp"
-#include "Os/test/ut/filesystem/CommonTests.hpp"
-#include "Os/Posix/Task.hpp"
 #include <gtest/gtest.h>
-#include "STest/Scenario/Scenario.hpp"
-#include "STest/Pick/Pick.hpp"
 #include "Fw/Types/String.hpp"
+#include "Os/Posix/Task.hpp"
+#include "Os/test/ut/filesystem/CommonTests.hpp"
+#include "Os/test/ut/filesystem/RulesHeaders.hpp"
+#include "STest/Pick/Pick.hpp"
+#include "STest/Scenario/Scenario.hpp"
 
 // ----------------------------------------------------------------------
 // Posix Test Cases
@@ -16,7 +16,7 @@
 
 // POSIX-specific test class
 class PosixFileSystemTest : public ::testing::Test {
-protected:
+  protected:
     void SetUp() override {
         // Create a test directory
         m_test_dir = "posix_test_dir";
@@ -51,15 +51,16 @@ TEST_F(PosixFileSystemTest, DetectSpecialPathTypes) {
     ASSERT_EQ(nonExistentType, Os::FileSystem::PathType::NOT_EXIST) << "Failed to detect nonexistent path";
 
     // Clean up test file
-    ASSERT_EQ(Os::FileSystem::removeFile(testFile.c_str()), Os::FileSystem::Status::OP_OK) << "Failed to remove test file";
+    ASSERT_EQ(Os::FileSystem::removeFile(testFile.c_str()), Os::FileSystem::Status::OP_OK)
+        << "Failed to remove test file";
 
     // Test FIFO (named pipe)
     std::string fifoPath = m_test_dir + "/test_fifo";
     ASSERT_EQ(mkfifo(fifoPath.c_str(), 0666), 0) << "Failed to create FIFO";
-    
+
     Os::FileSystem::PathType fifoType = Os::FileSystem::getPathType(fifoPath.c_str());
     ASSERT_EQ(fifoType, Os::FileSystem::PathType::OTHER) << "Failed to detect FIFO as OTHER type";
-    
+
     // Clean up FIFO
     ASSERT_EQ(unlink(fifoPath.c_str()), 0) << "Failed to remove FIFO";
 

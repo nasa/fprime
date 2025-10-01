@@ -34,7 +34,7 @@ class StubDirectory : public DirectoryInterface {
 
     //! \brief Open or create a directory
     //!
-    //! Using the path provided, this function will open or create a directory. 
+    //! Using the path provided, this function will open or create a directory.
     //! Use OpenMode::READ to open an existing directory and error if the directory is not found
     //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
     //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
@@ -69,19 +69,17 @@ class StubDirectory : public DirectoryInterface {
     //! \param fileNameBuffer: buffer to store filename
     //! \param buffSize: size of fileNameBuffer
     //! \return status of the operation
-    Status read(char * fileNameBuffer, FwSizeType buffSize) override;
-
+    Status read(char* fileNameBuffer, FwSizeType buffSize) override;
 
     //! \brief Close directory
     void close() override;
-
 
   private:
     //! Handle for StubDirectory
     StubDirectoryHandle m_handle;
 };
 
-} // namespace Directory
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_DIRECTORY_HPP
+}  // namespace Directory
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_DIRECTORY_HPP

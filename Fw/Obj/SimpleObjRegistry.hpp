@@ -26,23 +26,23 @@
 
 namespace Fw {
 
-    class SimpleObjRegistry : public ObjRegistry {
-        public:
-            SimpleObjRegistry(); //!< constructor for registry
-            ~SimpleObjRegistry(); //!< destructor for registry
-            void dump(); //!< dump contents of registry
-            void clear(); //!< clear registry entries
+class SimpleObjRegistry : public ObjRegistry {
+  public:
+    SimpleObjRegistry();   //!< constructor for registry
+    ~SimpleObjRegistry();  //!< destructor for registry
+    void dump();           //!< dump contents of registry
+    void clear();          //!< clear registry entries
 #if FW_OBJECT_NAMES == 1
-            void dump(const char* objName); //!< dump a particular object
+    void dump(const char* objName);  //!< dump a particular object
 #endif
-        private:
-            void regObject(ObjBase* obj); //!< register an object with the registry
-            ObjBase* m_objPtrArray[FW_OBJ_SIMPLE_REG_ENTRIES]; //!< array of objects
-            FwSizeType m_numEntries; //!< number of entries in the registry
-    };
+  private:
+    void regObject(ObjBase* obj);                       //!< register an object with the registry
+    ObjBase* m_objPtrArray[FW_OBJ_SIMPLE_REG_ENTRIES];  //!< array of objects
+    FwSizeType m_numEntries;                            //!< number of entries in the registry
+};
 
-}
+}  // namespace Fw
 
-#endif // FW_OBJECT_REGISTRATION
+#endif  // FW_OBJECT_REGISTRATION
 
-#endif // FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
+#endif  // FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP

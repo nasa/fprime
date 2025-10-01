@@ -4,22 +4,21 @@
 // \brief  cpp file for FatalHandler component implementation class
 // ======================================================================
 
-#include <cstdlib>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Fw/FPrimeBasicTypes.hpp>
+#include <cstdlib>
 
 namespace Svc {
 
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined typed input ports
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-    void FatalHandlerComponentImpl::FatalReceive_handler(
-            const FwIndexType portNum,
-            FwEventIdType Id) {
-        Fw::Logger::log("FATAL %" PRI_FwEventIdType "handled.\n",Id);
-        while (true) {} // Returning might be bad
-    }
+void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {
+    Fw::Logger::log("FATAL %" PRI_FwEventIdType "handled.\n", Id);
+    while (true) {
+    }  // Returning might be bad
+}
 
-} // end namespace Svc
+}  // end namespace Svc

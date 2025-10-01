@@ -171,7 +171,7 @@ void TestState ::action__BufferSendIn__InvalidHeaderHash() {
     // Perturb the header hash
     const U32 storedHash = computedHash + 1;
     Utils::HashBuffer storedHashBuffer;
-    const Fw::SerializeStatus serialStatus = storedHashBuffer.serialize(storedHash);
+    const Fw::SerializeStatus serialStatus = storedHashBuffer.serializeFrom(storedHash);
     ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_OK);
     container.setHeaderHash(storedHashBuffer);
     // Send the buffer

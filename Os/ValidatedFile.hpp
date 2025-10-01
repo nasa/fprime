@@ -13,58 +13,52 @@
 #ifndef OS_ValidatedFile_HPP
 #define OS_ValidatedFile_HPP
 
-#include "Fw/Types/String.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
+#include "Fw/Types/String.hpp"
 #include "Os/ValidateFile.hpp"
 
 namespace Os {
 
-  //! A validated file
-  class ValidatedFile {
+//! A validated file
+class ValidatedFile {
+  public:
+    //! Construct a validated file
+    ValidatedFile(const char* const fileName  //!< The file name
+    );
 
-    public:
+  public:
+    //! Validate the file
+    //! \return Status
+    Os::ValidateFile::Status validate();
 
-      //! Construct a validated file
-      ValidatedFile(
-          const char* const fileName //!< The file name
-      );
+    //! Create the hash file
+    //! \return Status
+    Os::ValidateFile::Status createHashFile();
 
-    public:
+  public:
+    //! Get the file name
+    //! \return The file name
+    const Fw::StringBase& getFileName() const;
 
-      //! Validate the file
-      //! \return Status
-      Os::ValidateFile::Status validate();
+    //! Get the hash file name
+    //! \return The hash file name
+    const Fw::StringBase& getHashFileName() const;
 
-      //! Create the hash file
-      //! \return Status
-      Os::ValidateFile::Status createHashFile();
+    //! Get the hash file buffer
+    //! \return The hash file buffer
+    const Utils::HashBuffer& getHashBuffer() const;
 
-    public:
+  private:
+    //! The file name
+    Fw::String m_fileName;
 
-      //! Get the file name
-      //! \return The file name
-      const Fw::StringBase& getFileName() const;
+    //! The hash file name
+    Fw::String m_hashFileName;
 
-      //! Get the hash file name
-      //! \return The hash file name
-      const Fw::StringBase& getHashFileName() const;
+    //! The hash value after creating or loading a validation file
+    Utils::HashBuffer m_hashBuffer;
+};
 
-      //! Get the hash file buffer
-      //! \return The hash file buffer
-      const Utils::HashBuffer& getHashBuffer() const;
-
-    private:
-
-      //! The file name
-      Fw::String m_fileName;
-
-      //! The hash file name
-      Fw::String m_hashFileName;
-
-      //! The hash value after creating or loading a validation file
-      Utils::HashBuffer m_hashBuffer;
-  };
-
-}
+}  // namespace Os
 
 #endif

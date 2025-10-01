@@ -7,45 +7,35 @@
 #ifndef COMSPLITTER_HPP
 #define COMSPLITTER_HPP
 
-#include <Svc/ComSplitter/ComSplitterComponentAc.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/ComSplitter/ComSplitterComponentAc.hpp>
 
 namespace Svc {
 
-  class ComSplitter final :
-    public ComSplitterComponentBase
-  {
+class ComSplitter final : public ComSplitterComponentBase {
+    // ----------------------------------------------------------------------
+    // Friend class for whitebox testing
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Friend class for whitebox testing
-      // ----------------------------------------------------------------------
+    friend class ComSplitterComponentBaseFriend;
 
-      friend class ComSplitterComponentBaseFriend;
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+  public:
+    ComSplitter(const char* compName);
 
-    public:
+    ~ComSplitter();
 
-      ComSplitter(const char* compName);
+    // ----------------------------------------------------------------------
+    // Handler implementations
+    // ----------------------------------------------------------------------
 
-      ~ComSplitter();
+  private:
+    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context);
+};
 
-      // ----------------------------------------------------------------------
-      // Handler implementations
-      // ----------------------------------------------------------------------
-
-    private:
-
-      void comIn_handler(
-          FwIndexType portNum,
-          Fw::ComBuffer &data,
-          U32 context
-      );
-
-    };
-
-}
+}  // namespace Svc
 
 #endif

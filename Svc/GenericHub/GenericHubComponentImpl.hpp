@@ -25,10 +25,10 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
      * Type of serialized data on the wire. Allows for expanding them on the opposing end.
      */
     enum HubType {
-        HUB_TYPE_PORT,    //!< Port type transmission
-        HUB_TYPE_BUFFER,  //!< Buffer type transmission
-        HUB_TYPE_EVENT,   //!< Event transmission
-        HUB_TYPE_CHANNEL, //!< Telemetry channel type
+        HUB_TYPE_PORT,     //!< Port type transmission
+        HUB_TYPE_BUFFER,   //!< Buffer type transmission
+        HUB_TYPE_EVENT,    //!< Event transmission
+        HUB_TYPE_CHANNEL,  //!< Telemetry channel type
         HUB_TYPE_MAX
     };
 
@@ -94,7 +94,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
 
     //! Handler implementation for portIn
     //!
-    void portIn_handler(FwIndexType portNum,        /*!< The port number*/
+    void portIn_handler(FwIndexType portNum,            /*!< The port number*/
                         Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     ) override;
 

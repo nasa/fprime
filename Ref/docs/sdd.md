@@ -23,7 +23,7 @@ It interconnects those application components with reusable service components:
 
 |Component|Description|Link
 |---|---|---|
-|ActiveLogger|Logs events for downlink| [SDD](../../Svc/ActiveLogger/docs/sdd.md)|
+|EventManager|Logs events for downlink| [SDD](../../Svc/EventManager/docs/sdd.md)|
 |ActiveRateGroup|Executes a rate group by calling components| [SDD](../../Svc/ActiveRateGroup/docs/sdd.md)|
 |BufferManager|Manages a pool of buffers| [SDD](../../Svc/BufferManager/docs/sdd.md)|
 |CmdSequencer|Loads a set of commands from a binary file and executes them| [SDD](../../Svc/CmdSequencer/docs/sdd.md)|
@@ -84,7 +84,7 @@ The connections for the reference deployment telemetry are as follows:
 
 ### 2.3 Logging
 
-The logging view consists of connections for components to send events for logging to the `ActiveLogger` component. 
+The logging view consists of connections for components to send events for logging to the `EventManager` component. 
 
 #### 2.3.1 C&DH Logging
 

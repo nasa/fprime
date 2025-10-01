@@ -20,6 +20,9 @@ set(HEADER_FILES
 
 register_fprime_module()
 ### UTs ###
+set(UT_MOD_DEPS
+    STest
+)
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTester.cpp"

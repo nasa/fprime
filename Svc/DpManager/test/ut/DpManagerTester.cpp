@@ -80,7 +80,6 @@ void DpManagerTester::checkTelemetry() {
     TESTER_CHECK_CHANNEL(NumBytes);
 }
 
-
 void DpManagerTester::doDispatch() {
     this->component.doDispatch();
 }

@@ -53,7 +53,6 @@ struct Notify : public ConcurrentRule<Os::Test::Condition::Tester> {
                 ) override;
 };
 
-
 // ------------------------------------------------------------------------------------------------------
 // Rule:  NotifyAll
 //
@@ -77,5 +76,4 @@ struct NotifyAll : public ConcurrentRule<Os::Test::Condition::Tester> {
     //! Action
     void action(Os::Test::Condition::Tester& state  //!< The test state
                 ) override;
-
 };

@@ -17,34 +17,29 @@
 
 namespace Svc {
 
-  namespace Logging {
+namespace Logging {
 
-    class BufferLoggerTester :
-      public Svc::BufferLoggerTester
-    {
+class BufferLoggerTester : public Svc::BufferLoggerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Test logging of data from bufferSendIn
+    void BufferSendIn();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Test close file command
+    void CloseFile();
 
-        //! Test logging of data from bufferSendIn
-        void BufferSendIn();
+    //! Test logging of data from comIn
+    void ComIn();
 
-        //! Test close file command
-        void CloseFile();
+    //! Test logging on/off capability
+    void OnOff();
+};
 
-        //! Test logging of data from comIn
-        void ComIn();
+}  // namespace Logging
 
-        //! Test logging on/off capability
-        void OnOff();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

@@ -15,9 +15,9 @@
 
 namespace Svc {
 
-FprimeFraming::FprimeFraming(): FramingProtocol() {}
+FprimeFraming::FprimeFraming() : FramingProtocol() {}
 
-FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
+FprimeDeframing::FprimeDeframing() : DeframingProtocol() {}
 
 void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) {
     // NOTE: packet_type is not used in this implementation
@@ -32,20 +32,20 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacketTyp
 
     // Serialize start word
     Fw::SerializeStatus status;
-    status = serializer.serialize(FpFrameHeader::START_WORD);
+    status = serializer.serializeFrom(FpFrameHeader::START_WORD);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Serialize data size
-    status = serializer.serialize(size);
+    status = serializer.serializeFrom(size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Serialize data
-    status = serializer.serialize(data, size, Fw::Serialization::OMIT_LENGTH);  // Serialize without length
+    status = serializer.serializeFrom(data, size, Fw::Serialization::OMIT_LENGTH);  // Serialize without length
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Calculate and add transmission hash
     Utils::Hash::hash(buffer.getData(), static_cast<FwSizeType>(totalSize - HASH_DIGEST_LENGTH), hash);
-    status = serializer.serialize(hash.getBuffAddr(), HASH_DIGEST_LENGTH, Fw::Serialization::OMIT_LENGTH);
+    status = serializer.serializeFrom(hash.getBuffAddr(), HASH_DIGEST_LENGTH, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     buffer.setSize(totalSize);
@@ -128,4 +128,4 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }
-}
+}  // namespace Svc

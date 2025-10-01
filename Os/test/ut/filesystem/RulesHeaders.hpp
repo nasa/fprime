@@ -7,11 +7,11 @@
 
 #include <gtest/gtest.h>
 #include "Os/FileSystem.hpp"
+#include "STest/Pick/Pick.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
-#include "STest/Pick/Pick.hpp"
 
 namespace Os {
 namespace Test {
@@ -20,22 +20,18 @@ namespace FileSystem {
 struct FileSystemNode {
     std::string path;
     explicit FileSystemNode(std::string a_path) : path(a_path) {};
-    bool operator==(const FileSystemNode& other) const {
-        return this->path == other.path;
-    }
+    bool operator==(const FileSystemNode& other) const { return this->path == other.path; }
 };
 struct TestFile : FileSystemNode {
     std::string contents;
     TestFile(std::string a_path, std::string a_contents) : FileSystemNode(a_path), contents(a_contents) {};
-}; //!< Representation of a file for tracking state of the filesystem during testing
+};  //!< Representation of a file for tracking state of the filesystem during testing
 
 struct TestDirectory : FileSystemNode {
     explicit TestDirectory(std::string a_path) : FileSystemNode(a_path) {};
-}; //!< Representation of a directory for tracking state of the filesystem during testing
-
+};  //!< Representation of a directory for tracking state of the filesystem during testing
 
 struct Tester {
-
     // Constructors that ensures the filesystem is always valid
     Tester() = default;
 
@@ -50,17 +46,13 @@ struct Tester {
     std::vector<TestDirectory> m_test_dirs;
     std::vector<TestFile> m_test_files;
 
-    U64 m_counter; //!< Counter for generating unique file/directory names
+    U64 m_counter;  //!< Counter for generating unique file/directory names
 
     // ---------------------------------------------------------------
     // Functions to manipulate the state of the Tester w.r.t filesystem
     // ---------------------------------------------------------------
-    void touch_file(std::string path) {
-        this->m_test_files.push_back(TestFile(path, ""));
-    }
-    void create_directory(std::string path) {
-        this->m_test_dirs.push_back(TestDirectory(path));
-    }
+    void touch_file(std::string path) { this->m_test_files.push_back(TestFile(path, "")); }
+    void create_directory(std::string path) { this->m_test_dirs.push_back(TestDirectory(path)); }
     void remove_file(std::string path) {
         for (auto it = this->m_test_files.begin(); it != this->m_test_files.end(); ++it) {
             if (it->path == path) {
@@ -69,9 +61,7 @@ struct Tester {
             }
         }
     }
-    void move_file(TestFile& source, std::string dest_path) {
-        source.path = dest_path;
-    }
+    void move_file(TestFile& source, std::string dest_path) { source.path = dest_path; }
     void copy_file(TestFile& source, std::string dest_path) {
         TestFile new_file(dest_path, source.contents);
         this->m_test_files.push_back(new_file);
@@ -97,9 +87,7 @@ struct Tester {
     TestDirectory& get_random_directory() {
         return this->m_test_dirs[STest::Pick::lowerUpper(0, this->m_test_dirs.size() - 1)];
     }
-    std::string new_random_filepath() {
-        return get_random_directory().path + "/" + get_new_filename();
-    }
+    std::string new_random_filepath() { return get_random_directory().path + "/" + get_new_filename(); }
 
     bool validate_contents_on_disk(TestFile& file) {
         Os::File os_file;

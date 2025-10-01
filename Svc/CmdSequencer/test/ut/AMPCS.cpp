@@ -9,88 +9,65 @@
 // acknowledged.
 // ======================================================================
 
-#include "Os/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
+#include "Os/FileSystem.hpp"
 
 namespace Svc {
 
-  namespace AMPCS {
+namespace AMPCS {
 
-    // ----------------------------------------------------------------------
-    // Constructors
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Constructors
+// ----------------------------------------------------------------------
 
-    CmdSequencerTester ::
-      CmdSequencerTester() :
-        Svc::CmdSequencerTester(SequenceFiles::File::Format::AMPCS)
-    {
+CmdSequencerTester ::CmdSequencerTester() : Svc::CmdSequencerTester(SequenceFiles::File::Format::AMPCS) {}
 
-    }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
-
-    void CmdSequencerTester ::
-      MissingCRC()
-    {
-      // Write the file
-      SequenceFiles::MissingCRCFile file(this->format);
-      file.write();
-      // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
-      this->clearAndDispatch();
-      // Assert no response on seqDone
-      ASSERT_from_seqDone_SIZE(0);
-      // Assert command response
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(
-          0,
-          this->getRunOpcode(),
-          0,
-          Fw::CmdResponse::EXECUTION_ERROR
-      );
-      // Assert events
-      Fw::String crcFileName(file.getName());
-      crcFileName += ".CRC32";
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_CS_FileNotFound(0, crcFileName.toChar());
-      // Assert telemetry
-      ASSERT_TLM_SIZE(1);
-      ASSERT_TLM_CS_Errors(0, 1);
-    }
-
-    void CmdSequencerTester ::
-      MissingFile()
-    {
-      // Remove the file
-      SequenceFiles::MissingFile file(this->format);
-      file.write();
-      file.remove();
-      // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
-      this->clearAndDispatch();
-      // Assert command response
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(
-          0,
-          this->getRunOpcode(),
-          0,
-          Fw::CmdResponse::EXECUTION_ERROR
-      );
-      // Assert events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_CS_FileInvalid(
-          0,
-          file.getName().toChar(),
-          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-          Os::FileSystem::DOESNT_EXIST
-      );
-      // Assert telemetry
-      ASSERT_TLM_SIZE(1);
-      ASSERT_TLM_CS_Errors(0, 1);
-    }
-
-  }
-
+void CmdSequencerTester ::MissingCRC() {
+    // Write the file
+    SequenceFiles::MissingCRCFile file(this->format);
+    file.write();
+    // Run the sequence
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->clearAndDispatch();
+    // Assert no response on seqDone
+    ASSERT_from_seqDone_SIZE(0);
+    // Assert command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, this->getRunOpcode(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    // Assert events
+    Fw::String crcFileName(file.getName());
+    crcFileName += ".CRC32";
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileNotFound(0, crcFileName.toChar());
+    // Assert telemetry
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_CS_Errors(0, 1);
 }
+
+void CmdSequencerTester ::MissingFile() {
+    // Remove the file
+    SequenceFiles::MissingFile file(this->format);
+    file.write();
+    file.remove();
+    // Run the sequence
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->clearAndDispatch();
+    // Assert command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, this->getRunOpcode(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    // Assert events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileInvalid(0, file.getName().toChar(), CmdSequencer_FileReadStage::READ_HEADER_SIZE,
+                                 Os::FileSystem::DOESNT_EXIST);
+    // Assert telemetry
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_CS_Errors(0, 1);
+}
+
+}  // namespace AMPCS
+
+}  // namespace Svc

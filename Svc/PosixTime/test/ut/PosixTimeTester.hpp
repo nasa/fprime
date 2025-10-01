@@ -5,43 +5,36 @@
 #ifndef POSIX_TIME_TESTER_HPP
 #define POSIX_TIME_TESTER_HPP
 
-#include "Svc/PosixTime/PosixTime.hpp"
 #include "PosixTimeGTestBase.hpp"
+#include "Svc/PosixTime/PosixTime.hpp"
 
 namespace Svc {
 
-  class PosixTimeTester :
-    public PosixTimeGTestBase
-  {
+class PosixTimeTester : public PosixTimeGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    explicit PosixTimeTester(const char* const compName);
 
-    public:
+    ~PosixTimeTester();
 
-      explicit PosixTimeTester(const char *const compName);
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      ~PosixTimeTester();
+  public:
+    void getTime();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // The component under test
+    // ----------------------------------------------------------------------
 
-    public:
+  private:
+    PosixTime component;
+};
 
-      void getTime();
-
-      // ----------------------------------------------------------------------
-      // The component under test
-      // ----------------------------------------------------------------------
-
-    private:
-
-      PosixTime component;
-
-  };
-
-}
+}  // namespace Svc
 
 #endif

@@ -4,12 +4,12 @@
 // ======================================================================
 #ifndef OS_POSIX_ERRNO_HPP
 #define OS_POSIX_ERRNO_HPP
-#include "Os/File.hpp"
-#include "Os/Task.hpp"
-#include "Os/FileSystem.hpp"
-#include "Os/Directory.hpp"
-#include "Os/RawTime.hpp"
 #include "Os/Condition.hpp"
+#include "Os/Directory.hpp"
+#include "Os/File.hpp"
+#include "Os/FileSystem.hpp"
+#include "Os/RawTime.hpp"
+#include "Os/Task.hpp"
 
 namespace Os {
 namespace Posix {
@@ -57,6 +57,6 @@ Os::Mutex::Status posix_status_to_mutex_status(int posix_status);
 //!
 Os::ConditionVariable::Status posix_status_to_conditional_status(int posix_status);
 
-}
-}
+}  // namespace Posix
+}  // namespace Os
 #endif

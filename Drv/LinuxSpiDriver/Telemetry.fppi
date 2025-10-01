@@ -1,2 +1,2 @@
 @ Bytes Sent/Received
-telemetry SPI_Bytes: U32 id 0
+telemetry SPI_Bytes: FwSizeType id 0

@@ -10,35 +10,23 @@
 //
 // ======================================================================
 
-
-#include <Svc/LinuxTimer/LinuxTimer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/LinuxTimer/LinuxTimer.hpp>
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  LinuxTimer ::
-    LinuxTimer(
-        const char *const compName
-    ) : LinuxTimerComponentBase(compName),
-        m_quit(false)
-  {
+LinuxTimer ::LinuxTimer(const char* const compName) : LinuxTimerComponentBase(compName), m_quit(false) {}
 
-  }
+LinuxTimer ::~LinuxTimer() {}
 
-  LinuxTimer ::
-    ~LinuxTimer()
-  {
+void LinuxTimer::quit() {
+    this->m_mutex.lock();
+    this->m_quit = true;
+    this->m_mutex.unLock();
+}
 
-  }
-
-  void LinuxTimer::quit() {
-      this->m_mutex.lock();
-      this->m_quit = true;
-      this->m_mutex.unLock();
-  }
-
-} // end namespace Svc
+}  // end namespace Svc

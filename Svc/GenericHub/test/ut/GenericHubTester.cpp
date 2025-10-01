@@ -84,7 +84,7 @@ void GenericHubTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_siz
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
-        buffer.serialize(static_cast<U8>(STest::Pick::any()));
+        buffer.serializeFrom(static_cast<U8>(STest::Pick::any()));
     }
 }
 
@@ -151,17 +151,17 @@ void GenericHubTester ::send_random_buffer(U32 port) {
 // ----------------------------------------------------------------------
 
 void GenericHubTester ::from_LogSend_handler(const FwIndexType portNum,
-                                   FwEventIdType id,
-                                   Fw::Time& timeTag,
-                                   const Fw::LogSeverity& severity,
-                                   Fw::LogBuffer& args) {
+                                             FwEventIdType id,
+                                             Fw::Time& timeTag,
+                                             const Fw::LogSeverity& severity,
+                                             Fw::LogBuffer& args) {
     this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
 }
 
 void GenericHubTester ::from_TlmSend_handler(const FwIndexType portNum,
-                                   FwChanIdType id,
-                                   Fw::Time& timeTag,
-                                   Fw::TlmBuffer& val) {
+                                             FwChanIdType id,
+                                             Fw::Time& timeTag,
+                                             Fw::TlmBuffer& val) {
     this->pushFromPortEntry_TlmSend(id, timeTag, val);
 }
 
@@ -194,8 +194,8 @@ void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::B
     this->from_dataInDeallocate_handler(0, fwBuffer);
 }
 
-void GenericHubTester ::from_portOut_handler(FwIndexType portNum,        /*!< The port number*/
-                                   Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
+                                             Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
     // Assert the buffer came through exactly on the right port

@@ -10,15 +10,14 @@
 //
 // ======================================================================
 
-#include "Svc/FramingProtocol/DeframingProtocolInterface.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/FramingProtocol/DeframingProtocolInterface.hpp"
 #include "Utils/Types/CircularBuffer.hpp"
 
 #ifndef SVC_DEFRAMING_PROTOCOL_HPP
 #define SVC_DEFRAMING_PROTOCOL_HPP
 
 namespace Svc {
-
 
 /**
  * \brief Abstract base class representing a deframing protocol
@@ -32,17 +31,17 @@ namespace Svc {
  */
 class DeframingProtocol {
   public:
-    virtual ~DeframingProtocol(){};
+    virtual ~DeframingProtocol() {};
     /**
      * \brief Status of the deframing call
      */
     enum DeframingStatus {
-        DEFRAMING_STATUS_SUCCESS, /*!< Successful deframing */
-        DEFRAMING_INVALID_SIZE, /*!< Invalid size found */
+        DEFRAMING_STATUS_SUCCESS,   /*!< Successful deframing */
+        DEFRAMING_INVALID_SIZE,     /*!< Invalid size found */
         DEFRAMING_INVALID_CHECKSUM, /*!< Invalid checksum */
-        DEFRAMING_MORE_NEEDED, /*!< Successful deframing likely with more data */
-        DEFRAMING_INVALID_FORMAT, /*!< Invalid format */
-        DEFRAMING_MAX_STATUS /*!< The number of status enumerations */
+        DEFRAMING_MORE_NEEDED,      /*!< Successful deframing likely with more data */
+        DEFRAMING_INVALID_FORMAT,   /*!< Invalid format */
+        DEFRAMING_MAX_STATUS        /*!< The number of status enumerations */
     };
     //! Constructor
     //!
@@ -55,12 +54,12 @@ class DeframingProtocol {
 
     //! Deframe packets from within the circular buffer
     //! \return deframing status of this deframe attempt
-    virtual DeframingStatus deframe(Types::CircularBuffer& buffer,  /*!< Deframe from circular buffer */
-                                    U32& needed  /*!< Return needed number of bytes */
-    ) = 0;
+    virtual DeframingStatus deframe(Types::CircularBuffer& buffer, /*!< Deframe from circular buffer */
+                                    U32& needed                    /*!< Return needed number of bytes */
+                                    ) = 0;
 
   protected:
     DeframingProtocolInterface* m_interface;
 };
-}
+}  // namespace Svc
 #endif  // SVC_DEFRAMING_PROTOCOL_HPP

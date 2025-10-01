@@ -73,8 +73,8 @@ managed by the caller and only affects the data of the underlying buffer.
 U32 my_data = 10001;
 U8  my_byte = 2;
 auto sb = my_fw_buffer.getSerializer();
-sb.serialize(my_data);
-sb.serialize(my_byte);
+sb.serializeFrom(my_data);
+sb.serializeFrom(my_byte);
 ```
 
 **Deserializing from `Fw::Buffer`**
@@ -82,6 +82,6 @@ sb.serialize(my_byte);
 U32 my_data = 0;
 U8  my_byte = 0;
 auto sb = my_fw_buffer.getDeserializer();
-sb.deserialize(my_data);
-sb.deserialize(my_byte);
+sb.deserializeTo(my_data);
+sb.deserializeTo(my_byte);
 ```

@@ -12,10 +12,11 @@
 #ifndef DRV_SocketComponentHelper_HPP
 #define DRV_SocketComponentHelper_HPP
 
-#include <Fw/Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Os/Task.hpp>
+#include <Fw/Buffer/Buffer.hpp>
+#include <Os/Condition.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/Task.hpp>
 
 namespace Drv {
 /**
@@ -27,12 +28,8 @@ namespace Drv {
  */
 class SocketComponentHelper {
   public:
-    enum OpenState{
-        NOT_OPEN,
-        OPENING,
-        OPEN,
-        SKIP
-    };
+    enum OpenState { NOT_OPEN, OPENING, OPEN, SKIP };
+    enum ReconnectState { NOT_RECONNECTING, REQUEST_RECONNECT, RECONNECT_IN_PROGRESS };
     /**
      * \brief constructs the socket read task
      */
@@ -52,14 +49,25 @@ class SocketComponentHelper {
      *        default behavior is to automatically open connections.
      *
      * \param name: name of the task
-     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not prioritized
-     * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
-     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
+     * \param priority: priority of the started read task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not
+     * prioritized
+     * \param stack: stack size provided to the read task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads
+     * default
+     * \param cpuAffinity: cpu affinity provided to read task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
+     * \param priorityReconnect: priority of the started reconnect task. See: Os::Task::start. Default:
+     * TASK_PRIORITY_DEFAULT, not prioritized
+     * \param stackReconnect: stack size provided to the reconnect task. See: Os::Task::start. Default: TASK_DEFAULT,
+     * posix threads default
+     * \param cpuAffinityReconnect: cpu affinity provided to reconnect task. See: Os::Task::start. Default:
+     * TASK_DEFAULT, don't care
      */
-    void start(const Fw::StringBase &name,
+    void start(const Fw::StringBase& name,
                const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
-               const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
+               const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,
+               const FwTaskPriorityType priorityReconnect = Os::Task::TASK_PRIORITY_DEFAULT,
+               const Os::Task::ParamType stackReconnect = Os::Task::TASK_DEFAULT,
+               const Os::Task::ParamType cpuAffinityReconnect = Os::Task::TASK_DEFAULT);
 
     /**
      * \brief open the socket for communications
@@ -73,7 +81,7 @@ class SocketComponentHelper {
      */
     SocketIpStatus open();
 
-     /**
+    /**
      * \brief check if IP socket has previously been opened
      *
      * Check if this IpSocket has previously been opened. In the case of Udp this will check for outgoing transmissions
@@ -87,12 +95,20 @@ class SocketComponentHelper {
     /**
      * \brief set socket to automatically open connections when true, or not when false
      *
-     * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed connections. When passed `false`
-     * the user must explicitly call the `open` method to open the socket initially and when a socket fails.
+     * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed
+     * connections. When passed `false` the user must explicitly call the `open` method to open the socket initially and
+     * when a socket fails.
      *
      * \param auto_open: true to automatically open and reopen sockets, false otherwise
      */
     void setAutomaticOpen(bool auto_open);
+
+    /**
+     * \brief get socket automatically open connections status
+     *
+     * \return status of auto_open
+     */
+    bool getAutomaticOpen();
 
     /**
      * \brief send data to the IP socket from the given buffer
@@ -102,7 +118,7 @@ class SocketComponentHelper {
      * \param size: size of data to send
      * \return status of send, SOCK_SUCCESS for success, something else on error
      */
-    SocketIpStatus send(const U8* const data, const U32 size);
+    SocketIpStatus send(const U8* const data, const FwSizeType size);
 
     /**
      * \brief receive data from the IP socket from the given buffer
@@ -112,7 +128,7 @@ class SocketComponentHelper {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* data, U32 &size);
+    SocketIpStatus recv(U8* data, FwSizeType& size);
 
     /**
      * \brief close the socket communications
@@ -137,6 +153,7 @@ class SocketComponentHelper {
      * \brief is the read loop running
      */
     bool running();
+    bool runningReconnect();
 
     /**
      * \brief stop the socket read task and close the associated socket.
@@ -145,6 +162,8 @@ class SocketComponentHelper {
      * startSocketTask call. This will stop the read task and close the client socket.
      */
     void stop();
+
+    void stopReconnect();
 
     /**
      * \brief joins to the stopping read task to wait for it to close
@@ -156,11 +175,19 @@ class SocketComponentHelper {
      */
     Os::Task::Status join();
 
+    Os::Task::Status joinReconnect();
+
   protected:
     /**
      * \brief receive off the TCP socket
      */
     virtual void readLoop();
+
+    /**
+     * \brief reconnect TCP socket
+     */
+    virtual void reconnectLoop();
+
     /**
      * \brief returns a reference to the socket handler
      *
@@ -202,7 +229,6 @@ class SocketComponentHelper {
      */
     virtual void connected() = 0;
 
-
     /**
      * \brief a task designed to read from the socket and output incoming data
      *
@@ -210,25 +236,64 @@ class SocketComponentHelper {
      */
     static void readTask(void* pointer);
 
+    /**
+     * \brief a task designed for socket reconnection
+     *
+     * \param pointer: pointer to "this" component
+     */
+    static void reconnectTask(void* pointer);
+
+    /**
+     * \brief signal to reconnect task that a reconnect is needed
+     *
+     */
+    void requestReconnect();
+
+    /**
+     * \brief wait method for a task to wait for a reconnect request to complete
+     *
+     * After requesting a reconnect, tasks should call this method
+     * to wait for the reconnect thread to complete
+     *
+     *
+     * \param timeout: timeout so that the wait doesn't hang indefinitely
+     *
+     * \return status of the reconnect request, SOCK_DISCONNECTED for
+     * reopen again, or SOCK_SUCCESS on success, something else on error
+     */
+    SocketIpStatus waitForReconnect(Fw::TimeInterval timeout = Fw::TimeInterval(1, 0));
+
   private:
     /**
      * \brief Re-open port if it has been disconnected
      *
-     * This function is a helper to handle the situations where this code needs to safely reopen a socket. User code should
-     * connect using the `open` call. This is for opening/reopening in situations where automatic open is performed
-     * within this socket helper.
+     * This function is a helper to handle the situations where this code needs to safely reopen a socket. User code
+     * should connect using the `open` call. This is for opening/reopening in situations where automatic open is
+     * performed within this socket helper.
      *
      * \return status of reconnect, SOCK_SUCCESS for success, something else on error
      */
     SocketIpStatus reopen();
 
   protected:
+    bool m_reopen = true;  //!< Force reopen on disconnect
+    SocketDescriptor m_descriptor;
+
+    // Read/recv
     Os::Task m_task;
     Os::Mutex m_lock;
-    SocketDescriptor m_descriptor;
-    bool m_reopen = true; //!< Force reopen on disconnect
-    bool m_stop = true; //!< Stops the task when set to true
-    OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
+    bool m_stop = true;                      //!< Stops the task when set to true
+    OpenState m_open = OpenState::NOT_OPEN;  //!< Have we successfully opened
+
+    // Reconnect
+    Os::Task m_reconnectTask;
+    Os::Mutex m_reconnectLock;
+    bool m_reconnectStop = true;
+    ReconnectState m_reconnectState = ReconnectState::NOT_RECONNECTING;
+    Fw::TimeInterval m_reconnectCheckInterval =
+        Fw::TimeInterval(0, 50000);  // 50 ms, Interval at which reconnect task loop checks for requests
+    Fw::TimeInterval m_reconnectWaitInterval =
+        Fw::TimeInterval(0, 10000);  // 10 ms, Interval at which reconnect requesters wait for response
 };
-}
+}  // namespace Drv
 #endif  // DRV_SocketComponentHelper_HPP

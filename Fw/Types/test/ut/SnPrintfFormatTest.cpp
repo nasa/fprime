@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "Fw/Types/format.hpp"
 #include <cstdio>
+#include "Fw/Types/format.hpp"
 
 TEST(Nominal, snprintf_format) {
     char buffer_test[100];

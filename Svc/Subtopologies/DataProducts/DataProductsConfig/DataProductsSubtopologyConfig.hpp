@@ -4,9 +4,9 @@
 #include "Fw/Types/MallocAllocator.hpp"
 
 namespace DataProducts {
-    namespace Allocation {
-        extern Fw::MemAllocator& memAllocator;
-    }
+namespace Allocation {
+extern Fw::MemAllocator& memAllocator;
 }
+}  // namespace DataProducts
 
-#endif 
+#endif

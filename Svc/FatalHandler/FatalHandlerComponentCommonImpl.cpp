@@ -10,28 +10,18 @@
 //
 // ======================================================================
 
-
-#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  FatalHandlerComponentImpl ::
-    FatalHandlerComponentImpl(
-        const char *const compName
-    ) : FatalHandlerComponentBase(compName)
-  {
+FatalHandlerComponentImpl ::FatalHandlerComponentImpl(const char* const compName)
+    : FatalHandlerComponentBase(compName) {}
 
-  }
+FatalHandlerComponentImpl ::~FatalHandlerComponentImpl() {}
 
-  FatalHandlerComponentImpl ::
-    ~FatalHandlerComponentImpl()
-  {
-
-  }
-
-} // end namespace Svc
+}  // end namespace Svc

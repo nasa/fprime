@@ -1,10 +1,10 @@
-#include "gtest/gtest.h"
 #include <Os/IntervalTimer.hpp>
 #include <Os/Task.hpp>
 #include <cstdio>
+#include "gtest/gtest.h"
 
 extern "C" {
-    void intervalTimerTest();
+void intervalTimerTest();
 }
 
 void intervalTimerTest() {
@@ -20,16 +20,16 @@ void intervalTimerTest() {
     Os::RawTime maxStart;
     Os::RawTime maxStop;
 
-    maxStart.now(); // max bound
-    timer.start();  // actual timer under test
-    minStart.now(); // low bound
+    maxStart.now();  // max bound
+    timer.start();   // actual timer under test
+    minStart.now();  // low bound
 
     // Delay 5ms (5000us) for good measure's sake, value should not affect test
     Os::Task::delay(Fw::TimeInterval(0, 5000));
 
-    minStop.now(); // low bound
-    timer.stop();  // actual timer under test
-    maxStop.now(); // max bound
+    minStop.now();  // low bound
+    timer.stop();   // actual timer under test
+    maxStop.now();  // max bound
 
     Fw::TimeInterval testInterval;
     Fw::TimeInterval minInterval;

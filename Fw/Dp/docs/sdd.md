@@ -98,7 +98,7 @@ Single-value records with _type = T_ have the following format:
 |Field Name|Data Type|Serialized Size|Description|
 |----------|---------|---------------|-----------|
 |`Id`|`FwDpIdType`|`sizeof(FwDpIdType)`|The record ID|
-|`Data`|_T_|`sizeof(`_T_`)` if _T_ is a primitive type; otherwise _T_`::SERIALIZED_SIZE`|The serialized data|
+|`Data`|_T_|Size of the serialized data|The serialized data|
 
 **Array records:**
 An array record is specified in FPP in the form `product record` _name_ `:` _type_ `array`.
@@ -110,7 +110,7 @@ Array records with _type = T_ have the following format:
 |----------|---------|---------------|-----------|
 |`Id`|`FwDpIdType`|`sizeof(FwDpIdType)`|The record ID|
 |`Size`|`FwSizeType`|`sizeof(FwSizeStoreType)`|The number _n_ of elements in the record|
-|`Data`|Array of _n_ _T_|_n_ * [`sizeof(`_T_`)` if _T_ is a primitive type; otherwise _T_`::SERIALIZED_SIZE`]|_n_ elements, each of type _T_|
+|`Data`|Array of _n_ _T_|Sum of the serialized sizes of the elements in the array|_n_ elements, each of type _T_|
 
 #### 5.1.4. Data Hash
 

@@ -46,7 +46,6 @@ class InvalidArguments : public Functionality {};
 
 //! Category of tests dependent on functional io
 class FunctionalIO : public Functionality {
-
     //! Specialized setup method used to pass requirement for functional i/o
     void SetUp() override;
 };

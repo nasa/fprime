@@ -14,17 +14,13 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::CancelPacket ::
-      compare(
-          const FilePacket::CancelPacket& expected,
-          const FilePacket::CancelPacket& actual
-      )
-    {
-      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
-    }
-
-  }
-
+void FilePackets::CancelPacket ::compare(const FilePacket::CancelPacket& expected,
+                                         const FilePacket::CancelPacket& actual) {
+    FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

@@ -7,71 +7,62 @@
 #ifndef Svc_PolyDbTester_HPP
 #define Svc_PolyDbTester_HPP
 
-#include "Svc/PolyDb/PolyDbGTestBase.hpp"
 #include "Svc/PolyDb/PolyDb.hpp"
+#include "Svc/PolyDb/PolyDbGTestBase.hpp"
 
 namespace Svc {
 
-  class PolyDbTester :
-    public PolyDbGTestBase
-  {
+class PolyDbTester : public PolyDbGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
-    public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const U32 MAX_HISTORY_SIZE = 10;
 
-      // ----------------------------------------------------------------------
-      // Constants
-      // ----------------------------------------------------------------------
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const U32 MAX_HISTORY_SIZE = 10;
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // Instance ID supplied to the component instance under test
-      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    //! Construct object PolyDbTester
+    PolyDbTester();
 
-    public:
+    //! Destroy object PolyDbTester
+    ~PolyDbTester();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Construct object PolyDbTester
-      PolyDbTester();
+    //! Do nominal testing
+    void runNominalReadWrite();
 
-      //! Destroy object PolyDbTester
-      ~PolyDbTester();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Connect ports
+    void connectPorts();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    void initComponents();
 
-      //! Do nominal testing
-      void runNominalReadWrite();
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
 
-    private:
+    //! The component under test
+    PolyDb component;
+};
 
-      // ----------------------------------------------------------------------
-      // Helper functions
-      // ----------------------------------------------------------------------
-
-      //! Connect ports
-      void connectPorts();
-
-      //! Initialize components
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Member variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      PolyDb component;
-
-  };
-
-}
+}  // namespace Svc
 
 #endif

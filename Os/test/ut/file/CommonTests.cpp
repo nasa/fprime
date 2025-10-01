@@ -312,39 +312,30 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
 
     // Place these rules into a list of rules
-    STest::Rule<Os::Test::FileTest::Tester>* rules[] = {
-            &open_file_create_overwrite_rule,
-            &close_file_rule,
-            &copy_assignment,
-            &copy_construction,
-            &open_invalid_modes_rule,
-            &preallocate_without_open_rule,
-            &seek_without_open_rule,
-            &flush_invalid_modes_rule,
-            &read_invalid_modes_rule,
-            &write_invalid_modes_rule,
-            &open_illegal_path,
-            &open_illegal_mode,
-            &seek_illegal,
-            &read_illegal_buffer,
-            &write_illegal_buffer,
-            &incremental_invalid_mode_rule,
-            &full_invalid_mode_rule
-    };
+    STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_overwrite_rule,
+                                                        &close_file_rule,
+                                                        &copy_assignment,
+                                                        &copy_construction,
+                                                        &open_invalid_modes_rule,
+                                                        &preallocate_without_open_rule,
+                                                        &seek_without_open_rule,
+                                                        &flush_invalid_modes_rule,
+                                                        &read_invalid_modes_rule,
+                                                        &write_invalid_modes_rule,
+                                                        &open_illegal_path,
+                                                        &open_illegal_mode,
+                                                        &seek_illegal,
+                                                        &read_illegal_buffer,
+                                                        &write_illegal_buffer,
+                                                        &incremental_invalid_mode_rule,
+                                                        &full_invalid_mode_rule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::FileTest::Tester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::FileTest::Tester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            RANDOM_BOUND/10
-    );
+    STest::BoundedScenario<Os::Test::FileTest::Tester> bounded("Bounded Random Rules Scenario", random,
+                                                               RANDOM_BOUND / 10);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps.\n", numSteps);
@@ -378,48 +369,37 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::FileTest::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
 
-
     // Place these rules into a list of rules
-    STest::Rule<Os::Test::FileTest::Tester>* rules[] = {
-        &open_file_create_rule,
-        &open_file_create_overwrite_rule,
-        &open_for_write_rule,
-        &open_for_read_rule,
-        &close_file_rule,
-        &copy_assignment,
-        &copy_construction,
-        &read_rule,
-        &write_rule,
-        &seek_rule,
-        &preallocate_rule,
-        &flush_rule,
-        &incremental_crc_rule,
-        &finalize_crc_rule,
-        &full_crc_rule,
-        &open_invalid_modes_rule,
-        &preallocate_without_open_rule,
-        &seek_without_open_rule,
-        &seek_invalid_size,
-        &flush_invalid_modes_rule,
-        &read_invalid_modes_rule,
-        &write_invalid_modes_rule,
-        &incremental_invalid_mode_rule,
-        &full_invalid_mode_rule
-    };
+    STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_rule,
+                                                        &open_file_create_overwrite_rule,
+                                                        &open_for_write_rule,
+                                                        &open_for_read_rule,
+                                                        &close_file_rule,
+                                                        &copy_assignment,
+                                                        &copy_construction,
+                                                        &read_rule,
+                                                        &write_rule,
+                                                        &seek_rule,
+                                                        &preallocate_rule,
+                                                        &flush_rule,
+                                                        &incremental_crc_rule,
+                                                        &finalize_crc_rule,
+                                                        &full_crc_rule,
+                                                        &open_invalid_modes_rule,
+                                                        &preallocate_without_open_rule,
+                                                        &seek_without_open_rule,
+                                                        &seek_invalid_size,
+                                                        &flush_invalid_modes_rule,
+                                                        &read_invalid_modes_rule,
+                                                        &write_invalid_modes_rule,
+                                                        &incremental_invalid_mode_rule,
+                                                        &full_invalid_mode_rule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::FileTest::Tester> random(
-        "Random Rules",
-        rules,
-        FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::FileTest::Tester> bounded(
-        "Bounded Random Rules Scenario",
-        random,
-        RANDOM_BOUND
-    );
+    STest::BoundedScenario<Os::Test::FileTest::Tester> bounded("Bounded Random Rules Scenario", random, RANDOM_BOUND);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps.\n", numSteps);
@@ -440,7 +420,6 @@ TEST_F(Functionality, IncrementalCrcInvalidMode) {
     open_rule.apply(*tester);
     rule.apply(*tester);
 }
-
 
 // Ensure open prevents nullptr as path
 TEST_F(InvalidArguments, OpenBadPath) {

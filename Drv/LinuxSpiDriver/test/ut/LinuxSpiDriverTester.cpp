@@ -17,114 +17,84 @@
 
 namespace Drv {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  LinuxSpiDriverTester ::
-    LinuxSpiDriverTester() :
-    LinuxSpiDriverTesterBase("Tester", MAX_HISTORY_SIZE),
-      component("LinuxSpiDriver")
-  {
+LinuxSpiDriverTester ::LinuxSpiDriverTester()
+    : LinuxSpiDriverTesterBase("Tester", MAX_HISTORY_SIZE), component("LinuxSpiDriver") {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  LinuxSpiDriverTester ::
-    ~LinuxSpiDriverTester()
-  {
+LinuxSpiDriverTester ::~LinuxSpiDriverTester() {}
 
-  }
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
-
-  void LinuxSpiDriverTester ::
-    connectPorts()
-  {
-
+void LinuxSpiDriverTester ::connectPorts() {
     // SpiReadWrite
-    this->connect_to_SpiReadWrite(
-        0,
-        this->component.get_SpiReadWrite_InputPort(0)
-    );
+    this->connect_to_SpiReadWrite(0, this->component.get_SpiReadWrite_InputPort(0));
 
     // Tlm
-    this->component.set_Tlm_OutputPort(
-        0,
-        this->get_from_Tlm(0)
-    );
+    this->component.set_Tlm_OutputPort(0, this->get_from_Tlm(0));
 
     // Time
-    this->component.set_Time_OutputPort(
-        0,
-        this->get_from_Time(0)
-    );
+    this->component.set_Time_OutputPort(0, this->get_from_Time(0));
 
     // Log
-    this->component.set_Log_OutputPort(
-        0,
-        this->get_from_Log(0)
-    );
+    this->component.set_Log_OutputPort(0, this->get_from_Log(0));
 
     // LogText
-    this->component.set_LogText_OutputPort(
-        0,
-        this->get_from_LogText(0)
-    );
+    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
+}
 
-  }
-
-  void LinuxSpiDriverTester ::
-    initComponents()
-  {
+void LinuxSpiDriverTester ::initComponents() {
     this->init();
-    this->component.init(
-        INSTANCE
-    );
+    this->component.init(INSTANCE);
 
-    this->component.open(8,0,SPI_FREQUENCY_1MHZ);
-  }
+    this->component.open(8, 0, SPI_FREQUENCY_1MHZ);
+}
 
-  void LinuxSpiDriverTester::textLogIn(const FwEventIdType id, //!< The event ID
-          Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
-          const Fw::TextLogString& text //!< The event string
-          ) {
-      TextLogEntry e = { id, timeTag, severity, text };
+void LinuxSpiDriverTester::textLogIn(const FwEventIdType id,              //!< The event ID
+                                     Fw::Time& timeTag,                   //!< The time
+                                     const Fw::TextLogSeverity severity,  //!< The severity
+                                     const Fw::TextLogString& text        //!< The event string
+) {
+    TextLogEntry e = {id, timeTag, severity, text};
 
-      printTextLogHistoryEntry(e, stdout);
-  }
+    printTextLogHistoryEntry(e, stdout);
+}
 
-  void LinuxSpiDriverTester::sendBuffer(BYTE* buffer, FwSizeType size) {
-      Fw::Buffer w;
-      w.setdata(reinterpret_cast<PlatformPointerCastType>(buffer));
-      w.setsize(size);
+void LinuxSpiDriverTester::sendBuffer(BYTE* buffer, FwSizeType size) {
+    Fw::Buffer w;
+    w.setdata(reinterpret_cast<PlatformPointerCastType>(buffer));
+    w.setsize(size);
 
-      printf("WRITE: ");
-      for (FwSizeType byte = 0; byte < size; byte++) {
-          printf("0x%02X ",buffer[byte]);
-      }
-      printf("\n");
+    printf("WRITE: ");
+    for (FwSizeType byte = 0; byte < size; byte++) {
+        printf("0x%02X ", buffer[byte]);
+    }
+    printf("\n");
 
-      BYTE* rb = 0;
-      rb = new BYTE[size];
+    BYTE* rb = 0;
+    rb = new BYTE[size];
 
-      FW_ASSERT(rb);
+    FW_ASSERT(rb);
 
-      Fw::Buffer r(0,0, reinterpret_cast<PlatformPointerCastType>(rb),size);
+    Fw::Buffer r(0, 0, reinterpret_cast<PlatformPointerCastType>(rb), size);
 
-      this->invoke_to_SpiReadWrite(0,w,r);
+    this->invoke_to_SpiReadWrite(0, w, r);
 
-      BYTE* d = (BYTE*)r.getdata();
-      printf("READ: ");
-      for (FwSizeType byte = 0; byte < size; byte++) {
-          printf("0x%02X ",d[byte]);
-      }
-      printf("\n");
+    BYTE* d = (BYTE*)r.getdata();
+    printf("READ: ");
+    for (FwSizeType byte = 0; byte < size; byte++) {
+        printf("0x%02X ", d[byte]);
+    }
+    printf("\n");
 
-      delete[] rb;
-  }
+    delete[] rb;
+}
 
-} // end namespace Drv
+}  // end namespace Drv

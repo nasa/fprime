@@ -17,207 +17,168 @@
 
 namespace Svc {
 
-  //! \class AMPCSSequence
-  //! \brief A sequence in AMPCS format
-  class AMPCSSequence :
-    public CmdSequencerComponentImpl::Sequence
-  {
-
-    public:
-
-      //! AMPCS sequence header
-      struct SequenceHeader {
-
+//! \class AMPCSSequence
+//! \brief A sequence in AMPCS format
+class AMPCSSequence : public CmdSequencerComponentImpl::Sequence {
+  public:
+    //! AMPCS sequence header
+    struct SequenceHeader {
         struct Constants {
-
-          typedef enum {
-            //! The sequence header size in bytes
-            SIZE = 4
-          } t;
-
+            typedef enum {
+                //! The sequence header size in bytes
+                SIZE = 4
+            } t;
         };
 
         typedef U8 t[Constants::SIZE];
+    };
 
-      };
-
-      //! AMPCS sequence record
-      struct Record {
-
+    //! AMPCS sequence record
+    struct Record {
         //! Time flag
         struct TimeFlag {
+            //! The time flag type
+            typedef enum { ABSOLUTE = 0x00, RELATIVE = 0xFF } t;
 
-          //! The time flag type
-          typedef enum {
-            ABSOLUTE = 0x00,
-            RELATIVE = 0xFF
-          } t;
-
-          //! The serial representation of a time flag
-          struct Serial {
-
-            typedef U8 t;
-
-          };
-
+            //! The serial representation of a time flag
+            struct Serial {
+                typedef U8 t;
+            };
         };
 
         //! Time
         struct Time {
-
-          //! The type of the time field
-          typedef U32 t;
-
+            //! The type of the time field
+            typedef U32 t;
         };
 
         //! Command length
         struct CmdLength {
-
-          //! The type of the command length field
-          typedef U16 t;
-
+            //! The type of the command length field
+            typedef U16 t;
         };
 
         //! Opcode
         struct Opcode {
-
-          //! The type of an AMPCS command opcode
-          typedef U16 t;
-
+            //! The type of an AMPCS command opcode
+            typedef U16 t;
         };
+    };
 
-      };
+  public:
+    //! Construct an AMPCSSequence
+    AMPCSSequence(CmdSequencerComponentImpl& component  //!< The enclosing component
+    );
 
-    public:
+  public:
+    //! Load a sequence file
+    //! \return Success or failure
+    bool loadFile(const Fw::StringBase& fileName  //!< The file name
+    );
 
-      //! Construct an AMPCSSequence
-      AMPCSSequence(
-          CmdSequencerComponentImpl& component //!< The enclosing component
-      );
+    //! Query whether the sequence has any more records
+    //! \return Yes or no
+    bool hasMoreRecords() const;
 
-    public:
+    //! Get the next record in the sequence.
+    //! Asserts on failure
+    void nextRecord(Sequence::Record& record  //!< The returned record
+    );
 
-      //! Load a sequence file
-      //! \return Success or failure
-      bool loadFile(
-          const Fw::StringBase& fileName //!< The file name
-      );
+    //! Reset the sequence to the beginning.
+    //! After calling this, hasMoreRecords should return true, unless
+    //! the sequence has no records.
+    void reset();
 
-      //! Query whether the sequence has any more records
-      //! \return Yes or no
-      bool hasMoreRecords() const;
+    //! Clear the sequence records.
+    //! After calling this, hasMoreRecords should return false.
+    void clear();
 
-      //! Get the next record in the sequence.
-      //! Asserts on failure
-      void nextRecord(
-          Sequence::Record& record //!< The returned record
-      );
+  private:
+    //! Read a CRC file
+    //! \return Success or failure
+    bool readCRCFile(Fw::CmdStringArg& crcFileName  //!< The CRC file name
+    );
 
-      //! Reset the sequence to the beginning.
-      //! After calling this, hasMoreRecords should return true, unless
-      //! the sequence has no records.
-      void reset();
+    //! Read the CRC out of an open CRC file
+    //! \return Success or failure
+    bool readCRC();
 
-      //! Clear the sequence records.
-      //! After calling this, hasMoreRecords should return false.
-      void clear();
+    //! Deserialize the CRC
+    //! \return Success or failure
+    bool deserializeCRC();
 
-    private:
+    //! Get the aggregate size of the command records
+    //! \return Success or failure
+    bool getFileSize(const Fw::StringBase& seqFileName  //!< The sequence file name
+    );
 
-      //! Read a CRC file
-      //! \return Success or failure
-      bool readCRCFile(
-          Fw::CmdStringArg& crcFileName //!< The CRC file name
-      );
+    //! Read a sequence file
+    //! \return Success or failure
+    bool readSequenceFile(const Fw::StringBase& seqFileName  //!< The sequence file name
+    );
 
-      //! Read the CRC out of an open CRC file
-      //! \return Success or failure
-      bool readCRC();
+    //! Read an open sequence file
+    //! \return Success or failure
+    bool readOpenSequenceFile();
 
-      //! Deserialize the CRC
-      //! \return Success or failure
-      bool deserializeCRC();
+    //! Read the sequence header from the sequence file
+    //! into the buffer
+    //! \return Success or failure
+    bool readSequenceHeader();
 
-      //! Get the aggregate size of the command records
-      //! \return Success or failure
-      bool getFileSize(
-          const Fw::StringBase& seqFileName //!< The sequence file name
-      );
+    //! Read records into buffer
+    //! \return Success or failure
+    bool readRecords();
 
-      //! Read a sequence file
-      //! \return Success or failure
-      bool readSequenceFile(
-          const Fw::StringBase& seqFileName //!< The sequence file name
-      );
+    //! Validate the CRC
+    //! \return Success or failure
+    bool validateCRC();
 
-      //! Read an open sequence file
-      //! \return Success or failure
-      bool readOpenSequenceFile();
+    //! Deserialize a record from a buffer
+    //! \return Serialize status
+    Fw::SerializeStatus deserializeRecord(Sequence::Record& record  //!< The record
+    );
 
-      //! Read the sequence header from the sequence file
-      //! into the buffer
-      //! \return Success or failure
-      bool readSequenceHeader();
+    //! Deserialize the time flag field and convert it into a record descriptor
+    //! \return Serialize status
+    Fw::SerializeStatus deserializeTimeFlag(Sequence::Record::Descriptor& descriptor  //!< The descriptor
+    );
 
-      //! Read records into buffer
-      //! \return Success or failure
-      bool readRecords();
+    //! Deserialize the time field and convert it into a time tag
+    //! \return Serialize status
+    Fw::SerializeStatus deserializeTime(Fw::Time& timeTag  //!< The time tag
+    );
 
-      //! Validate the CRC
-      //! \return Success or failure
-      bool validateCRC();
+    //! Deserialize the command length field
+    //! \return Serialize status
+    Fw::SerializeStatus deserializeCmdLength(Record::CmdLength::t& cmdLength  //!< The command length
+    );
 
-      //! Deserialize a record from a buffer
-      //! \return Serialize status
-      Fw::SerializeStatus deserializeRecord(
-          Sequence::Record& record //!< The record
-      );
+    //! Translate a serialized AMPCS command to a serialized F Prime command
+    //! \return Serialize status
+    Fw::SerializeStatus translateCommand(Fw::ComBuffer& comBuffer,             //!< The com buffer
+                                         const Record::CmdLength::t cmdLength  //!< The command length
+    );
 
-      //! Deserialize the time flag field and convert it into a record descriptor
-      //! \return Serialize status
-      Fw::SerializeStatus deserializeTimeFlag(
-          Sequence::Record::Descriptor& descriptor //!< The descriptor
-      );
+    //! Validate the sequence records in the buffer
+    //! \return Success or failure
+    bool validateRecords();
 
-      //! Deserialize the time field and convert it into a time tag
-      //! \return Serialize status
-      Fw::SerializeStatus deserializeTime(
-          Fw::Time& timeTag //!< The time tag
-      );
+  private:
+    //! The sequence header
+    SequenceHeader::t m_sequenceHeader;
 
-      //! Deserialize the command length field
-      //! \return Serialize status
-      Fw::SerializeStatus deserializeCmdLength(
-          Record::CmdLength::t& cmdLength //!< The command length
-      );
+    //! The CRC values
+    CmdSequencerComponentImpl::FPrimeSequence::CRC m_crc;
 
-      //! Translate a serialized AMPCS command to a serialized F Prime command
-      //! \return Serialize status
-      Fw::SerializeStatus translateCommand(
-          Fw::ComBuffer& comBuffer, //!< The com buffer
-          const Record::CmdLength::t cmdLength //!< The command length
-      );
+    //! The CRC file
+    Os::File m_crcFile;
 
-      //! Validate the sequence records in the buffer
-      //! \return Success or failure
-      bool validateRecords();
+    //! The sequence file
+    Os::File m_sequenceFile;
+};
 
-    private:
-
-      //! The sequence header
-      SequenceHeader::t m_sequenceHeader;
-
-      //! The CRC values
-      CmdSequencerComponentImpl::FPrimeSequence::CRC m_crc;
-
-      //! The CRC file
-      Os::File m_crcFile;
-
-      //! The sequence file
-      Os::File m_sequenceFile;
-
-  };
-
-}
+}  // namespace Svc
 
 #endif

@@ -12,8 +12,7 @@ namespace Memory {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct DarwinMemoryHandle : public MemoryHandle {
-};
+struct DarwinMemoryHandle : public MemoryHandle {};
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
@@ -39,7 +38,6 @@ class DarwinMemory : public MemoryInterface {
     // Functions overrides
     // ------------------------------------
   public:
-
     //! \brief get system memory usage
     //!
     //! This method delegates to the underlying implementation.
@@ -55,13 +53,14 @@ class DarwinMemory : public MemoryInterface {
     //!
     //! \return raw console handle
     //!
-    MemoryHandle *getHandle() override;
+    MemoryHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     DarwinMemoryHandle m_handle;
 };
-} // namespace Memory
-} // namespace Darwin
-} // namespace Os
+}  // namespace Memory
+}  // namespace Darwin
+}  // namespace Os
 
-#endif // OS_Darwin_Memory_HPP
+#endif  // OS_Darwin_Memory_HPP

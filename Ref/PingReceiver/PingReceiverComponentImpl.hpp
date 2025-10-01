@@ -17,50 +17,40 @@
 
 namespace Ref {
 
-  class PingReceiverComponentImpl final :
-    public PingReceiverComponentBase
-  {
+class PingReceiverComponentImpl final : public PingReceiverComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object PingReceiver
+    //!
+    PingReceiverComponentImpl(const char* const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Destroy object PingReceiver
+    //!
+    ~PingReceiverComponentImpl();
 
-      //! Construct object PingReceiver
-      //!
-      PingReceiverComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined typed input ports
+    // ----------------------------------------------------------------------
 
-      //! Destroy object PingReceiver
-      //!
-      ~PingReceiverComponentImpl();
+    //! Handler implementation for PingIn
+    //!
+    void PingIn_handler(const FwIndexType portNum, /*!< The port number*/
+                        U32 key                    /*!< Value to return to pinger*/
+    );
 
-    private:
+    void PR_StopPings_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
+                                 U32 cmdSeq           /*!< The command sequence number*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    bool m_inhibitPings;
+    U32 m_pingsRecvd;
+};
 
-      //! Handler implementation for PingIn
-      //!
-      void PingIn_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
-
-      void PR_StopPings_cmdHandler(
-              FwOpcodeType opCode, /*!< The opcode*/
-              U32 cmdSeq /*!< The command sequence number*/
-          );
-
-      bool m_inhibitPings;
-      U32 m_pingsRecvd;
-
-
-    };
-
-} // end namespace Ref
+}  // end namespace Ref
 
 #endif

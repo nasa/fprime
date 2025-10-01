@@ -2,11 +2,11 @@
 // \title Os/File.cpp
 // \brief common function implementation for Os::File
 // ======================================================================
-#include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Os/File.hpp>
 
 extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h> // borrow CRC
+#include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
 }
 namespace Os {
 
@@ -22,13 +22,13 @@ File::~File() {
     m_delegate.~FileInterface();
 }
 
-File::File(const File& other) :
-    m_mode(other.m_mode),
-    m_path(other.m_path),
-    m_crc(other.m_crc),
-    m_crc_buffer(),
-    m_handle_storage(),
-    m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
+File::File(const File& other)
+    : m_mode(other.m_mode),
+      m_path(other.m_path),
+      m_crc(other.m_crc),
+      m_crc_buffer(),
+      m_handle_storage(),
+      m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -91,7 +91,7 @@ File::Status File::size(FwSizeType& size_result) {
     return this->m_delegate.size(size_result);
 }
 
-File::Status File::position(FwSizeType &position_result) {
+File::Status File::position(FwSizeType& position_result) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
@@ -165,11 +165,11 @@ File::Status File::flush() {
     return this->m_delegate.flush();
 }
 
-File::Status File::read(U8* buffer, FwSizeType &size) {
+File::Status File::read(U8* buffer, FwSizeType& size) {
     return this->read(buffer, size, WaitType::WAIT);
 }
 
-File::Status File::read(U8* buffer, FwSizeType &size, File::WaitType wait) {
+File::Status File::read(U8* buffer, FwSizeType& size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -184,12 +184,11 @@ File::Status File::read(U8* buffer, FwSizeType &size, File::WaitType wait) {
     return this->m_delegate.read(buffer, size, wait);
 }
 
-File::Status File::write(const U8* buffer, FwSizeType &size) {
+File::Status File::write(const U8* buffer, FwSizeType& size) {
     return this->write(buffer, size, WaitType::WAIT);
 }
 
-
-File::Status File::write(const U8* buffer, FwSizeType &size, File::WaitType wait) {
+File::Status File::write(const U8* buffer, FwSizeType& size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -209,7 +208,7 @@ FileHandle* File::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-File::Status File::calculateCrc(U32 &crc) {
+File::Status File::calculateCrc(U32& crc) {
     File::Status status = File::Status::OP_OK;
     FwSizeType size = FW_FILE_CHUNK_SIZE;
     crc = 0;
@@ -227,36 +226,33 @@ File::Status File::calculateCrc(U32 &crc) {
     return status;
 }
 
-File::Status File::incrementalCrc(FwSizeType &size) {
+File::Status File::incrementalCrc(FwSizeType& size) {
     File::Status status = File::Status::OP_OK;
     FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
     if (OPEN_NO_MODE == this->m_mode) {
         status = File::Status::NOT_OPENED;
-    } else if  (OPEN_READ != this->m_mode) {
+    } else if (OPEN_READ != this->m_mode) {
         status = File::Status::INVALID_MODE;
     } else {
         // Read data without waiting for additional data to be available
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
             for (FwSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
-                this->m_crc =
-                    static_cast<U32>(
-                        update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]))
-                        );
+                this->m_crc = static_cast<U32>(update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i])));
             }
         }
     }
     return status;
 }
 
-File::Status File::finalizeCrc(U32 &crc) {
+File::Status File::finalizeCrc(U32& crc) {
     File::Status status = File::Status::OP_OK;
     crc = this->m_crc;
     this->m_crc = File::INITIAL_CRC;
     return status;
 }
 
-File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
+File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
     const FwSizeType requested_size = size;
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
@@ -273,7 +269,7 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
-        (void) this->seek_absolute(original_location);
+        (void)this->seek_absolute(original_location);
         return status;
     }
     FwSizeType read = 0;
@@ -298,7 +294,7 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
                 // Ensure that the computation worked and there is not overflow
                 FW_ASSERT(size <= requested_size);
                 FW_ASSERT(std::numeric_limits<FwSizeType>::max() - size >= original_location);
-                (void) this->seek_absolute(original_location + j + 1);
+                (void)this->seek_absolute(original_location + j + 1);
                 return Os::File::Status::OP_OK;
             }
         }
@@ -306,5 +302,4 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
     // Failed to find newline within data available
     return Os::File::Status::OTHER_ERROR;
 }
-} // Os
-
+}  // namespace Os

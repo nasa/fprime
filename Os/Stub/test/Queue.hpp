@@ -1,11 +1,11 @@
 
 #ifndef OS_STUB_TEST_QUEUE_HPP
 #define OS_STUB_TEST_QUEUE_HPP
-#include "Os/Queue.hpp"
-#include <queue>
-#include <deque>
 #include <cassert>
+#include <deque>
 #include <limits>
+#include <queue>
+#include "Os/Queue.hpp"
 
 namespace Os {
 namespace Stub {
@@ -55,7 +55,6 @@ struct StaticData {
     // Singleton data
     static StaticData data;
 };
-
 
 struct InjectableStlQueueHandle : public QueueHandle {
     //! \brief message type
@@ -140,10 +139,10 @@ class InjectableStlQueue : public QueueInterface {
     //! \param priority: (output) priority of message read
     //! \return: status of the send
     Status receive(U8* destination,
-                           FwSizeType capacity,
-                           BlockingType blockType,
-                           FwSizeType& actualSize,
-                           FwQueuePriorityType& priority) override;
+                   FwSizeType capacity,
+                   BlockingType blockType,
+                   FwSizeType& actualSize,
+                   FwQueuePriorityType& priority) override;
 
     //! \brief get number of messages available
     //!

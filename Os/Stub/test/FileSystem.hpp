@@ -75,8 +75,8 @@ class TestFileSystem : public FileSystemInterface {
     TestFileSystemHandle m_handle;
 };
 
-}
-}
-}
-}
-#endif // End OS_STUB_MUTEX_TEST_HPP
+}  // namespace Test
+}  // namespace FileSystem
+}  // namespace Stub
+}  // namespace Os
+#endif  // End OS_STUB_MUTEX_TEST_HPP

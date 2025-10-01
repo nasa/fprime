@@ -48,7 +48,7 @@ class StubMutex : public MutexInterface {
     StubMutexHandle m_handle;
 };
 
-} // namespace Mutex
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_MUTEX_HPP
+}  // namespace Mutex
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_MUTEX_HPP

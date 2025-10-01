@@ -82,7 +82,6 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
     //! Sends a buffer of supplied data and size on the component input port
     void mockReceiveData(U8* data, FwSizeType size);
 
-
   private:
     // ----------------------------------------------------------------------
     // Member variables

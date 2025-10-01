@@ -32,7 +32,6 @@ class CmdSplitter final : public CmdSplitterComponentBase {
     void configure(const FwOpcodeType remoteBaseOpcode /*!< Base remote opcode*/);
 
   private:
-
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -40,19 +39,19 @@ class CmdSplitter final : public CmdSplitterComponentBase {
     //! Handler implementation for CmdBuff
     //!
     void CmdBuff_handler(const FwIndexType portNum, /*!< The port number */
-                         Fw::ComBuffer& data,           /*!< Buffer containing packet data */
-                         U32 context                    /*!< Call context value; meaning chosen by user */
+                         Fw::ComBuffer& data,       /*!< Buffer containing packet data */
+                         U32 context                /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler implementation for seqCmdStatus
     //!
-    void seqCmdStatus_handler(const FwIndexType portNum,  /*!< The port number */
+    void seqCmdStatus_handler(const FwIndexType portNum,      /*!< The port number */
                               FwOpcodeType opCode,            /*!< Command Op Code */
                               U32 cmdSeq,                     /*!< Command Sequence */
                               const Fw::CmdResponse& response /*!< The command response argument */
     );
 
-    FwOpcodeType m_remoteBase; // Opcodes greater than or equal than this value will route remotely
+    FwOpcodeType m_remoteBase;  // Opcodes greater than or equal than this value will route remotely
 };
 
 }  // end namespace Svc

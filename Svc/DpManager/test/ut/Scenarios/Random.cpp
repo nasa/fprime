@@ -9,10 +9,10 @@
 // acknowledged.
 // ======================================================================
 
+#include "Svc/DpManager/test/ut/Scenarios/Random.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "Svc/DpManager/test/ut/Rules/Rules.hpp"
-#include "Svc/DpManager/test/ut/Scenarios/Random.hpp"
 
 namespace Svc {
 
@@ -37,15 +37,13 @@ Rules::SchedIn::OK schedInOK;
 // ----------------------------------------------------------------------
 
 void Tester ::run(U32 maxNumSteps) {
-    STest::Rule<TestState>* rules[] = {
-        &bufferGetStatusInvalid,
-        &bufferGetStatusValid,
-        &clearEventThrottleOK,
-        &productRequestInBufferInvalid,
-        &productRequestInBufferValid,
-        &productSendInOK,
-        &schedInOK
-    };
+    STest::Rule<TestState>* rules[] = {&bufferGetStatusInvalid,
+                                       &bufferGetStatusValid,
+                                       &clearEventThrottleOK,
+                                       &productRequestInBufferInvalid,
+                                       &productRequestInBufferValid,
+                                       &productSendInOK,
+                                       &schedInOK};
     STest::RandomScenario<TestState> scenario("RandomScenario", rules,
                                               sizeof(rules) / sizeof(STest::RandomScenario<TestState>*));
     STest::BoundedScenario<TestState> boundedScenario("BoundedRandomScenario", scenario, maxNumSteps);
