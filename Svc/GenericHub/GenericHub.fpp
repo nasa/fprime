@@ -11,7 +11,7 @@ module Svc {
   @|            A1 --> B1
   @|            A2 --> B2,
   @|
-  @|where An and Bn are component instances in separate deployments A and B,
+  @|where Ai and Bi are component instances in separate deployments A and B,
   @|can be implemented using hubs H1 and H2 like this:
   @|
   @|    A1 -->--+       +-->-- B1
@@ -28,14 +28,16 @@ module Svc {
   @|deployment, and each instance is paired with a driver for doing the
   @|communication. Sending data between the deployments looks like this:
   @|
-  @|    FSW --> GenericHub --> BufferDriver ~~> BufferDriver --> GenericHub --> FSW
+  @|    FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
   @|
-  @|In this diagram, BufferDriver represents any combination of component instances
-  @|that sends and receives Fw.Buffer objects. For example, BufferDriver may be
-  @|a pair consisting of (1) a ByteStreamDriver component that implements the
-  @|ByteStreamDriverInterface and (2) a ByteStreamBufferAdapter.
-  @|The buffer driver is specific to the transport mechanism.
-  @|The GenericHub may be paired with any buffer driver that conforms to
+  @|The driver must be a *buffer driver*, i.e., any combination of component
+  @|instances that sends and receives Fw.Buffer objects across a network.
+  @|For example, the driver may be a pair consisting of (1) a ByteStreamDriver
+  @|component that implements ByteStreamDriverInterface and
+  @|(2) a ByteStreamBufferAdapter.
+  @|
+  @|The driver is specific to the transport mechanism.
+  @|The GenericHub may be paired with any driver that conforms to
   @|its interface, and so can support any transport mechanism.
   @|---------------------------------------------------------------------- 
   passive component GenericHub {
