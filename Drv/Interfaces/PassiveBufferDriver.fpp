@@ -9,9 +9,6 @@ module Drv {
     @ The interface for receiving data from the driver
     import PassiveBufferOut
 
-    @ The interface for allocating and deallocating buffers
-    import BufferAllocation
-
   }
 
 }
