@@ -74,12 +74,12 @@ class GenericHubTester : public GenericHubGTestBase {
                                Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
     );
 
-    //! Handler for from_TlmSend
+    //! Handler for from_tlmOut
     //!
-    void from_TlmSend_handler(const FwIndexType portNum, /*!< The port number*/
-                              FwChanIdType id,           /*!< Telemetry Channel ID */
-                              Fw::Time& timeTag,         /*!< Time Tag */
-                              Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
+    void from_tlmOut_handler(const FwIndexType portNum, /*!< The port number*/
+                             FwChanIdType id,           /*!< Telemetry Channel ID */
+                             Fw::Time& timeTag,         /*!< Time Tag */
+                             Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
     );
 
     //! Handler for from_buffersOut

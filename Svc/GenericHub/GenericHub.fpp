@@ -154,8 +154,7 @@ module Svc {
     @ Port for receiving telemetry channels
     @ Data emitted on this port is copied from a buffer received on dataIn,
     @ and the buffer is returned.
-    @ TODO: Rename this port tlmOut
-    output port TlmSend: Fw.Tlm
+    output port tlmOut: Fw.Tlm
 
     @ Ports for receiving serial data
     @ You can connect each of these output ports to any typed input port.

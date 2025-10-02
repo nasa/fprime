@@ -97,8 +97,8 @@ void GenericHubTester ::test_telemetry() {
 
     // **must** deallocate buffer
     ASSERT_from_dataInReturn_SIZE(1);
-    ASSERT_from_TlmSend_SIZE(1);
-    ASSERT_from_TlmSend(0, 123, time, buffer);
+    ASSERT_from_tlmOut_SIZE(1);
+    ASSERT_from_tlmOut(0, 123, time, buffer);
     clearFromPortHistory();
 }
 
@@ -158,11 +158,11 @@ void GenericHubTester ::from_eventOut_handler(const FwIndexType portNum,
     this->pushFromPortEntry_eventOut(id, timeTag, severity, args);
 }
 
-void GenericHubTester ::from_TlmSend_handler(const FwIndexType portNum,
-                                             FwChanIdType id,
-                                             Fw::Time& timeTag,
-                                             Fw::TlmBuffer& val) {
-    this->pushFromPortEntry_TlmSend(id, timeTag, val);
+void GenericHubTester ::from_tlmOut_handler(const FwIndexType portNum,
+                                            FwChanIdType id,
+                                            Fw::Time& timeTag,
+                                            Fw::TlmBuffer& val) {
+    this->pushFromPortEntry_tlmOut(id, timeTag, val);
 }
 
 void GenericHubTester ::from_dataOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -259,8 +259,8 @@ void GenericHubTester ::connectPorts() {
     // eventOut
     this->componentOut.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
 
-    // TlmSend
-    this->componentOut.set_TlmSend_OutputPort(0, this->get_from_TlmSend(0));
+    // tlmOut
+    this->componentOut.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 
     // dataOut
     this->componentIn.set_dataOut_OutputPort(0, this->get_from_dataOut(0));

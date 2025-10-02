@@ -127,7 +127,7 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
         // Send it!
-        this->TlmSend_out(static_cast<FwIndexType>(port), id, timeTag, val);
+        this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
 
         // Deallocate the existing buffer
         dataInReturn_out(0, fwBuffer);
