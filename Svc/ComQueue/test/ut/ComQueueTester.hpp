@@ -77,8 +77,6 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testContextData();
 
-    void testBufferQueueReturn();
-
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -91,6 +89,9 @@ class ComQueueTester : public ComQueueGTestBase {
     //! Initialize components
     //!
     void initComponents();
+
+    //! Intercept from data out to return the call
+    void from_dataOut_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -25,7 +25,8 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max()
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U32>::max(), "Max stack size must be below U32 max");
+static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<Svc::Fpy::StackSizeType>::max(),
+              "Max stack size must be below Svc::Fpy::StackSizeType max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
@@ -48,6 +49,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
         FpySequencer_StoreTlmValDirective storeTlmVal;
+        FpySequencer_PushTlmValAndTimeDirective pushTlmValAndTime;
         FpySequencer_StorePrmDirective storePrm;
         FpySequencer_ConstCmdDirective constCmd;
         FpySequencer_StackOpDirective stackOp;
@@ -410,6 +412,10 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_storeTlmVal_internalInterfaceHandler(
         const Svc::FpySequencer_StoreTlmValDirective& directive) override;
 
+    //! Internal interface handler for directive_pushTlmValAndTime
+    void directive_pushTlmValAndTime_internalInterfaceHandler(
+        const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) override;
+
     //! Internal interface handler for directive_storePrm
     void directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) override;
 
@@ -610,6 +616,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
+
+    // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
     // pops a value off of the top of the stack
@@ -639,6 +647,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
     Signal storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error);
+    Signal pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
+                                              DirectiveError& error);
     Signal storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error);
     Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
     Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
