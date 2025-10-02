@@ -272,6 +272,13 @@ void Os::Test::FileTest::Tester::OpenBaseRule::action(Os::Test::FileTest::Tester
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+        }
+    }
 
     // Ensure initial and shadow states synchronized
     state.assert_file_consistent();
