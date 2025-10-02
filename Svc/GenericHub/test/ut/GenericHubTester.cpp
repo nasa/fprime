@@ -272,7 +272,7 @@ void GenericHubTester ::connectPorts() {
     this->componentOut.set_dataInReturn_OutputPort(0, this->get_from_dataInReturn(0));
 
     // bufferInReturn
-    for (FwIndexType i = 0; i < NumGenericHubBufferInputPorts; i++) {
+    for (FwIndexType i = 0; i < GenericHubCfg::NumBufferInputPorts; i++) {
         this->componentIn.set_bufferInReturn_OutputPort(i, this->get_from_bufferInReturn(i));
     }
 

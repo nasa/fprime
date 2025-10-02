@@ -75,7 +75,7 @@ module Svc {
     @ store pointers to data that is not serialized across the port
     @ interface. To connect output ports that emit buffers, use
     @ buffersIn below.
-    sync input port serialIn: [NumGenericHubSerialInputPorts] serial
+    sync input port serialIn: [GenericHubCfg.NumSerialInputPorts] serial
 
     @ Ports for sending buffer data to the hub
     @ Output ports connected to these ports must emit Fw.Buffer objects.
@@ -83,10 +83,10 @@ module Svc {
     @ data from the incoming buffer to B, and returns the incoming
     @ buffer to the sender for deallocation.
     @
-    sync input port bufferIn: [NumGenericHubBufferInputPorts] Fw.BufferSend
+    sync input port bufferIn: [GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
 
     @ Ports for returning buffers arriving on buffersIn
-    output port bufferInReturn: [NumGenericHubBufferInputPorts] Fw.BufferSend
+    output port bufferInReturn: [GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
 
     @ bufferIn and bufferInReturn ports must match
     match bufferIn with bufferInReturn
@@ -161,13 +161,13 @@ module Svc {
     @ Data emitted on one of these ports is copied from a buffer received on dataIn,
     @ and the buffer is returned.
     @ TODO: Rename this port serialOut
-    output port portOut: [GenericHubOutputPorts] serial
+    output port portOut: [GenericHubCfg.NumSerialOutputPorts] serial
 
     @ Ports for receiving buffer data
     @ A buffer emitted on one of these ports is a buffer received on dataIn,
     @ With adjusted metadata to point to the data stored in the buffer.
     @ TODO: Rename this port bufferOut
-    output port buffersOut: [GenericHubOutputBuffers] Fw.BufferSend
+    output port buffersOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
     # TODO: Add an input port for receiving buffers sent on bufferOut and then returned
 
