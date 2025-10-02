@@ -28,10 +28,14 @@ module Svc {
   @|deployment, and each instance is paired with a driver for doing the
   @|communication. Sending data between the deployments looks like this:
   @|
-  @|    FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
+  @|    FSW --> GenericHub --> BufferDriver ~~> BufferDriver --> GenericHub --> FSW
   @|
-  @|The Driver is specific to the transport mechanism.
-  @|The GenericHub may be paired with any driver that conforms to
+  @|In this diagram, BufferDriver represents any combination of component instances
+  @|that sends and receives Fw.Buffer objects. For example, BufferDriver may be
+  @|a pair consisting of (1) a ByteStreamDriver component that implements the
+  @|ByteStreamDriverInterface and (2) a ByteStreamBufferAdapter.
+  @|The buffer driver is specific to the transport mechanism.
+  @|The GenericHub may be paired with any buffer driver that conforms to
   @|its interface, and so can support any transport mechanism.
   @|---------------------------------------------------------------------- 
   passive component GenericHub {
@@ -79,27 +83,23 @@ module Svc {
     output port bufferDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Ports for sending data from the hub to a driver
+    # Ports for sending data from the hub to a buffer driver
     # ----------------------------------------------------------------------
-    # These ports establish the "send" interface from the hub to a driver.
+    # These ports establish the "send" interface from the hub to a buffer driver.
     #
-    # TODO: Make this interface conform to the Byte Stream Driver Interface (BSDI)
-    # * For the sync BSDI, there should be an output port of type Drv.ByteStreamSend.
-    # * For the async BSDI, we need to keep the output port of type Fw.BufferSend
-    #   for sending data, add an input port of type Drv.ByteStreamData for
-    #   receiving returned buffers.
-    # * For both sync and async BSDI, there should be an output port of type
-    #   Fw.BufferSend for deallocating the buffers allocated on dataOutAllocate.
+    # TODO:
+    # * Add an input port of type Fw.BufferSend for receiving returned buffers.
+    # * Add an output port of type Fw.BufferSend for deallocating the returned buffers.
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on dataOut
     output port dataOutAllocate: Fw.BufferGet
 
-    @ Port for sending buffers to a driver
+    @ Port for sending buffers to a buffer driver
     output port dataOut: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Ports for receiving data from a driver to the hub
+    # Ports for receiving data from a buffer driver to the hub
     # ----------------------------------------------------------------------
     # These ports establish the "receive" interface from a driver to the hub.
     # Each of these ports has the following behavior:
@@ -111,9 +111,7 @@ module Svc {
     #    to the data, and emit the same buffer. Do not return it.
     # ----------------------------------------------------------------------
 
-    @ Port for receiving buffers from a driver
-    @ TODO: Make this interface conform to the BSDI.
-    @ The type should be Drv.ByteStreamData.
+    @ Port for receiving buffers from a buffer driver
     sync input port dataIn: Fw.BufferSend
 
     @ Port for returning buffers arriving on dataIn
