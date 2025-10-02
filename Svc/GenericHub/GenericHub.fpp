@@ -104,7 +104,7 @@ module Svc {
     #    genericHub.toDriverOutAllocate -> bufferManager.bufferGetCallee
     #    genericHub.toDriverOut -> bufferDriver.send
     #    bufferDriver.sendReturn -> genericHub.toDriverOutReturn
-    #    genericHub.toDriverOutDeallocate -> bufferDriver.bufferSendIn
+    #    genericHub.toDriverOutDeallocate -> bufferManager.bufferSendIn
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on toDriverOut
