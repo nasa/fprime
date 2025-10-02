@@ -8,7 +8,7 @@
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/GenericHub.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/GenericHubComponentImpl.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/GenericHub.cpp"
 )
 
 register_fprime_module()

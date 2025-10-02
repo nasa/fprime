@@ -14,7 +14,7 @@
 #define TESTER_HPP
 #include <Fw/Com/ComBuffer.hpp>
 #include "GenericHubGTestBase.hpp"
-#include "Svc/GenericHub/GenericHubComponentImpl.hpp"
+#include "Svc/GenericHub/GenericHub.hpp"
 
 // Larger than com buffer size
 #define DATA_SIZE (FW_COM_BUFFER_MAX_SIZE * 10 + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType))
@@ -144,8 +144,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! The component under test
     //!
-    GenericHubComponentImpl componentIn;
-    GenericHubComponentImpl componentOut;
+    GenericHub componentIn;
+    GenericHub componentOut;
     Fw::ComBuffer m_comm;
     Fw::Buffer m_buffer;
     Fw::Buffer m_allocate;
