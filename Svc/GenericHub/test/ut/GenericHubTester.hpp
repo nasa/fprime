@@ -65,13 +65,13 @@ class GenericHubTester : public GenericHubGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_LogSend
+    //! Handler for from_eventOut
     //!
-    void from_LogSend_handler(const FwIndexType portNum,       /*!< The port number*/
-                              FwEventIdType id,                /*!< Log ID */
-                              Fw::Time& timeTag,               /*!< Time Tag  */
-                              const Fw::LogSeverity& severity, /*!< The severity argument */
-                              Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
+    void from_eventOut_handler(const FwIndexType portNum,       /*!< The port number*/
+                               FwEventIdType id,                /*!< Log ID */
+                               Fw::Time& timeTag,               /*!< Time Tag  */
+                               const Fw::LogSeverity& severity, /*!< The severity argument */
+                               Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
     );
 
     //! Handler for from_TlmSend

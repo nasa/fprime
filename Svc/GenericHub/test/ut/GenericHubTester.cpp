@@ -112,8 +112,8 @@ void GenericHubTester ::test_events() {
 
     // **must** deallocate buffer
     ASSERT_from_dataInReturn_SIZE(1);
-    ASSERT_from_LogSend_SIZE(1);
-    ASSERT_from_LogSend(0, 123, time, severity, buffer);
+    ASSERT_from_eventOut_SIZE(1);
+    ASSERT_from_eventOut(0, 123, time, severity, buffer);
     clearFromPortHistory();
 }
 // Helpers
@@ -150,12 +150,12 @@ void GenericHubTester ::send_random_buffer(U32 port) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void GenericHubTester ::from_LogSend_handler(const FwIndexType portNum,
-                                             FwEventIdType id,
-                                             Fw::Time& timeTag,
-                                             const Fw::LogSeverity& severity,
-                                             Fw::LogBuffer& args) {
-    this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
+void GenericHubTester ::from_eventOut_handler(const FwIndexType portNum,
+                                              FwEventIdType id,
+                                              Fw::Time& timeTag,
+                                              const Fw::LogSeverity& severity,
+                                              Fw::LogBuffer& args) {
+    this->pushFromPortEntry_eventOut(id, timeTag, severity, args);
 }
 
 void GenericHubTester ::from_TlmSend_handler(const FwIndexType portNum,
@@ -256,8 +256,8 @@ void GenericHubTester ::connectPorts() {
         this->componentOut.set_buffersOut_OutputPort(i, this->get_from_buffersOut(i));
     }
 
-    // LogSend
-    this->componentOut.set_LogSend_OutputPort(0, this->get_from_LogSend(0));
+    // eventOut
+    this->componentOut.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
 
     // TlmSend
     this->componentOut.set_TlmSend_OutputPort(0, this->get_from_TlmSend(0));

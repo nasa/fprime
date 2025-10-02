@@ -149,8 +149,7 @@ module Svc {
     @ Port for receiving events
     @ Data emitted on this port is copied from a buffer received on dataIn,
     @ and the buffer is returned.
-    @ TODO: Rename this port eventOut
-    output port LogSend:  Fw.Log
+    output port eventOut:  Fw.Log
 
     @ Port for receiving telemetry channels
     @ Data emitted on this port is copied from a buffer received on dataIn,
