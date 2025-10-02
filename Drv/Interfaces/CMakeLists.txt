@@ -16,8 +16,6 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/PassiveBufferDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveByteStreamDriverClient.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveByteStreamDriverClientReadyRecv.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/PassiveByteStreamDriverClientSendAsync.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/PassiveByteStreamDriverClientSendSync.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Spi.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Tick.fpp"
   INTERFACE
