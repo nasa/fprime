@@ -65,16 +65,14 @@ module Svc {
     @ store pointers to data that is not serialized across the port
     @ interface. To connect output ports that emit buffers, use
     @ buffersIn below.
-    @ TODO: Rename these ports serialIn
-    sync input port portIn: [GenericHubInputPorts] serial
+    sync input port serialIn: [GenericHubInputPorts] serial
 
     @ Ports for sending buffer data to the hub
     @ Output ports connected to these ports must emit Fw.Buffer objects.
     @ On invocation, each of these ports allocates a new buffer B, copies the
     @ data from the incoming buffer to B, and returns the incoming
     @ buffer to the sender for deallocation.
-    @ TODO: Rename these ports bufferIn
-    sync input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
+    sync input port bufferIn: [GenericHubInputBuffers] Fw.BufferSend
 
     @ Port for returning buffers arriving on buffersIn
     @ TODO: Rename this port bufferInReturn

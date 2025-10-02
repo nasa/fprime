@@ -51,10 +51,10 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for buffersIn
+    //! Handler implementation for bufferIn
     //!
-    void buffersIn_handler(const FwIndexType portNum, /*!< The port number*/
-                           Fw::Buffer& fwBuffer);
+    void bufferIn_handler(const FwIndexType portNum, /*!< The port number*/
+                          Fw::Buffer& fwBuffer);
 
     //! Handler implementation for dataIn
     //!
@@ -82,10 +82,10 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     // Handler implementations for user-defined serial input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for portIn
+    //! Handler implementation for serialIn
     //!
-    void portIn_handler(FwIndexType portNum,            /*!< The port number*/
-                        Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void serialIn_handler(FwIndexType portNum,            /*!< The port number*/
+                          Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 
     // Helpers and members

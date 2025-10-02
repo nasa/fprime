@@ -53,7 +53,7 @@ void GenericHubComponentImpl ::send_data(const HubType type,
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::buffersIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHubComponentImpl ::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
     bufferDeallocate_out(0, fwBuffer);
 }
@@ -178,8 +178,8 @@ void GenericHubComponentImpl ::tlmIn_handler(const FwIndexType portNum,
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::portIn_handler(FwIndexType portNum,            /*!< The port number*/
-                                              Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHubComponentImpl ::serialIn_handler(FwIndexType portNum,            /*!< The port number*/
+                                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getBuffLength());
 }
