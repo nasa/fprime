@@ -1,7 +1,7 @@
 module Drv {
 
   @ The ready and receive interfaces for a byte stream driver client
-  interface PassiveByteStreamDriverClientReadyReceive {
+  interface PassiveByteStreamDriverClientReadyRecv {
 
     # ----------------------------------------------------------------------
     # Ready interface
