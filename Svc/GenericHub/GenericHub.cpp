@@ -33,7 +33,7 @@ void GenericHub ::send_data(const HubType type, const FwIndexType port, const U8
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
     Fw::Buffer outgoing =
-        dataOutAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+        toDriverOutAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     auto serialize = outgoing.getSerializer();
     // Write data to our buffer
     status = serialize.serializeFrom(static_cast<U32>(type));
@@ -43,7 +43,7 @@ void GenericHub ::send_data(const HubType type, const FwIndexType port, const U8
     status = serialize.serializeFrom(data, size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     outgoing.setSize(static_cast<U32>(serialize.getBuffLength()));
-    dataOut_out(0, outgoing);
+    toDriverOut_out(0, outgoing);
 }
 
 // ----------------------------------------------------------------------
@@ -59,7 +59,7 @@ void GenericHub ::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     // TODO
 }
 
-void GenericHub ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHub ::fromDriverIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
@@ -88,7 +88,7 @@ void GenericHub ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         serialOut_out(static_cast<FwIndexType>(port), wrapper);
         // Deallocate the existing buffer
-        dataInReturn_out(0, fwBuffer);
+        fromDriverInReturn_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
         // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
         fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
@@ -113,7 +113,7 @@ void GenericHub ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer
         this->eventOut_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
 
         // Deallocate the existing buffer
-        dataInReturn_out(0, fwBuffer);
+        fromDriverInReturn_out(0, fwBuffer);
     } else if (type == HUB_TYPE_CHANNEL) {
         FwChanIdType id;
         Fw::Time timeTag;
@@ -131,11 +131,11 @@ void GenericHub ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer
         this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
 
         // Deallocate the existing buffer
-        dataInReturn_out(0, fwBuffer);
+        fromDriverInReturn_out(0, fwBuffer);
     }
 }
 
-void GenericHub ::dataOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHub ::toDriverOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // TODO
 }
 
