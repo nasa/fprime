@@ -16,7 +16,7 @@ module Drv {
         @ Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.byteStreamIn
         sync input port byteStreamIn: Drv.ByteStreamData
 
-        @ Port for returning ownership of buffers received on the $recv port
+        @ Port for returning ownership of buffers received on byteStreamIn
         @ Sample connection: byteStreamDriverClient.byteStreamReturn -> byteStreamDriver.recvReturnIn
         output port byteStreamInReturn: Fw.BufferSend
 
