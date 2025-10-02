@@ -93,7 +93,7 @@ void GenericHubTester ::test_telemetry() {
     random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
 
     Fw::Time time(100, 200);
-    invoke_to_TlmRecv(0, 123, time, buffer);
+    invoke_to_tlmIn(0, 123, time, buffer);
 
     // **must** deallocate buffer
     ASSERT_from_dataInDeallocate_SIZE(1);
@@ -108,7 +108,7 @@ void GenericHubTester ::test_events() {
     random_fill(buffer, FW_LOG_BUFFER_MAX_SIZE);
 
     Fw::Time time(100, 200);
-    invoke_to_LogRecv(0, 123, time, severity, buffer);
+    invoke_to_eventIn(0, 123, time, severity, buffer);
 
     // **must** deallocate buffer
     ASSERT_from_dataInDeallocate_SIZE(1);
@@ -242,11 +242,11 @@ void GenericHubTester ::connectPorts() {
         this->connect_to_buffersIn(i, this->componentIn.get_buffersIn_InputPort(i));
     }
 
-    // LogRecv
-    this->connect_to_LogRecv(0, this->componentIn.get_LogRecv_InputPort(0));
+    // eventIn
+    this->connect_to_eventIn(0, this->componentIn.get_eventIn_InputPort(0));
 
-    // TlmRecv
-    this->connect_to_TlmRecv(0, this->componentIn.get_TlmRecv_InputPort(0));
+    // tlmIn
+    this->connect_to_tlmIn(0, this->componentIn.get_tlmIn_InputPort(0));
 
     // dataIn
     this->connect_to_dataIn(0, this->componentOut.get_dataIn_InputPort(0));

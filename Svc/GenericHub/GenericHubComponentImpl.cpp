@@ -134,7 +134,7 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
     }
 }
 
-void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
+void GenericHubComponentImpl ::eventIn_handler(const FwIndexType portNum,
                                                FwEventIdType id,
                                                Fw::Time& timeTag,
                                                const Fw::LogSeverity& severity,
@@ -156,10 +156,10 @@ void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
     this->send_data(HubType::HUB_TYPE_EVENT, portNum, buffer, size);
 }
 
-void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
-                                               FwChanIdType id,
-                                               Fw::Time& timeTag,
-                                               Fw::TlmBuffer& val) {
+void GenericHubComponentImpl ::tlmIn_handler(const FwIndexType portNum,
+                                             FwChanIdType id,
+                                             Fw::Time& timeTag,
+                                             Fw::TlmBuffer& val) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + FW_TLM_BUFFER_MAX_SIZE];
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));

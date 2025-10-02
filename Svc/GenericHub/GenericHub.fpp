@@ -53,12 +53,10 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Port for sending events to the hub
-    @ TODO: Rename this port eventIn
-    sync input port LogRecv: Fw.Log
+    sync input port eventIn: Fw.Log
 
     @ Port for sending telemetry to the hub
-    @ TODO: Rename this port tlmIn
-    sync input port TlmRecv: Fw.Tlm
+    sync input port tlmIn: Fw.Tlm
 
     @ Ports for sending serial data to the hub
     @ You can connect any typed output ports to these input ports, so
