@@ -137,9 +137,9 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     m_buffer.setSize(max_random_size);
     m_current_port = port;
     invoke_to_bufferIn(m_current_port, m_buffer);
-    ASSERT_from_bufferDeallocate_SIZE(1);
-    ASSERT_from_bufferDeallocate(0, m_buffer);
-    fromPortHistory_bufferDeallocate->clear();
+    ASSERT_from_bufferInReturn_SIZE(1);
+    ASSERT_from_bufferInReturn(0, m_buffer);
+    fromPortHistory_bufferInReturn->clear();
     // Ensure that the data out was called, and that the portOut unwrapped properly
     ASSERT_from_dataOut_SIZE(m_buffer_in + m_comm_out + 1);
     ASSERT_EQ(m_buffer_in + 1, m_buffer_out);
@@ -213,11 +213,11 @@ Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType por
     return m_allocate;
 }
 
-void GenericHubTester ::from_bufferDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_bufferInReturn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Check buffer deallocations here
     ASSERT_EQ(fwBuffer.getData(), m_buffer.getData()) << "Ensure that the buffer was deallocated";
     ASSERT_EQ(fwBuffer.getSize(), m_buffer.getSize()) << "Ensure that the buffer was deallocated";
-    this->pushFromPortEntry_bufferDeallocate(fwBuffer);
+    this->pushFromPortEntry_bufferInReturn(fwBuffer);
 }
 
 void GenericHubTester ::from_dataInDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -271,8 +271,10 @@ void GenericHubTester ::connectPorts() {
     // dataDeallocate
     this->componentOut.set_dataInDeallocate_OutputPort(0, this->get_from_dataInDeallocate(0));
 
-    // bufferDeallocate
-    this->componentIn.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
+    // bufferInReturn
+    for (FwIndexType i = 0; i < NumGenericHubBufferInputPorts; i++) {
+      this->componentIn.set_bufferInReturn_OutputPort(i, this->get_from_bufferInReturn(i));
+    }
 
     // ----------------------------------------------------------------------
     // Connect serial output ports

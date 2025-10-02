@@ -50,6 +50,16 @@ module Svc {
     # 2. Serialize the hub message type (event, telemetry, serial, buffer),
     #    the port number, and the data into B.
     # 3. Emit B on dataOut.
+    #
+    # Sample connections:
+    #
+    #    eventProducer.eventOut -> genericHub.eventIn
+    #    telemetryProducer.tlmOut -> genericHub.tlmIn
+    #    dataProducer.dataOut -> genericHub.serialIn
+    #    bufferProducer0.bufferOut -> genericHub.bufferIn[0]
+    #    genericHub.bufferInReturn[0] -> bufferProducer0.bufferIn
+    #    bufferProducer1.bufferOut -> genericHub.bufferIn[1]
+    #    genericHub.bufferInReturn[1] -> bufferProducer0.bufferIn
     # ----------------------------------------------------------------------
 
     @ Port for sending events to the hub
@@ -65,27 +75,33 @@ module Svc {
     @ store pointers to data that is not serialized across the port
     @ interface. To connect output ports that emit buffers, use
     @ buffersIn below.
-    sync input port serialIn: [GenericHubInputPorts] serial
+    sync input port serialIn: [NumGenericHubSerialInputPorts] serial
 
     @ Ports for sending buffer data to the hub
     @ Output ports connected to these ports must emit Fw.Buffer objects.
     @ On invocation, each of these ports allocates a new buffer B, copies the
     @ data from the incoming buffer to B, and returns the incoming
     @ buffer to the sender for deallocation.
-    sync input port bufferIn: [GenericHubInputBuffers] Fw.BufferSend
+    @
+    sync input port bufferIn: [NumGenericHubBufferInputPorts] Fw.BufferSend
 
-    @ Port for returning buffers arriving on buffersIn
-    @ TODO: Rename this port bufferInReturn
-    output port bufferDeallocate: Fw.BufferSend
+    @ Ports for returning buffers arriving on buffersIn
+    output port bufferInReturn: [NumGenericHubBufferInputPorts] Fw.BufferSend
+
+    @ bufferIn and bufferInReturn ports must match
+    match bufferIn with bufferInReturn
 
     # ----------------------------------------------------------------------
     # Ports for sending data from the hub to a buffer driver
     # ----------------------------------------------------------------------
     # These ports establish the "send" interface from the hub to a buffer driver.
     #
-    # TODO:
-    # * Add an input port of type Fw.BufferSend for receiving returned buffers.
-    # * Add an output port of type Fw.BufferSend for deallocating the returned buffers.
+    # Sample connections:
+    #
+    #    genericHub.dataOutAllocate -> bufferManager.bufferGetCallee
+    #    genericHub.dataOut -> bufferDriver.send
+    #    bufferDriver.sendReturn -> genericHub.dataOutReturn
+    #    genericHub.dataOutDeallocate -> bufferDriver.bufferSendIn
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on dataOut
@@ -93,6 +109,12 @@ module Svc {
 
     @ Port for sending buffers to a buffer driver
     output port dataOut: Fw.BufferSend
+
+    @ Port for receiving buffers sent on dataOut and then returned
+    sync input port dataOutReturn: Fw.BufferSend
+
+    @ Port for deallocating buffers received on dataOutReturn
+    output port dataOutDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from a buffer driver to the hub
@@ -105,6 +127,11 @@ module Svc {
     #    to return the incoming buffer for deallocation.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
     #    to the data, and emit the same buffer. Do not return it.
+    #
+    # Sample connections:
+    #
+    #    bufferDriver.$recv -> genericHub.dataIn
+    #    genericHub.dataInReturn -> bufferDriver.recvReturn
     # ----------------------------------------------------------------------
 
     @ Port for receiving buffers from a buffer driver
@@ -144,6 +171,8 @@ module Svc {
     @ With adjusted metadata to point to the data stored in the buffer.
     @ TODO: Rename this port bufferOut
     output port buffersOut: [GenericHubOutputBuffers] Fw.BufferSend
+
+    # TODO: Add an input port for receiving buffers sent on bufferOut and then returned
 
   }
 

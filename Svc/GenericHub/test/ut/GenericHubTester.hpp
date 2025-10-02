@@ -87,10 +87,10 @@ class GenericHubTester : public GenericHubGTestBase {
     void from_buffersOut_handler(const FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& fwBuffer);
 
-    //! Handler for from_bufferDeallocate
+    //! Handler for from_bufferInReturn
     //!
-    void from_bufferDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
+    void from_bufferInReturn_handler(const FwIndexType portNum, /*!< The port number*/
+                                     Fw::Buffer& fwBuffer);
 
     //! Handler for from_dataOutAllocate
     //!

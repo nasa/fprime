@@ -54,12 +54,19 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     //! Handler implementation for bufferIn
     //!
     void bufferIn_handler(const FwIndexType portNum, /*!< The port number*/
-                          Fw::Buffer& fwBuffer);
+                          Fw::Buffer& fwBuffer) override;
 
     //! Handler implementation for dataIn
     //!
     void dataIn_handler(const FwIndexType portNum, /*!< The port number*/
-                        Fw::Buffer& fwBuffer);
+                        Fw::Buffer& fwBuffer) override;
+
+    //! Handler implementation for dataOutReturn
+    //!
+    //! Port for receiving buffers sent on dataOut and then returned
+    void dataOutReturn_handler(FwIndexType portNum,  //!< The port number
+                               Fw::Buffer& fwBuffer  //!< The buffer
+                               ) override;
 
     //! Handler implementation for eventIn
     //!
@@ -68,7 +75,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
                          Fw::Time& timeTag,               /*!< Time Tag */
                          const Fw::LogSeverity& severity, /*!< The severity argument */
                          Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
-    );
+                         ) override;
 
     //! Handler implementation for tlmIn
     //!
@@ -76,7 +83,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
                        FwChanIdType id,           /*!< Telemetry Channel ID */
                        Fw::Time& timeTag,         /*!< Time Tag */
                        Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
-    );
+                       ) override;
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined serial input ports
@@ -86,7 +93,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     //!
     void serialIn_handler(FwIndexType portNum,            /*!< The port number*/
                           Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
-    );
+    ) override;
 
     // Helpers and members
     void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);
