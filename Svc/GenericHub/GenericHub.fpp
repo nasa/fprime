@@ -56,13 +56,13 @@ module Svc {
     #    eventProducer.eventOut -> genericHub.eventIn
     #    telemetryProducer.tlmOut -> genericHub.tlmIn
     #
-    #    dataProducer0.toDriverOut[0] -> genericHub.serialIn[0]
-    #    dataProducer1.toDriverOut[1] -> genericHub.serialIn[1]
+    #    valueProducer0.valueOut[0] -> genericHub.serialIn[0]
+    #    valueProducer1.valueOut[1] -> genericHub.serialIn[1]
     #
     #    bufferProducer0.bufferOut -> genericHub.bufferIn[0]
     #    genericHub.bufferInReturn[0] -> bufferProducer0.bufferIn
     #    bufferProducer1.bufferOut -> genericHub.bufferIn[1]
-    #    genericHub.bufferInReturn[1] -> bufferProducer0.bufferIn
+    #    genericHub.bufferInReturn[1] -> bufferProducer1.bufferIn
     # ----------------------------------------------------------------------
 
     @ Port for sending events to the hub
@@ -154,8 +154,8 @@ module Svc {
     #    genericHub.eventOut -> eventManager.eventIn
     #    genericHub.tlmOut -> tlmDb.eventIn
     #    
-    #    genericHub.serialOut[0] -> dataConsumer0.fromDriverIn[0]
-    #    genericHub.serialOut[1] -> dataConsumer1.fromDriverIn[1]
+    #    genericHub.serialOut[0] -> valueConsumer0.valueIn[0]
+    #    genericHub.serialOut[1] -> valueConsumer1.valueIn[1]
     #    
     #    genericHub.bufferOut[0] -> bufferConsumer0.bufferIn
     #    bufferConsumer0.bufferInReturn -> genericHub.bufferOutReturn[0]
