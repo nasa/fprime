@@ -138,8 +138,7 @@ module Svc {
     sync input port dataIn: Fw.BufferSend
 
     @ Port for returning buffers arriving on dataIn
-    @ TODO: Rename this port dataInReturn
-    output port dataInDeallocate: Fw.BufferSend
+    output port dataInReturn: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from the hub to FSW

@@ -93,7 +93,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     //!
     void serialIn_handler(FwIndexType portNum,            /*!< The port number*/
                           Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
-    ) override;
+                          ) override;
 
     // Helpers and members
     void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);

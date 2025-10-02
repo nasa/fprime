@@ -104,8 +104,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_dataDeallocate
     //!
-    void from_dataInDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
+    void from_dataInReturn_handler(const FwIndexType portNum, /*!< The port number*/
+                                   Fw::Buffer& fwBuffer);
 
   private:
     // ----------------------------------------------------------------------

@@ -46,8 +46,8 @@ void GenericHubTester ::test_in_out() {
     U32 max = std::min(this->componentIn.getNum_serialIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_comm(i);
-        ASSERT_from_dataInDeallocate_SIZE(1);
-        fromPortHistory_dataInDeallocate->clear();
+        ASSERT_from_dataInReturn_SIZE(1);
+        fromPortHistory_dataInReturn->clear();
     }
 }
 
@@ -56,8 +56,8 @@ void GenericHubTester ::test_buffer_io() {
         std::min(this->componentIn.getNum_bufferIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_buffer(i);
-        ASSERT_from_dataInDeallocate_SIZE(1);
-        fromPortHistory_dataInDeallocate->clear();
+        ASSERT_from_dataInReturn_SIZE(1);
+        fromPortHistory_dataInReturn->clear();
     }
 }
 
@@ -75,8 +75,8 @@ void GenericHubTester ::test_random_io() {
                                                       1);
             send_random_buffer(port);
         }
-        ASSERT_from_dataInDeallocate_SIZE(1);
-        fromPortHistory_dataInDeallocate->clear();
+        ASSERT_from_dataInReturn_SIZE(1);
+        fromPortHistory_dataInReturn->clear();
     }
 }
 
@@ -96,7 +96,7 @@ void GenericHubTester ::test_telemetry() {
     invoke_to_tlmIn(0, 123, time, buffer);
 
     // **must** deallocate buffer
-    ASSERT_from_dataInDeallocate_SIZE(1);
+    ASSERT_from_dataInReturn_SIZE(1);
     ASSERT_from_TlmSend_SIZE(1);
     ASSERT_from_TlmSend(0, 123, time, buffer);
     clearFromPortHistory();
@@ -111,7 +111,7 @@ void GenericHubTester ::test_events() {
     invoke_to_eventIn(0, 123, time, severity, buffer);
 
     // **must** deallocate buffer
-    ASSERT_from_dataInDeallocate_SIZE(1);
+    ASSERT_from_dataInReturn_SIZE(1);
     ASSERT_from_LogSend_SIZE(1);
     ASSERT_from_LogSend(0, 123, time, severity, buffer);
     clearFromPortHistory();
@@ -190,7 +190,7 @@ void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::B
         ASSERT_EQ(byte1, byte2);
     }
     // Pretend to deallocate like file uplink would
-    this->from_dataInDeallocate_handler(0, fwBuffer);
+    this->from_dataInReturn_handler(0, fwBuffer);
 }
 
 void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
@@ -220,14 +220,14 @@ void GenericHubTester ::from_bufferInReturn_handler(const FwIndexType portNum, F
     this->pushFromPortEntry_bufferInReturn(fwBuffer);
 }
 
-void GenericHubTester ::from_dataInDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_dataInReturn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
         << "Incorrect data pointer deallocated";
 
     m_allocate.set(nullptr, 0);
-    this->pushFromPortEntry_dataInDeallocate(fwBuffer);
+    this->pushFromPortEntry_dataInReturn(fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -269,11 +269,11 @@ void GenericHubTester ::connectPorts() {
     this->componentIn.set_dataOutAllocate_OutputPort(0, this->get_from_dataOutAllocate(0));
 
     // dataDeallocate
-    this->componentOut.set_dataInDeallocate_OutputPort(0, this->get_from_dataInDeallocate(0));
+    this->componentOut.set_dataInReturn_OutputPort(0, this->get_from_dataInReturn(0));
 
     // bufferInReturn
     for (FwIndexType i = 0; i < NumGenericHubBufferInputPorts; i++) {
-      this->componentIn.set_bufferInReturn_OutputPort(i, this->get_from_bufferInReturn(i));
+        this->componentIn.set_bufferInReturn_OutputPort(i, this->get_from_bufferInReturn(i));
     }
 
     // ----------------------------------------------------------------------
