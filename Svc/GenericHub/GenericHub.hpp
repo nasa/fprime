@@ -63,17 +63,17 @@ class GenericHub final : public GenericHubComponentBase {
                                  Fw::Buffer& fwBuffer  //!< The buffer
                                  ) override;
 
-    //! Handler implementation for fromDriverIn
+    //! Handler implementation for fromBufferDriver
     //!
-    void fromDriverIn_handler(const FwIndexType portNum, /*!< The port number*/
-                              Fw::Buffer& fwBuffer) override;
+    void fromBufferDriver_handler(const FwIndexType portNum, /*!< The port number*/
+                                  Fw::Buffer& fwBuffer) override;
 
-    //! Handler implementation for toDriverOutReturn
+    //! Handler implementation for toBufferDriverReturn
     //!
-    //! Port for receiving buffers sent on toDriverOut and then returned
-    void toDriverOutReturn_handler(FwIndexType portNum,  //!< The port number
-                                   Fw::Buffer& fwBuffer  //!< The buffer
-                                   ) override;
+    //! Port for receiving buffers sent on toBufferDriver and then returned
+    void toBufferDriverReturn_handler(FwIndexType portNum,  //!< The port number
+                                      Fw::Buffer& fwBuffer  //!< The buffer
+                                      ) override;
 
     //! Handler implementation for eventIn
     //!

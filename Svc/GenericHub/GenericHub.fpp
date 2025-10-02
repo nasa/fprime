@@ -48,10 +48,10 @@ module Svc {
     # These ports establish the "send" interface from the rest of FSW to the hub.
     # ----------------------------------------------------------------------
     # Each of these ports has the following behavior:
-    # 1. Invoke toDriverOutAllocate to allocate a buffer B.
+    # 1. Invoke toBufferDriverAllocate to allocate a buffer B.
     # 2. Serialize the hub message type (event, telemetry, serial, buffer),
     #    the port number, and the data into B.
-    # 3. Emit B on toDriverOut.
+    # 3. Emit B on toBufferDriver.
     #
     # Sample connections:
     #
@@ -103,23 +103,20 @@ module Svc {
     #
     # Sample connections:
     #
-    #    genericHub.toDriverOutAllocate -> bufferManager.bufferGetCallee
-    #    genericHub.toDriverOut -> bufferDriver.send
-    #    bufferDriver.sendReturn -> genericHub.toDriverOutReturn
-    #    genericHub.toDriverOutDeallocate -> bufferManager.bufferSendIn
+    #    genericHub.toBufferDriverAllocate -> bufferManager.bufferGetCallee
+    #    genericHub.toBufferDriver -> bufferDriver.send
+    #    bufferDriver.sendReturn -> genericHub.toBufferDriverReturn
+    #    genericHub.toBufferDriverDeallocate -> bufferManager.bufferSendIn
     # ----------------------------------------------------------------------
 
-    @ Port for allocating a buffer to send on toDriverOut
-    output port toDriverOutAllocate: Fw.BufferGet
+    @ Port for allocating a buffer to send on toBufferDriver
+    output port toBufferDriverAllocate: Fw.BufferGet
 
-    @ Port for sending buffers to a buffer driver
-    output port toDriverOut: Fw.BufferSend
+    @ This interface provides ports toBufferDriver and toBufferDriverReturn
+    import Drv.PassiveBufferDriverClientSend
 
-    @ Port for receiving buffers sent on toDriverOut and then returned
-    sync input port toDriverOutReturn: Fw.BufferSend
-
-    @ Port for deallocating buffers received on toDriverOutReturn
-    output port toDriverOutDeallocate: Fw.BufferSend
+    @ Port for deallocating buffers received on toBufferDriverReturn
+    output port toBufferDriverDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from a buffer driver to the hub
@@ -128,23 +125,20 @@ module Svc {
     # Each of these ports has the following behavior:
     # 1. Unpack the incoming buffer into hub message type, port number, and data.
     # 2. If the hub message type is event, telemetry, or serial,
-    #    then pass the data by value to the receiver and invoke fromDriverInReturn
+    #    then pass the data by value to the receiver and invoke fromBufferDriverReturn
     #    to return the incoming buffer for deallocation.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
     #    to the data, and emit the same buffer on bufferOut. When the
-    #    buffer is returned on bufferOutReturn, invoke fromDriverInReturn to return it.
+    #    buffer is returned on bufferOutReturn, invoke fromBufferDriverReturn to return it.
     #
     # Sample connections:
     #
-    #    bufferDriver.$recv -> genericHub.fromDriverIn
-    #    genericHub.fromDriverInReturn -> bufferDriver.recvReturn
+    #    bufferDriver.$recv -> genericHub.fromBufferDriver
+    #    genericHub.fromBufferDriverReturn -> bufferDriver.recvReturn
     # ----------------------------------------------------------------------
 
-    @ Port for receiving buffers from a buffer driver
-    sync input port fromDriverIn: Fw.BufferSend
-
-    @ Port for returning buffers received on fromDriverIn
-    output port fromDriverInReturn: Fw.BufferSend
+    @ This interface provides ports fromBufferDriver and fromBufferDriverReturn
+    import Drv.PassiveBufferDriverClientRecv
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from the hub to FSW
@@ -166,23 +160,23 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Port for receiving events
-    @ Data emitted on this port is copied from a buffer received on fromDriverIn,
+    @ Data emitted on this port is copied from a buffer received on fromBufferDriver,
     @ and the buffer is returned.
     output port eventOut:  Fw.Log
 
     @ Port for receiving telemetry channels
-    @ Data emitted on this port is copied from a buffer received on fromDriverIn,
+    @ Data emitted on this port is copied from a buffer received on fromBufferDriver,
     @ and the buffer is returned.
     output port tlmOut: Fw.Tlm
 
     @ Ports for receiving serial data
     @ You can connect each of these output ports to any typed input port.
-    @ Data emitted on one of these ports is copied from a buffer received on fromDriverIn,
+    @ Data emitted on one of these ports is copied from a buffer received on fromBufferDriver,
     @ and the buffer is returned.
     output port serialOut: [GenericHubCfg.NumSerialOutputPorts] serial
 
     @ Ports for receiving buffer data
-    @ A buffer emitted on one of these ports is a buffer received on fromDriverIn,
+    @ A buffer emitted on one of these ports is a buffer received on fromBufferDriver,
     @ With adjusted metadata to point to the data stored in the buffer.
     output port bufferOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
