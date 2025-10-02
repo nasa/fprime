@@ -55,7 +55,10 @@ module Svc {
     #
     #    eventProducer.eventOut -> genericHub.eventIn
     #    telemetryProducer.tlmOut -> genericHub.tlmIn
-    #    dataProducer.dataOut -> genericHub.serialIn
+    #
+    #    dataProducer0.dataOut[0] -> genericHub.serialIn[0]
+    #    dataProducer1.dataOut[1] -> genericHub.serialIn[1]
+    #
     #    bufferProducer0.bufferOut -> genericHub.bufferIn[0]
     #    genericHub.bufferInReturn[0] -> bufferProducer0.bufferIn
     #    bufferProducer1.bufferOut -> genericHub.bufferIn[1]
@@ -123,10 +126,11 @@ module Svc {
     # Each of these ports has the following behavior:
     # 1. Unpack the incoming buffer into hub message type, port number, and data.
     # 2. If the hub message type is event, telemetry, or serial,
-    #    then pass the data by value to the receiver and call dataInDeallocate
+    #    then pass the data by value to the receiver and invoke dataInReturn
     #    to return the incoming buffer for deallocation.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
-    #    to the data, and emit the same buffer. Do not return it.
+    #    to the data, and emit the same buffer on bufferOut. When the
+    #    buffer is returned on bufferOutReturn, invoke dataInReturn to return it.
     #
     # Sample connections:
     #
@@ -144,6 +148,19 @@ module Svc {
     # Ports for receiving data from the hub to FSW
     # ----------------------------------------------------------------------
     # These ports establish the "receive" interface from the hub to FSW
+    #
+    # Sample connections:
+    #
+    #    genericHub.eventOut -> eventManager.eventIn
+    #    genericHub.tlmOut -> tlmDb.eventIn
+    #    
+    #    genericHub.serialOut[0] -> dataConsumer0.dataIn[0]
+    #    genericHub.serialOut[1] -> dataConsumer1.dataIn[1]
+    #    
+    #    genericHub.bufferOut[0] -> bufferConsumer0.bufferIn
+    #    bufferConsumer0.bufferInReturn -> genericHub.bufferOutReturn[0]
+    #    genericHub.bufferOut[1] -> bufferConsumer1.bufferIn
+    #    bufferConsumer1.bufferInReturn -> genericHub.bufferOutReturn[1]
     # ----------------------------------------------------------------------
 
     @ Port for receiving events
@@ -167,7 +184,11 @@ module Svc {
     @ With adjusted metadata to point to the data stored in the buffer.
     output port bufferOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
-    # TODO: Add an input port for receiving buffers sent on bufferOut and then returned
+    @ Ports for receiving buffers sent on bufferOut and then returned
+    sync input port bufferOutReturn: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
+
+    @ bufferOut and bufferOutReturn ports must match
+    match bufferOut with bufferOutReturn
 
   }
 

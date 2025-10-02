@@ -58,6 +58,10 @@ void GenericHubComponentImpl ::bufferIn_handler(const FwIndexType portNum, Fw::B
     bufferInReturn_out(portNum, fwBuffer);
 }
 
+void GenericHubComponentImpl ::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // TODO
+}
+
 void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
