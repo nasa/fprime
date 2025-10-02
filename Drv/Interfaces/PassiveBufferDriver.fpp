@@ -3,35 +3,26 @@ module Drv {
   @ A passive buffer driver
   interface PassiveBufferDriver {
 
-    import PassiveBufferDriverSend
+    @ The interface for sending data to the driver
+    @ Sample connections:
+    @
+    @ client.toBufferDriver -> driver.bufferIn
+    @ client.bufferInReturn -> driver.toBufferDriverReturn
+    import Fw.PassiveBufferIn
 
-    import PassiveBufferDriverRecv
+    @ The interface for receiving data from the driver
+    @ Sample connections:
+    @
+    @ driver.bufferOut -> client.fromBufferDriver
+    @ client.fromBufferDriverReturn -> driver.bufferOutReturn
+    import Fw.PassiveBufferOut
 
-  }
-
-  @ The send interface for a passive buffer driver
-  interface PassiveBufferDriverSend {
-
-    @ Port for sending data to the network
-    @ Sample connection: passiveBufferDriverClient.toBufferDriver -> passiveBufferDriver.bufferIn
-    sync input port bufferIn: Fw.BufferSend
-
-    @ Port for returning buffers received on bufferIn
-    @ Sample connection: passiveBufferDriver.bufferInReturn -> passiveBufferDriverClient.toBufferDriverReturn
-    output port bufferInReturn: Fw.BufferSend
-
-  }
-
-  @ The receive interface for a passive buffer driver
-  interface PassiveBufferDriverRecv {
-
-    @ Port for receiving data from the network
-    @ Sample connection: passiveBufferDriver.bufferOut -> passiveBufferDriverClient.fromBufferDriver
-    output port bufferOut: Fw.BufferSend
-
-    @ Port for receiving buffers sent on bufferOut and returned
-    @ Sample connection: passiveBufferDriverClient.fromBufferDriverReturn -> passiveBufferDriver.bufferOutReturn
-    sync input port bufferOutReturn: Fw.BufferSend
+    @ The interface for allocating and deallocating buffers
+    @ Sample connections:
+    @
+    @ driver.allocate -> bufferManager.bufferGetCallee
+    @ driver.deallocate -> bufferManager.bufferSendIn
+    import Fw.BufferAllocation
 
   }
 
