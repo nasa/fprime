@@ -4,10 +4,10 @@ module Drv {
   interface PassiveBufferDriver {
 
     @ The interface for sending data to the driver
-    import PassiveBufferIn
+    import Fw.PassiveBufferIn
 
     @ The interface for receiving data from the driver
-    import PassiveBufferOut
+    import Fw.PassiveBufferOut
 
   }
 
