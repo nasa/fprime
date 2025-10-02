@@ -11,6 +11,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/AsyncByteStreamDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverClient.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverClientReadyRecv.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverClientSendSync.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Gpio.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/I2c.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Spi.fpp"
