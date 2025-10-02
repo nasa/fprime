@@ -104,8 +104,8 @@ module Svc {
     # Sample connections:
     #
     #    genericHub.toBufferDriverAllocate -> bufferManager.bufferGetCallee
-    #    genericHub.toBufferDriver -> bufferDriver.send
-    #    bufferDriver.sendReturn -> genericHub.toBufferDriverReturn
+    #    genericHub.toBufferDriver -> bufferDriver.bufferIn
+    #    bufferDriver.bufferInReturn -> genericHub.toBufferDriverReturn
     #    genericHub.toBufferDriverDeallocate -> bufferManager.bufferSendIn
     # ----------------------------------------------------------------------
 
@@ -133,8 +133,8 @@ module Svc {
     #
     # Sample connections:
     #
-    #    bufferDriver.$recv -> genericHub.fromBufferDriver
-    #    genericHub.fromBufferDriverReturn -> bufferDriver.recvReturn
+    #    bufferDriver.bufferOut -> genericHub.fromBufferDriver
+    #    genericHub.fromBufferDriverReturn -> bufferDriver.bufferOutReturn
     # ----------------------------------------------------------------------
 
     @ This interface provides ports fromBufferDriver and fromBufferDriverReturn
