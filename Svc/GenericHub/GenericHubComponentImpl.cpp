@@ -85,13 +85,13 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
         status = wrapper.setBuffLen(rawSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        portOut_out(static_cast<FwIndexType>(port), wrapper);
+        serialOut_out(static_cast<FwIndexType>(port), wrapper);
         // Deallocate the existing buffer
         dataInReturn_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
         // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
         fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
-        buffersOut_out(static_cast<FwIndexType>(port), fwBuffer);
+        bufferOut_out(static_cast<FwIndexType>(port), fwBuffer);
     } else if (type == HUB_TYPE_EVENT) {
         FwEventIdType id;
         Fw::Time timeTag;

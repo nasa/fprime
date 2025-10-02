@@ -160,14 +160,12 @@ module Svc {
     @ You can connect each of these output ports to any typed input port.
     @ Data emitted on one of these ports is copied from a buffer received on dataIn,
     @ and the buffer is returned.
-    @ TODO: Rename this port serialOut
-    output port portOut: [GenericHubCfg.NumSerialOutputPorts] serial
+    output port serialOut: [GenericHubCfg.NumSerialOutputPorts] serial
 
     @ Ports for receiving buffer data
     @ A buffer emitted on one of these ports is a buffer received on dataIn,
     @ With adjusted metadata to point to the data stored in the buffer.
-    @ TODO: Rename this port bufferOut
-    output port buffersOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
+    output port bufferOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
     # TODO: Add an input port for receiving buffers sent on bufferOut and then returned
 

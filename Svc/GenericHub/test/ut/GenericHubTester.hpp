@@ -82,10 +82,10 @@ class GenericHubTester : public GenericHubGTestBase {
                              Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
     );
 
-    //! Handler for from_buffersOut
+    //! Handler for from_bufferOut
     //!
-    void from_buffersOut_handler(const FwIndexType portNum, /*!< The port number*/
-                                 Fw::Buffer& fwBuffer);
+    void from_bufferOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                Fw::Buffer& fwBuffer);
 
     //! Handler for from_bufferInReturn
     //!
@@ -112,10 +112,10 @@ class GenericHubTester : public GenericHubGTestBase {
     // Handlers for serial from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_portOut
+    //! Handler for from_serialOut
     //!
-    void from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
-                              Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
+                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 
   private:

@@ -43,7 +43,8 @@ GenericHubTester ::~GenericHubTester() {}
 // ----------------------------------------------------------------------
 
 void GenericHubTester ::test_in_out() {
-    U32 max = std::min(this->componentIn.getNum_serialIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
+    U32 max =
+        std::min(this->componentIn.getNum_serialIn_InputPorts(), this->componentOut.getNum_serialOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_comm(i);
         ASSERT_from_dataInReturn_SIZE(1);
@@ -53,7 +54,7 @@ void GenericHubTester ::test_in_out() {
 
 void GenericHubTester ::test_buffer_io() {
     U32 max =
-        std::min(this->componentIn.getNum_bufferIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
+        std::min(this->componentIn.getNum_bufferIn_InputPorts(), this->componentOut.getNum_bufferOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_buffer(i);
         ASSERT_from_dataInReturn_SIZE(1);
@@ -66,12 +67,12 @@ void GenericHubTester ::test_random_io() {
         U32 choice = STest::Pick::lowerUpper(0, 1);
         if (choice) {
             U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_serialIn_InputPorts(),
-                                                           this->componentOut.getNum_portOut_OutputPorts()) -
+                                                           this->componentOut.getNum_serialOut_OutputPorts()) -
                                                       1);
             send_random_comm(port);
         } else {
             U32 port = STest::Pick::lowerUpper(0, std::min(this->componentIn.getNum_bufferIn_InputPorts(),
-                                                           this->componentOut.getNum_buffersOut_OutputPorts()) -
+                                                           this->componentOut.getNum_bufferOut_OutputPorts()) -
                                                       1);
             send_random_buffer(port);
         }
@@ -122,7 +123,7 @@ void GenericHubTester ::send_random_comm(U32 port) {
     random_fill(m_comm, FW_COM_BUFFER_MAX_SIZE);
     m_current_port = port;
     invoke_to_serialIn(m_current_port, m_comm);
-    // Ensure that the data out was called, and that the portOut unwrapped properly
+    // Ensure that the data out was called, and that the serialOut unwrapped properly
     ASSERT_from_dataOut_SIZE(m_comm_in + m_buffer_out + 1);
     ASSERT_EQ(m_comm_in + 1, m_comm_out);
     m_comm_in++;
@@ -140,7 +141,7 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     ASSERT_from_bufferInReturn_SIZE(1);
     ASSERT_from_bufferInReturn(0, m_buffer);
     fromPortHistory_bufferInReturn->clear();
-    // Ensure that the data out was called, and that the portOut unwrapped properly
+    // Ensure that the data out was called, and that the serialOut unwrapped properly
     ASSERT_from_dataOut_SIZE(m_buffer_in + m_comm_out + 1);
     ASSERT_EQ(m_buffer_in + 1, m_buffer_out);
     m_buffer_in++;
@@ -179,7 +180,7 @@ void GenericHubTester ::from_dataOut_handler(const FwIndexType portNum, Fw::Buff
 // Handlers for serial from ports
 // ----------------------------------------------------------------------
 
-void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     m_buffer_out++;
     // Assert the buffer came through exactly on the right port
     ASSERT_EQ(portNum, m_current_port);
@@ -193,8 +194,8 @@ void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::B
     this->from_dataInReturn_handler(0, fwBuffer);
 }
 
-void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
-                                             Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
+                                               Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
     // Assert the buffer came through exactly on the right port
@@ -203,7 +204,7 @@ void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!
     for (U32 i = 0; i < Buffer.getBuffLength(); i++) {
         ASSERT_EQ(Buffer.getBuffAddr()[i], m_comm.getBuffAddr()[i]);
     }
-    ASSERT_from_buffersOut_SIZE(0);
+    ASSERT_from_bufferOut_SIZE(0);
 }
 
 Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const FwSizeType size) {
@@ -237,7 +238,7 @@ void GenericHubTester ::from_dataInReturn_handler(const FwIndexType portNum, Fw:
 void GenericHubTester ::connectPorts() {
     // bufferIn
     U32 max =
-        std::min(this->componentIn.getNum_bufferIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
+        std::min(this->componentIn.getNum_bufferIn_InputPorts(), this->componentOut.getNum_bufferOut_OutputPorts());
     for (U32 i = 0; i < max; ++i) {
         this->connect_to_bufferIn(i, this->componentIn.get_bufferIn_InputPort(i));
     }
@@ -251,9 +252,9 @@ void GenericHubTester ::connectPorts() {
     // dataIn
     this->connect_to_dataIn(0, this->componentOut.get_dataIn_InputPort(0));
 
-    // buffersOut
+    // bufferOut
     for (U32 i = 0; i < max; ++i) {
-        this->componentOut.set_buffersOut_OutputPort(i, this->get_from_buffersOut(i));
+        this->componentOut.set_bufferOut_OutputPort(i, this->get_from_bufferOut(i));
     }
 
     // eventOut
@@ -279,9 +280,9 @@ void GenericHubTester ::connectPorts() {
     // ----------------------------------------------------------------------
     // Connect serial output ports
     // ----------------------------------------------------------------------
-    max = std::min(this->componentIn.getNum_serialIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
+    max = std::min(this->componentIn.getNum_serialIn_InputPorts(), this->componentOut.getNum_serialOut_OutputPorts());
     for (U32 i = 0; i < max; ++i) {
-        this->componentOut.set_portOut_OutputPort(i, this->get_from_portOut(i));
+        this->componentOut.set_serialOut_OutputPort(i, this->get_from_serialOut(i));
     }
 
     // ----------------------------------------------------------------------
