@@ -1290,34 +1290,52 @@ TEST_F(FpySequencerTester, cmd_STEP) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     // Should fail in RUNNING state
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->tester_setState(State::IDLE);
 
-    // // Test STEP command in RUNNING_PAUSED state (should succeed)
-    // this->clearHistory();
-    
-    // // Setup test sequence
-    // clearSeq();
-    // add_NO_OP(); // Statement 0
-    // add_NO_OP(); // Statement 1 
-    // add_NO_OP(); // Statement 2
-    // writeAndRun();
-    // // tell it to break before stmt 0
-    // tester_get_m_debug_ptr()->breakOnBreakpoint = true;
-    // tester_get_m_debug_ptr()->breakpointIndex = 0;
+    // Test STEP command in RUNNING_PAUSED state (should succeed)
+    this->clearHistory();
+    // Setup test sequence
+    allocMem();
+    add_NO_OP(); // Statement 0
+    add_NO_OP(); // Statement 1 
+    add_NO_OP(); // Statement 2
+    writeAndRun();
 
-    // // run until we get to paused
-    // dispatchUntilState(State::RUNNING_PAUSED);
+    // tell it to break before stmt 0
+    tester_get_m_debug_ptr()->breakOnBreakpoint = true;
+    tester_get_m_debug_ptr()->breakpointIndex = 0;
+
+    // run until we get to paused
+    dispatchUntilState(State::RUNNING_PAUSED);
+
     
-    // // Send STEP command
-    // sendCmd_STEP(0, 0);
-    // // should go to dispatch stmt
-    // dispatchUntilState(State::RUNNING_DISPATCH_STATEMENT);
-    // // and then back to paused
-    // dispatchUntilState(State::RUNNING_PAUSED);
-    // ASSERT_CMD_RESPONSE_SIZE(1);
-    // // Should succeed in RUNNING_PAUSED state
-    // ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::OK);
-    // // Should be ready to execute statement 1 next
-    // ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 1);
+    // Send STEP command
+    sendCmd_STEP(0, 0);
+    // should go to dispatch stmt
+    dispatchUntilState(State::RUNNING_DISPATCH_STATEMENT);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should succeed in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::OK);
+
+    // and then back to paused
+    dispatchUntilState(State::RUNNING_PAUSED);
+    // Should be ready to execute statement 1 next
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 1);
+    ASSERT_FALSE(tester_get_m_debug_ptr()->breakOnNextLine);
+
+    this->clearHistory();
+    // okay try stepping to end of seq
+    tester_get_m_runtime_ptr()->nextStatementIndex = 3;
+    // Send STEP command
+    sendCmd_STEP(0, 0);
+    // should go to dispatch stmt
+    dispatchUntilState(State::RUNNING_DISPATCH_STATEMENT);
+    // once it gets past here should end seq
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should succeed in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::OK);
+    dispatchUntilState(State::IDLE);
+    ASSERT_EVENTS_SequenceDone_SIZE(1);
 }
 
 TEST_F(FpySequencerTester, readHeader) {
