@@ -281,7 +281,7 @@ void FpySequencerTester::add_SET_FLAG(U8 flagIdx) {
 }
 void FpySequencerTester::add_SET_FLAG(FpySequencer_SetFlagDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_FLAG, buf);
 }
 //! Handle a text event

@@ -350,7 +350,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         }
         case Fpy::DirectiveId::SET_FLAG: {
             new (&deserializedDirective.setFlag) FpySequencer_SetFlagDirective();
-            status = argBuf.deserialize(deserializedDirective.setFlag);
+            status = argBuf.deserializeTo(deserializedDirective.setFlag);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());

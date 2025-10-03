@@ -1875,7 +1875,7 @@ TEST_F(FpySequencerTester, deserialize_setFlag) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.setFlag, dir);
     // write some junk after buf, make sure it fails
-    seq.get_statements()[0].get_argBuf().serialize(123);
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
