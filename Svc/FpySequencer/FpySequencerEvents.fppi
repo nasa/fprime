@@ -193,26 +193,25 @@ event TooManySequenceArgs(
     severity warning high \
     format "A sequence specified it had {} args but the max was {}"
 
-event TooManySequenceStatements(
+event TooManySequenceDirectives(
     count: U16
     max: U16
 ) \
     severity warning high \
-    format "A sequence specified it had {} statements but the max was {}"
+    format "A sequence specified it had {} directives but the max was {}"
 
-event SequenceBroken(
+event SequencePaused(
     stmtIdx: U32
-    breakOnce: bool
 ) \
     severity activity high \
-    format "Sequence broken before dispatching statement index {}. Will break once: {}"
+    format "Sequence paused before dispatching directive index {}"
 
 event BreakpointSet(
     breakpointIdx: U32
     breakOnce: bool
 ) \
     severity activity high \
-    format "Breakpoint set before statement index {}. Will break once: {}"
+    format "Breakpoint set before directive index {}. Will break once: {}"
 
 event BreakpointCleared() \
     severity activity high \

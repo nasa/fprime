@@ -219,7 +219,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
-    Svc::FpySequencer::Debug* tester_get_m_debug_ptr();
+    Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
     Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();

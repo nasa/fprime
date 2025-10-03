@@ -324,18 +324,18 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_BreakpointArgs& value           //!< The value
         ) override;
 
-    //! Implementation for action setBreakOnNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the "break on next line" flag to true
-    void Svc_FpySequencer_SequencerStateMachine_action_setBreakOnNextLine(
+    void Svc_FpySequencer_SequencerStateMachine_action_setBreakBeforeNextLine(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearBreakOnNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action clearBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the "break on next line" flag to false
-    void Svc_FpySequencer_SequencerStateMachine_action_clearBreakOnNextLine(
+    void Svc_FpySequencer_SequencerStateMachine_action_clearBreakBeforeNextLine(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -535,9 +535,9 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // the state of the debugger. debugger is separate from runtime
     // because it can be set up before running the sequence.
-    struct Debug {
+    struct BreakpointInfo {
         // whether or not to break at the debug breakpoint index
-        bool breakOnBreakpoint = false;
+        bool breakpointInUse = false;
         // whether or not to remove the breakpoint after breaking on it
         bool breakOnlyOnceOnBreakpoint = false;
         // the statement index at which to break, before dispatching
@@ -545,28 +545,36 @@ class FpySequencer : public FpySequencerComponentBase {
         // whether or not to break before dispatching the next line,
         // independent of what line it is.
         // can be used in combination with breakpointIndex
-        bool breakOnNextLine = false;
+        bool breakBeforeNextLine = false;
+    } m_breakpoint;
+
+    // debug information about the sequence. only valid in the PAUSED state
+    // which you can access via BREAK or SET_BREAKPOINT cmds
+    struct DebugInfo {
+        // true if there are no statements remaining in the sequence file
+        bool reachedEndOfFile = false;
+        // true if we were able to deserialize the next statement successfully
+        bool nextStatementReadSuccess = false;
+        // the opcode of the next statement to dispatch.
+        U8 nextStatementOpcode = 0;
+        // if the next statement is a cmd directive, the opcode of that cmd
+        FwOpcodeType nextCmdOpcode = 0;
     } m_debug;
 
     struct Telemetry {
         // the number of statements that failed to execute
         U64 statementsFailed = 0;
-
         // the number of sequences successfully completed
         U64 sequencesSucceeded = 0;
-
         // the number of sequences that failed to validate or execute
         U64 sequencesFailed = 0;
-
         // the number of sequences that have been cancelled
         U64 sequencesCancelled = 0;
 
         // the error code of the last directive that ran
         DirectiveError lastDirectiveError = DirectiveError::NO_ERROR;
-
         // the index of the last directive that errored
         U64 directiveErrorIndex = 0;
-
         // the opcode of the last directive that errored
         Fpy::DirectiveId directiveErrorId = Fpy::DirectiveId::INVALID;
     } m_tlm;
@@ -629,8 +637,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // return true if state is a substate of RUNNING
     bool isRunningState(State state);
 
-    // return a struct containing debug telemetry, or defaults if not in debug break
-    FpySequencer_DebugTelemetry getDebugTelemetry();
+    // update a struct containing debug telemetry, or defaults if not in debug break
+    void updateDebugTelemetryStruct();
 
     // ----------------------------------------------------------------------
     // Directives

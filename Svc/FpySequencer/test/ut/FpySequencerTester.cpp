@@ -471,8 +471,8 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
     return &(this->cmp.m_sequenceBuffer);
 }
 
-Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
-    return &(this->cmp.m_debug);
+Svc::FpySequencer::BreakpointInfo* FpySequencerTester::tester_get_m_breakpoint_ptr() {
+    return &(this->cmp.m_breakpoint);
 }
 DirectiveError FpySequencerTester::tester_op_or() {
     return this->cmp.op_or();

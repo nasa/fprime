@@ -174,9 +174,9 @@ state machine SequencerStateMachine {
     @ sets the breakpoint to the provided args
     action setBreakpoint: BreakpointArgs
     @ sets the "break on next line" flag to true
-    action setBreakOnNextLine
+    action setBreakBeforeNextLine
     @ sets the "break on next line" flag to false
-    action clearBreakOnNextLine
+    action clearBreakBeforeNextLine
 
 
     @ called in dispatchStatement method when a statement was successfully dispatched
@@ -274,13 +274,13 @@ state machine SequencerStateMachine {
         @ sequencer is not taking any action, or allowing timeouts.
         @ must be exited via command, either CANCEL or CONTINUE
         state PAUSED {
-            entry do { signalEntered, clearBreakOnNextLine }
+            entry do { signalEntered, clearBreakBeforeNextLine }
             # -->
             on entered if breakOnce do { clearBreakpoint }
 
             on cmd_CONTINUE enter DISPATCH_STATEMENT
             # a step is really just a continue followed immediately by a break
-            on cmd_STEP do { setBreakOnNextLine } enter DISPATCH_STATEMENT
+            on cmd_STEP do { setBreakBeforeNextLine } enter DISPATCH_STATEMENT
         }
 
         @ fail the sequence if we got an unexpected statement response while running it.
@@ -294,7 +294,7 @@ state machine SequencerStateMachine {
         # commands         #
         ####################
         on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-        on cmd_BREAK do { setBreakOnNextLine }
+        on cmd_BREAK do { setBreakBeforeNextLine }
         on cmd_SET_BREAKPOINT do { setBreakpoint }
         on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }
     }

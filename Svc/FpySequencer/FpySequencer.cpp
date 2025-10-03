@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include <Svc/FpySequencer/FpySequencer.hpp>
+#include <new>
 
 namespace Svc {
 
@@ -26,7 +27,7 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_sequencesStarted(0),
       m_statementsDispatched(0),
       m_runtime(),
-      m_debug(),
+      m_breakpoint(),
       m_tlm() {}
 
 FpySequencer ::~FpySequencer() {}
@@ -150,7 +151,7 @@ void FpySequencer::SET_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opco
 //! Handler for command BREAK
 //!
 //! Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
-//! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
+//! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
 //! in substates of the RUNNING state that are not RUNNING.PAUSED.
 void FpySequencer::BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                     U32 cmdSeq            //!< The command sequence number
@@ -349,37 +350,66 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
-    this->tlmWrite_DirectiveErrorIdx(this->m_tlm.directiveErrorIndex);
+    this->tlmWrite_DirectiveErrorIndex(this->m_tlm.directiveErrorIndex);
     this->tlmWrite_DirectiveErrorId(this->m_tlm.directiveErrorId);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
-    this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
-    this->tlmWrite_Debug(this->getDebugTelemetry());
+
+    this->tlmWrite_BreakpointIndex(this->m_breakpoint.breakpointIndex);
+    this->tlmWrite_BreakOnlyOnceOnBreakpoint(this->m_breakpoint.breakOnlyOnceOnBreakpoint);
+    this->tlmWrite_BreakBeforeNextLine(this->m_breakpoint.breakBeforeNextLine);
+    this->tlmWrite_BreakpointInUse(this->m_breakpoint.breakpointInUse);
+
+    this->updateDebugTelemetryStruct();
+    this->tlmWrite_Debug_NextCmdOpcode(this->m_debug.nextCmdOpcode);
+    this->tlmWrite_Debug_NextStatementOpcode(this->m_debug.nextStatementOpcode);
+    this->tlmWrite_Debug_NextStatementReadSuccess(this->m_debug.nextStatementReadSuccess);
+    this->tlmWrite_Debug_ReachedEndOfFile(this->m_debug.reachedEndOfFile);
 }
 
-FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
+void FpySequencer::updateDebugTelemetryStruct() {
     // only send debug tlm when we are paused
     if (this->sequencer_getState() == State::RUNNING_PAUSED) {
         if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.get_header().get_statementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
-            return FpySequencer_DebugTelemetry(true, false, 0, 0);
+            this->m_debug.reachedEndOfFile = true;
+            this->m_debug.nextStatementReadSuccess = false;
+            this->m_debug.nextStatementOpcode = 0;
+            this->m_debug.nextCmdOpcode = 0;
+            return;
         }
 
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
+
         if (status != Fw::Success::SUCCESS) {
-            return FpySequencer_DebugTelemetry(false, false, nextStmt.get_opCode(), 0);
-        }
-        if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
-            // send opcode of the cmd to the ground
-            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(),
-                                               directiveUnion.constCmd.get_opCode());
+            this->m_debug.reachedEndOfFile = false;
+            this->m_debug.nextStatementReadSuccess = false;
+            this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
+            this->m_debug.nextCmdOpcode = 0;
+            return;
         }
 
-        return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), 0);
+        if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
+            // send opcode of the cmd to the ground
+            this->m_debug.reachedEndOfFile = false;
+            this->m_debug.nextStatementReadSuccess = true;
+            this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
+            this->m_debug.nextCmdOpcode = directiveUnion.constCmd.get_opCode();
+            return;
+        }
+
+        this->m_debug.reachedEndOfFile = false;
+        this->m_debug.nextStatementReadSuccess = true;
+        this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
+        this->m_debug.nextCmdOpcode = 0;
+        return;
     }
     // send some default tlm when we aren't in debug break
-    return FpySequencer_DebugTelemetry(false, false, 0, 0);
+    this->m_debug.reachedEndOfFile = false;
+    this->m_debug.nextStatementReadSuccess = false;
+    this->m_debug.nextStatementOpcode = 0;
+    this->m_debug.nextCmdOpcode = 0;
 }
 
 void FpySequencer::parametersLoaded() {
