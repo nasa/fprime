@@ -29,7 +29,7 @@ void AsyncByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buf
 }
 
 void AsyncByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO
+    // TODO: Send fwBuffer on fromByteStreamDriverReturn_out
 }
 
 void AsyncByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {
@@ -39,13 +39,14 @@ void AsyncByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType por
 void AsyncByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
                                                                 Fw::Buffer& buffer,
                                                                 const Drv::ByteStreamStatus& status) {
-    // TODO
+    // TODO: If the status is OK, then send buffer on toByteStreamDriver_out
+    // TODO: Otherwise log the error and send buffer on fromByteStreamDriverReturn_out
 }
 
 void AsyncByteStreamBufferAdapter::toByteStreamDriverReturn_handler(FwIndexType portNum,
                                                                     Fw::Buffer& buffer,
                                                                     const Drv::ByteStreamStatus& status) {
-    // TODO
+    // TODO: Send fwBuffer on bufferInReturn_out
 }
 
 }  // namespace Drv

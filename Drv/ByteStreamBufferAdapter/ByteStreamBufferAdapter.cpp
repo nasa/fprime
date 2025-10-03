@@ -30,7 +30,7 @@ void ByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& 
 }
 
 void ByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO: Send the buffer on fromByteStreamDriverReturn_out
+    // TODO: Send fwBuffer on fromByteStreamDriverReturn_out
 }
 
 void ByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
