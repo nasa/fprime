@@ -6,10 +6,10 @@ name: Python Dependency Check
 on:
   push:
     paths:
-      - 'requirements.txt'
+      - "requirements.txt"
   pull_request:
     paths:
-      - 'requirements.txt'
+      - "requirements.txt"
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -21,8 +21,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        # macos-13 is the last Intel-family runner; macos-latest is ARM
-        runner: [macos-13, macos-latest, ubuntu-22.04, ubuntu-latest]
+        # Purposefully test on both ARM and Intel macOS (macos-latest is ARM)
+        runner: [macos-15-intel, macos-latest, ubuntu-22.04, ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}

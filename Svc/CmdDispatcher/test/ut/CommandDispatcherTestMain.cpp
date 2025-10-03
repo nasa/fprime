@@ -18,6 +18,7 @@ void connectPorts(Svc::CommandDispatcherImpl& impl, Svc::CommandDispatcherTester
     tester.connect_to_compCmdStat(0, impl.get_compCmdStat_InputPort(0));
     tester.connect_to_seqCmdBuff(0, impl.get_seqCmdBuff_InputPort(0));
     tester.connect_to_compCmdReg(0, impl.get_compCmdReg_InputPort(0));
+    tester.connect_to_run(0, impl.get_run_InputPort(0));
 
     impl.set_compCmdSend_OutputPort(0, tester.get_from_compCmdSend(0));
     impl.set_seqCmdStatus_OutputPort(0, tester.get_from_seqCmdStatus(0));
@@ -182,6 +183,24 @@ TEST(CmdDispTestOffNominal, ClearSequenceTracker) {
     connectPorts(impl, tester);
 
     tester.runClearCommandTracking();
+}
+
+TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
+    TEST_CASE(102.2.5, "Off-nominal Command QueueOverflow");
+    COMMENT("Verify error case where the seqCmdBuff port queue overflows and does not ASSERT.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runCommandQueueOverflow();
 }
 
 #ifndef TGT_OS_TYPE_VXWORKS

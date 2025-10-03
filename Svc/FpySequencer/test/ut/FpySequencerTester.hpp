@@ -91,6 +91,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_NO_OP();
     void add_STORE_TLM_VAL(FwChanIdType id, Fpy::StackSizeType lvarOffset);
     void add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir);
+    void add_PUSH_TLM_VAL_AND_TIME(FwChanIdType id);
+    void add_PUSH_TLM_VAL_AND_TIME(FpySequencer_PushTlmValAndTimeDirective dir);
     void add_STORE_PRM(FwPrmIdType id, Fpy::StackSizeType lvarOffset);
     void add_STORE_PRM(FpySequencer_StorePrmDirective dir);
     void add_CONST_CMD(FwOpcodeType opcode);
@@ -143,6 +145,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
     Signal tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& err);
     Signal tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& err);
+    Signal tester_pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
+                                                     DirectiveError& err);
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
     Signal tester_constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& err);
     Signal tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& err);

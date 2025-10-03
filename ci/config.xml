@@ -1,9 +1,9 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>&lt;h2&gt;F´ Continuous Integration&lt;/h2&gt;&#xd;
+  <description>&lt;h2&gt;Fâ€² Continuous Integration&lt;/h2&gt;&#xd;
 &#xd;
-Continuous integration of the F´ core software. This performs safety checks on Pull Requests ensuring that the&#xd;
+Continuous integration of the Fâ€² core software. This performs safety checks on Pull Requests ensuring that the&#xd;
 &lt;em&gt;devel&lt;/em&gt; and &lt;em&gt;master&lt;/em&gt; branches are protected from erroneous pull requests.&#xd;
 &#xd;
 &lt;h3&gt;Current Tests&lt;/h3&gt;&#xd;

@@ -18,7 +18,7 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::m
 
 namespace Svc {
 CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
-    : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0) {
+    : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0), m_numCmdsDropped(0) {
     memset(this->m_entryTable, 0, sizeof(this->m_entryTable));
     memset(this->m_sequenceTracker, 0, sizeof(this->m_sequenceTracker));
 }
@@ -55,7 +55,6 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
         this->log_COMMAND_OpCodeCompleted(opCode);
     } else {
         this->m_numCmdErrors++;
-        this->tlmWrite_CommandErrors(this->m_numCmdErrors);
         FW_ASSERT(response.e != Fw::CmdResponse::OK);
         this->log_COMMAND_OpCodeError(opCode, response);
     }
@@ -140,8 +139,6 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
         // increment command count
         this->m_numCmdsDispatched++;
-        // write telemetry channel for dispatched commands
-        this->tlmWrite_CommandsDispatched(this->m_numCmdsDispatched);
     } else {
         this->log_WARNING_HI_InvalidCommand(cmdPkt.getOpCode());
         this->m_numCmdErrors++;
@@ -149,11 +146,16 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::INVALID_OPCODE);
         }
-        this->tlmWrite_CommandErrors(this->m_numCmdErrors);
     }
 
     // increment sequence number
     this->m_seq++;
+}
+
+void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_CommandsDropped(this->m_numCmdsDropped);
+    this->tlmWrite_CommandErrors(this->m_numCmdErrors);
+    this->tlmWrite_CommandsDispatched(this->m_numCmdsDispatched);
 }
 
 void CommandDispatcherImpl::CMD_NO_OP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -186,6 +188,21 @@ void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U
 void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     // respond to ping
     this->pingOut_out(0, key);
+}
+
+void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    // Extract command opcode
+    Fw::CmdPacket cmdPkt;
+    Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
+    FwOpcodeType opcode = 0;  // Note: 0 = Reserved opcode
+
+    if (stat == Fw::FW_SERIALIZE_OK) {
+        opcode = cmdPkt.getOpCode();
+    }
+
+    // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
+    this->m_numCmdsDropped++;
+    this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode, context);
 }
 
 }  // namespace Svc
