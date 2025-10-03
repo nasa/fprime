@@ -43,28 +43,28 @@ class AsyncByteStreamBufferAdapter final : public AsyncByteStreamBufferAdapterCo
                                  Fw::Buffer& fwBuffer  //!< The buffer
                                  ) override;
 
-    //! Handler implementation for driverReady
+    //! Handler implementation for byteStreamDriver
     //!
     //! Port for receiving ready signals from the driver
     //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamReady
-    void driverReady_handler(FwIndexType portNum  //!< The port number
-                             ) override;
+    void byteStreamDriverReady_handler(FwIndexType portNum  //!< The port number
+                                       ) override;
 
-    //! Handler implementation for fromDriver
+    //! Handler implementation for fromByteStreamDriver
     //!
     //! Port for receiving data from the driver
     //! Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.fromDriver
-    void fromDriver_handler(FwIndexType portNum,  //!< The port number
-                            Fw::Buffer& buffer,
-                            const Drv::ByteStreamStatus& status) override;
+    void fromByteStreamDriver_handler(FwIndexType portNum,  //!< The port number
+                                      Fw::Buffer& buffer,
+                                      const Drv::ByteStreamStatus& status) override;
 
-    //! Handler implementation for toDriverReturn
+    //! Handler implementation for toByteStreamDriverReturn
     //!
-    //! Port for receiving buffers sent on toDriver and then returned
-    //! Sample connection: driver.sendReturnOut -> client.toDriverReturn
-    void toDriverReturn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& buffer,
-                                const Drv::ByteStreamStatus& status) override;
+    //! Port for receiving buffers sent on toByteStreamDriver and then returned
+    //! Sample connection: driver.sendReturnOut -> client.toByteStreamDriverReturn
+    void toByteStreamDriverReturn_handler(FwIndexType portNum,  //!< The port number
+                                          Fw::Buffer& buffer,
+                                          const Drv::ByteStreamStatus& status) override;
 };
 
 }  // namespace Drv

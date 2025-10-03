@@ -23,24 +23,24 @@ ByteStreamBufferAdapter::~ByteStreamBufferAdapter() {}
 
 void ByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // TODO: If m_driverIsReady then
-    // TODO:   Send fwBuffer on byteStreamOut_out
+    // TODO:   Send fwBuffer on toByteStreamDriver_out
     // TODO:   Check the return status. If there is an error, then log it to the Logger.
     // TODO: Otherwise log the error
     // TODO: Send fwBuffer on bufferInReturn_out
 }
 
 void ByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO: Send the buffer on byteStreamInReturn_out
+    // TODO: Send the buffer on fromByteStreamDriverReturn_out
 }
 
-void ByteStreamBufferAdapter::byteStreamIn_handler(FwIndexType portNum,
-                                                   Fw::Buffer& buffer,
-                                                   const Drv::ByteStreamStatus& status) {
-    // TODO: If the status is OK, then send buffer on bufferOut_out
-    // TODO: Otherwise log the error and send buffer on byteStreamInReturn_out
+void ByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
+                                                           Fw::Buffer& buffer,
+                                                           const Drv::ByteStreamStatus& status) {
+    // TODO: If the status is OK, then send buffer on toByteStreamDriver_out
+    // TODO: Otherwise log the error and send buffer on fromByteStreamDriverReturn_out
 }
 
-void ByteStreamBufferAdapter::byteStreamReady_handler(FwIndexType portNum) {
+void ByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {
     this->m_driverIsReady = true;
 }
 

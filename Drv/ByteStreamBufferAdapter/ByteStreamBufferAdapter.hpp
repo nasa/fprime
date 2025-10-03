@@ -47,24 +47,24 @@ class ByteStreamBufferAdapter final : public ByteStreamBufferAdapterComponentBas
     //!
     //! Port for receiving data from the driver
     //! Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.byteStreamIn
-    void byteStreamIn_handler(FwIndexType portNum,  //!< The port number
-                              Fw::Buffer& buffer,
-                              const Drv::ByteStreamStatus& status) override;
+    void fromByteStreamDriver_handler(FwIndexType portNum,  //!< The port number
+                                      Fw::Buffer& buffer,
+                                      const Drv::ByteStreamStatus& status) override;
 
     //! Handler implementation for byteStreamReady
     //!
     //! Port for receiving ready signals from the driver
-    //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamReady
-    void byteStreamReady_handler(FwIndexType portNum  //!< The port number
-                                 ) override;
+    //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamDriverReady
+    void byteStreamDriverReady_handler(FwIndexType portNum  //!< The port number
+                                       ) override;
+
   private:
     // ----------------------------------------------------------------------
-    // Private member variables 
+    // Private member variables
     // ----------------------------------------------------------------------
 
     //! Whether the driver is ready
     bool m_driverIsReady = false;
-
 };
 
 }  // namespace Drv

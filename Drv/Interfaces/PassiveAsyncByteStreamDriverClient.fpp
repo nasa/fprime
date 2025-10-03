@@ -4,12 +4,12 @@ module Drv {
   interface PassiveByteStreamDriverClientSendAsync {
 
     @ Port for sending data to the driver
-    @ Sample connection: client.toDriver -> driver.$send
-    output port toDriver: Fw.BufferSend
+    @ Sample connection: client.toByteStreamDriver -> driver.$send
+    output port toByteStreamDriver: Fw.BufferSend
 
-    @ Port for receiving buffers sent on toDriver and then returned
-    @ Sample connection: driver.sendReturnOut -> client.toDriverReturn
-    sync input port toDriverReturn: Drv.ByteStreamData
+    @ Port for receiving buffers sent on toByteStreamDriver and then returned
+    @ Sample connection: driver.sendReturnOut -> client.toByteStreamDriverReturn
+    sync input port toByteStreamDriverReturn: Drv.ByteStreamData
 
   }
 

@@ -4,8 +4,8 @@ module Drv {
   interface PassiveByteStreamDriverClientSendSync {
 
     @ Port for sending data to the driver
-    @ Sample connection: client.byteStreamOut -> driver.$send
-    output port byteStreamOut: Drv.ByteStreamSend
+    @ Sample connection: client.toByteStreamDriver -> driver.$send
+    output port toByteStreamDriver: Drv.ByteStreamSend
 
   }
 

@@ -12,36 +12,36 @@ namespace Drv {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-AsyncByteStreamBufferAdapter ::AsyncByteStreamBufferAdapter(const char* const compName)
+AsyncByteStreamBufferAdapter::AsyncByteStreamBufferAdapter(const char* const compName)
     : AsyncByteStreamBufferAdapterComponentBase(compName) {}
 
-AsyncByteStreamBufferAdapter ::~AsyncByteStreamBufferAdapter() {}
+AsyncByteStreamBufferAdapter::~AsyncByteStreamBufferAdapter() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void AsyncByteStreamBufferAdapter ::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void AsyncByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // TODO
 }
 
-void AsyncByteStreamBufferAdapter ::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void AsyncByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // TODO
 }
 
-void AsyncByteStreamBufferAdapter ::driverReady_handler(FwIndexType portNum) {
+void AsyncByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {
     // TODO
 }
 
-void AsyncByteStreamBufferAdapter ::fromDriver_handler(FwIndexType portNum,
-                                                       Fw::Buffer& buffer,
-                                                       const Drv::ByteStreamStatus& status) {
+void AsyncByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
+                                                                Fw::Buffer& buffer,
+                                                                const Drv::ByteStreamStatus& status) {
     // TODO
 }
 
-void AsyncByteStreamBufferAdapter ::toDriverReturn_handler(FwIndexType portNum,
-                                                           Fw::Buffer& buffer,
-                                                           const Drv::ByteStreamStatus& status) {
+void AsyncByteStreamBufferAdapter::toByteStreamDriverReturn_handler(FwIndexType portNum,
+                                                                    Fw::Buffer& buffer,
+                                                                    const Drv::ByteStreamStatus& status) {
     // TODO
 }
 
