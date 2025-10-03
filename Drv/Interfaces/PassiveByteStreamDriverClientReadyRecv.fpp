@@ -8,18 +8,18 @@ module Drv {
     # ----------------------------------------------------------------------
     @ Port for receiving ready signals from the driver
     @ Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamReady
-    sync input port byteStreamReady: Drv.ByteStreamReady
+    sync input port driverReady: Drv.ByteStreamReady
 
     # ----------------------------------------------------------------------
     # Receive interface
     # ----------------------------------------------------------------------
     @ Port for receiving data from the driver
-    @ Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.byteStreamIn
-    sync input port byteStreamIn: Drv.ByteStreamData
+    @ Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.fromDriver
+    sync input port fromDriver: Drv.ByteStreamData
 
-    @ Port for returning ownership of buffers received on byteStreamIn
+    @ Port for returning ownership of buffers received on fromDriver
     @ Sample connection: byteStreamDriverClient.byteStreamReturn -> byteStreamDriver.recvReturnIn
-    output port byteStreamInReturn: Fw.BufferSend
+    output port fromDriverReturn: Fw.BufferSend
 
   }
 
