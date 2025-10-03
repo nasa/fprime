@@ -2156,7 +2156,7 @@ TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::EXECUTION_ERROR);
 
-    // now test that it doesn't fail if we set flag to false   
+    // now test that it doesn't fail if we set flag to false
     this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(false, Fw::ParamValid::VALID);
     this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
     this->clearHistory();
