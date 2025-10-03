@@ -250,14 +250,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     static FwOpcodeType get_OPCODE_CANCEL() { return FpySequencerComponentBase::OPCODE_CANCEL; }
 
     //! Get the OPCODE_CLEAR_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_CLEAR_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_CLEAR_BREAKPOINT;
-    }
+    static FwOpcodeType get_OPCODE_CLEAR_BREAKPOINT() { return FpySequencerComponentBase::OPCODE_CLEAR_BREAKPOINT; }
 
     //! Get the OPCODE_SET_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_SET_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_SET_BREAKPOINT;
-    }
+    static FwOpcodeType get_OPCODE_SET_BREAKPOINT() { return FpySequencerComponentBase::OPCODE_SET_BREAKPOINT; }
 
     //! Get the OPCODE_BREAK value
     static FwOpcodeType get_OPCODE_BREAK() { return FpySequencerComponentBase::OPCODE_BREAK; }
