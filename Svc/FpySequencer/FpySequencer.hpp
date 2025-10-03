@@ -33,8 +33,7 @@ static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max prm buffer size");
-static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(),
-              "Flag count must be less than U8 max");
+static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(), "Flag count must be less than U8 max");
 
 namespace Svc {
 
@@ -154,6 +153,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void DEBUG_CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                            U32 cmdSeq            //!< The command sequence number
                                            ) override;
+
+    //! Handler for command SET_FLAG
+    //!
+    //! Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag.
+    //! This command is only valid in the RUNNING state.
+    void SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                             U32 cmdSeq,           //!< The command sequence number
+                             Svc::Fpy::FlagId flag,
+                             bool value) override;
 
     // ----------------------------------------------------------------------
     // Functions to implement for internal state machine actions

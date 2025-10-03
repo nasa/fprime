@@ -410,7 +410,7 @@ Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_Mem
 }
 
 Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive,
-                                                          DirectiveError& err) {
+                                                           DirectiveError& err) {
     return this->cmp.setFlag_directiveHandler(directive, err);
 }
 

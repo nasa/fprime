@@ -4,9 +4,12 @@ module Svc {
         constant SCHEMA_VERSION = 2;
 
         @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
+        # should be equal to (last flag id) + 1
         constant FLAG_COUNT = 1
 
         enum FlagId {
+            # must start at 0 and increment by 1 each time
+            @ if true, the sequence will exit with an error if a command fails
             EXIT_ON_CMD_FAIL = 0
         }
 
@@ -25,7 +28,8 @@ module Svc {
             STORE_PRM = 8
             CONST_CMD = 9
             # stack op directives
-            # all of these are handled at the CPP level by one StackOpDirective
+            # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
+            # you MUST keep them all in between OR and ITRUNC_64_32 inclusive
             # boolean ops
             OR = 10
             AND = 11

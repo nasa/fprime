@@ -53,3 +53,10 @@ async command DEBUG_CONTINUE() \
 @ is valid in all states. This happens automatically when a sequence ends execution.
 async command DEBUG_CLEAR_BREAKPOINT() \
     opcode 7 priority 7 assert
+
+@ Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag. 
+@ This command is only valid in the RUNNING state.
+async command SET_FLAG(
+    flag: Fpy.FlagId, value: bool
+) \
+    opcode 8 priority 7 assert

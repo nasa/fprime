@@ -8,6 +8,9 @@ The FpySequencer is primarily composed of a state machine and a runtime environm
 
 The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` package). See the compiler documentation for the details of the Fpy language.
 
+## Flags
+The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running.
+
 ## Commands
 | Name | Description |
 |-----|-----|

@@ -200,6 +200,31 @@ void FpySequencer::DEBUG_CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+//! Handler for command SET_FLAG
+//!
+//! Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag.
+//! This command is only valid in the RUNNING state.
+void FpySequencer::SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                       U32 cmdSeq,           //!< The command sequence number
+                                       Svc::Fpy::FlagId flag,
+                                       bool value) {
+    if (!this->isRunningState(this->sequencer_getState())) {
+        // can only break while running
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // this is a sanity check, we shouldn't even get here if this isn't true
+    // because the enum should check for validity and raise a format err if not valid.
+    // actually what this really catches is an incorrect FLAG_COUNT value
+    FW_ASSERT(static_cast<I32>(flag.e) < Fpy::FLAG_COUNT, static_cast<FwAssertArgType>(flag.e));
+
+    this->m_runtime.flags[flag.e] = value;
+
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 //! Handler for input port checkTimers
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
@@ -376,9 +401,13 @@ FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
 
 void FpySequencer::parametersLoaded() {
     Fw::ParamValid valid;
+    // check for coding errors--all prms should have a default
     this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
-    // check for coding errors--should have a default
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+    this->paramGet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
 }
 
 void FpySequencer::parameterUpdated(FwPrmIdType id) {
@@ -386,6 +415,10 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
     switch (id) {
         case PARAMID_STATEMENT_TIMEOUT_SECS: {
             this->tlmWrite_PRM_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
+            break;
+        }
+        case PARAMID_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: {
+            this->tlmWrite_PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(this->paramGet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(valid));
             break;
         }
         default: {
