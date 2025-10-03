@@ -1248,7 +1248,7 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
 
     // pop the opcode of the cmd off the stack
     // note this means that, unlike the actual byte array that the dispatcher gets,
-    // these cmds have opcode after the argbuf
+    // these cmds have opcode after the argument buffer
     FwOpcodeType opcode = this->pop<FwOpcodeType>();
     U64 argBufOffset = this->m_runtime.stackSize - directive.get_argsSize();
 
