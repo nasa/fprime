@@ -22,7 +22,10 @@ AsyncByteStreamBufferAdapter::~AsyncByteStreamBufferAdapter() {}
 // ----------------------------------------------------------------------
 
 void AsyncByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO
+    // TODO: If m_driverIsReady then
+    // TODO:   Send fwBuffer on toByteStreamDriver_out
+    // TODO: Otherwise log the error
+    // TODO: Send fwBuffer on bufferInReturn_out
 }
 
 void AsyncByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -30,7 +33,7 @@ void AsyncByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, 
 }
 
 void AsyncByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {
-    // TODO
+    this->m_driverIsReady = true;
 }
 
 void AsyncByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
