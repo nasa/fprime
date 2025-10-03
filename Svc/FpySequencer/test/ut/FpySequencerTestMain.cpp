@@ -1334,6 +1334,28 @@ TEST_F(FpySequencerTester, cmd_DEBUG_CONTINUE) {
     ASSERT_EQ(this->tester_getState(), State::RUNNING_DISPATCH_STATEMENT);
 }
 
+TEST_F(FpySequencerTester, cmd_SET_FLAG) {
+    this->tester_setState(State::IDLE);
+    sendCmd_SET_FLAG(0, 0, Svc::Fpy::FlagId::EXIT_ON_CMD_FAIL, false);
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should fail in IDLE
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_FLAG(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->clearHistory();
+
+    tester_get_m_runtime_ptr()->flags[Fpy::FlagId::EXIT_ON_CMD_FAIL] = false;
+
+    // okay try setting in await stmt response
+    this->tester_setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    sendCmd_SET_FLAG(0, 0, Fpy::FlagId::EXIT_ON_CMD_FAIL, true);
+    // dispatch cmd handler
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should work in await stmt response
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_FLAG(), 0, Fw::CmdResponse::OK);
+    ASSERT_TRUE(tester_get_m_runtime_ptr()->flags[Fpy::FlagId::EXIT_ON_CMD_FAIL]);
+}
+
 TEST_F(FpySequencerTester, readHeader) {
     U8 seqBuf[Fpy::Header::SERIALIZED_SIZE] = {0};
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(seqBuf, sizeof(seqBuf));
@@ -2064,6 +2086,35 @@ TEST_F(FpySequencerTester, seqRunIn) {
     this->tester_doDispatch();
     ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
     removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
+    // test a simple seq that fails because a cmd fails
+    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(true, Fw::ParamValid::VALID);
+    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
+    this->clearHistory();
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // okay now send in a failure
+    invoke_to_cmdResponseIn(0, 123, 0x00010001, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::EXECUTION_ERROR);
+
+    // now test that it doesn't fail if we set flag to false   
+    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(false, Fw::ParamValid::VALID);
+    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
+    this->clearHistory();
+    // cmd is already in seq, can just rerun
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // okay now send in a failure
+    invoke_to_cmdResponseIn(0, 123, 0x00020002, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::OK);
 }
 
 }  // namespace Svc

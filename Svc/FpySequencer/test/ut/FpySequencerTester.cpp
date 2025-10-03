@@ -290,7 +290,7 @@ void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The eve
                                    const Fw::LogSeverity severity,  //!< The severity
                                    const Fw::TextLogString& text    //!< The event string
 ) {
-    // printf("%s\n", text.toChar());
+    printf("%s\n", text.toChar());
 }
 
 void FpySequencerTester::writeAndRun() {
