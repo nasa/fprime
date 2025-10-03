@@ -21,11 +21,11 @@ module Drv {
   @
   passive component AsyncByteStreamBufferAdapter {
 
-    @ The ByteStreamBufferAdapter is a passive client of the
+    @ AsyncByteStreamBufferAdapter is a passive client of the
     @ AsyncByteStreamDriver interface
     import PassiveAsyncByteStreamDriverClient
 
-    @ The ByteStreamBufferAdapter is a PassiveBufferDriver
+    @ AsyncByteStreamBufferAdapter is a PassiveBufferDriver
     import PassiveBufferDriver
 
   }
