@@ -224,14 +224,11 @@ class TlmPacketParser(object):
                     if self.verbose:
                         print("Processing Channel %s" % channel_name)
                     chan_type = chan.get_type()
-                    # if channel is enum
-                    if type(chan_type) == type(tuple()):
-                        chan_size = 4
                     # if channel type is string
                     #                    elif chan_type == "string":
                     #                        chan_size = int(chan.get_size()) + 2 # FIXME: buffer size storage size magic number - needs to be turned into a constant
                     # if channel is serializable
-                    elif chan_type in self.size_dict:
+                    if chan_type in self.size_dict:
                         chan_size = self.size_dict[chan_type]
                     else:
                         chan_size = self.get_type_size(chan_type, chan.get_size())
@@ -506,10 +503,7 @@ class TlmPacketParser(object):
                 member_comment,
                 _,
             ) in serializable_model.get_members():
-                # if enumeration
-                if type(member_type) == type(tuple()):
-                    type_size = 4  # Fixme: can we put this in a constant somewhere?
-                elif (
+                if (
                     member_type in self.size_dict.keys()
                 ):  # See if it is a registered type
                     type_size = self.size_dict[member_type]
@@ -536,9 +530,9 @@ class TlmPacketParser(object):
             enum_file = search_for_file("Enumeration", enum_file)
             enum_model = XmlEnumParser.XmlEnumParser(enum_file)
             enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
-            self.add_type_size(
-                enum_type, 4
-            )  # Fixme: can we put this in a constant somewhere?
+            serialize_type = enum_model.get_serialize_type()
+            enum_size = self.get_type_size(serialize_type, None)
+            self.add_type_size(enum_type, enum_size)
 
     def process_array_files(self, array_file_list):
         for array_file in array_file_list:
@@ -552,9 +546,7 @@ class TlmPacketParser(object):
             array_size = int(array_model.get_size())
             elem_type = array_model.get_type()
             elem_type_size = None
-            if type(elem_type) == type(tuple()):
-                elem_type_size = 4  # Fixme: can we put this in a constant somewhere?
-            elif elem_type in self.size_dict.keys():  # See if it is a registered type
+            if elem_type in self.size_dict.keys():  # See if it is a registered type
                 elem_type_size = self.size_dict[elem_type]
             else:
                 elem_type_size = self.get_type_size(elem_type, 1)  # Fixme: strings?
