@@ -1,7 +1,7 @@
 # Communication Adapter Interface
 
 Any communication component (e.g. a radio component) that is intended for use with the standard F´ uplink and downlink
-stack should implement the *Communication Adapter Interface* [`ComInterface.fppi`](../../Svc/Interfaces/ComInterface.fppi). This interface specifies both the ports and protocols used
+stack should implement the *Communication Adapter Interface* [`Com.fpp`](../../Svc/Interfaces/Com.fpp). This interface specifies both the ports and protocols used
 to operate with the standard F´ uplink and downlink components.
 
 Implementors of this interface are referred to as *Communication Adapters*.
@@ -10,6 +10,18 @@ Implementors of this interface are referred to as *Communication Adapters*.
 
 The communication adapter interface protocol is designed to work alongside the framer status protocol and the com queue
 protocol to ensure that data messages do not overload a communication interface. These protocols are discussed below.
+
+## Usage
+
+Components implementing the *Communication Adapter Interface* should include the following in the FPP model:
+
+```
+... component ... {
+    import Svc.Com
+}
+```
+
+This can be seen in [`Svc.ComStub`](https://github.com/nasa/fprime/blob/fff0e0bf77d8e03b2005e02e5095571a20048f4a/Svc/ComStub/ComStub.fpp#L6).
 
 ## Ports
 
@@ -53,7 +65,10 @@ This port is used to receive a callback returning ownership of the `Fw::Buffer` 
 This port carries a status of `Fw::Success::SUCCESS` or `Fw::Success::FAILURE` typically in response to a call to the `dataIn` port described above. 
 
 > [!NOTE]
-> it is critical to obey the protocol as described in the protocol section below.
+> It is critical to obey the protocol as described in the protocol section below.
+
+> [!CAUTION]
+> Calls to `comStatusOut` must happen after calls to `dataReturnOut` returning the data the com status applies to.
 
 ## Communication Queue Protocol
 
@@ -97,6 +112,9 @@ for each call received on `dataIn`. Additionally, a *Communication Adapter* shal
 startup to indicate communication is initially ready and once after each Fw::Success::FAILURE event to indicate that
 communication has been restored. By emitting Fw::Success::SUCCESS after any failure, the communication adapter ensures
 that each received message eventually results in a Fw::Success::SUCCESS.
+
+Since the communication status reflects the status of specific data transmission it must be sent after the return (deallocation) of that data.
+
 
 > [!NOTE]
 > It is imperative that *Communication Adapters* implement the `comStatusOut` protocol correctly.

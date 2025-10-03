@@ -95,7 +95,7 @@ Fw::Success FpySequencer::validate() {
     FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
 
     if (sequenceFileSize != sequenceFilePosition) {
-        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<FwSizeType>(sequenceFileSize - sequenceFilePosition));
         return Fw::Success::FAILURE;
     }
 
@@ -106,7 +106,7 @@ Fw::Success FpySequencer::validate() {
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readHeader() {
     // deser header
-    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_header());
+    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_header());
     if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::HEADER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -144,7 +144,7 @@ Fw::Success FpySequencer::readBody() {
     for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.get_header().get_argumentCount(); argMappingIdx++) {
         // serializable register index of arg $argMappingIdx
         // TODO should probably check that this serReg is inside range
-        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_args()[argMappingIdx]);
+        deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_args()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -156,7 +156,7 @@ Fw::Success FpySequencer::readBody() {
     // deser statements
     for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
         // deser statement
-        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_statements()[statementIdx]);
+        deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -170,7 +170,7 @@ Fw::Success FpySequencer::readBody() {
 // reads and validates the footer from the m_sequenceBuffer
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readFooter() {
-    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_footer());
+    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_footer());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::FOOTER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),

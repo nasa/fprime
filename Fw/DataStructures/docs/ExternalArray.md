@@ -24,6 +24,7 @@ It stores a pointer to the backing memory _M_.
 |----|----|-------|-------------|
 |`m_elements`|`T*`|Pointer to backing memory or `nullptr`|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
+|`m_destroyElementsOnRelease`|`bool`|Whether to destroy the array elements when the backing storage is released|`false`|
 
 <a name="Public-Constructors-and-Destructors"></a>
 ## 3. Public Constructors and Destructors
@@ -104,7 +105,7 @@ ExternalArray<U32> a2(a1);
 ~ExternalArray()
 ```
 
-Defined as `= default`.
+Call `releaseStorage()`.
 
 ## 4. Public Member Functions
 
@@ -231,7 +232,9 @@ void setStorage(T* elements, FwSizeType size)
 `elements` must point to a primitive array of at least `size`
 elements of type `T`.
 
-Set `m_elements = elements` and `m_size = size`.
+1. Call `releaseStorage()`.
+
+1. Set `m_elements = elements` and `m_size = size` and `m_destroyElementsOnRelease = true`.
 
 _Example:_
 ```c++
@@ -256,11 +259,15 @@ and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes
 
 1. Assert that `size * sizeof(T) <= data.size`.
 
+1. Call `releaseStorage()`.
+
 1. Initialize `m_elements` with `data.bytes`.
 
 1. Construct the objects pointed to by `m_elements` in place.
 
 1. Initialize `m_size` with `size`.
+
+1. Set `m_destroyElementsOnRelease = true`.
 
 _Example:_
 ```c++
@@ -302,3 +309,17 @@ const FwSizeType size = 10;
 const FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
 ```
+
+## 6. Private Member Functions
+
+### 6.1. releaseStorage
+
+```c++
+void releaseStorage()
+```
+
+If `m_destroyElementsOnRelease` then
+
+1. Call the destructor on each element of `m_elements`.
+
+2. Set `m_destroyElementsOnRelease = false`.

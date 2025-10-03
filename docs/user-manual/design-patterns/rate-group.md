@@ -13,7 +13,7 @@ central rate group driver and achieve their rates by dividing the incoming signa
 
 The `RateGroupDriver` component is the source of the "clock" or tick for the various rate groups. It is usually driven
 off a system timing interrupt or some other reliable clock source, and it performs the clock divider functionality to
-produces a series of slower repeating tick signals that are sent to the rate groups attached to it.
+produce a series of slower repeating tick signals that are sent to the rate groups attached to it.
 
 ### System Clock Sources
 
@@ -24,6 +24,18 @@ system clock and the port call to rate group driver's `CycleIn` port.
 
 The reference application calls the `CycleIn` port followed by a sleep for the system clock time within a while loop to
 simulate a system-driven clock.
+
+**_Example_**: Consider a crystal oscillator running at 1000 HZ (or 1 MHZ), then a system clock source would sample each 1MHZ. Recall that a `RateGroupDriver` is registered to this system clock source sampler that requires to be updated at a rate of 100HZ; therefore the following applies:
+* On the API layers level, both drivers; the `SystemSourceDriver`, and the `RateGroupDriver` shall be implementations of F' components; thus they could only communicate via ports (e.g., commands, events, and telemetry channels). In this case, the implementation could be taken towards commanding.
+* On the hardware level, the `SystemSourceDriver` shall use a clock divider that drives the `RateGroupDriver` each $$\frac{100HZ}{1MHZ}$$ of the system source sampler (i.e., at a rate of $$\frac{1}{10}$$ of the system source sampler).
+* On the hardware implementation level, this could be done via many approaches; a counter algorithm (that triggers an interrupt when reaching 100 cycles resetting the `numberOfCycles` each second) can suffice or a more complex modular arithmetics algorithm could be used (e.g., $$((ticks\ mod\ rate)\ ==\ offset) \implies CycleOut$$; where `ticks` represents the current system virtual clocks, `rate` represents the `RateGroupDriver` required frequency, and `offset` represents the remainder of the value at which sampling shall occur when the system clock `ticks` reaches the requested `rate`; Zero `offset` means that the system source sampler will sample this driver when it reaches an integer multiple of its requested `rate`).
+* The algorithm utilized here provides a software-based analogous activity to [the clock prescaler digital circuits](https://en.wikipedia.org/wiki/Prescaler).
+
+> [!NOTE]
+> **Linking with the `Svc` core module:**
+> * Here is the simple algorithm of `Svc::RateGroupDriver` implemented by the core libraries; where values captured from this algorithm can be encapsulated further in a `Divider` structure.
+> * This is essentially a variant of rate-controlled publish-subscriber pattern that samples the registered `RateGroupDriver` components by their requested sampling rate via their port channels: See [the Core Implementation `RateGroupDriver::CycleIn_handler(...)`](https://github.com/nasa/fprime/blob/devel/Svc/RateGroupDriver/RateGroupDriver.cpp).
+>   
 
 ## Passive and Active Rate Groups
 

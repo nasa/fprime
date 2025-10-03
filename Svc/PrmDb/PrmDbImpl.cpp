@@ -159,7 +159,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
             // reset buffer
             buff.resetSer();
-            Fw::SerializeStatus serStat = buff.serialize(recordSize);
+            Fw::SerializeStatus serStat = buff.serializeFrom(recordSize);
             // should always work
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
@@ -185,7 +185,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
             // serialize parameter id
 
-            serStat = buff.serialize(this->m_db[entry].id);
+            serStat = buff.serializeFrom(this->m_db[entry].id);
             // should always work
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 

@@ -18,6 +18,7 @@ arduino
 ARef
 argcomplete
 ARGN
+binaryfile
 ARINC
 arpa
 ASize
@@ -60,6 +61,7 @@ Campuzano
 carg
 CBF
 CBLOCK
+CCACHE
 CCB
 CComponent
 ccsds
@@ -112,6 +114,7 @@ coravy
 coreutils
 Coverity
 CPHA
+CPIU
 cplusplus
 CPOL
 cppcheck
@@ -179,6 +182,7 @@ DPWRITER
 DRAINBUFFERS
 drv
 drvtcpserversocket
+DSL
 dspal
 DSSC
 Dstate
@@ -191,6 +195,7 @@ ECLIPSEHELP
 EHAs
 eip
 Elts
+emptydir
 endcond
 endfunction
 endmacro
@@ -211,6 +216,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+featherm
 fecf
 FEEDNAME
 feq
@@ -224,6 +230,7 @@ FILEDOWNLINKCFG
 FILEHANDLING
 FILEHANDLINGSUBTOPOLOGY
 FILEID
+FILEMANAGERCONFIG
 FILEOPENERROR
 FILEWRITEERROR
 fio
@@ -367,6 +374,7 @@ LINEEVENT
 LINEHANDLE
 linelength
 lineoffset
+LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR
@@ -401,6 +409,7 @@ MMAPALLOCATOR
 MML
 modbus
 MOVEFILE
+Mpu
 msc
 mscfile
 mseconds
@@ -476,6 +485,7 @@ patsubst
 pdflatex
 penv
 PERLMOD
+PHASERMEMBEROUT
 PINGENTRIES
 PINGSEND
 pkill
@@ -490,6 +500,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+prescaler
 prioritization
 PRIORITYQUEUE
 prm

@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 1
+        constant SCHEMA_VERSION = 2;
 
         @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
         constant FLAG_COUNT = 1
@@ -9,6 +9,10 @@ module Svc {
         enum FlagId {
             EXIT_ON_CMD_FAIL = 0
         }
+
+        @ the type which everything referencing a size or offset on the stack is represented in
+        # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
+        type StackSizeType = U32
 
         enum DirectiveId : U8 {
             INVALID = 0
@@ -96,8 +100,8 @@ module Svc {
             DISCARD = 64
             MEMCMP = 65
             STACK_CMD = 66
-
-            SET_FLAG = 67
+            PUSH_TLM_VAL_AND_TIME = 67
+            SET_FLAG = 68
         }
 
         struct Header {

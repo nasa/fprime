@@ -4,16 +4,36 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
 
 namespace Svc {
+static_assert(std::numeric_limits<FwSizeType>::max() >= PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE,
+              "PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE must fit within range of FwSizeType");
 
-ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName) : PassiveTextLoggerComponentBase(compName) {}
+ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName)
+    : PassiveTextLoggerComponentBase(compName), m_numFilteredIDs(0) {}
 
 ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
+
+void ConsoleTextLoggerImpl::configure(const FwEventIdType* filteredIds, FwSizeType count) {
+    FW_ASSERT(count < PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
+              PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE);
+
+    this->m_numFilteredIDs = count;
+    for (FwSizeType entry = 0; entry < count; entry++) {
+        this->m_filteredIDs[entry] = filteredIds[entry];
+    }
+}
 
 void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum,
                                                FwEventIdType id,
                                                Fw::Time& timeTag,
                                                const Fw::LogSeverity& severity,
                                                Fw::TextLogString& text) {
+    // Check event ID filters
+    for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {
+        if (this->m_filteredIDs[i] == id) {
+            return;
+        }
+    }
+
     const char* severityString = nullptr;
     switch (severity.e) {
         case Fw::LogSeverity::FATAL:

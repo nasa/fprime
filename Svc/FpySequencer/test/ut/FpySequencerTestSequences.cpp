@@ -25,7 +25,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     allocMem();
 
     nextTlmId = 123;
-    ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(nextTlmValue.serializeFrom(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_ALLOCATE(1);
     add_STORE_TLM_VAL(123, 0);
     add_LOAD(0, 1);
@@ -43,7 +43,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
     nextTlmValue.resetSer();
-    nextTlmValue.serialize(false);
+    nextTlmValue.serializeFrom(false);
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
@@ -54,7 +54,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     allocMem();
 
     nextTlmId = 123;
-    ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(nextTlmValue.serializeFrom(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_ALLOCATE(1);
     add_STORE_TLM_VAL(123, 0);
     add_LOAD(0, 1);
@@ -75,7 +75,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
     nextTlmValue.resetSer();
-    nextTlmValue.serialize(false);
+    nextTlmValue.serializeFrom(false);
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
@@ -86,7 +86,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     allocMem();
 
     nextTlmId = 123;
-    ASSERT_EQ(nextTlmValue.serialize(static_cast<U64>(999)), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(nextTlmValue.serializeFrom(static_cast<U64>(999)), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_ALLOCATE(8);
     add_STORE_TLM_VAL(123, 0);
     add_LOAD(0, 8);
@@ -109,7 +109,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
     nextTlmValue.resetSer();
     // should fail if tlm is 998
-    nextTlmValue.serialize(static_cast<U64>(998));
+    nextTlmValue.serializeFrom(static_cast<U64>(998));
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);

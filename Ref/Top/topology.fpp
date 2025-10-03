@@ -20,7 +20,7 @@ module Ref {
     import ComCcsds.Subtopology
     import FileHandling.Subtopology
     import DataProducts.Subtopology
-    
+
     # ----------------------------------------------------------------------
     # Instances used in the topology
     # ----------------------------------------------------------------------
@@ -87,6 +87,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
       rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.comQueue.run
+      rateGroup1Comp.RateGroupMemberOut[6] -> CdhCore.cmdDisp.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -95,6 +96,8 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
       rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
+      #connection to FileManager listing feature command for sequencing
+      rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.fileManager.schedIn
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn

@@ -30,20 +30,29 @@ void FpySequencer::sendSignal(Signal signal) {
     }
 }
 
+// utility method for updating telemetry based on a directive error code
+void FpySequencer::handleDirectiveErrorCode(Fpy::DirectiveId id, DirectiveError err) {
+    this->m_tlm.lastDirectiveError = err;
+    if (err != DirectiveError::NO_ERROR) {
+        this->m_tlm.directiveErrorIndex = this->currentStatementIdx();
+        this->m_tlm.directiveErrorId = id;
+    }
+}
+
 Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat =
-        cmdBuf.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
+        cmdBuf.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return Fw::Success::FAILURE;
     }
-    stat = cmdBuf.serialize(opcode);
+    stat = cmdBuf.serializeFrom(opcode);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return Fw::Success::FAILURE;
     }
-    stat = cmdBuf.serialize(argBuf, argBufSize, Fw::Serialization::OMIT_LENGTH);
+    stat = cmdBuf.serializeFrom(argBuf, argBufSize, Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return Fw::Success::FAILURE;
     }
@@ -72,7 +81,7 @@ T FpySequencer::pop() {
     U8 valBytes[8] = {0};
     // now move top of stack into byte array and shrink stack
     memcpy(valBytes, this->top() - sizeof(T), sizeof(T));
-    this->m_runtime.stackSize -= sizeof(T);
+    this->m_runtime.stackSize -= static_cast<Fpy::StackSizeType>(sizeof(T));
 
     // now do appropriate byteswap on byte array
     if (sizeof(T) == 8) {
@@ -146,7 +155,7 @@ void FpySequencer::push(T val) {
         valBytes[0] = static_cast<U8>(valUnsigned);
     }
     memcpy(this->top(), valBytes, sizeof(T));
-    this->m_runtime.stackSize += sizeof(T);
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(sizeof(T));
 }
 
 template void FpySequencer::push(U8);
@@ -180,7 +189,7 @@ U8* FpySequencer::lvars() {
     return this->m_runtime.stack + this->lvarOffset();
 }
 
-U16 FpySequencer::lvarOffset() {
+Fpy::StackSizeType FpySequencer::lvarOffset() {
     // at the moment, because we only have one stack frame,
     // lvars always start at 0
     return 0;
@@ -190,35 +199,35 @@ U16 FpySequencer::lvarOffset() {
 void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitRel_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_REL, error);
 }
 
 //! Internal interface handler for directive_waitAbs
 void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitAbs_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_ABS, error);
 }
 
 //! Internal interface handler for directive_goto
 void FpySequencer::directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->goto_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::GOTO, error);
 }
 
 //! Internal interface handler for directive_if
 void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->if_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::IF, error);
 }
 
 //! Internal interface handler for directive_noOp
 void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->noOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::NO_OP, error);
 }
 
 //! Internal interface handler for directive_storeTlmVal
@@ -226,84 +235,92 @@ void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(
     const Svc::FpySequencer_StoreTlmValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeTlmVal_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_TLM_VAL, error);
+}
+
+//! Internal interface handler for directive_pushTlmValAndTime
+void FpySequencer::directive_pushTlmValAndTime_internalInterfaceHandler(
+    const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushTlmValAndTime_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, error);
 }
 
 //! Internal interface handler for directive_storePrm
 void FpySequencer::directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storePrm_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_PRM, error);
 }
 
 //! Internal interface handler for directive_constCmd
 void FpySequencer::directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->constCmd_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::CONST_CMD, error);
 }
 
 //! Internal interface handler for directive_stackOp
 void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(directive.get__op(), error);
 }
 
 //! Internal interface handler for directive_exit
 void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->exit_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::EXIT, error);
 }
 
 //! Internal interface handler for directive_allocate
 void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->allocate_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
 }
 
 //! Internal interface handler for directive_store
 void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->store_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE, error);
 }
 
 //! Internal interface handler for directive_pushVal
 void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushVal_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_VAL, error);
 }
 
 //! Internal interface handler for directive_load
 void FpySequencer::directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->load_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD, error);
 }
 
 //! Internal interface handler for directive_discard
 void FpySequencer::directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->discard_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::DISCARD, error);
 }
 
 //! Internal interface handler for directive_memCmp
 void FpySequencer::directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->memCmp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::MEMCMP, error);
 }
 
 //! Internal interface handler for directive_stackCmd
 void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackCmd_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STACK_CMD, error);
 }
 
 //! Internal interface handler for directive_setFlag
@@ -389,7 +406,7 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     if (stackOffset >= this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -417,12 +434,51 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
     return Signal::stmtResponse_success;
 }
 
+Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
+                                                        DirectiveError& error) {
+    if (!this->isConnected_getTlmChan_OutputPort(0)) {
+        error = DirectiveError::TLM_GET_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+
+    Fw::Time tlmTime;
+    Fw::TlmBuffer tlmValue;
+    Fw::TlmValid valid = this->getTlmChan_out(0, directive.get_chanId(), tlmTime, tlmValue);
+
+    if (valid != Fw::TlmValid::VALID) {
+        // could not find this tlm chan
+        error = DirectiveError::TLM_CHAN_NOT_FOUND;
+        return Signal::stmtResponse_failure;
+    }
+
+    U8 tlmTimeBuf[Fw::Time::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer timeEsb(tlmTimeBuf, Fw::Time::SERIALIZED_SIZE);
+    Fw::SerializeStatus stat = timeEsb.serializeFrom(tlmTime);
+
+    // coding error if this failed, we should have enough space
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // check that our stack won't overflow if we put both val and time on it
+    if (Fpy::MAX_STACK_SIZE - tlmValue.getBuffLength() - timeEsb.getBuffLength() < this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // push tlm to end of stack
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(tlmValue.getBuffLength());
+    // now push time to end of stack
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getBuffLength());
+    return Signal::stmtResponse_success;
+}
+
 Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error) {
     if (!this->isConnected_prmGet_OutputPort(0)) {
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     if (stackOffset >= this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -1101,7 +1157,7 @@ Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& d
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we popped these bytes off, and put them in lvar array, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize - directive.get_size()) {
         // write into lvar array would go out of bounds
@@ -1120,7 +1176,7 @@ Signal FpySequencer::load_directiveHandler(const FpySequencer_LoadDirective& dir
         return Signal::stmtResponse_failure;
     }
     // calculate the offset in the lvar array we're going to pull from
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we accessed these bytes, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
@@ -1139,7 +1195,7 @@ Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirectiv
     }
     // copy from the bytearray in the directive to the stack, add to stack size.
     memcpy(this->top(), directive.get_val(), directive.get__valSize());
-    this->m_runtime.stackSize += directive.get__valSize();
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(directive.get__valSize());
     return Signal::stmtResponse_success;
 }
 

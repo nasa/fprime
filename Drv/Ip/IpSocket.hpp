@@ -224,6 +224,13 @@ class IpSocket {
      */
     virtual SocketIpStatus handleZeroReturn();
 
+    /**
+     * \brief setup the socket options of the input socket as defined in IpCfg.hpp
+     * \param socketFd: socket file descriptor
+     * \return status of setup options
+     */
+    SocketIpStatus setupSocketOptions(int socketFd);
+
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
     U16 m_port;                                 //!< IP address port used

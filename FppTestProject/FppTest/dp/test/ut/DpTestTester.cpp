@@ -101,11 +101,11 @@ void DpTestTester::productRecvIn_Container1_SUCCESS() {
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         U32 elt;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U32Record;
         ASSERT_EQ(id, expectedId);
-        status = deserializer.deserialize(elt);
+        status = deserializer.deserializeTo(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt, this->component.u32RecordData);
     }
@@ -136,11 +136,11 @@ void DpTestTester::productRecvIn_Container2_SUCCESS() {
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         DpTest_Data elt;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::DataRecord;
         ASSERT_EQ(id, expectedId);
-        status = deserializer.deserialize(elt);
+        status = deserializer.deserializeTo(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt.get_u16Field(), this->component.dataRecordData);
     }
@@ -174,7 +174,7 @@ void DpTestTester::productRecvIn_Container3_SUCCESS() {
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U8ArrayRecord;
         ASSERT_EQ(id, expectedId);
@@ -184,7 +184,7 @@ void DpTestTester::productRecvIn_Container3_SUCCESS() {
         ASSERT_EQ(size, this->u8ArrayRecordData.size());
         for (FwSizeType j = 0; j < size; ++j) {
             U8 byte;
-            status = deserializer.deserialize(byte);
+            status = deserializer.deserializeTo(byte);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(byte, this->u8ArrayRecordData.at(j));
         }
@@ -219,7 +219,7 @@ void DpTestTester::productRecvIn_Container4_SUCCESS() {
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U32ArrayRecord;
         ASSERT_EQ(id, expectedId);
@@ -229,7 +229,7 @@ void DpTestTester::productRecvIn_Container4_SUCCESS() {
         ASSERT_EQ(size, this->u32ArrayRecordData.size());
         for (FwSizeType j = 0; j < size; ++j) {
             U32 elt;
-            status = deserializer.deserialize(elt);
+            status = deserializer.deserializeTo(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, this->u32ArrayRecordData.at(j));
         }
@@ -264,7 +264,7 @@ void DpTestTester::productRecvIn_Container5_SUCCESS() {
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::DataArrayRecord;
         ASSERT_EQ(id, expectedId);
@@ -274,7 +274,7 @@ void DpTestTester::productRecvIn_Container5_SUCCESS() {
         ASSERT_EQ(size, this->dataArrayRecordData.size());
         for (FwSizeType j = 0; j < size; ++j) {
             DpTest_Data elt;
-            status = deserializer.deserialize(elt);
+            status = deserializer.deserializeTo(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, this->dataArrayRecordData.at(j));
         }
@@ -309,11 +309,11 @@ void DpTestTester::productRecvIn_Container6_SUCCESS() {
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         Fw::String elt;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringRecord;
         ASSERT_EQ(id, expectedId);
-        status = deserializer.deserialize(elt);
+        status = deserializer.deserializeTo(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt, es);
     }
@@ -350,7 +350,7 @@ void DpTestTester::productRecvIn_Container7_SUCCESS() {
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        status = deserializer.deserialize(id);
+        status = deserializer.deserializeTo(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringArrayRecord;
         ASSERT_EQ(id, expectedId);
@@ -360,7 +360,7 @@ void DpTestTester::productRecvIn_Container7_SUCCESS() {
         ASSERT_EQ(size, arraySize);
         for (FwSizeType j = 0; j < size; ++j) {
             Fw::String elt;
-            status = deserializer.deserialize(elt);
+            status = deserializer.deserializeTo(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, es);
         }

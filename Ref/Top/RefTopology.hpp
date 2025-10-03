@@ -67,24 +67,25 @@ void teardownTopology(const TopologyState& state);
 /**
  * \brief cycle the rate group driver based in a system timer
  *
- * In order to be a portable demonstration, the reference topology does not have a direct hardware timer that is typically used
- * in embedded applications. Instead, a linux system timer is used to drive the rate groups at 1Hz. The slower rate groups are 
- * derived from this fundamental rate using the RateGroupDriver component to divide the rate down to slower rates.
- * 
- * For embedded Linux, this could be used to drive the system rate groups. For other embedded systems, projects should write components
- * that implement whatever timers are available for that platform in place of Svc/LinuxTimer.
+ * In order to be a portable demonstration, the reference topology does not have a direct hardware timer that is
+ * typically used in embedded applications. Instead, a linux system timer is used to drive the rate groups at 1Hz. The
+ * slower rate groups are derived from this fundamental rate using the RateGroupDriver component to divide the rate down
+ * to slower rates.
+ *
+ * For embedded Linux, this could be used to drive the system rate groups. For other embedded systems, projects should
+ * write components that implement whatever timers are available for that platform in place of Svc/LinuxTimer.
  *
  * This loop is stopped via a stopRateGroups call.
  *
  */
-void startRateGroups(Fw::TimeInterval interval);
+void startRateGroups(const Fw::TimeInterval& interval);
 
 /**
- * \brief stop the rate groups 
+ * \brief stop the rate groups
  *
  * This stops the cycle started by startRateGroups.
  */
 void stopRateGroups();
 
-} // namespace Ref
+}  // namespace Ref
 #endif

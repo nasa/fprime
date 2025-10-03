@@ -24,7 +24,7 @@ void serialize(Fw::SerializeBufferBase& destBuffer) {
     crc.init();
     crc.update(destBuffer.getBuffAddr(), destBuffer.getBuffLength());
     crc.finalize();
-    ASSERT_EQ(destBuffer.serialize(crc.m_computed), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(destBuffer.serializeFrom(crc.m_computed), Fw::FW_SERIALIZE_OK);
 }
 
 }  // namespace CRCs

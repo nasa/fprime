@@ -27,6 +27,7 @@ telemetry packets RefPackets {
 
   packet CDHErrors id 2 group 1 {
     CdhCore.$health.PingLateWarnings
+    CdhCore.cmdDisp.CommandsDropped
 
     FileHandling.fileUplink.Warnings
     FileHandling.fileDownlink.Warnings

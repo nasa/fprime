@@ -6,16 +6,16 @@
  *  Created on: May 23, 2019
  *      Author: mstarch
  */
-#include <STest/Scenario/Scenario.hpp>
-#include <STest/Scenario/RandomScenario.hpp>
 #include <STest/Scenario/BoundedScenario.hpp>
+#include <STest/Scenario/RandomScenario.hpp>
+#include <STest/Scenario/Scenario.hpp>
 
+#include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 #include <Utils/Types/test/ut/CircularBuffer/CircularRules.hpp>
-#include <gtest/gtest.h>
 
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
 
 #define STEP_COUNT 1000
 
@@ -41,22 +41,13 @@ TEST(CircularBufferTests, RandomCircularTests) {
     Types::PeekBadRule rotateBad("rotateBad");
 
     // Setup a list of rules to choose from
-    STest::Rule<MockTypes::CircularState>* rules[] = {
-            &randomize,
-            &serializeOk,
-            &serializeOverflow,
-            &peekOk,
-            &peekBad,
-            &rotateOk,
-            &rotateBad
-    };
+    STest::Rule<MockTypes::CircularState>* rules[] = {&randomize, &serializeOk, &serializeOverflow, &peekOk,
+                                                      &peekBad,   &rotateOk,    &rotateBad};
     // Construct the random scenario and run it with the defined bounds
-    STest::RandomScenario<MockTypes::CircularState> random("Random Rules", rules,
-                                                      FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::RandomScenario<MockTypes::CircularState> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Setup a bounded scenario to run rules a set number of times
-    STest::BoundedScenario<MockTypes::CircularState> bounded("Bounded Random Rules Scenario",
-                                                        random, STEP_COUNT);
+    STest::BoundedScenario<MockTypes::CircularState> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
     // Run!
     const U32 numSteps = bounded.run(state);
     printf("Ran %u steps.\n", numSteps);
@@ -82,7 +73,7 @@ TEST(CircularBufferTests, BasicSerializeTest) {
 TEST(CircularBufferTests, BasicOverflowTest) {
     // Setup state and fill it with garbage
     MockTypes::CircularState state;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK , state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize()));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize()));
     state.setRemainingSize(0);
 
     // Create rules, and assign them into the array
@@ -100,7 +91,7 @@ TEST(CircularBufferTests, BasicPeekTest) {
     char peek_char = static_cast<char>(0x85);
     U8 peek_u8 = 0x95;
     U32 peek_u32 = 0xdeadc0de;
-    U8 buffer[1024] = {};   // Clear out memory to appease valgrind
+    U8 buffer[1024] = {};  // Clear out memory to appease valgrind
     // Setup all circular state
     MockTypes::CircularState state;
     state.addInfinite(reinterpret_cast<U8*>(&peek_char), sizeof(peek_char));

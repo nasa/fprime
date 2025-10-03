@@ -35,7 +35,14 @@ struct StoreTlmValDirective {
     @ the tlm channel id to get the time of
     chanId: FwChanIdType
     @ the offset in the lvar array to store the tlm in
-    lvarOffset: U16
+    lvarOffset: Fpy.StackSizeType
+}
+
+@ pushes a tlm buffer to the stack, and then pushes the time 
+@ of the tlm meas to the stack
+struct PushTlmValAndTimeDirective {
+    @ the tlm channel id to get the time and value of
+    chanId: FwChanIdType
 }
 
 @ stores a prm buffer in the lvar array
@@ -43,7 +50,7 @@ struct StorePrmDirective {
     @ the param id to get the value of
     prmId: FwPrmIdType
     @ the offset in the lvar array to store the prm in
-    lvarOffset: U16
+    lvarOffset: Fpy.StackSizeType
 }
 
 @ executes a cmd with const args
@@ -70,19 +77,19 @@ struct ExitDirective {
 
 @ pushes some empty bytes to the stack
 struct AllocateDirective {
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 @ pops some bytes off the stack and puts them in lvar array
 struct StoreDirective {
-    lvarOffset: U16
-    $size: U16
+    lvarOffset: Fpy.StackSizeType
+    $size: Fpy.StackSizeType
 }
 
 @ gets bytes from lvar array and pushes them to stack
 struct LoadDirective {
-    lvarOffset: U16
-    $size: U16
+    lvarOffset: Fpy.StackSizeType
+    $size: Fpy.StackSizeType
 }
 
 @ pushes a const byte array onto stack
@@ -97,19 +104,19 @@ struct PushValDirective {
 @ pops bytes off the top of the stack and does nothing with them
 struct DiscardDirective {
     @ how many bytes to pop off the stack
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 @ pop two byte arrays off the top of the stack, call memcmp, push 1 if they were equal, 0 otherwise
 struct MemCmpDirective {
     @ how big a single byte array is. note, we pop 2x this amount off the stack
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 @ pop an opcode and arg buf off the stack, send to cmd dispatcher and await response
 struct StackCmdDirective {
     @ how big the argument buffer is
-    argsSize: U16
+    argsSize: Fpy.StackSizeType
 }
 
 @ pops a bool off the stack, sets a flag with a specific index to that bool
@@ -128,6 +135,8 @@ internal port directive_if(directive: IfDirective) priority 6 assert
 internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 
 internal port directive_storeTlmVal(directive: StoreTlmValDirective) priority 6 assert
+
+internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) priority 6 assert
 
 internal port directive_storePrm(directive: StorePrmDirective) priority 6 assert
 

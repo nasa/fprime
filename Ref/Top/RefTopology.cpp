@@ -15,7 +15,6 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 
-
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
@@ -78,19 +77,19 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-    //Initialize socket client communication if and only if there is a valid specification
+    // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
         comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
-void startRateGroups(Fw::TimeInterval interval) {
+void startRateGroups(const Fw::TimeInterval& interval) {
     // This timer drives the fundamental tick rate of the system.
     // Svc::RateGroupDriver will divide this down to the slower rate groups.
     // This call will block until the stopRateGroups() call is made.
     // For this Linux demo, that call is made from a signal handler.
-    linuxTimer.startTimer(interval.getSeconds()*1000+interval.getUSeconds()/1000);
+    linuxTimer.startTimer(interval);
 }
 
 void stopRateGroups() {
@@ -102,7 +101,7 @@ void teardownTopology(const TopologyState& state) {
     stopTasks(state);
     freeThreads(state);
 
-    //Stop the comDriver component, free thread
+    // Stop the comDriver component, free thread
     comDriver.stop();
     (void)comDriver.join();
 

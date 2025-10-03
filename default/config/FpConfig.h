@@ -11,12 +11,11 @@
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
-#include <Platform/PlatformTypes.h>
 #include <Fw/Types/BasicTypes.h>
-
+#include <Platform/PlatformTypes.h>
 
 // ----------------------------------------------------------------------
 // Type aliases
@@ -90,8 +89,8 @@ extern "C" {
 // This generates code to connect to serialized ports
 #ifndef FW_PORT_SERIALIZATION
 #define FW_PORT_SERIALIZATION \
-    1  //!< Indicates whether there is code in ports to serialize the call (more code, but ability to serialize calls
-       //!< for multi-note systems)
+    1  //!< Indicates whether there is code in ports to serialize the call (more code, but ability to serialize
+       //!< calls for multi-note systems)
 #endif
 
 // Component Facilities
@@ -327,9 +326,13 @@ extern "C" {
 #define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files in the OSAL layer
 #endif
 
+#ifndef FW_ASSERT_COUNT_MAX
+#define FW_ASSERT_COUNT_MAX 10  //!< Maximum number of cascading FW_ASSERT check failures before forcing a system assert
+#endif
+
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

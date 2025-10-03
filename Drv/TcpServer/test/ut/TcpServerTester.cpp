@@ -151,7 +151,10 @@ TcpServerTester ::TcpServerTester()
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
 }
 
-TcpServerTester ::~TcpServerTester() {}
+TcpServerTester ::~TcpServerTester() {
+    this->component.stop();
+    this->component.join();
+}
 
 // ----------------------------------------------------------------------
 // Tests
