@@ -12,8 +12,10 @@ module Drv {
   @ A passive client of a synchronous byte stream driver
   interface PassiveByteStreamDriverClient {
 
+    @ The ready and receive interfaces
     import PassiveByteStreamDriverClientReadyRecv
 
+    @ The send interface
     import PassiveByteStreamDriverClientSendSync
 
   }

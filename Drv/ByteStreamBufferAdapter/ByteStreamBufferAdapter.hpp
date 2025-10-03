@@ -57,6 +57,14 @@ class ByteStreamBufferAdapter final : public ByteStreamBufferAdapterComponentBas
     //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamReady
     void byteStreamReady_handler(FwIndexType portNum  //!< The port number
                                  ) override;
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables 
+    // ----------------------------------------------------------------------
+
+    //! Whether the driver is ready
+    bool m_driverIsReady = false;
+
 };
 
 }  // namespace Drv

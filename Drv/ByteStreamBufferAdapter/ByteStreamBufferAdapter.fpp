@@ -5,7 +5,19 @@ module Drv {
   @
   @ Sample topology:
   @
-  @ ByteStreamDriver <--> ByteStreamBufferAdapter <--> PassiveBufferDriverClient
+  @ -------------------------------------------------
+  @ |                                               |
+  @ | ByteStreamDriver <--> ByteStreamBufferAdapter | <--> PassiveBufferDriverClient
+  @ |                                               |
+  @ -------------------------------------------------
+  @
+  @ The two components in the box function together as a PassiveBufferDriver:
+  @
+  @ -------------------------------------------------
+  @ |                                               |
+  @ |             PassiveBufferDriver               | <--> PassiveBufferDriverClient
+  @ |                                               |
+  @ -------------------------------------------------
   @
   passive component ByteStreamBufferAdapter {
 

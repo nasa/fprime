@@ -12,31 +12,36 @@ namespace Drv {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-ByteStreamBufferAdapter ::ByteStreamBufferAdapter(const char* const compName)
+ByteStreamBufferAdapter::ByteStreamBufferAdapter(const char* const compName)
     : ByteStreamBufferAdapterComponentBase(compName) {}
 
-ByteStreamBufferAdapter ::~ByteStreamBufferAdapter() {}
+ByteStreamBufferAdapter::~ByteStreamBufferAdapter() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void ByteStreamBufferAdapter ::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO
+void ByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // TODO: If m_driverIsReady then
+    // TODO:   Send fwBuffer on byteStreamOut_out
+    // TODO:   Check the return status. If there is an error, then log it to the Logger.
+    // TODO: Otherwise log the error
+    // TODO: Send fwBuffer on bufferInReturn_out
 }
 
-void ByteStreamBufferAdapter ::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO
+void ByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // TODO: Send the buffer on byteStreamInReturn_out
 }
 
-void ByteStreamBufferAdapter ::byteStreamIn_handler(FwIndexType portNum,
-                                                    Fw::Buffer& buffer,
-                                                    const Drv::ByteStreamStatus& status) {
-    // TODO
+void ByteStreamBufferAdapter::byteStreamIn_handler(FwIndexType portNum,
+                                                   Fw::Buffer& buffer,
+                                                   const Drv::ByteStreamStatus& status) {
+    // TODO: If the status is OK, then send buffer on bufferOut_out
+    // TODO: Otherwise log the error and send buffer on byteStreamInReturn_out
 }
 
-void ByteStreamBufferAdapter ::byteStreamReady_handler(FwIndexType portNum) {
-    // TODO
+void ByteStreamBufferAdapter::byteStreamReady_handler(FwIndexType portNum) {
+    this->m_driverIsReady = true;
 }
 
 }  // namespace Drv
