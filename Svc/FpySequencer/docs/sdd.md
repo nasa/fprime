@@ -9,7 +9,11 @@ The FpySequencer is primarily composed of a state machine and a runtime environm
 The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` package). See the compiler documentation for the details of the Fpy language.
 
 ## Flags
-The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running.
+The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running. When a sequence starts running, the flags are initialized to a value configured by the FLAG_DEFAULT_XYZ parameters.
+
+| Name | Description | Default value (configurable) |
+|---|------------|---|
+|EXIT_ON_CMD_FAIL|if true, the sequence will exit with an error if a command fails|false|
 
 ## Commands
 | Name | Description |
@@ -18,6 +22,7 @@ The FpySequencer supports certain boolean flags which control the behavior of th
 | VALIDATE | Loads and validates a sequence. Mutually exclusive with RUN |
 | RUN_VALIDATED | Must be called after VALIDATE. Runs the sequence that was validated. |
 | CANCEL | Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE |
+| SET_FLAG | Sets the value of a flag |
 
 ## Debugging Commands
 The FpySequencer has a set of debugging commands which can be used to pause and step through sequences. They should not be necessary for nominal use cases.
@@ -98,3 +103,5 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 65 | MEMCMP | Compares two memory regions on the stack |
 | 66 | STACK_CMD | Dispatches a command with arguments from the stack |
 | 67 | PUSH_TLM_VAL_AND_TIME | Gets a telemetry channel and pushes its value, and then its time, onto the stack |
+| 68 | SET_FLAG | Pops a bool off the stack, sets a flag with a specific index to that bool |
+| 69 | GET_FLAG | Gets a flag and pushes its value as a U8 to the stack |

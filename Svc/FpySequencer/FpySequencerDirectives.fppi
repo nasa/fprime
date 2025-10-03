@@ -124,7 +124,7 @@ struct SetFlagDirective {
     flagIdx: U8
 }
 
-@ gets a flag and pushes its value (as a bool) to the stack
+@ gets a flag and pushes its value as a U8 to the stack
 struct GetFlagDirective {
     flagIdx: U8
 }
