@@ -284,13 +284,21 @@ void FpySequencerTester::add_SET_FLAG(FpySequencer_SetFlagDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_FLAG, buf);
 }
+void FpySequencerTester::add_GET_FLAG(U8 flagIdx) {
+    add_GET_FLAG(FpySequencer_GetFlagDirective(flagIdx));
+}
+void FpySequencerTester::add_GET_FLAG(FpySequencer_GetFlagDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_FLAG, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
                                    const Fw::LogSeverity severity,  //!< The severity
                                    const Fw::TextLogString& text    //!< The event string
 ) {
-    printf("%s\n", text.toChar());
+    // printf("%s\n", text.toChar());
 }
 
 void FpySequencerTester::writeAndRun() {
@@ -412,6 +420,11 @@ Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_Mem
 Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive,
                                                            DirectiveError& err) {
     return this->cmp.setFlag_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.getFlag_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,

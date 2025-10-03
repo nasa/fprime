@@ -329,6 +329,13 @@ void FpySequencer::directive_setFlag_internalInterfaceHandler(const Svc::FpySequ
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_getFlag
+void FpySequencer::directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->getFlag_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stackSize < 8) {
@@ -1276,6 +1283,21 @@ Signal FpySequencer::setFlag_directiveHandler(const FpySequencer_SetFlagDirectiv
     U8 flagVal = this->pop<U8>() != 0;
 
     this->m_runtime.flags[directive.get_flagIdx()] = flagVal == 1;
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error) {
+    if (Fpy::MAX_STACK_SIZE - this->m_runtime.stackSize < 1) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    if (directive.get_flagIdx() >= Fpy::FLAG_COUNT) {
+        error = DirectiveError::FLAG_IDX_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    bool flagVal = this->m_runtime.flags[directive.get_flagIdx()];
+    this->push<U8>(flagVal);
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

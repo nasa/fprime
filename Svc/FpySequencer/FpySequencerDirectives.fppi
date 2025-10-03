@@ -124,6 +124,11 @@ struct SetFlagDirective {
     flagIdx: U8
 }
 
+@ gets a flag and pushes its value (as a bool) to the stack
+struct GetFlagDirective {
+    flagIdx: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -161,6 +166,8 @@ internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
 internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
+
+internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR

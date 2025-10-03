@@ -65,6 +65,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
         FpySequencer_SetFlagDirective setFlag;
+        FpySequencer_GetFlagDirective getFlag;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -465,6 +466,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_setFlag
     void directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) override;
 
+    //! Internal interface handler for directive_getFlag
+    void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -735,6 +739,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
     Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
+    Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc
