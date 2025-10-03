@@ -126,6 +126,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME: {
+            new (&deserializedDirective.pushTlmValAndTime) FpySequencer_PushTlmValAndTimeDirective();
+            status = argBuf.deserializeTo(deserializedDirective.pushTlmValAndTime);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         case Fpy::DirectiveId::STORE_PRM: {
             new (&deserializedDirective.storePrm) FpySequencer_StorePrmDirective();
             status = argBuf.deserializeTo(deserializedDirective.storePrm);
@@ -378,6 +388,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::STORE_TLM_VAL: {
             this->directive_storeTlmVal_internalInterfaceInvoke(directive.storeTlmVal);
+            return;
+        }
+        case Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME: {
+            this->directive_pushTlmValAndTime_internalInterfaceInvoke(directive.pushTlmValAndTime);
             return;
         }
         case Fpy::DirectiveId::STORE_PRM: {

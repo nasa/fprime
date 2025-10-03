@@ -670,7 +670,6 @@ void CommandDispatcherTester::runOverflowCommands() {
     }
 
     // verify sequence tracker table is empty
-
     for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
     }
@@ -877,6 +876,92 @@ void CommandDispatcherTester::runClearCommandTracking() {
 
     // verify no status returned
     ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+void CommandDispatcherTester::runCommandQueueOverflow() {
+    U8 testNumCmdsToSend = 19;
+
+    // verify dispatch table is empty
+    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
+    }
+
+    // verify sequence tracker table is empty
+
+    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
+    }
+    // clear reg events
+    this->clearEvents();
+    // register built-in commands
+    this->m_impl.regCommands();
+    // verify registrations
+    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
+    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
+    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
+    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
+
+    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
+    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
+
+    // verify event
+    printTextLogHistory(stdout);
+    ASSERT_EVENTS_SIZE(4);
+    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
+    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
+    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
+    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
+    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+
+    // register our own command
+    FwOpcodeType testOpCode = 0x50;
+
+    this->clearEvents();
+    this->invoke_to_compCmdReg(0, 0x50);
+    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
+    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
+    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+
+    // verify registration event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+
+    // Flood CmdDispatcher with a series of NOOP commands until the command queue overflows
+    for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++) {
+        // send NO_OP command
+        this->m_seqStatusRcvd = false;
+        Fw::ComBuffer buff;
+        ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+                  Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),
+                  Fw::FW_SERIALIZE_OK);
+
+        this->invoke_to_seqCmdBuff(0, buff, 12);
+        ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    }
+    this->dispatchCurrentMessages(this->m_impl);
+
+    // Verify CommandsDropped Tlm channel incremented by 6, while the CommandDroppedQueueOverflow
+    // event count incremented by 5. This verifies the CommandDroppedQueueOverflow is being
+    // properly throttled.
+    ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(5);
+
+    // Telemetry is emitted via the run call, thus no output is had before the call, and one value
+    // is seen after the call.  This value is 6 as discussed above.
+    ASSERT_TLM_CommandsDropped_SIZE(0);
+    this->invoke_to_run(0, 0);
+    this->dispatchCurrentMessages(this->m_impl);
+    ASSERT_TLM_CommandsDropped_SIZE(1);
+    ASSERT_TLM_CommandsDropped(0, 6);
 }
 
 void CommandDispatcherTester::from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/

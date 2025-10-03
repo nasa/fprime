@@ -237,6 +237,14 @@ void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_TLM_VAL, error);
 }
 
+//! Internal interface handler for directive_pushTlmValAndTime
+void FpySequencer::directive_pushTlmValAndTime_internalInterfaceHandler(
+    const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushTlmValAndTime_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, error);
+}
+
 //! Internal interface handler for directive_storePrm
 void FpySequencer::directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -415,6 +423,45 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
     }
 
     memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
+                                                        DirectiveError& error) {
+    if (!this->isConnected_getTlmChan_OutputPort(0)) {
+        error = DirectiveError::TLM_GET_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+
+    Fw::Time tlmTime;
+    Fw::TlmBuffer tlmValue;
+    Fw::TlmValid valid = this->getTlmChan_out(0, directive.get_chanId(), tlmTime, tlmValue);
+
+    if (valid != Fw::TlmValid::VALID) {
+        // could not find this tlm chan
+        error = DirectiveError::TLM_CHAN_NOT_FOUND;
+        return Signal::stmtResponse_failure;
+    }
+
+    U8 tlmTimeBuf[Fw::Time::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer timeEsb(tlmTimeBuf, Fw::Time::SERIALIZED_SIZE);
+    Fw::SerializeStatus stat = timeEsb.serializeFrom(tlmTime);
+
+    // coding error if this failed, we should have enough space
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // check that our stack won't overflow if we put both val and time on it
+    if (Fpy::MAX_STACK_SIZE - tlmValue.getBuffLength() - timeEsb.getBuffLength() < this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // push tlm to end of stack
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(tlmValue.getBuffLength());
+    // now push time to end of stack
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
