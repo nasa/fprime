@@ -30,7 +30,7 @@ module Fw {
   @ The bufferIn interface for a passive component
   interface PassiveBufferIn {
 
-    @ Port receiving buffers
+    @ Port for receiving buffers
     sync input port bufferIn: BufferSend
 
     @ Port for returning buffers received on bufferIn
