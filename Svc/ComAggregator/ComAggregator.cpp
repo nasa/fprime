@@ -26,20 +26,27 @@ ComAggregator ::~ComAggregator() {}
 // ----------------------------------------------------------------------
 
 void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    // TODO: signal status and **dispatch**
+    Os::ScopeLock lock(this->m_mutex);
+    this->aggregationMachine_sendSignal_status(condition);
+    this->dispatchCurrentMessages();
 }
 
 void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    // TODO: signal fill and **dispatch**
+    Os::ScopeLock lock(this->m_mutex);
+    this->aggregationMachine_sendSignal_fill(data, context);
+    this->dispatchCurrentMessages();
 }
 
 void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::NOT_OWNED);
+    Os::ScopeLock lock(this->m_mutex);
     this->m_bufferState = Fw::Buffer::OwnershipState::OWNED;
 }
 
 void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
-    // TODO: signal timeout and **dispatch**
+    Os::ScopeLock lock(this->m_mutex);
+    this->aggregationMachine_sendSignal_timeout(context);
+    this->dispatchCurrentMessages();
 }
 
 // ----------------------------------------------------------------------
@@ -48,12 +55,21 @@ void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
 
 void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
     this->m_frameSerializer.resetSer();
-    //TODO serialize hold
+    if (this->m_held.get_data().isValid()) {
+        // Fill the held data
+        this->m_frameSerializer.serializeFrom(this->m_held.get_data().getData(), this->m_held.get_data().getSize());
+        this->m_lastContext = this->m_held.get_context();
+        this->m_held = Svc::ComDataContextPair();
+
+        Fw::Success good = Fw::Success::SUCCESS;
+        this->comStatusOut_out(0, good);
+    }
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
                                                           Svc_AggregationMachine::Signal signal,
                                                           const Svc::ComDataContextPair& value) {
+    // TODO: asset status
     this->m_frameSerializer.serializeFrom(value.get_data().getData(), value.get_data().getSize());
     this->m_lastContext = value.get_context();
     Fw::Success good = Fw::Success::SUCCESS;
@@ -70,20 +86,6 @@ void ComAggregator ::Svc_AggregationMachine_action_doHold(SmId smId,
     this->m_held = value;
 }
 
-void ComAggregator ::Svc_AggregationMachine_action_doStatus(SmId smId,
-                                                            Svc_AggregationMachine::Signal signal,
-                                                            const Fw::Success& value) {
-    FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED);
-    // Autocode for comStatusOut port will not alter the value therefore it is
-    // safe to cast away const.
-    this->comStatusOut_out(0, const_cast<Fw::Success&>(value));
-}
-
-void ComAggregator ::Svc_AggregationMachine_action_assertNoFill(SmId smId, Svc_AggregationMachine::Signal signal) {
-    // Fill is not possible in this state, confirm by assertion
-    FW_ASSERT(0);
-}
-
 void ComAggregator ::Svc_AggregationMachine_action_assertNoStatus(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Status is not possible in this state, confirm by assertion
     FW_ASSERT(0);
@@ -97,7 +99,7 @@ bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
                                                          Svc_AggregationMachine::Signal signal,
                                                          const Svc::ComDataContextPair& value) const {
     FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
-    return (this->m_frameSerializer.getBuffLeft() < value.get_data().getSize());
+    return (this->m_frameSerializer.getBuffLeft() <= value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isGood(SmId smId,

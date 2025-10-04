@@ -8,6 +8,7 @@
 #define Svc_ComAggregator_HPP
 
 #include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
+#include "Os/Mutex.hpp"
 
 namespace Svc {
 
@@ -91,21 +92,6 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                               const Svc::ComDataContextPair& value    //!< The value
                                               ) override;
 
-    //! Implementation for action doStatus of state machine Svc_AggregationMachine
-    //!
-    //! Handle status
-    void Svc_AggregationMachine_action_doStatus(SmId smId,                              //!< The state machine id
-                                                Svc_AggregationMachine::Signal signal,  //!< The signal
-                                                const Fw::Success& value                //!< The value
-                                                ) override;
-
-    //! Implementation for action assertNoFill of state machine Svc_AggregationMachine
-    //!
-    //! Assert no fill when in full or send state
-    void Svc_AggregationMachine_action_assertNoFill(SmId smId,                             //!< The state machine id
-                                                    Svc_AggregationMachine::Signal signal  //!< The signal
-                                                    ) override;
-
     //! Implementation for action assertNoStatus of state machine Svc_AggregationMachine
     //!
     //! Assert no status when in fill state
@@ -142,6 +128,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     ComCfg::FrameContext m_lastContext;     //!< Context for the current frame
 
     Svc::ComDataContextPair m_held; //!< Held data while waiting for send
+
+    Os::Mutex m_mutex;  //!< Mutex for serializing access to internal state
 };
 
 }  // namespace Svc

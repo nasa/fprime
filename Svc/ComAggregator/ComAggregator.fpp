@@ -32,11 +32,6 @@ module Svc {
         @ Hold a buffer
         action doHold: Svc.ComDataContextPair
 
-        @ Handle status
-        action doStatus: Fw.Success
-
-        @ Assert no fill when in full or send state
-        action assertNoFill
 
         @ Assert no status when in fill state
         action assertNoStatus
@@ -56,10 +51,10 @@ module Svc {
         @ Wait for com status from downstream
         state WAIT_STATUS {
             # ASSERT: fill cannot happen before initial 'status'
-            on fill do { assertNoFill }
+            on fill do { doHold }
             # IGNORE: 'timeout', this signal is irrelevant
             # On status, move to IS_GOOD_STATUS choice
-            on status do { doStatus } enter IS_GOOD_STATUS
+            on status enter IS_GOOD_STATUS
         }
 
         @ Buffer aggregation in-progress
@@ -80,12 +75,5 @@ module Svc {
 
         @ State machine instance for aggregation state machine
         state machine instance aggregationMachine: AggregationMachine
-
-        ###############################################################################
-        # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
-        ###############################################################################
-        @ Port for requesting the current time
-        time get port timeCaller
-
     }
 }

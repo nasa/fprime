@@ -95,14 +95,18 @@ module ComCcsds {
     instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000
 
     instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x05000
+
+    instance aggregator: Svc.ComAggregator base id ComCcsdsConfig.BASE_ID + 0x06000 \
+        queue size ComCcsdsConfig.QueueSizes.aggregator
+
     # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
-    instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x06000
+    instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000
 
-    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x07000
+    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x08000
 
-    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x08000
+    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x09000
 
-    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x09000
+    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x0A000
 
     topology FramingSubtopology {
         # Usage Note:
