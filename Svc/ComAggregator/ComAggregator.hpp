@@ -25,6 +25,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Destroy ComAggregator object
     ~ComAggregator();
 
+    void preamble() override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -128,8 +130,6 @@ class ComAggregator final : public ComAggregatorComponentBase {
     ComCfg::FrameContext m_lastContext;     //!< Context for the current frame
 
     Svc::ComDataContextPair m_held; //!< Held data while waiting for send
-
-    Os::Mutex m_mutex;  //!< Mutex for serializing access to internal state
 };
 
 }  // namespace Svc

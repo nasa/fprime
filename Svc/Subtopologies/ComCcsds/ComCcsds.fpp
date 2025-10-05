@@ -97,7 +97,8 @@ module ComCcsds {
     instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x05000
 
     instance aggregator: Svc.ComAggregator base id ComCcsdsConfig.BASE_ID + 0x06000 \
-        queue size ComCcsdsConfig.QueueSizes.aggregator
+        queue size ComCcsdsConfig.QueueSizes.aggregator \
+        stack size ComCcsdsConfig.StackSizes.aggregator
 
     # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
     instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000
@@ -135,6 +136,7 @@ module ComCcsds {
         instance framer
         instance spacePacketFramer
         instance apidManager
+        instance aggregator
 
         connections Downlink {
             # ComQueue <-> SpacePacketFramer
@@ -145,10 +147,15 @@ module ComCcsds {
             spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
             spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
             # SpacePacketFramer <-> TmFramer
-            spacePacketFramer.dataOut -> framer.dataIn
-            framer.dataReturnOut      -> spacePacketFramer.dataReturnIn
+            spacePacketFramer.dataOut -> aggregator.dataIn
+            aggregator.dataOut        -> framer.dataIn
+
+            framer.dataReturnOut      -> aggregator.dataReturnIn
+            aggregator.dataReturnOut    -> spacePacketFramer.dataReturnIn
+
             # ComStatus
-            framer.comStatusOut            -> spacePacketFramer.comStatusIn
+            framer.comStatusOut            -> aggregator.comStatusIn
+            aggregator.comStatusOut        -> spacePacketFramer.comStatusIn
             spacePacketFramer.comStatusOut -> comQueue.comStatusIn
             # (Outgoing) Framer <-> ComInterface connections shall be established by the user
         }

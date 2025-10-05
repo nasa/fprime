@@ -69,7 +69,7 @@ module Svc {
     }
 
     @ Aggregates com buffers
-    queued component ComAggregator {
+    active component ComAggregator {
         import Svc.Framer
         sync input port timeout: Svc.Sched
 
