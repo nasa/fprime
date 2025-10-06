@@ -8,6 +8,9 @@ module Ccsds {
         @ Port to validate a received sequence count for a given APID
         output port validateApidSeqCount: Ccsds.ApidSequenceCount
 
+        @ Port to notify of a deframing error
+        output port errorNotify: Ccsds.ErrorNotify
+
         @ Deframing received an invalid frame length
         event InvalidLength(transmitted: U16, actual: FwSizeType) \
             severity warning high \
