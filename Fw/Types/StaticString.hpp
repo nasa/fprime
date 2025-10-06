@@ -1,6 +1,5 @@
 // ======================================================================
 // @file   StaticString.hpp
-// @author Ian Brault
 // @brief  A string backed by an immutable string literal
 // ======================================================================
 
