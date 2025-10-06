@@ -184,8 +184,9 @@ satisfies the following constraints:
    For each node _N_ in _T'_, every path that follows child links from _N_ to a
    leaf node must pass through the same number of black nodes.
 
-For example, the tree shown at the beginning of
-this section is a valid red-black tree.
+For example, the tree shown in the section on
+<a href="#red-black-colorings">red-black colorings</a>
+is a valid red-black tree.
 Notice that **RBT2** is satisfied at each node.
 For example, at the root, each path from the root to a leaf
 in the leaf-augmented tree passes through two black nodes.
