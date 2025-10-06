@@ -1,66 +1,22 @@
 # Svc::ComAggregator
 
-Aggregates com buffers
-
-## Usage Examples
-Add usage examples here
-
-### Diagrams
-Add diagrams here
-
-### Typical Usage
-And the typical usage of the component here
-
-## Class Diagram
-Add a class diagram here
-
-## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
-
-## Component States
-Add component states in the chart below
-| Name | Description |
-|---|---|
-|---|---|
-
-## Sequence Diagrams
-Add sequence diagrams here
-
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
-## Commands
-| Name | Description |
-|---|---|
-|---|---|
-
-## Events
-| Name | Description |
-|---|---|
-|---|---|
-
-## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
+Aggregates buffers in the downlink chain. This is for use with systems that have fixed size frames (e.g. CCSDS TM) that needed internal aggregation.
 
 ## Requirements
-Add requirements in the chart below
-| Name | Description | Validation |
-|---|---|---|
-|---|---|---|
 
-## Change Log
-| Date | Description |
-|---|---|
-|---| Initial Draft |
+| ID                    | Description                                                                                                                                                   | Verification |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| Svc-ComAggregator-001 | ComAggregator shall accept incoming downlink data as `Fw::Buffer`, `ComCfg::FrameContext` pairs and append the buffer into the aggregate space permitting     | Unit-Test    |
+| Svc-ComAggregator-002 | ComAggregator shall hold the incoming buffer when there is insufficient space in the aggregate buffer.                                                        | Unit-Test    |
+| Svc-ComAggregator-003 | ComAggregator shall send the current aggregate buffer when the incoming buffer is held dur to overflow.                                                       | Unit-Test    |
+| Svc-ComAggregator-004 | ComAggregator shall send the current aggregate buffer when it receives a timeout trigger if and only if the aggregate is non-empty.                           | Unit-Test    |
+| Svc-ComAggregator-005 | ComAggregator shall clear aggregation state when a SUCCESS communication status is received back.                                                             | Unit-Test    |
+| Svc-ComAggregator-006 | ComAggregator shall preserve the order of received buffers when forming each aggregate and across aggregate sends.                                            | Unit-Test    |
+| Svc-ComAggregator-007 | ComAggregator shall interoperate with the [Communication Adapter Interface comStatus protocol](https://fprime.jpl.nasa.gov/latest/docs/reference/communication-adapter-interface/) | Unit-Test    |
+
+
+## Design
+
+![Component BDD](./img/bdd.svg)
+
+`Svc.ComAggregator` implements `Svc.Framer`.  Additionally, it has a `Svc.Sched` timeout port enabling timeout to be driven via a rate group.

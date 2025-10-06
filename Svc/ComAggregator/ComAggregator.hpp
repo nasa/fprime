@@ -7,8 +7,8 @@
 #ifndef Svc_ComAggregator_HPP
 #define Svc_ComAggregator_HPP
 
-#include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 #include "Os/Mutex.hpp"
+#include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 
 namespace Svc {
 
@@ -109,11 +109,10 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Implementation for guard isFull of state machine Svc_AggregationMachine
     //!
     //! Check if full
-    bool Svc_AggregationMachine_guard_isFull(SmId smId,                             //!< The state machine id
+    bool Svc_AggregationMachine_guard_isFull(SmId smId,                              //!< The state machine id
                                              Svc_AggregationMachine::Signal signal,  //!< The signal
                                              const Svc::ComDataContextPair& value    //!< The value
     ) const override;
-
 
     //! Implementation for guard isGood of state machine Svc_AggregationMachine
     //!
@@ -122,14 +121,16 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                              Svc_AggregationMachine::Signal signal,  //!< The signal
                                              const Fw::Success& value                //!< The value
     ) const override;
+
   private:
-    U8 m_frameBufferStore[ComCfg::AggregationSize];                   //!< Buffer to hold the frame data
-    Fw::Buffer::OwnershipState m_bufferState = Fw::Buffer::OwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TmFramer
+    U8 m_frameBufferStore[ComCfg::AggregationSize];  //!< Buffer to hold the frame data
+    Fw::Buffer::OwnershipState m_bufferState =
+        Fw::Buffer::OwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TmFramer
     Fw::Buffer m_frameBuffer;
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
-    ComCfg::FrameContext m_lastContext;     //!< Context for the current frame
+    ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
 
-    Svc::ComDataContextPair m_held; //!< Held data while waiting for send
+    Svc::ComDataContextPair m_held;  //!< Held data while waiting for send
 };
 
 }  // namespace Svc

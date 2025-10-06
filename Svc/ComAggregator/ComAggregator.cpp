@@ -12,12 +12,11 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-ComAggregator ::ComAggregator(const char* const compName) :
-    ComAggregatorComponentBase(compName),
-    m_bufferState(Fw::Buffer::OwnershipState::OWNED),
-    m_frameBuffer(m_frameBufferStore, sizeof(m_frameBufferStore)),
-    m_frameSerializer(m_frameBuffer.getSerializer())
-{}
+ComAggregator ::ComAggregator(const char* const compName)
+    : ComAggregatorComponentBase(compName),
+      m_bufferState(Fw::Buffer::OwnershipState::OWNED),
+      m_frameBuffer(m_frameBufferStore, sizeof(m_frameBufferStore)),
+      m_frameSerializer(m_frameBuffer.getSerializer()) {}
 
 ComAggregator ::~ComAggregator() {}
 
@@ -66,8 +65,8 @@ void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_Aggreg
 void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
                                                           Svc_AggregationMachine::Signal signal,
                                                           const Svc::ComDataContextPair& value) {
-    Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(value.get_data().getData(), value.get_data().getSize(),
-                                                                       Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(
+        value.get_data().getData(), value.get_data().getSize(), Fw::Serialization::OMIT_LENGTH);
     this->m_lastContext = value.get_context();
     Fw::Success good = Fw::Success::SUCCESS;
     // Return port does not alter data and thus const-cast is safe
