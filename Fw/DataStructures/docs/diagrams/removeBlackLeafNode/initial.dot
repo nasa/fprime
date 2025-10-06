@@ -1,0 +1,14 @@
+digraph {
+
+  P -> BH2
+  P -> N
+  N -> L1
+  N -> L2
+
+  P [label="parent",color="darkgray",fontcolor="darkgray"]
+  BH2 [shape="box",label="black height 2",style="dotted",fontname="Italic"]
+  N [label="node"]
+  L1 [fontcolor="invis"]
+  L2 [fontcolor="invis"]
+
+}
