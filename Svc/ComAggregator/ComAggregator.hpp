@@ -115,6 +115,13 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                              const Svc::ComDataContextPair& value    //!< The value
     ) const override;
 
+    //! Implementation for guard isNotEmpty of state machine Svc_AggregationMachine
+    //!
+    //! Check if not empty
+    bool Svc_AggregationMachine_guard_isNotEmpty(SmId smId,                             //!< The state machine id
+                                                 Svc_AggregationMachine::Signal signal  //!< The signal
+    ) const override;
+
     //! Implementation for guard isGood of state machine Svc_AggregationMachine
     //!
     //! Check if last status is good

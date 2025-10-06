@@ -41,6 +41,8 @@ TEST(OffNominal, TimeoutEmpty) {
     Svc::ComAggregatorTester tester;
     tester.test_initial();
     tester.test_timeout_zero();
+    tester.test_fill_multi();
+    tester.test_full();
 }
 
 TEST(Nominal, HoldWhileWaiting) {

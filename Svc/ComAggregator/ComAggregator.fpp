@@ -17,6 +17,9 @@ module Svc {
         @ Check if full 
         guard isFull: Svc.ComDataContextPair
 
+        @ Check if not empty
+        guard isNotEmpty
+
         @ Check if last status is good 
         guard isGood: Fw.Success
 
@@ -62,7 +65,7 @@ module Svc {
             # Fill buffer, check if full then send or fill
             on fill enter IS_FULL_THEN_SEND
             # Timeout, send buffer
-            on timeout do { doSend } enter WAIT_STATUS
+            on timeout if isNotEmpty do { doSend } enter WAIT_STATUS
             # ASSERT: status cannot happen while filling
             on status do { assertNoStatus }
         }
