@@ -218,13 +218,14 @@ SocketIpStatus IpSocket::setupSocketOptions(int socketFd) {
     // Iterate over the socket options and set them
     for (const auto& options : IP_SOCKET_OPTIONS) {
         int status = 0;
-        if(options.type == SOCK_OPT_INT) {
-            status = setsockopt(socketFd, options.level, options.option, &options.value.intVal, sizeof(options.value.intVal));
+        if (options.type == SOCK_OPT_INT) {
+            status = setsockopt(socketFd, options.level, options.option, &options.value.intVal,
+                                sizeof(options.value.intVal));
+        } else {
+            status = setsockopt(socketFd, options.level, options.option, &options.value.sizeVal,
+                                sizeof(options.value.sizeVal));
         }
-        else {
-            status = setsockopt(socketFd, options.level, options.option, &options.value.sizeVal, sizeof(options.value.sizeVal));
-        }
-        if(status) {
+        if (status) {
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
     }
