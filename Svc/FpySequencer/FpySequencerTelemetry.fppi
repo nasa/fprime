@@ -33,9 +33,9 @@ telemetry SeqPath: string size FileNameStringSize update on change
 # debug telemetry
 # only valid in RUNNING.PAUSED state
 @ true if there are no statements remaining in the sequence file
-telemetry Debug_ReachedEndOfFile: bool update on change
+telemetry Debug_ReachedEndOfFile: bool
 @ true if we were able to deserialize the next statement successfully
-telemetry Debug_NextStatementReadSuccess: bool update on change
+telemetry Debug_NextStatementReadSuccess: bool
 @ the opcode of the next statement to dispatch.
 telemetry Debug_NextStatementOpcode: U8 update on change
 @ if the next statement is a cmd directive, the opcode of that cmd
@@ -43,16 +43,16 @@ telemetry Debug_NextCmdOpcode: FwOpcodeType update on change
 
 # breakpoint telemetry
 @ whether or not to break at the breakpoint index
-telemetry BreakpointInUse: bool update on change
+telemetry BreakpointInUse: bool
 @ the current breakpoint index. The sequence will break at this point 
 @ just before dispatching the directive at this index
 telemetry BreakpointIndex: U32 update on change
 @ whether or not to remove the breakpoint after breaking on it
-telemetry BreakOnlyOnceOnBreakpoint: bool update on change
+telemetry BreakOnlyOnceOnBreakpoint: bool
 @ whether or not to break before dispatching the next line,
 @ independent of what line it is.
 @ can be used in combination with breakpointIndex
-telemetry BreakBeforeNextLine: bool update on change
+telemetry BreakBeforeNextLine: bool
 
 @ value of prm STATEMENT_TIMEOUT_SECS
 telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
