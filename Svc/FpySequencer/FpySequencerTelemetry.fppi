@@ -52,4 +52,4 @@ telemetry Debug: DebugTelemetry update on change
 telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
 
 @ value of prm FLAG_DEFAULT_EXIT_ON_CMD_FAIL
-telemetry PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: bool update on change
+telemetry PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: bool
