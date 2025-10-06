@@ -13,6 +13,7 @@
 namespace Svc {
 
 class ComAggregator final : public ComAggregatorComponentBase {
+    friend class ComAggregatorTester;  // Allow unit test access to private members
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

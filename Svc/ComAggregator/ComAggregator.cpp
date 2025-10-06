@@ -67,6 +67,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
                                                           const Svc::ComDataContextPair& value) {
     Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(
         value.get_data().getData(), value.get_data().getSize(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     this->m_lastContext = value.get_context();
     Fw::Success good = Fw::Success::SUCCESS;
     // Return port does not alter data and thus const-cast is safe
@@ -75,9 +76,12 @@ void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
-    this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
-    this->m_frameBuffer.setSize(this->m_frameSerializer.getBuffLength());
-    this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
+    // Send only when the buffer will be valid
+    if (this->m_frameSerializer.getBuffLength() > 0) {
+        this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
+        this->m_frameBuffer.setSize(this->m_frameSerializer.getBuffLength());
+        this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
+    }
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doHold(SmId smId,
