@@ -50,7 +50,7 @@ class Buffer : public Fw::Serializable {
   public:
     //! Buffer ownership state
     //!
-    //! A convienence enumeration to help users implement ownership tracking of buffers.
+    //! A convenience enumeration to help users implement ownership tracking of buffers.
     enum class OwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer
         OWNED,      //!< The buffer is currently owned by the TmFramer

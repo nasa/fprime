@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ComAggregator.hpp
-// \author starchmd
+// \author lestarch
 // \brief  hpp file for ComAggregator component implementation class
 // ======================================================================
 
