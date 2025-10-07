@@ -64,3 +64,4 @@ urllib3==2.5.0
 Werkzeug==3.0.6
 zipp==3.19.1
 zstandard==0.23.0
+pip

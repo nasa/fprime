@@ -1,0 +1,28 @@
+digraph {
+
+  P -> BH1
+  P -> K6
+
+  K6 -> K2
+  K6 -> BH2
+  K2 -> K1
+  K2 -> K4
+
+  K1 -> BH3
+  K1 -> BH3
+
+  K4 -> BH4
+  K4 -> BH4
+ 
+  P [label="parent",color="gray",fontcolor="gray"]
+  K1 [label="K1 (distantNephew)"]
+  K2 [label="K2 (sibling)",color="red",fontcolor="red"]
+  K4 [label="K4 (closeNephew)"]
+  K6 [label="K6 (node)"]
+
+  BH1 [shape="box",label="black height i + 3",style="dotted",fontname="Italic"]
+  BH2 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
+  BH3 [shape="box",label="black height i",style="dotted",fontname="Italic"]
+  BH4 [shape="box",label="black height i",style="dotted",fontname="Italic"]
+
+}

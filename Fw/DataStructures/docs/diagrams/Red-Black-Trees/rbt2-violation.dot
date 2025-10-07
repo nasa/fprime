@@ -1,0 +1,10 @@
+digraph {
+
+  K2 -> K1
+  K2 -> K3 [color="invis"]
+
+  K1
+  K2 [color="red",fontcolor="red"]
+  K3 [color="invis",fontcolor="invis"]
+
+}

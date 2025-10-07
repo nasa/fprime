@@ -32,6 +32,7 @@ baremetal
 batchmode
 BDV
 bfree
+BHn
 bibtex
 Bies
 binaryfile
@@ -43,6 +44,7 @@ bocchino
 boolt
 bsd
 BSDI
+bst
 BUFFERALLOCATE
 BUFFERALLOCATIONFAILED
 BUFFERGETOUT
@@ -238,6 +240,7 @@ fio
 fle
 FNDELAY
 fne
+fontcolor
 FONTPATH
 foodoodie
 foodoodiehoo
@@ -288,6 +291,7 @@ GSE
 gtags
 gtest
 gtimeout
+GTK
 Guire
 GVCID
 HACKSM
@@ -322,12 +326,14 @@ INCLUDEDIR
 ine
 initstate
 inkscape
+inorder
 installable
 intlimits
 inttypes
 INVALIDBUFFER
 INVALIDHEADER
 INVALIDHEADERHASH
+invis
 invisi
 ioc
 ioctl
@@ -382,6 +388,7 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
+LTK
 lvar
 LVL
 lxml
@@ -545,6 +552,7 @@ RATELIMITERTESTER
 rawtime
 RAWTIMETESTER
 RBF
+rbt
 RCHILD
 rcvd
 rdwr
