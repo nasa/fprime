@@ -85,7 +85,7 @@ void TcDeframerTester::testInvalidScId() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
-    ASSERT_from_errorNotify(0, Svc::Ccsds::ErrorType::TC_INVALID_SCID);  // errorNotify port called with invalid SCID
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_SCID);  // errorNotify port called with invalid SCID
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                      // exactly 1 event emitted
@@ -109,7 +109,7 @@ void TcDeframerTester::testInvalidVcId() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
-    ASSERT_from_errorNotify(0, Svc::Ccsds::ErrorType::TC_INVALID_VCID);  // errorNotify port called with invalid VCID
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_VCID);  // errorNotify port called with invalid VCID
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                                           // exactly 1 event emitted
@@ -132,7 +132,7 @@ void TcDeframerTester::testInvalidLengthToken() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
-    ASSERT_from_errorNotify(0, Svc::Ccsds::ErrorType::TC_INVALID_LENGTH);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_LENGTH);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                     // exactly 1 event emitted
@@ -159,7 +159,7 @@ void TcDeframerTester::testInvalidCrc() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);  // two port calls, one for dataReturn, one for errorNotify
-    ASSERT_from_errorNotify(0, Svc::Ccsds::ErrorType::TC_INVALID_CRC);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_CRC);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);  // exactly 1 event emitted

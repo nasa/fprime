@@ -93,7 +93,7 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     // Data returned (frame dropped)
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);  // two port calls, one for dataReturn and one for errorNotify
-    ASSERT_from_errorNotify(0, Svc::Ccsds::ErrorType::SP_INVALID_LENGTH);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_LENGTH);
     Fw::Buffer returnedBuffer = this->fromPortHistory_dataReturnOut->at(0).data;
     ASSERT_EQ(returnedBuffer.getSize(), buffer.getSize());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, nullContext);  // Data should be the same as input

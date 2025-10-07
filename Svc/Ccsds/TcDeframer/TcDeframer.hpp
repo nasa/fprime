@@ -59,7 +59,7 @@ class TcDeframer : public TcDeframerComponentBase {
 
     //! Helper method to send an error notification if the errorNotify port is connected
     //! \param error The error to send
-    void errorNotifyHelper(Svc::Ccsds::ErrorType error);
+    void errorNotifyHelper(Svc::Ccsds::FrameError error);
 
   private:
     U16 m_vcId;                   //!< The virtual channel ID this deframer is configured to handle
