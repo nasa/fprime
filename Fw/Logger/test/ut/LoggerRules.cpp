@@ -46,12 +46,16 @@ bool LogGood::precondition(const MockLogging::FakeLogger& truth) {
     return truth.s_current != nullptr;
 }
 
+U64 randomU64() {
+    return static_cast<U64>(STest::Pick::lowerUpper(0, 0xffffffff)) << 32 | STest::Pick::lowerUpper(0, 0xffffffff);
+}
+
 // Log valid messages
 void LogGood::action(MockLogging::FakeLogger& truth) {
     U32 random = STest::Pick::lowerUpper(0, 10);
-    U32 ra[10];
+    U64 ra[10];
     for (int i = 0; i < 10; ++i) {
-        ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
+        ra[i] = randomU64();
     }
     Fw::String correct;
     switch (random) {
@@ -60,52 +64,65 @@ void LogGood::action(MockLogging::FakeLogger& truth) {
             correct = "No args";
             break;
         case 1:
-            Fw::Logger::log("One arg: %lu", ra[0]);
-            correct.format("One arg: %lu", ra[0]);
+            Fw::Logger::log("One arg: %" PRI_U64, ra[0]);
+            correct.format("One arg: %" PRI_U64, ra[0]);
             break;
         case 2:
-            Fw::Logger::log("Two arg: %lu  %lu", ra[0], ra[1]);
-            correct.format("Two arg: %lu  %lu", ra[0], ra[1]);
+            Fw::Logger::log("Two arg: %" PRI_U64 "  %" PRI_U64, ra[0], ra[1]);
+            correct.format("Two arg: %" PRI_U64 "  %" PRI_U64, ra[0], ra[1]);
             break;
         case 3:
-            Fw::Logger::log("Three arg: %lu  %lu  %lu", ra[0], ra[1], ra[2]);
-            correct.format("Three arg: %lu  %lu  %lu", ra[0], ra[1], ra[2]);
+            Fw::Logger::log("Three arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1], ra[2]);
+            correct.format("Three arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1], ra[2]);
             break;
         case 4:
-            Fw::Logger::log("Four arg: %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3]);
-            correct.format("Four arg: %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3]);
+            Fw::Logger::log("Four arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1], ra[2],
+                            ra[3]);
+            correct.format("Four arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1], ra[2], ra[3]);
             break;
         case 5:
-            Fw::Logger::log("Five arg: %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
-            correct.format("Five arg: %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
+            Fw::Logger::log("Five arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1],
+                            ra[2], ra[3], ra[4]);
+            correct.format("Five arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64, ra[0], ra[1],
+                           ra[2], ra[3], ra[4]);
             break;
         case 6:
-            Fw::Logger::log("Six arg: %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
-            correct.format("Six arg: %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
+            Fw::Logger::log("Six arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
+            correct.format("Six arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                           ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
             break;
         case 7:
-            Fw::Logger::log("Seven arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5],
-                            ra[6]);
-            correct.format("Seven arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5],
-                           ra[6]);
+            Fw::Logger::log("Seven arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                            "  %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
+            correct.format("Seven arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                           "  %" PRI_U64,
+                           ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
             break;
         case 8:
-            Fw::Logger::log("Eight arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4],
-                            ra[5], ra[6], ra[7]);
-            correct.format("Eight arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4],
-                           ra[5], ra[6], ra[7]);
+            Fw::Logger::log("Eight arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                            "  %" PRI_U64 "  %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
+            correct.format("Eight arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                           "  %" PRI_U64 "  %" PRI_U64,
+                           ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
             break;
         case 9:
-            Fw::Logger::log("Nine arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4],
-                            ra[5], ra[6], ra[7], ra[8]);
-            correct.format("Nine arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3], ra[4],
-                           ra[5], ra[6], ra[7], ra[8]);
+            Fw::Logger::log("Nine arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                            "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
+            correct.format("Nine arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                           "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                           ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
             break;
         case 10:
-            Fw::Logger::log("Ten arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3],
-                            ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
-            correct.format("Ten arg: %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu  %lu", ra[0], ra[1], ra[2], ra[3],
-                           ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
+            Fw::Logger::log("Ten arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                            "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
+            correct.format("Ten arg: %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64
+                           "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64 "  %" PRI_U64,
+                           ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
             break;
 
         default:
@@ -150,9 +167,9 @@ bool LogBad::precondition(const MockLogging::FakeLogger& truth) {
 // Log valid messages
 void LogBad::action(MockLogging::FakeLogger& truth) {
     U32 random = STest::Pick::lowerUpper(0, 10);
-    U32 ra[10];
+    U64 ra[10];
     for (int i = 0; i < 10; ++i) {
-        ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
+        ra[i] = randomU64();
     }
 
     switch (random) {
@@ -160,34 +177,44 @@ void LogBad::action(MockLogging::FakeLogger& truth) {
             Fw::Logger::log("No args");
             break;
         case 1:
-            Fw::Logger::log("One arg: %lu", ra[0]);
+            Fw::Logger::log("One arg: %" PRI_U64 " %" PRI_U64, ra[0]);
             break;
         case 2:
-            Fw::Logger::log("Two arg: %lu", ra[0], ra[1]);
+            Fw::Logger::log("Two arg: %" PRI_U64 " %" PRI_U64, ra[0], ra[1]);
             break;
         case 3:
-            Fw::Logger::log("Three arg: %lu", ra[0], ra[1], ra[2]);
+            Fw::Logger::log("Three arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64, ra[0], ra[1], ra[2]);
             break;
         case 4:
-            Fw::Logger::log("Four arg: %lu", ra[0], ra[1], ra[2], ra[3]);
+            Fw::Logger::log("Four arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64, ra[0], ra[1], ra[2], ra[3]);
             break;
         case 5:
-            Fw::Logger::log("Five arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4]);
+            Fw::Logger::log("Five arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64, ra[0], ra[1],
+                            ra[2], ra[3], ra[4]);
             break;
         case 6:
-            Fw::Logger::log("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
+            Fw::Logger::log("Six arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5]);
             break;
         case 7:
-            Fw::Logger::log("Seven arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
+            Fw::Logger::log("Seven arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64
+                            " %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
             break;
         case 8:
-            Fw::Logger::log("Eight arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
+            Fw::Logger::log("Eight arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64
+                            " %" PRI_U64 " %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
             break;
         case 9:
-            Fw::Logger::log("Nine arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
+            Fw::Logger::log("Nine arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64
+                            " %" PRI_U64 " %" PRI_U64 " %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
             break;
         case 10:
-            Fw::Logger::log("Ten arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
+            Fw::Logger::log("Ten arg: %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64
+                            " %" PRI_U64 " %" PRI_U64 " %" PRI_U64 " %" PRI_U64,
+                            ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
             break;
         default:
             ASSERT_EQ(0, 1);

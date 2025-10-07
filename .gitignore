@@ -26,6 +26,7 @@ RemoteSystemsTempFiles
 *.stackdump
 Dict
 *.core
+*.swp
 
 **/coverage/
 *.gcov
