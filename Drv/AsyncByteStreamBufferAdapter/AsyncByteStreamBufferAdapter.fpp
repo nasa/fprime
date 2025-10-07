@@ -5,11 +5,11 @@ module Drv {
   @
   @ Sample topology:
   @
-  @ ----------------------------------------------------------
-  @ |                                                        |
-  @ | AsyncByteStreamDriver <--> AsycByteStreamBufferAdapter | <--> PassiveBufferDriverClient
-  @ |                                                        |
-  @ ----------------------------------------------------------
+  @ -----------------------------------------------------------
+  @ |                                                         |
+  @ | AsyncByteStreamDriver <--> AsyncByteStreamBufferAdapter | <--> PassiveBufferDriverClient
+  @ |                                                         |
+  @ -----------------------------------------------------------
   @
   @ The two components in the box function together as a PassiveBufferDriver:
   @
