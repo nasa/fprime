@@ -207,7 +207,7 @@ void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /
     ASSERT_from_bufferOut_SIZE(0);
 }
 
-Fw::Buffer GenericHubTester ::from_toBufferDriverAllocate_handler(const FwIndexType portNum, const FwSizeType size) {
+Fw::Buffer GenericHubTester ::from_allocate_handler(const FwIndexType portNum, const FwSizeType size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
     EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
     m_allocate.set(m_data_for_allocation, size);
@@ -267,7 +267,7 @@ void GenericHubTester ::connectPorts() {
     this->componentIn.set_toBufferDriver_OutputPort(0, this->get_from_toBufferDriver(0));
 
     // bufferAllocate
-    this->componentIn.set_toBufferDriverAllocate_OutputPort(0, this->get_from_toBufferDriverAllocate(0));
+    this->componentIn.set_allocate_OutputPort(0, this->get_from_allocate(0));
 
     // dataDeallocate
     this->componentOut.set_fromBufferDriverReturn_OutputPort(0, this->get_from_fromBufferDriverReturn(0));

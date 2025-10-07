@@ -48,7 +48,7 @@ module Svc {
     # These ports establish the "send" interface from the rest of FSW to the hub.
     # ----------------------------------------------------------------------
     # Each of these ports has the following behavior:
-    # 1. Invoke toBufferDriverAllocate to allocate a buffer B.
+    # 1. Invoke allocate to allocate a buffer B.
     # 2. Serialize the hub message type (event, telemetry, serial, buffer),
     #    the port number, and the data into B.
     # 3. Emit B on toBufferDriver.
@@ -103,20 +103,20 @@ module Svc {
     #
     # Sample connections:
     #
-    #    genericHub.toBufferDriverAllocate -> bufferManager.bufferGetCallee
+    #    genericHub.allocate -> bufferManager.bufferGetCallee
     #    genericHub.toBufferDriver -> bufferDriver.bufferIn
     #    bufferDriver.bufferInReturn -> genericHub.toBufferDriverReturn
-    #    genericHub.toBufferDriverDeallocate -> bufferManager.bufferSendIn
+    #    genericHub.deallocate -> bufferManager.bufferSendIn
     # ----------------------------------------------------------------------
 
     @ Port for allocating a buffer to send on toBufferDriver
-    output port toBufferDriverAllocate: Fw.BufferGet
+    output port allocate: Fw.BufferGet
 
     @ This interface provides ports toBufferDriver and toBufferDriverReturn
     import Drv.PassiveBufferDriverClientSend
 
     @ Port for deallocating buffers received on toBufferDriverReturn
-    output port toBufferDriverDeallocate: Fw.BufferSend
+    output port deallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from a buffer driver to the hub

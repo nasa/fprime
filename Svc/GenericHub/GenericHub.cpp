@@ -32,8 +32,7 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
     FW_ASSERT(data != nullptr);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer outgoing =
-        toBufferDriverAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+    Fw::Buffer outgoing = allocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     auto serialize = outgoing.getSerializer();
     // Write data to our buffer
     status = serialize.serializeFrom(static_cast<U32>(type));
@@ -136,7 +135,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
 }
 
 void GenericHub::toBufferDriverReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO: Send fwBuffer on toBufferDriverDeallocate_out
+    // TODO: Send fwBuffer on deallocate_out
 }
 
 void GenericHub::eventIn_handler(const FwIndexType portNum,
