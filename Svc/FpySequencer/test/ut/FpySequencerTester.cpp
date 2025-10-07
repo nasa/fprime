@@ -410,7 +410,8 @@ Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
 }
 
-Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err) {
+Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive,
+                                                            DirectiveError& err) {
     return this->cmp.pushTime_directiveHandler(directive, err);
 }
 
