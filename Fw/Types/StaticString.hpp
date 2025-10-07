@@ -12,6 +12,9 @@
 namespace Fw {
 
 //! A string backed by an immutable string literal
+//! NOTE: this class cannot be used in all cases where a StringBase can be used; StringBase will
+//! sometimes cast the pointer returned by toChar() to a mutable char* pointer but the semantics of
+//! StaticString assume that it is backed by an immutable const char* pointer
 class StaticString final : public Fw::StringBase {
   public:
     // ----------------------------------------------------------------------
