@@ -109,14 +109,11 @@ module Svc {
     #    genericHub.deallocate -> bufferManager.bufferSendIn
     # ----------------------------------------------------------------------
 
-    @ Port for allocating a buffer to send on toBufferDriver
-    output port allocate: Fw.BufferGet
+    @ This interface provides ports allocate and deallocate
+    import Fw.BufferAllocation
 
     @ This interface provides ports toBufferDriver and toBufferDriverReturn
     import Drv.PassiveBufferDriverClientSend
-
-    @ Port for deallocating buffers received on toBufferDriverReturn
-    output port deallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Ports for receiving data from a buffer driver to the hub
