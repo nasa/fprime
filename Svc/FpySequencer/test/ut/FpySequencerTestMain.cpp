@@ -996,6 +996,39 @@ TEST_F(FpySequencerTester, memCmp) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
+TEST_F(FpySequencerTester, pushTime) {
+    FpySequencer_PushTimeDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
+    setTestTime(testTime);
+    tester_get_m_runtime_ptr()->stackSize = 0;
+    Signal result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // make sure deser'd time is same as input time
+    Fw::Time deserTime;
+    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack, Fw::Time::SERIALIZED_SIZE);
+    esb.setBuffLen(Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(esb.deserializeTo(deserTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(deserTime, testTime);
+    clearHistory();
+
+    // check almost overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
+    result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // check overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE + 1;
+    result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);

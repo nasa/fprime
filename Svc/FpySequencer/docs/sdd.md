@@ -95,3 +95,4 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 65 | MEMCMP | Compares two memory regions on the stack |
 | 66 | STACK_CMD | Dispatches a command with arguments from the stack |
 | 67 | PUSH_TLM_VAL_AND_TIME | Gets a telemetry channel and pushes its value, and then its time, onto the stack |
+| 68 | PUSH_TIME | Pushes the current time, from the `timeCaller` port, to the stack |
