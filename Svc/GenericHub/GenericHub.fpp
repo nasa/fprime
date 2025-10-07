@@ -1,45 +1,45 @@
 module Svc {
 
-  @|---------------------------------------------------------------------- 
-  @|A generic hub component
-  @|---------------------------------------------------------------------- 
-  @|In F Prime, a *hub* is a mechanism for implementing logical port connections
-  @|that physically span two F Prime deployments. The pattern is called a "hub"
-  @|because any number of logical connections may be multiplexed through a single
-  @|pair of hubs. For example, a pair of logical connections like this
+  @| ----------------------------------------------------------------------
+  @| A generic hub component
+  @| ----------------------------------------------------------------------
+  @| In F Prime, a *hub* is a mechanism for implementing logical port connections
+  @| that physically span two F Prime deployments. The pattern is called a "hub"
+  @| because any number of logical connections may be multiplexed through a single
+  @| pair of hubs. For example, a pair of logical connections like this
   @|
-  @|            A1 --> B1
-  @|            A2 --> B2,
+  @|             A1 --> B1
+  @|             A2 --> B2,
   @|
-  @|where Ai and Bi are component instances in separate deployments A and B,
-  @|can be implemented using hubs H1 and H2 like this:
+  @| where Ai and Bi are component instances in separate deployments A and B,
+  @| can be implemented using hubs H1 and H2 like this:
   @|
-  @|    A1 -->--+       +-->-- B1
-  @|            |       |
-  @|            H1 ~~> H2
-  @|            |       |
-  @|    A1 -->--+       +-->-- B2
+  @|     A1 -->--+       +-->-- B1
+  @|             |       |
+  @|             H1 ~~> H2
+  @|             |       |
+  @|     A1 -->--+       +-->-- B2
   @|
-  @|The notation ~~> represents data transport between deployments,
-  @|e.g., via shared memory or across a network connection.
+  @| The notation ~~> represents data transport between deployments,
+  @| e.g., via shared memory or across a network connection.
   @|
-  @|The GenericHub component provides a generic capability for implementing a
-  @|hub. Typically there is a pair of instances of GenericHub, one in each
-  @|deployment, and each instance is paired with a driver for doing the
-  @|communication. Sending data between the deployments looks like this:
+  @| The GenericHub component provides a generic capability for implementing a
+  @| hub. Typically there is a pair of instances of GenericHub, one in each
+  @| deployment, and each instance is paired with a driver for doing the
+  @| communication. Sending data between the deployments looks like this:
   @|
-  @|    FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
+  @|     FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
   @|
-  @|The driver must be a *buffer driver*, i.e., any combination of component
-  @|instances that sends and receives Fw.Buffer objects across a network.
-  @|For example, the driver may be a pair consisting of (1) a ByteStreamDriver
-  @|component that implements ByteStreamDriverInterface and
-  @|(2) a ByteStreamBufferAdapter.
+  @| The driver must be a *buffer driver*, i.e., any combination of component
+  @| instances that sends and receives Fw.Buffer objects across a network.
+  @| For example, the driver may be a pair consisting of (1) a ByteStreamDriver
+  @| component that implements ByteStreamDriverInterface and
+  @| (2) a ByteStreamBufferAdapter.
   @|
-  @|The driver is specific to the transport mechanism.
-  @|The GenericHub may be paired with any driver that conforms to
-  @|its interface, and so can support any transport mechanism.
-  @|---------------------------------------------------------------------- 
+  @| The driver is specific to the transport mechanism.
+  @| The GenericHub may be paired with any driver that conforms to
+  @| its interface, and so can support any transport mechanism.
+  @| ----------------------------------------------------------------------
   passive component GenericHub {
 
     # ----------------------------------------------------------------------
@@ -149,10 +149,10 @@ module Svc {
     #
     #    genericHub.eventOut -> eventManager.eventIn
     #    genericHub.tlmOut -> tlmDb.eventIn
-    #    
+    #
     #    genericHub.serialOut[0] -> valueConsumer0.valueIn[0]
     #    genericHub.serialOut[1] -> valueConsumer1.valueIn[1]
-    #    
+    #
     #    genericHub.bufferOut[0] -> bufferConsumer0.bufferIn
     #    bufferConsumer0.bufferInReturn -> genericHub.bufferOutReturn[0]
     #    genericHub.bufferOut[1] -> bufferConsumer1.bufferIn
