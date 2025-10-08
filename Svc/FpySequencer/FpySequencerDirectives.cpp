@@ -322,6 +322,13 @@ void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::STACK_CMD, error);
 }
 
+//! Internal interface handler for directive_pushTime
+void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushTime_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TIME, error);
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stackSize < 8) {
@@ -443,7 +450,7 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
         return Signal::stmtResponse_failure;
     }
 
-    U8 tlmTimeBuf[Fw::Time::SERIALIZED_SIZE];
+    U8 tlmTimeBuf[Fw::Time::SERIALIZED_SIZE] = {};
     Fw::ExternalSerializeBuffer timeEsb(tlmTimeBuf, Fw::Time::SERIALIZED_SIZE);
     Fw::SerializeStatus stat = timeEsb.serializeFrom(tlmTime);
 
@@ -1238,6 +1245,27 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
         return Signal::stmtResponse_keepWaiting;
     }
 
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error) {
+    if (Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE < this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    Fw::Time currentTime = this->getTime();
+
+    U8 currentTimeBuf[Fw::Time::SERIALIZED_SIZE] = {};
+    Fw::ExternalSerializeBuffer timeEsb(currentTimeBuf, Fw::Time::SERIALIZED_SIZE);
+    Fw::SerializeStatus stat = timeEsb.serializeFrom(currentTime);
+
+    // coding error if this failed, we should have enough space
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // push time to end of stack
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getBuffLength());
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

@@ -276,6 +276,10 @@ void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::MEMCMP, buf);
 }
+void FpySequencerTester::add_PUSH_TIME() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -406,6 +410,11 @@ Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
 }
 
+Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.pushTime_directiveHandler(directive, err);
+}
+
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {
     return this->cmp.dispatchStatement();
 }
@@ -487,8 +496,8 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
     return &(this->cmp.m_sequenceBuffer);
 }
 
-Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
-    return &(this->cmp.m_debug);
+Svc::FpySequencer::BreakpointInfo* FpySequencerTester::tester_get_m_breakpoint_ptr() {
+    return &(this->cmp.m_breakpoint);
 }
 DirectiveError FpySequencerTester::tester_op_or() {
     return this->cmp.op_or();

@@ -64,17 +64,20 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     if (spacecraft_id != this->m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraft_id, this->m_spacecraftId);
+        this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_SCID);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
     if (data.getSize() < static_cast<Fw::Buffer::SizeType>(total_frame_length)) {
         FwSizeType maxDataAvailable = static_cast<FwSizeType>(data.getSize());
         this->log_WARNING_HI_InvalidFrameLength(total_frame_length, maxDataAvailable);
+        this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_LENGTH);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
     if (not this->m_acceptAllVcid && vc_id != this->m_vcId) {
         this->log_ACTIVITY_LO_InvalidVcId(vc_id, this->m_vcId);
+        this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_VCID);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
@@ -95,6 +98,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     U16 transmitted_crc = trailer.get_fecf();
     if (transmitted_crc != computed_crc) {
         this->log_WARNING_HI_InvalidCrc(computed_crc, transmitted_crc);
+        this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_CRC);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
@@ -109,6 +113,12 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
 void TcDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
     this->dataReturnOut_out(0, fwBuffer, context);
+}
+
+void TcDeframer::errorNotifyHelper(Ccsds::FrameError error) {
+    if (this->isConnected_errorNotify_OutputPort(0)) {
+        this->errorNotify_out(0, error);
+    }
 }
 
 }  // namespace Ccsds

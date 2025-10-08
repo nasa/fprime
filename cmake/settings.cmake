@@ -7,14 +7,15 @@
 #
 # Required settings:
 # - C standard 99
-# - C++ 11 standard, fprime uses C++11 items
+# - C++ 14 standard, fprime uses C++14 items
 # - UT flags overrides
 ####
 include_guard()
-# fprime framework is build with C++11 and C99 support, project may override these settings, but results are not guaranteed
-# when overriding for F Prime framework code.
+# The F Prime framework is built with C++14 and C99 support, project may override these settings, but results are not
+# guaranteed when overriding for F Prime framework code. Setting a higher standard after inclusion of the F Prime code
+# may allow a project to build with a newer standard without affecting F Prime.
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()

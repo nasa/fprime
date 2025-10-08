@@ -111,6 +111,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STACK_CMD(FpySequencer_StackCmdDirective dir);
     void add_MEMCMP(Fpy::StackSizeType size);
     void add_MEMCMP(FpySequencer_MemCmpDirective dir);
+    void add_PUSH_TIME();
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -153,6 +154,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err);
     Signal tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err);
     Signal tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err);
+    Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();
@@ -223,7 +225,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
-    Svc::FpySequencer::Debug* tester_get_m_debug_ptr();
+    Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
     Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
@@ -253,21 +255,20 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     //! Get the OPCODE_CANCEL value
     static FwOpcodeType get_OPCODE_CANCEL() { return FpySequencerComponentBase::OPCODE_CANCEL; }
 
-    //! Get the OPCODE_DEBUG_CLEAR_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_DEBUG_CLEAR_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_CLEAR_BREAKPOINT;
-    }
+    //! Get the OPCODE_CLEAR_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_CLEAR_BREAKPOINT() { return FpySequencerComponentBase::OPCODE_CLEAR_BREAKPOINT; }
 
-    //! Get the OPCODE_DEBUG_SET_BREAKPOINT value
-    static FwOpcodeType get_OPCODE_DEBUG_SET_BREAKPOINT() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_SET_BREAKPOINT;
-    }
+    //! Get the OPCODE_SET_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_SET_BREAKPOINT() { return FpySequencerComponentBase::OPCODE_SET_BREAKPOINT; }
 
-    //! Get the OPCODE_DEBUG_BREAK value
-    static FwOpcodeType get_OPCODE_DEBUG_BREAK() { return FpySequencerComponentBase::OPCODE_DEBUG_BREAK; }
+    //! Get the OPCODE_BREAK value
+    static FwOpcodeType get_OPCODE_BREAK() { return FpySequencerComponentBase::OPCODE_BREAK; }
 
-    //! Get the OPCODE_DEBUG_CONTINUE value
-    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() { return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE; }
+    //! Get the OPCODE_CONTINUE value
+    static FwOpcodeType get_OPCODE_CONTINUE() { return FpySequencerComponentBase::OPCODE_CONTINUE; }
+
+    //! Get the OPCODE_STEP value
+    static FwOpcodeType get_OPCODE_STEP() { return FpySequencerComponentBase::OPCODE_STEP; }
 };
 
 class FpySequencer_SequencerStateMachineTester {
