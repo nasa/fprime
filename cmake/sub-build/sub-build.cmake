@@ -65,7 +65,7 @@ function(run_sub_build SUB_BUILD_NAME)
         list(APPEND BUILD_EXTRA_ARGS "-j" "${FPRIME_SUB_BUILD_JOBS}")
     endif()
     # Tell ninja to be quiet because it outputs errors on stdout
-    if (CMAKE_GENERATOR STREQUAL "Ninja")
+    if (CMAKE_GENERATOR STREQUAL "Ninja" AND NOT CMAKE_DEBUG_OUTPUT)
         list(APPEND BUILD_EXTRA_ARGS "--quiet")
     endif()
 
