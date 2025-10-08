@@ -55,7 +55,6 @@ function(run_sub_build SUB_BUILD_NAME)
         "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
         "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
         ${CALL_PROPS}
-        OUTPUT_VARIABLE DISCARD
         RESULT_VARIABLE result
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
     )
