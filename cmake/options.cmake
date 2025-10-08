@@ -174,6 +174,21 @@ option(FPRIME_SKIP_TOOLS_VERSION_CHECK "Skip the version checking of tools" OFF)
 option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when building." OFF)
 
 ####
+# `FPRIME_INSTALL_STATIC_LIBRARIES`:
+#
+# Enables the installation of static libraries into the build-artifacts folder. This does not affect generation of the
+# static libraries, only their installation. Shared library installation is always enabled. Default: ON, install static
+# libraries.
+#
+# **Values:**
+# - ON:  (default) install static libraries
+# - OFF: do not install static libraries
+#
+# e.g. `-DFPRIME_INSTALL_STATIC_LIBRARIES=OFF`
+####
+option(FPRIME_INSTALL_STATIC_LIBRARIES "Install static libraries" ON)
+
+####
 # `ENABLE_SANITIZER_ADDRESS:`
 #
 # Enables Google's AddressSanitizer. AddressSanitizer is a memory error detector for C/C++.
