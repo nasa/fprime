@@ -63,8 +63,7 @@ function(run_sub_build SUB_BUILD_NAME)
     set(BUILD_EXTRA_ARGS "--")
     # When specified add specific number of jobs to the sub build
     if (DEFINED FPRIME_SUB_BUILD_JOBS)
-        message(FATAL_ERROR "CI DEBUGGING: ${FPRIME_SUB_BUILD_JOBS}")
-        list(APPEND BUILD_EXTRA_ARGS "-j ${FPRIME_SUB_BUILD_JOBS}")
+        list(APPEND BUILD_EXTRA_ARGS "-j" "${FPRIME_SUB_BUILD_JOBS}")
     endif()
     # Tell ninja to be quiet because it outputs errors on stdout
     if (CMAKE_GENERATOR STREQUAL "Ninja")
