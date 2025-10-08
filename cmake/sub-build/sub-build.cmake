@@ -64,12 +64,6 @@ function(run_sub_build SUB_BUILD_NAME)
     # When specified add specific number of jobs to the sub build
     if (DEFINED FPRIME_SUB_BUILD_JOBS)
         list(APPEND BUILD_EXTRA_ARGS "-j ${FPRIME_SUB_BUILD_JOBS}")
-    # Otherwise specify the MAKEFLAGS variable to speed-up makefile driven systems
-    elseif(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
-        cmake_host_system_information(RESULT CPU_COUNT QUERY NUMBER_OF_PHYSICAL_CORES)
-        if(CPU_COUNT GREATER 0)
-            list(APPEND BUILD_EXTRA_ARGS "-j ${CPU_COUNT}")
-        endif()
     endif()
     # Tell ninja to be quiet because it outputs errors on stdout
     if (CMAKE_GENERATOR STREQUAL "Ninja")
