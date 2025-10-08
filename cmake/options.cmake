@@ -50,6 +50,21 @@ ini_to_cache()
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
 ####
+# `FPRIME_CMAKE_QUIET`:
+#
+# Turns off the F Prime CMake status messages to reduce output. This include messages: module registration, target
+# registration, autocoder registration, etc. This does not affect error nor warning messages. It also does not quiet
+# build-in CMake messages.
+#
+# **Values:**
+# - ON: quiet the F Prime CMake output
+# - OFF: (default) print F Prime status messages
+#
+# e.g. `-DFPRIME_CMAKE_QUIET=ON`
+####
+option(FPRIME_CMAKE_QUIET "Quiet F prime's CMake output" OFF)
+
+####
 # `FPRIME_USE_STUBBED_DRIVERS`:
 #
 # Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
