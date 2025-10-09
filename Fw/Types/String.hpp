@@ -1,59 +1,61 @@
 // ======================================================================
-// @file   String.hpp
-// @author F Prime
-// @brief  A general purpose string backed by a fixed-size buffer
+// @file   StaticString.hpp
+// @brief  A string backed by an immutable string literal
 // ======================================================================
 
-#ifndef FW_STRING_HPP
-#define FW_STRING_HPP
+#ifndef FW_STATIC_STRING_HPP
+#define FW_STATIC_STRING_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include <Fw/Types/StringBase.hpp>
 
 namespace Fw {
 
-class String final : public StringBase {
+//! A string backed by an immutable string literal
+//! NOTE: this class cannot be used in all cases where a StringBase can be used; StringBase will
+//! sometimes cast the pointer returned by toChar() to a mutable char* pointer but the semantics of
+//! StaticString assume that it is backed by an immutable const char* pointer
+class StaticString final : public Fw::StringBase {
   public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_FIXED_LENGTH_STRING,
-        STRING_SIZE = FW_FIXED_LENGTH_STRING_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
-    };
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-    String() : StringBase() { *this = ""; }
+    //! Constructor (uninitialized buffer)
+    StaticString() : StringBase(), m_bufferPtr(nullptr), m_bufferSize(0) {}
 
-    String(const String& src) : StringBase() { *this = src; }
+    //! Constructor (bufferPtr and bufferSize)
+    StaticString(const char* bufferPtr,           //!< The buffer pointer
+                 StringBase::SizeType bufferSize  //!< The buffer size
+                 )
+        : StringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize + 1) {}
+ //! Destructor
+    ~StaticString() {}
 
-    String(const StringBase& src) : StringBase() { *this = src; }
+  public:
+    // ----------------------------------------------------------------------
+    // StringBase interface
+    // ----------------------------------------------------------------------
 
-    String(const char* src) : StringBase() { *this = src; }
+    //! Gets the char buffer
+    const char* toChar() const { return this->m_bufferPtr; }
 
-    ~String() {}
-
-    String& operator=(const String& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    String& operator=(const StringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    String& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
+    //! Returns the buffer size
+    StringBase::SizeType getCapacity() const { return this->m_bufferSize; }
 
   private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
+    // ----------------------------------------------------------------------
+    // Data members
+    // ----------------------------------------------------------------------
+
+    //! Pointer to string buffer
+    const char* m_bufferPtr;
+    //! Size of string buffer
+    //! F Prime strings are null-terminated, so this is one more than
+    //! the length of the largest string that the buffer can hold
+    StringBase::SizeType m_bufferSize;
 };
+
 }  // namespace Fw
 
 #endif
