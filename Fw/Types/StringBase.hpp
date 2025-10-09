@@ -66,9 +66,9 @@ class StringBase : public Serializable {
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, Serialization::Endianess mode = Serialization::BIG) const override;
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen, Serialization::Endianess mode = Serialization::BIG) const;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Serialization::Endianess mode = Serialization::BIG) override;
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {

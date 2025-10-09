@@ -22,15 +22,28 @@ typedef enum {
 } SerializeStatus;
 class SerializeBufferBase;  //!< forward declaration
 
+class Serialization {
+  public:
+    enum t {
+        INCLUDE_LENGTH,  //!< Include length as first token in serialization
+        OMIT_LENGTH      //!< Omit length from serialization
+    };
+
+    enum Endianess {
+        BIG,   //!< Include length as first token in serialization
+        LITTLE //!< Omit length from serialization
+    };
+};
+
 class Serializable {
   public:
     // Size type for backwards compatibility
     using SizeType = FwSizeType;
 
   public:
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const = 0;  //!< serialize contents to buffer
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, Serialization::Endianess mode = Serialization::BIG) const = 0;  //!< serialize contents to buffer
 
-    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer) = 0;  //!< deserialize contents from buffer
+    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Serialization::Endianess mode = Serialization::BIG) = 0;  //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility
@@ -59,19 +72,6 @@ class Serializable {
     virtual ~Serializable();  //!< destructor
 };
 
-class Serialization {
-  public:
-    enum t {
-        INCLUDE_LENGTH,  //!< Include length as first token in serialization
-        OMIT_LENGTH      //!< Omit length from serialization
-    };
-
-    enum Endianess {
-        BIG,   //!< Include length as first token in serialization
-        LITTLE //!< Omit length from serialization
-    };
-};
-
 class SerializeBufferBase {
     friend class SerializeBufferBaseTester;
 
@@ -83,24 +83,24 @@ class SerializeBufferBase {
 
     // Serialization for built-in types
 
-    SerializeStatus serializeFrom(U8 val);  //!< serialize 8-bit unsigned int
-    SerializeStatus serializeFrom(I8 val);  //!< serialize 8-bit signed int
+    SerializeStatus serializeFrom(U8 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 8-bit unsigned int
+    SerializeStatus serializeFrom(I8 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 8-bit signed int
 
 #if FW_HAS_16_BIT == 1
-    SerializeStatus serializeFrom(U16 val);  //!< serialize 16-bit unsigned int
-    SerializeStatus serializeFrom(I16 val);  //!< serialize 16-bit signed int
+    SerializeStatus serializeFrom(U16 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 16-bit unsigned int
+    SerializeStatus serializeFrom(I16 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 16-bit signed int
 #endif
 #if FW_HAS_32_BIT == 1
-    SerializeStatus serializeFrom(U32 val);  //!< serialize 32-bit unsigned int
-    SerializeStatus serializeFrom(I32 val);  //!< serialize 32-bit signed int
+    SerializeStatus serializeFrom(U32 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 32-bit unsigned int
+    SerializeStatus serializeFrom(I32 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 32-bit signed int
 #endif
 #if FW_HAS_64_BIT == 1
-    SerializeStatus serializeFrom(U64 val);  //!< serialize 64-bit unsigned int
-    SerializeStatus serializeFrom(I64 val);  //!< serialize 64-bit signed int
+    SerializeStatus serializeFrom(U64 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 64-bit unsigned int
+    SerializeStatus serializeFrom(I64 val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize 64-bit signed int
 #endif
-    SerializeStatus serializeFrom(F32 val);   //!< serialize 32-bit floating point
-    SerializeStatus serializeFrom(F64 val);   //!< serialize 64-bit floating point
-    SerializeStatus serializeFrom(bool val);  //!< serialize boolean
+    SerializeStatus serializeFrom(F32 val, Serialization::Endianess mode = Serialization::BIG);   //!< serialize 32-bit floating point
+    SerializeStatus serializeFrom(F64 val, Serialization::Endianess mode = Serialization::BIG);   //!< serialize 64-bit floating point
+    SerializeStatus serializeFrom(bool val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize boolean
 
     SerializeStatus serializeFrom(
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
@@ -122,9 +122,9 @@ class SerializeBufferBase {
     SerializeStatus serializeFrom(const SerializeBufferBase& val);  //!< serialize a serialized buffer
 
     SerializeStatus serializeFrom(
-        const Serializable& val);  //!< serialize an object derived from serializable base class
+        const Serializable& val, Serialization::Endianess mode = Serialization::BIG);  //!< serialize an object derived from serializable base class
 
-    SerializeStatus serializeSize(const FwSizeType size);  //!< serialize a size value
+    SerializeStatus serializeSize(const FwSizeType size, Serialization::Endianess mode = Serialization::BIG);  //!< serialize a size value
 
     // Deserialization for built-in types
 

@@ -61,7 +61,7 @@ SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase& s
 
 // serialization routines
 
-SerializeStatus SerializeBufferBase::serializeFrom(U8 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U8 val, Fw::Serialization::Endianess mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -73,131 +73,133 @@ SerializeStatus SerializeBufferBase::serializeFrom(U8 val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I8 val) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-    FW_ASSERT(this->getBuffAddr());
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+SerializeStatus SerializeBufferBase::serializeFrom(I8 val, Fw::Serialization::Endianess mode) {
+    return serializeFrom(static_cast<U8>(val), mode);
 }
 
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U16 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U16 val, Fw::Serialization::Endianess mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
     FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
+    switch (mode) {
+        case Serialization::BIG:
+            // MSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
+            break;
+        case Serialization::LITTLE:
+            // LSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            break;
+        default:
+            FW_ASSERT(false);
+            break;
+    }
     this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
     this->m_deserLoc = 0;
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I16 val) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-    FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+SerializeStatus SerializeBufferBase::serializeFrom(I16 val, Fw::Serialization::Endianess mode) {
+    return serializeFrom(static_cast<U16>(val), mode);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U32 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U32 val, Fw::Serialization::Endianess mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
     FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
-    this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
+    switch (mode) {
+        case Serialization::BIG:
+            // MSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
+            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
+            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
+            break;
+        case Serialization::LITTLE:
+            // LSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
+            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
+            break;
+        default:
+            FW_ASSERT(false);
+            break;
+    }
     this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
     this->m_deserLoc = 0;
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I32 val) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-    FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
-    this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+SerializeStatus SerializeBufferBase::serializeFrom(I32 val, Fw::Serialization::Endianess mode) {
+    return serializeFrom(static_cast<U32>(val), mode);
 }
 #endif
 
 #if FW_HAS_64_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U64 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U64 val, Fw::Serialization::Endianess mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
     FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
-    this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
-    this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
-    this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
-    this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
-    this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
+    switch (mode) {
+        case Serialization::BIG:
+            // MSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
+            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
+            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
+            this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
+            this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
+            this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
+            this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
+            break;
+        case Serialization::LITTLE:
+            // LSB first
+            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
+            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
+            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
+            this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 32);
+            this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 40);
+            this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 48);
+            this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val >> 56);
+            break;
+        default:
+            FW_ASSERT(false);
+            break;
+    }
     this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
     this->m_deserLoc = 0;
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I64 val) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-    FW_ASSERT(this->getBuffAddr());
-    // MSB first
-    this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
-    this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
-    this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
-    this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
-    this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
-    this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
-    this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
-    this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+SerializeStatus SerializeBufferBase::serializeFrom(I64 val, Fw::Serialization::Endianess mode) {
+    return serializeFrom(static_cast<U64>(val), mode);
 }
 #endif
 
-SerializeStatus SerializeBufferBase::serializeFrom(F64 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(F64 val, Fw::Serialization::Endianess mode) {
     // floating point values need to be byte-swapped as well, so copy to U64 and use that routine
     U64 u64Val;
     (void)memcpy(&u64Val, &val, sizeof(val));
-    return this->serializeFrom(u64Val);
+    return this->serializeFrom(u64Val, mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(F32 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(F32 val, Fw::Serialization::Endianess mode) {
     // floating point values need to be byte-swapped as well, so copy to U32 and use that routine
     U32 u32Val;
     (void)memcpy(&u32Val, &val, sizeof(val));
-    return this->serializeFrom(u32Val);
+    return this->serializeFrom(u32Val, mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(bool val) {
+SerializeStatus SerializeBufferBase::serializeFrom(bool val, Fw::Serialization::Endianess mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -249,8 +251,8 @@ SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType le
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val) {
-    return val.serializeTo(*this);
+SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val, Fw::Serialization::Endianess mode) {
+    return val.serializeTo(*this, mode);
 }
 
 SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& val) {
@@ -276,7 +278,7 @@ SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& va
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size) {
+SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size, Fw::Serialization::Endianess mode) {
     SerializeStatus status = FW_SERIALIZE_OK;
     if ((size < std::numeric_limits<FwSizeStoreType>::min()) || (size > std::numeric_limits<FwSizeStoreType>::max())) {
         status = FW_SERIALIZE_FORMAT_ERROR;
