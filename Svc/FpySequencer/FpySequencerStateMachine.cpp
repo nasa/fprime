@@ -265,40 +265,61 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFi
     this->m_sequenceFilePath = "";
 }
 
-//! Implementation for action clearDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
+//! Implementation for action clearBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! clears the debug breakpoint, allowing execution of the sequence to continue
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearDebugBreakpoint(
+//! clears the breakpoint, allowing execution of the sequence to continue
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearBreakpoint(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->m_debug.breakOnBreakpoint = false;
-    this->m_debug.breakpointIndex = 0;
-    this->m_debug.breakOnlyOnceOnBreakpoint = false;
+    this->m_breakpoint.breakpointInUse = false;
+    this->m_breakpoint.breakpointIndex = 0;
+    this->m_breakpoint.breakOnlyOnceOnBreakpoint = false;
+    this->m_breakpoint.breakBeforeNextLine = false;
 }
 
-//! Implementation for action report_debugBroken of state machine Svc_FpySequencer_SequencerStateMachine
+//! Implementation for action report_seqBroken of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! reports that a debug breakpoint was hit
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_debugBroken(
+//! reports that a breakpoint was hit
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqBroken(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->log_ACTIVITY_HI_DebugBroken(this->m_runtime.nextStatementIndex, this->m_debug.breakOnlyOnceOnBreakpoint);
+    this->log_ACTIVITY_HI_SequencePaused(this->m_runtime.nextStatementIndex);
 }
 
-//! Implementation for action setDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
+//! Implementation for action setBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! sets the debug breakpoint to the provided args
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setDebugBreakpoint(
+//! sets the breakpoint to the provided args
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setBreakpoint(
     SmId smId,                                              //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-    const Svc::FpySequencer_DebugBreakpointArgs& value      //!< The value
+    const Svc::FpySequencer_BreakpointArgs& value           //!< The value
 ) {
-    this->m_debug.breakOnBreakpoint = value.get_breakOnBreakpoint();
-    this->m_debug.breakOnlyOnceOnBreakpoint = value.get_breakOnlyOnceOnBreakpoint();
-    this->m_debug.breakpointIndex = value.get_breakpointIndex();
-    this->log_ACTIVITY_HI_DebugBreakpointSet(value.get_breakpointIndex(), value.get_breakOnlyOnceOnBreakpoint());
+    this->m_breakpoint.breakpointInUse = value.get_breakOnBreakpoint();
+    this->m_breakpoint.breakOnlyOnceOnBreakpoint = value.get_breakOnlyOnceOnBreakpoint();
+    this->m_breakpoint.breakpointIndex = value.get_breakpointIndex();
+    this->log_ACTIVITY_HI_BreakpointSet(value.get_breakpointIndex(), value.get_breakOnlyOnceOnBreakpoint());
+}
+
+//! Implementation for action setBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! sets the "break on next line" flag to true
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setBreakBeforeNextLine(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    this->m_breakpoint.breakBeforeNextLine = true;
+}
+
+//! Implementation for action clearBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! sets the "break on next line" flag to false
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearBreakBeforeNextLine(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    this->m_breakpoint.breakBeforeNextLine = false;
 }
 
 //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
@@ -341,24 +362,28 @@ bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_goalStateIs_RUNN
     return this->m_goalState == FpySequencer_GoalState::RUNNING;
 }
 
-//! Implementation for guard shouldDebugBreak of state machine Svc_FpySequencer_SequencerStateMachine
+//! Implementation for guard shouldBreak of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! return true if should debug break at this point in execution, before dispatching
+//! return true if should break at this point in execution, before dispatching
 //! next stmt
-bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_shouldDebugBreak(
+bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_shouldBreak(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) const {
-    return this->m_debug.breakOnBreakpoint && this->m_debug.breakpointIndex == this->m_runtime.nextStatementIndex;
+    // there are really two mechanisms for pausing the execution of the seq
+    // one is the "break on next line flag", and the other is the breakpoint
+    return this->m_breakpoint.breakBeforeNextLine ||
+           (this->m_breakpoint.breakpointInUse &&
+            this->m_breakpoint.breakpointIndex == this->m_runtime.nextStatementIndex);
 }
 
-//! Implementation for guard debugBreakOnce of state machine Svc_FpySequencer_SequencerStateMachine
+//! Implementation for guard breakOnce of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! return true if this debug breakpoint should only happen once
-bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_debugBreakOnce(
+//! return true if this breakpoint should only happen once
+bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_breakOnce(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) const {
-    return this->m_debug.breakOnlyOnceOnBreakpoint;
+    return this->m_breakpoint.breakOnlyOnceOnBreakpoint;
 }
 }  // namespace Svc

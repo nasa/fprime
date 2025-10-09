@@ -5,6 +5,9 @@ module Ccsds {
 
         import Deframer
 
+        @ Port to notify of a deframing error
+        output port errorNotify: Ccsds.ErrorNotify
+
         @ Deframing received an invalid SCID
         event InvalidSpacecraftId(transmitted: U16, configured: U16) \
             severity warning low \ 

@@ -23,7 +23,7 @@ find_program(CMAKE_AR           NAMES ${FPRIME__INTERNAL_PREFIX_1}-ar  ${FPRIME_
 find_program(CMAKE_OBJCOPY      NAMES ${FPRIME__INTERNAL_PREFIX_1}-objcopy ${FPRIME__INTERNAL_PREFIX_2}-objcopy ${FPRIME__INTERNAL_FIND_INPUTS})
 find_program(CMAKE_OBJDUMP      NAMES ${FPRIME__INTERNAL_PREFIX_1}-objdump ${FPRIME__INTERNAL_PREFIX_2}-objdump ${FPRIME__INTERNAL_FIND_INPUTS})
 
-# List programs as found
+# List programs as found, Note: in toolchain utilities (and message helpers) are not available
 if (CMAKE_DEBUG_OUTPUT)
     message(STATUS "[arm-linux] Assembler:    ${CMAKE_ASM_COMPILER}")
     message(STATUS "[arm-linux] C   Compiler: ${CMAKE_C_COMPILER}")

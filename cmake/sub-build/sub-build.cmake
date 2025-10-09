@@ -37,13 +37,16 @@ endif()
 #####
 function(run_sub_build SUB_BUILD_NAME)
     skip_on_sub_build()
-    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
+    fprime_cmake_status("[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
     _get_call_properties()
 
     # Run CMake as efficiently as possible
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
-    message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
+    fprime_cmake_status("[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
     string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
+    if (NOT CMAKE_DEBUG_OUTPUT)
+        list(APPEND CALL_PROPS "-DFPRIME_CMAKE_QUIET=ON")
+    endif()
     execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
         "${CMAKE_COMMAND}"
         -G "${CMAKE_GENERATOR}"
@@ -56,20 +59,19 @@ function(run_sub_build SUB_BUILD_NAME)
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
     )
 
-    set(BUILD_EXTRA_ARGS)
+    set(BUILD_EXTRA_ARGS "--")
     # When specified add specific number of jobs to the sub build
     if (DEFINED FPRIME_SUB_BUILD_JOBS)
-        list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
-    # Otherwise specify the MAKEFLAGS variable to speed-up makefile driven systems
-    else()
-        cmake_host_system_information(RESULT CPU_COUNT QUERY NUMBER_OF_PHYSICAL_CORES)
-        if(CPU_COUNT GREATER 0)
-            set(ENV{MAKEFLAGS} "--jobs=${CPU_COUNT}")
-        endif()
+        list(APPEND BUILD_EXTRA_ARGS "-j" "${FPRIME_SUB_BUILD_JOBS}")
     endif()
+    # Tell ninja to be quiet because it outputs errors on stdout
+    if (CMAKE_GENERATOR STREQUAL "Ninja" AND NOT CMAKE_DEBUG_OUTPUT)
+        list(APPEND BUILD_EXTRA_ARGS "--quiet")
+    endif()
+
     foreach (TARGET IN LISTS ARGN)
         get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
-        message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
+        fprime_cmake_status("[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
         execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
             "${CMAKE_COMMAND}"
             --build
@@ -80,7 +82,7 @@ function(run_sub_build SUB_BUILD_NAME)
             RESULT_VARIABLE result
         )
     endforeach()
-    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
+    fprime_cmake_status("[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
 endfunction(run_sub_build)
 
 ####
@@ -107,9 +109,7 @@ function(_get_call_properties)
         # Add escaping for list type variables (for pass to function call and then again to another function call)
         string(REPLACE ";" "\\\\;" PROP_VALUE "${${PROPERTY}}" )
         # Check for debugging output
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[sub-build] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")
-        endif()
+        fprime_cmake_debug_message("[sub-build] Adding cache variable: '${PROPERTY}=${PROP_VALUE}'")
         set(CALL_PROP "-D${PROPERTY}=${PROP_VALUE}")
         list(APPEND CALL_PROPS "${CALL_PROP}")
     endforeach()
