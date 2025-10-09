@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ComAggregatorTester.cpp
-// \author starchmd
+// \author lestarch
 // \brief  cpp file for ComAggregator component test harness implementation class
 // ======================================================================
 
