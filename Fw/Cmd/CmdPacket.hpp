@@ -19,8 +19,8 @@ class CmdPacket : public ComPacket {
     virtual ~CmdPacket();
 
     // New serialization interface methods
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const;
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer);
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode = Fw::Serialization::BIG) const;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode = Fw::Serialization::BIG);
 
     FwOpcodeType getOpCode() const;
     CmdArgBuffer& getArgBuffer();

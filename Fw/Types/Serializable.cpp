@@ -61,7 +61,7 @@ SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase& s
 
 // serialization routines
 
-SerializeStatus SerializeBufferBase::serializeFrom(U8 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(U8 val, Fw::Serialization::Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -73,12 +73,12 @@ SerializeStatus SerializeBufferBase::serializeFrom(U8 val, Fw::Serialization::En
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I8 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(I8 val, Fw::Serialization::Endianness mode) {
     return serializeFrom(static_cast<U8>(val), mode);
 }
 
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U16 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(U16 val, Fw::Serialization::Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -103,12 +103,12 @@ SerializeStatus SerializeBufferBase::serializeFrom(U16 val, Fw::Serialization::E
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I16 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(I16 val, Fw::Serialization::Endianness mode) {
     return serializeFrom(static_cast<U16>(val), mode);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U32 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(U32 val, Fw::Serialization::Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -137,13 +137,13 @@ SerializeStatus SerializeBufferBase::serializeFrom(U32 val, Fw::Serialization::E
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I32 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(I32 val, Fw::Serialization::Endianness mode) {
     return serializeFrom(static_cast<U32>(val), mode);
 }
 #endif
 
 #if FW_HAS_64_BIT == 1
-SerializeStatus SerializeBufferBase::serializeFrom(U64 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(U64 val, Fw::Serialization::Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -180,26 +180,26 @@ SerializeStatus SerializeBufferBase::serializeFrom(U64 val, Fw::Serialization::E
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(I64 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(I64 val, Fw::Serialization::Endianness mode) {
     return serializeFrom(static_cast<U64>(val), mode);
 }
 #endif
 
-SerializeStatus SerializeBufferBase::serializeFrom(F64 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(F64 val, Fw::Serialization::Endianness mode) {
     // floating point values need to be byte-swapped as well, so copy to U64 and use that routine
     U64 u64Val;
     (void)memcpy(&u64Val, &val, sizeof(val));
     return this->serializeFrom(u64Val, mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(F32 val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(F32 val, Fw::Serialization::Endianness mode) {
     // floating point values need to be byte-swapped as well, so copy to U32 and use that routine
     U32 u32Val;
     (void)memcpy(&u32Val, &val, sizeof(val));
     return this->serializeFrom(u32Val, mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(bool val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(bool val, Fw::Serialization::Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -251,11 +251,11 @@ SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType le
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val, Fw::Serialization::Endianness mode) {
     return val.serializeTo(*this, mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& val) {
+SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& val, Fw::Serialization::Endianness mode) {
     Serializable::SizeType size = val.getBuffLength();
     if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) >
         this->getBuffCapacity()) {
@@ -263,7 +263,7 @@ SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& va
     }
 
     // First, serialize size
-    SerializeStatus stat = this->serializeFrom(static_cast<FwSizeStoreType>(size));
+    SerializeStatus stat = this->serializeFrom(static_cast<FwSizeStoreType>(size), mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -278,7 +278,7 @@ SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& va
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size, Fw::Serialization::Endianness mode) {
     SerializeStatus status = FW_SERIALIZE_OK;
     if ((size < std::numeric_limits<FwSizeStoreType>::min()) || (size > std::numeric_limits<FwSizeStoreType>::max())) {
         status = FW_SERIALIZE_FORMAT_ERROR;
@@ -291,7 +291,7 @@ SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size, Fw::Se
 
 // deserialization routines
 
-SerializeStatus SerializeBufferBase::deserializeTo(U8& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -305,7 +305,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(U8& val, Fw::Serialization::E
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(I8& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(I8& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -320,7 +320,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(I8& val, Fw::Serialization::E
 }
 
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerializeBufferBase::deserializeTo(U16& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U16& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -336,7 +336,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(U16& val, Fw::Serialization::
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(I16& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(I16& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -353,7 +353,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(I16& val, Fw::Serialization::
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerializeBufferBase::deserializeTo(U32& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U32& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -371,7 +371,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(U32& val, Fw::Serialization::
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(I32& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(I32& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -392,7 +392,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(I32& val, Fw::Serialization::
 
 #if FW_HAS_64_BIT == 1
 
-SerializeStatus SerializeBufferBase::deserializeTo(U64& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U64& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -415,7 +415,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(U64& val, Fw::Serialization::
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(I64& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(I64& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -438,7 +438,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(I64& val, Fw::Serialization::
 }
 #endif
 
-SerializeStatus SerializeBufferBase::deserializeTo(F64& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(F64& val, Fw::Serialization::Endianness mode) {
     // deserialize as 64-bit int to handle endianness
     U64 tempVal;
     SerializeStatus stat = this->deserializeTo(tempVal);
@@ -451,7 +451,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(F64& val, Fw::Serialization::
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(bool& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(bool& val, Fw::Serialization::Endianness mode) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -472,7 +472,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(bool& val, Fw::Serialization:
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(void*& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(void*& val, Fw::Serialization::Endianness mode) {
     // Deserialize as pointer cast, then convert to void*
     PlatformPointerCastType pointerCastVal = 0;
     const SerializeStatus stat = this->deserializeTo(pointerCastVal);
@@ -482,7 +482,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(void*& val, Fw::Serialization
     return stat;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(F32& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(F32& val, Fw::Serialization::Endianness mode) {
     // deserialize as 64-bit int to handle endianness
     U32 tempVal;
     SerializeStatus stat = this->deserializeTo(tempVal);
@@ -535,11 +535,11 @@ SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeT
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(Serializable& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(Serializable& val, Fw::Serialization::Endianness mode) {
     return val.deserializeFrom(*this);
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(SerializeBufferBase& val, Fw::Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(SerializeBufferBase& val, Fw::Serialization::Endianness mode) {
     FW_ASSERT(val.getBuffAddr());
     SerializeStatus stat = FW_SERIALIZE_OK;
 
@@ -571,7 +571,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(SerializeBufferBase& val, Fw:
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserializeSize(FwSizeType& size, Serialization::Endianess mode) {
+SerializeStatus SerializeBufferBase::deserializeSize(FwSizeType& size, Serialization::Endianness mode) {
     FwSizeStoreType storedSize = 0;
     Fw::SerializeStatus status = this->deserializeTo(storedSize);
     if (status == FW_SERIALIZE_OK) {
