@@ -72,8 +72,7 @@ Choose the operating system you are using to install F Prime:
     sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
     ```
 
-    In order to cross-compile, a Linux box is essential. You may choose to use a virtual 
-    machine or may choose to follow the instructions in [Appendix I](#appendix-i-installing-rancher-desktop-and-the-f-arm-container) to 
+    In order to cross-compile, a Linux box is essential. You may choose to use a virtual machine or may choose to follow the instructions in [Appendix I](#appendix-i-installing-rancher-desktop-and-the-f-arm-container) to 
     install a docker container including the necessary tools. 
 
 === "Ubuntu 20.04 / 22.04 / Generic Linux"
@@ -212,11 +211,11 @@ the logs scroll by when you initially `fprime-util generate <toolchain>`.
 
 ## Appendix I: Installing Rancher Desktop and the F´ ARM Container
 
-Some users may with to run cross-compilers within docker to minimize the impact of those tools on their systems. Macintosh users will be required to use docker as the ARM/Linux cross-compilers are not available natively for macOS and simple virtualization of a Linux box is no longer practical since the introduction of M1 and M2 hardware.
+Some users may wish to run cross-compilers within docker to minimize the impact of those tools on their systems. Macintosh users will be required to use docker as the ARM/Linux cross-compilers are not available natively for macOS and simple virtualization of a Linux box is no longer practical since the introduction of M1 and M2 hardware.
 
 ### Rancher Desktop Setup
 
-Rancher Desktop is an alternative to Docker Desktop that allows users to run docker containers directly on their desktop  computer. It does not require a license for use like Docker Desktop does and also supports both intel and ARM based  Macintosh computers.
+Rancher Desktop is an alternative to Docker Desktop that allows users to run docker containers directly on their desktop  computer. It does not require a license for use like Docker Desktop does and also supports both Intel and ARM based  Macintosh computers.
 
 > [!NOTE]
 > Non-Macintosh users are advised to run without the below Docker container
