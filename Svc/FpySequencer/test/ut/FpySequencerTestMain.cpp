@@ -140,7 +140,7 @@ TEST_F(FpySequencerTester, storeTlmVal) {
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getSize());
     clearHistory();
 
     // try getting a nonexistent chan
@@ -173,7 +173,7 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength() + Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getSize() + Fw::Time::SERIALIZED_SIZE);
     Fw::Time deserTime;
     Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack + 1, Fw::Time::SERIALIZED_SIZE);
     esb.setBuffLen(Fw::Time::SERIALIZED_SIZE);
@@ -211,7 +211,7 @@ TEST_F(FpySequencerTester, storePrm) {
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextPrmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextPrmValue.getBuffLength());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextPrmValue.getSize());
     clearHistory();
 
     // try getting a nonexistent param
@@ -1425,7 +1425,7 @@ TEST_F(FpySequencerTester, readHeader) {
 
     // check not enough bytes
     tester_get_m_sequenceBuffer_ptr()->resetDeser();
-    tester_get_m_sequenceBuffer_ptr()->setBuffLen(tester_get_m_sequenceBuffer_ptr()->getBuffLength() - 1);
+    tester_get_m_sequenceBuffer_ptr()->setBuffLen(tester_get_m_sequenceBuffer_ptr()->getSize() - 1);
     ASSERT_EQ(tester_readHeader(), Fw::Success::FAILURE);
     ASSERT_EVENTS_FileReadDeserializeError_SIZE(1);
 
@@ -1529,7 +1529,7 @@ TEST_F(FpySequencerTester, readFooter) {
     ASSERT_EVENTS_WrongCRC_SIZE(1);
 
     // try not enough remaining
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->setBuffLen(tester_get_m_sequenceBuffer_ptr()->getBuffLength() - 1),
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->setBuffLen(tester_get_m_sequenceBuffer_ptr()->getSize() - 1),
               Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(tester_readFooter(), Fw::Success::FAILURE);
 }
@@ -1635,10 +1635,10 @@ TEST_F(FpySequencerTester, allocateBuffer) {
     Fw::MallocAllocator alloc;
     cmp.allocateBuffer(0, alloc, 100);
     ASSERT_NE(tester_get_m_sequenceBuffer_ptr()->getBuffAddr(), nullptr);
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->getBuffCapacity(), 100);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->getCapacity(), 100);
     cmp.deallocateBuffer(alloc);
     ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->getBuffAddr(), nullptr);
-    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->getBuffCapacity(), 0);
+    ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->getCapacity(), 0);
 }
 
 // caught a bug

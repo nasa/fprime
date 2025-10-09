@@ -96,7 +96,7 @@ QueueHandle* Queue::getHandle() {
 QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
                                    FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
-    return this->send(message.getBuffAddr(), message.getBuffLength(), priority, blockType);
+    return this->send(message.getBuffAddr(), message.getSize(), priority, blockType);
 }
 
 QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
@@ -105,7 +105,7 @@ QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
     FwSizeType actualSize = 0;
     destination.resetSer();  // Reset the buffer
     QueueInterface::Status status =
-        this->receive(destination.getBuffAddrSer(), destination.getBuffCapacity(), blockType, actualSize, priority);
+        this->receive(destination.getBuffAddrSer(), destination.getCapacity(), blockType, actualSize, priority);
     if (status == QueueInterface::Status::OP_OK) {
         Fw::SerializeStatus serializeStatus =
             destination.setBuffLen(static_cast<Fw::Serializable::SizeType>(actualSize));

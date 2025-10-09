@@ -424,12 +424,12 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
     // would it go over the current size of the stack (NOT the max size b/c
     // we aren't supposed to add anything to the stack when we store)
 
-    if (stackOffset + tlmValue.getBuffLength() > this->m_runtime.stackSize) {
+    if (stackOffset + tlmValue.getSize() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getSize());
     return Signal::stmtResponse_success;
 }
 
@@ -458,17 +458,17 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
     // check that our stack won't overflow if we put both val and time on it
-    if (Fpy::MAX_STACK_SIZE - tlmValue.getBuffLength() - timeEsb.getBuffLength() < this->m_runtime.stackSize) {
+    if (Fpy::MAX_STACK_SIZE - tlmValue.getSize() - timeEsb.getSize() < this->m_runtime.stackSize) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
 
     // push tlm to end of stack
-    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
-    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(tlmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, tlmValue.getBuffAddr(), tlmValue.getSize());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(tlmValue.getSize());
     // now push time to end of stack
-    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getBuffLength());
-    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getBuffLength());
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getSize());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getSize());
     return Signal::stmtResponse_success;
 }
 
@@ -495,12 +495,12 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
     // would it overflow the current size of the stack (NOT the max size b/c
     // we aren't supposed to add anything to the stack when we store)
 
-    if (stackOffset + prmValue.getBuffLength() > this->m_runtime.stackSize) {
+    if (stackOffset + prmValue.getSize() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->m_runtime.stack + stackOffset, prmValue.getBuffAddr(), prmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + stackOffset, prmValue.getBuffAddr(), prmValue.getSize());
     return Signal::stmtResponse_success;
 }
 
@@ -1264,8 +1264,8 @@ Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirect
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
     // push time to end of stack
-    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getBuffLength());
-    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getBuffLength());
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, timeEsb.getBuffAddr(), timeEsb.getSize());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(timeEsb.getSize());
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

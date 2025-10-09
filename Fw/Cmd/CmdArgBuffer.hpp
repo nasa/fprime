@@ -31,7 +31,9 @@ class CmdArgBuffer final : public SerializeBufferBase {
     virtual ~CmdArgBuffer();                             //!< destructor
     CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-    FwSizeType getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");  
+    FwSizeType getCapacity() const;      //!< return capacity of buffer (how much it can hold)
+
     U8* getBuffAddr();                   //!< return address of buffer (non const version)
     const U8* getBuffAddr() const;       //!< return address of buffer (const version)
 

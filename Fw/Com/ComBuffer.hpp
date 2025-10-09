@@ -30,7 +30,9 @@ class ComBuffer final : public SerializeBufferBase {
     virtual ~ComBuffer();
     ComBuffer& operator=(const ComBuffer& other);
 
-    FwSizeType getBuffCapacity() const;  // !< returns capacity, not current size, of buffer
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
+    FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
+
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 

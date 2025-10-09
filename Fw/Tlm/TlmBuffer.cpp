@@ -13,7 +13,7 @@ TlmBuffer::TlmBuffer() {}
 TlmBuffer::~TlmBuffer() {}
 
 TlmBuffer::TlmBuffer(const TlmBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ TlmBuffer& TlmBuffer::operator=(const TlmBuffer& other) {
         return *this;
     }
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType TlmBuffer::getBuffCapacity() const {
+FwSizeType TlmBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType TlmBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* TlmBuffer::getBuffAddr() const {

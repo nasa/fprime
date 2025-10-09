@@ -26,7 +26,8 @@ class FileBuffer : public Fw::SerializeBufferBase {
     enum Constants { CAPACITY = 4096 };
 
   public:
-    FwSizeType getBuffCapacity() const;
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
+    FwSizeType getCapacity() const;
 
     U8* getBuffAddr();
 

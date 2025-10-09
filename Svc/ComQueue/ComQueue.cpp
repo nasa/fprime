@@ -253,7 +253,7 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
-    Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
+    Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getSize()));
 
     // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;

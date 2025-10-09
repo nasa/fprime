@@ -85,7 +85,7 @@ void ComQueueTester ::testQueueSend() {
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
         invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
-        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getBuffLength());
+        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getSize());
     }
     clearFromPortHistory();
 
@@ -112,7 +112,7 @@ void ComQueueTester ::testQueuePause() {
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
-        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getBuffLength());
+        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getSize());
     }
     clearFromPortHistory();
 
@@ -299,7 +299,7 @@ void ComQueueTester ::testReadyFirst() {
         dispatchAll();
 
         Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(portNum).data;
-        ASSERT_EQ(emittedBuffer.getSize(), comBuffer.getBuffLength());
+        ASSERT_EQ(emittedBuffer.getSize(), comBuffer.getSize());
         for (FwSizeType i = 0; i < emittedBuffer.getSize(); i++) {
             ASSERT_EQ(emittedBuffer.getData()[i], comBuffer.getBuffAddr()[i]);
         }

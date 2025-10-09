@@ -45,7 +45,7 @@ void TooLargeFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
     Fw::SerialBuffer cmdField(cmdFieldBuffer, sizeof(cmdFieldBuffer));
     cmdField.setBuffLen(cmdFieldSize);
     AMPCS::Records::serialize(timeFlag, time, cmdField, buffer);
-    ASSERT_EQ(sizeof(AMPCSSequence::SequenceHeader::t) + dataSize, buffer.getBuffLength());
+    ASSERT_EQ(sizeof(AMPCSSequence::SequenceHeader::t) + dataSize, buffer.getSize());
     // CRC
     AMPCS::CRCs::createFile(buffer, this->getName().toChar());
 }

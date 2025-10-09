@@ -235,7 +235,7 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entryToUse->packetOffset[pkt]];
-            (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getBuffLength()));
+            (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
             // record that this chan has a value. could do this outside of the loop only once
             // but then we'd need to grab the lock again.
             entryToUse->hasValue = true;
@@ -294,8 +294,8 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
     }
 
     // make sure we have enough space to store this entry in our buf
-    FW_ASSERT(entryToUse->channelSize <= val.getBuffCapacity(), static_cast<FwAssertArgType>(entryToUse->channelSize),
-              static_cast<FwAssertArgType>(val.getBuffCapacity()));
+    FW_ASSERT(entryToUse->channelSize <= val.getCapacity(), static_cast<FwAssertArgType>(entryToUse->channelSize),
+              static_cast<FwAssertArgType>(val.getCapacity()));
 
     // okay, we have the matching entry.
     // go over each packet and find the first one which stores this channel

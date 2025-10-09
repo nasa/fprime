@@ -33,7 +33,7 @@ SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
     }
 
     // We want to add data but not size for the ground software
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getBuffLength(),
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(),
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
@@ -54,7 +54,7 @@ SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
     }
 
     // remainder of buffer must be telemetry value
-    FwSizeType size = buffer.getBuffLeft();
+    FwSizeType size = buffer.getDeserializeSizeLeft();
     stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

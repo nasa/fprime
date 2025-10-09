@@ -24,7 +24,7 @@ typedef PrmDb_PrmReadError PrmReadError;
 namespace {
 class WorkingBuffer : public Fw::SerializeBufferBase {
   public:
-    FwSizeType getBuffCapacity() const { return sizeof(m_buff); }
+    FwSizeType getCapacity() const { return sizeof(m_buff); }
 
     U8* getBuffAddr() { return m_buff; }
 
@@ -155,7 +155,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 return;
             }
             // serialize record size = id field + data
-            U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + this->m_db[entry].val.getBuffLength());
+            U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + this->m_db[entry].val.getSize());
 
             // reset buffer
             buff.resetSer();
@@ -164,7 +164,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
             // write record size
-            writeSize = static_cast<FwSizeType>(buff.getBuffLength());
+            writeSize = static_cast<FwSizeType>(buff.getSize());
             stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
             if (stat != Os::File::OP_OK) {
                 this->unLock();
@@ -190,7 +190,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
             // write parameter ID
-            writeSize = static_cast<FwSizeType>(buff.getBuffLength());
+            writeSize = static_cast<FwSizeType>(buff.getSize());
             stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
             if (stat != Os::File::OP_OK) {
                 this->unLock();
@@ -198,7 +198,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
             }
-            if (writeSize != static_cast<FwSizeType>(buff.getBuffLength())) {
+            if (writeSize != static_cast<FwSizeType>(buff.getSize())) {
                 this->unLock();
                 this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE, static_cast<I32>(numRecords),
                                                        static_cast<I32>(writeSize));
@@ -208,7 +208,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
             // write serialized parameter value
 
-            writeSize = static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength());
+            writeSize = static_cast<FwSizeType>(this->m_db[entry].val.getSize());
             stat = paramFile.write(this->m_db[entry].val.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
             if (stat != Os::File::OP_OK) {
                 this->unLock();
@@ -217,7 +217,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
             }
-            if (writeSize != static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength())) {
+            if (writeSize != static_cast<FwSizeType>(this->m_db[entry].val.getSize())) {
                 this->unLock();
                 this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE,
                                                        static_cast<I32>(numRecords), static_cast<I32>(writeSize));

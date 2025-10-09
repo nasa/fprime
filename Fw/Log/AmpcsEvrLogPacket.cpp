@@ -39,7 +39,7 @@ SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) cons
         return stat;
     }
 
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getBuffLength(),
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(),
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
@@ -70,7 +70,7 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) 
         return stat;
     }
 
-    FwSizeType size = buffer.getBuffLeft();
+    FwSizeType size = buffer.getDeserializeSizeLeft();
     stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, true);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

@@ -63,7 +63,7 @@ void BasicGuardTestAbsTypeTester::smStateBasicGuardTestAbsType_stateMachineOverf
     SmHarness::TestAbsType value;
     const auto status = buffer.deserializeTo(value);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buffer.getBuffLeft(), 0);
+    ASSERT_EQ(buffer.getDeserializeSizeLeft(), 0);
     ASSERT_EQ(value, this->m_value);
 }
 

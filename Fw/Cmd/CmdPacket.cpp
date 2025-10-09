@@ -41,9 +41,9 @@ SerializeStatus CmdPacket::deserializeFrom(SerializeBufferBase& buffer) {
     }
 
     // if non-empty, copy data
-    if (buffer.getBuffLeft()) {
+    if (buffer.getDeserializeSizeLeft()) {
         // copy the serialized arguments to the buffer
-        stat = buffer.copyRaw(this->m_argBuffer, buffer.getBuffLeft());
+        stat = buffer.copyRaw(this->m_argBuffer, buffer.getDeserializeSizeLeft());
     }
 
     return stat;

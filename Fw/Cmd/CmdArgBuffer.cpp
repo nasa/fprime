@@ -13,7 +13,7 @@ CmdArgBuffer::CmdArgBuffer() {}
 CmdArgBuffer::~CmdArgBuffer() {}
 
 CmdArgBuffer::CmdArgBuffer(const CmdArgBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = this->setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = this->setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ CmdArgBuffer& CmdArgBuffer::operator=(const CmdArgBuffer& other) {
         return *this;
     }
 
-    SerializeStatus stat = this->setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = this->setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType CmdArgBuffer::getBuffCapacity() const {
+FwSizeType CmdArgBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType CmdArgBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* CmdArgBuffer::getBuffAddr() const {

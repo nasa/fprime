@@ -30,7 +30,7 @@
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
   public:
-    FwSizeType getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
+    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
         return sizeof(m_testBuff);
     }
 
