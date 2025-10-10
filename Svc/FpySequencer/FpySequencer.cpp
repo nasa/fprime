@@ -225,7 +225,7 @@ void FpySequencer::SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                        Svc::Fpy::FlagId flag,
                                        bool value) {
     if (!this->isRunningState(this->sequencer_getState())) {
-        // can only break while running
+        // can only set flag while running
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -240,6 +240,7 @@ void FpySequencer::SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
+
 //! Handler for input port checkTimers
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
