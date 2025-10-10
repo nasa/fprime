@@ -28,6 +28,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | Output | dataOut | Svc.ComDataWithContext | Port to output deframed data |
 | Output | dataReturnOut | Svc.ComDataWithContext | Port for returning ownership of received buffers to deframe |
 | Input (sync) | dataReturnIn | Svc.ComDataWithContext | Port receiving back ownership of sent buffers |
+| Output | errorNotify | Ccsds.ErrorNotify | Port to send notification of deframing errors |
 
 ## Events
 
@@ -42,12 +43,13 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 
 | Name | Description | Validation |
 |---|---|---|
-| SVC-Ccsds-TC-DEFRAMER-001 | The TcDeframer shall deframe Telecommand (TC) Transfer Frames according to the CCSDS Space Data Link Protocol standard for Type-BD frames. | Unit Test, Inspection |
-| SVC-Ccsds-TC-DEFRAMER-002 | The TcDeframer shall perform Frame Validation Check Procedures, including Spacecraft ID, Virtual Channel ID, Frame Length, and CRC. | Unit Test |
-| SVC-Ccsds-TC-DEFRAMER-003 | The TcDeframer shall be configurable for a specific Spacecraft ID. | Unit Test, Inspection |
-| SVC-Ccsds-TC-DEFRAMER-004 | The TcDeframer shall be configurable with a specific Virtual Channel ID (VCID) OR to accept all VCIDs. | Unit Test, Inspection |
-| SVC-Ccsds-TC-DEFRAMER-005 | The TcDeframer shall log an `InvalidSpacecraftId` event if a frame with an unexpected Spacecraft ID is received. | Unit Test |
-| SVC-Ccsds-TC-DEFRAMER-006 | The TcDeframer shall log an `InvalidFrameLength` event if a frame with an invalid length is received. | Unit Test |
-| SVC-Ccsds-TC-DEFRAMER-007 | The TcDeframer shall log an `InvalidVcId` event if a frame with an unexpected VCID is received (when not configured to accept all VCIDs). | Unit Test |
-| SVC-Ccsds-TC-DEFRAMER-008 | The TcDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
-| SVC-Ccsds-TC-DEFRAMER-009 | The TcDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-001 | The TcDeframer shall deframe Telecommand (TC) Transfer Frames according to the CCSDS Space Data Link Protocol standard for Type-BD frames. | Unit Test, Inspection |
+| SVC-CCSDS-TC-DEFRAMER-002 | The TcDeframer shall perform Frame Validation Check Procedures, including Spacecraft ID, Virtual Channel ID, Frame Length, and CRC. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-003 | The TcDeframer shall be configurable for a specific Spacecraft ID. | Unit Test, Inspection |
+| SVC-CCSDS-TC-DEFRAMER-004 | The TcDeframer shall be configurable with a specific Virtual Channel ID (VCID) OR to accept all VCIDs. | Unit Test, Inspection |
+| SVC-CCSDS-TC-DEFRAMER-005 | The TcDeframer shall log an `InvalidSpacecraftId` event if a frame with an unexpected Spacecraft ID is received. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-006 | The TcDeframer shall log an `InvalidFrameLength` event if a frame with an invalid length is received. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-007 | The TcDeframer shall log an `InvalidVcId` event if a frame with an unexpected VCID is received (when not configured to accept all VCIDs). | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-008 | The TcDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-009 | The TcDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-010 | The TcDeframer shall emit notifications on its `errorNotify` port when deframing errors occur. | Unit Test |

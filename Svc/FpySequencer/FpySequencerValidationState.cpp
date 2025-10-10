@@ -126,7 +126,7 @@ Fw::Success FpySequencer::readHeader() {
     }
 
     if (this->m_sequenceObj.get_header().get_statementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
-        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.get_header().get_statementCount(),
+        this->log_WARNING_HI_TooManySequenceDirectives(this->m_sequenceObj.get_header().get_statementCount(),
                                                        Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
         return Fw::Success::FAILURE;
     }

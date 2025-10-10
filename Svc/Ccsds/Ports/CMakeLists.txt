@@ -13,4 +13,6 @@
 register_fprime_library(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Ports.fpp"
+  DEPENDS
+    Svc_Ccsds_Types
 )
