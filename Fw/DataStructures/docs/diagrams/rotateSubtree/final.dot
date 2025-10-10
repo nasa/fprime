@@ -1,0 +1,19 @@
+digraph {
+
+  K1 -> LTK1
+  K1 -> K2
+  K3 -> K1
+  K3 -> GTK3
+  K2 -> LTK2GTK1
+  K2 -> GTK2LTK3
+
+  K1 [label="K1 (node)",color="darkgray",fontcolor="darkgray"]
+  K2 [label="K2 (newChild)",color="darkgray",fontcolor="darkgray"]
+  K3 [label="K3 (newRoot)",color="darkgray",fontcolor="darkgray"]
+
+  LTK1 [shape="box",label="K < K1",style="dotted",fontname="Italic"]
+  GTK3 [shape="box",label="K > K3",style="dotted",fontname="Italic"]
+  LTK2GTK1 [shape="box",label="K1 < K < K2",style="dotted",fontname="Italic"]
+  GTK2LTK3 [shape="box",label="K2 < K < K3",style="dotted",fontname="Italic"]
+
+}

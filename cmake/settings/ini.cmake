@@ -60,7 +60,7 @@ function(ini_to_cache)
     foreach(LINE IN LISTS INI_OUTPUT)
         # Skip malformed lines
         if (NOT LINE MATCHES "^[A-Za-z0-9_]+=")
-            message(STATUS "${LINE}")
+            fprime_cmake_status("${LINE}")
             continue()
         endif()
         STRING(REPLACE ";" "\\;" LINE "${LINE}")
@@ -80,9 +80,7 @@ function(ini_to_cache)
         # If the setting is undefined, then we must load it from the INI file and set the proper value.
         if (NOT DEFINED "${SETTING}")
             # Print source of setting when debugging
-            if (CMAKE_DEBUG_OUTPUT)
-                message(STATUS "${SETTING} read from settings.ini as '${VALUE}'")
-            endif()
+            fprime_cmake_debug_message("${SETTING} read from settings.ini as '${VALUE}'")
             set("${SETTING}_INI_" "${VALUE}" CACHE INTERNAL "Original value of ${SETTING} from settings.ini")
             set("${SETTING}" "${VALUE}" CACHE INTERNAL "")
         # If setting was originally loaded, here, from settings.ini. We should check that it is correctly re-set.
@@ -90,9 +88,7 @@ function(ini_to_cache)
             # Changed INI files are hard-failure as it is difficult to know how/when to regenerate
             if(NOT "${VALUE}" STREQUAL "${${SETTING}_INI_}")
                 # Print some extra output to help debug
-                if (CMAKE_DEBUG_OUTPUT)
-                    message(WARNING "${SETTING} changed from '${${SETTING}_INI_}' to '${VALUE}'")
-                endif()
+                fprime_cmake_debug_message("${SETTING} changed from '${${SETTING}_INI_}' to '${VALUE}'")
                 message(FATAL_ERROR "settings.ini field changed. Please regenerate.")
             endif()
         # If setting was passed in on CLI
@@ -100,17 +96,13 @@ function(ini_to_cache)
             # Changed INI files are hard-failure as it is difficult to know how/when to regenerate
             if(NOT "${VALUE}" STREQUAL "${${SETTING}_CLI_}" AND SETTING IN_LIST FPRIME_UTIL_CRITICAL_LIST)
                 # Print some extra output to help debug
-                if (CMAKE_DEBUG_OUTPUT)
-                    message(WARNING "${SETTING} changed from '${${SETTING}_CLI_}' to '${VALUE}'")
-                endif()
-                message(WARNING "settings.ini field changed. This likely means fprime-util generate should be run.")
+                fprime_cmake_debug_message("${SETTING} changed from '${${SETTING}_CLI_}' to '${VALUE}'")
+                fprime_cmake_warning("settings.ini field changed. This likely means fprime-util generate should be run.")
             endif()
         # Setting defined, but none of the check-values are set. This it is the first run, with items from CLI.
         else()
             # Print source of setting when debugging
-            if (CMAKE_DEBUG_OUTPUT)
-                message(STATUS "${SETTING} read from CLI as '${${SETTING}}'")
-            endif()
+            fprime_cmake_debug_message("${SETTING} read from CLI as '${${SETTING}}'")
             set("${SETTING}_CLI_" "${${SETTING}}" CACHE INTERNAL "Original value of ${SETTING} from CLI")
         endif()
     endforeach()

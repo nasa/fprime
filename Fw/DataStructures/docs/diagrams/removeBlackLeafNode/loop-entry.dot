@@ -1,0 +1,10 @@
+digraph {
+
+  P -> BH2
+  P -> L
+
+  P [label="parent",color="darkgray",fontcolor="darkgray"]
+  BH2 [shape="box",label="black height 2",style="dotted",fontname="Italic"]
+  L [fontcolor="invis"]
+
+}

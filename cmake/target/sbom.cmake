@@ -31,7 +31,7 @@ function(sbom_add_global_target TARGET)
         add_custom_command(TARGET "${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
                           -DCMAKE_INSTALL_COMPONENT=${TARGET} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
     else()
-        message(STATUS "[INFO] to find 'syft' on PATH, please install to generate software bill-of-materials")
+        fprime_cmake_status("[INFO] Failed to find 'syft' on PATH, please install to generate software bill-of-materials")
     endif()
 endfunction()
 

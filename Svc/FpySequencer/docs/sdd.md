@@ -29,10 +29,11 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 
 | Name | Description |
 |-----|-----|
-| DEBUG_SET_BREAKPOINT | Sets the debugging breakpoint which will pause the execution of the sequencer when reached, until unpaused by the DEBUG_CONTINUE command.  |
-| DEBUG_BREAK | Pauses the execution of the sequencer, just before it is about to dispatch the next statement, until unpaused by the DEBUG_CONTINUE command. |
-| DEBUG_CONTINUE | Continues the execution of the sequence after it has been paused by a debug break. |
-| DEBUG_CLEAR_BREAKPOINT | Clears the debugging breakpoint, but does not continue executing the sequence. |
+| SET_BREAKPOINT | Sets a breakpoint at the specified statement index. When reached, execution will pause before dispatching that statement. |
+| BREAK | Immediately pauses execution before dispatching the next statement. Will break once, then continue normal execution. |
+| CONTINUE | Continues automatic execution of the sequence after it has been paused. If a breakpoint is still set, execution may pause again. |
+| CLEAR_BREAKPOINT | Clears any set breakpoint, but does not continue executing the sequence. |
+| STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
 
 ## Directives
 | Opcode | Name | Description |
@@ -103,5 +104,6 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 65 | MEMCMP | Compares two memory regions on the stack |
 | 66 | STACK_CMD | Dispatches a command with arguments from the stack |
 | 67 | PUSH_TLM_VAL_AND_TIME | Gets a telemetry channel and pushes its value, and then its time, onto the stack |
-| 68 | SET_FLAG | Pops a bool off the stack, sets a flag with a specific index to that bool |
-| 69 | GET_FLAG | Gets a flag and pushes its value as a U8 to the stack |
+| 68 | PUSH_TIME | Pushes the current time, from the `timeCaller` port, to the stack |
+| 69 | SET_FLAG | Pops a bool off the stack, sets a flag with a specific index to that bool |
+| 70 | GET_FLAG | Gets a flag and pushes its value as a U8 to the stack |

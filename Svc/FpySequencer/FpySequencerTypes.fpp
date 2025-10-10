@@ -105,8 +105,9 @@ module Svc {
             MEMCMP = 65
             STACK_CMD = 66
             PUSH_TLM_VAL_AND_TIME = 67
-            SET_FLAG = 68
-            GET_FLAG = 69
+            PUSH_TIME = 68
+            SET_FLAG = 69
+            GET_FLAG = 70
         }
 
         struct Header {

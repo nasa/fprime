@@ -348,6 +348,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::PUSH_TIME: {
+            new (&deserializedDirective.pushTime) FpySequencer_PushTimeDirective();
+            if (argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         case Fpy::DirectiveId::SET_FLAG: {
             new (&deserializedDirective.setFlag) FpySequencer_SetFlagDirective();
             status = argBuf.deserializeTo(deserializedDirective.setFlag);
@@ -505,6 +515,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::STACK_CMD: {
             this->directive_stackCmd_internalInterfaceInvoke(directive.stackCmd);
+            return;
+        }
+        case Fpy::DirectiveId::PUSH_TIME: {
+            this->directive_pushTime_internalInterfaceInvoke(directive.pushTime);
             return;
         }
         case Fpy::DirectiveId::SET_FLAG: {

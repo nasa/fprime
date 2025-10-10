@@ -119,6 +119,11 @@ struct StackCmdDirective {
     argsSize: Fpy.StackSizeType
 }
 
+@ pushes the current Fw.Time struct to the stack
+struct PushTimeDirective {
+    _empty: U8
+}
+
 @ pops a bool off the stack, sets a flag with a specific index to that bool
 struct SetFlagDirective {
     flagIdx: U8
@@ -164,6 +169,8 @@ internal port directive_discard(directive: DiscardDirective) priority 6 assert
 internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
 
 internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
+
+internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
 
 internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
 

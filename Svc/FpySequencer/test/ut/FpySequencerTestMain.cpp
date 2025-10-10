@@ -1061,6 +1061,39 @@ TEST_F(FpySequencerTester, getFlag) {
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 }
 
+TEST_F(FpySequencerTester, pushTime) {
+    FpySequencer_PushTimeDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
+    setTestTime(testTime);
+    tester_get_m_runtime_ptr()->stackSize = 0;
+    Signal result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // make sure deser'd time is same as input time
+    Fw::Time deserTime;
+    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack, Fw::Time::SERIALIZED_SIZE);
+    esb.setBuffLen(Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(esb.deserializeTo(deserTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(deserTime, testTime);
+    clearHistory();
+
+    // check almost overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
+    result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // check overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE + 1;
+    result = tester_pushTime_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
@@ -1293,75 +1326,84 @@ TEST_F(FpySequencerTester, cmd_CANCEL) {
     dispatchUntilState(State::IDLE);
 }
 
-TEST_F(FpySequencerTester, cmd_DEBUG_CLEAR_BREAKPOINT) {
-    tester_get_m_debug_ptr()->breakOnBreakpoint = true;
-    sendCmd_DEBUG_CLEAR_BREAKPOINT(0, 0);
+TEST_F(FpySequencerTester, cmd_CLEAR_BREAKPOINT) {
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    sendCmd_CLEAR_BREAKPOINT(0, 0);
     // dispatch cmd
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should always work
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CLEAR_BREAKPOINT(), 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_CLEAR_BREAKPOINT(), 0, Fw::CmdResponse::OK);
     // dispatch signal
     this->tester_doDispatch();
-    ASSERT_FALSE(tester_get_m_debug_ptr()->breakOnBreakpoint);
+    ASSERT_FALSE(tester_get_m_breakpoint_ptr()->breakpointInUse);
 }
 
-TEST_F(FpySequencerTester, cmd_DEBUG_SET_BREAKPOINT) {
-    sendCmd_DEBUG_SET_BREAKPOINT(0, 0, 123, true);
+TEST_F(FpySequencerTester, cmd_SET_BREAKPOINT) {
+    sendCmd_SET_BREAKPOINT(0, 0, 123, true);
     // dispatch cmd handler
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should always work
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_SET_BREAKPOINT(), 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_BREAKPOINT(), 0, Fw::CmdResponse::OK);
     // dispatch signal
     this->tester_doDispatch();
-    ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnBreakpoint);
-    ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnlyOnceOnBreakpoint);
-    ASSERT_EQ(tester_get_m_debug_ptr()->breakpointIndex, 123);
+    ASSERT_TRUE(tester_get_m_breakpoint_ptr()->breakpointInUse);
+    ASSERT_TRUE(tester_get_m_breakpoint_ptr()->breakOnlyOnceOnBreakpoint);
+    ASSERT_EQ(tester_get_m_breakpoint_ptr()->breakpointIndex, 123);
 }
 
-TEST_F(FpySequencerTester, cmd_DEBUG_BREAK) {
+TEST_F(FpySequencerTester, cmd_BREAK) {
+    // Test BREAK command in IDLE state (should fail)
     this->tester_setState(State::IDLE);
-    tester_get_m_debug_ptr()->breakOnBreakpoint = false;
-    tester_get_m_debug_ptr()->breakOnlyOnceOnBreakpoint = false;
-    sendCmd_DEBUG_BREAK(0, 0, true);
+    tester_get_m_breakpoint_ptr()->breakBeforeNextLine = false;
+    sendCmd_BREAK(0, 0);
     dispatchCurrentMessages(cmp);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    // should fail in idle
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_BREAK(), 0, Fw::CmdResponse::EXECUTION_ERROR);
-    ASSERT_FALSE(tester_get_m_debug_ptr()->breakOnBreakpoint);
+    // Should fail in IDLE state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_BREAK(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FALSE(tester_get_m_breakpoint_ptr()->breakBeforeNextLine);
 
-    // now try while running
+    // Test BREAK command in RUNNING state (should succeed)
     this->clearHistory();
     this->tester_setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
-    sendCmd_DEBUG_BREAK(0, 0, true);
-    // dispatch cmd handler
-    dispatchCurrentMessages(cmp);
-    // dispatch signal handler
+    sendCmd_BREAK(0, 0);
     dispatchCurrentMessages(cmp);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    // should work in running
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_BREAK(), 0, Fw::CmdResponse::OK);
-    ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnBreakpoint);
-    ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnlyOnceOnBreakpoint);
+    // Should succeed in RUNNING state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_BREAK(), 0, Fw::CmdResponse::OK);
+    // now dispatch the signal
+    dispatchCurrentMessages(cmp);
+    ASSERT_TRUE(tester_get_m_breakpoint_ptr()->breakBeforeNextLine);
+
+    tester_get_m_breakpoint_ptr()->breakBeforeNextLine = false;
+    // Test BREAK command in RUNNING_PAUSED state (should fail)
+    this->clearHistory();
+    this->tester_setState(State::RUNNING_PAUSED);
+    sendCmd_BREAK(0, 0);
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should fail in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_BREAK(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FALSE(tester_get_m_breakpoint_ptr()->breakBeforeNextLine);
 }
 
-TEST_F(FpySequencerTester, cmd_DEBUG_CONTINUE) {
+TEST_F(FpySequencerTester, cmd_CONTINUE) {
     this->tester_setState(State::IDLE);
-    sendCmd_DEBUG_CONTINUE(0, 0);
+    sendCmd_CONTINUE(0, 0);
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should fail in IDLE
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CONTINUE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_CONTINUE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     this->clearHistory();
 
-    this->tester_setState(State::RUNNING_DEBUG_BROKEN);
-    sendCmd_DEBUG_CONTINUE(0, 0);
+    this->tester_setState(State::RUNNING_PAUSED);
+    sendCmd_CONTINUE(0, 0);
     // dispatch cmd handler
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should work in debug_broken
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CONTINUE(), 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_CONTINUE(), 0, Fw::CmdResponse::OK);
     // dispatch signal handler
     this->tester_doDispatch();
     // should have gone to dispatch stmt
@@ -1388,6 +1430,70 @@ TEST_F(FpySequencerTester, cmd_SET_FLAG) {
     // should work in await stmt response
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_FLAG(), 0, Fw::CmdResponse::OK);
     ASSERT_TRUE(tester_get_m_runtime_ptr()->flags[Fpy::FlagId::EXIT_ON_CMD_FAIL]);
+}
+
+TEST_F(FpySequencerTester, cmd_STEP) {
+    // Test STEP command in IDLE state (should fail)
+    this->tester_setState(State::IDLE);
+    sendCmd_STEP(0, 0);
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should fail in IDLE state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Test STEP command in RUNNING state (should fail - must be paused)
+    this->clearHistory();
+    this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
+    sendCmd_STEP(0, 0);
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should fail in RUNNING state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->tester_setState(State::IDLE);
+
+    // Test STEP command in RUNNING_PAUSED state (should succeed)
+    this->clearHistory();
+    // Setup test sequence
+    allocMem();
+    add_NO_OP();  // Statement 0
+    add_NO_OP();  // Statement 1
+    add_NO_OP();  // Statement 2
+    writeAndRun();
+
+    // tell it to break before stmt 0
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    tester_get_m_breakpoint_ptr()->breakpointIndex = 0;
+
+    // run until we get to paused
+    dispatchUntilState(State::RUNNING_PAUSED);
+
+    // Send STEP command
+    sendCmd_STEP(0, 0);
+    // should go to dispatch stmt
+    dispatchUntilState(State::RUNNING_DISPATCH_STATEMENT);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should succeed in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::OK);
+
+    // and then back to paused
+    dispatchUntilState(State::RUNNING_PAUSED);
+    // Should be ready to execute statement 1 next
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 1);
+    ASSERT_FALSE(tester_get_m_breakpoint_ptr()->breakBeforeNextLine);
+
+    this->clearHistory();
+    // okay try stepping to end of seq
+    tester_get_m_runtime_ptr()->nextStatementIndex = 3;
+    // Send STEP command
+    sendCmd_STEP(0, 0);
+    // should go to dispatch stmt
+    dispatchUntilState(State::RUNNING_DISPATCH_STATEMENT);
+    // once it gets past here should end seq
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should succeed in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_STEP(), 0, Fw::CmdResponse::OK);
+    dispatchUntilState(State::IDLE);
+    ASSERT_EVENTS_SequenceDone_SIZE(1);
 }
 
 TEST_F(FpySequencerTester, readHeader) {
@@ -1432,7 +1538,7 @@ TEST_F(FpySequencerTester, readHeader) {
     header.set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT + 1);
     ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(tester_readHeader(), Fw::Success::FAILURE);
-    ASSERT_EVENTS_TooManySequenceStatements_SIZE(1);
+    ASSERT_EVENTS_TooManySequenceDirectives_SIZE(1);
 }
 
 TEST_F(FpySequencerTester, readBody) {
@@ -2111,7 +2217,7 @@ TEST_F(FpySequencerTester, tlmWrite) {
     invoke_to_tlmWrite(0, 0);
     this->tester_doDispatch();
     // make sure that all tlm is written every call
-    ASSERT_TLM_SIZE(12);
+    ASSERT_TLM_SIZE(18);
 }
 
 TEST_F(FpySequencerTester, seqRunIn) {

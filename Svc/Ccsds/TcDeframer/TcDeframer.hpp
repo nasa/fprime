@@ -57,6 +57,10 @@ class TcDeframer : public TcDeframerComponentBase {
                               Fw::Buffer& data,     //!< The buffer
                               const ComCfg::FrameContext& context) override;
 
+    //! Helper method to send an error notification if the errorNotify port is connected
+    //! \param error The error to send
+    void errorNotifyHelper(Svc::Ccsds::FrameError error);
+
   private:
     U16 m_vcId;                   //!< The virtual channel ID this deframer is configured to handle
     U16 m_spacecraftId;           //!< The spacecraft ID this deframer is configured to handle
