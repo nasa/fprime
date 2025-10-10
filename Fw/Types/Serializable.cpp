@@ -37,8 +37,6 @@ std::ostream& operator<<(std::ostream& os, const Serializable& val) {
 }
 #endif
 
-SerialBufferBase::SerialBufferBase() : m_serLoc(0), m_deserLoc(0) {}
-
 SerialBufferBase::~SerialBufferBase() {}
 
 SerializeBufferBase::SerializeBufferBase() : m_serLoc(0), m_deserLoc(0) {}
@@ -791,126 +789,126 @@ Serializable::SizeType SerializeBufferBase::getBuffLeft() {
     return this->getDeserializeSizeLeft();
 }
 
-SerializeStatus SerialBufferBase::serialize(U8 val) {
+SerializeStatus SerializeBufferBase::serialize(U8 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(I8 val) {
+SerializeStatus SerializeBufferBase::serialize(I8 val) {
     return this->serializeFrom(val);
 }
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerialBufferBase::serialize(U16 val) {
+SerializeStatus SerializeBufferBase::serialize(U16 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(I16 val) {
+SerializeStatus SerializeBufferBase::serialize(I16 val) {
     return this->serializeFrom(val);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerialBufferBase::serialize(U32 val) {
+SerializeStatus SerializeBufferBase::serialize(U32 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(I32 val) {
+SerializeStatus SerializeBufferBase::serialize(I32 val) {
     return this->serializeFrom(val);
 }
 #endif
 #if FW_HAS_64_BIT == 1
-SerializeStatus SerialBufferBase::serialize(U64 val) {
+SerializeStatus SerializeBufferBase::serialize(U64 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(I64 val) {
+SerializeStatus SerializeBufferBase::serialize(I64 val) {
     return this->serializeFrom(val);
 }
 #endif
-SerializeStatus SerialBufferBase::serialize(F32 val) {
+SerializeStatus SerializeBufferBase::serialize(F32 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(F64 val) {
+SerializeStatus SerializeBufferBase::serialize(F64 val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(bool val) {
+SerializeStatus SerializeBufferBase::serialize(bool val) {
     return this->serializeFrom(val);
 }
-SerializeStatus SerialBufferBase::serialize(const void* val) {
+SerializeStatus SerializeBufferBase::serialize(const void* val) {
     return this->serializeFrom(val);
 }
 
 // Deprecated method for backward compatibility
-SerializeStatus SerialBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) {
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) {
     const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
     return this->serializeFrom(buff, length, mode);
 }
 
-SerializeStatus SerialBufferBase::serialize(const U8* buff, FwSizeType length) {
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length) {
     return this->serializeFrom(buff, length);
 }
-SerializeStatus SerialBufferBase::serialize(const U8* buff, FwSizeType length, Serialization::t mode) {
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Serialization::t mode) {
     return this->serializeFrom(buff, length, mode);
 }
-SerializeStatus SerialBufferBase::serialize(const Serializable& val) {
+SerializeStatus SerializeBufferBase::serialize(const Serializable& val) {
     return this->serializeFrom(val);
 }
 SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) {
     return this->serializeFrom(val);
 }
 
-SerializeStatus SerialBufferBase::deserialize(U8& val) {
+SerializeStatus SerializeBufferBase::deserialize(U8& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(I8& val) {
+SerializeStatus SerializeBufferBase::deserialize(I8& val) {
     return this->deserializeTo(val);
 }
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerialBufferBase::deserialize(U16& val) {
+SerializeStatus SerializeBufferBase::deserialize(U16& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(I16& val) {
+SerializeStatus SerializeBufferBase::deserialize(I16& val) {
     return this->deserializeTo(val);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerialBufferBase::deserialize(U32& val) {
+SerializeStatus SerializeBufferBase::deserialize(U32& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(I32& val) {
+SerializeStatus SerializeBufferBase::deserialize(I32& val) {
     return this->deserializeTo(val);
 }
 #endif
 #if FW_HAS_64_BIT == 1
-SerializeStatus SerialBufferBase::deserialize(U64& val) {
+SerializeStatus SerializeBufferBase::deserialize(U64& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(I64& val) {
+SerializeStatus SerializeBufferBase::deserialize(I64& val) {
     return this->deserializeTo(val);
 }
 #endif
-SerializeStatus SerialBufferBase::deserialize(F32& val) {
+SerializeStatus SerializeBufferBase::deserialize(F32& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(F64& val) {
+SerializeStatus SerializeBufferBase::deserialize(F64& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(bool& val) {
+SerializeStatus SerializeBufferBase::deserialize(bool& val) {
     return this->deserializeTo(val);
 }
-SerializeStatus SerialBufferBase::deserialize(void*& val) {
+SerializeStatus SerializeBufferBase::deserialize(void*& val) {
     return this->deserializeTo(val);
 }
 
 // Deprecated method for backward compatibility
-SerializeStatus SerialBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) {
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) {
     const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
     return this->deserializeTo(buff, length, mode);
 }
 
-SerializeStatus SerialBufferBase::deserialize(U8* buff, FwSizeType& length) {
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length) {
     return this->deserializeTo(buff, length, Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus SerialBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
     return this->deserializeTo(buff, length, mode);
 }
 
-SerializeStatus SerialBufferBase::deserialize(Serializable& val) {
+SerializeStatus SerializeBufferBase::deserialize(Serializable& val) {
     return this->deserializeTo(val);
 }
 SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) {
