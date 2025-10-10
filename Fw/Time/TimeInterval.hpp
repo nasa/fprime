@@ -30,8 +30,8 @@ class TimeInterval : public Serializable {
     U32 getSeconds() const;                            // !< Gets seconds part of time
     U32 getUSeconds() const;                           // !< Gets microseconds part of time
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Serialization::BIG) const override;  // !< Serialize method
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Serialization::BIG) override;    // !< Deserialize method
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) const override;  // !< Serialize method
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override;    // !< Deserialize method
     void add(U32 seconds, U32 mseconds);  // !< Add seconds and microseconds to existing time interval
     bool operator==(const TimeInterval& other) const;
     bool operator!=(const TimeInterval& other) const;

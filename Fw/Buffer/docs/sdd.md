@@ -77,8 +77,8 @@ auto sb = my_fw_buffer.getSerializer();
 sb.serializeFrom(my_data);
 sb.serializeFrom(my_byte);
 // Or for little-endian
-sb.serializeFrom(my_data, Fw::Serialization::LITTLE);
-sb.serializeFrom(my_byte, Fw::Serialization::LITTLE);
+sb.serializeFrom(my_data, Fw::Endianness::LITTLE);
+sb.serializeFrom(my_byte, Fw::Endianness::LITTLE);
 ```
 
 **Deserializing from `Fw::Buffer`**
@@ -90,6 +90,6 @@ auto sb = my_fw_buffer.getDeserializer();
 sb.deserializeTo(my_data);
 sb.deserializeTo(my_byte);
 // Or for little-endian
-sb.deserializeTo(my_data, Fw::Serialization::LITTLE);
-sb.deserializeTo(my_byte, Fw::Serialization::LITTLE);
+sb.deserializeTo(my_data, Fw::Endianness::LITTLE);
+sb.deserializeTo(my_byte, Fw::Endianness::LITTLE);
 ```

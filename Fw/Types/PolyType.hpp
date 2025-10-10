@@ -103,8 +103,8 @@ class PolyType : public Serializable {
     bool operator==(const PolyType& other) const;  //!< PolyType operator==
     bool operator!=(const PolyType& other) const;  //!< PolyType operator!=
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Serialization::BIG) const override;  //!< Serialize function
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Serialization::BIG) override;    //!< Deserialize function
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< Serialize function
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override;    //!< Deserialize function
 
   private:
     typedef enum {
