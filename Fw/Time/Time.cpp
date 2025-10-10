@@ -77,11 +77,11 @@ bool Time::operator<=(const Time& other) const {
     return ((LT == c) or (EQ == c));
 }
 
-SerializeStatus Time::serializeTo(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode) const {
+SerializeStatus Time::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
     return this->m_val.serializeTo(buffer, mode);
 }
 
-SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode) {
+SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     return this->m_val.deserializeFrom(buffer, mode);
 }
 

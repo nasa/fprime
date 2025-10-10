@@ -16,7 +16,7 @@ LogPacket::LogPacket() : m_id(0) {
 
 LogPacket::~LogPacket() {}
 
-SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode) const {
+SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
     SerializeStatus stat = ComPacket::serializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -37,7 +37,7 @@ SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer, Fw::Serializ
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Serialization::Endianness mode) {
+SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     SerializeStatus stat = deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
