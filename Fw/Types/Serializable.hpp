@@ -373,10 +373,10 @@ class SerializeBufferBase : SerialBufferBase {
         SerializeBufferBase& dest,
         Serializable::SizeType size);  //!< directly copies buffer without looking for a size in the stream.
                                        // Will increment deserialization pointer
-    SerializeStatus copyRawOffset(
-        SerializeBufferBase& dest,
-        Serializable::SizeType size);  //!< directly copies buffer without looking for a size in the stream.
-                                       // Will increment deserialization pointer
+    DEPRECATED(SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
+        SerializeBufferBase& dest,              // Will increment deserialization pointer
+        Serializable::SizeType size), "copyRawOffset() has been DEPRECATED");  
+                                                                             
 
 #ifdef BUILD_UT
     bool operator==(const SerializeBufferBase& other) const;
