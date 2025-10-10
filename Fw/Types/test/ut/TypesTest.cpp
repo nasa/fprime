@@ -625,7 +625,7 @@ struct TestStruct {
 
 class MySerializable : public Fw::Serializable {
   public:
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer, Fw::Serialization::Endianness mode = Fw::Serialization::BIG) const override {
         buffer.serializeFrom(m_testStruct.m_u32);
         buffer.serializeFrom(m_testStruct.m_u16);
         buffer.serializeFrom(m_testStruct.m_u8);
@@ -634,7 +634,7 @@ class MySerializable : public Fw::Serializable {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Serialization::Endianness mode = Fw::Serialization::BIG) override {
         buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         buffer.serializeFrom(m_testStruct.m_f32);
         buffer.serializeFrom(m_testStruct.m_u8);
