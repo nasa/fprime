@@ -103,7 +103,7 @@ class SerializeBufferBase {
     SerializeStatus serializeFrom(bool val, Serialization::Endianness mode = Serialization::BIG);  //!< serialize boolean
 
     SerializeStatus serializeFrom(
-        const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
+        const void* val, Fw::Serialization::Endianness mode = Fw::Serialization::BIG);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
     SerializeStatus serializeFrom(const U8* buff, FwSizeType length);
