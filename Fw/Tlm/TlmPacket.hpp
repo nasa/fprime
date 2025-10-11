@@ -22,7 +22,8 @@ class TlmPacket : public ComPacket {
     //! Destructor
     virtual ~TlmPacket();
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
+    SerializeStatus serializeTo(SerializeBufferBase& buffer,
+                                Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override;
     //! Add telemetry value to buffer.
     SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);

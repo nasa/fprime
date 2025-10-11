@@ -48,11 +48,13 @@ class RawTimeTester : public Os::RawTimeInterface {
         return OP_OK;
     }
 
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) const override {
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override {
         return buffer.serializeFrom(m_handle.t, mode);
     }
 
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override {
         return buffer.deserializeTo(m_handle.t, mode);
     }
 

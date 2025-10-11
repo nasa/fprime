@@ -224,11 +224,16 @@ SerializeStatus SerializeBufferBase::serializeFrom(const void* val, Endianness m
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, Serializable::SizeType length, Endianness endianMode) {
+SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff,
+                                                   Serializable::SizeType length,
+                                                   Endianness endianMode) {
     return this->serializeFrom(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH, endianMode);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType length, Serialization::t lengthMode, Endianness endianMode) { // First serialize length
+SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff,
+                                                   FwSizeType length,
+                                                   Serialization::t lengthMode,
+                                                   Endianness endianMode) {  // First serialize length
     SerializeStatus stat;
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
         stat = this->serializeFrom(static_cast<FwSizeStoreType>(length), endianMode);
@@ -332,12 +337,12 @@ SerializeStatus SerializeBufferBase::deserializeTo(U16& val, Endianness mode) {
         case Endianness::BIG:
             // MSB first
             val = static_cast<U16>(((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
-                           ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8));
+                                   ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8));
             break;
         case Endianness::LITTLE:
             // LSB first
             val = static_cast<U16>(((this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                           ((this->getBuffAddr()[this->m_deserLoc + 1]) << 8));
+                                   ((this->getBuffAddr()[this->m_deserLoc + 1]) << 8));
             break;
         default:
             FW_ASSERT(false);
@@ -370,16 +375,16 @@ SerializeStatus SerializeBufferBase::deserializeTo(U32& val, Endianness mode) {
         case Endianness::BIG:
             // MSB first
             val = (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 0) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 8) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 16) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 24);
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 8) |
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 16) |
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 24);
             break;
         case Endianness::LITTLE:
             // LSB first
             val = (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
-                (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24);
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
+                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24);
             break;
         default:
             FW_ASSERT(false);
@@ -414,24 +419,24 @@ SerializeStatus SerializeBufferBase::deserializeTo(U64& val, Endianness mode) {
         case Endianness::BIG:
             // MSB first
             val = (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 0) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 8) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 16) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 24) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 32) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 40) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 48) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 56);
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 8) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 16) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 24) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 32) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 40) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 48) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 56);
             break;
         case Endianness::LITTLE:
             // LSB first
             val = (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 32) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 40) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 48) |
-                (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 56);
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 32) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 40) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 48) |
+                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 56);
             break;
         default:
             FW_ASSERT(false);
@@ -514,7 +519,10 @@ SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeT
     return status;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length, Serialization::t lengthMode, Endianness endianMode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8* buff,
+                                                   Serializable::SizeType& length,
+                                                   Serialization::t lengthMode,
+                                                   Endianness endianMode) {
     FW_ASSERT(this->getBuffAddr());
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
@@ -698,8 +706,7 @@ SerializeStatus SerializeBufferBase::copyRawOffset(SerializeBufferBase& dest, Se
     }
 
     // otherwise, serialize bytes to destination without writing length
-    SerializeStatus stat =
-        dest.serializeFrom(&this->getBuffAddr()[this->m_deserLoc], size, Serialization::OMIT_LENGTH);
+    SerializeStatus stat = dest.serializeFrom(&this->getBuffAddr()[this->m_deserLoc], size, Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         this->m_deserLoc += size;
     }

@@ -48,17 +48,15 @@ struct TestAbsType final : public Fw::Serializable {
 
     //! Serialize function
     //! \return Status
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& sbb, //!< The serialize buffer base
-        Fw::Endianness mode = Fw::Endianness::BIG
-    ) const final {
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& sbb,  //!< The serialize buffer base
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const final {
         return sbb.serializeFrom(this->m_data, mode);
     }
 
     //! Deserialize method
     //! \return status
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& sbb, //!< The serialize buffer base
-        Fw::Endianness mode = Fw::Endianness::BIG
-                                        ) final {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& sbb,  //!< The serialize buffer base
+                                        Fw::Endianness mode = Fw::Endianness::BIG) final {
         return sbb.deserializeTo(this->m_data, mode);
     }
 
