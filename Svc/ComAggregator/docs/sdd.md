@@ -2,6 +2,9 @@
 
 Aggregates buffers in the downlink chain. This is for use with systems that have fixed size frames (e.g. CCSDS TM) that needed internal aggregation.
 
+> [!CAUTION]
+> `Svc::ComAggregator` does not preserve context.
+
 ## Requirements
 
 | ID                    | Description                                                                                                                                                   | Verification |
