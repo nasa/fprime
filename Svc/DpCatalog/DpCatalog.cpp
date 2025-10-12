@@ -125,8 +125,6 @@ void DpCatalog::resetBinaryTree() {
             this->m_freeListHead[slot - 1].left = &this->m_freeListHead[slot];
         }
     }
-    // set the foot of the free list (one past what we can use)
-    this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots];
     // clear binary tree
     this->m_dpTree = nullptr;
     // reset number of records
@@ -700,7 +698,7 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
     // should always be null since we are allocating an empty slot
     FW_ASSERT(newNode == nullptr);
     // make sure there is an entry from the free list
-    if (this->m_freeListHead == nullptr || this->m_freeListHead == this->m_freeListFoot) {
+    if (this->m_freeListHead == nullptr) {
         this->log_WARNING_HI_DpCatalogFull(newEntry.record);
         return false;
     }
@@ -708,6 +706,7 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
     // get a new node from the free list
     newNode = this->m_freeListHead;
     // move the head of the free list to the next node
+    // If we've at the bottom of the free list, head will now be nullptr
     this->m_freeListHead = this->m_freeListHead->left;
 
     // initialize the new node
