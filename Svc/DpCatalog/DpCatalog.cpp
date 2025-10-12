@@ -456,7 +456,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     // Seems like the logic works so long as the path styles match (i.e. relative vs absolute)
     // Full path resolution might be a worthwhile add
 
-    // No directory delimeter found; return DP_MAX_DIRECTORIES to signal failure
+    // No directory delimiter found; return DP_MAX_DIRECTORIES to signal failure
     if (-1 == loc) {
         return DP_MAX_DIRECTORIES;
     }
@@ -476,7 +476,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTORIES) {
+int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // file class instance for processing files
     Os::File dpFile;
 
@@ -486,18 +486,6 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
     Fw::DpContainer container;                    // container object for extracting header fields
 
     this->log_ACTIVITY_LO_ProcessingFile(fullFile);
-
-    // If this is a runtime addition
-    // Check if file is in one of our directories
-    if (dir >= DP_MAX_DIRECTORIES) {
-        dir = this->determineDirectory(fullFile);
-
-        // Not in one of our directories; skip this file
-        if (dir == DP_MAX_DIRECTORIES) {
-            this->log_WARNING_HI_DirectoryNotManaged(fullFile);
-            return 0;
-        }
-    }
 
     // get file size
     FwSizeType fileSize = 0;
@@ -1002,8 +990,18 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     (void)priority;
     (void)size;
 
+    // Since this is a runtime addition
+    // Check if file is in one of our directories
+    FwSizeType dir = this->determineDirectory(fileName);
+
+    // Not in one of our directories; skip this file
+    if (dir == DP_MAX_DIRECTORIES) {
+        this->log_WARNING_HI_DirectoryNotManaged(fileName);
+        return;
+    }
+
     // ret > 0 := success
-    int ret = processFile(fileName);
+    int ret = processFile(fileName, dir);
 
     if (ret > 0) {
         // If we already finished, sendNext only if remainingActive

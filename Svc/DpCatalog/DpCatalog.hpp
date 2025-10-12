@@ -164,7 +164,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
     /// @param fullFile full path to file to be processed
-    /// @param dir directory index in m_directories; DP_MAX_DIRECTORIES if func should search for directory
+    /// @param dir directory index in m_directories
     /// @return -1 for quit, 0 for failure but continue, 1 for success
     int processFile(Fw::String fullFile, FwSizeType dir);
 
