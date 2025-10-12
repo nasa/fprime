@@ -12,7 +12,7 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 | Svc-ComAggregator-004 | ComAggregator shall send the current aggregate buffer when it receives a timeout trigger if and only if the aggregate is non-empty.                           | Unit-Test    |
 | Svc-ComAggregator-005 | ComAggregator shall clear aggregation state when a SUCCESS communication status is received back.                                                             | Unit-Test    |
 | Svc-ComAggregator-006 | ComAggregator shall preserve the order of received buffers when forming each aggregate and across aggregate sends.                                            | Unit-Test    |
-| Svc-ComAggregator-007 | ComAggregator shall inter operate with the [Communication Adapter Interface comStatus protocol](https://fprime.jpl.nasa.gov/latest/docs/reference/communication-adapter-interface/) | Unit-Test    |
+| Svc-ComAggregator-007 | ComAggregator shall inter operate with the [Communication Adapter Interface comStatus protocol](../../../docs/reference/communication-adapter-interface.md)   | Unit-Test    |
 
 
 ## Design
