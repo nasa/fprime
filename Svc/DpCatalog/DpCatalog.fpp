@@ -173,7 +173,7 @@ module Svc {
 
     @ Sending product
     event SendingProduct (
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             bytes: U32 @< file size
                             prio: U32 @< DP priority
                           ) \

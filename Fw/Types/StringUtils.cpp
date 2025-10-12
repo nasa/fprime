@@ -49,7 +49,7 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
         return -1;
     }
     // Confirm that the output type can hold the range of valid results
-    FW_ASSERT(static_cast<FwSignedSizeType>(source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
+    FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
 
     // Loop from zero to source_size - sub_size (inclusive)
     for (FwSizeType source_index = 0;
@@ -83,7 +83,7 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
 
     // zero size sub-strings should always match
     if ((source_size > 0) && (0 == sub_size)) {
-        return 0;
+        return static_cast<FwSignedSizeType>(source_size - 1);
     }
 
     // Cannot find a substring larger than the source
@@ -91,7 +91,7 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
         return -1;
     }
     // Confirm that the output type can hold the range of valid results
-    FW_ASSERT(static_cast<FwSignedSizeType>(source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
+    FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
 
     // Loop from source_size - sub_size to zero (inclusive)
     for (FwSizeType source_index = (source_size - sub_size + 1); source_index-- > 0;) {

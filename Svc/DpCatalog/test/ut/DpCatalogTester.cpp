@@ -548,7 +548,7 @@ void DpCatalogTester ::test_RandomDp() {
 
         for (FwIndexType ind = 0; ind < NUM_DIRS; ind++) {
             char tmp[256];
-            sprintf(tmp, "./DpTest_Random_%03d", ind);
+            snprintf(tmp, sizeof(tmp), "./DpTest_Random_%03d", ind);
             dirs[ind] = tmp;
             std::cout << dirs[ind] << std::endl;
         }

@@ -154,11 +154,11 @@ class DpCatalog final : public DpCatalogComponentBase {
             }  // end checking entry comparison
         }
 
-        bool operator==(const DpStateEntry& other) { return CompareEntries(*this, other) == 0; }
-        bool operator!=(const DpStateEntry& other) { return CompareEntries(*this, other) != 0; }
+        bool operator==(const DpStateEntry& other) const { return CompareEntries(*this, other) == 0; }
+        bool operator!=(const DpStateEntry& other) const { return CompareEntries(*this, other) != 0; }
 
-        bool operator>(const DpStateEntry& other) { return CompareEntries(*this, other) > 0; }
-        bool operator<(const DpStateEntry& other) { return CompareEntries(*this, other) < 0; }
+        bool operator>(const DpStateEntry& other) const { return CompareEntries(*this, other) > 0; }
+        bool operator<(const DpStateEntry& other) const { return CompareEntries(*this, other) < 0; }
     };
 
     struct DpDstateFileEntry {

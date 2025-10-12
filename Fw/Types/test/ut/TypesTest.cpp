@@ -1478,7 +1478,7 @@ TEST(OffNominal, sub_string_last_source_zero_size) {
 TEST(OffNominal, sub_string_last_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string_last = "";
-    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 0), 0);
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 0), 5);
 }
 
 int main(int argc, char** argv) {
