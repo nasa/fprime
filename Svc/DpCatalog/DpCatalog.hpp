@@ -130,35 +130,12 @@ class DpCatalog final : public DpCatalogComponentBase {
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
-        static int CompareEntries(const DpStateEntry& left, const DpStateEntry& right) {
-            // check priority. Lower is higher priority
-            if (left.record.get_priority() == right.record.get_priority()) {
-                // check time. Older is higher priority
-                if (left.record.get_tSec() == right.record.get_tSec()) {
-                    // check subsecond time. Older is higher priority
-                    if (left.record.get_tSub() == right.record.get_tSub()) {
-                        // check ID. Lower is higher priority
-                        if (left.record.get_id() == right.record.get_id()) {
-                            return 0;
-                        } else {  // if ids are not equal. smaller is higher priority
-                            return left.record.get_id() < right.record.get_id() ? -1 : 1;
-                        }
-                    } else {  // if subseconds are not equal. Older is higher priority
-                        return left.record.get_tSub() < right.record.get_tSub() ? -1 : 1;
-                    }
-                } else {  // if seconds are not equal. Older is higher priority
-                    return left.record.get_tSec() < right.record.get_tSec() ? -1 : 1;
-                }
-            } else {  // if priority is not equal. Lower is higher priority.
-                return left.record.get_priority() < right.record.get_priority() ? -1 : 1;
-            }  // end checking entry comparison
-        }
+        static int compareEntries(const DpStateEntry& left, const DpStateEntry& right);
 
-        bool operator==(const DpStateEntry& other) const { return CompareEntries(*this, other) == 0; }
-        bool operator!=(const DpStateEntry& other) const { return CompareEntries(*this, other) != 0; }
-
-        bool operator>(const DpStateEntry& other) const { return CompareEntries(*this, other) > 0; }
-        bool operator<(const DpStateEntry& other) const { return CompareEntries(*this, other) < 0; }
+        bool operator==(const DpStateEntry& other) const;
+        bool operator!=(const DpStateEntry& other) const;
+        bool operator>(const DpStateEntry& other) const;
+        bool operator<(const DpStateEntry& other) const;
     };
 
     struct DpDstateFileEntry {
@@ -179,6 +156,11 @@ class DpCatalog final : public DpCatalogComponentBase {
     // ----------------------------------
     // Private helpers
     // ----------------------------------
+
+    /// @brief determine in which managed directory a file resides
+    /// @param fullFile full path to file to be processed
+    /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
+    FwSizeType determineDirectory(Fw::String fullFile);
 
     /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
     /// @param fullFile full path to file to be processed

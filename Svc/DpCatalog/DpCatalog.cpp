@@ -446,6 +446,36 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
 }  // end fillBinaryTree()
 
+FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
+    // Grab the directory string (up until the final slash)
+    // Could be found directly w/ a dirname func or regex
+    FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
+        fullFile.toChar(), fullFile.length(), DIRECTORY_DELIMITER,
+        Fw::StringUtils::string_length(DIRECTORY_DELIMITER, sizeof(DIRECTORY_DELIMITER)));
+
+    // Seems like the logic works so long as the path styles match (i.e. relative vs absolute)
+    // Full path resolution might be a worthwhile add
+
+    // No directory delimeter found; return DP_MAX_DIRECTORIES to signal failure
+    if (-1 == loc) {
+        return DP_MAX_DIRECTORIES;
+    }
+
+    for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
+        const char* const dir_string = this->m_directories[dir].toChar();
+
+        // Compare both strings up to location of final slash
+        // memory safe since both are fixed width strings
+        // and loc is before the fixed width
+        if (strncmp(dir_string, fullFile.toChar(), static_cast<FwSizeType>(loc)) == 0) {
+            return dir;
+        }
+    }
+
+    // No directory matched
+    return DP_MAX_DIRECTORIES;
+}
+
 int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTORIES) {
     // file class instance for processing files
     Os::File dpFile;
@@ -457,33 +487,13 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
     this->log_ACTIVITY_LO_ProcessingFile(fullFile);
 
+    // If this is a runtime addition
     // Check if file is in one of our directories
     if (dir >= DP_MAX_DIRECTORIES) {
-        // Grab the directory string (up until the final slash)
-        // Could be found directly w/ a dirname func or regex
-        FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
-            fullFile.toChar(), fullFile.length(), DIRECTORY_DELIMITER,
-            Fw::StringUtils::string_length(DIRECTORY_DELIMITER, sizeof(DIRECTORY_DELIMITER)));
+        dir = this->determineDirectory(fullFile);
 
-        // Seems like the logic works so long as the path styles match (i.e. relative vs absolute)
-        // Full path resolution might be a worthwhile add
-        if (-1 == loc) {
-            this->log_WARNING_HI_DirectoryNotManaged(fullFile);
-            return 0;
-        }
-
-        for (dir = 0; dir < this->m_numDirectories; dir++) {
-            const char* const dir_string = this->m_directories[dir].toChar();
-
-            // Compare both strings up to location of final slash
-            // memory safe since both are fixed width strings
-            // and loc is before the fixed width
-            if (strncmp(dir_string, fullFile.toChar(), static_cast<FwSizeType>(loc)) == 0) {
-                break;
-            }
-        }
-
-        if (dir == this->m_numDirectories) {
+        // Not in one of our directories; skip this file
+        if (dir == DP_MAX_DIRECTORIES) {
             this->log_WARNING_HI_DirectoryNotManaged(fullFile);
             return 0;
         }
@@ -530,6 +540,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
+        return 0;
     }
 
     // skip adding an already transmitted file
@@ -585,6 +596,47 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
     }
 
     return 1;
+}
+
+// ----------------------------------------------------------------------
+// DpStateEntry Comparison Ops
+// ----------------------------------------------------------------------
+int DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+    // check priority. Lower is higher priority
+    if (left.record.get_priority() == right.record.get_priority()) {
+        // check time. Older is higher priority
+        if (left.record.get_tSec() == right.record.get_tSec()) {
+            // check subsecond time. Older is higher priority
+            if (left.record.get_tSub() == right.record.get_tSub()) {
+                // check ID. Lower is higher priority
+                if (left.record.get_id() == right.record.get_id()) {
+                    return 0;
+                } else {  // if ids are not equal. smaller is higher priority
+                    return (left.record.get_id() < right.record.get_id()) ? -1 : 1;
+                }
+            } else {  // if subseconds are not equal. Older is higher priority
+                return left.record.get_tSub() < right.record.get_tSub() ? -1 : 1;
+            }
+        } else {  // if seconds are not equal. Older is higher priority
+            return left.record.get_tSec() < right.record.get_tSec() ? -1 : 1;
+        }
+    } else {  // if priority is not equal. Lower is higher priority.
+        return left.record.get_priority() < right.record.get_priority() ? -1 : 1;
+    }  // end checking entry comparison
+}
+
+bool DpCatalog::DpStateEntry::operator==(const DpStateEntry& other) const {
+    return compareEntries(*this, other) == 0;
+}
+bool DpCatalog::DpStateEntry::operator!=(const DpStateEntry& other) const {
+    return compareEntries(*this, other) != 0;
+}
+
+bool DpCatalog::DpStateEntry::operator>(const DpStateEntry& other) const {
+    return compareEntries(*this, other) > 0;
+}
+bool DpCatalog::DpStateEntry::operator<(const DpStateEntry& other) const {
+    return compareEntries(*this, other) < 0;
 }
 
 DpCatalog::DpBtreeNode* DpCatalog::insertEntry(DpStateEntry& entry) {
