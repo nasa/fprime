@@ -54,7 +54,6 @@ void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
 void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
     this->m_frameSerializer.resetSer();
     this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
-    Fw::Success good = Fw::Success::SUCCESS;
     if (this->m_held.get_data().isValid()) {
         // Fill the held data
         this->Svc_AggregationMachine_action_doFill(smId, signal, this->m_held);
