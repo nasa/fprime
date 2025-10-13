@@ -63,6 +63,9 @@
 #endif
 #endif
 
+// Define NOINLINE as __attribute__((noinline)) if that attribute is available.
+// Marking assertion functions as NOINLINE can reduce code size without sacrificing performance
+// in the common case that the function is not called.
 #ifndef NOINLINE
 #ifndef __has_attribute
 #define __has_attribute(x) 0
