@@ -12,6 +12,7 @@
 
 #ifndef FW_STRING_BASE_HPP
 #define FW_STRING_BASE_HPP
+
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/format.hpp>
@@ -22,15 +23,20 @@
 
 namespace Fw {
 
-class StringBase : public Serializable {
+//! A read-only abstract superclass for StringBase
+class ConstStringBase : public Serializable {
   public:
     using SizeType = FwSizeType;
-    virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
-    virtual SizeType getCapacity() const = 0;  //!< return size of buffer
-    SizeType length() const;                   //!< Get length of string
 
+    //<! Convert to a C-style char*
+    virtual const CHAR* toChar() const = 0;
+    //!< Return the size of the buffer
+    virtual SizeType getCapacity() const = 0;
+    //!< Get the length of the string
+    virtual SizeType length() const = 0;
     //! Get the maximum length of a string that the buffer can hold (which is capacity - 1)
     SizeType maxLength() const;
+
     //! Get the static serialized size of a string
     //! This is the max length of the string plus the size of the stored size
     static constexpr SizeType STATIC_SERIALIZED_SIZE(SizeType maxLength  //!< The maximum string length
@@ -54,21 +60,13 @@ class StringBase : public Serializable {
     SizeType serializedTruncatedSize(FwSizeType maxLength  //!< The max string length
     ) const;
 
-    const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
-    const StringBase& operator+=(const StringBase& src);  //!< Concatenate a StringBase
-    bool operator==(const StringBase& other) const;       //!< Check for equality with StringBase
-    bool operator==(const CHAR* other) const;             //!< Check for equality with CHAR*
-    bool operator!=(const StringBase& other) const;       //!< Inequality with StringBase
-    bool operator!=(const CHAR* other) const;             //!< Inequality with CHAR*
-    StringBase& operator=(const CHAR* src);               //!< Assign CHAR*
-    StringBase& operator=(const StringBase& src);         //!< Assign another StringBase
-
-    FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
-    FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
+    bool operator==(const ConstStringBase& other) const;    //!< Check for equality with ConstStringBase
+    bool operator==(const CHAR* other) const;               //!< Check for equality with CHAR*
+    bool operator!=(const ConstStringBase& other) const;    //!< Inequality with ConstStringBase
+    bool operator!=(const CHAR* other) const;               //!< Inequality with CHAR*
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {
@@ -82,8 +80,37 @@ class StringBase : public Serializable {
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests
-    friend std::ostream& operator<<(std::ostream& os, const StringBase& str);
+    friend std::ostream& operator<<(std::ostream& os, const ConstStringBase& str);
 #endif
+
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+    void toString(StringBase& text) const override;  //!< write string with contents
+#endif
+
+  protected:
+    ConstStringBase();
+    virtual ~ConstStringBase();
+
+  private:
+    //! Deleted copy constructor
+    ConstStringBase(const ConstStringBase& src) = delete;
+};
+
+class StringBase : public ConstStringBase {
+  public:
+    //!< Get the length of the string
+    SizeType length() const override;
+
+    const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
+    const StringBase& operator+=(const ConstStringBase& src);  //!< Concatenate a StringBase
+    StringBase& operator=(const CHAR* src);               //!< Assign CHAR*
+    StringBase& operator=(const ConstStringBase& src);         //!< Assign another StringBase
+
+    FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
+    FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
+
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void toString(StringBase& text) const override;  //!< write string with contents
 #endif
