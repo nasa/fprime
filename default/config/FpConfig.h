@@ -118,7 +118,7 @@ extern "C" {
 //   1. FW_NO_ASSERT: assertions are compiled out, side effects are kept
 //   2. FW_FILEID_ASSERT: asserts report a file CRC and line number
 //   3. FW_FILENAME_ASSERT: asserts report a file path (__FILE__) and line number
-//   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number
+//   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F' or F' library and line number
 //
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
 #ifndef FW_ASSERT_LEVEL

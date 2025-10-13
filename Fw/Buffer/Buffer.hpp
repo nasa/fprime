@@ -134,7 +134,8 @@ class Buffer : public Fw::Serializable {
     //! or the serialize buffer base representation and serialize from that.
     //! \param serialBuffer: serialize buffer to write data into
     //! \return: status of serialization
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& serialBuffer) const;
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& serialBuffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const;
 
     //! Deserializes this buffer from a SerializeBufferBase
     //!
@@ -144,7 +145,7 @@ class Buffer : public Fw::Serializable {
     //! or the serialize buffer base representation and deserialize from that.
     //! \param buffer: serialize buffer to read data into
     //! \return: status of serialization
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer);
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG);
 
     // ----------------------------------------------------------------------
     // Accessor functions
