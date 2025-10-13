@@ -39,7 +39,7 @@ class Time : public Serializable {
     SerializeStatus serializeTo(SerializeBufferBase& buffer,
                                 Fw::Endianness mode = Fw::Endianness::BIG) const override;  // !< Serialize method
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer,
-                                    Fw::Endianness mode) override;  // !< Deserialize method
+                                    Fw::Endianness mode = Fw::Endianness::BIG) override;  // !< Deserialize method
     bool operator==(const Time& other) const;
     bool operator!=(const Time& other) const;
     bool operator>(const Time& other) const;
