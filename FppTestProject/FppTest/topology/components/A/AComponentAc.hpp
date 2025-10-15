@@ -29,20 +29,6 @@ class AComponentBase : public Fw::PassiveComponentBase {
     //! Friend class tester implementation to support white-box testing
     friend class ATester;
 
-#if FW_PORT_TRACING == 1
-  public:
-    // ----------------------------------------------------------------------
-    // Constants for port tracing
-    // ----------------------------------------------------------------------
-
-    enum class PortIds { dataIn, dataOut };
-
-#if FW_OBJECT_NAMES == 1
-    static constexpr const char* portNames[] = {"dataIn", "dataOut"};
-#endif
-
-#endif
-
   protected:
     // ----------------------------------------------------------------------
     // Constants
@@ -138,7 +124,11 @@ class AComponentBase : public Fw::PassiveComponentBase {
                                 U32 data              //!< The data
                                 ) = 0;
 
+#ifdef FW_DIRECT_PORT_CALLS
   public:
+#else
+  protected:
+#endif
     // ----------------------------------------------------------------------
     // Port handler base-class functions for typed input ports
     //
@@ -159,57 +149,6 @@ class AComponentBase : public Fw::PassiveComponentBase {
     void dataOut_out(FwIndexType portNum,  //!< The port number
                      U32 data              //!< The data
     );
-
-#if defined FW_DIRECT_PORT_CALLS && FW_PORT_TRACING == 1
-
-  public:
-    // ----------------------------------------------------------------------
-    // Trace functions for direct port calls
-    // ----------------------------------------------------------------------
-
-    bool getUseLocalTraceFlag_dataOut(FwIndexType portNum) const {
-        FW_ASSERT((portNum >= 0) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
-        return this->m_useLocalTraceFlag_dataOut & (1 << portNum);
-    }
-
-    bool getLocalTraceFlag_dataOut(FwIndexType portNum) const {
-        FW_ASSERT((portNum >= 0) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
-        return this->m_localTraceFlag_dataOut & (1 << portNum);
-    }
-
-    void setUseLocalTraceFlag_dataOut(FwIndexType portNum, bool flag) {
-        FW_ASSERT((portNum >= 0) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
-        const U8 mask = static_cast<U8>(1 << portNum);
-        if (flag) {
-            this->m_useLocalTraceFlag_dataOut |= mask;
-        } else {
-            this->m_useLocalTraceFlag_dataOut &= static_cast<U8>(~mask);
-        }
-    }
-
-    void setLocalTraceFlag_dataOut(FwIndexType portNum, bool flag) {
-        FW_ASSERT((portNum >= 0) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
-        const U8 mask = static_cast<U8>(1 << portNum);
-        if (flag) {
-            this->m_localTraceFlag_dataOut |= mask;
-        } else {
-            this->m_localTraceFlag_dataOut &= static_cast<U8>(~mask);
-        }
-    }
-
-#endif
-
-#if defined FW_DIRECT_PORT_CALLS && FW_PORT_TRACING == 1
-
-  private:
-    // ----------------------------------------------------------------------
-    // Member variables for direct port call tracing
-    // ----------------------------------------------------------------------
-
-    U8 m_useLocalTraceFlag_dataOut = 0;
-    U8 m_localTraceFlag_dataOut = 0;
-
-#endif
 
 #ifndef FW_DIRECT_PORT_CALLS
   private:
