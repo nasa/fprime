@@ -167,10 +167,6 @@ void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
         case InstanceIds::FppTest_a1:
             switch (portNum) {
                 case 0:
-                    FW_EMIT_PORT_TRACE(this->getUseLocalTraceFlag_dataOut(0), this->getLocalTraceFlag_dataOut(0),
-                                       instance, "FppTest.a1", FppTest::AComponentBase::PortIds::dataOut, "dataOut",
-                                       0, FppTest::InstanceIds::FppTest_b1, "FppTest.b1",
-                                       FppTest::BComponentBase::PortIds::dataIn, "dataIn", 0);
                     FppTest::b1.dataIn_handlerBase(0, data);
                     break;
                 default:
@@ -181,10 +177,6 @@ void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
         case InstanceIds::FppTest_a2:
             switch (portNum) {
                 case 0:
-                    FW_EMIT_PORT_TRACE(this->getUseLocalTraceFlag_dataOut(0), this->getLocalTraceFlag_dataOut(0),
-                                       instance, "FppTest.a2", FppTest::AComponentBase::PortIds::dataOut, "dataOut",
-                                       0, FppTest::InstanceIds::FppTest_b2, "FppTest.b2",
-                                       FppTest::BComponentBase::PortIds::dataIn, "dataIn", 0);
                     FppTest::b2.dataIn_handlerBase(0, data);
                     break;
                 default:
@@ -239,10 +231,6 @@ void BComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
         case InstanceIds::FppTest_b1:
             switch (portNum) {
                 case 0:
-                    FW_EMIT_PORT_TRACE(this->getUseLocalTraceFlag_dataOut(0), this->getLocalTraceFlag_dataOut(0),
-                                       instance, "FppTest.b1", FppTest::BComponentBase::PortIds::dataOut, "dataOut",
-                                       0, FppTest::InstanceIds::FppTest_a1, "FppTest.a1",
-                                       FppTest::AComponentBase::PortIds::dataIn, "dataIn", 0);
                     FppTest::a1.dataIn_handlerBase(0, data);
                     break;
                 default:
@@ -253,10 +241,6 @@ void BComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
         case InstanceIds::FppTest_b2:
             switch (portNum) {
                 case 0:
-                    FW_EMIT_PORT_TRACE(this->getUseLocalTraceFlag_dataOut(0), this->getLocalTraceFlag_dataOut(0),
-                                       instance, "FppTest.b2", FppTest::BComponentBase::PortIds::dataOut, "dataOut",
-                                       0, FppTest::InstanceIds::FppTest_a2, "FppTest.a2",
-                                       FppTest::AComponentBase::PortIds::dataIn, "dataIn", 0);
                     FppTest::a2.dataIn_handlerBase(0, data);
                     break;
                 default:
