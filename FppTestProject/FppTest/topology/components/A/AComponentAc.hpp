@@ -77,6 +77,10 @@ class AComponentBase : public Fw::PassiveComponentBase {
     FppTest::InputDataPort* get_dataIn_InputPort(FwIndexType portNum  //!< The port number
     );
 
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
   public:
     // ----------------------------------------------------------------------
     // Connect typed input ports to typed output ports
@@ -87,7 +91,9 @@ class AComponentBase : public Fw::PassiveComponentBase {
                                 FppTest::InputDataPort* port  //!< The input port
     );
 
-#if FW_PORT_SERIALIZATION
+#endif
+
+#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
   public:
     // ----------------------------------------------------------------------
@@ -98,8 +104,6 @@ class AComponentBase : public Fw::PassiveComponentBase {
     void set_dataOut_OutputPort(FwIndexType portNum,          //!< The port number
                                 Fw::InputSerializePort* port  //!< The port
     );
-
-#endif
 
 #endif
 

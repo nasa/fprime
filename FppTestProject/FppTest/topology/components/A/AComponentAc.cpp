@@ -42,6 +42,10 @@ FppTest::InputDataPort* AComponentBase ::get_dataIn_InputPort(FwIndexType portNu
     return &this->m_dataIn_InputPort[portNum];
 }
 
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
 // ----------------------------------------------------------------------
 // Connect typed input ports to typed output ports
 // ----------------------------------------------------------------------
@@ -52,7 +56,9 @@ void AComponentBase ::set_dataOut_OutputPort(FwIndexType portNum, FppTest::Input
     this->m_dataOut_OutputPort[portNum].addCallPort(port);
 }
 
-#if FW_PORT_SERIALIZATION
+#endif
+
+#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
 // ----------------------------------------------------------------------
 // Connect serial input ports to typed output ports
@@ -66,6 +72,8 @@ void AComponentBase ::set_dataOut_OutputPort(FwIndexType portNum, Fw::InputSeria
 
 #endif
 
+#ifndef FW_DIRECT_PORT_CALLS
+
 // ----------------------------------------------------------------------
 // Connection status queries for typed output ports
 // ----------------------------------------------------------------------
@@ -74,6 +82,7 @@ bool AComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
     return this->m_dataOut_OutputPort[portNum].isConnected();
 }
+
 #endif
 
 // ----------------------------------------------------------------------
@@ -89,16 +98,19 @@ void AComponentBase::dataIn_handlerBase(FwIndexType portNum, U32 data) {
     this->dataIn_handler(portNum, data);
 }
 
+#ifndef FW_DIRECT_PORT_CALLS
+
 // ----------------------------------------------------------------------
 // Invocation functions for typed output ports
 // ----------------------------------------------------------------------
 
-#ifndef FW_DIRECT_PORT_CALLS
+
 void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
     FW_ASSERT(this->isConnected_dataOut_OutputPort(portNum), static_cast<FwAssertArgType>(portNum));
 
     this->m_dataOut_OutputPort[portNum].invoke(data);
 }
+
 #endif
 
 }  // namespace FppTest
