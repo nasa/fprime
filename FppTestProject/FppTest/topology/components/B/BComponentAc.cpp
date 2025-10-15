@@ -129,6 +129,10 @@ FppTest::InputDataPort* BComponentBase::get_dataIn_InputPort(FwIndexType portNum
     return &this->m_dataIn_InputPort[portNum];
 }
 
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
 // ----------------------------------------------------------------------
 // Connect typed input ports to typed output ports
 // ----------------------------------------------------------------------
@@ -139,7 +143,9 @@ void BComponentBase::set_dataOut_OutputPort(FwIndexType portNum, FppTest::InputD
     this->m_dataOut_OutputPort[portNum].addCallPort(port);
 }
 
-#if FW_PORT_SERIALIZATION
+#endif
+
+#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
 // ----------------------------------------------------------------------
 // Connect serial input ports to typed output ports
@@ -150,8 +156,6 @@ void BComponentBase::set_dataOut_OutputPort(FwIndexType portNum, Fw::InputSerial
 
     this->m_dataOut_OutputPort[portNum].registerSerialPort(port);
 }
-
-#endif
 
 #endif
 

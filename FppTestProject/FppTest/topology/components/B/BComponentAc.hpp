@@ -78,6 +78,10 @@ class BComponentBase : public Fw::ActiveComponentBase {
     FppTest::InputDataPort* get_dataIn_InputPort(FwIndexType portNum  //!< The port number
     );
 
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
   public:
     // ----------------------------------------------------------------------
     // Connect typed input ports to typed output ports
@@ -88,7 +92,9 @@ class BComponentBase : public Fw::ActiveComponentBase {
                                 FppTest::InputDataPort* port  //!< The input port
     );
 
-#if FW_PORT_SERIALIZATION
+#endif
+
+#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
   public:
     // ----------------------------------------------------------------------
@@ -99,8 +105,6 @@ class BComponentBase : public Fw::ActiveComponentBase {
     void set_dataOut_OutputPort(FwIndexType portNum,          //!< The port number
                                 Fw::InputSerializePort* port  //!< The port
     );
-
-#endif
 
 #endif
 
@@ -174,6 +178,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
     virtual MsgDispatchStatus doDispatch();
 
 #ifndef FW_DIRECT_PORT_CALLS
+
   private:
     // ----------------------------------------------------------------------
     // Calls for messages received on typed input ports
@@ -185,6 +190,10 @@ class BComponentBase : public Fw::ActiveComponentBase {
                               U32 data                             //!< The data
     );
 
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
   private:
     // ----------------------------------------------------------------------
     // Typed input ports
@@ -193,6 +202,11 @@ class BComponentBase : public Fw::ActiveComponentBase {
     //! Input port dataIn
     FppTest::InputDataPort m_dataIn_InputPort[NUM_DATAIN_INPUT_PORTS] = {};
 
+
+#endif
+
+#ifndef FW_DIRECT_PORT_CALLS
+
   private:
     // ----------------------------------------------------------------------
     // Typed output ports
@@ -200,6 +214,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
 
     //! Output port dataOut
     FppTest::OutputDataPort m_dataOut_OutputPort[NUM_DATAOUT_OUTPUT_PORTS] = {};
+
 #endif
 };
 
