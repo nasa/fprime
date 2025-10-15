@@ -16,19 +16,10 @@ Specific Ways to Contribute:
 - [Ask a Question or Suggest Improvements](https://github.com/nasa/fprime/discussions/new)
 - [Report a Bug or Mistake](https://github.com/nasa/fprime/issues/new/choose)
 - [Review Contributions](https://github.com/nasa/fprime/pulls)
-- Submit a Pull Request
+- Submit a Pull Request see: [Code Contribution Process](#contribution-process)
 - Contribute to Ongoing Discussions and Reviews
 
 Feel free to contribute any way that suits your skills and enjoy.
-
-
-> **Note:** [F´ Autocoder Python](https://github.com/nasa/fprime/tree/master/Autocoders) is being actively replaced
-> by [FPP](https://github.com/fprime-community/fpp). Thus we will no longer accept changes to this code except for
-> security and critical bug fixes done in the most minimal fashion.
->
-> We do love Python fixes, please consider contributing to
-> [fprime-tools](https://github.com/fprime-community/fprime-tools) or
-> [fprime-gds](https://github.com/fprime-community/fprime-gds)
 
 ## Where to Start
 
@@ -43,6 +34,14 @@ To contribute to the F´ framework directly, consider writing
 with an [easy first issue](https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22).
 When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure,
 development process, and helpful tips sections below.
+
+Here’s a **friendly and inviting** version of the paragraph that focuses on the process (issues → approval → work → PR) and clearly links to the governance document:
+
+## Code Contribution Process
+
+All code contributions to F´ begin with an issue. Whether you’re fixing a bug, adding a feature, or improving documentation, please start by opening an issue describing your proposal. The Change Control Board (CCB) reviews and approves issues before work begins to ensure alignment with project goals and standards. Once approved, you can proceed with implementation and submit a pull request (PR).
+
+If a PR is opened for work that does not correspond to an approved issue, the PR will be routed through the CCB process first—reviewed on a best-effort basis—and may be delayed or declined depending on CCB decisions.You can read more about how this process works in the [F´ Governance document](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md).
 
 ## Project Structure
 
