@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# ----------------------------------------------------------------------
+# modify
+# ----------------------------------------------------------------------
+# Replace $1 with $2 in files ending in suffixes
+# ----------------------------------------------------------------------
+
+suffixes="cpp hpp fpp txt"
+
+for suffix in $suffixes
+do
+  for file in `find . -name '*.'$suffix`
+  do
+    sed 's;'"$1"';'"$2"';g' < "$file" > tmp
+    mv tmp "$file"
+  done
+done
