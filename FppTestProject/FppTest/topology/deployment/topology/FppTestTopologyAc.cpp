@@ -123,11 +123,12 @@ void teardown(const TopologyState& state) {
 
 }  // namespace FppTest
 
+#ifdef FW_DIRECT_PORT_CALLS
+
 // ----------------------------------------------------------------------
 // Topology-specific connection code
 // ----------------------------------------------------------------------
 
-#ifdef FW_DIRECT_PORT_CALLS
 namespace FppTest {
 
 bool AComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) {
