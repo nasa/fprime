@@ -18,7 +18,7 @@
 
 namespace Fw {
 
-// ConstStringBase interfacese
+// ConstStringBase interfaces
 
 ConstStringBase::ConstStringBase() {}
 
