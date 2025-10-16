@@ -15,7 +15,7 @@ TBD
 
 ## States
 
-The following diagram represents the states of the `FpyySequencer`.
+The following diagram represents the states of the `FpySequencer`.
 
 
 ```mermaid
