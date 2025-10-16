@@ -35,7 +35,7 @@ namespace Fw {
 //! \warning implementors providing derived classes that tie an identifier to a specific memory segment should use
 //! bump pointer or other implementation to handle multiple calls to allocate() with the same identifier.
 //!
-//! \warning alignment must be respected in allocation calls, but may be larger than than requested.
+//! \warning alignment must be respected in allocation calls, but may be larger than requested.
 //!
 //! The size is the requested size of the memory. If the allocator cannot return the requested amount, it should return
 //! the actual amount and users should check.

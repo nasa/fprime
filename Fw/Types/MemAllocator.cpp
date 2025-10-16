@@ -9,6 +9,8 @@
 
 namespace Fw {
 
+MemAllocatorRegistry* MemAllocatorRegistry::s_registry = nullptr; //!< singleton registry
+
 MemAllocator::MemAllocator() {}
 
 MemAllocator::~MemAllocator() {}
