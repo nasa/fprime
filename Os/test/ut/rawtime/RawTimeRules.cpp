@@ -38,9 +38,13 @@ bool Os::Test::RawTime::Tester::Now::precondition(const Os::Test::RawTime::Teste
 
 void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester& state) {
     FwIndexType index = state.pick_random_index();
-
+    Os::RawTime zero_time;
+    auto shadow_1 = std::chrono::system_clock::now();
     Os::RawTime::Status status = state.m_times[index].now();
-    state.shadow_now(index);
+    auto shadow_2 = std::chrono::system_clock::now();
+
+    std::cout << shadow_1.time_since_epoch().count() << " " << shadow_2.time_since_epoch().count() << std::endl;
+
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
 }
 

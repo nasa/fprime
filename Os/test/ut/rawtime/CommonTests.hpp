@@ -30,4 +30,12 @@ class Functionality : public ::testing::Test {
     std::unique_ptr<Os::Test::RawTime::Tester> tester;
 };
 
+// namespace RawTimeTestHelper {
+
+bool operator==(const Os::RawTime& lhs, const std::__1::chrono::system_clock::time_point& rhs);
+bool operator>=(const Os::RawTime& lhs, const std::__1::chrono::system_clock::time_point& rhs);
+bool operator<=(const Os::RawTime& lhs, const std::__1::chrono::system_clock::time_point& rhs);
+
+// }  // namespace RawTimeTestHelper
+
 #endif  // OS_TEST_UT_COMMON_RAWTIME_TESTS_HPP
