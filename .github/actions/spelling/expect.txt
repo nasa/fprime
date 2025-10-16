@@ -735,7 +735,7 @@ WORKDIR
 wrs
 wxgui
 wxy
-Xapian
+XBee
 xdf
 xdffe
 xsltproc
