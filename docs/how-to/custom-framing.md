@@ -31,9 +31,9 @@ For more information on working with subtopologies, see the [Subtopologies Guide
 ## Flight Software Implementation
 
 To implement a custom framing protocol in F´, will need to implement the following:
-- **Framer**: A component that wraps payload data into frames for transmission.
-- **Deframer**: A component that unpacks received frames, extracts the payload data, and validates the frame.
-- **FrameDetector** Helper Class (optional): A C++ helper class (not an FPP component) that detects the start and end of frames in a stream of data, if your transport is stream-based (e.g., TCP, UART).
+- **Framer**: An F´ component that wraps payload data into frames for transmission.
+- **Deframer**: An F´ component that unpacks received frames, extracts the payload data, and validates the frame.
+- **FrameDetector** Helper Class (optional): A C++ helper class (not an F´ component) that detects the start and end of frames in a stream of data, if your transport does not guarantee complete packets (e.g., TCP, UART).
 
 > [!TIP]
 > When creating framer/deframer components using `fprime-util new --component`, the recommended settings are to use passive components with events enabled.
@@ -46,9 +46,11 @@ Before implementing, consider these best practices:
 
 1. **Centralize Protocol Constants**: Define protocol constants (e.g., start word, header structure, field sizes) in a dedicated `.fpp` types file (e.g., `Types/Types.fpp`). This allows constants like start words, field types, or spacecraft IDs to be reused consistently across your framer, deframer, and frame detector.
 
-2. **Endianness Convention**: F´ serializes all integer types in big-endian (network byte order) as defined in `Fw::Serializable`. If your custom protocol requires little-endian fields, you must explicitly swap bytes when building or parsing frames. This is critical for interoperability with ground systems or other flight software.
+2. **Endianness Convention**: F´ serializes all integer types in big-endian by default (network byte order), as defined in `Fw::Serializable`. If your protocol requires little-endian fields, you must specify so during serialization with the `Fw::Endianness::LITTLE` mode, or manually order bytes as needed.
 
 3. **Set the APID in the Deframer**: Your deframer **must** extract and set the APID (Application ID) in the `FrameContext` before emitting packets downstream via `dataOut`. Without this, the `Svc.FprimeRouter` will not know where to route packets to. This is a critical requirement, unless you are also implementing a custom router and define your own requirements (not recommended and outside the scope of this guide).
+
+4. **Payload vs. Frame Structure**: A framing protocol should only define the outer frame structure (headers and trailers). The internal payload structure is determined by the upper-layer protocols and applications that produce and consume the data, not by the framing protocol itself.
 
 ### Implementation Steps
 
