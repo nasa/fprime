@@ -6,7 +6,7 @@ Modern F´ deployments use the CCSDS protocol by default via the `Svc.ComCcsds` 
 
 ## Overview
 
-This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. 
+This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. For a bi-directional framing implementation (uplink and downlink), you will need to implement both a framer and a deframer component. A framer is required for downlink (flight software → GDS). A deframer (and optionally a FrameDetector) is needed for deframing uplink messages (GDS → flight software).
 
 A reference implementation of a custom framing protocol (the "Decaf Protocol") is available in the `fprime-examples` repository:
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
@@ -15,7 +15,7 @@ A reference implementation of a custom framing protocol (the "Decaf Protocol") i
 This guide is divided into two main sections: flight software implementation and GDS integration. If you are aiming to integrate with another GDS and do not wish to use the F´ GDS, you can skip the GDS section.
 
 > [!NOTE]
-> When using the reference examples, it is recommended to check out the `fprime-examples` repository at the same release tag as your F´ core installation to ensure compatibility.
+> When using the reference examples, it is recommended to check out the `fprime-examples` repository **at the same release tag** as your F´ core installation to ensure compatibility. You can find which version of F´ you are using with `fprime-util version-check`.
 
 ## Prerequisites: Understanding Subtopologies
 
@@ -162,7 +162,7 @@ Before implementing, consider these best practices:
    _When is this needed?_  
    If your data transport is stream-based and does not preserve message boundaries, you must implement a mechanism to delimit frames. Examples include:
    - TCP connections (stream-based, no inherent message boundaries)
-   - UART/serial connections
+   - UART/serial connections (e.g. UART radios such as XBee)
    
    F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
 
@@ -185,6 +185,8 @@ Before implementing, consider these best practices:
    // ...existing code...
    Svc::FrameDetector::Status MyCustomFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
        // TODO: Implement frame boundary detection
+       // This can include searching for start words, validating headers, checking lengths, checking CRC and hashes, etc.
+       // Utilities exist for CRC under Utils/Hash, and examples are shown in Svc/Ccsds/Utils or in fprime-examples repo
        // Refer to the Svc.FrameDetector documentation for details on how to implement this
        return Svc::FrameDetector::NO_FRAME_DETECTED;
    }
@@ -222,12 +224,16 @@ class MyCustomFramerDeframer(FramerDeframer):
     def deframe(self, data, no_copy=False):
         # TODO: Implement deframing logic
         return packet, leftover_data, discarded_data
+
+    def get_name(self):
+        # TODO: Return the protocol name for selection with `fprime-gds --framing-selection <selection>`
+        return "MyCustomProtocol"
 ```
 
 Make sure to [package and install the plugin in your virtual environment](./develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
 
 ```
-fprime-gds --framing-selection MyCustomFramerDeframer
+fprime-gds --framing-selection MyCustomProtocol
 ```
 
 ## References 
