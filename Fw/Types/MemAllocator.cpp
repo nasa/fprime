@@ -1,16 +1,11 @@
 /**
- * \file
- * \author
- * \brief
- *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
- *
  */
-
 #include <Fw/Types/MemAllocator.hpp>
+#include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
@@ -18,4 +13,34 @@ MemAllocator::MemAllocator() {}
 
 MemAllocator::~MemAllocator() {}
 
+
+MemAllocatorRegistry::MemAllocatorRegistry() {
+    // Register self as the singleton
+    MemAllocatorRegistry::s_registry = this;
+}
+
+void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType::T type, MemAllocator& allocator) {
+    FW_ASSERT(type < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+    this->m_allocators[type] = &allocator;
+}
+
+MemAllocatorRegistry& MemAllocatorRegistry::getInstance() {
+    FW_ASSERT(s_registry != nullptr);
+    return *s_registry;
+}
+
+MemAllocator& MemAllocatorRegistry::getAllocator(const MemoryAllocation::MemoryAllocatorType::T type) {
+    FW_ASSERT(type < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+    FW_ASSERT(this->m_allocators[type] != nullptr, static_cast<FwAssertArgType>(type));
+    return *this->m_allocators[type];
+}
+
+MemAllocator& MemAllocatorRegistry::getAnAllocator(const MemoryAllocation::MemoryAllocatorType::T type) {
+    FW_ASSERT(type < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+    // If the allocator is not registered, return the SYSTEM allocator
+    if (this->m_allocators[type] == nullptr) {
+        return this->getAllocator(MemoryAllocation::MemoryAllocatorType::SYSTEM);
+    }
+    return *this->m_allocators[type];
+}
 } /* namespace Fw */
