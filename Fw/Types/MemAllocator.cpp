@@ -21,8 +21,7 @@ MemAllocatorRegistry::MemAllocatorRegistry() {
     MemAllocatorRegistry::s_registry = this;
 }
 
-void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType::T type, MemAllocator& allocator) {
-    FW_ASSERT(type.e < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type, MemAllocator& allocator) {
     this->m_allocators[type] = &allocator;
 }
 
@@ -31,14 +30,12 @@ MemAllocatorRegistry& MemAllocatorRegistry::getInstance() {
     return *s_registry;
 }
 
-MemAllocator& MemAllocatorRegistry::getAllocator(const MemoryAllocation::MemoryAllocatorType::T type) {
-    FW_ASSERT(type.e < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+MemAllocator& MemAllocatorRegistry::getAllocator(const MemoryAllocation::MemoryAllocatorType type) {
     FW_ASSERT(this->m_allocators[type] != nullptr, static_cast<FwAssertArgType>(type));
     return *this->m_allocators[type];
 }
 
-MemAllocator& MemAllocatorRegistry::getAnAllocator(const MemoryAllocation::MemoryAllocatorType::T type) {
-    FW_ASSERT(type.e < MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS, static_cast<FwAssertArgType>(type));
+MemAllocator& MemAllocatorRegistry::getAnAllocator(const MemoryAllocation::MemoryAllocatorType type) {
     // If the allocator is not registered, return the SYSTEM allocator
     if (this->m_allocators[type] == nullptr) {
         return this->getAllocator(MemoryAllocation::MemoryAllocatorType::SYSTEM);

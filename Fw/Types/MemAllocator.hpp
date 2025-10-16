@@ -100,7 +100,7 @@ class MemAllocatorRegistry {
     //!
     //! \param type the type of allocator
     //! \param allocator the allocator. The registry does not take ownership of the allocator.
-    void registerAllocator(const MemoryAllocation::MemoryAllocatorType::T type, MemAllocator& allocator);
+    void registerAllocator(const MemoryAllocation::MemoryAllocatorType type, MemAllocator& allocator);
 
     //! Get an allocator for a type
     //!
@@ -108,7 +108,7 @@ class MemAllocatorRegistry {
     //! been registered.
     //!
     //! \param type the type of allocator
-    MemAllocator& getAllocator(const MemoryAllocation::MemoryAllocatorType::T type);
+    MemAllocator& getAllocator(const MemoryAllocation::MemoryAllocatorType type);
 
     //! Get an allocator for a type with default
     //!
@@ -116,7 +116,7 @@ class MemAllocatorRegistry {
     //! registered to MemoryAllocatorType::SYSTEM. It is an error if SYSTEM has not been registered.
     //!
     //! \param type the type of allocator
-    MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType::T type);
+    MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType type);
   private:
     //! Array of allocators for each type defaulted to nullptr
     MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
