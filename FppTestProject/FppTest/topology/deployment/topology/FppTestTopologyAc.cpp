@@ -123,7 +123,7 @@ void teardown(const TopologyState& state) {
 
 }  // namespace FppTest
 
-#ifdef FW_DIRECT_PORT_CALLS
+#if FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Topology-specific connection code

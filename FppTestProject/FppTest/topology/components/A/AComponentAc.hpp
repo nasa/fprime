@@ -10,7 +10,7 @@
 #include "FppTest/topology/ports/DataPortAc.hpp"
 #include "Fw/Comp/ActiveComponentBase.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 #include "Fw/Port/InputSerializePort.hpp"
 #include "Fw/Port/OutputSerializePort.hpp"
 #endif
@@ -64,7 +64,7 @@ class AComponentBase : public Fw::PassiveComponentBase {
     //! Destroy AComponentBase object
     virtual ~AComponentBase();
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   public:
     // ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ class AComponentBase : public Fw::PassiveComponentBase {
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   public:
     // ----------------------------------------------------------------------
@@ -93,7 +93,7 @@ class AComponentBase : public Fw::PassiveComponentBase {
 
 #endif
 
-#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
+#if !FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
   public:
     // ----------------------------------------------------------------------
@@ -128,7 +128,7 @@ class AComponentBase : public Fw::PassiveComponentBase {
                                 U32 data              //!< The data
                                 ) = 0;
 
-#ifdef FW_DIRECT_PORT_CALLS
+#if FW_DIRECT_PORT_CALLS
   public:
 #else
   protected:
@@ -154,7 +154,7 @@ class AComponentBase : public Fw::PassiveComponentBase {
                      U32 data              //!< The data
     );
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
   private:
     // ----------------------------------------------------------------------
     // Typed input ports

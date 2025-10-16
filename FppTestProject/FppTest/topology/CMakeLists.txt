@@ -1,6 +1,10 @@
-if (NOT BUILD_TESTING)
+if (BUILD_TESTING)
     add_compile_options(
-      -DFW_DIRECT_PORT_CALLS
+      -DFW_DIRECT_PORT_CALLS=0
+    )
+else()
+    add_compile_options(
+      -DFW_DIRECT_PORT_CALLS=1
     )
 endif()
 

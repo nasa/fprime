@@ -26,6 +26,11 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
+// Direct port calls (TODO)
+#ifndef FW_DIRECT_PORT_CALLS
+#define FW_DIRECT_PORT_CALLS 0
+#endif
+
 // Boolean values for serialization
 #ifndef FW_SERIALIZE_TRUE_VALUE
 #define FW_SERIALIZE_TRUE_VALUE (0xFF)  //!< Value encoded during serialization for boolean true

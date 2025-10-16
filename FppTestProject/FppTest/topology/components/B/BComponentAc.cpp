@@ -58,7 +58,7 @@ void BComponentBase::init(FwSizeType queueDepth, FwEnumStoreType instance) {
     // Initialize base class
     Fw::ActiveComponentBase::init(instance);
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
     // Connect input port dataIn
     for (
       FwIndexType port = 0;
@@ -117,7 +117,7 @@ BComponentBase::BComponentBase(const char* compName) : Fw::ActiveComponentBase(c
 
 BComponentBase::~BComponentBase() {}
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Getters for typed input ports
@@ -131,7 +131,7 @@ FppTest::InputDataPort* BComponentBase::get_dataIn_InputPort(FwIndexType portNum
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Connect typed input ports to typed output ports
@@ -145,7 +145,7 @@ void BComponentBase::set_dataOut_OutputPort(FwIndexType portNum, FppTest::InputD
 
 #endif
 
-#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
+#if !FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
 // ----------------------------------------------------------------------
 // Connect serial input ports to typed output ports
@@ -159,7 +159,7 @@ void BComponentBase::set_dataOut_OutputPort(FwIndexType portNum, Fw::InputSerial
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Connection status queries for typed output ports
@@ -219,7 +219,7 @@ void BComponentBase::dataIn_preMsgHook(FwIndexType portNum, U32 data) {
     // Default: no-op
 }
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Invocation functions for typed output ports
@@ -282,7 +282,7 @@ Fw::QueuedComponentBase::MsgDispatchStatus BComponentBase::doDispatch() {
     return MSG_DISPATCH_OK;
 }
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 // ----------------------------------------------------------------------
 // Calls for messages received on typed input ports

@@ -4,7 +4,7 @@
 // \brief  cpp file for Data port
 // ======================================================================
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 #include "FppTest/topology/ports/DataPortAc.hpp"
 #include "Fw/Types/Assert.hpp"

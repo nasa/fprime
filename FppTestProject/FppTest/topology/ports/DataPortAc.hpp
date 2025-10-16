@@ -9,7 +9,7 @@
 
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Port/PortBase.hpp"
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 #include "Fw/Comp/PassiveComponentBase.hpp"
 #include "Fw/Port/InputPortBase.hpp"
 #include "Fw/Port/OutputPortBase.hpp"
@@ -25,7 +25,7 @@ struct DataPortConstants {
     static constexpr FwSizeType INPUT_SERIALIZED_SIZE = sizeof(U32);
 };
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
 //! Input Data port
 class InputDataPort : public Fw::InputPortBase {

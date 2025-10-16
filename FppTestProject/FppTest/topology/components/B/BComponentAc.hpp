@@ -10,7 +10,7 @@
 #include "Fw/Comp/ActiveComponentBase.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "FppTest/topology/ports/DataPortAc.hpp"
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 #include "Fw/Port/InputSerializePort.hpp"
 #include "Fw/Port/OutputSerializePort.hpp"
 #endif
@@ -65,7 +65,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
     //! Destroy BComponentBase object
     virtual ~BComponentBase();
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   public:
     // ----------------------------------------------------------------------
@@ -80,7 +80,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   public:
     // ----------------------------------------------------------------------
@@ -94,7 +94,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
 
 #endif
 
-#if !defined FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
+#if !FW_DIRECT_PORT_CALLS && FW_PORT_SERIALIZATION
 
   public:
     // ----------------------------------------------------------------------
@@ -129,7 +129,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
                                 U32 data              //!< The data
                                 ) = 0;
 
-#ifdef FW_DIRECT_PORT_CALLS
+#if FW_DIRECT_PORT_CALLS
   public:
 #else
   protected:
@@ -177,7 +177,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
     //! Called in the message loop to dispatch a message from the queue
     virtual MsgDispatchStatus doDispatch();
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   private:
     // ----------------------------------------------------------------------
@@ -192,7 +192,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   private:
     // ----------------------------------------------------------------------
@@ -205,7 +205,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
 
 #endif
 
-#ifndef FW_DIRECT_PORT_CALLS
+#if !FW_DIRECT_PORT_CALLS
 
   private:
     // ----------------------------------------------------------------------
