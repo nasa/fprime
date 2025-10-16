@@ -4,24 +4,24 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/MemAllocator.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/MemAllocator.hpp>
 
 namespace Fw {
 
-MemAllocatorRegistry* MemAllocatorRegistry::s_registry = nullptr; //!< singleton registry
+MemAllocatorRegistry* MemAllocatorRegistry::s_registry = nullptr;  //!< singleton registry
 
 MemAllocator::MemAllocator() {}
 
 MemAllocator::~MemAllocator() {}
-
 
 MemAllocatorRegistry::MemAllocatorRegistry() {
     // Register self as the singleton
     MemAllocatorRegistry::s_registry = this;
 }
 
-void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type, MemAllocator& allocator) {
+void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type,
+                                             MemAllocator& allocator) {
     this->m_allocators[type] = &allocator;
 }
 

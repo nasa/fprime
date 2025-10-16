@@ -20,7 +20,6 @@
 #include <config/MemoryAllocatorTypeEnumAc.hpp>
 #include <cstddef>
 
-
 namespace Fw {
 
 //! \brief Memory Allocation base class
@@ -61,7 +60,10 @@ class MemAllocator {
     //! \param recoverable - flag to indicate the memory could be recoverable
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
     //! \return the pointer to memory. Zero if unable to allocate
-    virtual void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment=alignof(std::max_align_t)) = 0;
+    virtual void* allocate(const FwEnumStoreType identifier,
+                           FwSizeType& size,
+                           bool& recoverable,
+                           FwSizeType alignment = alignof(std::max_align_t)) = 0;
 
     //! Deallocate memory
     //!
@@ -117,12 +119,13 @@ class MemAllocatorRegistry {
     //!
     //! \param type the type of allocator
     MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType type);
+
   private:
     //! Array of allocators for each type defaulted to nullptr
     MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
 
     //! The singleton registry pointer
-    static MemAllocatorRegistry* s_registry; //!< singleton registry
+    static MemAllocatorRegistry* s_registry;  //!< singleton registry
 };
 } /* namespace Fw */
 

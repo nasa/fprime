@@ -37,7 +37,10 @@ class MallocAllocator : public MemAllocator {
     //! \param recoverable - flag to indicate the memory could be recoverable (always set to false)
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
     //! \return the pointer to memory. Zero if unable to allocate.
-    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment=alignof(std::max_align_t)) override;
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   bool& recoverable,
+                   FwSizeType alignment = alignof(std::max_align_t)) override;
     //! Deallocate memory
     //!
     //! Deallocate memory previously allocated by allocate() using free(). The identifier is unused but should still

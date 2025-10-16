@@ -31,7 +31,10 @@ class MmapAllocator : public MemAllocator {
     //! \param identifier: identifier to use with allocation
     //! \param size: size of memory to be allocated
     //! \param recoverable: (output) is this memory recoverable after a reset. Always false for mmap.
-    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment=alignof(std::max_align_t)) override;
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   bool& recoverable,
+                   FwSizeType alignment = alignof(std::max_align_t)) override;
 
     //! Deallocation of memory using the mmap allocator
     //! \param identifier: identifier used at allocation

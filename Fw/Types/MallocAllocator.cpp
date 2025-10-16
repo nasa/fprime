@@ -7,13 +7,16 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 #include <cstdlib>
 
 namespace Fw {
 
-void* MallocAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment) {
+void* MallocAllocator::allocate(const FwEnumStoreType identifier,
+                                FwSizeType& size,
+                                bool& recoverable,
+                                FwSizeType alignment) {
     // don't use identifier
     // heap memory is never recoverable
     recoverable = false;
