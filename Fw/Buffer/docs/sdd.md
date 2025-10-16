@@ -73,8 +73,12 @@ managed by the caller and only affects the data of the underlying buffer.
 U32 my_data = 10001;
 U8  my_byte = 2;
 auto sb = my_fw_buffer.getSerializer();
+// Defaults to big-endian
 sb.serializeFrom(my_data);
 sb.serializeFrom(my_byte);
+// Or for little-endian
+sb.serializeFrom(my_data, Fw::Endianness::LITTLE);
+sb.serializeFrom(my_byte, Fw::Endianness::LITTLE);
 ```
 
 **Deserializing from `Fw::Buffer`**
@@ -82,6 +86,10 @@ sb.serializeFrom(my_byte);
 U32 my_data = 0;
 U8  my_byte = 0;
 auto sb = my_fw_buffer.getDeserializer();
+// Defaults to big-endian
 sb.deserializeTo(my_data);
 sb.deserializeTo(my_byte);
+// Or for little-endian
+sb.deserializeTo(my_data, Fw::Endianness::LITTLE);
+sb.deserializeTo(my_byte, Fw::Endianness::LITTLE);
 ```

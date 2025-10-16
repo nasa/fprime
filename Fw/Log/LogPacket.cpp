@@ -16,18 +16,18 @@ LogPacket::LogPacket() : m_id(0) {
 
 LogPacket::~LogPacket() {}
 
-SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
+SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
     SerializeStatus stat = ComPacket::serializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_id);
+    stat = buffer.serializeFrom(this->m_id, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_timeTag);
+    stat = buffer.serializeFrom(this->m_timeTag, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -37,18 +37,18 @@ SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     SerializeStatus stat = deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_id);
+    stat = buffer.deserializeTo(this->m_id, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_timeTag);
+    stat = buffer.deserializeTo(this->m_timeTag, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }

@@ -113,7 +113,7 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
     }
 }
 
-Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer) const {
+Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) const {
     Fw::SerializeStatus stat;
 #if FW_SERIALIZATION_TYPE_ID
     stat = buffer.serializeFrom(static_cast<U32>(Buffer::TYPE_ID));
@@ -121,22 +121,22 @@ Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer) const {
         return stat;
     }
 #endif
-    stat = buffer.serializeFrom(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData));
+    stat = buffer.serializeFrom(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData), mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.serializeFrom(this->m_size);
+    stat = buffer.serializeFrom(this->m_size, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.serializeFrom(this->m_context);
+    stat = buffer.serializeFrom(this->m_context, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     return stat;
 }
 
-Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerializeBufferBase& buffer) {
+Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) {
     Fw::SerializeStatus stat;
 
 #if FW_SERIALIZATION_TYPE_ID
@@ -152,17 +152,17 @@ Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerializeBufferBase& buffer) {
     }
 #endif
     PlatformPointerCastType pointer;
-    stat = buffer.deserializeTo(pointer);
+    stat = buffer.deserializeTo(pointer, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     this->m_bufferData = reinterpret_cast<U8*>(pointer);
 
-    stat = buffer.deserializeTo(this->m_size);
+    stat = buffer.deserializeTo(this->m_size, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.deserializeTo(this->m_context);
+    stat = buffer.deserializeTo(this->m_context, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
