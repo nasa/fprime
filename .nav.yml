@@ -47,3 +47,4 @@ nav:
         - "docs/reference/*.md"
   - Support: '../support'
   - Events: '../events'
+  - News: "../news"

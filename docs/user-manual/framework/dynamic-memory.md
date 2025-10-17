@@ -72,10 +72,16 @@ object which you can then call `.serializeFrom()` or `.deserializeTo()` on.
 ```c++
 U32 my_value = 123;
 Fw::Buffer my_buffer = ...;
+// Defaults to big-endian
 my_buffer.getSerializer().serializeFrom(mv_value);
+// Or for little-endian
+my_buffer.getSerializer().serializeFrom(mv_value, Fw::Endianness::LITTLE);
 
 U32 my_value_again = 0;
+// Defaults to big-endian
 my_buffer.getDeserializer().deserializeTo(mv_value_again);
+// Or for little-endian
+my_buffer.getDeserializer().deserializeTo(mv_value_again, Fw::Endianness::LITTLE);
 ```
 > [!NOTE]
 > To use this method types must inherit from `Fw::Serializable` or be basic types.

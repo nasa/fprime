@@ -219,7 +219,7 @@ endfunction()
 ####
 function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOCODER_INPUTS HEADERS DEPENDENCIES REQUIRES_IMPLEMENTATIONS CHOOSES_IMPLEMENTATIONS FPRIME_CMAKE_ADD_OPTIONS)
     # Historical status message for posterity...and to prevent panic amongst users
-    message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
+    fprime_cmake_status("Adding ${TYPE}: ${TARGET_NAME}")
     # Remap F Prime target type to CMake targe type
     if (INTERFACE IN_LIST FPRIME_CMAKE_ADD_OPTIONS AND SOURCES)
         fprime_cmake_fatal_error("INTERFACE libraries cannot have SOURCES")
@@ -269,7 +269,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
 
     # Add required implementations to the target
     if (REQUIRES_IMPLEMENTATIONS)
-        message(STATUS "Adding required implementations of ${REQUIRES_IMPLEMENTATIONS}")
+        fprime_cmake_status("Adding required implementations of ${REQUIRES_IMPLEMENTATIONS}")
         append_list_property("${REQUIRES_IMPLEMENTATIONS}" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
     endif()      
 endfunction()

@@ -98,9 +98,7 @@ function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES GENERATED_FILE_LIST HA
 
     # Break early if there are no sources, no need to autocode nothing
     if (NOT AC_INPUT_SOURCES)
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] No sources detected")
-        endif()
+        fprime_cmake_debug_message("[Autocode/${AUTOCODER_NAME}] No sources detected")
         return()
     endif()
 
@@ -165,12 +163,10 @@ endfunction(run_ac)
 ####
 function(_describe_autocoder_prep AUTOCODER_NAME AC_INPUT_SOURCES)
     # Start by displaying inputs to autocoders
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[Autocode/${AUTOCODER_NAME}] Autocoding Input Sources:")
-        foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${SOURCE}")
-        endforeach()
-    endif()
+    fprime_cmake_debug_message("[Autocode/${AUTOCODER_NAME}] Autocoding Input Sources:")
+    foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
+        fprime_cmake_debug_message("[Autocode/${AUTOCODER_NAME}]   ${SOURCE}")
+    endforeach()
 endfunction()
 
 ####
@@ -204,9 +200,9 @@ function(_describe_autocoder_run AUTOCODER_NAME)
                 
                 get_property(PROPERTY_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_${VARIABLE_NAME}")
                 if (PROPERTY_VALUES)
-                    message(STATUS "[Autocode/${AUTOCODER_NAME}] ${DISPLAY_NAME}:")
+                    fprime_cmake_debug_message("[Autocode/${AUTOCODER_NAME}] ${DISPLAY_NAME}:")
                     foreach(VALUE IN LISTS PROPERTY_VALUES)
-                        message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${VALUE}")
+                        fprime_cmake_debug_message("[Autocode/${AUTOCODER_NAME}]   ${VALUE}")
                     endforeach()
                 endif()
             endif()

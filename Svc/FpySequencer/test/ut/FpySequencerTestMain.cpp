@@ -996,6 +996,71 @@ TEST_F(FpySequencerTester, memCmp) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
+TEST_F(FpySequencerTester, setFlag) {
+    FpySequencer_SetFlagDirective directive(0);
+    tester_push<U8>(1);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_TRUE(tester_get_m_runtime_ptr()->flags[static_cast<Fpy::FlagId::T>(0)]);
+
+    // Test setting flag to false
+    tester_push<U8>(0);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_FALSE(tester_get_m_runtime_ptr()->flags[static_cast<Fpy::FlagId::T>(0)]);
+
+    // Test invalid flag index
+    directive.set_flagIdx(Fpy::FLAG_COUNT);
+    tester_push<U8>(1);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::FLAG_IDX_OUT_OF_BOUNDS);
+    tester_get_m_runtime_ptr()->stackSize = 0;
+
+    // Test stack underflow
+    directive.set_flagIdx(0);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, getFlag) {
+    tester_get_m_runtime_ptr()->flags[0] = true;
+    FpySequencer_GetFlagDirective directive(0);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_getFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+
+    // reset stack
+    tester_get_m_runtime_ptr()->stackSize = 0;
+    // test getting false flag
+    tester_get_m_runtime_ptr()->flags[0] = false;
+    result = tester_getFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+
+    // Test invalid flag index
+    directive.set_flagIdx(Fpy::FLAG_COUNT);
+    result = tester_getFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::FLAG_IDX_OUT_OF_BOUNDS);
+
+    // Test stack overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE;
+    directive.set_flagIdx(0);
+    result = tester_getFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
 TEST_F(FpySequencerTester, pushTime) {
     FpySequencer_PushTimeDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
@@ -1343,6 +1408,28 @@ TEST_F(FpySequencerTester, cmd_CONTINUE) {
     this->tester_doDispatch();
     // should have gone to dispatch stmt
     ASSERT_EQ(this->tester_getState(), State::RUNNING_DISPATCH_STATEMENT);
+}
+
+TEST_F(FpySequencerTester, cmd_SET_FLAG) {
+    this->tester_setState(State::IDLE);
+    sendCmd_SET_FLAG(0, 0, Svc::Fpy::FlagId::EXIT_ON_CMD_FAIL, false);
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should fail in IDLE
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_FLAG(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->clearHistory();
+
+    tester_get_m_runtime_ptr()->flags[Fpy::FlagId::EXIT_ON_CMD_FAIL] = false;
+
+    // okay try setting in await stmt response
+    this->tester_setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    sendCmd_SET_FLAG(0, 0, Fpy::FlagId::EXIT_ON_CMD_FAIL, true);
+    // dispatch cmd handler
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should work in await stmt response
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_SET_FLAG(), 0, Fw::CmdResponse::OK);
+    ASSERT_TRUE(tester_get_m_runtime_ptr()->flags[Fpy::FlagId::EXIT_ON_CMD_FAIL]);
 }
 
 TEST_F(FpySequencerTester, cmd_STEP) {
@@ -1941,6 +2028,46 @@ TEST_F(FpySequencerTester, deserialize_memCmp) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
+
+TEST_F(FpySequencerTester, deserialize_setFlag) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_SetFlagDirective dir(123);
+    add_SET_FLAG(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.setFlag, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_getFlag) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_GetFlagDirective dir(123);
+    add_GET_FLAG(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.getFlag, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();
@@ -2118,6 +2245,35 @@ TEST_F(FpySequencerTester, seqRunIn) {
     this->tester_doDispatch();
     ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
     removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
+    // test a simple seq that fails because a cmd fails
+    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(true, Fw::ParamValid::VALID);
+    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
+    this->clearHistory();
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // okay now send in a failure
+    invoke_to_cmdResponseIn(0, 123, 0x00010001, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::EXECUTION_ERROR);
+
+    // now test that it doesn't fail if we set flag to false
+    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(false, Fw::ParamValid::VALID);
+    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
+    this->clearHistory();
+    // cmd is already in seq, can just rerun
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // okay now send in a failure
+    invoke_to_cmdResponseIn(0, 123, 0x00020002, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::OK);
 }
 
 }  // namespace Svc
