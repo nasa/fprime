@@ -12,13 +12,13 @@ module Svc {
   @|             A2 --> B2,
   @|
   @| where Ai and Bi are component instances in separate deployments A and B,
-  @| can be implemented using hubs H1 and H2 like this:
+  @| can be implemented using hubs HA and HB like this:
   @|
   @|     A1 -->--+       +-->-- B1
   @|             |       |
-  @|             H1 ~~> H2
+  @|             HA ~~> HB
   @|             |       |
-  @|     A1 -->--+       +-->-- B2
+  @|     A2 -->--+       +-->-- B2
   @|
   @| The notation ~~> represents data transport between deployments,
   @| e.g., via shared memory or across a network connection.
