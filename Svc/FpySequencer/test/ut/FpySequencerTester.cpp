@@ -276,6 +276,22 @@ void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::MEMCMP, buf);
 }
+void FpySequencerTester::add_SET_FLAG(U8 flagIdx) {
+    add_SET_FLAG(FpySequencer_SetFlagDirective(flagIdx));
+}
+void FpySequencerTester::add_SET_FLAG(FpySequencer_SetFlagDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::SET_FLAG, buf);
+}
+void FpySequencerTester::add_GET_FLAG(U8 flagIdx) {
+    add_GET_FLAG(FpySequencer_GetFlagDirective(flagIdx));
+}
+void FpySequencerTester::add_GET_FLAG(FpySequencer_GetFlagDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_FLAG, buf);
+}
 void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
@@ -403,6 +419,16 @@ Signal FpySequencerTester::tester_stackCmd_directiveHandler(const FpySequencer_S
 Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive,
                                                           DirectiveError& err) {
     return this->cmp.memCmp_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.setFlag_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.getFlag_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,

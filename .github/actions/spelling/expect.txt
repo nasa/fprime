@@ -435,6 +435,7 @@ ncsl
 newtio
 nmsgs
 NOBLOCK
+noinline
 NOLINT
 NOLINTNEXTLINE
 noparent
@@ -736,6 +737,7 @@ wrs
 wxgui
 wxy
 Xapian
+XBee
 xdf
 xdffe
 xsltproc

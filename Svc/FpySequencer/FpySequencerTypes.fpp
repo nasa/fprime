@@ -3,6 +3,16 @@ module Svc {
         @ the current schema version (must be representable in U8)
         constant SCHEMA_VERSION = 2;
 
+        @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
+        # should be equal to (last flag id) + 1
+        constant FLAG_COUNT = 1
+
+        enum FlagId : U8 {
+            # must start at 0 and increment by 1 each time
+            @ if true, the sequence will exit with an error if a command fails
+            EXIT_ON_CMD_FAIL = 0
+        }
+
         @ the type which everything referencing a size or offset on the stack is represented in
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
         type StackSizeType = U32
@@ -18,7 +28,8 @@ module Svc {
             STORE_PRM = 8
             CONST_CMD = 9
             # stack op directives
-            # all of these are handled at the CPP level by one StackOpDirective
+            # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
+            # you MUST keep them all in between OR and ITRUNC_64_32 inclusive
             # boolean ops
             OR = 10
             AND = 11
@@ -95,6 +106,8 @@ module Svc {
             STACK_CMD = 66
             PUSH_TLM_VAL_AND_TIME = 67
             PUSH_TIME = 68
+            SET_FLAG = 69
+            GET_FLAG = 70
         }
 
         struct Header {

@@ -32,7 +32,7 @@ void FpySequencer::updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) 
 }
 
 // loads the sequence in memory, and does header/crc/integrity checks.
-// return true if sequence is valid
+// return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
     FW_ASSERT(this->m_sequenceFilePath.length() > 0);
 
@@ -102,6 +102,8 @@ Fw::Success FpySequencer::validate() {
     return Fw::Success::SUCCESS;
 }
 
+// reads and validates the header from the m_sequenceBuffer
+// return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readHeader() {
     // deser header
     Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_header());
@@ -133,6 +135,8 @@ Fw::Success FpySequencer::readHeader() {
     return Fw::Success::SUCCESS;
 }
 
+// reads and validates the body from the m_sequenceBuffer
+// return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
     // deser body:
@@ -163,6 +167,8 @@ Fw::Success FpySequencer::readBody() {
     return Fw::Success::SUCCESS;
 }
 
+// reads and validates the footer from the m_sequenceBuffer
+// return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readFooter() {
     Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_footer());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {

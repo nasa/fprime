@@ -101,21 +101,37 @@ struct PushValDirective {
     _valSize: FwSizeType
 }
 
+@ pops bytes off the top of the stack and does nothing with them
 struct DiscardDirective {
+    @ how many bytes to pop off the stack
     $size: Fpy.StackSizeType
 }
 
+@ pop two byte arrays off the top of the stack, call memcmp, push 1 if they were equal, 0 otherwise
 struct MemCmpDirective {
+    @ how big a single byte array is. note, we pop 2x this amount off the stack
     $size: Fpy.StackSizeType
 }
 
+@ pop an opcode and arg buf off the stack, send to cmd dispatcher and await response
 struct StackCmdDirective {
+    @ how big the argument buffer is
     argsSize: Fpy.StackSizeType
 }
 
 @ pushes the current Fw.Time struct to the stack
 struct PushTimeDirective {
     _empty: U8
+}
+
+@ pops a bool off the stack, sets a flag with a specific index to that bool
+struct SetFlagDirective {
+    flagIdx: U8
+}
+
+@ gets a flag and pushes its value as a U8 to the stack
+struct GetFlagDirective {
+    flagIdx: U8
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
@@ -156,6 +172,10 @@ internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
 
+internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
+
+internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
+
 enum DirectiveErrorCode {
     NO_ERROR
     STMT_OUT_OF_BOUNDS
@@ -168,4 +188,5 @@ enum DirectiveErrorCode {
     STACK_ACCESS_OUT_OF_BOUNDS
     STACK_OVERFLOW
     DOMAIN_ERROR
+    FLAG_IDX_OUT_OF_BOUNDS
 }
