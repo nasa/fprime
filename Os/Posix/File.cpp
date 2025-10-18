@@ -29,6 +29,14 @@ namespace File {
 #define USER_FLAGS (0)
 #endif
 
+// O_SYNC is not defined on every system. This will set up the SYNC_FLAGS variable to be O_SYNC when defined and
+// (0) when not defined. This allows OPEN_SYNC_WRITE to fall-back to OPEN_WRITE on those systems.
+#if defined(O_SYNC)
+#define SYNC_FLAGS O_SYNC
+#else
+#define SYNC_FLAGS (0)
+#endif
+
 // Create constants for the max limits of the signed types
 // These constants are used for comparisons with complementary unsigned types to avoid sign-compare warning
 using UnsignedOffT = std::make_unsigned<off_t>::type;
@@ -83,7 +91,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             mode_flags = O_WRONLY | O_CREAT;
             break;
         case OPEN_SYNC_WRITE:
-            mode_flags = O_WRONLY | O_CREAT | O_SYNC;
+            mode_flags = O_WRONLY | O_CREAT | SYNC_FLAGS;
             break;
         case OPEN_CREATE:
             mode_flags =
