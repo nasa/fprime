@@ -689,7 +689,7 @@ Serializable::SizeType SerializeBufferBase::getSerializeSizeLeft() const {
     return this->getCapacity() - this->m_serLoc;
 }
 
-SerializeStatus SerializeBufferBase::copyRaw(SerializeBufferBase& dest, Serializable::SizeType size) {
+SerializeStatus SerializeBufferBase::copyRaw(SerialBufferBase& dest, Serializable::SizeType size) {
     // make sure there is sufficient size in destination
     if (dest.getCapacity() < size) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
@@ -702,7 +702,7 @@ SerializeStatus SerializeBufferBase::copyRaw(SerializeBufferBase& dest, Serializ
     return stat;
 }
 
-SerializeStatus SerializeBufferBase::copyRawOffset(SerializeBufferBase& dest, Serializable::SizeType size) {
+SerializeStatus SerializeBufferBase::copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size) {
     // make sure there is sufficient size in destination
     if (dest.getCapacity() < size + dest.getSize()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;

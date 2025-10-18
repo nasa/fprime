@@ -183,11 +183,11 @@ class SerialBufferBase {
     virtual SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG) = 0;  //!< deserialize a size value
 
     virtual SerializeStatus copyRaw(
-        SerializeBufferBase& dest,
+        SerialBufferBase& dest,
         Serializable::SizeType size) = 0;  //!< directly copies buffer without looking for a size in the stream.
                                         // Will increment deserialization pointer
     virtual SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
-        SerializeBufferBase& dest,              // Will increment deserialization pointer
+        SerialBufferBase& dest,              // Will increment deserialization pointer
         Serializable::SizeType size) = 0;
 
     virtual void resetSer() = 0;    //!< reset to beginning of buffer to reuse for serialization
@@ -355,11 +355,11 @@ class SerializeBufferBase : public SerialBufferBase {
     SerializeStatus setBuff(const U8* src, Serializable::SizeType length);  //!< sets buffer contents and size
     SerializeStatus setBuffLen(Serializable::SizeType length);  //!< sets buffer length manually after filling with data
     SerializeStatus copyRaw(
-        SerializeBufferBase& dest,
+        SerialBufferBase& dest,
         Serializable::SizeType size);  //!< directly copies buffer without looking for a size in the stream.
                                        // Will increment deserialization pointer
     SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
-        SerializeBufferBase& dest,              // Will increment deserialization pointer
+        SerialBufferBase& dest,              // Will increment deserialization pointer
         Serializable::SizeType size);
 
     // ----------------------------------------------------------------------
