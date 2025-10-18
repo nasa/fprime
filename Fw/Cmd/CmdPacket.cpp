@@ -18,13 +18,13 @@ CmdPacket::CmdPacket() : m_opcode(0) {
 CmdPacket::~CmdPacket() {}
 
 // New serialization interface methods
-SerializeStatus CmdPacket::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
+SerializeStatus CmdPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // Shouldn't be called, no use case for serializing CmdPackets in FSW (currently)
     FW_ASSERT(0);
     return FW_SERIALIZE_OK;  // for compiler
 }
 
-SerializeStatus CmdPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+SerializeStatus CmdPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     SerializeStatus stat = ComPacket::deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;

@@ -77,7 +77,7 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+    virtual Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                             Fw::Endianness mode = Fw::Endianness::BIG) const = 0;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
@@ -92,7 +92,7 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+    virtual Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                                 Fw::Endianness mode = Fw::Endianness::BIG) = 0;
 };
 
@@ -145,7 +145,7 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const override;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
@@ -160,7 +160,7 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override;
 
     // ------------------------------------------------------------

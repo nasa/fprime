@@ -42,23 +42,23 @@ class Serializable {
     using SizeType = FwSizeType;
 
   public:
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer,
+    virtual SerializeStatus serializeTo(SerialBufferBase& buffer,
                                         Endianness mode = Endianness::BIG) const = 0;  //!< serialize contents to buffer
 
     virtual SerializeStatus deserializeFrom(
-        SerializeBufferBase& buffer,
+        SerialBufferBase& buffer,
         Endianness mode = Endianness::BIG) = 0;  //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility
     // ----------------------------------------------------------------------
 
-    DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
+    DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
-    DEPRECATED(SerializeStatus deserialize(SerializeBufferBase& buffer),
+    DEPRECATED(SerializeStatus deserialize(SerialBufferBase& buffer),
                "Use deserializeFrom(SerializeBufferBase& buffer) instead") {
         return this->deserializeFrom(buffer);
     }
@@ -182,6 +182,14 @@ class SerialBufferBase {
 
     virtual SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG) = 0;  //!< deserialize a size value
 
+    virtual SerializeStatus copyRaw(
+        SerializeBufferBase& dest,
+        Serializable::SizeType size) = 0;  //!< directly copies buffer without looking for a size in the stream.
+                                        // Will increment deserialization pointer
+    virtual SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
+        SerializeBufferBase& dest,              // Will increment deserialization pointer
+        Serializable::SizeType size) = 0;
+
     virtual void resetSer() = 0;    //!< reset to beginning of buffer to reuse for serialization
     virtual void resetDeser() = 0;  //!< reset deserialization to beginning
 
@@ -202,7 +210,7 @@ class SerialBufferBase {
     virtual SerializeStatus setBuffLen(Serializable::SizeType length) = 0;  //!< sets buffer length manually after filling with data
 };
 
-class SerializeBufferBase : SerialBufferBase {
+class SerializeBufferBase : public SerialBufferBase {
     friend class SerializeBufferBaseTester;
 
   protected:
@@ -350,9 +358,9 @@ class SerializeBufferBase : SerialBufferBase {
         SerializeBufferBase& dest,
         Serializable::SizeType size);  //!< directly copies buffer without looking for a size in the stream.
                                        // Will increment deserialization pointer
-    DEPRECATED(SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
+    SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
         SerializeBufferBase& dest,              // Will increment deserialization pointer
-        Serializable::SizeType size), "copyRawOffset() has been DEPRECATED");
+        Serializable::SizeType size);
 
     // ----------------------------------------------------------------------
     // Deprecated Serialization methods

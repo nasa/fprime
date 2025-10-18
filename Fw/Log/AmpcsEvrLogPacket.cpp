@@ -16,7 +16,7 @@ AmpcsEvrLogPacket::AmpcsEvrLogPacket() : m_eventID(0), m_overSeqNum(0), m_catSeq
 }
 AmpcsEvrLogPacket::~AmpcsEvrLogPacket() {}
 
-SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) const {
+SerializeStatus AmpcsEvrLogPacket::serializeTo(SerialBufferBase& buffer) const {
     SerializeStatus stat;
 
     stat = buffer.serializeFrom(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH);
@@ -43,10 +43,9 @@ SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) cons
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
     FwSizeType len;
 
-    SerializeStatus stat;
     SerializeStatus stat;
 
     len = AMPCS_EVR_TASK_NAME_LEN;
