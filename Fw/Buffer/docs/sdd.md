@@ -93,3 +93,7 @@ sb.deserializeTo(my_byte);
 sb.deserializeTo(my_data, Fw::Endianness::LITTLE);
 sb.deserializeTo(my_byte, Fw::Endianness::LITTLE);
 ```
+
+The objects returned by `getSerializer()` and `getDeserializer()` implement the `Fw::SerialBufferBase` interface. This
+allows them to be passed directly to `Fw::Serializable::serializeTo` and `Fw::Serializable::deserializeFrom` on
+user-defined serializable types.

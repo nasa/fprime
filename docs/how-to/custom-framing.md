@@ -46,7 +46,7 @@ Before implementing, consider these best practices:
 
 1. **Centralize Protocol Constants**: Define protocol constants (e.g., start word, header structure, field sizes) in a dedicated `.fpp` types file (e.g., `Types/Types.fpp`). This allows constants like start words, field types, or spacecraft IDs to be reused consistently across your framer, deframer, and frame detector.
 
-2. **Endianness Convention**: F´ serializes all integer types in big-endian by default (network byte order), as defined in `Fw::Serializable`. If your protocol requires little-endian fields, you must specify so during serialization with the `Fw::Endianness::LITTLE` mode, or manually order bytes as needed.
+2. **Endianness Convention**: F´ serializes all integer types in big-endian by default (network byte order), as defined in `Fw::Serializable`. If your protocol requires little-endian fields, you must specify so during serialization with the `Fw::Endianness::LITTLE` mode, or manually order bytes as needed. Payload serialization and deserialization target the `Fw::SerialBufferBase` interface, so user-defined serializable types can use `serializeTo`/`deserializeFrom` with a compatible buffer.
 
 3. **Set the APID in the Deframer**: Your deframer **must** extract and set the APID (Application ID) in the `FrameContext` before emitting packets downstream via `dataOut`. Without this, the `Svc.FprimeRouter` will not know where to route packets to. This is a critical requirement, unless you are also implementing a custom router and define your own requirements (not recommended and outside the scope of this guide).
 
