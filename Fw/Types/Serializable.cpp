@@ -694,6 +694,11 @@ SerializeStatus SerializeBufferBase::copyRaw(SerialBufferBase& dest, Serializabl
     if (dest.getCapacity() < size) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
+    // make sure there is sufficient buffer in source
+    if (this->getDeserializeSizeLeft() < size) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
     // otherwise, set destination buffer to data from deserialization pointer plus size
     SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc], size);
     if (stat == FW_SERIALIZE_OK) {

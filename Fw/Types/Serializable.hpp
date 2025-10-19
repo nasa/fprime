@@ -182,13 +182,43 @@ class SerialBufferBase {
 
     virtual SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG) = 0;  //!< deserialize a size value
 
-    virtual SerializeStatus copyRaw(
-        SerialBufferBase& dest,
-        Serializable::SizeType size) = 0;  //!< directly copies buffer without looking for a size in the stream.
-                                        // Will increment deserialization pointer
-    virtual SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
-        SerialBufferBase& dest,              // Will increment deserialization pointer
-        Serializable::SizeType size) = 0;
+    //! \brief Copy raw bytes from the source (this) into a destination buffer and advance source offset
+    //!
+    //! Copies exactly `size` bytes starting at the current deserialization pointer of `this` into `dest`.
+    //! This operation does not prepend a length field and does not interpret the data.
+    //!
+    //! Preconditions:
+    //! - `size` bytes must remain in the source (`getDeserializeSizeLeft() >= size`).
+    //! - Destination must have sufficient capacity (`dest.getCapacity() >= size`).
+    //!
+    //! Postconditions on success:
+    //! - `dest` contains exactly the copied bytes and its previous contents are discarded.
+    //! - `this` has advanced its deserialization pointer by `size` bytes.
+    //!
+    //! \param dest Destination serialization buffer to receive the bytes (its contents are replaced)
+    //! \param size Number of bytes to copy from the source
+    //! \return `FW_SERIALIZE_OK` on success; `FW_SERIALIZE_NO_ROOM_LEFT` if destination capacity is insufficient;
+    //!         `FW_DESERIALIZE_SIZE_MISMATCH` if source does not contain `size` bytes remaining
+    virtual SerializeStatus copyRaw(SerialBufferBase& dest, Serializable::SizeType size) = 0;
+
+    //! \brief Append raw bytes to destination (no length) and advance source offset
+    //!
+    //! Appends exactly `size` bytes from the current deserialization pointer of `this` into `dest` using
+    //! `Serialization::OMIT_LENGTH`, preserving any existing bytes already serialized in `dest`.
+    //!
+    //! Preconditions:
+    //! - `size` bytes must remain in the source (`getDeserializeSizeLeft() >= size`).
+    //! - Destination must have space for the append (`dest.getCapacity() >= dest.getSize() + size`).
+    //!
+    //! Postconditions on success:
+    //! - `dest` gains `size` additional bytes at the end; no length token is written.
+    //! - `this` has advanced its deserialization pointer by `size` bytes.
+    //!
+    //! \param dest Destination serialization buffer to append to
+    //! \param size Number of bytes to copy from the source and append to dest
+    //! \return `FW_SERIALIZE_OK` on success; `FW_SERIALIZE_NO_ROOM_LEFT` if destination capacity is insufficient;
+    //!         `FW_DESERIALIZE_SIZE_MISMATCH` if source does not contain `size` bytes remaining
+    virtual SerializeStatus copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size) = 0;
 
     virtual void resetSer() = 0;    //!< reset to beginning of buffer to reuse for serialization
     virtual void resetDeser() = 0;  //!< reset deserialization to beginning
@@ -354,13 +384,9 @@ class SerializeBufferBase : public SerialBufferBase {
                            //!< when done
     SerializeStatus setBuff(const U8* src, Serializable::SizeType length);  //!< sets buffer contents and size
     SerializeStatus setBuffLen(Serializable::SizeType length);  //!< sets buffer length manually after filling with data
-    SerializeStatus copyRaw(
-        SerialBufferBase& dest,
-        Serializable::SizeType size);  //!< directly copies buffer without looking for a size in the stream.
-                                       // Will increment deserialization pointer
-    SerializeStatus copyRawOffset(   //!< directly copies buffer without looking for a size in the stream.
-        SerialBufferBase& dest,              // Will increment deserialization pointer
-        Serializable::SizeType size);
+    
+    SerializeStatus copyRaw(SerialBufferBase& dest, Serializable::SizeType size);
+    SerializeStatus copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size);
 
     // ----------------------------------------------------------------------
     // Deprecated Serialization methods
