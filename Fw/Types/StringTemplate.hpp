@@ -25,7 +25,7 @@ class StringTemplate final : public StringBase {
 
     StringTemplate(const StringTemplate& src) : StringBase() { *this = src; }
 
-    StringTemplate(const StringBase& src) : StringBase() { *this = src; }
+    StringTemplate(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit StringTemplate(const char* src) : StringBase() { *this = src; }
 
@@ -36,7 +36,7 @@ class StringTemplate final : public StringBase {
         return *this;
     }
 
-    StringTemplate& operator=(const StringBase& src) {
+    StringTemplate& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

@@ -85,7 +85,7 @@ class Hash {
 
     //! Add the extension for the supported hash type
     //!
-    static void addFileExtension(const Fw::StringBase& baseName,  //!< The base name
+    static void addFileExtension(const Fw::ConstStringBase& baseName,  //!< The base name
                                  Fw::StringBase& extendedName     //!< The extended name
     );
 

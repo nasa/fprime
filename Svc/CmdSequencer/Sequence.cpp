@@ -61,7 +61,7 @@ const CmdSequencerComponentImpl::Sequence::Header& CmdSequencerComponentImpl::Se
     return this->m_header;
 }
 
-void CmdSequencerComponentImpl::Sequence ::setFileName(const Fw::StringBase& fileName) {
+void CmdSequencerComponentImpl::Sequence ::setFileName(const Fw::ConstStringBase& fileName) {
     this->m_fileName = fileName;
     this->m_logFileName = fileName;
     this->m_stringFileName = fileName;

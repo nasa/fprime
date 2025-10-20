@@ -27,7 +27,7 @@ class InternalInterfaceString final : public StringBase {
 
     InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
 
-    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
+    InternalInterfaceString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit InternalInterfaceString(const char* src) : StringBase() { *this = src; }
 
@@ -38,7 +38,7 @@ class InternalInterfaceString final : public StringBase {
         return *this;
     }
 
-    InternalInterfaceString& operator=(const StringBase& src) {
+    InternalInterfaceString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

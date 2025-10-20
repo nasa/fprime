@@ -23,7 +23,7 @@ DpWriter::DpWriter(const char* const compName) : DpWriterComponentBase(compName)
 
 DpWriter::~DpWriter() {}
 
-void DpWriter::configure(const Fw::StringBase& dpFileNamePrefix) {
+void DpWriter::configure(const Fw::ConstStringBase& dpFileNamePrefix) {
     this->m_dpFileNamePrefix = dpFileNamePrefix;
 }
 

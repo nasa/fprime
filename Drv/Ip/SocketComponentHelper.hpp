@@ -61,7 +61,7 @@ class SocketComponentHelper {
      * \param cpuAffinityReconnect: cpu affinity provided to reconnect task. See: Os::Task::start. Default:
      * TASK_DEFAULT, don't care
      */
-    void start(const Fw::StringBase& name,
+    void start(const Fw::ConstStringBase& name,
                const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
                const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,

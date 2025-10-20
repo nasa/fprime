@@ -26,7 +26,7 @@ class ObjectName final : public StringBase {
 
     ObjectName(const ObjectName& src) : StringBase() { *this = src; }
 
-    ObjectName(const StringBase& src) : StringBase() { *this = src; }
+    ObjectName(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit ObjectName(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class ObjectName final : public StringBase {
         return *this;
     }
 
-    ObjectName& operator=(const StringBase& src) {
+    ObjectName& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

@@ -35,7 +35,7 @@ class DpWriter final : public DpWriterComponentBase {
     ~DpWriter();
 
     //! Configure writer
-    void configure(const Fw::StringBase& dpFileNamePrefix  //!< The file name prefix for writing DP files
+    void configure(const Fw::ConstStringBase& dpFileNamePrefix  //!< The file name prefix for writing DP files
     );
 
   private:
