@@ -9,6 +9,25 @@
 #include "STest/Pick/Pick.hpp"
 
 // ------------------------------------------------------------------------------------------------------
+// Rule SelfDiffIsZero
+// ------------------------------------------------------------------------------------------------------
+Os::Test::RawTime::Tester::SelfDiffIsZero::SelfDiffIsZero()
+    : STest::Rule<Os::Test::RawTime::Tester>("SelfDiffIsZero") {}
+
+bool Os::Test::RawTime::Tester::SelfDiffIsZero::precondition(const Os::Test::RawTime::Tester& state) {
+    return true;
+}
+
+void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester& state) {
+    U32 result;
+    FwIndexType index = state.pick_random_index();
+    Os::RawTime& raw_time = state.m_times[index];
+    Os::RawTime::Status status = raw_time.getDiffUsec(raw_time, result);
+    ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
+    ASSERT_EQ(result, 0);
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule Now
 // ------------------------------------------------------------------------------------------------------
 Os::Test::RawTime::Tester::Now::Now() : STest::Rule<Os::Test::RawTime::Tester>("Now") {}
@@ -29,25 +48,6 @@ void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester& state) {
     // and update the shadow time accordingly. This helper is platform-specific and must be implemented
     // by the OSAL implementor.
     Os::Test::RawTime::assert_and_update_now(raw_time_under_test, lower_time, upper_time, state.m_shadow_times[index]);
-}
-
-// ------------------------------------------------------------------------------------------------------
-// Rule SelfDiffIsZero
-// ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::SelfDiffIsZero::SelfDiffIsZero()
-    : STest::Rule<Os::Test::RawTime::Tester>("SelfDiffIsZero") {}
-
-bool Os::Test::RawTime::Tester::SelfDiffIsZero::precondition(const Os::Test::RawTime::Tester& state) {
-    return true;
-}
-
-void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester& state) {
-    U32 result;
-    FwIndexType index = state.pick_random_index();
-    Os::RawTime& raw_time = state.m_times[index];
-    Os::RawTime::Status status = raw_time.getDiffUsec(raw_time, result);
-    ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
-    ASSERT_EQ(result, 0);
 }
 
 // ------------------------------------------------------------------------------------------------------

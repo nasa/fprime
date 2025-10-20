@@ -3,7 +3,6 @@
 // \brief tests for posix implementation for Os::RawTime
 // ======================================================================
 #include <gtest/gtest.h>
-#include <thread>  // TODO: DELETE ME
 #include "Fw/Types/String.hpp"
 #include "Os/Posix/RawTime.hpp"
 #include "Os/Posix/Task.hpp"
