@@ -125,9 +125,9 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     return Fw::FW_SERIALIZE_OK;
 }
 
-SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer) const {
+SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
     // serialize the number of packets
-    SerializeStatus stat = buffer.serializeFrom(this->m_numEntries);
+    SerializeStatus stat = buffer.serializeFrom(this->m_numEntries, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -136,9 +136,9 @@ SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer) const {
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus TlmPacket::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus TlmPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     // deserialize the number of packets
-    SerializeStatus stat = buffer.deserializeTo(this->m_numEntries);
+    SerializeStatus stat = buffer.deserializeTo(this->m_numEntries, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }

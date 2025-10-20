@@ -13,7 +13,9 @@
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
+#include "Svc/FpySequencer/FlagIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
+#include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencerComponentAc.hpp"
 #include "Svc/FpySequencer/FpySequencer_GoalStateEnumAc.hpp"
 #include "Svc/FpySequencer/HeaderSerializableAc.hpp"
@@ -31,6 +33,7 @@ static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max prm buffer size");
+static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(), "Flag count must be less than U8 max");
 
 namespace Svc {
 
@@ -61,6 +64,9 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_DiscardDirective discard;
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
+        FpySequencer_PushTimeDirective pushTime;
+        FpySequencer_SetFlagDirective setFlag;
+        FpySequencer_GetFlagDirective getFlag;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -112,43 +118,60 @@ class FpySequencer : public FpySequencerComponentBase {
                            U32 cmdSeq            //!< The command sequence number
                            ) override;
 
-    //! Handler for command DEBUG_SET_BREAKPOINT
+    //! Handler for command SET_BREAKPOINT
     //!
-    //! Sets the debugging breakpoint which will pause the execution of the sequencer
-    //! until unpaused by the DEBUG_CONTINUE command. Will pause just before dispatching
-    //! the specified statement. This command is valid in all states. Debug settings are
-    //! cleared after a sequence ends execution.
-    void DEBUG_SET_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                         U32 cmdSeq,           //!< The command sequence number
-                                         U32 stmtIdx,          //!< The statement index to pause execution before.
-                                         bool breakOnce        //!< Whether or not to break only once at this breakpoint
-                                         ) override;
-
-    //! Handler for command DEBUG_BREAK
-    //!
-    //! Pauses the execution of the sequencer once, just before it is about to dispatch the next statement,
-    //! until unpaused by the DEBUG_CONTINUE command. This command is only valid in the RUNNING state.
-    //! Debug settings are cleared after a sequence ends execution.
-    void DEBUG_BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                U32 cmdSeq,           //!< The command sequence number
-                                bool breakOnce        //!< Whether or not to break only once at this breakpoint
-                                ) override;
-
-    //! Handler for command DEBUG_CONTINUE
-    //!
-    //! Continues the execution of the sequence after it has been paused by a debug break. This command
-    //! is only valid in the RUNNING.DEBUG_BROKEN state.
-    void DEBUG_CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                   U32 cmdSeq            //!< The command sequence number
+    //! Sets the breakpoint which will pause the execution of the sequencer when
+    //! reached, until unpaused by the CONTINUE command. Will pause just before
+    //! dispatching the specified statement. This command is valid in all states. Breakpoint
+    //! settings are cleared after a sequence ends execution.
+    void SET_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                   U32 cmdSeq,           //!< The command sequence number
+                                   U32 stmtIdx,          //!< The statement index to pause execution before.
+                                   bool breakOnce        //!< Whether or not to break only once at this breakpoint
                                    ) override;
 
-    //! Handler for command DEBUG_CLEAR_BREAKPOINT
+    //! Handler for command BREAK
     //!
-    //! Clears the debugging breakpoint, but does not continue executing the sequence. This command
+    //! Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
+    //! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid in the
+    //! RUNNING state.
+    void BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                          U32 cmdSeq            //!< The command sequence number
+                          ) override;
+
+    //! Handler for command CONTINUE
+    //!
+    //! Continues the automatic execution of the sequence after it has been paused. If a breakpoint is still
+    //! set, it may pause again on that breakpoint. This command is only valid in the RUNNING.PAUSED state.
+    void CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                             U32 cmdSeq            //!< The command sequence number
+                             ) override;
+
+    //! Handler for command CLEAR_BREAKPOINT
+    //!
+    //! Clears the breakpoint, but does not continue executing the sequence. This command
     //! is valid in all states. This happens automatically when a sequence ends execution.
-    void DEBUG_CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                           U32 cmdSeq            //!< The command sequence number
-                                           ) override;
+    void CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq            //!< The command sequence number
+                                     ) override;
+
+    //! Handler for command STEP
+    //!
+    //! Dispatches and awaits the result of the next directive, or ends the sequence if no more directives remain.
+    //! Returns to the RUNNING.PAUSED state if the directive executes successfully. This command is only valid in the
+    //! RUNNING.PAUSED state.
+    void STEP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                         U32 cmdSeq            //!< The command sequence number
+                         ) override;
+
+    //! Handler for command SET_FLAG
+    //!
+    //! Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag.
+    //! This command is only valid in the RUNNING state.
+    void SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                             U32 cmdSeq,           //!< The command sequence number
+                             Svc::Fpy::FlagId flag,
+                             bool value) override;
 
     // ----------------------------------------------------------------------
     // Functions to implement for internal state machine actions
@@ -293,29 +316,45 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action clearBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! clears the debug breakpoint, allowing execution of the sequence to continue
-    void Svc_FpySequencer_SequencerStateMachine_action_clearDebugBreakpoint(
+    //! clears the breakpoint, allowing execution of the sequence to continue
+    void Svc_FpySequencer_SequencerStateMachine_action_clearBreakpoint(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_debugBroken of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_seqBroken of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! reports that a debug breakpoint was hit
-    void Svc_FpySequencer_SequencerStateMachine_action_report_debugBroken(
+    //! reports that a breakpoint was hit
+    void Svc_FpySequencer_SequencerStateMachine_action_report_seqBroken(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! sets the debug breakpoint to the provided args
-    void Svc_FpySequencer_SequencerStateMachine_action_setDebugBreakpoint(
+    //! sets the breakpoint to the provided args
+    void Svc_FpySequencer_SequencerStateMachine_action_setBreakpoint(
         SmId smId,                                              //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_DebugBreakpointArgs& value      //!< The value
+        const Svc::FpySequencer_BreakpointArgs& value           //!< The value
+        ) override;
+
+    //! Implementation for action setBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the "break on next line" flag to true
+    void Svc_FpySequencer_SequencerStateMachine_action_setBreakBeforeNextLine(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action clearBreakBeforeNextLine of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the "break on next line" flag to false
+    void Svc_FpySequencer_SequencerStateMachine_action_clearBreakBeforeNextLine(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
@@ -347,19 +386,19 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard shouldDebugBreak of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for guard shouldBreak of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! return true if should debug break at this point in execution, before dispatching
+    //! return true if should break at this point in execution, before dispatching
     //! next stmt
-    bool Svc_FpySequencer_SequencerStateMachine_guard_shouldDebugBreak(
+    bool Svc_FpySequencer_SequencerStateMachine_guard_shouldBreak(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard debugBreakOnce of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for guard breakOnce of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! return true if this debug breakpoint should only happen once
-    bool Svc_FpySequencer_SequencerStateMachine_guard_debugBreakOnce(
+    //! return true if this breakpoint should only happen once
+    bool Svc_FpySequencer_SequencerStateMachine_guard_breakOnce(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
     ) const override;
@@ -449,6 +488,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_stackCmd
     void directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) override;
 
+    //! Internal interface handler for directive_pushTime
+    void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) override;
+
+    //! Internal interface handler for directive_setFlag
+    void directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) override;
+
+    //! Internal interface handler for directive_getFlag
+    void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -511,40 +559,59 @@ class FpySequencer : public FpySequencerComponentBase {
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
 
+        // the byte array of the program stack, storing lvars, operands and function calls
         U8 stack[Fpy::MAX_STACK_SIZE] = {0};
+        // how many bytes high the stack is
         Fpy::StackSizeType stackSize = 0;
+
+        // the sequencer runtime flags. these are modifiable by the sequence and control
+        // various aspects of the sequencer.
+        // these get set to a default value from FpySequencerCfg
+        bool flags[Fpy::FLAG_COUNT] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
     // because it can be set up before running the sequence.
-    struct Debug {
+    struct BreakpointInfo {
         // whether or not to break at the debug breakpoint index
-        bool breakOnBreakpoint = false;
+        bool breakpointInUse = false;
         // whether or not to remove the breakpoint after breaking on it
         bool breakOnlyOnceOnBreakpoint = false;
         // the statement index at which to break, before dispatching
         U32 breakpointIndex = 0;
+        // whether or not to break before dispatching the next line,
+        // independent of what line it is.
+        // can be used in combination with breakpointIndex
+        bool breakBeforeNextLine = false;
+    } m_breakpoint;
+
+    // debug information about the sequence. only valid in the PAUSED state
+    // which you can access via BREAK or SET_BREAKPOINT cmds
+    struct DebugInfo {
+        // true if there are no statements remaining in the sequence file
+        bool reachedEndOfFile = false;
+        // true if we were able to deserialize the next statement successfully
+        bool nextStatementReadSuccess = false;
+        // the opcode of the next statement to dispatch.
+        U8 nextStatementOpcode = 0;
+        // if the next statement is a cmd directive, the opcode of that cmd
+        FwOpcodeType nextCmdOpcode = 0;
     } m_debug;
 
     struct Telemetry {
         // the number of statements that failed to execute
         U64 statementsFailed = 0;
-
         // the number of sequences successfully completed
         U64 sequencesSucceeded = 0;
-
         // the number of sequences that failed to validate or execute
         U64 sequencesFailed = 0;
-
         // the number of sequences that have been cancelled
         U64 sequencesCancelled = 0;
 
         // the error code of the last directive that ran
         DirectiveError lastDirectiveError = DirectiveError::NO_ERROR;
-
         // the index of the last directive that errored
         U64 directiveErrorIndex = 0;
-
         // the opcode of the last directive that errored
         Fpy::DirectiveId directiveErrorId = Fpy::DirectiveId::INVALID;
     } m_tlm;
@@ -559,16 +626,16 @@ class FpySequencer : public FpySequencerComponentBase {
     );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
-    // return success if sequence is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success validate();
     // reads and validates the header from the m_sequenceBuffer
-    // return success if header is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readHeader();
     // reads and validates the body from the m_sequenceBuffer
-    // return success if body is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readBody();
     // reads and validates the footer from the m_sequenceBuffer
-    // return success if footer is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readFooter();
 
     // reads some bytes from the open file into the m_sequenceBuffer.
@@ -607,8 +674,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // return true if state is a substate of RUNNING
     bool isRunningState(State state);
 
-    // return a struct containing debug telemetry, or defaults if not in debug break
-    FpySequencer_DebugTelemetry getDebugTelemetry();
+    // update a struct containing debug telemetry, or defaults if not in debug break
+    void updateDebugTelemetryStruct();
 
     // ----------------------------------------------------------------------
     // Directives
@@ -711,6 +778,9 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
+    Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
+    Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
+    Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

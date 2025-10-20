@@ -65,7 +65,8 @@ class PosixRawTime : public RawTimeInterface {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override;
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -79,7 +80,8 @@ class PosixRawTime : public RawTimeInterface {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override;
 
   private:
     //! Handle for PosixRawTime

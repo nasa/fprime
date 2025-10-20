@@ -7,6 +7,7 @@
 #
 ####
 include_guard()
+include(utilities)
 
 ####
 # Function `get_target_name`:
@@ -113,9 +114,7 @@ endfunction(setup_global_target)
 function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     # Announce for the debug log
     get_target_name("${TARGET_FILE}")
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[target] Setting up '${TARGET_NAME}' on all module ${MODULE}")
-    endif()
+    fprime_cmake_debug_message("[target] Setting up '${TARGET_NAME}' on all module ${MODULE}")
     get_target_property(MODULE_TYPE "${MODULE}" FPRIME_TYPE)
 
     if (NOT MODULE_TYPE STREQUAL "Deployment")
@@ -128,14 +127,12 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
             recurse_target_properties("${MODULE}" "${RECURSED_PROPERTY_NAMES}" KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
             
             # Report all detected recursive dependencies
-            if (CMAKE_DEBUG_OUTPUT)
-                foreach(LIST_PRINT IN ITEMS EXTERNAL_LINKS KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
-                    message(STATUS "[target] '${MODULE}' Recursive Links: ${LIST_PRINT}")
-                    foreach(ITEM_PRINT IN LISTS ${LIST_PRINT})
-                        message(STATUS "[target]    ${ITEM_PRINT}")
-                    endforeach()
+            foreach(LIST_PRINT IN ITEMS EXTERNAL_LINKS KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
+                fprime_cmake_debug_message("[target] '${MODULE}' Recursive Links: ${LIST_PRINT}")
+                foreach(ITEM_PRINT IN LISTS ${LIST_PRINT})
+                    fprime_cmake_debug_message("[target]    ${ITEM_PRINT}")
                 endforeach()
-            endif()
+            endforeach()
             check_unknown_links("${MODULE}" ${UNKNOWN_LINKS})
             set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")
             set(TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")

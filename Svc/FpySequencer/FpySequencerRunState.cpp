@@ -348,6 +348,36 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::PUSH_TIME: {
+            new (&deserializedDirective.pushTime) FpySequencer_PushTimeDirective();
+            if (argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
+        case Fpy::DirectiveId::SET_FLAG: {
+            new (&deserializedDirective.setFlag) FpySequencer_SetFlagDirective();
+            status = argBuf.deserializeTo(deserializedDirective.setFlag);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
+        case Fpy::DirectiveId::GET_FLAG: {
+            new (&deserializedDirective.getFlag) FpySequencer_GetFlagDirective();
+            status = argBuf.deserializeTo(deserializedDirective.getFlag);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.get_opCode(), this->currentStatementIdx(),
@@ -485,6 +515,18 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::STACK_CMD: {
             this->directive_stackCmd_internalInterfaceInvoke(directive.stackCmd);
+            return;
+        }
+        case Fpy::DirectiveId::PUSH_TIME: {
+            this->directive_pushTime_internalInterfaceInvoke(directive.pushTime);
+            return;
+        }
+        case Fpy::DirectiveId::SET_FLAG: {
+            this->directive_setFlag_internalInterfaceInvoke(directive.setFlag);
+            return;
+        }
+        case Fpy::DirectiveId::GET_FLAG: {
+            this->directive_getFlag_internalInterfaceInvoke(directive.getFlag);
             return;
         }
     }

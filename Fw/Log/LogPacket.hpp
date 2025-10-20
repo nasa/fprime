@@ -19,8 +19,9 @@ class LogPacket : public ComPacket {
     LogPacket();
     virtual ~LogPacket();
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< serialize contents
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer,
+                                Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override;
 
     void setId(FwEventIdType id);
     void setLogBuffer(const LogBuffer& buffer);

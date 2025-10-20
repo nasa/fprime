@@ -13,6 +13,7 @@
 # If a relative path is specified, this will be relative to the component's folder **in the build cache** 
 # if using fprime-util check, OR relative to the current directory if running a single executable.
 ####
+include(utilities)
 include_guard()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     set(SANITIZERS)
@@ -27,7 +28,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_LEAK)
         if(APPLE) 
-            message(STATUS "[WARNING] Leak sanitizer is not supported on macOS")
+            fprime_cmake_warning("Leak sanitizer is not supported on macOS")
         else()
             list(APPEND SANITIZERS "leak")
         endif()
@@ -35,7 +36,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_THREAD)
         if("address" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
-            message(STATUS "[WARNING] Thread sanitizer does not work with Address or Leak sanitizer enabled")
+            fprime_cmake_warning("Thread sanitizer does not work with Address or Leak sanitizer enabled")
         else()
             list(APPEND SANITIZERS "thread")
         endif()
@@ -44,7 +45,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
     list(JOIN SANITIZERS "," LIST_OF_SANITIZERS)
 
     if(LIST_OF_SANITIZERS AND NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
-            message(STATUS "Enabled the following sanitizers: ${LIST_OF_SANITIZERS}")
+            fprime_cmake_status("Enabled the following sanitizers: ${LIST_OF_SANITIZERS}")
             add_compile_options(-fsanitize=${LIST_OF_SANITIZERS})
             add_link_options(-fsanitize=${LIST_OF_SANITIZERS})
     endif()
