@@ -23,7 +23,7 @@ namespace RawTime {
 //! REQUIRED NOTICE TO PLATFORM IMPLEMENTORS
 //! ------------------------------------------------------------------------------------------------------
 //! The rules defined in Os/test/ut/rawtime are intended to be reusable, with one condition:
-//! implementors of an OSAL must provide their own implementation of the `assert_and_update_now()()` method.
+//! implementors of an OSAL must provide their own implementation of the `assert_and_update_now()` helper.
 //!
 //! This is because the "Now" rule must keep a Os::RawTime object synchronized with a "shadow" (acting as a
 //! tracker) time object (std::time_point), which is not possible without having knowledge of the platform
