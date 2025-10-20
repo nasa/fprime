@@ -26,6 +26,12 @@ class PrmDbTester : public PrmDbGTestBase {
     void runMissingExtraParams();
     void runFileReadError();
     void runFileWriteError();
+    void runDbEqualTest();
+    void runDbCopyTest();
+    void runDbCommitTest();
+    void runPrmFileLoadNominal();
+    void runPrmFileLoadWithErrors();
+    void runPrmFileLoadIllegal();
 
     void runRefPrmFile();
 
@@ -67,6 +73,8 @@ class PrmDbTester : public PrmDbGTestBase {
         static void setTester(PrmDbTester* tester);
         static PrmDbTester* s_tester;
     };
+
+    void printDb(PrmDb_PrmDbType dbType);
 };
 
 }  // namespace Svc

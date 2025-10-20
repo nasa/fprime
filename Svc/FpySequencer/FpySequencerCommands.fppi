@@ -56,3 +56,10 @@ async command CLEAR_BREAKPOINT() \
 @ to the RUNNING.PAUSED state if the directive executes successfully. This command is only valid in the RUNNING.PAUSED state.
 async command STEP() \
     opcode 8 priority 7 assert
+
+@ Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag. 
+@ This command is only valid in the RUNNING state.
+async command SET_FLAG(
+    flag: Fpy.FlagId, value: bool
+) \
+    opcode 9 priority 7 assert
