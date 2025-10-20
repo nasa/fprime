@@ -8,6 +8,98 @@ The FpySequencer is primarily composed of a state machine and a runtime environm
 
 The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` package). See the compiler documentation for the details of the Fpy language.
 
+
+## Requirements
+
+TBD
+
+## States
+
+The following diagram represents the states of the `FpySequencer`.
+
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "IDLE
+entry / clearBreakpoint, clearSequenceFile
+    ------------------------------------------------------
+    cmd_SET_BREAKPOINT / setBreakpoint
+    cmd_CLEAR_BREAKPOINT / clearBreakpoint 
+  " as IDLE
+
+  state "VALIDATING
+    enter / report_seqStarted, validate
+    ------------------------------------------------------
+    cmd_SET_BREAKPOINT / setBreakpoint
+    cmd_CLEAR_BREAKPOINT / clearBreakpoint
+  " as VALIDATING
+
+  state VALID <<choice>>
+
+  state "AWAITING_CMD_RUN_VALIDATED
+    enter / resp_OK
+    ------------------------------------------------------
+    cmd_SET_BREAKPOINT / setBreakpoint
+    cmd_CLEAR_BREAKPOINT / clearBreakpoint
+  " as AWAITING_CMD_RUN_VALIDATED
+
+  state "RUNNING entry / resetRuntime
+  " as RUNNING {
+    state BREAK_CHECK <<choice>>
+
+    state "DISPATCH_STATEMENT
+      enter / dispatch 
+    " as DISPATCH_STATEMENT
+
+    state "PAUSED
+      entry / clearBreakBeforeNextLine, if breakOnce: clearBreakpoint
+      -------------------------------------------------------------
+    " as PAUSED
+
+    [*] --> BREAK_CHECK
+    BREAK_CHECK --> PAUSED: if break
+    BREAK_CHECK --> DISPATCH_STATEMENT: if not break
+
+    PAUSED --> DISPATCH_STATEMENT: cmd_CONTINUE
+    PAUSED --> DISPATCH_STATEMENT: cmdSTEP/setBreakBeforeNextLine
+
+    DISPATCH_STATEMENT --> [*]: noMoreStatements/resp_OK
+    DISPATCH_STATEMENT --> [*]: failure/resp_EXECUTION_ERROR 
+    DISPATCH_STATEMENT --> AWAITING_STATEMENT_RESPONSE: success
+
+
+    AWAITING_STATEMENT_RESPONSE --> [*]: failure/resp_EXECUTION_ERROR 
+    AWAITING_STATEMENT_RESPONSE --> [*]: timeout
+    AWAITING_STATEMENT_RESPONSE --> SLEEPING: beginSleep
+    AWAITING_STATEMENT_RESPONSE --> BREAK_CHECK: success
+
+    SLEEPING --> [*]: timeout/resp_EXECUTION_ERROR
+    SLEEPING --> [*]: error/resp_EXECUTION_ERROR
+
+    SLEEPING --> BREAK_CHECK: shouldWake
+
+  }
+
+  IDLE --> VALIDATING: cmd_VALIDATE/setSequenceFilePath
+  IDLE --> VALIDATING: cmd_RUN/setSequenceFilePath
+
+  VALID --> RUNNING: if cmd_RUN
+  VALID --> AWAITING_CMD_RUN_VALIDATED: if cmd_VALIDATE
+
+  VALIDATING --> IDLE:  failure/seqFailed,resp_EXECUTION_ERROR
+  VALIDATING --> VALID: success
+  VALIDATING --> IDLE: cmd_CANCEL/seqCancelled,resp_EXECUTION_ERROR
+
+  AWAITING_CMD_RUN_VALIDATED --> IDLE: cmd_CANCEL/seqCancelled
+  AWAITING_CMD_RUN_VALIDATED --> RUNNING: cmd_RUN_VALIDATED
+
+  RUNNING --> IDLE: failure
+  RUNNING --> IDLE: noMoreStatements
+
+```
+
+
 ## Flags
 The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running. When a sequence starts running, the flags are initialized to a value configured by the FLAG_DEFAULT_XYZ parameters.
 
