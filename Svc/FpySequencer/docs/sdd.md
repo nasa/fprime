@@ -8,6 +8,8 @@ The FpySequencer is primarily composed of a state machine and a runtime environm
 
 The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` package). See the compiler documentation for the details of the Fpy language.
 
+> [!CAUTION]
+> The FpySequencer depends on `float` and `double` conforming to IEEE-754 standard on the target system. Users should ensure `SKIP_FLOAT_IEEE_754_COMPLIANCE` is defined as `0` to guarantee compliance.
 
 ## Requirements
 
@@ -150,12 +152,12 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 19 | SLE | Pops two 8-byte signed integers off the stack. If the second <= first, pushes 1 to stack, otherwise 0 |
 | 20 | SGT | Pops two 8-byte signed integers off the stack. If the second > first, pushes 1 to stack, otherwise 0 |
 | 21 | SGE | Pops two 8-byte signed integers off the stack. If the second >= first, pushes 1 to stack, otherwise 0 |
-| 22 | FEQ | Pops two 8-byte floats off the stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0 |
-| 23 | FNE | Pops two 8-byte floats off the stack. If neither is NaN and they are otherwise not equal , pushes 1 to stack, otherwise 0 |
-| 24 | FLT | Pops two 8-byte floats off the stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0 |
-| 25 | FLE | Pops two 8-byte floats off the stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0 |
-| 26 | FGT | Pops two 8-byte floats off the stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0 |
-| 27 | FGE | Pops two 8-byte floats off the stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0 |
+| 22 | FEQ | Pops two 8-byte floats off the stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
+| 23 | FNE | Pops two 8-byte floats off the stack. If neither is NaN and they are otherwise not equal , pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
+| 24 | FLT | Pops two 8-byte floats off the stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
+| 25 | FLE | Pops two 8-byte floats off the stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
+| 26 | FGT | Pops two 8-byte floats off the stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
+| 27 | FGE | Pops two 8-byte floats off the stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0. Infintiy is handled consistent with C++ |
 | 28 | NOT | Pops a byte off the stack. If it is != 0, push 0 to stack, otherwise 1 |
 | 29 | FPTOSI | Pops an 8-byte float off the stack, cast it to a signed 8-byte integer and push to the stack |
 | 30 | FPTOUI | Pops an 8-byte float off the stack, cast it to an unsigned 8-byte integer and push to the stack |
@@ -164,18 +166,18 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 33 | IADD | Pops two 8-byte integers off the stack. Adds them and pushes the result to stack |
 | 34 | ISUB | Pops two 8-byte integers off the stack. Subtracts them and pushes the result to stack |
 | 35 | IMUL | Pops two 8-byte integers off the stack. Multiplies them and pushes the result to stack |
-| 36 | UDIV | Pops two 8-byte unsigned integers off the stack. Divides them and pushes the result to stack |
-| 37 | SDIV | Pops two 8-byte signed integers off the stack. Divides them and pushes the result to stack |
-| 38 | UMOD | Pops two 8-byte unsigned integers off the stack. Computes modulo and pushes the result to stack |
-| 39 | SMOD | Pops two 8-byte signed integers off the stack. Computes modulo and pushes the result to stack |
-| 40 | FADD | Pops two 8-byte floats off the stack. Adds them and pushes the result to stack |
-| 41 | FSUB | Pops two 8-byte floats off the stack. Subtracts them and pushes the result to stack |
-| 42 | FMUL | Pops two 8-byte floats off the stack. Multiplies them and pushes the result to stack |
-| 43 | FDIV | Pops two 8-byte floats off the stack. Divides them and pushes the result to stack |
-| 44 | FLOAT_FLOOR_DIV | Pops two 8-byte floats off the stack. Performs floor division and pushes the result to stack |
-| 45 | FPOW | Pops two 8-byte floats off the stack. Computes power and pushes the result to stack |
-| 46 | FLOG | Pops two 8-byte floats off the stack. Computes logarithm and pushes the result to stack |
-| 47 | FMOD | Pops two 8-byte floats off the stack. Computes modulo and pushes the result to stack |
+| 36 | UDIV | Pops two 8-byte unsigned integers off the stack. Divides them and pushes the result to stack. A divisor of 0 will result in DOMAIN_ERROR. |
+| 37 | SDIV | Pops two 8-byte signed integers off the stack. Divides them and pushes the result to stack. A divisor of 0 will result in DOMAIN_ERROR. |
+| 38 | UMOD | Pops two 8-byte unsigned integers off the stack. Computes modulo and pushes the result to stack. A 0 modulous will result in DOMAIN_ERROR. |
+| 39 | SMOD | Pops two 8-byte signed integers off the stack. Computes modulo and pushes the result to stack. A 0 modulous will result in DOMAIN_ERROR. |
+| 40 | FADD | Pops two 8-byte floats off the stack. Adds them and pushes the result to stack.  NaN, and infinity are handled consistently with C++ addition |
+| 41 | FSUB | Pops two 8-byte floats off the stack. Subtracts them and pushes the result to stack.  NaN, and infinity are handled consistently with C++ subtraction |
+| 42 | FMUL | Pops two 8-byte floats off the stack. Multiplies them and pushes the result to stack.  NaN, and infinity are handled consistently with C++ multiplication |
+| 43 | FDIV | Pops two 8-byte floats off the stack. Divides them and pushes the result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division |
+| 44 | FLOAT_FLOOR_DIV | Pops two 8-byte floats off the stack. Performs floor division and pushes the result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division and `std::floor` |
+| 45 | FPOW | Pops two 8-byte floats off the stack. Computes power and pushes the result to stack. NaN and infitity values are handled consistently with C++ `std::pow`. |
+| 46 | FLOG | Pops one 8-byte float off the stack. Computes logarithm (base 10) and pushes the result to stack. Negatives yield a DOMAIN_ERROR, NaN and infitity values are handled consistently with C++ `std::log` |
+| 47 | FMOD | Pops two 8-byte floats off the stack. Computes modulo and pushes the result to stack. A NaN will produce a NaN result or infinty as either argument yields NaN. |
 | 48 | FPEXT | Pops a 4-byte float off the stack, cast it to an 8-byte float and push to the stack |
 | 49 | FPTRUNC | Pops an 8-byte float off the stack, cast it to a 4-byte float and push to the stack |
 | 50 | SIEXT_8_64 | Sign extends an 8-bit integer to 64 bits |
