@@ -31,6 +31,7 @@ class MallocAllocator : public MemAllocator {
     //! Allocate memory
     //!
     //! Allocate memory using malloc(). The identifier is unused and memory is never recoverable.
+    //! malloc() guarantees alignment for any type and so does this allocator. It will not respect smaller alignments.
     //!
     //! \param identifier the memory segment identifier (not used)
     //! \param size the requested size (not changed)
