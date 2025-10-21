@@ -748,7 +748,7 @@ TEST_F(FpySequencerTester, fne) {
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
 }
 
 TEST_F(FpySequencerTester, not) {
