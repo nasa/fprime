@@ -792,7 +792,7 @@ DirectiveError FpySequencer::op_imul() {
         return DirectiveError::ARITHMETIC_OVERFLOW;
     }
     // Check the both negative case
-    else if ((rhs < 0) && (lhs < 0) && ((std::numeric_limits<I64>::max() / (-1.0 * rhs)) < (-1 * lhs))) {
+    else if ((rhs < 0) && (lhs < 0) && ((std::numeric_limits<I64>::max() / (-1 * rhs)) < (-1 * lhs))) {
         return DirectiveError::ARITHMETIC_OVERFLOW;
     }
     // Underflow can occur with operands of differing signs and occurs when one operand is less than the minimum value
