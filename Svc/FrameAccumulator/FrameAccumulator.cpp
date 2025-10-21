@@ -146,7 +146,7 @@ void FrameAccumulator ::processRing() {
         // More data needed
         else if (status == FrameDetector::MORE_DATA_NEEDED) {
             if (size_out > ringCapacity) {
-                // Detector reports a size_out larger than the ring capacity. We can not accumulate enough
+                // Detector reports a size_out larger than the ring capacity. We cannot accumulate enough
                 // data to hold the entire frame. Log a warning and discard a byte to effectively drop the frame.
                 this->log_WARNING_HI_FrameDetectionSizeError(size_out);
                 // Discard a single byte of data and start again
