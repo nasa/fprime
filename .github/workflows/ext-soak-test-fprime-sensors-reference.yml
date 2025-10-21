@@ -1,6 +1,6 @@
 # Cross-compile https://github.com/fprime-community/fprime-sensors-reference
 
-name: "External Repo: F Prime Sensors Referece (RPI5)"
+name: "External Repo: F Prime Sensors Reference (RPI5)"
 
 on:
   release:
