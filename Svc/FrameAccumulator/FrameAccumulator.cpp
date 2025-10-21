@@ -118,17 +118,16 @@ void FrameAccumulator ::processRing() {
                   static_cast<FwAssertArgType>(m_inRing.get_allocated_size()), static_cast<FwAssertArgType>(remaining));
         // On successful detection, consume data from the ring buffer and place it into an allocated frame
         if (status == FrameDetector::FRAME_DETECTED) {
-            // size_out must be set to the size of the buffer and must fit within the existing data
+            // size_out must be set (non-zero) and must fit within the remaining data. Otherwise would mean
+            // a coding error in the detector (returned FRAME_DETECTED without proper validation)
             FW_ASSERT(size_out != 0);
             FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
                       static_cast<FwAssertArgType>(remaining));
-            // check for overflow before casting down to U32
-            FW_ASSERT(size_out <= std::numeric_limits<U32>::max());
-            Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
+            Fw::Buffer buffer = this->allocate_out(0, size_out);
             if (buffer.isValid()) {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
-                buffer.setSize(static_cast<Fw::Buffer::SizeType>(size_out));
+                buffer.setSize(size_out);
                 FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 // Consume (rotate) the data from the ring buffer
                 serialize_status = this->m_inRing.rotate(size_out);
@@ -146,13 +145,24 @@ void FrameAccumulator ::processRing() {
         }
         // More data needed
         else if (status == FrameDetector::MORE_DATA_NEEDED) {
-            // size_out can never be larger than the capacity of the ring. Otherwise all uplink will fail.
-            FW_ASSERT(size_out < m_inRing.get_capacity(), static_cast<FwAssertArgType>(size_out));
-            // Detection should report "more is needed" and set size_out to something larger than available data
-            FW_ASSERT(size_out > remaining, static_cast<FwAssertArgType>(size_out),
-                      static_cast<FwAssertArgType>(remaining));
-            // Break out of loop: suspend detection until we receive another buffer
-            break;
+            if (size_out > ringCapacity) {
+                // Detector reports a size_out larger than the ring capacity. We can not accumulate enough
+                // data to hold the entire frame. Log a warning and discard a byte to effectively drop the frame.
+                this->log_WARNING_HI_FrameDetectionSizeError(size_out);
+                // Discard a single byte of data and start again
+                (void)this->m_inRing.rotate(1);
+                FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
+                          static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
+                          static_cast<FwAssertArgType>(remaining));
+            } else {
+                // size_out can never be larger than the capacity of the ring. Otherwise all uplink will fail.
+                FW_ASSERT(size_out <= m_inRing.get_capacity(), static_cast<FwAssertArgType>(size_out));
+                // Detection should report "more is needed" and set size_out to something larger than available data
+                FW_ASSERT(size_out > remaining, static_cast<FwAssertArgType>(size_out),
+                          static_cast<FwAssertArgType>(remaining));
+                // Break out of loop: suspend detection until we receive another buffer
+                break;
+            }
         }
         // No frame was detected or an unknown status was received
         else {
@@ -170,7 +180,7 @@ void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum,
                                              const ComCfg::FrameContext& context) {
     // Frame buffer ownership is returned to the component. Component had allocated with a buffer manager,
     // so we return it to the buffer manager for deallocation
-    this->bufferDeallocate_out(0, fwBuffer);
+    this->deallocate_out(0, fwBuffer);
 }
 
 }  // namespace Svc

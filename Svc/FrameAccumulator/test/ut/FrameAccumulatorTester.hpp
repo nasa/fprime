@@ -66,6 +66,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test returning ownership of a buffer
     void testBufferReturnDeallocation();
 
+    //! Test handling of errors from the FrameDetector (too large size_out)
+    void testDetectionErrorHandling();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -87,7 +90,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // Port handler overrides
     // ----------------------------------------------------------------------
     //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
+    Fw::Buffer from_allocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------

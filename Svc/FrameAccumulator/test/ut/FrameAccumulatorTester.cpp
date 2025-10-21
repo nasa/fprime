@@ -155,9 +155,34 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
     this->invoke_to_dataReturnIn(0, buffer, context);
-    ASSERT_from_bufferDeallocate_SIZE(1);  // incoming buffer should be deallocated
-    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), data);
-    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
+    ASSERT_from_deallocate_SIZE(1);  // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
+void FrameAccumulatorTester ::testDetectionErrorHandling() {
+    FwSizeType too_large_size = this->component.m_inRing.get_capacity() + 1;
+    // Using buffer_size=1 to simplify test since otherwise Accumulator will loop `buffer_size` times
+    Fw::Buffer::SizeType buffer_size = 1;
+    U8 data[buffer_size];
+    Fw::Buffer buffer(data, buffer_size);
+    ComCfg::FrameContext context;
+
+    // Too large size reported by detector should crash if returning FRAME_DETECTED
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, too_large_size);
+    ASSERT_DEATH(this->invoke_to_dataIn(0, buffer, context), "");
+
+    this->clearHistory();
+
+    // Too large size reported by detector should emit event and continue if returning MORE_DATA_NEEDED
+    this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, too_large_size);
+    this->invoke_to_dataIn(0, buffer, context);
+    // Checks
+    ASSERT_from_dataReturnOut_SIZE(1);                         // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                               // No frame was sent out
+    ASSERT_EVENTS_SIZE(1);                                     // One event should be logged:
+    ASSERT_EVENTS_FrameDetectionSizeError_SIZE(1);             // FrameDetectionSizeError
+    ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
 }
 
 // ----------------------------------------------------------------------
@@ -202,8 +227,8 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 // Port handler overrides
 // ----------------------------------------------------------------------
-Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
-    this->pushFromPortEntry_bufferAllocate(size);
+Fw::Buffer FrameAccumulatorTester ::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
+    this->pushFromPortEntry_allocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);
     ::memset(this->m_buffer.getData(), 0, size);
