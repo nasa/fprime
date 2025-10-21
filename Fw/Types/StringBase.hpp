@@ -28,12 +28,12 @@ class ConstStringBase : public Serializable {
   public:
     using SizeType = FwSizeType;
 
-    //<! Convert to a C-style char*
+    //! Convert to a C-style char*
     virtual const CHAR* toChar() const = 0;
-    //!< Return the size of the buffer
+    //! Return the size of the buffer
     virtual SizeType getCapacity() const = 0;
-    //!< Get the length of the string
-    virtual SizeType length() const = 0;
+    //! Get the length of the string
+    virtual SizeType length() const;
     //! Get the maximum length of a string that the buffer can hold (which is capacity - 1)
     SizeType maxLength() const;
 
@@ -67,6 +67,9 @@ class ConstStringBase : public Serializable {
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
+    // NOTE: all derived classes should override this function; it will always return an error
+    // status since ConstStringBase is immutable and deserializeFrom is not a read-only operation
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {
@@ -98,7 +101,7 @@ class ConstStringBase : public Serializable {
 
 class StringBase : public ConstStringBase {
   public:
-    //!< Get the length of the string
+    //! Get the length of the string
     SizeType length() const override;
 
     const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*

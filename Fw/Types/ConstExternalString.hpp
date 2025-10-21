@@ -22,7 +22,7 @@ class ConstExternalString final : public ConstStringBase {
     ConstExternalString() : ConstStringBase(), m_bufferPtr(nullptr), m_bufferSize(0) {}
 
     //! Constructor (bufferPtr and bufferSize)
-    ConstExternalString(const char* bufferPtr,           //!< The buffer pointer
+    ConstExternalString(const char* bufferPtr,                //!< The buffer pointer
                         ConstStringBase::SizeType bufferSize  //!< The buffer size
                         )
         : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize + 1) {}
@@ -40,9 +40,6 @@ class ConstExternalString final : public ConstStringBase {
 
     //! Returns the buffer size
     ConstStringBase::SizeType getCapacity() const { return this->m_bufferSize; }
-
-    //!< Get the length of the string
-    ConstStringBase::SizeType length() const { return this->m_bufferSize - 1; }
 
   private:
     // ----------------------------------------------------------------------

@@ -24,6 +24,13 @@ ConstStringBase::ConstStringBase() {}
 
 ConstStringBase::~ConstStringBase() {}
 
+ConstStringBase::SizeType ConstStringBase::length() const {
+    // The length of the string should be 1 less than its capacity (string + null terminator)
+    const SizeType capacity = this->getCapacity();
+    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
+    return capacity - 1;
+}
+
 ConstStringBase::SizeType ConstStringBase::maxLength() const {
     const SizeType capacity = this->getCapacity();
     FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
@@ -76,6 +83,12 @@ SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, SizeTy
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
+SerializeStatus ConstStringBase::deserializeFrom(SerializeBufferBase& buffer) {
+    // Cannot deserialize into a read-only string
+    // This should be overridden by derived classes
+    return SerializeStatus::FW_DESERIALIZE_IMMUTABLE;
+}
+
 #ifdef BUILD_UT
 std::ostream& operator<<(std::ostream& os, const ConstStringBase& str) {
     os << str.toChar();
@@ -85,7 +98,7 @@ std::ostream& operator<<(std::ostream& os, const ConstStringBase& str) {
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
 void ConstStringBase::toString(StringBase& text) const {
-    text = this->toChar();
+    text = *this;
 }
 #endif
 
