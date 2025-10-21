@@ -655,7 +655,7 @@ DirectiveError FpySequencer::op_flt() {
     }
     F64 rhs = this->pop<F64>();
     F64 lhs = this->pop<F64>();
-    this->push(static_cast<U8>(isless(lhs, rhs)));
+    this->push(static_cast<U8>(std::isless(lhs, rhs)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fle() {
@@ -664,7 +664,7 @@ DirectiveError FpySequencer::op_fle() {
     }
     F64 rhs = this->pop<F64>();
     F64 lhs = this->pop<F64>();
-    this->push(static_cast<U8>(islessequal(lhs, rhs)));
+    this->push(static_cast<U8>(std::islessequal(lhs, rhs)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fgt() {
@@ -673,7 +673,7 @@ DirectiveError FpySequencer::op_fgt() {
     }
     F64 rhs = this->pop<F64>();
     F64 lhs = this->pop<F64>();
-    this->push(static_cast<U8>(isgreater(lhs, rhs)));
+    this->push(static_cast<U8>(std::isgreater(lhs, rhs)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fge() {
@@ -682,7 +682,7 @@ DirectiveError FpySequencer::op_fge() {
     }
     F64 rhs = this->pop<F64>();
     F64 lhs = this->pop<F64>();
-    this->push(static_cast<U8>(isgreaterequal(lhs, rhs)));
+    this->push(static_cast<U8>(std::isgreaterequal(lhs, rhs)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_not() {
