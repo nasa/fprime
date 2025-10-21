@@ -82,8 +82,7 @@ SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& b
     }
 
     // telemetry buffer
-    stat =
-        this->m_tlmBuffer.serializeFrom(buffer.getBuffAddr(), buffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+    stat = this->m_tlmBuffer.serializeFrom(buffer.getBuffAddr(), buffer.getSize(), Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -132,8 +131,7 @@ SerializeStatus TlmPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness 
         return stat;
     }
     // Serialize the ComBuffer
-    return buffer.serializeFrom(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getSize(),
-                                Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {

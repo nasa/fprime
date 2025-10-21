@@ -57,8 +57,7 @@ Signal FpySequencer::dispatchStatement() {
 Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective) {
     Fw::SerializeStatus status;
     // make our own esb so we can deser from stmt without breaking its constness
-    Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.get_argBuf().getBuffAddr()),
-                                       stmt.get_argBuf().getSize());
+    Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.get_argBuf().getBuffAddr()), stmt.get_argBuf().getSize());
     argBuf.setBuffLen(stmt.get_argBuf().getSize());
 
     switch (stmt.get_opCode()) {
@@ -181,7 +180,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
 
             // now there should be nothing left, otherwise coding err
-            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0, static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
+            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,
+                      static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
 
             // and set the buf size now that we know it
             deserializedDirective.constCmd.set__argBufSize(cmdArgBufSize);
@@ -312,7 +312,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
 
             // now there should be nothing left, otherwise coding err
-            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0, static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
+            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,
+                      static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
 
             // and set the buf size now that we know it
             deserializedDirective.pushVal.set__valSize(bufSize);

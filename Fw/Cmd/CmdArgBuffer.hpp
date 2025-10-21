@@ -31,11 +31,11 @@ class CmdArgBuffer final : public SerializeBufferBase {
     virtual ~CmdArgBuffer();                             //!< destructor
     CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");  
-    FwSizeType getCapacity() const;      //!< return capacity of buffer (how much it can hold)
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
+    FwSizeType getCapacity() const;  //!< return capacity of buffer (how much it can hold)
 
-    U8* getBuffAddr();                   //!< return address of buffer (non const version)
-    const U8* getBuffAddr() const;       //!< return address of buffer (const version)
+    U8* getBuffAddr();              //!< return address of buffer (non const version)
+    const U8* getBuffAddr() const;  //!< return address of buffer (const version)
 
   private:
     U8 m_bufferData[FW_CMD_ARG_BUFFER_MAX_SIZE];  //!< command argument buffer

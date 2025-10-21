@@ -21,7 +21,7 @@ typedef enum {
     FW_DESERIALIZE_TYPE_MISMATCH   //!< Deserialized type ID didn't match
 } SerializeStatus;
 
-class SerialBufferBase;     //!< forward declaration
+class SerialBufferBase;  //!< forward declaration
 class LinearBufferBase;  //!< forward declaration
 
 // TODO: Temporary backwards-compatibility hack. Remove this when all references to SerializeBufferBase are migrated.
@@ -54,8 +54,7 @@ class Serializable {
     //! \param buffer Reference to the SerialBufferBase where data will be serialized
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeTo(SerialBufferBase& buffer,
-                                        Endianness mode = Endianness::BIG) const = 0;
+    virtual SerializeStatus serializeTo(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) const = 0;
 
     //! \brief Deserialize the contents of this object from a buffer
     //!
@@ -66,9 +65,7 @@ class Serializable {
     //! \param buffer Reference to the SerialBufferBase from which data will be deserialized
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeFrom(
-        SerialBufferBase& buffer,
-        Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) = 0;
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility
@@ -243,8 +240,7 @@ class SerialBufferBase {
     //! \param val The pointer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeFrom(const void* val,
-                                  Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus serializeFrom(const void* val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Serialize a data buffer
     //!
@@ -255,7 +251,9 @@ class SerialBufferBase {
     //! \param length Number of bytes to serialize from the buffer
     //! \param endianMode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeFrom(const U8* buff, FwSizeType length, Endianness endianMode = Endianness::BIG) = 0;
+    virtual SerializeStatus serializeFrom(const U8* buff,
+                                          FwSizeType length,
+                                          Endianness endianMode = Endianness::BIG) = 0;
 
     //! \brief Serialize a byte buffer with optional length prefix
     //!
@@ -269,9 +267,9 @@ class SerialBufferBase {
     //! \param endianMode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus serializeFrom(const U8* buff,
-                                  FwSizeType length,
-                                  Serialization::t lengthMode,
-                                  Endianness endianMode = Endianness::BIG) = 0;
+                                          FwSizeType length,
+                                          Serialization::t lengthMode,
+                                          Endianness endianMode = Endianness::BIG) = 0;
 
     //! \brief Serialize another LinearBufferBase object
     //!
@@ -282,8 +280,7 @@ class SerialBufferBase {
     //! \param val Reference to the LinearBufferBase object to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeFrom(const LinearBufferBase& val,
-                                  Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus serializeFrom(const LinearBufferBase& val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Serialize a Serializable object
     //!
@@ -294,9 +291,7 @@ class SerialBufferBase {
     //! \param val Reference to the Serializable object to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeFrom(
-        const Serializable& val,
-        Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus serializeFrom(const Serializable& val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Serialize a size value
     //!
@@ -307,8 +302,7 @@ class SerialBufferBase {
     //! \param size The size value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeSize(const FwSizeType size,
-                                  Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus serializeSize(const FwSizeType size, Endianness mode = Endianness::BIG) = 0;
 
     // Deserialization for built-in types
 
@@ -447,9 +441,7 @@ class SerialBufferBase {
     //! \param val Reference to store the deserialized pointer value
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeTo(
-        void*& val,
-        Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeTo(void*& val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a data buffer
     //!
@@ -461,9 +453,7 @@ class SerialBufferBase {
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeTo(U8* buff,
-                                  FwSizeType& length,
-                                  Endianness endianMode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeTo(U8* buff, FwSizeType& length, Endianness endianMode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a byte buffer with optional length prefix
     //!
@@ -479,9 +469,9 @@ class SerialBufferBase {
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus deserializeTo(U8* buff,
-                                  FwSizeType& length,
-                                  Serialization::t lengthMode,
-                                  Endianness endianMode = Endianness::BIG) = 0;
+                                          FwSizeType& length,
+                                          Serialization::t lengthMode,
+                                          Endianness endianMode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a Serializable object
     //!
@@ -492,9 +482,7 @@ class SerialBufferBase {
     //! \param val Reference to the Serializable object that will be populated with deserialized data
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeTo(
-        Serializable& val,
-        Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeTo(Serializable& val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a LinearBufferBase object
     //!
@@ -505,8 +493,7 @@ class SerialBufferBase {
     //! \param val Reference to the LinearBufferBase object that will be populated with deserialized data
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeTo(LinearBufferBase& val,
-                                  Endianness mode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeTo(LinearBufferBase& val, Endianness mode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a size value
     //!
@@ -604,8 +591,7 @@ class SerialBufferBase {
     //!
     //! \param numBytesToSkip Number of bytes to skip during serialization
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus serializeSkip(
-        FwSizeType numBytesToSkip) = 0;
+    virtual SerializeStatus serializeSkip(FwSizeType numBytesToSkip) = 0;
 
     //! \brief Skip specified number of bytes during deserialization
     //!
@@ -615,8 +601,7 @@ class SerialBufferBase {
     //!
     //! \param numBytesToSkip Number of bytes to skip during deserialization
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeSkip(
-        FwSizeType numBytesToSkip) = 0;
+    virtual SerializeStatus deserializeSkip(FwSizeType numBytesToSkip) = 0;
 
     //! \brief Get buffer capacity
     //!
@@ -709,7 +694,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     SerializeStatus serializeFrom(U8 val, Endianness mode = Endianness::BIG) override;
-    
+
     //! \brief Serialize an 8-bit signed integer value
     //!
     //! This method serializes a single 8-bit signed integer value into the buffer.
@@ -822,8 +807,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val The pointer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus serializeFrom(const void* val,
-                                  Endianness mode = Endianness::BIG) override;
+    SerializeStatus serializeFrom(const void* val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Serialize a data buffer
     //!
@@ -861,8 +845,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val Reference to the LinearBufferBase object to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus serializeFrom(const LinearBufferBase& val,
-                                  Endianness mode = Endianness::BIG) override;
+    SerializeStatus serializeFrom(const LinearBufferBase& val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Serialize a Serializable object
     //!
@@ -873,9 +856,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val Reference to the Serializable object to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus serializeFrom(
-        const Serializable& val,
-        Endianness mode = Endianness::BIG) override;
+    SerializeStatus serializeFrom(const Serializable& val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Serialize a size value
     //!
@@ -886,8 +867,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param size The size value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus serializeSize(const FwSizeType size,
-                                  Endianness mode = Endianness::BIG) override;
+    SerializeStatus serializeSize(const FwSizeType size, Endianness mode = Endianness::BIG) override;
 
     // Deserialization for built-in types
 
@@ -1026,9 +1006,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val Reference to store the deserialized pointer value
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeTo(
-        void*& val,
-        Endianness mode = Endianness::BIG) override;
+    SerializeStatus deserializeTo(void*& val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Deserialize a data buffer
     //!
@@ -1040,9 +1018,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeTo(U8* buff,
-                                  FwSizeType& length,
-                                  Endianness endianMode = Endianness::BIG) override;
+    SerializeStatus deserializeTo(U8* buff, FwSizeType& length, Endianness endianMode = Endianness::BIG) override;
 
     //! \brief Deserialize a byte buffer with optional length prefix
     //!
@@ -1071,9 +1047,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val Reference to the Serializable object that will be populated with deserialized data
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeTo(
-        Serializable& val,
-        Endianness mode = Endianness::BIG) override;
+    SerializeStatus deserializeTo(Serializable& val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Deserialize a LinearBufferBase object
     //!
@@ -1084,8 +1058,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param val Reference to the LinearBufferBase object that will be populated with deserialized data
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeTo(LinearBufferBase& val,
-                                  Endianness mode = Endianness::BIG) override;
+    SerializeStatus deserializeTo(LinearBufferBase& val, Endianness mode = Endianness::BIG) override;
 
     //! \brief Deserialize a size value
     //!
@@ -1100,8 +1073,7 @@ class LinearBufferBase : public SerialBufferBase {
 
     DEPRECATED(SerializeStatus serialize(const LinearBufferBase& val),
                "Use serializeFrom(const SerialBufferBase& val) instead");
-    DEPRECATED(SerializeStatus deserialize(LinearBufferBase& val),
-               "Use deserializeTo(SerialBufferBase& val) instead");
+    DEPRECATED(SerializeStatus deserialize(LinearBufferBase& val), "Use deserializeTo(SerialBufferBase& val) instead");
 
     //! \brief Reset serialization pointer to beginning of buffer
     //!
@@ -1150,8 +1122,7 @@ class LinearBufferBase : public SerialBufferBase {
     //!
     //! \param numBytesToSkip Number of bytes to skip during serialization
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus serializeSkip(
-        FwSizeType numBytesToSkip) override;
+    SerializeStatus serializeSkip(FwSizeType numBytesToSkip) override;
 
     //! \brief Skip specified number of bytes during deserialization
     //!
@@ -1161,8 +1132,7 @@ class LinearBufferBase : public SerialBufferBase {
     //!
     //! \param numBytesToSkip Number of bytes to skip during deserialization
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeSkip(
-        FwSizeType numBytesToSkip) override;
+    SerializeStatus deserializeSkip(FwSizeType numBytesToSkip) override;
 
     DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
     DEPRECATED(Serializable::SizeType getBuffLength() const, "Use getSize() instead");

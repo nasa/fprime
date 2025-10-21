@@ -226,16 +226,14 @@ SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
-SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
-                                                   Serializable::SizeType length,
-                                                   Endianness endianMode) {
+SerializeStatus LinearBufferBase::serializeFrom(const U8* buff, Serializable::SizeType length, Endianness endianMode) {
     return this->serializeFrom(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH, endianMode);
 }
 
 SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
-                                                   FwSizeType length,
-                                                   Serialization::t lengthMode,
-                                                   Endianness endianMode) {  // First serialize length
+                                                FwSizeType length,
+                                                Serialization::t lengthMode,
+                                                Endianness endianMode) {  // First serialize length
     SerializeStatus stat;
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
         stat = this->serializeFrom(static_cast<FwSizeStoreType>(length), endianMode);
@@ -263,8 +261,7 @@ SerializeStatus LinearBufferBase::serializeFrom(const Serializable& val, Endiann
 
 SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val, Endianness mode) {
     Serializable::SizeType size = val.getSize();
-    if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) >
-        this->getCapacity()) {
+    if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) > this->getCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
@@ -522,9 +519,9 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff, Serializable::SizeType
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
-                                                   Serializable::SizeType& length,
-                                                   Serialization::t lengthMode,
-                                                   Endianness endianMode) {
+                                                Serializable::SizeType& length,
+                                                Serialization::t lengthMode,
+                                                Endianness endianMode) {
     FW_ASSERT(this->getBuffAddr());
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {

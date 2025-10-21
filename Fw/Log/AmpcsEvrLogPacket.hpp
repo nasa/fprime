@@ -23,7 +23,8 @@ class AmpcsEvrLogPacket : public ComPacket {
     AmpcsEvrLogPacket();
     virtual ~AmpcsEvrLogPacket();
 
-    SerializeStatus serializeTo(SerialBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
+    SerializeStatus serializeTo(SerialBufferBase& buffer,
+                                Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG);
 
     void setTaskName(U8* taskName, U8 len);

@@ -33,8 +33,7 @@ SerializeStatus LogPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness 
     }
 
     // We want to add data but not size for the ground software
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(),
-                                Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus LogPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {

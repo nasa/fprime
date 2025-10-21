@@ -39,8 +39,7 @@ SerializeStatus AmpcsEvrLogPacket::serializeTo(SerialBufferBase& buffer) const {
         return stat;
     }
 
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(),
-                                Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {

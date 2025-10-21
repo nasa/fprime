@@ -38,7 +38,7 @@ class ParamBuffer final : public SerializeBufferBase {
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
-    
+
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 
