@@ -22,7 +22,10 @@ typedef enum {
 } SerializeStatus;
 
 class SerialBufferBase;     //!< forward declaration
-class SerializeBufferBase;  //!< forward declaration
+class LinearBufferBase;  //!< forward declaration
+
+// TODO: Temporary backwards-compatibility hack. 
+using SerializeBufferBase = LinearBufferBase;
 
 struct Serialization {
     enum t {
@@ -54,12 +57,12 @@ class Serializable {
     // ----------------------------------------------------------------------
 
     DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
-               "Use serializeTo(SerializeBufferBase& buffer) instead") {
+               "Use serializeTo(SerialBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
     DEPRECATED(SerializeStatus deserialize(SerialBufferBase& buffer),
-               "Use deserializeFrom(SerializeBufferBase& buffer) instead") {
+               "Use deserializeFrom(SerialBufferBase& buffer) instead") {
         return this->deserializeFrom(buffer);
     }
 
@@ -121,7 +124,7 @@ class SerialBufferBase {
                                   Serialization::t lengthMode,
                                   Endianness endianMode = Endianness::BIG) = 0;
 
-    virtual SerializeStatus serializeFrom(const SerializeBufferBase& val,
+    virtual SerializeStatus serializeFrom(const LinearBufferBase& val,
                                   Endianness mode = Endianness::BIG) = 0;  //!< serialize a serialized buffer
 
     virtual SerializeStatus serializeFrom(
@@ -177,7 +180,7 @@ class SerialBufferBase {
         Serializable& val,
         Endianness mode = Endianness::BIG) = 0;  //!< deserialize an object derived from serializable base class
 
-    virtual SerializeStatus deserializeTo(SerializeBufferBase& val,
+    virtual SerializeStatus deserializeTo(LinearBufferBase& val,
                                   Endianness mode = Endianness::BIG) = 0;  //!< serialize a serialized buffer
 
     virtual SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG) = 0;  //!< deserialize a size value
@@ -240,42 +243,42 @@ class SerialBufferBase {
     virtual SerializeStatus setBuffLen(Serializable::SizeType length) = 0;  //!< sets buffer length manually after filling with data
 };
 
-class SerializeBufferBase : public SerialBufferBase {
+class LinearBufferBase : public SerialBufferBase {
     friend class SerializeBufferBaseTester;
 
   protected:
-    SerializeBufferBase& operator=(const SerializeBufferBase& src);  //!< copy assignment operator
+    LinearBufferBase& operator=(const LinearBufferBase& src);  //!< copy assignment operator
 
   public:
-    virtual ~SerializeBufferBase();  //!< destructor
+    virtual ~LinearBufferBase();  //!< destructor
 
     // Serialization for built-in types
 
-    SerializeStatus serializeFrom(U8 val, Endianness mode = Endianness::BIG);  //!< serialize 8-bit unsigned int
-    SerializeStatus serializeFrom(I8 val, Endianness mode = Endianness::BIG);  //!< serialize 8-bit signed int
+    SerializeStatus serializeFrom(U8 val, Endianness mode = Endianness::BIG) override;  //!< serialize 8-bit unsigned int
+    SerializeStatus serializeFrom(I8 val, Endianness mode = Endianness::BIG) override;  //!< serialize 8-bit signed int
 
 #if FW_HAS_16_BIT == 1
-    SerializeStatus serializeFrom(U16 val, Endianness mode = Endianness::BIG);  //!< serialize 16-bit unsigned int
-    SerializeStatus serializeFrom(I16 val, Endianness mode = Endianness::BIG);  //!< serialize 16-bit signed int
+    SerializeStatus serializeFrom(U16 val, Endianness mode = Endianness::BIG) override;  //!< serialize 16-bit unsigned int
+    SerializeStatus serializeFrom(I16 val, Endianness mode = Endianness::BIG) override;  //!< serialize 16-bit signed int
 #endif
 #if FW_HAS_32_BIT == 1
-    SerializeStatus serializeFrom(U32 val, Endianness mode = Endianness::BIG);  //!< serialize 32-bit unsigned int
-    SerializeStatus serializeFrom(I32 val, Endianness mode = Endianness::BIG);  //!< serialize 32-bit signed int
+    SerializeStatus serializeFrom(U32 val, Endianness mode = Endianness::BIG) override;  //!< serialize 32-bit unsigned int
+    SerializeStatus serializeFrom(I32 val, Endianness mode = Endianness::BIG) override;  //!< serialize 32-bit signed int
 #endif
 #if FW_HAS_64_BIT == 1
-    SerializeStatus serializeFrom(U64 val, Endianness mode = Endianness::BIG);  //!< serialize 64-bit unsigned int
-    SerializeStatus serializeFrom(I64 val, Endianness mode = Endianness::BIG);  //!< serialize 64-bit signed int
+    SerializeStatus serializeFrom(U64 val, Endianness mode = Endianness::BIG) override;  //!< serialize 64-bit unsigned int
+    SerializeStatus serializeFrom(I64 val, Endianness mode = Endianness::BIG) override;  //!< serialize 64-bit signed int
 #endif
-    SerializeStatus serializeFrom(F32 val, Endianness mode = Endianness::BIG);   //!< serialize 32-bit floating point
-    SerializeStatus serializeFrom(F64 val, Endianness mode = Endianness::BIG);   //!< serialize 64-bit floating point
-    SerializeStatus serializeFrom(bool val, Endianness mode = Endianness::BIG);  //!< serialize boolean
+    SerializeStatus serializeFrom(F32 val, Endianness mode = Endianness::BIG) override;   //!< serialize 32-bit floating point
+    SerializeStatus serializeFrom(F64 val, Endianness mode = Endianness::BIG) override;   //!< serialize 64-bit floating point
+    SerializeStatus serializeFrom(bool val, Endianness mode = Endianness::BIG) override;  //!< serialize boolean
 
     SerializeStatus serializeFrom(const void* val,
-                                  Endianness mode = Endianness::BIG);  //!< serialize pointer (careful, only pointer
+                                  Endianness mode = Endianness::BIG) override;  //!< serialize pointer (careful, only pointer
                                                                        //!< value, not contents are serialized)
 
     //! serialize data buffer
-    SerializeStatus serializeFrom(const U8* buff, FwSizeType length, Endianness endianMode = Endianness::BIG);
+    SerializeStatus serializeFrom(const U8* buff, FwSizeType length, Endianness endianMode = Endianness::BIG) override;
 
     //! \brief serialize a byte buffer of a given length
     //!
@@ -289,47 +292,47 @@ class SerializeBufferBase : public SerialBufferBase {
     SerializeStatus serializeFrom(const U8* buff,
                                   FwSizeType length,
                                   Serialization::t lengthMode,
-                                  Endianness endianMode = Endianness::BIG);
+                                  Endianness endianMode = Endianness::BIG) override;
 
-    SerializeStatus serializeFrom(const SerializeBufferBase& val,
-                                  Endianness mode = Endianness::BIG);  //!< serialize a serialized buffer
+    SerializeStatus serializeFrom(const LinearBufferBase& val,
+                                  Endianness mode = Endianness::BIG) override;  //!< serialize a serialized buffer
 
     SerializeStatus serializeFrom(
         const Serializable& val,
-        Endianness mode = Endianness::BIG);  //!< serialize an object derived from serializable base class
+        Endianness mode = Endianness::BIG) override;  //!< serialize an object derived from serializable base class
 
     SerializeStatus serializeSize(const FwSizeType size,
-                                  Endianness mode = Endianness::BIG);  //!< serialize a size value
+                                  Endianness mode = Endianness::BIG) override;  //!< serialize a size value
 
     // Deserialization for built-in types
 
-    SerializeStatus deserializeTo(U8& val, Endianness mode = Endianness::BIG);  //!< deserialize 8-bit unsigned int
-    SerializeStatus deserializeTo(I8& val, Endianness mode = Endianness::BIG);  //!< deserialize 8-bit signed int
+    SerializeStatus deserializeTo(U8& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 8-bit unsigned int
+    SerializeStatus deserializeTo(I8& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 8-bit signed int
 
 #if FW_HAS_16_BIT == 1
-    SerializeStatus deserializeTo(U16& val, Endianness mode = Endianness::BIG);  //!< deserialize 16-bit unsigned int
-    SerializeStatus deserializeTo(I16& val, Endianness mode = Endianness::BIG);  //!< deserialize 16-bit signed int
+    SerializeStatus deserializeTo(U16& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 16-bit unsigned int
+    SerializeStatus deserializeTo(I16& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 16-bit signed int
 #endif
 
 #if FW_HAS_32_BIT == 1
-    SerializeStatus deserializeTo(U32& val, Endianness mode = Endianness::BIG);  //!< deserialize 32-bit unsigned int
-    SerializeStatus deserializeTo(I32& val, Endianness mode = Endianness::BIG);  //!< deserialize 32-bit signed int
+    SerializeStatus deserializeTo(U32& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 32-bit unsigned int
+    SerializeStatus deserializeTo(I32& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 32-bit signed int
 #endif
 #if FW_HAS_64_BIT == 1
-    SerializeStatus deserializeTo(U64& val, Endianness mode = Endianness::BIG);  //!< deserialize 64-bit unsigned int
-    SerializeStatus deserializeTo(I64& val, Endianness mode = Endianness::BIG);  //!< deserialize 64-bit signed int
+    SerializeStatus deserializeTo(U64& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 64-bit unsigned int
+    SerializeStatus deserializeTo(I64& val, Endianness mode = Endianness::BIG) override;  //!< deserialize 64-bit signed int
 #endif
-    SerializeStatus deserializeTo(F32& val, Endianness mode = Endianness::BIG);   //!< deserialize 32-bit floating point
-    SerializeStatus deserializeTo(F64& val, Endianness mode = Endianness::BIG);   //!< deserialize 64-bit floating point
-    SerializeStatus deserializeTo(bool& val, Endianness mode = Endianness::BIG);  //!< deserialize boolean
+    SerializeStatus deserializeTo(F32& val, Endianness mode = Endianness::BIG) override;   //!< deserialize 32-bit floating point
+    SerializeStatus deserializeTo(F64& val, Endianness mode = Endianness::BIG) override;   //!< deserialize 64-bit floating point
+    SerializeStatus deserializeTo(bool& val, Endianness mode = Endianness::BIG) override;  //!< deserialize boolean
 
     SerializeStatus deserializeTo(
         void*& val,
-        Endianness mode = Endianness::BIG);  //!< deserialize point value (careful, pointer value only, not contents)
+        Endianness mode = Endianness::BIG) override;  //!< deserialize point value (careful, pointer value only, not contents)
 
     SerializeStatus deserializeTo(U8* buff,
                                   FwSizeType& length,
-                                  Endianness endianMode = Endianness::BIG);  //!< deserialize data buffer
+                                  Endianness endianMode = Endianness::BIG) override;  //!< deserialize data buffer
 
     //! \brief deserialize a byte buffer of a given length
     //!
@@ -341,52 +344,52 @@ class SerializeBufferBase : public SerialBufferBase {
     SerializeStatus deserializeTo(U8* buff,
                                   FwSizeType& length,
                                   Serialization::t lengthMode,
-                                  Endianness endianMode = Endianness::BIG);
+                                  Endianness endianMode = Endianness::BIG) override;
 
     SerializeStatus deserializeTo(
         Serializable& val,
-        Endianness mode = Endianness::BIG);  //!< deserialize an object derived from serializable base class
+        Endianness mode = Endianness::BIG) override;  //!< deserialize an object derived from serializable base class
 
-    SerializeStatus deserializeTo(SerializeBufferBase& val,
-                                  Endianness mode = Endianness::BIG);  //!< serialize a serialized buffer
+    SerializeStatus deserializeTo(LinearBufferBase& val,
+                                  Endianness mode = Endianness::BIG) override;  //!< serialize a serialized buffer
 
-    SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG);  //!< deserialize a size value
+    SerializeStatus deserializeSize(FwSizeType& size, Endianness mode = Endianness::BIG) override;  //!< deserialize a size value
 
-    DEPRECATED(SerializeStatus serialize(const SerializeBufferBase& val),
+    DEPRECATED(SerializeStatus serialize(const LinearBufferBase& val),
                "Use serializeFrom(const SerialBufferBase& val) instead");
-    DEPRECATED(SerializeStatus deserialize(SerializeBufferBase& val),
+    DEPRECATED(SerializeStatus deserialize(LinearBufferBase& val),
                "Use deserializeTo(SerialBufferBase& val) instead");
 
-    void resetSer();    //!< reset to beginning of buffer to reuse for serialization
-    void resetDeser();  //!< reset deserialization to beginning
+    void resetSer() override;    //!< reset to beginning of buffer to reuse for serialization
+    void resetDeser() override;  //!< reset deserialization to beginning
 
-    SerializeStatus moveSerToOffset(FwSizeType offset);    //!< Moves serialization to the specified offset
-    SerializeStatus moveDeserToOffset(FwSizeType offset);  //!< Moves deserialization to the specified offset
+    SerializeStatus moveSerToOffset(FwSizeType offset) override;    //!< Moves serialization to the specified offset
+    SerializeStatus moveDeserToOffset(FwSizeType offset) override;  //!< Moves deserialization to the specified offset
 
     SerializeStatus serializeSkip(
-        FwSizeType numBytesToSkip);  //!< Skips the number of specified bytes for serialization
+        FwSizeType numBytesToSkip) override;  //!< Skips the number of specified bytes for serialization
     SerializeStatus deserializeSkip(
-        FwSizeType numBytesToSkip);  //!< Skips the number of specified bytes for deserialization
+        FwSizeType numBytesToSkip) override;  //!< Skips the number of specified bytes for deserialization
 
     DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
     DEPRECATED(Serializable::SizeType getBuffLength() const, "Use getSize() instead"); 
     DEPRECATED(Serializable::SizeType getBuffLeft(), "Use getDeserializeSizeLeft() instead");
 
-    virtual Serializable::SizeType getCapacity() const = 0;     //!< returns capacity, not current size, of buffer
-    Serializable::SizeType getSize() const;                     //!< returns current buffer size
-    Serializable::SizeType getDeserializeSizeLeft() const;      //!< returns how much deserialization buffer is left
-    Serializable::SizeType getSerializeSizeLeft() const;        //!< returns how much serialization space is left
+    virtual Serializable::SizeType getCapacity() const override = 0;     //!< returns capacity, not current size, of buffer
+    Serializable::SizeType getSize() const override;                     //!< returns current buffer size
+    Serializable::SizeType getDeserializeSizeLeft() const override;      //!< returns how much deserialization buffer is left
+    Serializable::SizeType getSerializeSizeLeft() const override;        //!< returns how much serialization space is left
 
     virtual U8* getBuffAddr() = 0;                               //!< gets buffer address for data filling
     virtual const U8* getBuffAddr() const = 0;  //!< gets buffer address for data reading, const version
     const U8* getBuffAddrLeft() const;          //!< gets address of remaining non-deserialized data.
     U8* getBuffAddrSer();  //!< gets address of end of serialization. DANGEROUS! Need to know max buffer size and adjust
                            //!< when done
-    SerializeStatus setBuff(const U8* src, Serializable::SizeType length);  //!< sets buffer contents and size
-    SerializeStatus setBuffLen(Serializable::SizeType length);  //!< sets buffer length manually after filling with data
+    SerializeStatus setBuff(const U8* src, Serializable::SizeType length) override;  //!< sets buffer contents and size
+    SerializeStatus setBuffLen(Serializable::SizeType length) override;  //!< sets buffer length manually after filling with data
     
-    SerializeStatus copyRaw(SerialBufferBase& dest, Serializable::SizeType size);
-    SerializeStatus copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size);
+    SerializeStatus copyRaw(SerialBufferBase& dest, Serializable::SizeType size) override;
+    SerializeStatus copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size) override;
 
     // ----------------------------------------------------------------------
     // Deprecated Serialization methods
@@ -448,26 +451,26 @@ class SerializeBufferBase : public SerialBufferBase {
     DEPRECATED(SerializeStatus deserialize(Serializable& val), "Use deserializeTo(Serializable& val) instead");
 
 #ifdef BUILD_UT
-    bool operator==(const SerializeBufferBase& other) const;
-    friend std::ostream& operator<<(std::ostream& os, const SerializeBufferBase& buff);
+    bool operator==(const LinearBufferBase& other) const;
+    friend std::ostream& operator<<(std::ostream& os, const LinearBufferBase& buff);
 #endif
 
   protected:
-    SerializeBufferBase();              //!< default constructor
+    LinearBufferBase();              //!< default constructor
     Serializable::SizeType m_serLoc;    //!< current offset in buffer of serialized data
     Serializable::SizeType m_deserLoc;  //!< current offset for deserialization
 
   private:
     // Copy constructor can be used only by the implementation
-    SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
+    LinearBufferBase(const LinearBufferBase& src);  //!< constructor with buffer as source
 
-    void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
+    void copyFrom(const LinearBufferBase& src);  //!< copy data from source buffer
 };
 
 // Helper classes for building buffers with external storage
 
 //! External serialize buffer with no copy semantics
-class ExternalSerializeBuffer : public SerializeBufferBase {
+class ExternalSerializeBuffer : public LinearBufferBase {
   public:
     ExternalSerializeBuffer(U8* buffPtr, Serializable::SizeType size);  //!< construct with external buffer
     ExternalSerializeBuffer();                                          //!< default constructor
@@ -485,7 +488,7 @@ class ExternalSerializeBuffer : public SerializeBufferBase {
     const U8* getBuffAddr() const;
 
     //! deleted copy assignment operator
-    ExternalSerializeBuffer& operator=(const SerializeBufferBase& src) = delete;
+    ExternalSerializeBuffer& operator=(const LinearBufferBase& src) = delete;
 
   protected:
     // data members
@@ -503,9 +506,9 @@ class ExternalSerializeBufferWithDataCopy final : public ExternalSerializeBuffer
         : ExternalSerializeBuffer(buffPtr, size) {}
     ExternalSerializeBufferWithDataCopy() : ExternalSerializeBuffer() {}
     ~ExternalSerializeBufferWithDataCopy() {}
-    ExternalSerializeBufferWithDataCopy(const SerializeBufferBase& src) = delete;
-    ExternalSerializeBufferWithDataCopy& operator=(SerializeBufferBase& src) {
-        (void)SerializeBufferBase::operator=(src);
+    ExternalSerializeBufferWithDataCopy(const LinearBufferBase& src) = delete;
+    ExternalSerializeBufferWithDataCopy& operator=(LinearBufferBase& src) {
+        (void)LinearBufferBase::operator=(src);
         return *this;
     }
 };
