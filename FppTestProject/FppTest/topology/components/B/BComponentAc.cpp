@@ -60,45 +60,26 @@ void BComponentBase::init(FwSizeType queueDepth, FwEnumStoreType instance) {
 
 #if !FW_DIRECT_PORT_CALLS
     // Connect input port dataIn
-    for (
-      FwIndexType port = 0;
-      port < NUM_DATAIN_INPUT_PORTS;
-      port++
-    ) {
-      this->m_dataIn_InputPort[port].init();
-      this->m_dataIn_InputPort[port].addCallComp(
-        this,
-        m_p_dataIn_in
-      );
-      this->m_dataIn_InputPort[port].setPortNum(port);
+    for (FwIndexType port = 0; port < NUM_DATAIN_INPUT_PORTS; port++) {
+        this->m_dataIn_InputPort[port].init();
+        this->m_dataIn_InputPort[port].addCallComp(this, m_p_dataIn_in);
+        this->m_dataIn_InputPort[port].setPortNum(port);
 
 #if FW_OBJECT_NAMES == 1
-      Fw::ObjectName portName;
-      portName.format(
-        "%s_dataIn_InputPort[%" PRI_FwIndexType "]",
-        this->m_objName.toChar(),
-        port
-      );
-      this->m_dataIn_InputPort[port].setObjName(portName.toChar());
+        Fw::ObjectName portName;
+        portName.format("%s_dataIn_InputPort[%" PRI_FwIndexType "]", this->m_objName.toChar(), port);
+        this->m_dataIn_InputPort[port].setObjName(portName.toChar());
 #endif
     }
 
     // Connect output port dataOut
-    for (
-      FwIndexType port = 0;
-      port < NUM_DATAOUT_OUTPUT_PORTS;
-      port++
-    ) {
-      this->m_dataOut_OutputPort[port].init();
+    for (FwIndexType port = 0; port < NUM_DATAOUT_OUTPUT_PORTS; port++) {
+        this->m_dataOut_OutputPort[port].init();
 
 #if FW_OBJECT_NAMES == 1
-      Fw::ObjectName portName;
-      portName.format(
-        "%s_dataOut_OutputPort[%" PRI_FwIndexType "]",
-        this->m_objName.toChar(),
-        port
-      );
-      this->m_dataOut_OutputPort[port].setObjName(portName.toChar());
+        Fw::ObjectName portName;
+        portName.format("%s_dataOut_OutputPort[%" PRI_FwIndexType "]", this->m_objName.toChar(), port);
+        this->m_dataOut_OutputPort[port].setObjName(portName.toChar());
 #endif
     }
 #endif
@@ -165,7 +146,7 @@ void BComponentBase::set_dataOut_OutputPort(FwIndexType portNum, Fw::InputSerial
 // Connection status queries for typed output ports
 // ----------------------------------------------------------------------
 
-bool BComponentBase ::isConnected_dataOut_OutputPort(FwIndexType portNum) {
+bool BComponentBase ::isConnected_dataOut_OutputPort(FwIndexType portNum) const {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
 
     return this->m_dataOut_OutputPort[portNum].isConnected();

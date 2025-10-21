@@ -9,7 +9,7 @@
 
 #include "Fw/Comp/ActiveComponentBase.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#include "FppTest/topology/ports/DataPortAc.hpp"
+#include "FppTest/topology/ports/handcode/DataPortAc.hpp"
 #if !FW_DIRECT_PORT_CALLS
 #include "Fw/Port/InputSerializePort.hpp"
 #include "Fw/Port/OutputSerializePort.hpp"
@@ -117,7 +117,7 @@ class BComponentBase : public Fw::ActiveComponentBase {
     //!
     //! \return Whether port dataOut is connected
     bool isConnected_dataOut_OutputPort(FwIndexType portNum  //!< The port number
-    );
+    ) const;
 
   protected:
     // ----------------------------------------------------------------------

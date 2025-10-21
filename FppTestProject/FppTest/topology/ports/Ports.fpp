@@ -1,1 +1,5 @@
-# This file must be here for the build to work
+module FppTest {
+
+  port Data(data: U32)
+
+}

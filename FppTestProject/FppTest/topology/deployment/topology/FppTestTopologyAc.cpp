@@ -131,7 +131,7 @@ void teardown(const TopologyState& state) {
 
 namespace FppTest {
 
-bool AComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) {
+bool AComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) const {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
     bool result = false;
     const auto instance = this->getInstance();
@@ -195,7 +195,7 @@ void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
 
 namespace FppTest {
 
-bool BComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) {
+bool BComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) const {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
     bool result = false;
     const auto instance = this->getInstance();
