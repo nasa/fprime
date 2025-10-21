@@ -83,10 +83,9 @@ struct Tester {
         if (duration < std::chrono::system_clock::duration::zero()) {
             duration = -duration;
         }
-
-        U32 microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-        U32 seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-
+        U32 total_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        U32 seconds = total_microseconds / 1000000;
+        U32 microseconds = total_microseconds % 1000000;
         interval.set(seconds, microseconds);
     }
 

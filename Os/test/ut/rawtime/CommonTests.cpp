@@ -4,7 +4,7 @@
 // ======================================================================
 #include "Os/test/ut/rawtime/CommonTests.hpp"
 #include "Fw/Buffer/Buffer.hpp"
-
+#include "Os/Posix/RawTime.hpp"
 // ----------------------------------------------------------------------
 // Test Fixture
 // ----------------------------------------------------------------------
@@ -20,8 +20,12 @@ Functionality::Functionality() : tester(get_tester_implementation()) {
     for (U32 i = 0; i < tester->TEST_TIME_COUNT; ++i) {
         tester->m_times.emplace_back();
         tester->m_shadow_times.emplace_back();
+        auto tmp_time_1 = std::chrono::system_clock::now();
         tester->m_times[i].now();
-        tester->m_shadow_times[i] = std::chrono::system_clock::now();
+        auto tmp_time_2 = std::chrono::system_clock::now();
+        // The below helper function ensures that m_shadow_times[i] is updated to the value in m_times[i]
+        // We are conveniently re-using the helper function, which is why we take tmp_time measurements
+        Os::Test::RawTime::assert_and_update_now(tester->m_times[i], tmp_time_1, tmp_time_2, tester->m_shadow_times[i]);
     }
 }
 
@@ -92,7 +96,7 @@ TEST_F(Functionality, RandomizedTesting) {
     STest::RandomScenario<Os::Test::RawTime::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded("Bounded Random Rules Scenario", random, 5000);
+    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded("Bounded Random Rules Scenario", random, 50000);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps for RawTime.\n", numSteps);
