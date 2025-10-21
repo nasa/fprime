@@ -1175,7 +1175,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! the current size, which indicates how much data is currently in the buffer.
     //!
     //! \return The capacity of the buffer in bytes
-    virtual Serializable::SizeType getCapacity() const override = 0;
+    Serializable::SizeType getCapacity() const override = 0;
 
     //! \brief Get current buffer size
     //!
