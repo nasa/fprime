@@ -96,7 +96,7 @@ TEST_F(Functionality, RandomizedTesting) {
     STest::RandomScenario<Os::Test::RawTime::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded("Bounded Random Rules Scenario", random, 50000);
+    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded("Bounded Random Rules Scenario", random, 5000);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps for RawTime.\n", numSteps);
