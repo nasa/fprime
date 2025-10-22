@@ -28,6 +28,8 @@ set(MOD_DEPS
     ${PROJECT_NAME}/state_machine/internal_instance/initial
     ${PROJECT_NAME}/state_machine/internal_instance/state
     ${PROJECT_NAME}/struct
+    ${PROJECT_NAME}/topology/components/A
+    ${PROJECT_NAME}/topology/components/B
 )
 
 register_fprime_deployment()

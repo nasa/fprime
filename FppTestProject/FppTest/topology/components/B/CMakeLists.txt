@@ -4,6 +4,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
 )
 set(MOD_DEPS
+  FppTest/topology/ports
   Fw/Comp
   Fw/Types
   Os
@@ -21,7 +22,6 @@ set(UT_SOURCE_FILES
 )
 
 set(UT_MOD_DEPS
-  FppTest/topology/ports
   STest
 )
 
