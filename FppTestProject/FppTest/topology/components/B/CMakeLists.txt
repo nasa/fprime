@@ -1,24 +1,13 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/B.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/BComponentAc.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
-)
-set(MOD_DEPS
-  FppTest/topology/ports
-  Fw/Comp
-  Fw/Types
-  Os
+  "${CMAKE_CURRENT_LIST_DIR}/B.fpp"
 )
 register_fprime_module()
 
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/../../../../../Fw/Comp/ActiveComponentBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../../../../../Fw/Comp/QueuedComponentBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BGTestBase.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/B.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/BTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/BTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BTesterBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/BTesterHelpers.cpp"
 )
 
 set(UT_MOD_DEPS
