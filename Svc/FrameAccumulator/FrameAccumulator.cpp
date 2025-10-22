@@ -116,10 +116,23 @@ void FrameAccumulator ::processRing() {
         // Detect must not consume data in the ring buffer
         FW_ASSERT(m_inRing.get_allocated_size() == remaining,
                   static_cast<FwAssertArgType>(m_inRing.get_allocated_size()), static_cast<FwAssertArgType>(remaining));
+
+        // Drop frames that are too large to handle (can't fit in the accumulation circular buffer)
+        if (size_out > ringCapacity) {
+            // Detector reports a size_out larger than the accumulation buffer capacity, we will never be able
+            // to process it. Log a warning and discard a byte, then keep iterating to look for a new frame
+            this->log_WARNING_HI_FrameDetectionSizeError(size_out);
+            // Discard a single byte of data and start again
+            (void)this->m_inRing.rotate(1);
+            FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
+                      static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
+                      static_cast<FwAssertArgType>(remaining));
+            continue;
+        }
+
         // On successful detection, consume data from the ring buffer and place it into an allocated frame
         if (status == FrameDetector::FRAME_DETECTED) {
-            // size_out must be set (non-zero) and must fit within the remaining data. Otherwise would mean
-            // a coding error in the detector (returned FRAME_DETECTED without proper validation)
+            // size_out must be set (non-zero) and must fit within the remaining data
             FW_ASSERT(size_out != 0);
             FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
                       static_cast<FwAssertArgType>(remaining));
@@ -145,24 +158,11 @@ void FrameAccumulator ::processRing() {
         }
         // More data needed
         else if (status == FrameDetector::MORE_DATA_NEEDED) {
-            if (size_out > ringCapacity) {
-                // Detector reports a size_out larger than the ring capacity. We cannot accumulate enough
-                // data to hold the entire frame. Log a warning and discard a byte to effectively drop the frame.
-                this->log_WARNING_HI_FrameDetectionSizeError(size_out);
-                // Discard a single byte of data and start again
-                (void)this->m_inRing.rotate(1);
-                FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
-                          static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                          static_cast<FwAssertArgType>(remaining));
-            } else {
-                // size_out can never be larger than the capacity of the ring. Otherwise all uplink will fail.
-                FW_ASSERT(size_out <= m_inRing.get_capacity(), static_cast<FwAssertArgType>(size_out));
-                // Detection should report "more is needed" and set size_out to something larger than available data
-                FW_ASSERT(size_out > remaining, static_cast<FwAssertArgType>(size_out),
-                          static_cast<FwAssertArgType>(remaining));
-                // Break out of loop: suspend detection until we receive another buffer
-                break;
-            }
+            // Detection should report "more is needed" and set size_out to something larger than available data
+            FW_ASSERT(size_out > remaining, static_cast<FwAssertArgType>(size_out),
+                      static_cast<FwAssertArgType>(remaining));
+            // Break out of loop: suspend detection until we receive another buffer
+            break;
         }
         // No frame was detected or an unknown status was received
         else {

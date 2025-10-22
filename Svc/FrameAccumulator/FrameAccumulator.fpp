@@ -18,9 +18,11 @@ module Svc {
             severity warning high \
             format "Could not allocate a valid buffer to fit the detected frame"
 
+        @ A frame was detected whose size exceeds the internal accumulation buffer
+        @ capacity. No choice but to drop the frame.
         event FrameDetectionSizeError(size_out: FwSizeType) \
             severity warning high \
-            format "Reported size_out={} exceeds available data"
+            format "Reported size_out={} exceeds accumulation buffer capacity"
 
         ###############################################################################
         # Standard AC Ports for Events 
