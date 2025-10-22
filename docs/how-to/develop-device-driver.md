@@ -73,14 +73,14 @@ static constexpr U8 RESET_VAL = 0x80;
 static constexpr U8 DEFAULT_ADDR = 0x48;
 static constexpr U8 DATA_SIZE = 6;
 
-// Example: Reset device
+// Reset device
 Drv::I2cStatus MyDeviceManager::reset() {
     U8 cmd[] = {RESET_REG, RESET_VAL};  // From your datasheet
     Fw::Buffer writeBuffer(cmd, sizeof(cmd));
     return this->busWrite_out(0, m_address, writeBuffer);
 }
 
-// Example: Read sensor data
+// Read sensor data
 Drv::I2cStatus MyDeviceManager::read(MyDeviceData& output_data) {
     U8 regAddr = DATA_REG;
     U8 rawData[DATA_SIZE];
@@ -174,8 +174,8 @@ The ImuManager component in the fprime-sensors repository also uses a state mach
 Wire your device manager to the bus driver in a topology:
 
 ```fpp
-instance myDevice: MyModule.MyDeviceManager base id 0x1000
-instance busDriver: Drv.LinuxI2cDriver base id 0x2000  # Or SPI, UART, etc.
+instance myDevice: MyProject.ImuManager base id 0x1000
+instance busDriver: Drv.LinuxI2cDriver base id 0x2000
 
 topology MyTopology {
     connections {
