@@ -15,6 +15,14 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+  workflow_call:
+    inputs:
+      fprime_location:
+        description: "Relative path from the external project root to its F´ submodule"
+        required: false
+        type: string
+        default: "./lib/fprime"
+
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -32,11 +40,18 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-sensors-reference
+          fprime_location: ${{ inputs.fprime_location }}
 
       - name: Cross compile
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
         with:
           toolchain-url: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p build-artifacts-soak
+          cp -r ./build-artifacts build-artifacts-soak
+          cp ./fprime/.github/workflows/
 
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
@@ -47,7 +62,7 @@ jobs:
 
   deploy-service:
     name: "Deploy as System Service"
-    runs-on: [apple-pi]
+    runs-on: [apple-ci]
     needs: cross-compile
 
     steps:
