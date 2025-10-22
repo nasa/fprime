@@ -6,7 +6,7 @@ on:
   release:
     types: [published] # triggers when a release is published
   push:
-    branches: [ devel, release/** ]
+    branches: [ devel, release/**, soak-testing ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
