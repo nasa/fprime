@@ -243,7 +243,7 @@ def test_active_logger_filter(fprime_test_api):
 
         set_event_filter(fprime_test_api, FilterSeverity.COMMAND, False)
         # Drain time for dispatch events
-        time.sleep(10)
+        time.sleep(3)
         fprime_test_api.clear_histories()
         fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
         fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
