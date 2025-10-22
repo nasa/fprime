@@ -19,6 +19,35 @@ namespace Os {
 namespace Test {
 namespace RawTime {
 
+//! ------------------------------------------------------------------------------------------------------
+//! REQUIRED NOTICE TO PLATFORM IMPLEMENTORS
+//! ------------------------------------------------------------------------------------------------------
+//! The rules defined in Os/test/ut/rawtime are intended to be reusable, with one condition:
+//! implementors of an OSAL must provide their own implementation of the `assert_and_update_now()` helper.
+//!
+//! This is because the "Now" rule must keep a Os::RawTime object synchronized with a "shadow" (acting as a
+//! tracker) time object (std::time_point), which is not possible without having knowledge of the platform
+//! specific time representation.
+//!
+//! The assert_and_update_now() method *must* therefore be implemented and have the following behavior:
+//! 1. Verify that raw_time_under_test represents a time between lower_time and upper_time
+//! 2. Update shadow_time reference to represent the same time as raw_time_under_test
+//!
+//! An example of such implementation can be found in Os/Posix/test/ut/PosixRawTimeTests.cpp.
+//!
+//! If this is not possible for your OSAL implementation, it is recommended to write tests directly
+//! for your platform.
+//!
+//! \param raw_time_under_test The RawTime object under test
+//! \param lower_time The lower bound time point
+//! \param upper_time The upper bound time point
+//! \param shadow_time reference to shadow time to update
+void assert_and_update_now(const Os::RawTime& raw_time_under_test,
+                           const std::chrono::system_clock::time_point& lower_time,
+                           const std::chrono::system_clock::time_point& upper_time,
+                           std::chrono::system_clock::time_point& shadow_time  //!< reference to shadow time to update
+);
+
 struct Tester {
     // Constructors that ensures the mutex is always valid
     Tester() = default;
@@ -28,10 +57,6 @@ struct Tester {
 
     // Number of instances of RawTime under test
     static constexpr U32 TEST_TIME_COUNT = 5;
-
-    // Threshold for time differences, in microseconds
-    // This value was selected empirically, some platforms may need to adjust
-    static constexpr U32 INTERVAL_DIFF_THRESHOLD = 20;
 
     //! RawTime (array thereof) under test
     std::vector<Os::RawTime> m_times;
@@ -51,41 +76,16 @@ struct Tester {
         return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t2).count();
     }
 
+    //! Compute the time interval between two shadow times at specified indices and populate the given interval
+    //! with the result
     void shadow_getTimeInterval(FwIndexType index1, FwIndexType index2, Fw::TimeInterval& interval) {
         auto duration = this->m_shadow_times[index1] - this->m_shadow_times[index2];
         if (duration < std::chrono::system_clock::duration::zero()) {
             duration = -duration;
         }
-
-        U32 microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        U32 microseconds = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000000;
         U32 seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-
         interval.set(seconds, microseconds);
-    }
-
-    void shadow_validate_interval_result(FwIndexType index1, FwIndexType index2, const Fw::TimeInterval& interval) {
-        Fw::TimeInterval shadow_interval;
-        Fw::TimeInterval result;
-        this->shadow_getTimeInterval(index1, index2, shadow_interval);
-        // Signedness is important here so we compare and substract accordingly
-        if (interval < shadow_interval) {
-            result = Fw::TimeInterval::sub(shadow_interval, interval);
-        } else {
-            result = Fw::TimeInterval::sub(interval, shadow_interval);
-        }
-        // Check that difference between 2 intervals is less than threshold
-        ASSERT_TRUE(result < Fw::TimeInterval(0, INTERVAL_DIFF_THRESHOLD)) << "Interval difference: " << result;
-    }
-
-    void shadow_validate_diff_result(U32 result, U32 shadow_result) {
-        U32 result_diff;
-        if (result > shadow_result) {
-            result_diff = result - shadow_result;
-        } else {
-            result_diff = shadow_result - result;
-        }
-        ASSERT_TRUE(result_diff < INTERVAL_DIFF_THRESHOLD)
-            << "Difference between results: " << result_diff << " microseconds";
     }
 
     FwIndexType pick_random_index() const { return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1); }
