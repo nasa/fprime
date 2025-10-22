@@ -27,13 +27,10 @@ jobs:
 
     steps:
 
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
       - name: Set up F Prime
-        uses: nasa/fprime-actions/setup@devel
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-sensors-reference
 
       - name: Cross compile
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
