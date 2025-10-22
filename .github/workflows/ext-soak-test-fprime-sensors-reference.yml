@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
 
-  cross-compile:
+  compile-on-arm-machine:
     runs-on: apple-ci
 
     steps:
@@ -32,7 +32,13 @@ jobs:
         with:
           target_repository: fprime-community/fprime-sensors-reference
 
-      - name: Cross compile
-        uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
-        with:
-          toolchain-url: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+      - name: Compile on ARM machine
+        shell: bash
+        run: |
+          fprime-util generate aarch64-linux
+          fprime-util build aarch64-linux
+
+      #- name: Cross compile
+        #uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
+        #with:
+          #toolchain-url: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
