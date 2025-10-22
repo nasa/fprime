@@ -9,7 +9,7 @@
 
 #include "Fw/Comp/ActiveComponentBase.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#include "FppTest/topology/ports/handcode/DataPortAc.hpp"
+#include "FppTest/topology/ports/DataPortAc.hpp"
 #if !FW_DIRECT_PORT_CALLS
 #include "Fw/Port/InputSerializePort.hpp"
 #include "Fw/Port/OutputSerializePort.hpp"
