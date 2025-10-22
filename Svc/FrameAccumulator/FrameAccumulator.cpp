@@ -123,7 +123,7 @@ void FrameAccumulator ::processRing() {
             FW_ASSERT(size_out != 0);
             FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
                       static_cast<FwAssertArgType>(remaining));
-            Fw::Buffer buffer = this->allocate_out(0, size_out);
+            Fw::Buffer buffer = this->bufferAllocate_out(0, size_out);
             if (buffer.isValid()) {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
@@ -180,7 +180,7 @@ void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum,
                                              const ComCfg::FrameContext& context) {
     // Frame buffer ownership is returned to the component. Component had allocated with a buffer manager,
     // so we return it to the buffer manager for deallocation
-    this->deallocate_out(0, fwBuffer);
+    this->bufferDeallocate_out(0, fwBuffer);
 }
 
 }  // namespace Svc

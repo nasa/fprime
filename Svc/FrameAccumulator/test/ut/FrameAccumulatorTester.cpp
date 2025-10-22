@@ -155,9 +155,9 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
     this->invoke_to_dataReturnIn(0, buffer, context);
-    ASSERT_from_deallocate_SIZE(1);  // incoming buffer should be deallocated
-    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
-    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+    ASSERT_from_bufferDeallocate_SIZE(1);  // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
 void FrameAccumulatorTester ::testDetectionErrorHandling() {
@@ -227,8 +227,8 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 // Port handler overrides
 // ----------------------------------------------------------------------
-Fw::Buffer FrameAccumulatorTester ::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
-    this->pushFromPortEntry_allocate(size);
+Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);
     ::memset(this->m_buffer.getData(), 0, size);

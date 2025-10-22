@@ -7,8 +7,11 @@ module Svc {
         # ----------------------------------------------------------------------
         import Svc.FrameAccumulator
 
-        @ Enables buffer allocation and deallocation
-        import Svc.BufferAllocation
+        @ Port for deallocating buffers holding extracted frames
+        output port bufferDeallocate: Fw.BufferSend
+
+        @ Port for allocating buffer to hold extracted frame
+        output port bufferAllocate: Fw.BufferGet
 
         @ An error occurred while deserializing a packet
         event NoBufferAvailable \
