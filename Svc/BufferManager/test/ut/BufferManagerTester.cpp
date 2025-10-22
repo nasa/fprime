@@ -42,7 +42,7 @@ class TestAllocator : public Fw::MemAllocator {
      * \param recoverable - flag to indicate the memory could be recoverable (always set to false)
      * \return the pointer to memory. Zero if unable to allocate.
      */
-    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) {
+    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment) {
         this->m_reqId = identifier;
         this->m_reqSize = size;
         this->m_mem = this->m_alloc.allocate(identifier, size, recoverable);

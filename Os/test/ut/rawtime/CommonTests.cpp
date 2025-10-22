@@ -20,8 +20,12 @@ Functionality::Functionality() : tester(get_tester_implementation()) {
     for (U32 i = 0; i < tester->TEST_TIME_COUNT; ++i) {
         tester->m_times.emplace_back();
         tester->m_shadow_times.emplace_back();
+        auto tmp_time_1 = std::chrono::system_clock::now();
         tester->m_times[i].now();
-        tester->m_shadow_times[i] = std::chrono::system_clock::now();
+        auto tmp_time_2 = std::chrono::system_clock::now();
+        // The below helper function ensures that m_shadow_times[i] is updated to the value in m_times[i]
+        // We are conveniently re-using the helper function, which is why we take tmp_time measurements
+        Os::Test::RawTime::assert_and_update_now(tester->m_times[i], tmp_time_1, tmp_time_2, tester->m_shadow_times[i]);
     }
 }
 
