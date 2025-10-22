@@ -88,6 +88,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
       rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.comQueue.run
       rateGroup1Comp.RateGroupMemberOut[6] -> CdhCore.cmdDisp.run
+      rateGroup1Comp.RateGroupMemberOut[7] -> ComCcsds.aggregator.timeout
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn

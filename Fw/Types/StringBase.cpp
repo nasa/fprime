@@ -73,17 +73,17 @@ bool ConstStringBase::operator!=(const CHAR* other) const {
     return !operator==(other);
 }
 
-SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer) const {
+SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
 }
 
-SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, SizeType maxLength) const {
+SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, SizeType maxLength, Fw::Endianness mode) const {
     const FwSizeType len = FW_MIN(maxLength, this->length());
     // Serialize length and then bytes
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus ConstStringBase::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus ConstStringBase::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     // Cannot deserialize into a read-only string
     // This should be overridden by derived classes
     return SerializeStatus::FW_DESERIALIZE_IMMUTABLE;
@@ -176,7 +176,7 @@ StringBase::SizeType StringBase::length() const {
     return length;
 }
 
-SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
     // Get the max size of the deserialized string
     const SizeType maxSize = this->maxLength();
     // Initial estimate of actual size is max size

@@ -50,6 +50,21 @@ ini_to_cache()
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
 ####
+# `FPRIME_CMAKE_QUIET`:
+#
+# Turns off the F Prime CMake status messages to reduce output. This include messages: module registration, target
+# registration, autocoder registration, etc. This does not affect error nor warning messages. It also does not quiet
+# build-in CMake messages.
+#
+# **Values:**
+# - ON: quiet the F Prime CMake output
+# - OFF: (default) print F Prime status messages
+#
+# e.g. `-DFPRIME_CMAKE_QUIET=ON`
+####
+option(FPRIME_CMAKE_QUIET "Quiet F prime's CMake output" OFF)
+
+####
 # `FPRIME_USE_STUBBED_DRIVERS`:
 #
 # Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
@@ -172,6 +187,21 @@ option(FPRIME_SKIP_TOOLS_VERSION_CHECK "Skip the version checking of tools" OFF)
 # For internal use only.  Used to check the framework version has been updated on tags.
 ####
 option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when building." OFF)
+
+####
+# `FPRIME_INSTALL_STATIC_LIBRARIES`:
+#
+# Enables the installation of static libraries into the build-artifacts folder. This does not affect generation of the
+# static libraries, only their installation. Shared library installation is always enabled. Default: ON, install static
+# libraries.
+#
+# **Values:**
+# - ON:  (default) install static libraries
+# - OFF: do not install static libraries
+#
+# e.g. `-DFPRIME_INSTALL_STATIC_LIBRARIES=OFF`
+####
+option(FPRIME_INSTALL_STATIC_LIBRARIES "Install static libraries" ON)
 
 ####
 # `ENABLE_SANITIZER_ADDRESS:`

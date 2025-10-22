@@ -35,9 +35,11 @@ class Time : public Serializable {
     U32 getUSeconds() const;  // !< Gets microseconds part of time
     TimeBase getTimeBase()
         const;  // !< Time base of time. This is project specific and is meant for indicating different sources of time
-    FwTimeContextStoreType getContext() const;                                // !< get the context value
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  // !< Serialize method
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;    // !< Deserialize method
+    FwTimeContextStoreType getContext() const;  // !< get the context value
+    SerializeStatus serializeTo(SerializeBufferBase& buffer,
+                                Fw::Endianness mode = Fw::Endianness::BIG) const override;  // !< Serialize method
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) override;  // !< Deserialize method
     bool operator==(const Time& other) const;
     bool operator!=(const Time& other) const;
     bool operator>(const Time& other) const;

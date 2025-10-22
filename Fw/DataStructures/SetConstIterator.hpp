@@ -11,6 +11,7 @@
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "Fw/DataStructures/Nil.hpp"
+#include "Fw/DataStructures/RedBlackTreeSetOrMapImpl.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
@@ -24,6 +25,9 @@ class SetConstIterator {
 
     //! The type of an array iterator
     using ArrayIterator = typename ArraySetOrMapImpl<T, Nil>::ConstIterator;
+
+    //! The type of a red-black tree iterator
+    using RedBlackTreeIterator = typename RedBlackTreeSetOrMapImpl<T, Nil>::ConstIterator;
 
   private:
     // ----------------------------------------------------------------------
@@ -39,9 +43,12 @@ class SetConstIterator {
         Impl() {}
         //! Array constructor
         Impl(const ArrayIterator& it) : array(it) {}
+        //! Red-black tree constructor
+        Impl(const RedBlackTreeIterator& it) : redBlackTree(it) {}
         //! An array iterator
         ArrayIterator array;
-        // TODO: Add red-black tree implementation
+        //! A red-black tree iterator
+        RedBlackTreeIterator redBlackTree;
         // ! Destructor
         ~Impl() {}
     };
@@ -54,6 +61,9 @@ class SetConstIterator {
     //! Constructor providing an array implementation
     SetConstIterator(const ArrayIterator& it) : m_impl(it), m_implIterator(&m_impl.array) {}
 
+    //! Constructor providing a red-black tree implementation
+    SetConstIterator(const RedBlackTreeIterator& it) : m_impl(it), m_implIterator(&m_impl.redBlackTree) {}
+
     //! Copy constructor
     SetConstIterator(const SetConstIterator& it) : m_impl(), m_implIterator() {
         const auto implKind = it.getImplIterator().implKind();
@@ -62,7 +72,7 @@ class SetConstIterator {
                 this->m_implIterator = new (&this->m_impl.array) ArrayIterator(it.m_impl.array);
                 break;
             case ImplKind::RED_BLACK_TREE:
-                // TODO
+                this->m_implIterator = new (&this->m_impl.redBlackTree) RedBlackTreeIterator(it.m_impl.redBlackTree);
                 break;
             default:
                 FW_ASSERT(0, static_cast<FwAssertArgType>(implKind));
@@ -92,7 +102,7 @@ class SetConstIterator {
                     result = this->m_impl.array.compareEqual(it.m_impl.array);
                     break;
                 case ImplKind::RED_BLACK_TREE:
-                    // TODO
+                    result = this->m_impl.redBlackTree.compareEqual(it.m_impl.redBlackTree);
                     break;
                 default:
                     FW_ASSERT(0, static_cast<FwAssertArgType>(implKind1));

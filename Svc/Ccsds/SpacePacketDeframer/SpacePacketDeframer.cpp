@@ -52,6 +52,9 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
         FwSizeType maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_LENGTH);
+        }
         this->dataReturnOut_out(0, data, context);  // Drop the packet
         return;
     }

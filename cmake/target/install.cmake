@@ -45,13 +45,22 @@ endfunction()
 function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
     _install_real_helper(INSTALL_DEPENDENCIES "${FULL_DEPENDENCIES}")
-    install(TARGETS ${MODULE} ${INSTALL_DEPENDENCIES}
+
+    # Gate the installation of static libs behind a CMake option
+    set(STATIC_LIBS_INSTALL_ARGS)
+    if (FPRIME_INSTALL_STATIC_LIBRARIES)
+        list(APPEND STATIC_LIBS_INSTALL_ARGS ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static COMPONENT ${MODULE})
+    endif()
+    # List installation targets and remove duplicate entries
+    set(INSTALLATION_TARGETS ${MODULE} ${INSTALL_DEPENDENCIES})
+    list(REMOVE_DUPLICATES INSTALLATION_TARGETS)
+
+    install(TARGETS ${INSTALLATION_TARGETS}
             RUNTIME DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/bin
             COMPONENT ${MODULE}
             LIBRARY DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib
             COMPONENT ${MODULE}
-            ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static
-            COMPONENT ${MODULE}
+            ${STATIC_LIBS_INSTALL_ARGS}
     )
     install(FILES ${CMAKE_BINARY_DIR}/hashes.txt DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT ${MODULE})
 

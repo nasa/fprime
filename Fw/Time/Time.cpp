@@ -77,12 +77,12 @@ bool Time::operator<=(const Time& other) const {
     return ((LT == c) or (EQ == c));
 }
 
-SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
-    return this->m_val.serializeTo(buffer);
+SerializeStatus Time::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
+    return this->m_val.serializeTo(buffer, mode);
 }
 
-SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
-    return this->m_val.deserializeFrom(buffer);
+SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+    return this->m_val.deserializeFrom(buffer, mode);
 }
 
 U32 Time::getSeconds() const {

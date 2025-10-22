@@ -77,7 +77,8 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const = 0;
+    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+                                            Fw::Endianness mode = Fw::Endianness::BIG) const = 0;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -91,7 +92,8 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) = 0;
+    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+                                                Fw::Endianness mode = Fw::Endianness::BIG) = 0;
 };
 
 class RawTime final : public RawTimeInterface {
@@ -143,7 +145,8 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override;
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -157,7 +160,8 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override;
 
     // ------------------------------------------------------------
     // Common functions built on top of OS-specific functions

@@ -17,47 +17,61 @@
 #define TYPES_MEMALLOCATOR_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-
-/*!
- *
- * This class is a pure virtual base class for memory allocators in Fprime.
- * The intent is to provide derived classes the get memory from different sources.
- * The base class can be passed to classes so the allocator can be selected at the
- * system level, and different allocators can be used by different components as
- * appropriate.
- *
- * The identifier can be used to look up a pre-allocated buffer by ID in an
- * embedded system. Identifiers may be used only in a single call to an invocation.
- * Some implementations of MemAllocator discard the identifier but components using
- * the MemAllocator interface should not depend on the identifier to be discarded.
- *
- * The size is the requested size of the memory. If the allocator cannot return the
- * requested amount, it should return the actual amount and users should check.
- *
- * The recoverable flag is intended to be used in embedded environments where
- * memory can survive a processor reset and data can be recovered. The component
- * using the allocator can then use the data. Any integrity checks are up to the
- * user of the memory.
- *
- */
+#include <config/MemoryAllocatorTypeEnumAc.hpp>
+#include <cstddef>
 
 namespace Fw {
 
+//! \brief Memory Allocation base class
+//!
+//! This class is a pure virtual base class for memory allocators in F Prime. The intent is to provide derived classes
+//! that allocate memory from different sources. The base class can be passed to classes so the allocator can be
+//! selected at the system level, and different allocators can be used by different components as appropriate.
+//!
+//! The identifier can be used to look up a pre-allocated buffer by ID in an embedded system. There is no guarantee
+//! that an identifier is unique across multiple calls to allocate(). It is intended to be unique to a given entity.
+//!
+//! \warning implementors providing derived classes that tie an identifier to a specific memory segment should use
+//! bump pointer or other implementation to handle multiple calls to allocate() with the same identifier.
+//!
+//! \warning alignment must be respected in allocation calls, but may be larger than requested.
+//!
+//! The size is the requested size of the memory. If the allocator cannot return the requested amount, it should return
+//! the actual amount and users should check.
+//!
+//! The recoverable flag is intended to be used in embedded environments where memory can survive a processor reset and
+//! data can be recovered. The component using the allocator can then use the data. Any integrity checks are up to the
+//! user of the memory.
+//!
 class MemAllocator {
   public:
     //! Allocate memory
-    /*!
-     * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
-     * \param size the requested size - changed to actual if different
-     * \param recoverable - flag to indicate the memory could be recoverable
-     * \return the pointer to memory. Zero if unable to allocate
-     */
-    virtual void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) = 0;
+    //!
+    //! Allows allocation of memory of a given size and alignment. The actual returned memory size may be smaller than
+    //! the requested size. The alignment of the memory is guaranteed to be at least as large as the requested
+    //! alignment but may be larger. The recoverable flag indicates if the memory is recoverable (i.e. non-volatile)
+    //! and thus may be valid without initialization.
+    //!
+    //! identifier is a unique identifier for the allocating entity. This entity (e.g. a component) may call allocate
+    //! multiple times with the same id, but no other entity in the system shall call allocate with that id.
+    //!
+    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param size the requested size - changed to actual if different
+    //! \param recoverable - flag to indicate the memory could be recoverable
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    virtual void* allocate(const FwEnumStoreType identifier,
+                           FwSizeType& size,
+                           bool& recoverable,
+                           FwSizeType alignment = alignof(std::max_align_t)) = 0;
+
     //! Deallocate memory
-    /*!
-     * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
-     * \param ptr the pointer to memory returned by allocate()
-     */
+    //!
+    //! Deallocate memory previously allocated by allocate(). The pointer must be one returned by allocate() and the
+    //! identifier must match the one used in the original allocate() call.
+    //!
+    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param ptr the pointer to memory returned by allocate()
     virtual void deallocate(const FwEnumStoreType identifier, void* ptr) = 0;
 
   protected:
@@ -69,6 +83,50 @@ class MemAllocator {
     MemAllocator(MemAllocator*);  //!< disable
 };
 
+class MemAllocatorRegistry {
+  public:
+    // Constructor which will register itself as the singleton
+    MemAllocatorRegistry();
+    ~MemAllocatorRegistry() = default;
+
+    //! \brief get the singleton registry
+    //!
+    //! \return the singleton registry
+    static MemAllocatorRegistry& getInstance();
+
+    //! \brief register an allocator for the given type
+    //!
+    //! This will register an allocator for the given type. If the allocator is already registered it will overwrite.
+    //!
+    //! \warning allocator must remain valid for duration of the program.
+    //!
+    //! \param type the type of allocator
+    //! \param allocator the allocator. The registry does not take ownership of the allocator.
+    void registerAllocator(const MemoryAllocation::MemoryAllocatorType type, MemAllocator& allocator);
+
+    //! Get an allocator for a type
+    //!
+    //! Return the memory allocator for the given type. It is an error to request an allocator for a type that has not
+    //! been registered.
+    //!
+    //! \param type the type of allocator
+    MemAllocator& getAllocator(const MemoryAllocation::MemoryAllocatorType type);
+
+    //! Get an allocator for a type with default
+    //!
+    //! Return the memory allocator for the given type. If the type has not been registered, then return the allocator
+    //! registered to MemoryAllocatorType::SYSTEM. It is an error if SYSTEM has not been registered.
+    //!
+    //! \param type the type of allocator
+    MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType type);
+
+  private:
+    //! Array of allocators for each type defaulted to nullptr
+    MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
+
+    //! The singleton registry pointer
+    static MemAllocatorRegistry* s_registry;  //!< singleton registry
+};
 } /* namespace Fw */
 
 #endif /* TYPES_MEMALLOCATOR_HPP_ */

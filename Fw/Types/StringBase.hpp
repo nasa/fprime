@@ -65,11 +65,13 @@ class ConstStringBase : public Serializable {
     bool operator!=(const ConstStringBase& other) const;    //!< Inequality with ConstStringBase
     bool operator!=(const CHAR* other) const;               //!< Inequality with CHAR*
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) const override;
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer,
+                                        SizeType maxLen,
+                                        Endianness mode = Endianness::BIG) const;
     // NOTE: all derived classes should override this function; it will always return an error
     // status since ConstStringBase is immutable and deserializeFrom is not a read-only operation
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {
@@ -112,7 +114,7 @@ class StringBase : public ConstStringBase {
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void toString(StringBase& text) const override;  //!< write string with contents

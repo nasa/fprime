@@ -2,17 +2,20 @@
 
 This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software.
 
-The default [F Prime Protocol](../../Svc/FprimeProtocol/docs/sdd.md) is a lightweight protocol used to get development started quickly with a low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, as projects mature, there may be a need to implement a framing protocol that fits mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
+Modern F´ deployments use the CCSDS protocol by default via the `Svc.ComCcsds` subtopology. The lightweight [F Prime Protocol](../../Svc/FprimeProtocol/docs/sdd.md) (available via `Svc.ComFprime`) is also available as an alternative low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, some projects choose to implement another framing protocol that fits their mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
 
 ## Overview
 
-This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. 
+This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. For a bi-directional framing implementation (uplink and downlink), you will need to implement both a framer and a deframer component. A framer is required for downlink (flight software → GDS). A deframer (and optionally a FrameDetector) is needed for deframing uplink messages (GDS → flight software).
 
 A reference implementation of a custom framing protocol (the "Decaf Protocol") is available in the `fprime-examples` repository:
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)
 
-This guide is divided into two main sections: flight software implementation and GDS integration. Note that if you are aiming to integrate with another GDS and do not wish to use the F´ GDS, you can skip the GDS section.
+This guide is divided into two main sections: flight software implementation and GDS integration. If you are aiming to integrate with another GDS and do not wish to use the F´ GDS, you can skip the GDS section.
+
+> [!NOTE]
+> When using the reference examples, it is recommended to check out the `fprime-examples` repository **at the same release tag** as your F´ core installation to ensure compatibility. You can find which version of F´ you are using with `fprime-util version-check`.
 
 ## Prerequisites: Understanding Subtopologies
 
@@ -28,11 +31,28 @@ For more information on working with subtopologies, see the [Subtopologies Guide
 ## Flight Software Implementation
 
 To implement a custom framing protocol in F´, will need to implement the following:
-- **Framer**: A component that wraps payload data into frames for transmission.
-- **Deframer**: A component that unpacks received frames, extracts the payload data, and validate the frame.
-- **FrameDetector** (optional): A helper class that detects the start and end of frames in a stream of data, if your transport is stream-based (e.g., TCP, UART).
+- **Framer**: An F´ component that wraps payload data into frames for transmission.
+- **Deframer**: An F´ component that unpacks received frames, extracts the payload data, and validates the frame.
+- **FrameDetector** Helper Class (optional): A C++ helper class (not an F´ component) that detects the start and end of frames in a stream of data, if your transport does not guarantee complete packets (e.g., TCP, UART).
+
+> [!TIP]
+> When creating framer/deframer components using `fprime-util new --component`, the recommended settings are to use passive components with events enabled.
 
 The following examples will walk through the implementation of a custom framer and deframer for a hypothetical **MyCustomProtocol** protocol. Implementation details are left to the reader, but examples of such implementations can be found in the [fprime-examples repository](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming), or within the F´ codebase itself ([Svc.FprimeFramer](../../Svc/FprimeFramer/docs/sdd.md) and [Svc.FprimeDeframer](../../Svc/FprimeDeframer/docs/sdd.md)).
+
+### Pitfalls and Best Practices
+
+Before implementing, consider these best practices:
+
+1. **Centralize Protocol Constants**: Define protocol constants (e.g., start word, header structure, field sizes) in a dedicated `.fpp` types file (e.g., `Types/Types.fpp`). This allows constants like start words, field types, or spacecraft IDs to be reused consistently across your framer, deframer, and frame detector.
+
+2. **Endianness Convention**: F´ serializes all integer types in big-endian by default (network byte order), as defined in `Fw::Serializable`. If your protocol requires little-endian fields, you must specify so during serialization with the `Fw::Endianness::LITTLE` mode, or manually order bytes as needed.
+
+3. **Set the APID in the Deframer**: Your deframer **must** extract and set the APID (Application ID) in the `FrameContext` before emitting packets downstream via `dataOut`. Without this, the `Svc.FprimeRouter` will not know where to route packets to. This is a critical requirement, unless you are also implementing a custom router and define your own requirements (not recommended and outside the scope of this guide).
+
+4. **Payload vs. Frame Structure**: A framing protocol should only define the outer frame structure (headers and trailers). The internal payload structure is determined by the upper-layer protocols and applications that produce and consume the data, not by the framing protocol itself.
+
+### Implementation Steps
 
 1. **Define the Framer and Deframer FPP Components**
 
@@ -108,14 +128,48 @@ The following examples will walk through the implementation of a custom framer a
     instance framer: MyCustomFramer base id 0x1000
     instance deframer: MyCustomDeframer base id 0x2000
     ```
+    
+    **Troubleshooting Common Integration Issues**:
+    
+    After removing the CCSDS subtopology and adding your custom framing components, you may encounter compilation errors:
+    
+    - **Missing header errors** (e.g., `fatal error: Svc/Subtopologies/ComCcsds/ComCcsdsConfig/FppConstantsAc.hpp: No such file or directory`):
+      - Remove all mentions of `ComCcsds` from your auto-generated `<DeploymentName>TopologyDefs.hpp` file (located in `<deployment>/Top/`).
+      - After significant topology changes, you may need to do a clean rebuild with `fprime-util generate --force`
+    
+    - **Undeclared port enum errors** (e.g., `error: 'Ports_ComPacketQueue' has not been declared`):
+      - Include the generated port headers in your `<DeploymentName>TopologyDefs.hpp`:
+        ```cpp
+        #include <MyDeployment/Top/Ports_ComPacketQueueEnumAc.hpp>
+        #include <MyDeployment/Top/Ports_ComBufferQueueEnumAc.hpp>
+        ```
+    
+    - **Linker errors** (e.g., `undefined reference to 'vtable for CustomFraming::MyCustomFrameDetector'`):
+      - Ensure your custom Detector is added as a dependency of your Deframer or deployment, using the `DEPENDS` keyword. In your Deframer's `CMakeLists.txt`, add:
+        ```cmake
+        register_fprime_module(
+            [...]
+            DEPENDS
+                CustomFraming_DecafFrameDetector  # This is a helper module and cannot be resolved by FPP dependencies alone
+        )
+        ```
 
 5. **(Optional) Implement a Frame Detector**
 
    _When is this not needed?_  
-   If your communications manager component always receives complete frames, you do not need to implement frame detection. This can be the case when using radios with built-in frame synchronization or when another subsystem handles frame delimiting.
+   If your communications manager component always receives complete frames, you do not need to implement frame detection. This can be the case when using:
+   - Radios with built-in frame synchronization
+   - Message-oriented transport-layer protocols where frame boundaries are guaranteed (e.g. UDP)
 
    _When is this needed?_  
-   If your data transport is stream-based (for example, relying on TCP or UART), or if you cannot guarantee that frames will always be received in full, you must implement a mechanism to delimit frames. F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
+   If your data transport is stream-based and does not preserve message boundaries, you must implement a mechanism to delimit frames. Examples include:
+   - TCP connections (stream-based, no inherent message boundaries)
+   - UART/serial connections (e.g. UART radios such as XBee)
+   
+   F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
+
+   > [!NOTE]
+   > The `FrameDetector` is a C++ helper class, not an FPP component. It does not have an `.fpp` definition and is used internally by `Svc.FrameAccumulator`.
 
    To use the `Svc.FrameAccumulator`, you need to configure it with a FrameDetector that detects when a frame is present:
    **MyCustomFrameDetector.hpp**
@@ -133,6 +187,8 @@ The following examples will walk through the implementation of a custom framer a
    // ...existing code...
    Svc::FrameDetector::Status MyCustomFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
        // TODO: Implement frame boundary detection
+       // This can include searching for start words, validating headers, checking lengths, checking CRC and hashes, etc.
+       // Utilities exist for CRC under Utils/Hash, and examples are shown in Svc/Ccsds/Utils or in fprime-examples repo
        // Refer to the Svc.FrameDetector documentation for details on how to implement this
        return Svc::FrameDetector::NO_FRAME_DETECTED;
    }
@@ -170,12 +226,16 @@ class MyCustomFramerDeframer(FramerDeframer):
     def deframe(self, data, no_copy=False):
         # TODO: Implement deframing logic
         return packet, leftover_data, discarded_data
+
+    def get_name(self):
+        # TODO: Return the protocol name for selection with `fprime-gds --framing-selection <selection>`
+        return "MyCustomProtocol"
 ```
 
 Make sure to [package and install the plugin in your virtual environment](./develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
 
 ```
-fprime-gds --framing-selection MyCustomFramerDeframer
+fprime-gds --framing-selection MyCustomProtocol
 ```
 
 ## References 

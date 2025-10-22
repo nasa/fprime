@@ -1,0 +1,120 @@
+// ======================================================================
+// \title  ComAggregator.cpp
+// \author lestarch
+// \brief  cpp file for ComAggregator component implementation class
+// ======================================================================
+
+#include "Svc/ComAggregator/ComAggregator.hpp"
+
+namespace Svc {
+
+// ----------------------------------------------------------------------
+// Component construction and destruction
+// ----------------------------------------------------------------------
+
+ComAggregator ::ComAggregator(const char* const compName)
+    : ComAggregatorComponentBase(compName),
+      m_bufferState(Fw::Buffer::OwnershipState::OWNED),
+      m_frameBuffer(m_frameBufferStore, sizeof(m_frameBufferStore)),
+      m_frameSerializer(m_frameBuffer.getSerializer()) {}
+
+ComAggregator ::~ComAggregator() {}
+
+void ComAggregator ::preamble() {
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->comStatusOut_out(0, good);
+}
+
+// ----------------------------------------------------------------------
+// Handler implementations for typed input ports
+// ----------------------------------------------------------------------
+
+void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
+    this->aggregationMachine_sendSignal_status(condition);
+}
+
+void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    Svc::ComDataContextPair pair(data, context);
+    this->aggregationMachine_sendSignal_fill(pair);
+}
+
+void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::NOT_OWNED);
+    this->m_bufferState = Fw::Buffer::OwnershipState::OWNED;
+}
+
+void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
+    this->aggregationMachine_sendSignal_timeout();
+}
+
+// ----------------------------------------------------------------------
+// Implementations for internal state machine actions
+// ----------------------------------------------------------------------
+
+void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
+    this->m_frameSerializer.resetSer();
+    this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
+    if (this->m_held.get_data().isValid()) {
+        // Fill the held data
+        this->Svc_AggregationMachine_action_doFill(smId, signal, this->m_held);
+        this->m_held = Svc::ComDataContextPair();
+    }
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
+                                                          Svc_AggregationMachine::Signal signal,
+                                                          const Svc::ComDataContextPair& value) {
+    Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(
+        value.get_data().getData(), value.get_data().getSize(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    this->m_lastContext = value.get_context();
+    Fw::Success good = Fw::Success::SUCCESS;
+    // Return port does not alter data and thus const-cast is safe
+    this->dataReturnOut_out(0, const_cast<Fw::Buffer&>(value.get_data()), value.get_context());
+    this->comStatusOut_out(0, good);
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
+    // Send only when the buffer will be valid
+    if (this->m_frameSerializer.getBuffLength() > 0) {
+        this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
+        this->m_frameBuffer.setSize(this->m_frameSerializer.getBuffLength());
+        this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
+    }
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_doHold(SmId smId,
+                                                          Svc_AggregationMachine::Signal signal,
+                                                          const Svc::ComDataContextPair& value) {
+    FW_ASSERT(not this->m_held.get_data().isValid());
+    this->m_held = value;
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_assertNoStatus(SmId smId, Svc_AggregationMachine::Signal signal) {
+    // Status is not possible in this state, confirm by assertion
+    FW_ASSERT(0);
+}
+
+// ----------------------------------------------------------------------
+// Implementations for internal state machine guards
+// ----------------------------------------------------------------------
+
+bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
+                                                         Svc_AggregationMachine::Signal signal,
+                                                         const Svc::ComDataContextPair& value) const {
+    FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
+    const FwSizeType remaining = this->m_frameSerializer.getBuffCapacity() - this->m_frameSerializer.getBuffLength();
+    return (remaining <= value.get_data().getSize());
+}
+
+bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {
+    return this->m_frameSerializer.getBuffLength() > 0;
+}
+
+bool ComAggregator ::Svc_AggregationMachine_guard_isGood(SmId smId,
+                                                         Svc_AggregationMachine::Signal signal,
+                                                         const Fw::Success& value) const {
+    return value == Fw::Success::SUCCESS;
+}
+
+}  // namespace Svc
