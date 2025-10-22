@@ -161,7 +161,7 @@ bool AComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) const {
     return result;
 }
 
-void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
+void AComponentBase::dataOut_out(FwIndexType portNum, U32 data) const {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
     const auto instance = this->getInstance();
     switch (instance) {
@@ -225,7 +225,7 @@ bool BComponentBase::isConnected_dataOut_OutputPort(FwIndexType portNum) const {
     return result;
 }
 
-void BComponentBase::dataOut_out(FwIndexType portNum, U32 data) {
+void BComponentBase::dataOut_out(FwIndexType portNum, U32 data) const {
     FW_ASSERT((0 <= portNum) && (portNum < NUM_DATAOUT_OUTPUT_PORTS), static_cast<FwAssertArgType>(portNum));
     const auto instance = this->getInstance();
     switch (instance) {
