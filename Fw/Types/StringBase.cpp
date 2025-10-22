@@ -77,7 +77,9 @@ SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, Fw::En
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
 }
 
-SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, SizeType maxLength, Fw::Endianness mode) const {
+SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer,
+                                             SizeType maxLength,
+                                             Fw::Endianness mode) const {
     const FwSizeType len = FW_MIN(maxLength, this->length());
     // Serialize length and then bytes
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);

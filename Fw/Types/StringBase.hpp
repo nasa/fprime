@@ -60,10 +60,10 @@ class ConstStringBase : public Serializable {
     SizeType serializedTruncatedSize(FwSizeType maxLength  //!< The max string length
     ) const;
 
-    bool operator==(const ConstStringBase& other) const;    //!< Check for equality with ConstStringBase
-    bool operator==(const CHAR* other) const;               //!< Check for equality with CHAR*
-    bool operator!=(const ConstStringBase& other) const;    //!< Inequality with ConstStringBase
-    bool operator!=(const CHAR* other) const;               //!< Inequality with CHAR*
+    bool operator==(const ConstStringBase& other) const;  //!< Check for equality with ConstStringBase
+    bool operator==(const CHAR* other) const;             //!< Check for equality with CHAR*
+    bool operator!=(const ConstStringBase& other) const;  //!< Inequality with ConstStringBase
+    bool operator!=(const CHAR* other) const;             //!< Inequality with CHAR*
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) const override;
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer,
@@ -106,9 +106,9 @@ class StringBase : public ConstStringBase {
     //! Get the length of the string
     SizeType length() const override;
 
-    const CHAR* operator+=(const CHAR* src);              //!< Concatenate a CHAR*
+    const CHAR* operator+=(const CHAR* src);                   //!< Concatenate a CHAR*
     const StringBase& operator+=(const ConstStringBase& src);  //!< Concatenate a StringBase
-    StringBase& operator=(const CHAR* src);               //!< Assign CHAR*
+    StringBase& operator=(const CHAR* src);                    //!< Assign CHAR*
     StringBase& operator=(const ConstStringBase& src);         //!< Assign another StringBase
 
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
