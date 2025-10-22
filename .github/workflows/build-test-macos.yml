@@ -6,7 +6,7 @@ name: CI [macOS]
 # events but only for the master branch
 on:
   push:
-    branches: [ devel, release/** , 4346-macos-ci ]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
