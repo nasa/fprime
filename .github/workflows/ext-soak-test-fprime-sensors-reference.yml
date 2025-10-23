@@ -59,11 +59,12 @@ jobs:
 
     steps:
       - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build-artifacts-soak
 
       - name: "Stop Services"
+        shell: bash
         run: |
-          ls build-artifacts-soak/
+          ls -R
 
