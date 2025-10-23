@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p build-artifacts-soak
           cp -r ./build-artifacts build-artifacts-soak
-          cp ./fprime/.github/actions/soak-test/soak_monitor.py build-artifacts-soak
+          cp ./lib/fprime/.github/actions/soak-test/soak_monitor.py build-artifacts-soak
 
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
