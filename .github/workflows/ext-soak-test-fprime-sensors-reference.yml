@@ -66,5 +66,5 @@ jobs:
       - name: "Stop Services"
         shell: bash
         run: |
-          ls -R
+          ls build-artifacts-soak
 
