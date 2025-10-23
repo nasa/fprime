@@ -40,7 +40,7 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-sensors-reference
-          fprime_location: ${{ inputs.fprime_location }}
+          fprime_location: ${{ github.event.inputs.fprime_location }}
 
       - name: Cross compile
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
