@@ -110,9 +110,9 @@ class StringBase : public ConstStringBase {
     const StringBase& operator+=(const ConstStringBase& src);  //!< Concatenate a ConstStringBase
     const StringBase& operator+=(const StringBase& src);       //!< Concatenate a StringBase
 
-    StringBase& operator=(const CHAR* src);                    //!< Assign CHAR*
-    StringBase& operator=(const ConstStringBase& src);         //!< Assign another ConstStringBase
-    StringBase& operator=(const StringBase& src);              //!< Assign another StringBase
+    StringBase& operator=(const CHAR* src);             //!< Assign CHAR*
+    StringBase& operator=(const ConstStringBase& src);  //!< Assign another ConstStringBase
+    StringBase& operator=(const StringBase& src);       //!< Assign another StringBase
 
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
