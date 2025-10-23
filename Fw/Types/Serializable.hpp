@@ -123,6 +123,9 @@ class SerialBufferBase {
     //! This method serializes a single 8-bit unsigned integer value into the buffer.
     //! The endianness of the serialization can be controlled via the mode parameter.
     //!
+    //! NOTE: The 'mode' argument here for endianness has no effect as there is no
+    //! concept of endianness for a U8. It has been left in for compatibility.
+    //!
     //! \param val The 8-bit unsigned integer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
@@ -132,6 +135,9 @@ class SerialBufferBase {
     //!
     //! This method serializes a single 8-bit signed integer value into the buffer.
     //! The endianness of the serialization can be controlled via the mode parameter.
+    //!
+    //! NOTE: The 'mode' argument here for endianness has no effect as there is no
+    //! concept of endianness for an I8. It has been left in for compatibility.
     //!
     //! \param val The 8-bit signed integer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
@@ -515,7 +521,7 @@ class SerialBufferBase {
     //! - `size` bytes must remain in the source (`getDeserializeSizeLeft() >= size`).
     //! - Destination must have sufficient capacity (`dest.getCapacity() >= size`).
     //!
-    //! Postconditions on success:
+    //! Post-conditions on success:
     //! - `dest` contains exactly the copied bytes and its previous contents are discarded.
     //! - `this` has advanced its deserialization pointer by `size` bytes.
     //!
@@ -534,7 +540,7 @@ class SerialBufferBase {
     //! - `size` bytes must remain in the source (`getDeserializeSizeLeft() >= size`).
     //! - Destination must have space for the append (`dest.getCapacity() >= dest.getSize() + size`).
     //!
-    //! Postconditions on success:
+    //! Post-conditions on success:
     //! - `dest` gains `size` additional bytes at the end; no length token is written.
     //! - `this` has advanced its deserialization pointer by `size` bytes.
     //!
@@ -549,8 +555,6 @@ class SerialBufferBase {
     //! This method resets the serialization pointer to the beginning of the buffer,
     //! allowing the buffer to be reused for new serialization operations. Any
     //! data that was previously serialized in the buffer will be overwritten.
-    //!
-    //! \return None
     virtual void resetSer() = 0;
 
     //! \brief Reset deserialization pointer to beginning of buffer
@@ -559,8 +563,6 @@ class SerialBufferBase {
     //! allowing the buffer to be reused for new deserialization operations. The buffer
     //! contents are not modified, but the pointer is reset to allow reading from the
     //! start of the data.
-    //!
-    //! \return None
     virtual void resetDeser() = 0;
 
     //! \brief Move serialization pointer to specified offset
@@ -625,7 +627,7 @@ class SerialBufferBase {
     //!
     //! This method returns the amount of data that remains to be deserialized
     //! from the buffer. It indicates how much data is left starting from the
-    //! current deserialization pointer to the end of the buffer.
+    //! current deserialization pointer to the end of the valid size (returned by getSize()).
     //!
     //! \return The remaining size of the deserialization buffer in bytes
     virtual Serializable::SizeType getDeserializeSizeLeft() const = 0;
@@ -690,6 +692,9 @@ class LinearBufferBase : public SerialBufferBase {
     //! This method serializes a single 8-bit unsigned integer value into the buffer.
     //! The endianness of the serialization can be controlled via the mode parameter.
     //!
+    //! NOTE: The 'mode' argument here for endianness has no effect as there is no
+    //! concept of endianness for an U8. It has been left in for compatibility.
+    //!
     //! \param val The 8-bit unsigned integer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
@@ -699,6 +704,9 @@ class LinearBufferBase : public SerialBufferBase {
     //!
     //! This method serializes a single 8-bit signed integer value into the buffer.
     //! The endianness of the serialization can be controlled via the mode parameter.
+    //!
+    //! NOTE: The 'mode' argument here for endianness has no effect as there is no
+    //! concept of endianness for an I8. It has been left in for compatibility.
     //!
     //! \param val The 8-bit signed integer value to serialize
     //! \param mode Endianness mode for serialization (default is Endianness::BIG)
