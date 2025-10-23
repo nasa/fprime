@@ -15,13 +15,6 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
-  workflow_call:
-    inputs:
-      fprime_location:
-        description: "Relative path from the external project root to its F´ submodule"
-        required: false
-        type: string
-        default: "./lib/fprime"
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
@@ -40,7 +33,6 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-sensors-reference
-          fprime_location: "./lib/fprime"
 
       - name: Cross compile
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
