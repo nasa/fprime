@@ -120,6 +120,10 @@ const StringBase& StringBase::operator+=(const ConstStringBase& src) {
     return *this;
 }
 
+const StringBase& StringBase::operator+=(const StringBase& src) {
+    return StringBase::operator+=(static_cast<const ConstStringBase&>(src));
+}
+
 FormatStatus StringBase::format(const CHAR* formatString, ...) {
     va_list args;
     va_start(args, formatString);
@@ -149,6 +153,10 @@ StringBase& StringBase::operator=(const ConstStringBase& other) {
         (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     }
     return *this;
+}
+
+StringBase& StringBase::operator=(const StringBase& other) {
+    return StringBase::operator=(static_cast<const ConstStringBase&>(other));
 }
 
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should

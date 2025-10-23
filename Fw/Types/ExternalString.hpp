@@ -93,7 +93,7 @@ class ExternalString final : public Fw::StringBase {
         return *this;
     }
 
-    // Operator= (const StringBase&)
+    // Operator= (const ConstStringBase&)
     ExternalString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
