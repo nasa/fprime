@@ -169,6 +169,12 @@ Buffer bins are defined using the `BufferBins` structure, which contains an arra
 **Example configuration:**
 
 ```cpp
+// Instantiate the BufferManager component
+Svc::BufferManagerComponentImpl bufferManager("BufferManager");
+
+// Initialize the component (standard F Prime component initialization)
+bufferManager.init(0);
+
 // Create buffer bins configuration
 Svc::BufferManagerComponentImpl::BufferBins bufferBins;
 memset(&bufferBins, 0, sizeof(bufferBins));
