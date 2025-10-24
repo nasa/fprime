@@ -24,6 +24,7 @@ jobs:
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: fprime-community/fprime-workshop-led-blinker
+      default_target_ref: v3.6.0
 
   cross-compilation:
     name: "Cross Compilation"
@@ -74,6 +75,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
       - name: "Setup environment"
         run: |
           python -m venv venv

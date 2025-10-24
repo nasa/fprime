@@ -20,6 +20,7 @@ jobs:
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: fprime-community/fprime-workshop-led-blinker
+      default_target_ref: v3.6.0
 
   run:
     needs: get-branch

@@ -26,12 +26,14 @@ jobs:
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: nasa/fprime-tools
+      default_target_ref: v3.6.1
 
   get-bootstrap-branch:
     name: "Get fprime-bootstrap target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: nasa/fprime-bootstrap
+      default_target_ref: v1.4.0
 
   # -------- Install target versions of the cookiecutter templates and validate -------
   Validate:
