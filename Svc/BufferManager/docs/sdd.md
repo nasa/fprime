@@ -149,7 +149,7 @@ To set up an instance of `BufferManager`, the following needs to be done:
    - `mgrID`: A unique manager ID for buffer checking
    - `memID`: A memory segment identifier
    - `allocator`: An `Fw::MemAllocator` instance (must persist beyond the component's lifetime)
-   - `bins`: A `BufferBins` structure defining the buffer pools
+   - `bins`: A `BufferBins` structure defining the buffer pools (size and number). This is defined by the user, as demonstrated below.
 
 The `setup` method configures the buffer bins, allocates memory for all buffers, and initializes the buffer tracking structures.
 
@@ -159,54 +159,28 @@ Buffer bins are defined using the `BufferBins` structure, which contains an arra
 - `bufferSize`: The size of each buffer in the bin (in bytes)
 - `numBuffers`: The number of buffers to allocate for this bin
 
-**Rules for specifying bins:**
-
-1. For each bin (`BufferBins.bins[n]`), specify the size of the buffers (`bufferSize`) and how many buffers for that bin (`numBuffers`).
-2. The bins should be ordered based on increasing `bufferSize` to allow `BufferManager` to efficiently search for available buffers. When receiving a request for a buffer, the component will search for the first available buffer from the bins that is equal to or greater than the requested size, starting at the beginning of the table.
-3. Any unused bins should have `numBuffers` set to 0.
-4. A single bin can be specified if only one buffer size is needed.
-
 **Example configuration:**
 
 ```cpp
-// Instantiate the BufferManager component
-Svc::BufferManagerComponentImpl bufferManager("BufferManager");
+Svc::BufferManager::BufferBins bins;
+memset(&bins, 0, sizeof(bins));
+bins.bins[0].bufferSize = 256;   // Small buffers
+bins.bins[0].numBuffers = 10;    // 10 small buffers
 
-// Initialize the component (standard F Prime component initialization)
-bufferManager.init(0);
+bins.bins[1].bufferSize = 1024;  // Medium buffers
+bins.bins[1].numBuffers = 5;     // 5 medium buffers
 
-// Create buffer bins configuration
-Svc::BufferManagerComponentImpl::BufferBins bufferBins;
-memset(&bufferBins, 0, sizeof(bufferBins));
+bins.bins[2].bufferSize = 4096;  // Large buffers
+bins.bins[2].numBuffers = 2;     // 2 large buffers
 
-// Define three bins with different buffer sizes
-bufferBins.bins[0].bufferSize = 256;   // Small buffers
-bufferBins.bins[0].numBuffers = 10;    // 10 small buffers
-
-bufferBins.bins[1].bufferSize = 1024;  // Medium buffers
-bufferBins.bins[1].numBuffers = 5;     // 5 medium buffers
-
-bufferBins.bins[2].bufferSize = 4096;  // Large buffers
-bufferBins.bins[2].numBuffers = 2;     // 2 large buffers
-
-// Create memory allocator (example using MallocAllocator)
-Fw::MallocAllocator allocator;
-
-// Setup the buffer manager
-const U16 MGR_ID = 1;
-const FwEnumStoreType MEM_ID = 0;
-bufferManager.setup(MGR_ID, MEM_ID, allocator, bufferBins);
+bufferManager.setup(1, 0, allocator, bins);
 ```
 
 If a buffer is requested that cannot be found among available buffers, the call will return an `Fw::Buffer` with a size of zero. It is expected that the user will detect this condition and respond appropriately for their design. If an empty buffer is returned to the `BufferManager` instance, a `WARNING_HI` event will be issued but no other action will be taken.
 
-## 5 Dictionary
-
-TBD
-
-## 6 Checklists
+## 5 Checklists
 
 
-## 7 Unit Testing
+## 6 Unit Testing
 
 Completed.
