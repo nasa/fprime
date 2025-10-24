@@ -142,14 +142,11 @@ namespace Svc {
 
 ### 4.2 Runtime Setup
 
-To set up an instance of `BufferManager`, the following needs to be done:
-
-1. Call the constructor and the init method in the usual way for an F Prime passive component.
-2. Call the `setup` method, passing in:
-   - `mgrID`: A unique manager ID for buffer checking
-   - `memID`: A memory segment identifier
-   - `allocator`: An `Fw::MemAllocator` instance (must persist beyond the component's lifetime)
-   - `bins`: A `BufferBins` structure defining the buffer pools (size and number). This is defined by the user, as demonstrated below.
+To configure an instance of `BufferManager`, the following needs to be supplied to its `setup()` method:
+- `mgrID`: A unique manager ID for buffer checking
+- `memID`: A memory segment identifier
+- `allocator`: An `Fw::MemAllocator` instance
+- `bins`: A `BufferBins` structure defining the buffer pools (size and number). This is defined by the user, as demonstrated below.
 
 The `setup` method configures the buffer bins, allocates memory for all buffers, and initializes the buffer tracking structures.
 
@@ -158,6 +155,8 @@ The `setup` method configures the buffer bins, allocates memory for all buffers,
 Buffer bins are defined using the `BufferBins` structure, which contains an array of `BufferBin` entries. Each bin specifies:
 - `bufferSize`: The size of each buffer in the bin (in bytes)
 - `numBuffers`: The number of buffers to allocate for this bin
+
+Choosing appropriate buffer sizes and counts depends on the expected usage patterns of the system. Users should analyze their application's memory requirements to determine optimal configurations.
 
 **Example configuration:**
 
@@ -176,11 +175,4 @@ bins.bins[2].numBuffers = 2;     // 2 large buffers
 bufferManager.setup(1, 0, allocator, bins);
 ```
 
-If a buffer is requested that cannot be found among available buffers, the call will return an `Fw::Buffer` with a size of zero. It is expected that the user will detect this condition and respond appropriately for their design. If an empty buffer is returned to the `BufferManager` instance, a `WARNING_HI` event will be issued but no other action will be taken.
-
-## 5 Checklists
-
-
-## 6 Unit Testing
-
-Completed.
+A real-world usage and configuration example can be found in the [`Svc.ComCcsds` subtopology](../../Subtopologies/ComCcsds/).
