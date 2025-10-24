@@ -15,7 +15,7 @@
 // Used for command line argument processing
 #include <getopt.h>
 // Used for printf functions
-#include <cstdlib>
+#include <cstdio>
 // Used to get the Os::Console
 #include <Os/Os.hpp>
 
