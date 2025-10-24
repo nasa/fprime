@@ -132,7 +132,7 @@ sequenceDiagram
 
 ### 4.1 Constants
 
-The maximum number of buffer bins is configured in `BufferManagerComponentImplCfg.hpp`:
+The maximum number of buffer bins is configured in the config file [`config/BufferManagerComponentImplCfg.hpp`](../../../default/config/BufferManagerComponentImplCfg.hpp):
 
 ```cpp
 namespace Svc {
