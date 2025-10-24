@@ -48,8 +48,9 @@ class Serializable {
         SerializeBufferBase& buffer,
         Endianness mode = Endianness::BIG) = 0;  //!< deserialize contents from buffer
 
-    //! Deleted copy-assignment operator
-    Serializable& operator=(const Serializable& src) = delete;
+    //! TODO: this operator should be deleted, this must be done after RawTime is modified though
+    // as it currently depends on this being defined
+    Serializable& operator=(const Serializable& src) = default;
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility

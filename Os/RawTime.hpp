@@ -35,12 +35,6 @@ class RawTimeInterface : public Fw::Serializable {
     //! \brief default virtual destructor
     virtual ~RawTimeInterface() = default;
 
-    //! \brief copy assignment operator
-    //! TODO: added to appease the compiler with Serializable::operator= being deleted but the
-    //! class should be updated to provide an `update` interface instead since assignment to
-    //! abstract supertypes goes against the JPL C++ guidelines
-    RawTimeInterface& operator=(const RawTimeInterface& src) { return *this; }
-
     //! \brief return the underlying RawTime handle (implementation specific)
     //! \return internal RawTime handle representation
     virtual RawTimeHandle* getHandle() = 0;
