@@ -209,19 +209,3 @@ internal port directive_duplicate(directive: DuplicateDirective) priority 6 asse
 internal port directive_assert(directive: AssertDirective) priority 6 assert
 
 internal port directive_store(directive: StoreDirective) priority 6 assert
-
-enum DirectiveErrorCode : U8 {
-    NO_ERROR
-    STMT_OUT_OF_BOUNDS
-    TLM_GET_NOT_CONNECTED
-    TLM_CHAN_NOT_FOUND
-    PRM_GET_NOT_CONNECTED
-    PRM_NOT_FOUND
-    CMD_SERIALIZE_FAILURE
-    DELIBERATE_FAILURE
-    STACK_ACCESS_OUT_OF_BOUNDS
-    STACK_OVERFLOW
-    DOMAIN_ERROR
-    FLAG_IDX_OUT_OF_BOUNDS
-    ASSERTION_FAILED
-}

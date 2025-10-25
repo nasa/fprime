@@ -39,7 +39,7 @@ namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
-using DirectiveError = FpySequencer_DirectiveErrorCode;
+using DirectiveError = Fpy::DirectiveErrorCode;
 
 class FpySequencer : public FpySequencerComponentBase {
     friend class FpySequencerTester;

@@ -114,6 +114,22 @@ module Svc {
             STORE = 74
         }
 
+        enum DirectiveErrorCode : U8 {
+            NO_ERROR = 0
+            STMT_OUT_OF_BOUNDS = 1
+            TLM_GET_NOT_CONNECTED = 2
+            TLM_CHAN_NOT_FOUND = 3
+            PRM_GET_NOT_CONNECTED = 4
+            PRM_NOT_FOUND = 5
+            CMD_SERIALIZE_FAILURE = 6
+            EXIT_WITH_ERROR = 7
+            STACK_ACCESS_OUT_OF_BOUNDS = 8
+            STACK_OVERFLOW = 9
+            DOMAIN_ERROR = 10
+            FLAG_IDX_OUT_OF_BOUNDS = 11
+            ASSERTION_FAILED = 12
+        }
+
         struct Header {
             @ the major version of the FSW
             majorVersion: U8

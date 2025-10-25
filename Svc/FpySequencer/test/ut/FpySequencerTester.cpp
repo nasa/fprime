@@ -322,7 +322,6 @@ void FpySequencerTester::add_ASSERT() {
 
 void FpySequencerTester::add_ASSERT(const FpySequencer_AssertDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::ASSERT, buf);
 }
 

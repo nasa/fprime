@@ -1167,7 +1167,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
     // otherwise, kill the sequence here
     // raise the user defined error code as an event
     this->log_WARNING_HI_SequenceExitedWithError(this->m_sequenceFilePath, errorCode);
-    error = DirectiveError::DELIBERATE_FAILURE;
+    error = DirectiveError::EXIT_WITH_ERROR;
     return Signal::stmtResponse_failure;
 }
 
@@ -1383,6 +1383,10 @@ Signal FpySequencer::duplicate_directiveHandler(const FpySequencer_DuplicateDire
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
+    if (this->m_runtime.stackSize < byteCount) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
     // copy from top - bytecount to top
     memcpy(this->top(), this->top() - byteCount, byteCount);
     this->m_runtime.stackSize += byteCount;
@@ -1390,6 +1394,10 @@ Signal FpySequencer::duplicate_directiveHandler(const FpySequencer_DuplicateDire
 }
 
 Signal FpySequencer::assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < sizeof(U8) * 2) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
     U8 errorCode = this->pop<U8>();
     U8 condition = this->pop<U8>();
 
@@ -1401,7 +1409,7 @@ Signal FpySequencer::assert_directiveHandler(const FpySequencer_AssertDirective&
     // otherwise, kill the sequence here
     // raise the user defined error code as an event
     this->log_WARNING_HI_SequenceAsserted(this->m_sequenceFilePath, errorCode);
-    error = DirectiveError::DELIBERATE_FAILURE;
+    error = DirectiveError::ASSERTION_FAILED;
     return Signal::stmtResponse_failure;
 }
 

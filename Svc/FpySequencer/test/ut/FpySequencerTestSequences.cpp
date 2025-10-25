@@ -46,7 +46,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::DELIBERATE_FAILURE);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 4);
 }
 
@@ -76,7 +76,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::DELIBERATE_FAILURE);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
 }
 
@@ -108,7 +108,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::DELIBERATE_FAILURE);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
 }
 TEST_F(FpySequencerTester, NotTrueSeq) {
