@@ -1387,7 +1387,7 @@ Signal FpySequencer::duplicate_directiveHandler(const FpySequencer_DuplicateDire
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    // copy from top - bytecount to top
+    // copy from top - byteCount to top
     memcpy(this->top(), this->top() - byteCount, byteCount);
     this->m_runtime.stackSize += byteCount;
     return Signal::stmtResponse_success;
