@@ -130,6 +130,35 @@ struct GetFlagDirective {
     flagIdx: U8
 }
 
+@ grabs a specified region from a struct, pushes it to the stack, removing
+@ the rest of the struct
+struct GetFieldDirective {
+    # pops an Fpy.StackSizeType offset in the parent off the stack
+    @ total size of the struct
+    parentSize: Fpy.StackSizeType
+    @ size of the member to extract
+    memberSize: Fpy.StackSizeType
+}
+
+@ duplicates the top N bytes on the stack
+struct DuplicateDirective {
+    @ how many bytes to duplicate
+    $size: Fpy.StackSizeType
+}
+
+@ asserts that a condition is true, raise an error code if not
+struct AssertDirective {
+    # pops two U8s off the stack
+    # condition and error code
+}
+
+@ stores bytes from the top of the stack into a memory location, determined by the stack
+struct StoreDirective {
+    # pops an Fpy.StackSizeType offset off of stack
+    @ size of data to pop off stack
+    $size: Fpy.StackSizeType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -172,6 +201,14 @@ internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
 
 internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 
+internal port directive_getMember(directive: GetMemberDirective) priority 6 assert
+
+internal port directive_duplicate(directive: DuplicateDirective) priority 6 assert
+
+internal port directive_assert(directive: AssertDirective) priority 6 assert
+
+internal port directive_store(directive: StoreDirective) priority 6 assert
+
 enum DirectiveErrorCode : U8 {
     NO_ERROR
     STMT_OUT_OF_BOUNDS
@@ -185,4 +222,5 @@ enum DirectiveErrorCode : U8 {
     STACK_OVERFLOW
     DOMAIN_ERROR
     FLAG_IDX_OUT_OF_BOUNDS
+    ASSERTION_FAILED
 }

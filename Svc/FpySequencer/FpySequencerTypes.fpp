@@ -108,10 +108,10 @@ module Svc {
             PUSH_TIME = 68
             SET_FLAG = 69
             GET_FLAG = 70
-            # GET_MEMBER = 71
-            # DUPLICATE = 72
-            # ASSERT = 73
-            # STORE_CONST_OFFSET = 74
+            GET_FIELD = 71
+            DUPLICATE = 72
+            ASSERT = 73
+            STORE = 74
         }
 
         struct Header {

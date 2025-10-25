@@ -199,3 +199,7 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 68 | PUSH_TIME | Pushes the current time, from the `timeCaller` port, to the stack |
 | 69 | SET_FLAG | Pops a bool off the stack, sets a flag with a specific index to that bool |
 | 70 | GET_FLAG | Gets a flag and pushes its value as a U8 to the stack |
+| 71 | GET_FIELD | Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes from top of stack, and then inside of that a second array of hard-coded number of bytes. The second array is offset by the value previously popped off the stack, with offset 0 meaning the second array starts furthest down the stack. Leaves only the second array of bytes, deleting the surrounding bytes |
+| 72 | DUPLICATE | Pops a StackSizeType off the stack, duplicates that many bytes on the top of the stack |
+| 73 | ASSERT | Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event |
+| 74 | STORE | Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes from the top of the stack, and moves them to the start of the lvar array plus the offset previously popped off the stack |

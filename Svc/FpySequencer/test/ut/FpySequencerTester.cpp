@@ -296,6 +296,45 @@ void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
 }
+void FpySequencerTester::add_GET_FIELD(const Fpy::StackSizeType parentSize, const Fpy::StackSizeType memberSize) {
+    add_GET_FIELD(FpySequencer_GetFieldDirective(parentSize, memberSize));
+}
+
+void FpySequencerTester::add_GET_FIELD(const FpySequencer_GetFieldDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_FIELD, buf);
+}
+
+void FpySequencerTester::add_DUPLICATE(const Fpy::StackSizeType size) {
+    add_DUPLICATE(FpySequencer_DuplicateDirective(size));
+}
+
+void FpySequencerTester::add_DUPLICATE(const FpySequencer_DuplicateDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::DUPLICATE, buf);
+}
+
+void FpySequencerTester::add_ASSERT() {
+    add_ASSERT(FpySequencer_AssertDirective());
+}
+
+void FpySequencerTester::add_ASSERT(const FpySequencer_AssertDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::ASSERT, buf);
+}
+
+void FpySequencerTester::add_store(const Fpy::StackSizeType size) {
+    add_store(FpySequencer_StoreDirective(size));
+}
+
+void FpySequencerTester::add_STORE(const FpySequencer_StoreDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::STORE, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -376,12 +415,12 @@ Signal FpySequencerTester::tester_if_directiveHandler(const FpySequencer_IfDirec
 }
 
 Signal FpySequencerTester::tester_pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive,
-                                                            DirectiveError& err) {
+                                                           DirectiveError& err) {
     return this->cmp.pushPrm_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive,
-                                                               DirectiveError& err) {
+                                                              DirectiveError& err) {
     return this->cmp.pushTlmVal_directiveHandler(directive, err);
 }
 
@@ -429,6 +468,26 @@ Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_Se
 Signal FpySequencerTester::tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive,
                                                            DirectiveError& err) {
     return this->cmp.getFlag_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.getField_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_duplicate_directiveHandler(const FpySequencer_DuplicateDirective& directive,
+                                                             DirectiveError& err) {
+    return this->cmp.duplicate_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive,
+                                                          DirectiveError& err) {
+    return this->cmp.assert_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_store_directiveHandler(const FpySequencer_StoreDirective& directive,
+                                                         DirectiveError& err) {
+    return this->cmp.store_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,

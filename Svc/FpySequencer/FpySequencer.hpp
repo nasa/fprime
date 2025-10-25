@@ -67,6 +67,10 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_PushTimeDirective pushTime;
         FpySequencer_SetFlagDirective setFlag;
         FpySequencer_GetFlagDirective getFlag;
+        FpySequencer_GetFieldDirective getField;
+        FpySequencer_DuplicateDirective duplicate;
+        FpySequencer_AssertDirective assert;
+        FpySequencer_StoreDirective store;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -448,8 +452,7 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
     //! Internal interface handler for directive_pushTlmVal
-    void directive_pushTlmVal_internalInterfaceHandler(
-        const Svc::FpySequencer_PushTlmValDirective& directive) override;
+    void directive_pushTlmVal_internalInterfaceHandler(const Svc::FpySequencer_PushTlmValDirective& directive) override;
 
     //! Internal interface handler for directive_pushTlmValAndTime
     void directive_pushTlmValAndTime_internalInterfaceHandler(
@@ -471,7 +474,8 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
 
     //! Internal interface handler for directive_storeConstOffset
-    void directive_storeConstOffset_internalInterfaceHandler(const Svc::FpySequencer_StoreConstOffsetDirective& directive) override;
+    void directive_storeConstOffset_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreConstOffsetDirective& directive) override;
 
     //! Internal interface handler for directive_load
     void directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) override;
@@ -496,6 +500,18 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Internal interface handler for directive_getFlag
     void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
+
+    //! Internal interface handler for directive_getField
+    void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
+
+    //! Internal interface handler for directive_duplicate
+    void directive_duplicate_internalInterfaceHandler(const Svc::FpySequencer_DuplicateDirective& directive) override;
+
+    //! Internal interface handler for directive_assert
+    void directive_assert_internalInterfaceHandler(const Svc::FpySequencer_AssertDirective& directive) override;
+
+    //! Internal interface handler for directive_store
+    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -772,7 +788,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
-    Signal storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive, DirectiveError& error);
+    Signal storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive,
+                                             DirectiveError& error);
     Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
@@ -781,6 +798,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
     Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
     Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
+    Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
+    Signal duplicate_directiveHandler(const FpySequencer_DuplicateDirective& directive, DirectiveError& error);
+    Signal assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error);
+    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

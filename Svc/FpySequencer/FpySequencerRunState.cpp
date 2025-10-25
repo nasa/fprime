@@ -529,6 +529,22 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_getFlag_internalInterfaceInvoke(directive.getFlag);
             return;
         }
+        case Fpy::DirectiveId::GET_FIELD: {
+            this->directive_getField_internalInterfaceInvoke(directive.getField);
+            return;
+        }
+        case Fpy::DirectiveId::DUPLICATE: {
+            this->directive_duplicate_internalInterfaceInvoke(directive.duplicate);
+            return;
+        }
+        case Fpy::DirectiveId::ASSERT: {
+            this->directive_assert_internalInterfaceInvoke(directive.assert);
+            return;
+        }
+        case Fpy::DirectiveId::STORE: {
+            this->directive_store_internalInterfaceInvoke(directive.store);
+            return;
+        }
     }
     // coding err
     FW_ASSERT(0, static_cast<FwAssertArgType>(id));

@@ -281,7 +281,8 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
 }
 
 //! Internal interface handler for directive_storeConstOffset
-void FpySequencer::directive_storeConstOffset_internalInterfaceHandler(const Svc::FpySequencer_StoreConstOffsetDirective& directive) {
+void FpySequencer::directive_storeConstOffset_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreConstOffsetDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_CONST_OFFSET, error);
@@ -341,6 +342,34 @@ void FpySequencer::directive_getFlag_internalInterfaceHandler(const Svc::FpySequ
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->getFlag_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::GET_FLAG, error);
+}
+
+//! Internal interface handler for directive_getField
+void FpySequencer::directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->getField_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::GET_FIELD, error);
+}
+
+//! Internal interface handler for directive_duplicate
+void FpySequencer::directive_duplicate_internalInterfaceHandler(const Svc::FpySequencer_DuplicateDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->duplicate_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::DUPLICATE, error);
+}
+
+//! Internal interface handler for directive_assert
+void FpySequencer::directive_assert_internalInterfaceHandler(const Svc::FpySequencer_AssertDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->assert_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::ASSERT, error);
+}
+
+//! Internal interface handler for directive_store
+void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->store_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE, error);
 }
 
 //! Internal interface handler for directive_waitRel
@@ -414,7 +443,7 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
 }
 
 Signal FpySequencer::pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive,
-                                                  DirectiveError& error) {
+                                                 DirectiveError& error) {
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
@@ -1153,7 +1182,8 @@ Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirect
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive, DirectiveError& error) {
+Signal FpySequencer::storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive,
+                                                       DirectiveError& error) {
     if (this->m_runtime.stackSize < directive.get_size()) {
         // not enough bytes to pop
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
@@ -1315,6 +1345,82 @@ Signal FpySequencer::getFlag_directiveHandler(const FpySequencer_GetFlagDirectiv
 
     bool flagVal = this->m_runtime.flags[directive.get_flagIdx()];
     this->push<U8>(flagVal);
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < sizeof(Fpy::StackSizeType) ||
+        this->m_runtime.stackSize < directive.get_parentSize()) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    Fpy::StackSizeType offset = this->pop<Fpy::StackSizeType>();
+
+    if (offset + directive.get_memberSize() > directive.get_parentSize()) {
+        // i think it's somewhat ambiguous whether this is a stack access out of bounds
+        // but there isn't really an error code that better reflects this, and i guess
+        // it's technically true
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    // the resulting bytes should move to the start of the parent array
+
+    // get pointer to the start of the parent
+    U8* parentStartPtr = this->top() - directive.get_parentSize();
+    // move the field bytes to the start of the parent
+    memmove(parentStartPtr, parentStartPtr + offset, directive.get_memberSize());
+    // adjust stack size by the diff between the member and the parent
+    this->m_runtime.stackSize -= (directive.get_parentSize() - directive.get_memberSize());
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::duplicate_directiveHandler(const FpySequencer_DuplicateDirective& directive,
+                                                DirectiveError& error) {
+    Fpy::StackSizeType byteCount = directive.get_size();
+    if (Fpy::MAX_STACK_SIZE - this->m_runtime.stackSize < byteCount) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // copy from top - bytecount to top
+    memcpy(this->top(), this->top() - byteCount, byteCount);
+    this->m_runtime.stackSize += byteCount;
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error) {
+    U8 errorCode = this->pop<U8>();
+    U8 condition = this->pop<U8>();
+
+    if (condition != 0) {
+        // proceed to next instruction
+        return Signal::stmtResponse_success;
+    }
+
+    // otherwise, kill the sequence here
+    // raise the user defined error code as an event
+    this->log_WARNING_HI_SequenceAsserted(this->m_sequenceFilePath, errorCode);
+    error = DirectiveError::DELIBERATE_FAILURE;
+    return Signal::stmtResponse_failure;
+}
+
+Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < directive.get_size() + sizeof(Fpy::StackSizeType)) {
+        // not enough bytes to pop the value and the stack offset
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + this->pop<Fpy::StackSizeType>();
+    // if we popped these bytes off, and put them in lvar array, would we go out of bounds
+    if (stackOffset + directive.get_size() > this->m_runtime.stackSize - directive.get_size()) {
+        // write into lvar array would go out of bounds
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    // i believe we can be sure the regions are not overlapping, due to the above check
+    memcpy(this->m_runtime.stack + stackOffset, this->top() - directive.get_size(), directive.get_size());
+    this->m_runtime.stackSize -= directive.get_size();
     return Signal::stmtResponse_success;
 }
 
