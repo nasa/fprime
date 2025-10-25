@@ -24,8 +24,8 @@ module Svc {
             GOTO = 4
             IF = 5
             NO_OP = 6
-            STORE_TLM_VAL = 7
-            STORE_PRM = 8
+            PUSH_TLM_VAL = 7
+            PUSH_PRM = 8
             CONST_CMD = 9
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
@@ -108,6 +108,10 @@ module Svc {
             PUSH_TIME = 68
             SET_FLAG = 69
             GET_FLAG = 70
+            # GET_MEMBER = 71
+            # DUPLICATE = 72
+            # ASSERT = 73
+            # STORE_CONST_OFFSET = 74
         }
 
         struct Header {

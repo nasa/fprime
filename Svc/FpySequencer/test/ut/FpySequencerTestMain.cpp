@@ -126,36 +126,38 @@ TEST_F(FpySequencerTester, noOp) {
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 }
 
-TEST_F(FpySequencerTester, storeTlmVal) {
-    FpySequencer_StoreTlmValDirective directive(456, 0);
+TEST_F(FpySequencerTester, pushTlmVal) {
+    FpySequencer_PushTlmValDirective directive(456);
     nextTlmId = 456;
-    nextTlmValue.setBuffLen(1);
+    nextTlmValue.setBuffLen(2);
     nextTlmValue.getBuffAddr()[0] = 200;
+    nextTlmValue.getBuffAddr()[1] = 100;
     nextTlmTime.set(888, 777);
     DirectiveError err = DirectiveError::NO_ERROR;
     tester_get_m_runtime_ptr()->stackSize = 1;
-    Signal result = tester_storeTlmVal_directiveHandler(directive, err);
+    Signal result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], nextTlmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[2], nextTlmValue.getBuffAddr()[1]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength() + 1);
     clearHistory();
 
     // try getting a nonexistent chan
     directive.set_chanId(111);
-    result = tester_storeTlmVal_directiveHandler(directive, err);
+    result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::TLM_CHAN_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
     directive.set_chanId(456);
 
-    // try setting bad lvar offset
-    directive.set_lvarOffset(1);
-    result = tester_storeTlmVal_directiveHandler(directive, err);
+    // try overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - 1;
+    result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
     err = DirectiveError::NO_ERROR;
 }
 
@@ -198,35 +200,37 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
     err = DirectiveError::NO_ERROR;
 }
 
-TEST_F(FpySequencerTester, storePrm) {
-    FpySequencer_StorePrmDirective directive(456, 0);
+TEST_F(FpySequencerTester, pushPrm) {
+    FpySequencer_PushPrmDirective directive(456);
     nextPrmId = 456;
-    nextPrmValue.setBuffLen(1);
+    nextPrmValue.setBuffLen(2);
     nextPrmValue.getBuffAddr()[0] = 200;
+    nextPrmValue.getBuffAddr()[1] = 100;
     DirectiveError err = DirectiveError::NO_ERROR;
     tester_get_m_runtime_ptr()->stackSize = 1;
-    Signal result = tester_storePrm_directiveHandler(directive, err);
+    Signal result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextPrmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextPrmValue.getBuffLength());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], nextPrmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[2], nextPrmValue.getBuffAddr()[1]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextPrmValue.getBuffLength() + 1);
     clearHistory();
 
     // try getting a nonexistent param
     directive.set_prmId(111);
-    result = tester_storePrm_directiveHandler(directive, err);
+    result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::PRM_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
     directive.set_prmId(456);
 
-    // try setting bad lvar offset
-    directive.set_lvarOffset(1);
-    result = tester_storePrm_directiveHandler(directive, err);
+    // try stack overflow
+    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - 1;
+    result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
     err = DirectiveError::NO_ERROR;
 }
 
@@ -917,16 +921,18 @@ TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(123);
-    tester_push<U8>(true);
+    tester_push<U8>(0);
     Signal result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_header().get_statementCount(), 123);
 
-    tester_push<U8>(false);
+    tester_push<U8>(123);
     result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::DELIBERATE_FAILURE);
+    ASSERT_EVENTS_SequenceExited_SIZE(1);
+    ASSERT_EVENTS_SequenceExited(0, tester_get_m_sequenceFilePath().toChar(), 123);
 }
 
 TEST_F(FpySequencerTester, discard) {
@@ -1868,13 +1874,13 @@ TEST_F(FpySequencerTester, deserialize_noOp) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
 }
 
-TEST_F(FpySequencerTester, deserialize_storeTlmVal) {
+TEST_F(FpySequencerTester, deserialize_pushTlmVal) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_StoreTlmValDirective dir(123, 0);
-    add_STORE_TLM_VAL(dir);
+    FpySequencer_PushTlmValDirective dir(123);
+    add_PUSH_TLM_VAL(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.storeTlmVal, dir);
+    ASSERT_EQ(actual.pushTlmVal, dir);
     // write some junk after buf, make sure it fails
     seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
@@ -1908,13 +1914,13 @@ TEST_F(FpySequencerTester, deserialize_pushTlmValAndTime) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_storePrm) {
+TEST_F(FpySequencerTester, deserialize_pushPrm) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_StorePrmDirective dir(123, 456);
-    add_STORE_PRM(dir);
+    FpySequencer_PushPrmDirective dir(123);
+    add_PUSH_PRM(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.storePrm, dir);
+    ASSERT_EQ(actual.pushPrm, dir);
     // write some junk after buf, make sure it fails
     seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);

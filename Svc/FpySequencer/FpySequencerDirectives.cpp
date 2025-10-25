@@ -229,12 +229,12 @@ void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequenc
     handleDirectiveErrorCode(Fpy::DirectiveId::NO_OP, error);
 }
 
-//! Internal interface handler for directive_storeTlmVal
-void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreTlmValDirective& directive) {
+//! Internal interface handler for directive_pushTlmVal
+void FpySequencer::directive_pushTlmVal_internalInterfaceHandler(
+    const Svc::FpySequencer_PushTlmValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeTlmVal_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_TLM_VAL, error);
+    this->sendSignal(this->pushTlmVal_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL, error);
 }
 
 //! Internal interface handler for directive_pushTlmValAndTime
@@ -245,11 +245,11 @@ void FpySequencer::directive_pushTlmValAndTime_internalInterfaceHandler(
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, error);
 }
 
-//! Internal interface handler for directive_storePrm
-void FpySequencer::directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) {
+//! Internal interface handler for directive_pushPrm
+void FpySequencer::directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storePrm_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_PRM, error);
+    this->sendSignal(this->pushPrm_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_PRM, error);
 }
 
 //! Internal interface handler for directive_constCmd
@@ -413,15 +413,10 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive,
+Signal FpySequencer::pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive,
                                                   DirectiveError& error) {
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
-        return Signal::stmtResponse_failure;
-    }
-    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
-    if (stackOffset >= this->m_runtime.stackSize) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     Fw::Time tlmTime;
@@ -434,16 +429,13 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
         return Signal::stmtResponse_failure;
     }
 
-    // if we were to write this buf at this offset
-    // would it go over the current size of the stack (NOT the max size b/c
-    // we aren't supposed to add anything to the stack when we store)
-
-    if (stackOffset + tlmValue.getBuffLength() > this->m_runtime.stackSize) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    if (Fpy::MAX_STACK_SIZE - tlmValue.getBuffLength() < this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(tlmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
@@ -486,16 +478,12 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error) {
+Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& error) {
     if (!this->isConnected_prmGet_OutputPort(0)) {
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
-    if (stackOffset >= this->m_runtime.stackSize) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
+
     Fw::ParamBuffer prmValue;
     Fw::ParamValid valid = this->getParam_out(0, directive.get_prmId(), prmValue);
 
@@ -505,16 +493,13 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
         return Signal::stmtResponse_failure;
     }
 
-    // if we were to write this buf at this offset
-    // would it overflow the current size of the stack (NOT the max size b/c
-    // we aren't supposed to add anything to the stack when we store)
-
-    if (stackOffset + prmValue.getBuffLength() > this->m_runtime.stackSize) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    if (Fpy::MAX_STACK_SIZE - prmValue.getBuffLength() < this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->m_runtime.stack + stackOffset, prmValue.getBuffAddr(), prmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + this->m_runtime.stackSize, prmValue.getBuffAddr(), prmValue.getBuffLength());
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(prmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
@@ -1143,12 +1128,16 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    if (this->pop<U8>() != 0) {
+    U8 errorCode = this->pop<U8>();
+    // exit(0), no error
+    if (errorCode == 0) {
         // just goto the end of the sequence
         this->m_runtime.nextStatementIndex = this->m_sequenceObj.get_header().get_statementCount();
         return Signal::stmtResponse_success;
     }
     // otherwise, kill the sequence here
+    // raise the user defined error code as an event
+    this->log_WARNING_HI_SequenceExited(this->m_sequenceFilePath, errorCode);
     error = DirectiveError::DELIBERATE_FAILURE;
     return Signal::stmtResponse_failure;
 }

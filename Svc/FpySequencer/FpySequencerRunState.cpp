@@ -116,9 +116,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_TLM_VAL: {
-            new (&deserializedDirective.storeTlmVal) FpySequencer_StoreTlmValDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storeTlmVal);
+        case Fpy::DirectiveId::PUSH_TLM_VAL: {
+            new (&deserializedDirective.pushTlmVal) FpySequencer_PushTlmValDirective();
+            status = argBuf.deserializeTo(deserializedDirective.pushTlmVal);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -136,9 +136,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_PRM: {
-            new (&deserializedDirective.storePrm) FpySequencer_StorePrmDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storePrm);
+        case Fpy::DirectiveId::PUSH_PRM: {
+            new (&deserializedDirective.pushPrm) FpySequencer_PushPrmDirective();
+            status = argBuf.deserializeTo(deserializedDirective.pushPrm);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -416,16 +416,16 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_noOp_internalInterfaceInvoke(directive.noOp);
             return;
         }
-        case Fpy::DirectiveId::STORE_TLM_VAL: {
-            this->directive_storeTlmVal_internalInterfaceInvoke(directive.storeTlmVal);
+        case Fpy::DirectiveId::PUSH_TLM_VAL: {
+            this->directive_pushTlmVal_internalInterfaceInvoke(directive.pushTlmVal);
             return;
         }
         case Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME: {
             this->directive_pushTlmValAndTime_internalInterfaceInvoke(directive.pushTlmValAndTime);
             return;
         }
-        case Fpy::DirectiveId::STORE_PRM: {
-            this->directive_storePrm_internalInterfaceInvoke(directive.storePrm);
+        case Fpy::DirectiveId::PUSH_PRM: {
+            this->directive_pushPrm_internalInterfaceInvoke(directive.pushPrm);
             return;
         }
         case Fpy::DirectiveId::CONST_CMD: {

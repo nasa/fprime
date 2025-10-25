@@ -51,9 +51,9 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
-        FpySequencer_StoreTlmValDirective storeTlmVal;
+        FpySequencer_PushTlmValDirective pushTlmVal;
         FpySequencer_PushTlmValAndTimeDirective pushTlmValAndTime;
-        FpySequencer_StorePrmDirective storePrm;
+        FpySequencer_PushPrmDirective pushPrm;
         FpySequencer_ConstCmdDirective constCmd;
         FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
@@ -447,16 +447,16 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_noOp
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
-    //! Internal interface handler for directive_storeTlmVal
-    void directive_storeTlmVal_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreTlmValDirective& directive) override;
+    //! Internal interface handler for directive_pushTlmVal
+    void directive_pushTlmVal_internalInterfaceHandler(
+        const Svc::FpySequencer_PushTlmValDirective& directive) override;
 
     //! Internal interface handler for directive_pushTlmValAndTime
     void directive_pushTlmValAndTime_internalInterfaceHandler(
         const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) override;
 
-    //! Internal interface handler for directive_storePrm
-    void directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) override;
+    //! Internal interface handler for directive_pushPrm
+    void directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive) override;
 
     //! Internal interface handler for directive_constCmd
     void directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) override;
@@ -713,10 +713,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error);
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
-    Signal storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error);
+    Signal pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive, DirectiveError& error);
     Signal pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
                                               DirectiveError& error);
-    Signal storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error);
+    Signal pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& error);
     Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
     Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
 

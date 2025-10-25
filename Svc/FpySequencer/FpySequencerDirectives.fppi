@@ -30,12 +30,10 @@ struct NoOpDirective {
     _empty: U8
 }
 
-@ stores a tlm buffer in the lvar array
-struct StoreTlmValDirective {
+@ pushes a tlm buf to the stack
+struct PushTlmValDirective {
     @ the tlm channel id to get the time of
     chanId: FwChanIdType
-    @ the offset in the lvar array to store the tlm in
-    lvarOffset: Fpy.StackSizeType
 }
 
 @ pushes a tlm buffer to the stack, and then pushes the time 
@@ -45,12 +43,10 @@ struct PushTlmValAndTimeDirective {
     chanId: FwChanIdType
 }
 
-@ stores a prm buffer in the lvar array
-struct StorePrmDirective {
+@ pushes a prm buf to the stack
+struct PushPrmDirective {
     @ the param id to get the value of
     prmId: FwPrmIdType
-    @ the offset in the lvar array to store the prm in
-    lvarOffset: Fpy.StackSizeType
 }
 
 @ executes a cmd with const args
@@ -144,11 +140,11 @@ internal port directive_if(directive: IfDirective) priority 6 assert
 
 internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 
-internal port directive_storeTlmVal(directive: StoreTlmValDirective) priority 6 assert
+internal port directive_pushTlmVal(directive: PushTlmValDirective) priority 6 assert
 
 internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) priority 6 assert
 
-internal port directive_storePrm(directive: StorePrmDirective) priority 6 assert
+internal port directive_pushPrm(directive: PushPrmDirective) priority 6 assert
 
 internal port directive_constCmd(directive: ConstCmdDirective) priority 6 assert
 

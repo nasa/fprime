@@ -135,8 +135,8 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 4 | GOTO | Sets the index of the next statement to be executed |
 | 5 | IF | Pops a byte off the stack. If 0, goto a specified statement index, otherwise proceed |
 | 6 | NO_OP | Does nothing |
-| 7 | STORE_TLM_VAL | Stores a telemetry buffer in the lvar array |
-| 8 | STORE_PRM | Stores a parameter buffer in the lvar array |
+| 7 | PUSH_TLM_VAL | Pushes a telemetry buffer to the stack |
+| 8 | PUSH_PRM | Pushes a parameter buffer to the stack |
 | 9 | CONST_CMD | Dispatches a command with constant arguments |
 | 10 | OR | Pops two bytes off the stack. If either one is != 0, pushes 1 to stack, otherwise 0 |
 | 11 | AND | Pops two bytes off the stack. If both are != 0, pushes 1 to stack, otherwise 0 |

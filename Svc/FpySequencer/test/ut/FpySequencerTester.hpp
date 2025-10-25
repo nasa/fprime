@@ -89,12 +89,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_IF(U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
-    void add_STORE_TLM_VAL(FwChanIdType id, Fpy::StackSizeType lvarOffset);
-    void add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir);
+    void add_PUSH_TLM_VAL(FwChanIdType id);
+    void add_PUSH_TLM_VAL(FpySequencer_PushTlmValDirective dir);
     void add_PUSH_TLM_VAL_AND_TIME(FwChanIdType id);
     void add_PUSH_TLM_VAL_AND_TIME(FpySequencer_PushTlmValAndTimeDirective dir);
-    void add_STORE_PRM(FwPrmIdType id, Fpy::StackSizeType lvarOffset);
-    void add_STORE_PRM(FpySequencer_StorePrmDirective dir);
+    void add_PUSH_PRM(FwPrmIdType id);
+    void add_PUSH_PRM(FpySequencer_PushPrmDirective dir);
     void add_CONST_CMD(FwOpcodeType opcode);
     void add_CONST_CMD(FpySequencer_ConstCmdDirective dir);
     void add_STACK_OP(Fpy::DirectiveId op);
@@ -148,8 +148,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err);
     Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective& directive, DirectiveError& err);
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
-    Signal tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& err);
-    Signal tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& err);
+    Signal tester_pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& err);
+    Signal tester_pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive, DirectiveError& err);
     Signal tester_pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
                                                      DirectiveError& err);
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
