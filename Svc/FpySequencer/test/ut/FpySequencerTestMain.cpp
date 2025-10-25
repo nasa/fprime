@@ -1101,7 +1101,7 @@ TEST_F(FpySequencerTester, pushTime) {
 }
 
 TEST_F(FpySequencerTester, getField) {
-    FpySequencer_GetFieldDirective directive(4, 2); // parent size 3, member size 2
+    FpySequencer_GetFieldDirective directive(4, 2);  // parent size 3, member size 2
     tester_push<U8>(123);
     tester_push<U8>(45);
     tester_push<U8>(67);
@@ -1133,7 +1133,6 @@ TEST_F(FpySequencerTester, getField) {
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
-
     // test not enough bytes
     tester_get_m_runtime_ptr()->stackSize = 0;
     directive = FpySequencer_GetFieldDirective(0, 0);
@@ -1145,7 +1144,7 @@ TEST_F(FpySequencerTester, getField) {
 TEST_F(FpySequencerTester, assert) {
     FpySequencer_AssertDirective directive;
     tester_push<U8>(1);  // True condition
-    tester_push<U8>(0); // 0 error code
+    tester_push<U8>(0);  // 0 error code
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_assert_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -1153,13 +1152,12 @@ TEST_F(FpySequencerTester, assert) {
 
     // Test false assertion
     tester_push<U8>(0);
-    tester_push<U8>(123); // 123 error code
+    tester_push<U8>(123);  // 123 error code
     result = tester_assert_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::ASSERTION_FAILED);
     ASSERT_EVENTS_SequenceAsserted_SIZE(1);
     ASSERT_EVENTS_SequenceAsserted(0, tester_get_m_sequenceFilePath().toChar(), 123);
-
 
     // Test stack underflow
     tester_get_m_runtime_ptr()->stackSize = 0;
@@ -1201,7 +1199,7 @@ TEST_F(FpySequencerTester, store) {
 }
 
 TEST_F(FpySequencerTester, duplicate) {
-    FpySequencer_DuplicateDirective directive(2); // Size 1 for U8
+    FpySequencer_DuplicateDirective directive(2);  // Size 1 for U8
     tester_push<U8>(45);
     tester_push<U8>(50);
     DirectiveError err = DirectiveError::NO_ERROR;
@@ -2202,7 +2200,6 @@ TEST_F(FpySequencerTester, deserialize_getFlag) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-
 TEST_F(FpySequencerTester, deserialize_getField) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_GetFieldDirective dir(123, 123);
@@ -2262,7 +2259,6 @@ TEST_F(FpySequencerTester, deserialize_store) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
-
 
 TEST_F(FpySequencerTester, deserialize_duplicate) {
     FpySequencer::DirectiveUnion actual;
