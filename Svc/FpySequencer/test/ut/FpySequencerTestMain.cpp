@@ -931,8 +931,8 @@ TEST_F(FpySequencerTester, exit) {
     result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::DELIBERATE_FAILURE);
-    ASSERT_EVENTS_SequenceExited_SIZE(1);
-    ASSERT_EVENTS_SequenceExited(0, tester_get_m_sequenceFilePath().toChar(), 123);
+    ASSERT_EVENTS_SequenceExitedWithError_SIZE(1);
+    ASSERT_EVENTS_SequenceExitedWithError(0, tester_get_m_sequenceFilePath().toChar(), 123);
 }
 
 TEST_F(FpySequencerTester, discard) {

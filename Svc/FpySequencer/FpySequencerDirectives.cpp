@@ -280,11 +280,11 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
 }
 
-//! Internal interface handler for directive_store
-void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+//! Internal interface handler for directive_storeConstOffset
+void FpySequencer::directive_storeConstOffset_internalInterfaceHandler(const Svc::FpySequencer_StoreConstOffsetDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->store_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE, error);
+    this->sendSignal(this->storeConstOffset_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_pushVal
@@ -1137,7 +1137,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
     }
     // otherwise, kill the sequence here
     // raise the user defined error code as an event
-    this->log_WARNING_HI_SequenceExited(this->m_sequenceFilePath, errorCode);
+    this->log_WARNING_HI_SequenceExitedWithError(this->m_sequenceFilePath, errorCode);
     error = DirectiveError::DELIBERATE_FAILURE;
     return Signal::stmtResponse_failure;
 }
@@ -1153,7 +1153,7 @@ Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirect
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
+Signal FpySequencer::storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stackSize < directive.get_size()) {
         // not enough bytes to pop
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;

@@ -101,8 +101,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_EXIT();
     void add_ALLOCATE(Fpy::StackSizeType size);
     void add_ALLOCATE(FpySequencer_AllocateDirective dir);
-    void add_STORE(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
-    void add_STORE(FpySequencer_StoreDirective dir);
+    void add_STORE_CONST_OFFSET(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
+    void add_STORE_CONST_OFFSET(FpySequencer_StoreConstOffsetDirective dir);
     void add_LOAD(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
     void add_LOAD(FpySequencer_LoadDirective dir);
     void add_DISCARD(Fpy::StackSizeType size);

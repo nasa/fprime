@@ -58,7 +58,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
         FpySequencer_AllocateDirective allocate;
-        FpySequencer_StoreDirective store;
+        FpySequencer_StoreConstOffsetDirective storeConstOffset;
         FpySequencer_LoadDirective load;
         FpySequencer_PushValDirective pushVal;
         FpySequencer_DiscardDirective discard;
@@ -470,8 +470,8 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_allocate
     void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
 
-    //! Internal interface handler for directive_store
-    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
+    //! Internal interface handler for directive_storeConstOffset
+    void directive_storeConstOffset_internalInterfaceHandler(const Svc::FpySequencer_StoreConstOffsetDirective& directive) override;
 
     //! Internal interface handler for directive_load
     void directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) override;
@@ -772,7 +772,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
-    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
+    Signal storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive, DirectiveError& error);
     Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);

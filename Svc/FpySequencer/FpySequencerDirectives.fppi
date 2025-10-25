@@ -77,7 +77,7 @@ struct AllocateDirective {
 }
 
 @ pops some bytes off the stack and puts them in lvar array
-struct StoreDirective {
+struct StoreConstOffsetDirective {
     lvarOffset: Fpy.StackSizeType
     $size: Fpy.StackSizeType
 }
@@ -154,7 +154,7 @@ internal port directive_exit(directive: ExitDirective) priority 6 assert
 
 internal port directive_allocate(directive: AllocateDirective) priority 6 assert
 
-internal port directive_store(directive: StoreDirective) priority 6 assert
+internal port directive_storeConstOffset(directive: StoreConstOffsetDirective) priority 6 assert
 
 internal port directive_load(directive: LoadDirective) priority 6 assert
 

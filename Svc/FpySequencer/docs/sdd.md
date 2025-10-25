@@ -187,9 +187,9 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | 56 | ITRUNC_64_8 | Truncates a 64-bit integer to 8 bits |
 | 57 | ITRUNC_64_16 | Truncates a 64-bit integer to 16 bits |
 | 58 | ITRUNC_64_32 | Truncates a 64-bit integer to 32 bits |
-| 59 | EXIT | Pops a byte off the stack. If the byte != 0, end sequence as if it had finished nominally, otherwise end as if a command had failed |
-| 60 | ALLOCATE | Pushes a hard-coded count of 0-bytes to the stack |
-| 61 | STORE | Pops a hard-coded number of bytes off the stack, and writes them to the local variable array at a hard-coded offset |
+| 59 | EXIT | Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code |
+| 60 | ALLOCATE | Pushes a hard-coded count of 0x00-bytes to the stack |
+| 61 | STORE_CONST_OFFSET | Pops a hard-coded number of bytes off the stack, and writes them to the local variable array at a hard-coded offset |
 | 62 | LOAD | Reads a hard-coded number of bytes from the local variable array at a specific offset, and pushes them to the stack |
 | 63 | PUSH_VAL | Pushes a constant array of bytes to the stack |
 | 64 | DISCARD | Discards bytes from the top of the stack |

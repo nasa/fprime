@@ -221,13 +221,13 @@ void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::ALLOCATE, buf);
 }
-void FpySequencerTester::add_STORE(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size) {
-    add_STORE(FpySequencer_StoreDirective(lvarOffset, size));
+void FpySequencerTester::add_STORE_CONST_OFFSET(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size) {
+    add_STORE_CONST_OFFSET(FpySequencer_StoreConstOffsetDirective(lvarOffset, size));
 }
-void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
+void FpySequencerTester::add_STORE_CONST_OFFSET(FpySequencer_StoreConstOffsetDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE, buf);
+    addDirective(Fpy::DirectiveId::STORE_CONST_OFFSET, buf);
 }
 void FpySequencerTester::add_LOAD(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size) {
     add_LOAD(FpySequencer_LoadDirective(lvarOffset, size));

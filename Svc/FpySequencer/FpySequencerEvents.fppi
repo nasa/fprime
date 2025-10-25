@@ -88,7 +88,7 @@ event SequenceCancelled(
     severity activity high \
     format "Cancelled sequence file {}"
 
-event SequenceExited(
+event SequenceExitedWithError(
     filePath: string
     errorCode: U8
 ) \

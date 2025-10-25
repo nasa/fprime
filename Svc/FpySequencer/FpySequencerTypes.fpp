@@ -98,7 +98,7 @@ module Svc {
 
             EXIT = 59
             ALLOCATE = 60
-            STORE = 61
+            STORE_CONST_OFFSET = 61
             LOAD = 62
             PUSH_VAL = 63
             DISCARD = 64
