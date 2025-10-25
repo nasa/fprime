@@ -326,8 +326,8 @@ void FpySequencerTester::add_ASSERT(const FpySequencer_AssertDirective dir) {
     addDirective(Fpy::DirectiveId::ASSERT, buf);
 }
 
-void FpySequencerTester::add_store(const Fpy::StackSizeType size) {
-    add_store(FpySequencer_StoreDirective(size));
+void FpySequencerTester::add_STORE(const Fpy::StackSizeType size) {
+    add_STORE(FpySequencer_StoreDirective(size));
 }
 
 void FpySequencerTester::add_STORE(const FpySequencer_StoreDirective dir) {

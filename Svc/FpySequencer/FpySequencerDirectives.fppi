@@ -150,6 +150,7 @@ struct DuplicateDirective {
 struct AssertDirective {
     # pops two U8s off the stack
     # condition and error code
+    _empty: U8
 }
 
 @ stores bytes from the top of the stack into a memory location, determined by the stack
@@ -201,7 +202,7 @@ internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
 
 internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 
-internal port directive_getMember(directive: GetMemberDirective) priority 6 assert
+internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
 internal port directive_duplicate(directive: DuplicateDirective) priority 6 assert
 
