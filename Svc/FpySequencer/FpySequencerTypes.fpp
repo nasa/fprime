@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 2;
+        constant SCHEMA_VERSION = 3;
 
         @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
         # should be equal to (last flag id) + 1
