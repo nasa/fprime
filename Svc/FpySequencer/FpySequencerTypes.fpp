@@ -127,7 +127,8 @@ module Svc {
             STACK_OVERFLOW = 9
             DOMAIN_ERROR = 10
             FLAG_IDX_OUT_OF_BOUNDS = 11
-            ASSERTION_FAILED = 12
+            ASSERTION_FAILURE = 12
+            ARRAY_OUT_OF_BOUNDS = 13
         }
 
         struct Header {
