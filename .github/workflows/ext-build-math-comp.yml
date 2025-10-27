@@ -32,5 +32,6 @@ jobs:
     with: 
       target_repository: fprime-community/fprime-tutorial-math-component
       build_location: MathProject/MathDeployment
+      fprime_location: ./lib/fprime
       run_unit_tests: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
