@@ -722,6 +722,7 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+valdaarhun
 valgrind
 vbai
 VCA
