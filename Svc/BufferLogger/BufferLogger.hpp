@@ -76,8 +76,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
         );
 
         //! Set base file name
-        void setBaseName(const Fw::ConstStringBase&
-                             baseName  //!< The base file name; used with prefix, unique counter value, and suffix
+        void setBaseName(const Fw::ConstStringBase& baseName  //!< The base file name; used with prefix, unique counter value, and suffix
         );
 
         //! Log a buffer

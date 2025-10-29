@@ -25,7 +25,7 @@ class ConstExternalString final : public ConstStringBase {
     ConstExternalString(const char* bufferPtr,                //!< The buffer pointer
                         ConstStringBase::SizeType bufferSize  //!< The buffer size
                         )
-        : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize + 1) {}
+        : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {}
 
     //! Destructor
     ~ConstExternalString() {}
