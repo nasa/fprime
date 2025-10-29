@@ -11,7 +11,44 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 
 ## Requirements
 
-TBD
+| **ID**      | **Requirement**                                                                                                                                   | **Verification**                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| FPY-SEQ-001 | The sequencer shall support branching on conditionals.                                                                                            | Unit Test                       |
+| FPY-SEQ-002 | The sequencer shall support arithmetic and logical operations.                                                                                    | Unit Test                       |
+| FPY-SEQ-003 | The sequencer shall support accessing telemetry and parameters.                                                                                   | Unit Test                       |
+| FPY-SEQ-004 | The sequencer shall support calling subroutines with arguments and a single return value.                                                         | Unit Test                       |
+| FPY-SEQ-005 | The sequencer shall support scoped variables.                                                                                                     | Unit Test                       |
+| FPY-SEQ-006 | The sequencer shall support executing commands at relative and absolute times.                                                                    | Unit Test                       | 
+| FPY-SEQ-007 | The sequencer shall support executing commands with argument values from telemetry channels, parameters, and local variables.                     | Unit Test                       |
+| FPY-SEQ-008 | The sequencer shall support running sequences with arguments.                                                                                     | Unit Test                       |
+| FPY-SEQ-009 | The sequencer shall support looping.                                                                                                              | Unit Test                       |
+| FPY-SEQ-010 | The sequencer shall read a binary-encoded sequence file.                                                                                          | Unit Test                       |
+| FPY-SEQ-011 | The sequencer shall be supported by ground-side tools.                                                                                            | Unit Test                       |
+| FPY-SEQ-012 | The sequencer shall dispatch commands.                                                                                                            | Unit Test                       |
+| FPY-SEQ-013 | The sequencer shall use a stack for operands and local variables with a configurable maximum size.                                                | Unit Test                       |
+| FPY-SEQ-014 | The sequencer shall support directive `WAIT_ABS`, reading `<absolute time>` from the operand stack.                                               | Unit Test                       |
+| FPY-SEQ-015 | The sequencer shall support directive `WAIT_REL`, reading `<time interval>` from the operand stack.                                               | Unit Test                       |
+| FPY-SEQ-016 | The sequencer shall support directive `EXIT_ON_FAILURE`, reading `<truefalse>` from the operand stack.                                            | Unit Test                       |
+| FPY-SEQ-017 | The sequencer shall support directive `EXIT`, reading `<status>` from the operand stack.                                                          | Unit Test                       |
+| FPY-SEQ-018 | The sequencer shall support directive `GOTO <line number>`.                                                                                       | Unit Test                       |
+| FPY-SEQ-019 | The sequencer shall support directive `STORE, <lvar offset>, <lvar size>` to pop from the operand stack into the local-variable array.            | Unit Test                       |
+| FPY-SEQ-020 | The sequencer shall support directive `LOAD, <lvar offset>, <lvar size>` to push from the local-variable array onto the operand stack.            | Unit Test                       |
+| FPY-SEQ-021 | The sequencer shall support directives `IEQ`, `INEQ`, `FEQ`, `FNEQ`, reading numeric values from the operand stack.                               | Unit Test                       |
+| FPY-SEQ-022 | The sequencer shall support directives `GT`, `GE`, `LT`, `LE` for signed/unsigned integers and floats, reading values from the operand stack.     | Unit Test                       |
+| FPY-SEQ-023 | The sequencer shall support directives `ADD`, `SUB`, `MUL`, `DIV` for signed/unsigned integers and floats, reading values from the operand stack. | Unit Test                       |
+| FPY-SEQ-024 | The sequencer shall support directive `FLOAT_FLOOR_DIV`, reading the numerator and divisor from the operand stack.                                | Unit Test                       |
+| FPY-SEQ-025 | The sequencer shall support directives `POW` and `LOG` for floats, reading values from the operand stack.                                         | Unit Test                       |
+| FPY-SEQ-026 | The sequencer shall support directives `TRUNC` and `EXT` for signed/unsigned integers and floats, reading values from the operand stack.          | Unit Test                       |
+| FPY-SEQ-027 | The sequencer shall support directives `INT_TO_FLOAT` and `FLOAT_TO_INT`, reading values from the operand stack.                                  | Unit Test                       |
+| FPY-SEQ-028 | The sequencer shall support directives `AND`, `OR`, `NOT`, `XOR`, reading values from the operand stack.                                          | Unit Test                       |
+| FPY-SEQ-029 | The sequencer shall support directive `IF <goto idx if false>`, reading a conditional value from the stack.                                       | Unit Test                       |
+| FPY-SEQ-030 | The sequencer shall support parameterized sequences by loading local variables before executing.                                                  | Unit Test                       |
+| FPY-SEQ-031 | The sequencer shall support `STORE_TLM`, `STORE_PRM <tlm/prm id> <lvar offset>`.                                                                  | Unit Test                       |
+| FPY-SEQ-032 | The sequencer shall support `CONST_CMD <opcode> <arg bytes>` directive.                                                                           | Unit Test                       |
+| FPY-SEQ-033 | The sequencer shall support `STACK_CMD <cmd size>` directive, reading the command opcode and arg value from the operand stack.                    | Unit Test                       |
+| FPY-SEQ-034 | The sequencer shall support directive `ALLOCATE_STACK <size>`.                                                                                    | Unit Test                       |
+| FPY-SEQ-035 | The sequencer shall support directive `PRINT`, reading a string to log from the operand stack.                                                    | Unit Test                       |
+
 
 ## States
 
