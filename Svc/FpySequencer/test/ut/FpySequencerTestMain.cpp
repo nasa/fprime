@@ -1155,7 +1155,7 @@ TEST_F(FpySequencerTester, assert) {
     tester_push<U8>(123);  // 123 error code
     result = tester_assert_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::ASSERTION_FAILED);
+    ASSERT_EQ(err, DirectiveError::ASSERTION_FAILURE);
     ASSERT_EVENTS_SequenceAsserted_SIZE(1);
     ASSERT_EVENTS_SequenceAsserted(0, tester_get_m_sequenceFilePath().toChar(), 123);
 

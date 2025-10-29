@@ -1409,7 +1409,7 @@ Signal FpySequencer::assert_directiveHandler(const FpySequencer_AssertDirective&
     // otherwise, kill the sequence here
     // raise the user defined error code as an event
     this->log_WARNING_HI_SequenceAsserted(this->m_sequenceFilePath, errorCode);
-    error = DirectiveError::ASSERTION_FAILED;
+    error = DirectiveError::ASSERTION_FAILURE;
     return Signal::stmtResponse_failure;
 }
 
