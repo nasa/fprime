@@ -4,13 +4,11 @@ This document describes the steps to create a new device manager in F Prime. A d
 
 ## Application-Manager-Driver Pattern
 
-Please refer to the [Application Manager Driver Pattern](../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
+A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component and the bus driver component. The bus driver handles the platform-specific implementation of communications on a specific bus (e.g., LinuxI2cDriver, LinuxUartDriver). The device manager handles the operations and logic for a specific device. This enhances modularity and reusability: for example the same device manager can be ported to different platforms by switching the bus driver component.
 
-> [!IMPORTANT]
-> A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component (sometimes called "device driver") and the driver component (or "bus driver"). This enhances modularity and reusability, as we will see in the guide below.
+Please refer to the [Application Manager Driver pattern documentation](../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
 
-<!-- TODO: do both device manager and bus driver in this doc? -->
-**This guide focuses on the device manager component**. The bus driver component is assumed to already exist (e.g., I2C driver, SPI driver, UART driver, etc.) and will be covered in a separate guide.
+**This guide focuses on the device manager component**. The bus driver component is assumed to already exist, and implementing a bus driver will be covered in a separate guide. Linux implementations are available in core F´ with for example `Drv.LinuxUartDriver`, `Drv.LinuxI2cDriver` and `LinuxSpiDriver`.
 
 ### Example and reference
 
@@ -45,9 +43,9 @@ Before starting development, obtain the datasheet and any relevant documentation
 
 ### Step 2 - Define the Device Manager Component
 
-Use `fprime-util new --component` to create a new component for your device manager. This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports.
+Use `fprime-util new --component` to create a new component for your device manager. This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports by mirroring the bus driver's interface.
 
-For our example `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)). A `Drv.I2c` for example provides an input port of type `Drv.I2cWriteRead`, so we need to define an output port of that type in our component:
+For our example `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)). A `Drv.I2c` provides an input port of type `Drv.I2cWriteRead`, so we need to define an output port of that type in our component:
 
 ```python
 @ Component emitting telemetry read from an MpuImu
@@ -114,7 +112,7 @@ struct ImuData {
 
 **a) Emit telemetry on a schedule**
 
-Add a run port to connect to a RateGroup, and implement the run handler to read data and emit telemetry:
+Add a run port to connect to a RateGroup, and implement the run handler to read data and emit telemetry on a regular cadence:
 ```python
 queued component ImuManager {
     ...
@@ -191,17 +189,17 @@ Then configure the bus driver to open the correct device. This is platform speci
 void configureTopology() {
     ...
 
-    Drv::I2cStatus status = MpuImu::imuDriver.open(state.mpu.device);
-    // TODO: handle status
+    Drv::I2cStatus status = MpuImu::imuDriver.open("/dev/i2c-1"); // Or use CLI args
+    // TODO: handle status, log if error
 }
 ```
 
 ## Best Practices
 
-- Keep device-specific logic in helper functions separate from component infrastructure
+- Use parameters for configurable device settings (ranges, modes, etc.)
 - Always check bus operation status and emit events on errors
 - Define all register addresses/values as named constants from the datasheet, don't use "magic" numbers
-- Use parameters for configurable device settings (ranges, modes, etc.)
+- Keep device-specific logic in helper functions separate from component infrastructure
 
 ## Additional Resources
 
