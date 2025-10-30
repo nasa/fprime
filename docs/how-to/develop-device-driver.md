@@ -227,7 +227,7 @@ void configureTopology() {
 ## Additional Resources
 
 - [Application Manager Driver Pattern](../user-manual/design-patterns/app-man-drv.md)
-- [FPP State Machine Reference](../reference/fpp/fpp-spec.html#specifying-state-machines)
+- [FPP State Machine User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-State-Machines)
 - [fprime-sensors Repository](https://github.com/fprime-community/fprime-sensors) - A collection of ready-to-use device managers for specific devices
 - [fprime-sensors-reference Repository](https://github.com/fprime-community/fprime-sensors-reference) - Reference project that uses sensors defined in fprime-sensors
 
