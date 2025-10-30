@@ -49,7 +49,7 @@ For our example `ImuManager` component, we are using an I2C bus, therefore we ne
 
 ```python
 @ Component emitting telemetry read from an MpuImu
-queued component ImuManager {
+active component ImuManager {
     output port busWriteRead: Drv.I2cWriteRead
     output port busWrite: Drv.I2c
 }
@@ -60,7 +60,7 @@ queued component ImuManager {
 It is good practice to create helper functions for device operations, based on your datasheet. These helpers will then be called from your component's port handlers to respond to requests, or for example update telemetry on a schedule.
 
 ```cpp
-
+// ------------- Snippet from Component.hpp -------------
 // Register addresses (from datasheet)
 static constexpr U8 RESET_REG = 0x00;
 static constexpr U8 CONFIG_REG = 0x01;
@@ -71,6 +71,7 @@ static constexpr U8 RESET_VAL = 0x80;
 static constexpr U8 DEFAULT_ADDR = 0x48;
 static constexpr U8 DATA_SIZE = 6;
 
+// ------------- Snippet from Component.cpp -------------
 // Reset device
 Drv::I2cStatus MyDeviceManager::reset() {
     U8 cmd[] = {RESET_REG, RESET_VAL};  // From your datasheet
@@ -79,20 +80,23 @@ Drv::I2cStatus MyDeviceManager::reset() {
 }
 
 // Read sensor data
-Drv::I2cStatus MyDeviceManager::read(MyDeviceData& output_data) {
+Drv::I2cStatus MyDeviceManager::read(ImuData& output_data) {
     U8 regAddr = DATA_REG;
     U8 rawData[DATA_SIZE];
     Fw::Buffer writeBuffer(&regAddr, 1);
     Fw::Buffer readBuffer(rawData, DATA_SIZE);
     
     Drv::I2cStatus status = this->busWriteRead_out(0, m_address, writeBuffer, readBuffer);
-    if (status == BUS_OK) {
-        // Convert to engineering units
+    if (status == Drv::I2cStatus::I2C_OK) {
+        // Convert to engineering units - implement as per your datasheet
         output_data = convertRawData(rawData);
     }
     return status;
 }
 ```
+
+> [!TIP]
+> The above code snippets are simplified for clarity. In a concrete implementation, these methods and constants would be private members of the component class. Helpers can be broken out in a different file if desired. This is all up to the implementer.
 
 ### Step 4 - Expose Behavior to Application layer
 
@@ -103,9 +107,16 @@ Once the device-specific helper functions are implemented, integrate them into y
 First, let's represent our ImuData in FPP so we can use it in telemetry and ports:
 
 ```python
+@ Struct representing X, Y, Z data
+struct GeometricVector3 {
+    x: F32
+    y: F32
+    z: F32
+}
+
 struct ImuData {
-    acceleration: FprimeSensors.GeometricVector3
-    rotation: FprimeSensors.GeometricVector3
+    acceleration: GeometricVector3
+    rotation: GeometricVector3
     temperature: F32
 }
 ```
@@ -114,11 +125,15 @@ struct ImuData {
 
 Add a run port to connect to a RateGroup, and implement the run handler to read data and emit telemetry on a regular cadence:
 ```python
-queued component ImuManager {
+active component ImuManager {
     ...
 
+    @ Telemetry channel for IMU data (struct of acceleration, rotation, temperature)
+    telemetry ImuData: ImuData
+    
     @ Scheduling port for reading from IMU and writing to telemetry
     sync input port run: Svc.Sched
+
 }
 ```
 
@@ -126,7 +141,8 @@ queued component ImuManager {
 void ImuManager::run_handler(FwIndexType portNum, U32 context) {
     ImuData data;
     Drv::I2cStatus status = this->read(data);
-    if (status == BUS_OK) {
+    // Check status and emit telemetry or log error
+    if (status == Drv::I2cStatus::I2C_OK) {
         this->tlmWrite_ImuData(data);
     } else {
         this->log_WARNING_HI_ImuReadError(status);
@@ -142,7 +158,7 @@ Add a port that returns data on request:
 @ Port to read IMU data on request. Update data reference and return status
 port ImuDataRead(ref data: ImuData) -> Fw.Success
 
-queued component ImuManager {
+active component ImuManager {
     ...
 
     sync input port getData: ImuDataRead
@@ -172,12 +188,12 @@ The ImuManager component in the fprime-sensors repository also uses a state mach
 Wire your device manager to the bus driver in a topology:
 
 ```fpp
-instance myDevice: MyProject.ImuManager base id 0x1000
+instance imuManager: MyProject.ImuManager base id 0x1000
 instance busDriver: Drv.LinuxI2cDriver base id 0x2000
 
 topology MyTopology {
     connections {
-        myDevice.busWriteRead -> busDriver.writeRead
+        imuManager.busWriteRead -> busDriver.writeRead
     }
 }
 ```
@@ -189,10 +205,17 @@ Then configure the bus driver to open the correct device. This is platform speci
 void configureTopology() {
     ...
 
-    Drv::I2cStatus status = MpuImu::imuDriver.open("/dev/i2c-1"); // Or use CLI args
+    Drv::I2cStatus status = busDriver.open("/dev/i2c-1"); // Or use CLI args
     // TODO: handle status, log if error
+
+    // Optionally, if needed, this is where you would configure the device address
+    // This method would need to be implemented in your device manager
+    Drv::I2cStatus status = imuManager.configure(0x68); // Device I2C address from datasheet
 }
 ```
+
+> [!TIP]
+> A reference MpuImuManager component implementation is available in the fprime-sensors repository: [MpuImu component reference](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/MpuImu/Components/ImuManager)
 
 ## Best Practices
 
