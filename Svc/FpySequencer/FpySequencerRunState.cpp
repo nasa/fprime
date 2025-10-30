@@ -388,11 +388,11 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::DUPLICATE: {
-            new (&deserializedDirective.duplicate) FpySequencer_DuplicateDirective();
-            status = argBuf.deserializeTo(deserializedDirective.duplicate);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+        case Fpy::DirectiveId::PEEK: {
+            new (&deserializedDirective.peek) FpySequencer_PeekDirective();
+            if (argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
@@ -573,8 +573,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_getField_internalInterfaceInvoke(directive.getField);
             return;
         }
-        case Fpy::DirectiveId::DUPLICATE: {
-            this->directive_duplicate_internalInterfaceInvoke(directive.duplicate);
+        case Fpy::DirectiveId::PEEK: {
+            this->directive_peek_internalInterfaceInvoke(directive.peek);
             return;
         }
         case Fpy::DirectiveId::ASSERT: {

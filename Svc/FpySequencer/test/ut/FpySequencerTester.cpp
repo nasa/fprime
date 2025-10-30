@@ -306,14 +306,13 @@ void FpySequencerTester::add_GET_FIELD(const FpySequencer_GetFieldDirective dir)
     addDirective(Fpy::DirectiveId::GET_FIELD, buf);
 }
 
-void FpySequencerTester::add_DUPLICATE(const Fpy::StackSizeType size) {
-    add_DUPLICATE(FpySequencer_DuplicateDirective(size));
+void FpySequencerTester::add_PEEK() {
+    add_PEEK(FpySequencer_PeekDirective());
 }
 
-void FpySequencerTester::add_DUPLICATE(const FpySequencer_DuplicateDirective dir) {
+void FpySequencerTester::add_PEEK(const FpySequencer_PeekDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::DUPLICATE, buf);
+    addDirective(Fpy::DirectiveId::PEEK, buf);
 }
 
 void FpySequencerTester::add_ASSERT() {
@@ -474,9 +473,9 @@ Signal FpySequencerTester::tester_getField_directiveHandler(const FpySequencer_G
     return this->cmp.getField_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_duplicate_directiveHandler(const FpySequencer_DuplicateDirective& directive,
-                                                             DirectiveError& err) {
-    return this->cmp.duplicate_directiveHandler(directive, err);
+Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive,
+                                                        DirectiveError& err) {
+    return this->cmp.peek_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive,
@@ -749,7 +748,7 @@ void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveU
 
 template <typename T>
 void FpySequencerTester::tester_push(T val) {
-    cmp.push<T>(val);
+    cmp.m_runtime.stack.push<T>(val);
 }
 template void FpySequencerTester::tester_push(U8);
 template void FpySequencerTester::tester_push(U16);
@@ -763,7 +762,7 @@ template void FpySequencerTester::tester_push(F32);
 template void FpySequencerTester::tester_push(F64);
 template <typename T>
 T FpySequencerTester::tester_pop() {
-    return cmp.pop<T>();
+    return cmp.m_runtime.stack.pop<T>();
 }
 template U8 FpySequencerTester::tester_pop();
 template U16 FpySequencerTester::tester_pop();

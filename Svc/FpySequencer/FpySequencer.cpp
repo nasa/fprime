@@ -356,7 +356,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     }
 
     // push the cmd response to the stack so we can branch off of it
-    this->push(static_cast<I32>(response.e));
+    this->m_runtime.stack.push(static_cast<I32>(response.e));
 }
 
 //! Handler for input port seqRunIn

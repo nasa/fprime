@@ -134,15 +134,15 @@ TEST_F(FpySequencerTester, pushTlmVal) {
     nextTlmValue.getBuffAddr()[1] = 100;
     nextTlmTime.set(888, 777);
     DirectiveError err = DirectiveError::NO_ERROR;
-    tester_get_m_runtime_ptr()->stackSize = 1;
+    tester_get_m_runtime_ptr()->stack.size = 1;
     Signal result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[2], nextTlmValue.getBuffAddr()[1]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength() + 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], nextTlmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], nextTlmValue.getBuffAddr()[1]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, nextTlmValue.getBuffLength() + 1);
     clearHistory();
 
     // try getting a nonexistent chan
@@ -154,7 +154,7 @@ TEST_F(FpySequencerTester, pushTlmVal) {
     directive.set_chanId(456);
 
     // try overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - 1;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
     result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
@@ -168,16 +168,16 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
     nextTlmValue.getBuffAddr()[0] = 200;
     nextTlmTime.set(888, 777);
     DirectiveError err = DirectiveError::NO_ERROR;
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     Signal result = tester_pushTlmValAndTime_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextTlmValue.getBuffLength() + Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], nextTlmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, nextTlmValue.getBuffLength() + Fw::Time::SERIALIZED_SIZE);
     Fw::Time deserTime;
-    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack + 1, Fw::Time::SERIALIZED_SIZE);
+    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack.bytes + 1, Fw::Time::SERIALIZED_SIZE);
     esb.setBuffLen(Fw::Time::SERIALIZED_SIZE);
     ASSERT_EQ(esb.deserializeTo(deserTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(deserTime, nextTlmTime);
@@ -193,7 +193,7 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
 
     // try overflow stack
     // should be one byte over
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
     result = tester_pushTlmValAndTime_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
@@ -207,15 +207,15 @@ TEST_F(FpySequencerTester, pushPrm) {
     nextPrmValue.getBuffAddr()[0] = 200;
     nextPrmValue.getBuffAddr()[1] = 100;
     DirectiveError err = DirectiveError::NO_ERROR;
-    tester_get_m_runtime_ptr()->stackSize = 1;
+    tester_get_m_runtime_ptr()->stack.size = 1;
     Signal result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], nextPrmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[2], nextPrmValue.getBuffAddr()[1]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, nextPrmValue.getBuffLength() + 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], nextPrmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], nextPrmValue.getBuffAddr()[1]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, nextPrmValue.getBuffLength() + 1);
     clearHistory();
 
     // try getting a nonexistent param
@@ -227,7 +227,7 @@ TEST_F(FpySequencerTester, pushPrm) {
     directive.set_prmId(456);
 
     // try stack overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - 1;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
     result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
@@ -280,9 +280,9 @@ TEST_F(FpySequencerTester, stackOp) {
     Signal result = tester_stackOp_directiveHandler(directiveEQ, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test NE (not equal)
     FpySequencer_StackOpDirective directiveNE(Fpy::DirectiveId::INE);
@@ -291,9 +291,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveNE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test OR (bitwise OR)
     FpySequencer_StackOpDirective directiveOR(Fpy::DirectiveId::OR);
@@ -302,9 +302,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveOR, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 15);  // 0b1111
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);  // 0b1111
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 15);  // 0b1111
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);       // 0b1111
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test AND (bitwise AND)
     FpySequencer_StackOpDirective directiveAND(Fpy::DirectiveId::AND);
@@ -313,9 +313,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 8);   // 0b1111
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);  // 0b1111
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 8);  // 0b1111
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);      // 0b1111
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test signed comparison (SLT - signed less than)
     FpySequencer_StackOpDirective directiveSLT(Fpy::DirectiveId::SLT);
@@ -324,9 +324,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveSLT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test unsigned comparison (ULT - unsigned less than)
     FpySequencer_StackOpDirective directiveULT(Fpy::DirectiveId::ULT);
@@ -335,9 +335,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveULT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test unsigned comparison (UGT - unsigned greater than)
     FpySequencer_StackOpDirective directiveUGT(Fpy::DirectiveId::UGT);
@@ -346,9 +346,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveUGT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test floating-point comparison (FLT - floating-point less than)
     FpySequencer_StackOpDirective directiveFLT(Fpy::DirectiveId::FLT);
@@ -357,9 +357,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveFLT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test floating-point comparison (FGE - floating-point greater or equal)
     FpySequencer_StackOpDirective directiveFGE(Fpy::DirectiveId::FGE);
@@ -368,9 +368,9 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveFGE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test out-of-bounds stack access
     FpySequencer_StackOpDirective directiveOOB(Fpy::DirectiveId::IEQ);
@@ -387,378 +387,378 @@ TEST_F(FpySequencerTester, ieq) {
     tester_push<I64>(-1);
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_ieq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<I64>(-1);
     tester_push<I64>(1);
     ASSERT_EQ(tester_op_ieq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, ine) {
     tester_push<I64>(-1);
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_ine(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<I64>(-1);
     tester_push<I64>(1);
     ASSERT_EQ(tester_op_ine(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, or) {
     tester_push<U8>(true);
     tester_push<U8>(true);
     ASSERT_EQ(tester_op_or(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(true);
     tester_push<U8>(false);
     ASSERT_EQ(tester_op_or(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(false);
     tester_push<U8>(false);
     ASSERT_EQ(tester_op_or(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, and) {
     tester_push<U8>(false);
     tester_push<U8>(false);
     ASSERT_EQ(tester_op_and(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(true);
     tester_push<U8>(false);
     ASSERT_EQ(tester_op_and(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(true);
     tester_push<U8>(true);
     ASSERT_EQ(tester_op_and(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, ult) {
     tester_push<U64>(0);
     tester_push<U64>(std::numeric_limits<U64>::max());
     ASSERT_EQ(tester_op_ult(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_ult(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(1);
     ASSERT_EQ(tester_op_ult(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, ule) {
     tester_push<U64>(0);
     tester_push<U64>(std::numeric_limits<U64>::max());
     ASSERT_EQ(tester_op_ule(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_ule(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(1);
     ASSERT_EQ(tester_op_ule(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(2);
     tester_push<U64>(1);
     ASSERT_EQ(tester_op_ule(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, ugt) {
     tester_push<U64>(std::numeric_limits<U64>::max());
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_ugt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_ugt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(1);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_ugt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, uge) {
     tester_push<U64>(std::numeric_limits<U64>::max());
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_uge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(0);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_uge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(1);
     tester_push<U64>(0);
     ASSERT_EQ(tester_op_uge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<U64>(1);
     tester_push<U64>(2);
     ASSERT_EQ(tester_op_uge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, slt) {
     tester_push<I64>(0);
     tester_push<I64>(std::numeric_limits<I64>::max());
     ASSERT_EQ(tester_op_slt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_slt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(1);
     ASSERT_EQ(tester_op_slt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, sle) {
     tester_push<I64>(0);
     tester_push<I64>(std::numeric_limits<I64>::max());
     ASSERT_EQ(tester_op_sle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_sle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_sle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, sgt) {
     tester_push<I64>(0);
     tester_push<I64>(std::numeric_limits<I64>::max());
     ASSERT_EQ(tester_op_sgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_sgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_sgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, sge) {
     tester_push<I64>(0);
     tester_push<I64>(std::numeric_limits<I64>::max());
     ASSERT_EQ(tester_op_sge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_sge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<I64>(0);
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_sge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 }
 
 TEST_F(FpySequencerTester, flt) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_flt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_flt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_flt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_flt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, fle) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_fle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_fle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_fle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_fle(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, fgt) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_fgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_fgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_fgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_fgt(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, fge) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_fge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_fge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_fge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_fge(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, feq) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_feq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_feq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_feq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_feq(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, fne) {
     tester_push<F64>(0.0);
     tester_push<F64>(std::numeric_limits<F64>::max());
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(0.0);
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(0.0);
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, not) {
     tester_push<U8>(true);
     ASSERT_EQ(tester_op_not(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 }
 
 TEST_F(FpySequencerTester, fptrunc) {
@@ -943,7 +943,7 @@ TEST_F(FpySequencerTester, discard) {
     Signal result = tester_discard_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
 
     // Test error case - try to discard more bytes than available
     tester_push<U8>(0x12);
@@ -964,7 +964,7 @@ TEST_F(FpySequencerTester, stackCmd) {
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_cmdOut_SIZE(1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
 
     // Test error case - not enough bytes on stack
     tester_push<U8>(0x12);
@@ -1024,7 +1024,7 @@ TEST_F(FpySequencerTester, setFlag) {
     result = tester_setFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::FLAG_IDX_OUT_OF_BOUNDS);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
 
     // Test stack underflow
     directive.set_flagIdx(0);
@@ -1040,18 +1040,18 @@ TEST_F(FpySequencerTester, getFlag) {
     Signal result = tester_getFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 1);
 
     // reset stack
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     // test getting false flag
     tester_get_m_runtime_ptr()->flags[0] = false;
     result = tester_getFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0);
 
     // Test invalid flag index
     directive.set_flagIdx(Fpy::FLAG_COUNT);
@@ -1060,7 +1060,7 @@ TEST_F(FpySequencerTester, getFlag) {
     ASSERT_EQ(err, DirectiveError::FLAG_IDX_OUT_OF_BOUNDS);
 
     // Test stack overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
     directive.set_flagIdx(0);
     result = tester_getFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -1072,29 +1072,29 @@ TEST_F(FpySequencerTester, pushTime) {
     DirectiveError err = DirectiveError::NO_ERROR;
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     Signal result = tester_pushTime_directiveHandler(directive, err);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fw::Time::SERIALIZED_SIZE);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 
     // make sure deser'd time is same as input time
     Fw::Time deserTime;
-    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack, Fw::Time::SERIALIZED_SIZE);
+    Fw::ExternalSerializeBuffer esb(tester_get_m_runtime_ptr()->stack.bytes, Fw::Time::SERIALIZED_SIZE);
     esb.setBuffLen(Fw::Time::SERIALIZED_SIZE);
     ASSERT_EQ(esb.deserializeTo(deserTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(deserTime, testTime);
     clearHistory();
 
     // check almost overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
     result = tester_pushTime_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 
     // check overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE + 1;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE + 1;
     result = tester_pushTime_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
@@ -1111,12 +1111,12 @@ TEST_F(FpySequencerTester, getField) {
     Signal result = tester_getField_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 2);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 45);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], 67);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 2);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 45);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], 67);
 
     // Test parent out of bounds
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U64>(0);
     tester_push<Fpy::StackSizeType>(0);
     directive = FpySequencer_GetFieldDirective(20, 1);
@@ -1125,7 +1125,7 @@ TEST_F(FpySequencerTester, getField) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test member out of bounds
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U64>(0);
     tester_push<Fpy::StackSizeType>(0);
     directive = FpySequencer_GetFieldDirective(1, 6);
@@ -1134,7 +1134,7 @@ TEST_F(FpySequencerTester, getField) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // test not enough bytes
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     directive = FpySequencer_GetFieldDirective(0, 0);
     result = tester_getField_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -1160,7 +1160,7 @@ TEST_F(FpySequencerTester, assert) {
     ASSERT_EVENTS_SequenceAsserted(0, tester_get_m_sequenceFilePath().toChar(), 123);
 
     // Test stack underflow
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     result = tester_assert_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
@@ -1168,7 +1168,7 @@ TEST_F(FpySequencerTester, assert) {
 
 TEST_F(FpySequencerTester, store) {
     FpySequencer_StoreDirective directive(2);
-    tester_get_m_runtime_ptr()->stackSize = 10;
+    tester_get_m_runtime_ptr()->stack.size = 10;
     tester_push<U8>(123);
     tester_push<U8>(100);
     tester_push<Fpy::StackSizeType>(4);
@@ -1176,12 +1176,12 @@ TEST_F(FpySequencerTester, store) {
     Signal result = tester_store_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 10);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[4], 123);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[5], 100);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 100);
 
     // Test out of bounds storage
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(123);
     tester_push<U8>(100);
     tester_push<Fpy::StackSizeType>(4);
@@ -1191,36 +1191,102 @@ TEST_F(FpySequencerTester, store) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test stack underflow
-    tester_get_m_runtime_ptr()->stackSize = 0;
+    tester_get_m_runtime_ptr()->stack.size = 0;
     directive.set_size(1);
     result = tester_store_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
-TEST_F(FpySequencerTester, duplicate) {
-    FpySequencer_DuplicateDirective directive(2);  // Size 1 for U8
-    tester_push<U8>(45);
-    tester_push<U8>(50);
+TEST_F(FpySequencerTester, peek) {
+    FpySequencer_PeekDirective directive(0);
+    // start by testing without pushing args to stack
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_duplicate_directiveHandler(directive, err);
+    Signal result = tester_peek_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    // okay now try duplicating two bytes on the top of the stack
+    tester_push<U8>(12);
+    tester_push<U8>(34);
+    // push size
+    tester_push<Fpy::StackSizeType>(2);
+    // push offset
+    tester_push<Fpy::StackSizeType>(0);
+    err = DirectiveError::NO_ERROR;
+    result = tester_peek_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 4);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 45);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[1], 50);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[2], 45);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[3], 50);
+
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], 34);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], 12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[3], 34);
+
+    // okay now try duplicating two bytes at the bottom of the stack
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_push<U8>(12);
+    tester_push<U8>(34);
+    tester_push<U8>(0);
+    tester_push<U8>(0);
+    // push size
+    tester_push<Fpy::StackSizeType>(2);
+    // push offset
+    tester_push<Fpy::StackSizeType>(2);
+    err = DirectiveError::NO_ERROR;
+    result = tester_peek_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 6);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], 34);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[3], 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 34);
+
+
+    // test offset > stack size
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    // push size
+    tester_push<Fpy::StackSizeType>(0);
+    // push offset
+    tester_push<Fpy::StackSizeType>(11);
+    err = DirectiveError::NO_ERROR;
+    result = tester_peek_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+
+    // test offset == stack size and byte count == 0
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    // push size
+    tester_push<Fpy::StackSizeType>(0);
+    // push offset
+    tester_push<Fpy::StackSizeType>(10);
+    err = DirectiveError::NO_ERROR;
+    result = tester_peek_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
 
     // Test stack overflow
-    tester_get_m_runtime_ptr()->stackSize = Fpy::MAX_STACK_SIZE - 1;
-    result = tester_duplicate_directiveHandler(directive, err);
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1 - sizeof(Fpy::StackSizeType) * 2;
+    // push size
+    tester_push<Fpy::StackSizeType>(2 + sizeof(Fpy::StackSizeType) * 2);
+    // push offset
+    tester_push<Fpy::StackSizeType>(0);
+    result = tester_peek_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 
     // Test stack underflow
-    tester_get_m_runtime_ptr()->stackSize = 0;
-    result = tester_duplicate_directiveHandler(directive, err);
+    // push size
+    tester_push<Fpy::StackSizeType>(2);
+    // push offset
+    tester_push<Fpy::StackSizeType>(0);
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    result = tester_peek_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
@@ -2260,24 +2326,24 @@ TEST_F(FpySequencerTester, deserialize_store) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_duplicate) {
+TEST_F(FpySequencerTester, deserialize_peek) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_DuplicateDirective dir(123);
-    add_DUPLICATE(dir);
+    FpySequencer_PeekDirective dir(0);
+    add_PEEK(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.duplicate, dir);
+    ASSERT_EQ(actual.peek, dir);
     // write some junk after buf, make sure it fails
     seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
     this->clearHistory();
-    // clear args, make sure it fails
+    // clear args, make sure it succeeds
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
 // caught a bug

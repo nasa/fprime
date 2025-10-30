@@ -140,10 +140,10 @@ struct GetFieldDirective {
     memberSize: Fpy.StackSizeType
 }
 
-@ duplicates the top N bytes on the stack
-struct DuplicateDirective {
-    @ how many bytes to duplicate
-    $size: Fpy.StackSizeType
+@ peeks at N bytes from the stack, starting from an offset relative to the top of the stack
+struct PeekDirective {
+    # pops two StackSizeTypes off the stack
+    _empty: U8
 }
 
 @ asserts that a condition is true, raise an error code if not
@@ -204,7 +204,7 @@ internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 
 internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
-internal port directive_duplicate(directive: DuplicateDirective) priority 6 assert
+internal port directive_peek(directive: PeekDirective) priority 6 assert
 
 internal port directive_assert(directive: AssertDirective) priority 6 assert
 

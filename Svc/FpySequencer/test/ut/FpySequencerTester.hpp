@@ -118,8 +118,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_PUSH_TIME();
     void add_GET_FIELD(Fpy::StackSizeType parentSize, Fpy::StackSizeType memberSize);
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
-    void add_DUPLICATE(Fpy::StackSizeType size);
-    void add_DUPLICATE(FpySequencer_DuplicateDirective dir);
+    void add_PEEK();
+    void add_PEEK(FpySequencer_PeekDirective dir);
     void add_ASSERT();
     void add_ASSERT(FpySequencer_AssertDirective dir);
     void add_STORE(Fpy::StackSizeType size);
@@ -169,7 +169,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& err);
     Signal tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& err);
     Signal tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& err);
-    Signal tester_duplicate_directiveHandler(const FpySequencer_DuplicateDirective& directive, DirectiveError& err);
+    Signal tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& err);
     Signal tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& err);
     Signal tester_store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);

@@ -109,7 +109,7 @@ module Svc {
             SET_FLAG = 69
             GET_FLAG = 70
             GET_FIELD = 71
-            DUPLICATE = 72
+            PEEK = 72
             ASSERT = 73
             STORE = 74
         }

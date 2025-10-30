@@ -667,15 +667,15 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 | ------------------|-------------|
 | bytes | The raw bytes of the field |
 
-## DUPLICATE (72)
-Pops a StackSizeType off the stack, duplicates that many bytes on the top of the stack.
+## PEEK (72)
+Pops a StackSizeType off the stack, peeks that many bytes on the top of the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| size | U32 | hardcoded | Number of bytes to duplicate |
+| size | U32 | hardcoded | Number of bytes to peek |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| bytes | The duplicated bytes |
+| bytes | The peekd bytes |
 
 ## ASSERT (73)
 Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event.
