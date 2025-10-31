@@ -341,7 +341,9 @@ IPCFG
 IPHELPER
 isf
 isgreater
+isgreaterequal
 isless
+islessequal
 isr
 isunordered
 itimerspec

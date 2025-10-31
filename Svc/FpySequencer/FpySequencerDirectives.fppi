@@ -176,7 +176,7 @@ internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
 
 internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 
-enum DirectiveErrorCode {
+enum DirectiveErrorCode : U8 {
     NO_ERROR
     STMT_OUT_OF_BOUNDS
     TLM_GET_NOT_CONNECTED
@@ -188,5 +188,7 @@ enum DirectiveErrorCode {
     STACK_ACCESS_OUT_OF_BOUNDS
     STACK_OVERFLOW
     DOMAIN_ERROR
+    ARITHMETIC_OVERFLOW
+    ARITHMETIC_UNDERFLOW
     FLAG_IDX_OUT_OF_BOUNDS
 }

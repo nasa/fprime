@@ -11,7 +11,7 @@ module Drv {
 
 module Drv {
 
-  enum I2cStatus {
+  enum I2cStatus : U8 {
     I2C_OK = 0 @< Transaction okay
     I2C_ADDRESS_ERR = 1 @< I2C address invalid
     I2C_WRITE_ERR = 2 @< I2C write failed

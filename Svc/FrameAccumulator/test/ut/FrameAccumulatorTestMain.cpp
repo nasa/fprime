@@ -47,6 +47,11 @@ TEST(FrameAccumulator, testBufferReturnDeallocation) {
     tester.testBufferReturnDeallocation();
 }
 
+TEST(FrameAccumulator, testDetectionErrorHandling) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testDetectionErrorHandling();
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
