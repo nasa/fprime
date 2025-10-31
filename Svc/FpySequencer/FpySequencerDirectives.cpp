@@ -1291,7 +1291,7 @@ Signal FpySequencer::getField_directiveHandler(const FpySequencer_GetFieldDirect
 }
 
 Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error) {
-    // must have at least two stacksizetype on stack
+    // must have at least two StackSizeType on stack
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) * 2) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;

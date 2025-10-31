@@ -1246,7 +1246,6 @@ TEST_F(FpySequencerTester, peek) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 12);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 34);
 
-
     // test offset > stack size
     tester_get_m_runtime_ptr()->stack.size = 10;
     // push size
