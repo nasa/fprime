@@ -142,7 +142,7 @@ struct GetFieldDirective {
 
 @ peeks at N bytes from the stack, starting from an offset relative to the top of the stack
 struct PeekDirective {
-    # pops two StackSizeTypes off the stack
+    # pops two StackSizeType off the stack
     _empty: U8
 }
 
