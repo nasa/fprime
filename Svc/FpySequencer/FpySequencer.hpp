@@ -102,6 +102,9 @@ class FpySequencer : public FpySequencerComponentBase {
         // does not convert endianness
         void push(U8* src, Fpy::StackSizeType size);
 
+        // pushes zero bytes to the stack
+        void pushZeroes(Fpy::StackSizeType byteCount);
+
         // returns a pointer to the next unused byte at the top of the stack
         U8* top();
         // returns a pointer to the first byte of the lvars array

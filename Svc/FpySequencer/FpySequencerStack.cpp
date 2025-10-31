@@ -129,6 +129,14 @@ void FpySequencer::Stack::push(U8* src, Fpy::StackSizeType srcSize) {
     this->size += srcSize;
 }
 
+// pushes zero bytes to the stack
+void FpySequencer::Stack::pushZeroes(Fpy::StackSizeType byteCount) {
+    FW_ASSERT(this->size + byteCount < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
+              static_cast<FwAssertArgType>(byteCount));
+    memset(this->top(), 0, byteCount);
+    this->size += byteCount;
+}
+
 U8* FpySequencer::Stack::top() {
     return &this->bytes[this->size];
 }

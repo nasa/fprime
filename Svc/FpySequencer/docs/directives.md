@@ -192,7 +192,7 @@ Performs a signed greater than or equal to comparison on two signed integers, pu
 | ------------------|-------------|
 | bool | The result |
 ## FEQ (22)
-Compares two floats for equality, pushes result to stack.
+Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -202,7 +202,7 @@ Compares two floats for equality, pushes result to stack.
 | ------------------|-------------|
 | bool | The result |
 ## FNE (23)
-Compares two floats for inequality, pushes result to stack.
+Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -212,7 +212,7 @@ Compares two floats for inequality, pushes result to stack.
 | ------------------|-------------|
 | bool | The result |
 ## FLT (24)
-Performs a less than comparison on two floats, pushes result to stack.
+Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -222,7 +222,7 @@ Performs a less than comparison on two floats, pushes result to stack.
 | ------------------|-------------|
 | bool | The result |
 ## FLE (25)
-Performs a less than or equal to comparison on two floats, pushes result to stack.
+Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -232,7 +232,7 @@ Performs a less than or equal to comparison on two floats, pushes result to stac
 | ------------------|-------------|
 | bool | The result |
 ## FGT (26)
-Performs a greater than comparison on two floats, pushes result to stack.
+Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -242,7 +242,7 @@ Performs a greater than comparison on two floats, pushes result to stack.
 | ------------------|-------------|
 | bool | The result |
 ## FGE (27)
-Performs a greater than or equal to comparison on two floats, pushes result to stack.
+Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -326,7 +326,7 @@ Performs integer multiplication, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 ## UDIV (36)
-Performs unsigned integer division, pushes result to stack.
+Performs unsigned integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -336,7 +336,7 @@ Performs unsigned integer division, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 ## SDIV (37)
-Performs signed integer division, pushes result to stack.
+Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -346,7 +346,7 @@ Performs signed integer division, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 ## UMOD (38)
-Performs unsigned integer modulo, pushes result to stack.
+Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -356,7 +356,7 @@ Performs unsigned integer modulo, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 ## SMOD (39)
-Performs signed integer modulo, pushes result to stack.
+Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -366,7 +366,7 @@ Performs signed integer modulo, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 ## FADD (40)
-Performs float addition, pushes result to stack.
+Performs float addition, pushes result to stack. NaN, and infinity are handled consistently with C++ addition.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -376,7 +376,7 @@ Performs float addition, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FSUB (41)
-Performs float subtraction, pushes result to stack.
+Performs float subtraction, pushes result to stack. NaN, and infinity are handled consistently with C++ subtraction.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -386,7 +386,7 @@ Performs float subtraction, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FMUL (42)
-Performs float multiplication, pushes result to stack.
+Performs float multiplication, pushes result to stack. NaN, and infinity are handled consistently with C++ multiplication.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -396,7 +396,7 @@ Performs float multiplication, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FDIV (43)
-Performs float division, pushes result to stack.
+Performs float division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -407,7 +407,7 @@ Performs float division, pushes result to stack.
 | F64 | The result |
 
 ## FLOAT_FLOOR_DIV (44)
-Performs float floor division, pushes result to stack.
+Performs float floor division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division and `std::floor`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -417,7 +417,7 @@ Performs float floor division, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FPOW (45)
-Performs float exponentiation, pushes result to stack.
+Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | exp      | F64      | stack  | Exponent value |
@@ -427,7 +427,7 @@ Performs float exponentiation, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FLOG (46)
-Performs float logarithm, pushes result to stack.
+Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR, NaN and infinity values are handled consistently with C++ `std::log`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Value for logarithm |
@@ -436,7 +436,7 @@ Performs float logarithm, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 ## FMOD (47)
-Performs float modulo, pushes result to stack.
+Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in a DOMAIN_ERROR. A NaN will produce a NaN result or infinity as either argument yields NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |

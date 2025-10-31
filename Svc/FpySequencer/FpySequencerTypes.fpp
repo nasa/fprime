@@ -129,6 +129,8 @@ module Svc {
             FLAG_IDX_OUT_OF_BOUNDS = 11
             ASSERTION_FAILURE = 12
             ARRAY_OUT_OF_BOUNDS = 13
+            ARITHMETIC_OVERFLOW = 14
+            ARITHMETIC_UNDERFLOW = 15
         }
 
         struct Header {
