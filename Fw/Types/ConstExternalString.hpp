@@ -7,6 +7,7 @@
 #define FW_CONST_EXTERNAL_STRING_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringBase.hpp>
 
 namespace Fw {
@@ -25,7 +26,10 @@ class ConstExternalString final : public ConstStringBase {
     ConstExternalString(const char* bufferPtr,                //!< The buffer pointer
                         ConstStringBase::SizeType bufferSize  //!< The buffer size
                         )
-        : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {}
+        : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        // Assert that the string length plus the null terminator fills the buffer
+        FW_ASSERT(ConstStringBase::length() + 1 == bufferSize);
+    }
 
     //! Destructor
     ~ConstExternalString() {}
@@ -34,6 +38,12 @@ class ConstExternalString final : public ConstStringBase {
     // ----------------------------------------------------------------------
     // ConstStringBase interface
     // ----------------------------------------------------------------------
+
+    //! Get the length of the string
+    ConstStringBase::SizeType length() const override {
+        // The length of the string is 1 less than its capacity (string + null terminator)
+        return this->m_bufferSize - 1;
+    }
 
     //! Gets the char buffer
     const char* toChar() const { return this->m_bufferPtr; }

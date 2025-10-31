@@ -26,9 +26,6 @@ namespace Fw {
 
 class StringBase : public ConstStringBase {
   public:
-    //! Get the length of the string
-    SizeType length() const override;
-
     const CHAR* operator+=(const CHAR* src);                   //!< Concatenate a CHAR*
     const StringBase& operator+=(const ConstStringBase& src);  //!< Concatenate a ConstStringBase
     const StringBase& operator+=(const StringBase& src);       //!< Concatenate a StringBase

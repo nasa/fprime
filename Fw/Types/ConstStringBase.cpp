@@ -22,10 +22,10 @@ ConstStringBase::ConstStringBase() {}
 ConstStringBase::~ConstStringBase() {}
 
 ConstStringBase::SizeType ConstStringBase::length() const {
-    // The length of the string should be 1 less than its capacity (string + null terminator)
-    const SizeType capacity = this->getCapacity();
-    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
-    return capacity - 1;
+    const SizeType length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
+              static_cast<FwAssertArgType>(this->maxLength()));
+    return length;
 }
 
 ConstStringBase::SizeType ConstStringBase::maxLength() const {
