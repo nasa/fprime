@@ -745,7 +745,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             FW_ASSERT(rightmostNode != this->m_freeListFoot);
         }
 
-        // We can stich its left branch onto its parent in its place
+        // We can stitch its left branch onto its parent in its place
         FW_ASSERT(rightmostNode != nullptr);
         FW_ASSERT(rightmostNode->parent != nullptr);
         rightmostNode->parent->right = rightmostNode->left;
