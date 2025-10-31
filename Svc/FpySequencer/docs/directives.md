@@ -668,14 +668,15 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 | bytes | The raw bytes of the field |
 
 ## PEEK (72)
-Pops a StackSizeType off the stack, peeks that many bytes on the top of the stack.
+Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. Let `top` be the top of the stack. Takes the region starting at `top - offset - byteCount` and going to `top - offset`, and pushes this region to the top of the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| size | U32 | hardcoded | Number of bytes to peek |
+| offset | StackSizeType | stack | Offset from top at which to peek |
+| byteCount | StackSizeType | stack | Number of bytes to peek at, starting at offset, and going downwards in the stack |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| bytes | The peekd bytes |
+| bytes | The peeked bytes |
 
 ## ASSERT (73)
 Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event.
