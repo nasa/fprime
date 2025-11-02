@@ -861,6 +861,11 @@ void DpCatalog::sendNextEntry() {
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         if (this->m_xmitCmdWait) {
             this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::OK);
+
+            // Prevent a Duplicate Cmd Response
+            this->m_xmitCmdWait = false;
+            this->m_xmitOpCode = 0;
+            this->m_xmitCmdSeq = 0;
         }
         return;
     } else {
