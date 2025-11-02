@@ -88,7 +88,7 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
         match_index = source_size - 1;
 
         // Ensure we can represent the match_index in a signed num
-        FW_ASSERT(static_cast<FwSignedSizeType>(match_index) == match_index);
+        FW_ASSERT(static_cast<FwSizeType>(static_cast<FwSignedSizeType>(match_index)) == match_index);
 
         return static_cast<FwSignedSizeType>(match_index);
     }
@@ -114,9 +114,9 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
                 match_index = source_index;
 
                 // Ensure the result converts properly
-                FW_ASSERT(static_cast<FwSignedSizeType>(match_index) == match_index);
+                FW_ASSERT(static_cast<FwSizeType>(static_cast<FwSignedSizeType>(match_index)) == match_index);
 
-                return static_cast<FwSignedSizeType>(source_index);
+                return static_cast<FwSignedSizeType>(match_index);
             }
         }
     }
