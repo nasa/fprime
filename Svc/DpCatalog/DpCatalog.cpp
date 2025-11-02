@@ -591,26 +591,37 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
 // ----------------------------------------------------------------------
 int DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
-    if (left.record.get_priority() == right.record.get_priority()) {
-        // check time. Older is higher priority
-        if (left.record.get_tSec() == right.record.get_tSec()) {
-            // check subsecond time. Older is higher priority
-            if (left.record.get_tSub() == right.record.get_tSub()) {
-                // check ID. Lower is higher priority
-                if (left.record.get_id() == right.record.get_id()) {
-                    return 0;
-                } else {  // if ids are not equal. smaller is higher priority
-                    return (left.record.get_id() < right.record.get_id()) ? -1 : 1;
-                }
-            } else {  // if subseconds are not equal. Older is higher priority
-                return left.record.get_tSub() < right.record.get_tSub() ? -1 : 1;
-            }
-        } else {  // if seconds are not equal. Older is higher priority
-            return left.record.get_tSec() < right.record.get_tSec() ? -1 : 1;
-        }
-    } else {  // if priority is not equal. Lower is higher priority.
-        return left.record.get_priority() < right.record.get_priority() ? -1 : 1;
-    }  // end checking entry comparison
+    if (left.record.get_priority() < right.record.get_priority()) {
+        return -1;
+    } else if (left.record.get_priority() > right.record.get_priority()) {
+        return 1;
+    }
+
+    // check time. Older is higher priority
+    else if (left.record.get_tSec() < right.record.get_tSec()) {
+        return -1;
+    } else if (left.record.get_tSec() > right.record.get_tSec()) {
+        return 1;
+    }
+
+    // check subsecond time. Older is higher priority
+    else if (left.record.get_tSub() < right.record.get_tSub()) {
+        return -1;
+    } else if (left.record.get_tSub() > right.record.get_tSub()) {
+        return 1;
+    }
+
+    // check ID. Lower is higher priority
+    else if (left.record.get_id() < right.record.get_id()) {
+        return -1;
+    } else if (left.record.get_id() > right.record.get_id()) {
+        return 1;
+    }
+
+    // if ids are equal we have two nodes with the same value
+    else {
+        return 0;
+    }
 }
 
 bool DpCatalog::DpStateEntry::operator==(const DpStateEntry& other) const {
