@@ -243,7 +243,6 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     DpBtreeNode* m_dpTree;           //!< The head of the binary tree
     DpBtreeNode* m_freeListHead;     //!< The head of the free list
-    DpBtreeNode* m_freeListFoot;     //!< The foot of the free list
     DpBtreeNode* m_currentNode;      //!< current node for traversing tree
     DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
 

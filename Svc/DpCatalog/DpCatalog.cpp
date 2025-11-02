@@ -25,7 +25,6 @@ DpCatalog ::DpCatalog(const char* const compName)
       m_initialized(false),
       m_dpTree(nullptr),
       m_freeListHead(nullptr),
-      m_freeListFoot(nullptr),
       m_currentNode(nullptr),
       m_currentXmitNode(nullptr),
       m_numDpSlots(0),
@@ -220,12 +219,8 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
     FW_ASSERT(this->m_stateFileData);
     // search the file state data for the entry
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
-        // check for a match
-        if ((this->m_stateFileData[line].entry.dir == entry.dir) and
-            (this->m_stateFileData[line].entry.record.get_id() == entry.record.get_id()) and
-            (this->m_stateFileData[line].entry.record.get_tSec() == entry.record.get_tSec()) and
-            (this->m_stateFileData[line].entry.record.get_tSub() == entry.record.get_tSub()) and
-            (this->m_stateFileData[line].entry.record.get_priority() == entry.record.get_priority())) {
+        // check for a match (compare dir, then id, priority, & time)
+        if (this->m_stateFileData[line].entry.dir == entry.dir && this->m_stateFileData[line].entry == entry) {
             // update the transmitted state
             entry.record.set_state(this->m_stateFileData[line].entry.record.get_state());
             entry.record.set_blocks(this->m_stateFileData[line].entry.record.get_blocks());
@@ -738,16 +733,14 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
     // since nodes are deallocated after xmit, left should be gone
     // However, left node could be added during xmit
     if (node->left != nullptr) {
-        // To try to only deallocate nodes at fileDone,
-        // finished nodes w/ children are trimmed out
-        // Simple shifts only work with branches that don't branch
-
         // Since we aren't limited to adding just 1 node during file transfer
-        // left might not be a leaf
-        // Instead, find the lowest priority node on the left branch
+        // the left child might not be a leaf
+        // Instead, find the node of closeet (but higher) priority to this node
+        // This is the lowest priority node on the left branch
+        // Which is the rightmost node of the left branch
         DpBtreeNode* rightmostNode = node->left;
 
-        // (i.e. node->right->right ... ->right until we hit null)
+        // (i.e. node->left->right->right ... ->right until we hit null)
 
         // bounded while loop (in case we're linked onto the free list somehow)
         for (FwSizeType record = 0; record < this->m_numDpSlots && rightmostNode->right != nullptr; record++) {
@@ -755,7 +748,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 
             // I really hope these never fire
             FW_ASSERT(rightmostNode != this->m_freeListHead);
-            FW_ASSERT(rightmostNode != this->m_freeListFoot);
+            FW_ASSERT(rightmostNode != nullptr);
         }
 
         // We can stitch its left branch onto its parent in its place
@@ -793,12 +786,15 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
         }
 
     } else {
-        // cut out this segment and shift the right branch up
-        // root node has no parent, but needs the root pointer to shift
+        // This node only had a right branch
+        // cut out this node and shift the right branch up
+
+        // The root node has no parent, but needs the tree root pointer to shift
         if (parent == nullptr) {
             this->m_dpTree = node->right;
         } else {
-            // patch onto the appropriate parent branch
+            // Patch the right branch onto
+            // the appropriate parent branch of this node
             if (parent->left == node) {
                 parent->left = node->right;
             } else {
@@ -806,13 +802,15 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             }
         }
 
+        // If there is a right branch
+        // Point it at the parent of the removed node
         if (node->right != nullptr) {
             FW_ASSERT(node->right->parent != nullptr);
             node->right->parent = parent;
         }
     }
 
-    // Left node doesn't point at us
+    // Ensure the Left node no longer points at us
     if (node->left != nullptr) {
         FW_ASSERT(node->left->parent != node);
     }
@@ -822,7 +820,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
     // point this node @ the old head of the free list
     node->left = m_freeListHead;
 
-    // Right node doesn't point at us
+    // Ensure the Right node no longer points at us
     if (node->right != nullptr) {
         FW_ASSERT(node->right->parent != node);
     }
@@ -839,7 +837,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 
     node->parent = nullptr;
 
-    // Node only points at next in free list
+    // Ensure this Node only points at next in free list
     FW_ASSERT(node->left == oldFreeListHead);
     FW_ASSERT(node->right == nullptr);
     FW_ASSERT(node->parent == nullptr);
@@ -907,7 +905,7 @@ DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
 
         // I really hope these never fire
         FW_ASSERT(this->m_currentNode != this->m_freeListHead);
-        FW_ASSERT(this->m_currentNode != this->m_freeListFoot);
+        FW_ASSERT(this->m_currentNode != nullpt);
     }
 
     // save the high prio & find next best
