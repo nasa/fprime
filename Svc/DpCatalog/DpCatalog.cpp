@@ -35,6 +35,7 @@ DpCatalog ::DpCatalog(const char* const compName)
       m_memPtr(nullptr),
       m_allocatorId(0),
       m_allocator(nullptr),
+      m_catalogBuilt(false),
       m_xmitInProgress(false),
       m_xmitCmdWait(false),
       m_xmitBytes(0),
@@ -129,6 +130,8 @@ void DpCatalog::resetBinaryTree() {
     // reset number of records
     this->m_pendingFiles = 0;
     this->m_pendingDpBytes = 0;
+    // Mark the catalog as un-built
+    this->m_catalogBuilt = false;
 }
 
 void DpCatalog::resetStateFileData() {
@@ -366,6 +369,9 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     this->pruneAndWriteStateFile();
 
     this->log_ACTIVITY_HI_CatalogBuildComplete();
+
+    // Flag so addToCat knows it is good to go
+    this->m_catalogBuilt = true;
 
     return Fw::CmdResponse::OK;
 }
@@ -1006,8 +1012,8 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // Check for state file init
-    if (0 == this->m_stateFileEntries) {
+    // Check the catalog has been built
+    if (not this->m_catalogBuilt) {
         this->log_WARNING_LO_NotLoaded(fileName);
         return;
     }

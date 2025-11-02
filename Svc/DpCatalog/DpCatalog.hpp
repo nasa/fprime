@@ -261,6 +261,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     FwEnumStoreType m_allocatorId;  //!< stored for shutdown
     Fw::MemAllocator* m_allocator;  //!< stored for shutdown
 
+    bool m_catalogBuilt;                    //!< catalog build is complete (can add DPs at runtime)
     bool m_xmitInProgress;                  //!< set if DP files are in the process of being sent
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
     bool m_xmitCmdWait;                     //!< true if waiting for transmission complete to complete xmit command
