@@ -136,11 +136,11 @@ The `initialize()` function is provided an array of directories where data produ
 
 #### 3.7.2 Sorting Algorithm
 
-The data products are sorted using an unbalanced, non-recursive binary tree algorithm. The node to be inserted is placed into the tree according to its priority. Higher priotiy nodes are left children, while lower (and unlikely, equal) priority nodes are placed as right children. No rotations or rebalanacing is performed, so all new nodes will be initially be leaves.
+The data products are sorted using an unbalanced, non-recursive binary tree algorithm. The node to be inserted is placed into the tree according to its priority. Higher priority nodes are left children, while lower (and unlikely, equal) priority nodes are placed as right children. No rotations or rebalancing is performed, so all new nodes will be initially be leaves.
 
 #### 3.7.2 Tree Traversal for Downlink
 
-When data products are downlinked, the tree is traversed in priority order. As each node is visited, the file is downlinked and the node is removed from the tree upon completion. The current node to be explored is always checked for left children to ensure the highest priority node is transmitted. Afterward, the right child and, ultimately, the parent are transmited. If a node is added to the tree with a higher priority than the node to be explored, the added node becomes the node to be explored.
+When data products are downlinked, the tree is traversed in priority order. As each node is visited, the file is downlinked and the node is removed from the tree upon completion. The current node to be explored is always checked for left children to ensure the highest priority node is transmitted. Afterward, the right child and, ultimately, the parent are transmitted. If a node is added to the tree with a higher priority than the node to be explored, the added node becomes the node to be explored.
 
 #### 3.7.3 State File
 
