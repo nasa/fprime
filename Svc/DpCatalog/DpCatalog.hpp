@@ -246,7 +246,6 @@ class DpCatalog final : public DpCatalogComponentBase {
     DpBtreeNode* m_currentNode;      //!< current node for traversing tree
     DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
 
-    FwSizeType m_numDpRecords;  //!< Stores the actual number of records.
     FwSizeType m_numDpSlots;    //!< Stores the available number of record slots.
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
@@ -272,8 +271,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     U32 m_pendingFiles;    //!< Pending Files to Transmit
     U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
 
-    bool m_remainActive;  //!< Does the DpCat resume transmission when a runtime Dp is received after the full
-                          //!< catalog is sent
+    bool m_remainActive;  //!< Does the DpCat resume transmission when
+                          //!< a runtime Dp is received after
+                          //!< the full catalog is sent
 };
 
 }  // namespace Svc

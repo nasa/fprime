@@ -239,6 +239,7 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
                                                              const Fw::StringBase& destFileName,
                                                              U32 offset,
                                                              U32 length) {
+    // Tell the DpCatalog that the xmit succeeded
     this->pushFromPortEntry_fileOut(sourceFileName, destFileName, offset, length);
     this->invoke_to_fileDone(0, Svc::SendFileResponse());
 
