@@ -86,7 +86,7 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
     // by indexing the free list to one element past the end of
     // the free list.
 
-    if ((this->m_memSize >= sizeof(DpBtreeNode)) and (this->m_memPtr != nullptr)) {
+    if ((this->m_memSize >= slotSize) and (this->m_memPtr != nullptr)) {
         // set the number of available record slots based on how much memory we actually got
         this->m_numDpSlots = this->m_memSize / slotSize;  // Step 1.
         this->resetBinaryTree();                          // Step 2
@@ -460,12 +460,14 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     }
 
     for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
-        const char* const dir_string = this->m_directories[dir].toChar();
+        const Fw::FileNameString& dir_string = this->m_directories[dir];
 
         // Compare both strings up to location of final slash
+        // StringUtils::substring_find will return zero if both paths agree
         // memory safe since both are fixed width strings
         // and loc is before the fixed width
-        if (strncmp(dir_string, fullFile.toChar(), static_cast<FwSizeType>(loc)) == 0) {
+        if (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
+                                            static_cast<FwSizeType>(loc)) == 0) {
             return dir;
         }
     }

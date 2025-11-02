@@ -147,9 +147,9 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief A list sorted in priority order for downlink
     struct DpBtreeNode {
-        DpStateEntry entry;  //!< pointer to DP record
-        DpBtreeNode* left;   //!< left child. Also used for free list
-        DpBtreeNode* right;  //!< right child
+        DpStateEntry entry;   //!< pointer to DP record
+        DpBtreeNode* left;    //!< left child. Also used for free list
+        DpBtreeNode* right;   //!< right child
         DpBtreeNode* parent;  //!< parent node
     };
 
