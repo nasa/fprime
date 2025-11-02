@@ -735,7 +735,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
     if (node->left != nullptr) {
         // Since we aren't limited to adding just 1 node during file transfer
         // the left child might not be a leaf
-        // Instead, find the node of closeet (but higher) priority to this node
+        // Instead, find the node of closeset (but higher) priority to this node
         // This is the lowest priority node on the left branch
         // Which is the rightmost node of the left branch
         DpBtreeNode* rightmostNode = node->left;
@@ -905,7 +905,7 @@ DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
 
         // I really hope these never fire
         FW_ASSERT(this->m_currentNode != this->m_freeListHead);
-        FW_ASSERT(this->m_currentNode != nullpt);
+        FW_ASSERT(this->m_currentNode != nullptr);
     }
 
     // save the high prio & find next best
