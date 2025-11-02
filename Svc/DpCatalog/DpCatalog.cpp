@@ -735,7 +735,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
     if (node->left != nullptr) {
         // Since we aren't limited to adding just 1 node during file transfer
         // the left child might not be a leaf
-        // Instead, find the node of closeset (but higher) priority to this node
+        // Instead, find the node of closest (but higher) priority to this node
         // This is the lowest priority node on the left branch
         // Which is the rightmost node of the left branch
         DpBtreeNode* rightmostNode = node->left;
