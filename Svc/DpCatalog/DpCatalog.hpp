@@ -246,7 +246,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     DpBtreeNode* m_currentNode;      //!< current node for traversing tree
     DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
 
-    FwSizeType m_numDpSlots;    //!< Stores the available number of record slots.
+    FwSizeType m_numDpSlots;  //!< Stores the available number of record slots.
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
     FwSizeType m_numDirectories;                           //!< number of supplied directories

@@ -844,9 +844,6 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 }
 
 void DpCatalog::sendNextEntry() {
-    // check some asserts
-    FW_ASSERT(this->m_xmitInProgress);
-
     // Use xmit flag to break upon STOP_XMIT_CATALOG
     if (this->m_xmitInProgress != true) {
         return;
@@ -960,7 +957,14 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
         this->m_xmitInProgress = false;
-        this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+
+        if (this->m_xmitCmdWait) {
+            this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+
+            this->m_xmitCmdWait = false;
+            this->m_xmitOpCode = 0;
+            this->m_xmitCmdSeq = 0;
+        }
     }
 
     // Reduce pending
@@ -999,6 +1003,12 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     // check that initialization got memory
     if (0 == this->m_numDpSlots) {
         this->log_WARNING_HI_NoDpMemory();
+        return;
+    }
+
+    // Check for state file init
+    if (0 == this->m_stateFileEntries) {
+        this->log_WARNING_LO_NotLoaded(fileName);
         return;
     }
 
