@@ -81,9 +81,16 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
     FW_ASSERT(source_string != nullptr);
     FW_ASSERT(sub_string != nullptr);
 
+    FwSizeType match_index = 0;
+
     // zero size sub-strings should always match
     if ((source_size > 0) && (0 == sub_size)) {
-        return static_cast<FwSignedSizeType>(source_size - 1);
+        match_index = source_size - 1;
+
+        // Ensure we can represent the match_index in a signed num
+        FW_ASSERT(static_cast<FwSignedSizeType>(match_index) == match_index);
+
+        return static_cast<FwSignedSizeType>(match_index);
     }
 
     // Cannot find a substring larger than the source
@@ -104,6 +111,11 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
                 break;
             } else if (sub_index == (sub_size - 1)) {
                 // if we matched all the way to the end of the substring
+                match_index = source_index;
+
+                // Ensure the result converts properly
+                FW_ASSERT(static_cast<FwSignedSizeType>(match_index) == match_index);
+
                 return static_cast<FwSignedSizeType>(source_index);
             }
         }
