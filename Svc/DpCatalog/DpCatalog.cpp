@@ -911,7 +911,8 @@ DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
     // save the high prio & find next best
     DpBtreeNode* found = this->m_currentNode;
 
-    // Try right, else up
+    // On the next cycle, explore the node to the right, if available,
+    // otherwise the node above
     if (this->m_currentNode->right != nullptr) {
         this->m_currentNode = this->m_currentNode->right;
     } else {
