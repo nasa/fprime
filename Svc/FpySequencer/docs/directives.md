@@ -11,6 +11,10 @@ Sleeps for a relative duration from the current time.
 | useconds  | U32      | stack  | Wait time in microseconds (must be less than a second) |
 | seconds  | U32      | stack  | Wait time in seconds |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
 **Requirement:** FPY-SEQ-007
 
 ## WAIT_ABS (2)
@@ -22,6 +26,10 @@ Sleeps until an absolute time.
 | time_context | FwTimeContextStoreType       | stack  | Time context (user defined value, unused by Fpy) |
 | time_base    | U16      | stack  | Time base |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
 **Requirement:** FPY-SEQ-008
 
 ## GOTO (4)
@@ -29,6 +37,10 @@ Sets the index of the next directive to execute.
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
 | dir_idx  | U32      | hardcoded | The statement index to execute next |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
 
 **Requirement:**  ???
 
@@ -40,10 +52,22 @@ Pops a byte off the stack. If the byte is not 0, proceed to the next directive, 
 | false_goto_dir_index| U32      | hardcoded | Directive index to jump to if false |
 | condition          | bool     | stack     | Condition to evaluate |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
 **Requirement:** FPY-SEQ-001
 
 ## NO_OP (6)
 Does nothing.
+
+| Arg Name             | Arg Type | Source     | Description |
+|---------------------|----------|------------|-------------|
+|  N/A | | | |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
 
 **Requirement:**  ???
 
@@ -210,11 +234,12 @@ Performs a signed less than or equal to comparison on two signed integers, pushe
 | rhs      | I64      | stack  | Right operand |
 | lhs      | I64      | stack  | Left operand |
 
-**Requirement:**  FPY-SEQ-002
-
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SGT (20)
 Performs a signed greater than comparison on two signed integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -710,6 +735,10 @@ Pops a byte off the stack. If the byte == 0, end sequence as if it had finished 
 |----------|----------|--------|-------------|
 | success    | U8      | stack  | 0 if should exit without error |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
 **Requirement:**  FPY-SEQ-016
 
 ## ALLOCATE (60)
@@ -819,6 +848,12 @@ Pops a bool off the stack, sets a flag with a specific index to that bool.
 | flag_idx | U8 | hardcoded | Index of the flag to set |
 | value | bool | stack | Value to set the flag to |
 
+TODO: where does this bool go when set?
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| ??? | |
+
 **Requirement:**  ???
 
 ## GET_FLAG (70)
@@ -877,5 +912,9 @@ Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes f
 | size        | U32      | hardcoded  | Number of bytes |
 | lvar_offset | U32      | stack      | Local variable offset |
 | value       | bytes    | stack      | Value to store |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| ??? | |
 
 **Requirement:**  ???
