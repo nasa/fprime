@@ -1,5 +1,5 @@
 module Drv {
-  enum GpioStatus {
+  enum GpioStatus : U8 {
     OP_OK @< Operation succeeded
     NOT_OPENED @< Pin was never opened
     INVALID_MODE @< Operation not permitted with current configuration

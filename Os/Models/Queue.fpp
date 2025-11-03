@@ -5,7 +5,7 @@
 
 module Os {
     @ FPP shadow-enum representing Os::Queue::Status
-    enum QueueStatus {
+    enum QueueStatus : U8 {
         OP_OK,             @<  message sent/received okay
         ALREADY_CREATED,   @<  creating an already created queue
         EMPTY,             @<  If non-blocking, all the messages have been drained.
@@ -21,7 +21,7 @@ module Os {
     }
 
     @ FPP shadow-enum representing Os::Queue::BlockingType
-    enum QueueBlockingType {
+    enum QueueBlockingType : U8 {
         BLOCKING,    @< Message will block until space is available
         NONBLOCKING  @< Message will return with status when space is unavailable
     }

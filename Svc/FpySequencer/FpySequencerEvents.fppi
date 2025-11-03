@@ -88,6 +88,20 @@ event SequenceCancelled(
     severity activity high \
     format "Cancelled sequence file {}"
 
+event SequenceExitedWithError(
+    filePath: string
+    errorCode: U8
+) \
+    severity warning high \
+    format "Sequence {} exited with error code {}"
+
+event SequenceAsserted(
+    filePath: string
+    errorCode: U8
+) \
+    severity warning high \
+    format "Sequence {} failed an assertion with error code {}"
+
 event UnknownSequencerDirective(
     $opcode: U8
     stmtIdx: U32
@@ -216,4 +230,3 @@ event BreakpointSet(
 event BreakpointCleared() \
     severity activity high \
     format "Breakpoint cleared"
-    

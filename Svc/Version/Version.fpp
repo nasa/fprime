@@ -1,14 +1,14 @@
 module Svc {
     
     @ Tracks versions for project, framework and user defined versions etc
-    enum VersionEnabled {
+    enum VersionEnabled : U8 {
         DISABLED = 0 @< verbosity disabled
         ENABLED = 1 @< verbosity enabled
     }
     
    
     @ An enumeration for Version Type
-    enum VersionType {
+    enum VersionType : U8 {
         PROJECT = 0 @< project version
         FRAMEWORK = 1 @< framework version
         LIBRARY = 2 @< library version

@@ -5,7 +5,7 @@
 
 module Os {
 @ FPP shadow-enum representing Os::Task::Status
-enum TaskStatus {
+enum TaskStatus : U8 {
     OP_OK,             @< message sent/received okay
     INVALID_HANDLE,    @< Task handle invalid
     INVALID_PARAMS,    @< started task with invalid parameters

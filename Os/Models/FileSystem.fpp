@@ -5,7 +5,7 @@
 
 module Os {
 @ FPP shadow-enum representing Os::FileSystem::Status
-enum FileSystemStatus {
+enum FileSystemStatus : U8 {
         OP_OK,            @<  Operation was successful
         ALREADY_EXISTS,   @<  File already exists
         NO_SPACE,         @<  No space left

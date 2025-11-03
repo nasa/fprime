@@ -32,6 +32,6 @@ jobs:
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
       fprime_location: ./lib/fprime
-      build_location: HelloWorldDeployment
+      build_location: Hello/HelloWorldDeployment
       run_unit_tests: false # no UTs in HelloWorld project
       target_ref: ${{ needs.get-branch.outputs.target-branch }}

@@ -3,7 +3,7 @@ module Fw {
   type ParamBuffer
 
   @ Enum representing parameter validity
-  enum ParamValid {
+  enum ParamValid : U8 {
     UNINIT = 0
     VALID = 1
     INVALID = 2

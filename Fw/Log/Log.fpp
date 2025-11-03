@@ -4,7 +4,7 @@ module Fw {
   type TextLogString
 
   @ Enum representing event severity
-  enum LogSeverity {
+  enum LogSeverity : U8 {
     FATAL = 1 @< A fatal non-recoverable event
     WARNING_HI = 2 @< A serious but recoverable event
     WARNING_LO = 3 @< A less serious but recoverable event

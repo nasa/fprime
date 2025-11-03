@@ -9,6 +9,6 @@ module ComLoggerTeeConfig {
     }
 
     module Priorities {
-        constant comLog = 95
+        constant comLog = 18
     }
 }

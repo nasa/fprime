@@ -1,7 +1,7 @@
 module Svc {
 
   @ Send file status enum
-  enum SendFileStatus {
+  enum SendFileStatus : U8 {
     STATUS_OK
     STATUS_ERROR
     STATUS_INVALID

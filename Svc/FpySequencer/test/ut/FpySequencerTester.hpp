@@ -89,20 +89,20 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_IF(U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
-    void add_STORE_TLM_VAL(FwChanIdType id, Fpy::StackSizeType lvarOffset);
-    void add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir);
+    void add_PUSH_TLM_VAL(FwChanIdType id);
+    void add_PUSH_TLM_VAL(FpySequencer_PushTlmValDirective dir);
     void add_PUSH_TLM_VAL_AND_TIME(FwChanIdType id);
     void add_PUSH_TLM_VAL_AND_TIME(FpySequencer_PushTlmValAndTimeDirective dir);
-    void add_STORE_PRM(FwPrmIdType id, Fpy::StackSizeType lvarOffset);
-    void add_STORE_PRM(FpySequencer_StorePrmDirective dir);
+    void add_PUSH_PRM(FwPrmIdType id);
+    void add_PUSH_PRM(FpySequencer_PushPrmDirective dir);
     void add_CONST_CMD(FwOpcodeType opcode);
     void add_CONST_CMD(FpySequencer_ConstCmdDirective dir);
     void add_STACK_OP(Fpy::DirectiveId op);
     void add_EXIT();
     void add_ALLOCATE(Fpy::StackSizeType size);
     void add_ALLOCATE(FpySequencer_AllocateDirective dir);
-    void add_STORE(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
-    void add_STORE(FpySequencer_StoreDirective dir);
+    void add_STORE_CONST_OFFSET(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
+    void add_STORE_CONST_OFFSET(FpySequencer_StoreConstOffsetDirective dir);
     void add_LOAD(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
     void add_LOAD(FpySequencer_LoadDirective dir);
     void add_DISCARD(Fpy::StackSizeType size);
@@ -116,6 +116,14 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_FLAG(U8 flagIdx);
     void add_GET_FLAG(FpySequencer_GetFlagDirective dir);
     void add_PUSH_TIME();
+    void add_GET_FIELD(Fpy::StackSizeType parentSize, Fpy::StackSizeType memberSize);
+    void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
+    void add_PEEK();
+    void add_PEEK(FpySequencer_PeekDirective dir);
+    void add_ASSERT();
+    void add_ASSERT(FpySequencer_AssertDirective dir);
+    void add_STORE(Fpy::StackSizeType size);
+    void add_STORE(FpySequencer_StoreDirective dir);
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -148,8 +156,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err);
     Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective& directive, DirectiveError& err);
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
-    Signal tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& err);
-    Signal tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& err);
+    Signal tester_pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& err);
+    Signal tester_pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive, DirectiveError& err);
     Signal tester_pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
                                                      DirectiveError& err);
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
@@ -160,6 +168,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err);
     Signal tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& err);
     Signal tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& err);
+    Signal tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& err);
+    Signal tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& err);
+    Signal tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& err);
+    Signal tester_store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();

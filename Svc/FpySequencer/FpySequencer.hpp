@@ -39,7 +39,7 @@ namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
-using DirectiveError = FpySequencer_DirectiveErrorCode;
+using DirectiveError = Fpy::DirectiveErrorCode;
 
 class FpySequencer : public FpySequencerComponentBase {
     friend class FpySequencerTester;
@@ -51,14 +51,14 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
-        FpySequencer_StoreTlmValDirective storeTlmVal;
+        FpySequencer_PushTlmValDirective pushTlmVal;
         FpySequencer_PushTlmValAndTimeDirective pushTlmValAndTime;
-        FpySequencer_StorePrmDirective storePrm;
+        FpySequencer_PushPrmDirective pushPrm;
         FpySequencer_ConstCmdDirective constCmd;
         FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
         FpySequencer_AllocateDirective allocate;
-        FpySequencer_StoreDirective store;
+        FpySequencer_StoreConstOffsetDirective storeConstOffset;
         FpySequencer_LoadDirective load;
         FpySequencer_PushValDirective pushVal;
         FpySequencer_DiscardDirective discard;
@@ -67,9 +67,50 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_PushTimeDirective pushTime;
         FpySequencer_SetFlagDirective setFlag;
         FpySequencer_GetFlagDirective getFlag;
+        FpySequencer_GetFieldDirective getField;
+        FpySequencer_PeekDirective peek;
+        FpySequencer_AssertDirective assert;
+        FpySequencer_StoreDirective store;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
+    };
+
+    class Stack {
+      public:
+        // the byte array of the program stack, storing lvars, operands and function calls
+        U8 bytes[Fpy::MAX_STACK_SIZE] = {0};
+        // how many bytes high the stack is
+        Fpy::StackSizeType size = 0;
+
+        // pops a value off of the top of the stack
+        // converts it from big endian
+        template <typename T>
+        T pop();
+
+        // pushes a value onto the top of the stack
+        // converts it to big endian
+        template <typename T>
+        void push(T val);
+
+        // pops a byte array from the top of the stack into the destination array
+        // does not convert endianness
+        void pop(U8* dest, Fpy::StackSizeType size);
+
+        // pushes a byte array to the top of the stack from the source array
+        // leaves the source array unmodified
+        // does not convert endianness
+        void push(U8* src, Fpy::StackSizeType size);
+
+        // pushes zero bytes to the stack
+        void pushZeroes(Fpy::StackSizeType byteCount);
+
+        // returns a pointer to the next unused byte at the top of the stack
+        U8* top();
+        // returns a pointer to the first byte of the lvars array
+        U8* lvars();
+        // returns the stack height at which the lvar array begins
+        Fpy::StackSizeType lvarOffset();
     };
 
     // ----------------------------------------------------------------------
@@ -447,16 +488,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_noOp
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
-    //! Internal interface handler for directive_storeTlmVal
-    void directive_storeTlmVal_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreTlmValDirective& directive) override;
+    //! Internal interface handler for directive_pushTlmVal
+    void directive_pushTlmVal_internalInterfaceHandler(const Svc::FpySequencer_PushTlmValDirective& directive) override;
 
     //! Internal interface handler for directive_pushTlmValAndTime
     void directive_pushTlmValAndTime_internalInterfaceHandler(
         const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) override;
 
-    //! Internal interface handler for directive_storePrm
-    void directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) override;
+    //! Internal interface handler for directive_pushPrm
+    void directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive) override;
 
     //! Internal interface handler for directive_constCmd
     void directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) override;
@@ -470,8 +510,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_allocate
     void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
 
-    //! Internal interface handler for directive_store
-    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
+    //! Internal interface handler for directive_storeConstOffset
+    void directive_storeConstOffset_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreConstOffsetDirective& directive) override;
 
     //! Internal interface handler for directive_load
     void directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) override;
@@ -496,6 +537,18 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Internal interface handler for directive_getFlag
     void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
+
+    //! Internal interface handler for directive_getField
+    void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
+
+    //! Internal interface handler for directive_peek
+    void directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive) override;
+
+    //! Internal interface handler for directive_assert
+    void directive_assert_internalInterfaceHandler(const Svc::FpySequencer_AssertDirective& directive) override;
+
+    //! Internal interface handler for directive_store
+    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -559,10 +612,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
 
-        // the byte array of the program stack, storing lvars, operands and function calls
-        U8 stack[Fpy::MAX_STACK_SIZE] = {0};
-        // how many bytes high the stack is
-        Fpy::StackSizeType stackSize = 0;
+        Stack stack = Stack();
 
         // the sequencer runtime flags. these are modifiable by the sequence and control
         // various aspects of the sequencer.
@@ -687,22 +737,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
-    // pops a value off of the top of the stack
-    // converts it from big endian
-    template <typename T>
-    T pop();
-
-    // pushes a value onto the top of the stack
-    // converts it to big endian
-    template <typename T>
-    void push(T val);
-
-    // returns a pointer to the next unused byte at the top of the stack
-    U8* top();
-    // returns a pointer to the first byte of the lvars array
-    U8* lvars();
-    // returns the stack height at which the lvar array begins
-    Fpy::StackSizeType lvarOffset();
     // returns the index of the current statement
     U32 currentStatementIdx();
 
@@ -713,10 +747,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error);
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
-    Signal storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error);
+    Signal pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDirective& directive, DirectiveError& error);
     Signal pushTlmValAndTime_directiveHandler(const FpySequencer_PushTlmValAndTimeDirective& directive,
                                               DirectiveError& error);
-    Signal storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error);
+    Signal pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& error);
     Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
     Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
 
@@ -772,7 +806,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
-    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
+    Signal storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive,
+                                             DirectiveError& error);
     Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
@@ -781,6 +816,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
     Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
     Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
+    Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
+    Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
+    Signal assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error);
+    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

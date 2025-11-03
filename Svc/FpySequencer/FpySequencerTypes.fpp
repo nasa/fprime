@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 2;
+        constant SCHEMA_VERSION = 3;
 
         @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
         # should be equal to (last flag id) + 1
@@ -24,8 +24,8 @@ module Svc {
             GOTO = 4
             IF = 5
             NO_OP = 6
-            STORE_TLM_VAL = 7
-            STORE_PRM = 8
+            PUSH_TLM_VAL = 7
+            PUSH_PRM = 8
             CONST_CMD = 9
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
@@ -98,7 +98,7 @@ module Svc {
 
             EXIT = 59
             ALLOCATE = 60
-            STORE = 61
+            STORE_CONST_OFFSET = 61
             LOAD = 62
             PUSH_VAL = 63
             DISCARD = 64
@@ -108,6 +108,29 @@ module Svc {
             PUSH_TIME = 68
             SET_FLAG = 69
             GET_FLAG = 70
+            GET_FIELD = 71
+            PEEK = 72
+            ASSERT = 73
+            STORE = 74
+        }
+
+        enum DirectiveErrorCode : U8 {
+            NO_ERROR = 0
+            STMT_OUT_OF_BOUNDS = 1
+            TLM_GET_NOT_CONNECTED = 2
+            TLM_CHAN_NOT_FOUND = 3
+            PRM_GET_NOT_CONNECTED = 4
+            PRM_NOT_FOUND = 5
+            CMD_SERIALIZE_FAILURE = 6
+            EXIT_WITH_ERROR = 7
+            STACK_ACCESS_OUT_OF_BOUNDS = 8
+            STACK_OVERFLOW = 9
+            DOMAIN_ERROR = 10
+            FLAG_IDX_OUT_OF_BOUNDS = 11
+            ASSERTION_FAILURE = 12
+            ARRAY_OUT_OF_BOUNDS = 13
+            ARITHMETIC_OVERFLOW = 14
+            ARITHMETIC_UNDERFLOW = 15
         }
 
         struct Header {
