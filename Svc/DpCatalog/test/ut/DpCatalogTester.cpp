@@ -98,6 +98,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
                               FwSizeType numDps,
                               FwSizeType numRuntime,
                               FwSizeType stopAfter) {
+    ASSERT_GE(numDps, numRuntime);
     // make a directory for the files
     for (FwSizeType dir = 0; dir < numDirs; dir++) {
         this->makeDpDir(dpDirs[dir].toChar());
@@ -131,7 +132,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     for (FwSizeType dp = 0; dp < numDps; dp++) {
         if (stopAfter > 0 && dp > stopAfter) {
             ASSERT_from_fileOut_SIZE(stopAfter);
-        } else {
+        } else if (numRuntime == 0) {
             ASSERT_from_fileOut_SIZE(dp);
         }
 
@@ -161,12 +162,14 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
         // Potentially dispatch file done port call that is sent on fileOut_handler
         // Since files are "instantly" marked done, delay the doDispatch to simulate a delay
-        // TODO: Fix the asan issue when we delay the dispatch
-        // while (this->component.m_queue.getMessagesAvailable() > 0) {
-        this->component.doDispatch();
-
-        //  && (true || STest::Pick::lowerUpper(0, 1) < 1)) {
-        // }
+        // TODO: Fix the file out count issue when we delay the dispatch
+        if (stopAfter == 0 && numRuntime > 0) {
+            if (STest::Pick::lowerUpper(0, 1) < 1) {
+                this->component.doDispatch();
+            }
+        } else {
+            this->component.doDispatch();
+        }
     }
 
     // Finish out any outstanding messages
@@ -181,9 +184,11 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
         ASSERT_from_fileOut_SIZE(stopAfter);
     } else if (numRuntime > 0) {
         // Since we are remaining active, num completed events will be larger than 1
+        ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
         ASSERT_from_fileOut_SIZE(numDps);
     } else {
         ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+        ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
         ASSERT_from_fileOut_SIZE(numDps);
     }
 
@@ -585,7 +590,7 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
 
 void DpCatalogTester ::test_RandomDp() {
     static constexpr FwIndexType NUM_ENTRIES = DP_MAX_FILES;
-    static constexpr FwIndexType NUM_ITERS = 1;
+    static constexpr FwIndexType NUM_ITERS = 2;
     static constexpr FwIndexType NUM_DIRS = DP_MAX_DIRECTORIES;
 
     static constexpr FwSizeStoreType MAX_SIZE = 1000;
@@ -626,7 +631,7 @@ void DpCatalogTester ::test_RandomDp() {
             }
         }
 
-        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries);
+        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries, 0);
     }
 }
 
