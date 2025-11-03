@@ -27,8 +27,10 @@ class ConstExternalString final : public ConstStringBase {
                         ConstStringBase::SizeType bufferSize  //!< The buffer size
                         )
         : ConstStringBase(), m_bufferPtr(bufferPtr), m_bufferSize(bufferSize) {
+        FW_ASSERT(bufferPtr != nullptr);
+        FW_ASSERT(bufferSize > 0, static_cast<FwAssertArgType>(bufferSize));
         // Assert that the string length plus the null terminator fills the buffer
-        FW_ASSERT(ConstStringBase::length() + 1 == bufferSize);
+        FW_ASSERT(ConstStringBase::length() + 1 == bufferSize, static_cast<FwAssertArgType>(ConstStringBase::length() + 1), static_cast<FwAssertArgType>(bufferSize));
     }
 
     //! Destructor
