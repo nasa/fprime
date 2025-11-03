@@ -274,6 +274,11 @@ TEST(NominalManual, RandomDp) {
     tester.test_RandomDp();
 }
 
+TEST(NominalManual, XmitBeforeInit) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitBeforeInit();
+}
+
 TEST(NominalManual, StopWarn) {
     Svc::DpCatalogTester tester;
     tester.test_StopWarn();

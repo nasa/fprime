@@ -54,7 +54,7 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
                           Fw::MemAllocator& allocator) {
     // Do some assertion checks
     FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
-    FW_ASSERT(stateFile.length());
+
     this->m_stateFile = stateFile;
 
     // request memory for catalog which is DP_MAX_FILES * slot size.
@@ -331,7 +331,6 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
 Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // check initialization
     if (not this->checkInit()) {
-        this->log_WARNING_HI_NotInitialized();
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
@@ -806,6 +805,8 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
         // Point at actual parent or nullptr if this is the new root
         rightmostNode->parent = parent;
 
+        // Ensure the Left node no longer points at us
+        FW_ASSERT(node->left->parent != node);
     } else {
         // This node only had a right branch
         // cut out this node and shift the right branch up
@@ -829,11 +830,6 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             FW_ASSERT(node->right->parent != nullptr);
             node->right->parent = parent;
         }
-    }
-
-    // Ensure the Left node no longer points at us
-    if (node->left != nullptr) {
-        FW_ASSERT(node->left->parent != node);
     }
 
     // clear out the entry
@@ -1023,7 +1019,6 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
                                   FwSizeType size) {
     // check initialization
     if (not this->checkInit()) {
-        this->log_WARNING_HI_NotInitialized();
         return;
     }
 
@@ -1103,7 +1098,6 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
 Fw::CmdResponse DpCatalog::doCatalogXmit() {
     // check initialization
     if (not this->checkInit()) {
-        this->log_WARNING_HI_NotInitialized();
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
 

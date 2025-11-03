@@ -142,6 +142,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_TreeTestRandomId();
     void test_TreeTestRandomPrioIdTime();
     void test_RandomDp();
+    void test_XmitBeforeInit();
     void test_StopWarn();
 };
 

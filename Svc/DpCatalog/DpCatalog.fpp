@@ -305,11 +305,6 @@ module Svc {
       id 32 \
       format "No memory for DP"
 
-    event NotInitialized \
-      severity warning high \
-      id 33 \
-      format "DpCatalog not initialized"
-
     event XmitNotActive \
       severity warning low \
       id 34 \

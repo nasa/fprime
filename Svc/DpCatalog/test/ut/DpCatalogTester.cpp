@@ -630,6 +630,16 @@ void DpCatalogTester ::test_RandomDp() {
     }
 }
 
+void DpCatalogTester ::test_XmitBeforeInit() {
+    // Start xmit before init
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComponentNotInitialized_SIZE(1);
+}
+
 void DpCatalogTester ::test_StopWarn() {
     this->sendCmd_STOP_XMIT_CATALOG(0, 111);
     this->component.doDispatch();
