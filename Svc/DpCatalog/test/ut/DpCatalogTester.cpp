@@ -134,8 +134,10 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
             this->invoke_to_addToCat(0, dpPath, 0, 0);
             this->component.doDispatch();
         }
+    }
 
-        // dispatch file done port call that is sent on fileOut_handler
+    // dispatch file done port call that is sent on fileOut_handler
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
 
