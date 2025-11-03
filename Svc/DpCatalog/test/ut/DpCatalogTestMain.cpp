@@ -274,6 +274,11 @@ TEST(NominalManual, RandomDp) {
     tester.test_RandomDp();
 }
 
+TEST(NominalManual, StopWarn) {
+    Svc::DpCatalogTester tester;
+    tester.test_StopWarn();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

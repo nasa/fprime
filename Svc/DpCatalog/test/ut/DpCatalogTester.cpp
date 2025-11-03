@@ -630,4 +630,13 @@ void DpCatalogTester ::test_RandomDp() {
     }
 }
 
+void DpCatalogTester ::test_StopWarn() {
+    this->sendCmd_STOP_XMIT_CATALOG(0, 111);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 111, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_XmitNotActive_SIZE(1);
+}
+
 }  // namespace Svc
