@@ -44,7 +44,7 @@ class ConstExternalString final : public ConstStringBase {
     //! Get the length of the string
     ConstStringBase::SizeType length() const override {
         // The length of the string is 1 less than its capacity (string + null terminator)
-        return this->m_bufferSize - 1;
+        return this->m_bufferSize == 0 ? 0 : this->m_bufferSize - 1;
     }
 
     //! Gets the char buffer
