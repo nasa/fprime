@@ -144,6 +144,7 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | CONTINUE | Continues automatic execution of the sequence after it has been paused. If a breakpoint is still set, execution may pause again. |
 | CLEAR_BREAKPOINT | Clears any set breakpoint, but does not continue executing the sequence. |
 | STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
+| DUMP_STACK_TO_FILE | Writes the contents of the stack to a file. Not valid during automatic execution. |
 
 ## Directives
 See `directives.md` for documentation on all directives.
