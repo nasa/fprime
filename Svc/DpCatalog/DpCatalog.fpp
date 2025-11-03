@@ -157,7 +157,7 @@ module Svc {
 
     @ Catalog transmission stopped
     event CatalogXmitStopped (
-                            bytes: U32 @< data transmitted
+                            bytes: U64 @< data transmitted
                           ) \
       severity activity high \
       id 11 \
@@ -390,7 +390,7 @@ module Svc {
     event NotLoaded(
                             file: string size FileNameStringSize @< The file
     ) \
-      severity warning low \
+      severity activity high \
       id 44 \
       format "Not adding file {} now; Catalog not yet loaded"
 
@@ -401,6 +401,11 @@ module Svc {
       severity activity high \
       id 45 \
       format "Already Transmitted DP file {} not added"
+
+    event XmitUnbuiltCatalog() \
+      severity warning high \
+      id 46 \
+      format "Cannot Transmit a Catalog before Building"
 
     # ----------------------------------------------------------------------
     # Telemetry

@@ -60,12 +60,14 @@ class DpCatalogTester : public DpCatalogGTestBase {
     };
 
     //! Read a set of DPs
+    //! Runtime addition and stopAfter should not be used together
     void readDps(Fw::FileNameString* dpDirs,
                  FwSizeType numDirs,
                  Fw::FileNameString& stateFile,
                  const DpSet* dpSet,
                  FwSizeType numDps,
-                 FwSizeType numRuntime = 0);
+                 FwSizeType numRuntime = 0,
+                 FwSizeType stopAfter = 0);
 
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,

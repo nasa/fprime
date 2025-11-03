@@ -96,7 +96,8 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
                               Fw::FileNameString& stateFile,
                               const DpSet* dpSet,
                               FwSizeType numDps,
-                              FwSizeType numRuntime) {
+                              FwSizeType numRuntime,
+                              FwSizeType stopAfter) {
     // make a directory for the files
     for (FwSizeType dir = 0; dir < numDirs; dir++) {
         this->makeDpDir(dpDirs[dir].toChar());
@@ -114,16 +115,26 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     }
 
     Fw::MallocAllocator alloc;
+    this->clearHistory();
 
     this->component.configure(dpDirs, numDirs, stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
+    // TODO: Modify to use and check WAIT
     this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT, true);
-    this->component.doDispatch();
+    // this->component.doDispatch();
+
+    ASSERT_from_fileOut_SIZE(0);
 
     // dispatch messages
     for (FwSizeType dp = 0; dp < numDps; dp++) {
+        if (stopAfter > 0 && dp > stopAfter) {
+            ASSERT_from_fileOut_SIZE(stopAfter);
+        } else {
+            ASSERT_from_fileOut_SIZE(dp);
+        }
+
         // Create a runtime added Dp if we've exhausted all startup Dps
         if (dp + numRuntime >= numDps) {
             Fw::String dpPath = this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize,
@@ -134,14 +145,47 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
             this->invoke_to_addToCat(0, dpPath, 0, 0);
             this->component.doDispatch();
         }
+
+        // If we've transmitted stopAfter files, then issue the stop seq
+        if (dp + 1 == stopAfter) {
+            // Stop Transmission
+            this->sendCmd_STOP_XMIT_CATALOG(0, 123);
+            // Clear the catalog so we don't send upon restart
+            this->sendCmd_CLEAR_CATALOG(0, 124);
+            // Stop Sequence Complete
+
+            // Ensure we cleared out the catalog
+            // Start up and expect an error + no additional xmit
+            this->sendCmd_START_XMIT_CATALOG(0, 125, Fw::Wait::NO_WAIT, false);
+        }
+
+        // Potentially dispatch file done port call that is sent on fileOut_handler
+        // Since files are "instantly" marked done, delay the doDispatch to simulate a delay
+        // TODO: Fix the asan issue when we delay the dispatch
+        // while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+
+        //  && (true || STest::Pick::lowerUpper(0, 1) < 1)) {
+        // }
     }
 
-    // dispatch file done port call that is sent on fileOut_handler
+    // Finish out any outstanding messages
     while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
 
-    ASSERT_from_fileOut_SIZE(numDps);
+    if (stopAfter > 0 && stopAfter < numDps) {
+        ASSERT_EVENTS_CatalogXmitCompleted_SIZE(0);
+        ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
+        ASSERT_EVENTS_XmitUnbuiltCatalog_SIZE(1);
+        ASSERT_from_fileOut_SIZE(stopAfter);
+    } else if (numRuntime > 0) {
+        // Since we are remaining active, num completed events will be larger than 1
+        ASSERT_from_fileOut_SIZE(numDps);
+    } else {
+        ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+        ASSERT_from_fileOut_SIZE(numDps);
+    }
 
     this->component.shutdown();
 

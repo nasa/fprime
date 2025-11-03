@@ -956,9 +956,6 @@ void DpCatalog::shutdown() {
 // ----------------------------------------------------------------------
 
 void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileResponse& resp) {
-    // check some asserts
-    FW_ASSERT(this->m_dpTree);
-
     // check file status
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
@@ -972,6 +969,15 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
             this->m_xmitCmdSeq = 0;
         }
     }
+
+    // Catalog cleared while this file was sent
+    if (!this->m_catalogBuilt) {
+        return;
+    }
+
+    // Since catalog built flag is true
+    // we should have a tree w/ at least one element
+    FW_ASSERT(this->m_dpTree);
 
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
@@ -1014,7 +1020,7 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
 
     // Check the catalog has been built
     if (not this->m_catalogBuilt) {
-        this->log_WARNING_LO_NotLoaded(fileName);
+        this->log_ACTIVITY_HI_NotLoaded(fileName);
         return;
     }
 
@@ -1098,6 +1104,12 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
+    // Check the catalog has been built
+    if (not this->m_catalogBuilt) {
+        this->log_WARNING_HI_XmitUnbuiltCatalog();
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
     // start transmission
     this->m_xmitBytes = 0;
 
@@ -1116,6 +1128,7 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // benign error, so don't fail the command
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        this->log_ACTIVITY_HI_CatalogXmitStopped(this->m_xmitBytes);
         // Disarm the flag so next sendNextEntry stops transmission
         this->m_xmitInProgress = false;
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
