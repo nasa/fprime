@@ -290,6 +290,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
     //! Get the OPCODE_STEP value
     static FwOpcodeType get_OPCODE_STEP() { return FpySequencerComponentBase::OPCODE_STEP; }
+
+    //! Get the OPCODE_DUMP_STACK_TO_FILE value
+    static FwOpcodeType get_OPCODE_DUMP_STACK_TO_FILE() { return FpySequencerComponentBase::OPCODE_DUMP_STACK_TO_FILE; }
 };
 
 class FpySequencer_SequencerStateMachineTester {
