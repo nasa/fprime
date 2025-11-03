@@ -37,8 +37,9 @@ FauxPhaser::State FauxPhaser::run(U32 tick_of_cycle, U32 cycle_length) {
              (state == FauxPhaser::RUNNING || state == FauxPhaser::STARTING)) {
         bool finished_on_time = (current->length == current->actual_length);
         current++;
-        if (current < children.end())
+        if (current < children.end()) {
             current->runtime = 0;
+        }
         // A child has run long, the machine is forced to idle before starting the next child to avoid a short cycle
         state = finished_on_time ? FauxPhaser::STARTING : FauxPhaser::IDLE;
     }
@@ -53,8 +54,9 @@ FauxPhaser::State FauxPhaser::run(U32 tick_of_cycle, U32 cycle_length) {
     } else {
         EXPECT_FALSE(1);
     }
-    if (current < children.end())
+    if (current < children.end()) {
         current->runtime++;
+    }
     return state;
 }
 
