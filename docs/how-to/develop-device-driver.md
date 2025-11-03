@@ -34,6 +34,9 @@ graph LR
 ```
 **Figure**: Application-Manager-Driver pattern example with MPU6050 IMU sensor over I2C.
 
+> [!NOTE]
+> The reference MpuImu component linked above is implemented using a state machine to manage the device's initialization and operational modes. This is a design choice for this specific component and **not** a requirement for all device managers. Simpler devices may not need a state machine. Other device manager examples are available in [https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors).
+
 
 ## How-To Develop a Device Manager
 
@@ -173,15 +176,7 @@ Fw::Success ImuManager::getData_handler(FwIndexType portNum, ImuData& data) {
 ```
 
 >[!TIP]
-> For more complex use cases, it is recommended not to use Fw.Success but rather define your own status enum to represent different error conditions. This is left as an exercise to the reader, but is illustrated in the fprime-sensors repository as well as in the `Drv/` directory in F Prime.
-
-### Optional Step - Implement as a State Machine
-
-For devices with initialization sequences, multiple operational modes, or any behavior that fits the pattern, you may consider using an FPP state machine. FPP state machines are documented here:
-- [FPP State Machine User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-State-Machines)
-- [How-To Define State Machines in FPP](./define-state-machines.md)
-
-The ImuManager component in the fprime-sensors repository also uses a state machine, see [ImuStateMachine.fpp](https://github.com/fprime-community/fprime-sensors/blob/devel/fprime-sensors/MpuImu/Components/ImuManager/ImuStateMachine.fpp)
+> For more complex use cases, it is recommended not to use Fw.Success but rather define your own status enum to represent different error conditions. Examples are available in the `Drv/` directory in F Prime: [Drv.I2cStatus](https://github.com/nasa/fprime/blob/3f25d8b5358c6a734029e7eeb9dd8621e8895c90/Drv/Ports/I2cDriverPorts.fpp#L14-L21) and [Drv.GpioStatus](https://github.com/nasa/fprime/blob/3f25d8b5358c6a734029e7eeb9dd8621e8895c90/Drv/Ports/GpioDriverPorts.fpp#L2-L7).
 
 ### Step 5 - Integrate into Deployment
 
@@ -227,7 +222,6 @@ void configureTopology() {
 ## Additional Resources
 
 - [Application Manager Driver Pattern](../user-manual/design-patterns/app-man-drv.md)
-- [FPP State Machine User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-State-Machines)
 - [fprime-sensors Repository](https://github.com/fprime-community/fprime-sensors) - A collection of ready-to-use device managers for specific devices
 - [fprime-sensors-reference Repository](https://github.com/fprime-community/fprime-sensors-reference) - Reference project that uses sensors defined in fprime-sensors
 
