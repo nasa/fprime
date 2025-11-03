@@ -757,16 +757,15 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             FW_ASSERT(rightmostNode != nullptr);
         }
 
-        // We can stitch its left branch onto its parent in its place
         FW_ASSERT(rightmostNode != nullptr);
         FW_ASSERT(rightmostNode->parent != nullptr);
-        rightmostNode->parent->right = rightmostNode->left;
 
         // We can then swap the node to be deallocated w/ the rightmost
-        // (since it is the next lowest priority node after us)
+        // (since it is immediately higher priority than us)
 
-        // this is the root node: has no parent, but needs the root pointer to shift
+        // Make the "parent" of the deallocated node point at the rightmost
         if (parent == nullptr) {
+            // this is the root node: has no parent, but needs the root pointer to shift
             this->m_dpTree = rightmostNode;
         } else {
             // patch onto the appropriate parent branch
@@ -777,19 +776,35 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             }
         }
 
-        // Point at actual parent or nullptr so future us knows this is root
-        rightmostNode->parent = parent;
+        // Handle the children of the rightmost node
+        if (rightmostNode == node->left) {
+            // The rightmost node is the immediate left child of the deallocated node
+            // Since it only has left children, shift the left branch up
+            // with node->left taking the place of the deallocated node
 
-        // Now connect this node's children onto rightmostNode
-        rightmostNode->left = node->left;
+            // Nothing we need to do
+            // Just avoid the infinite loop that would occur in this case
+            // on the other branch
+        } else {
+            // If the rightmost node isn't the node to be deallocated's left child,
+            // we can stitch its left branch onto its parent in its place
+            rightmostNode->parent->right = rightmostNode->left;
+
+            // Now connect the deallocated node's left branch onto rightmostNode
+            rightmostNode->left = node->left;
+            node->left->parent = rightmostNode;
+        }
+
+        // Regardless, connect the deallocated node's right branch onto rightmostNode
         rightmostNode->right = node->right;
-
-        // Make sure all children point at their new parent node
-        node->left->parent = rightmostNode;
 
         if (node->right != nullptr) {
             node->right->parent = rightmostNode;
         }
+
+        // Now that we're done using the parent of rightmost node
+        // Point at actual parent or nullptr if this is the new root
+        rightmostNode->parent = parent;
 
     } else {
         // This node only had a right branch
