@@ -341,7 +341,7 @@ Converts a float to a signed integer, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## FPTOUI (30)
 Converts a float to an unsigned integer, pushes result to stack.
@@ -353,7 +353,7 @@ Converts a float to an unsigned integer, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## SITOFP (31)
 Converts a signed integer to a float, pushes result to stack.
@@ -365,7 +365,7 @@ Converts a signed integer to a float, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 
 ## UITOFP (32)
@@ -378,7 +378,7 @@ Converts an unsigned integer to a float, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## IADD (33)
 Performs integer addition, pushes result to stack.
@@ -618,7 +618,7 @@ Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:** FPY-SEQ-015
 
 ## SIEXT_32_64 (52)
 Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
@@ -630,7 +630,7 @@ Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
 | ------------------|-------------|
 | I64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:** FPY-SEQ-015
 
 ## ZIEXT_8_64 (53)
 Zero-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
@@ -642,7 +642,7 @@ Zero-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## ZIEXT_16_64 (54)
 Zero-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
@@ -654,7 +654,7 @@ Zero-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## ZIEXT_32_64 (55)
 Zero-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
@@ -666,7 +666,7 @@ Zero-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
 | ------------------|-------------|
 | U64 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## ITRUNC_64_8 (56)
 Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
@@ -678,7 +678,7 @@ Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
 | ------------------|-------------|
 | U8 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## ITRUNC_64_16 (57)
 Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
@@ -690,7 +690,7 @@ Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
 | ------------------|-------------|
 | I16 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:** FPY-SEQ-015
 
 ## ITRUNC_64_32 (58)
 Truncates a 64-bit integer to a 32-bit integer, pushes result to stack.
@@ -702,7 +702,7 @@ Truncates a 64-bit integer to a 32-bit integer, pushes result to stack.
 | ------------------|-------------|
 | I32 | The result |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-015
 
 ## EXIT (59)
 Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code.
@@ -710,7 +710,7 @@ Pops a byte off the stack. If the byte == 0, end sequence as if it had finished 
 |----------|----------|--------|-------------|
 | success    | U8      | stack  | 0 if should exit without error |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-016
 
 ## ALLOCATE (60)
 Pushes a hard-coded count of 0x00-bytes to the stack.
@@ -789,7 +789,7 @@ Dispatches a command with arguments from the stack.
 | ------------------|-------------|
 | Fw.CmdResponse | The CmdResponse that the command returned |
 
-**Requirement:**  **NEED**
+**Requirement:**  FPY-SEQ-010
 
 ## PUSH_TLM_VAL_AND_TIME (67)
 Gets a telemetry channel and pushes its value, and then its time, onto the stack.
