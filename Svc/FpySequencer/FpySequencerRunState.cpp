@@ -382,29 +382,29 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::GET_FIELD: {
             new (&deserializedDirective.getField) FpySequencer_GetFieldDirective();
             status = argBuf.deserializeTo(deserializedDirective.getField);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
-                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
                 return Fw::Success::FAILURE;
             }
             break;
         }
         case Fpy::DirectiveId::PEEK: {
             new (&deserializedDirective.peek) FpySequencer_PeekDirective();
-            if (argBuf.getBuffLeft() != 0) {
+            if (argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
                                                                Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
-                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
                 return Fw::Success::FAILURE;
             }
             break;
         }
         case Fpy::DirectiveId::ASSERT: {
             new (&deserializedDirective.assert) FpySequencer_AssertDirective();
-            if (argBuf.getBuffLeft() != 0) {
+            if (argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
                                                                Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
-                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
                 return Fw::Success::FAILURE;
             }
             break;
@@ -412,9 +412,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::STORE: {
             new (&deserializedDirective.store) FpySequencer_StoreDirective();
             status = argBuf.deserializeTo(deserializedDirective.store);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
-                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
                 return Fw::Success::FAILURE;
             }
             break;

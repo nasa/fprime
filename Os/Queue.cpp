@@ -93,13 +93,13 @@ QueueHandle* Queue::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
+QueueInterface::Status Queue::send(const Fw::LinearBufferBase& message,
                                    FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
     return this->send(message.getBuffAddr(), message.getSize(), priority, blockType);
 }
 
-QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
+QueueInterface::Status Queue::receive(Fw::LinearBufferBase& destination,
                                       QueueInterface::BlockingType blockType,
                                       FwQueuePriorityType& priority) {
     FwSizeType actualSize = 0;

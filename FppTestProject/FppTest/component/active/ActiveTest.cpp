@@ -26,37 +26,37 @@ ActiveTest ::~ActiveTest() {}
 // ----------------------------------------------------------------------
 
 void ActiveTest ::serialAsync_handler(FwIndexType portNum,             //!< The port number
-                                      Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                      Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }
 
 void ActiveTest ::serialAsyncAssert_handler(FwIndexType portNum,             //!< The port number
-                                            Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                            Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
 }
 
 void ActiveTest ::serialAsyncBlockPriority_handler(FwIndexType portNum,             //!< The port number
-                                                   Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                                   Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
 }
 
 void ActiveTest ::serialAsyncDropPriority_handler(FwIndexType portNum,             //!< The port number
-                                                  Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                                  Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
 }
 
 void ActiveTest ::serialGuarded_handler(FwIndexType portNum,             //!< The port number
-                                        Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                        Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }
 
 void ActiveTest ::serialSync_handler(FwIndexType portNum,             //!< The port number
-                                     Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+                                     Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }

@@ -130,7 +130,7 @@ Fw::SerializeStatus ActiveTestTester::ActiveTestComponentBaseParamExternalDelega
     const FwPrmIdType base_id,
     const FwPrmIdType local_id,
     const Fw::ParamValid prmStat,
-    Fw::SerializeBufferBase& buff) {
+    Fw::SerialBufferBase& buff) {
     Fw::SerializeStatus stat;
     (void)base_id;
 
@@ -171,7 +171,7 @@ Fw::SerializeStatus ActiveTestTester::ActiveTestComponentBaseParamExternalDelega
 Fw::SerializeStatus ActiveTestTester::ActiveTestComponentBaseParamExternalDelegate ::serializeParam(
     const FwPrmIdType base_id,
     const FwPrmIdType local_id,
-    Fw::SerializeBufferBase& buff) const {
+    Fw::SerialBufferBase& buff) const {
     Fw::SerializeStatus stat;
     (void)base_id;
 

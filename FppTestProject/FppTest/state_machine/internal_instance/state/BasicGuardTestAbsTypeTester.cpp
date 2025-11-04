@@ -56,7 +56,7 @@ bool BasicGuardTestAbsTypeTester::FppTest_SmState_BasicGuardTestAbsType_guard_g(
 void BasicGuardTestAbsTypeTester::smStateBasicGuardTestAbsType_stateMachineOverflowHook(
     SmId smId,
     FwEnumStoreType signal,
-    Fw::SerializeBufferBase& buffer) {
+    Fw::SerialBufferBase& buffer) {
     this->m_hookCalled = true;
     ASSERT_EQ(smId, SmId::smStateBasicGuardTestAbsType);
     ASSERT_EQ(static_cast<SmState_BasicGuardTestAbsType::Signal>(signal), SmState_BasicGuardTestAbsType::Signal::s);
