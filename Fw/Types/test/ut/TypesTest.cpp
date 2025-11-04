@@ -1457,9 +1457,9 @@ TEST(TypesTest, ConstExternalStringTest) {
     ASSERT_EQ(strUninit.length(), strUninit.maxLength());
 
     // Empty string
-    const char* lstrEmpty = "";  // capacity 1
-    Fw::ConstExternalString strEmpty(lstrEmpty, 1);
-    ASSERT_EQ(strEmpty.toChar(), lstrEmpty);
+    const char* strLiteralEmpty = "";  // capacity 1
+    Fw::ConstExternalString strEmpty(strLiteralEmpty, 1);
+    ASSERT_EQ(strEmpty.toChar(), strLiteralEmpty);
     ASSERT_EQ(strEmpty.getCapacity(), 1);
     ASSERT_EQ(strEmpty.length(), 0);
     ASSERT_EQ(strEmpty.length(), strEmpty.maxLength());
@@ -1467,9 +1467,9 @@ TEST(TypesTest, ConstExternalStringTest) {
     ASSERT_TRUE(strEmpty != strUninit);
 
     // Basic non-empty string
-    const char* lstrFoo = "foo";  // capacity 4
-    Fw::ConstExternalString strFoo(lstrFoo, 4);
-    ASSERT_EQ(strFoo.toChar(), lstrFoo);
+    const char* stLiteralFoo = "foo";  // capacity 4
+    Fw::ConstExternalString strFoo(stLiteralFoo, 4);
+    ASSERT_EQ(strFoo.toChar(), stLiteralFoo);
     ASSERT_EQ(strFoo.getCapacity(), 4);
     ASSERT_EQ(strFoo.length(), 3);
     ASSERT_EQ(strFoo.length(), strFoo.maxLength());
