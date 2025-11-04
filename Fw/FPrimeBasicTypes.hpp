@@ -46,13 +46,17 @@ static_assert(static_cast<FwSizeType>(FW_FIXED_LENGTH_STRING_SIZE) >= static_cas
 
 // Check that command/telemetry strings are not larger than an argument buffer
 
-static_assert(static_cast<FwSizeType>(FW_CMD_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <= static_cast<FwSizeType>(FW_CMD_ARG_BUFFER_MAX_SIZE),
+static_assert(static_cast<FwSizeType>(FW_CMD_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <=
+                  static_cast<FwSizeType>(FW_CMD_ARG_BUFFER_MAX_SIZE),
               "static_cast<FwSizeType>(FW_CMD_STRING_MAX_SIZE) cannot be larger than FW_CMD_ARG_BUFFER_MAX_SIZE");
-static_assert(static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <= static_cast<FwSizeType>(FW_LOG_BUFFER_MAX_SIZE),
+static_assert(static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <=
+                  static_cast<FwSizeType>(FW_LOG_BUFFER_MAX_SIZE),
               "static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE) cannot be larger than FW_LOG_BUFFER_MAX_SIZE");
-static_assert(static_cast<FwSizeType>(FW_TLM_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <= static_cast<FwSizeType>(FW_TLM_BUFFER_MAX_SIZE),
+static_assert(static_cast<FwSizeType>(FW_TLM_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <=
+                  static_cast<FwSizeType>(FW_TLM_BUFFER_MAX_SIZE),
               "static_cast<FwSizeType>(FW_TLM_STRING_MAX_SIZE) cannot be larger than FW_TLM_BUFFER_MAX_SIZE");
-static_assert(static_cast<FwSizeType>(FW_PARAM_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <= static_cast<FwSizeType>(FW_PARAM_BUFFER_MAX_SIZE),
+static_assert(static_cast<FwSizeType>(FW_PARAM_STRING_MAX_SIZE) + sizeof(FwSizeStoreType) <=
+                  static_cast<FwSizeType>(FW_PARAM_BUFFER_MAX_SIZE),
               "FW_PARAM_STRING_MAX_SIZE cannot be larger than FW_PARAM_BUFFER_MAX_SIZE");
 
 // Text logging needs the code generator for serializables to generate a stringified version of the
