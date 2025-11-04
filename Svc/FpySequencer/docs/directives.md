@@ -42,7 +42,7 @@ Sets the index of the next directive to execute.
 | ------------------|-------------|
 | N/A | |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-017
 
 ## IF (5)
 Pops a byte off the stack. If the byte is not 0, proceed to the next directive, otherwise goto a hardcoded directive index.
@@ -69,7 +69,7 @@ Does nothing.
 | ------------------|-------------|
 | N/A | |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-018
 
 ## PUSH_TLM_VAL (7)
 Pushes a telemetry value buffer to the stack.
@@ -406,20 +406,20 @@ Converts an unsigned integer to a float, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## IADD (33)
-Performs integer addition, pushes result to stack.
+Performs integer addition, pushes result to stack. TODO: say 2's complement, use U64
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | I64 \| U64     | stack  | Right operand |
+| lhs      | I64 \| U64     | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| I64 \| U64 | The result |
 
 **Requirement:**  FPY-SEQ-002
 
 ## ISUB (34)
-Performs integer subtraction, pushes result to stack.
+Performs integer subtraction, pushes result to stack. TODO: say 2's complement, use U64
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -432,7 +432,7 @@ Performs integer subtraction, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## IMUL (35)
-Performs integer multiplication, pushes result to stack.
+Performs integer multiplication, pushes result to stack. TODO: say 2's complement, use U64
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -548,19 +548,6 @@ Performs float division, pushes result to stack. Zero divisors, NaN, and infinit
 
 **Requirement:**  FPY-SEQ-002
 
-## FLOAT_FLOOR_DIV (44)
-Performs float floor division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division and `std::floor`.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| rhs      | F64      | stack  | Right operand |
-| lhs      | F64      | stack  | Left operand |
-
-| Stack Result Type | Description |
-| ------------------|-------------|
-| F64 | The result |
-
-**Requirement:**  ???
-
 ## FPOW (45)
 Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
 | Arg Name | Arg Type | Source | Description |
@@ -624,7 +611,7 @@ Extends a 32-bit float to a 64-bit float, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## SIEXT_8_64 (50)
-Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack. TODO: must specified as 2's complement.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I8       | stack  | Value to extend |
@@ -632,6 +619,8 @@ Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | I64 | The result |
+
+**Requirement:** FPY-SEQ-015
 
 ## SIEXT_16_64 (51)
 Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
@@ -751,7 +740,7 @@ Pushes a hard-coded count of 0x00-bytes to the stack.
 | ------------------|-------------|
 | bytes | A series of 0 bytes of length `size` |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## STORE_CONST_OFFSET (61)
 Pops a hard-coded number of bytes off the stack, and writes them to the local variable array at a hard-coded offset.
@@ -761,7 +750,7 @@ Pops a hard-coded number of bytes off the stack, and writes them to the local va
 | size        | U32      | hardcoded  | Number of bytes |
 | value       | bytes    | stack      | Value to store |
 
-**Requirement:**  FPY-SEQ-009
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## LOAD (62)
 Reads a hard-coded number of bytes from the local variable array at a specific offset, and pushes them to the stack.
@@ -774,7 +763,7 @@ Reads a hard-coded number of bytes from the local variable array at a specific o
 | ------------------|-------------|
 | bytes | The bytes from the lvar array |
 
-**Requirement:**  ???
+**Requirement:** FPY-SEQ-009, FPY-SEQ-010
 
 ## PUSH_VAL (63)
 Pushes a constant array of bytes to the stack.
@@ -786,7 +775,7 @@ Pushes a constant array of bytes to the stack.
 | ------------------|-------------|
 | bytes | The byte array from the arg |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## DISCARD (64)
 Discards bytes from the top of the stack.
@@ -794,10 +783,12 @@ Discards bytes from the top of the stack.
 |----------|----------|------------|-------------|
 | size     | U32      | hardcoded  | Bytes to discard |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## MEMCMP (65)
-Compares two memory regions on the stack.
+
+Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison pushing a boolean true when equal and false when unequal.
+
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
 | size     | U32      | hardcoded  | Bytes to compare |
@@ -806,7 +797,7 @@ Compares two memory regions on the stack.
 | ------------------|-------------|
 | bool | The result |
 
-**Requirement:**  ???
+**Requirement:** FPY-SEQ-019
 
 ## STACK_CMD (66)
 Dispatches a command with arguments from the stack.
@@ -831,7 +822,7 @@ Gets a telemetry channel and pushes its value, and then its time, onto the stack
 | bytes | The raw bytes of the telemetry value buffer |
 | Fw.Time | The time tag of the telemetry value |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-010
 
 ## PUSH_TIME (68)
 Pushes the current time, from the `timeCaller` port, to the stack.
@@ -839,25 +830,24 @@ Pushes the current time, from the `timeCaller` port, to the stack.
 | ------------------|-------------|
 | Fw.Time | The current time |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-010
 
 ## SET_FLAG (69)
-Pops a bool off the stack, sets a flag with a specific index to that bool.
+Pops a bool off the stack, and sets a command sequencer flag from the value.
+
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | flag_idx | U8 | hardcoded | Index of the flag to set |
 | value | bool | stack | Value to set the flag to |
 
-TODO: where does this bool go when set?
-
 | Stack Result Type | Description |
 | ------------------|-------------|
-| ??? | |
+| N/A | |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-020
 
 ## GET_FLAG (70)
-Gets a flag and pushes its value as a U8 to the stack.
+Gets a command sequencer flag and pushes its value as a U8 to the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | flag_idx | U8 | hardcoded | Index of the flag to get |
@@ -866,7 +856,7 @@ Gets a flag and pushes its value as a U8 to the stack.
 | ------------------|-------------|
 | bool | The value of the flag |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-020
 
 ## GET_FIELD (71)
 Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes from top of stack, and then inside of that a second array of hard-coded number of bytes. The second array is offset by the value previously popped off the stack, with offset 0 meaning the second array starts furthest down the stack. Leaves only the second array of bytes, deleting the surrounding bytes.
@@ -881,7 +871,7 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 | ------------------|-------------|
 | bytes | The raw bytes of the field |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-019
 
 ## PEEK (72)
 Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. Let `top` be the top of the stack. Takes the region starting at `top - offset - byteCount` and going to `top - offset`, and pushes this region to the top of the stack.
@@ -894,16 +884,7 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 | ------------------|-------------|
 | bytes | The peeked bytes |
 
-**Requirement:**  ???
-
-## ASSERT (73)
-Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| error_code | U8 | stack | Error code to exit with if assertion fails |
-| condition | bool | stack | Condition to assert |
-
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-009
 
 ## STORE (74)
 Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes from the top of the stack, and moves them to the start of the lvar array plus the offset previously popped off the stack.
@@ -915,6 +896,6 @@ Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes f
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| ??? | |
+| N/A | |
 
-**Requirement:**  ???
+**Requirement:**  FPY-SEQ-009
