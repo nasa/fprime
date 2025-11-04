@@ -658,7 +658,7 @@ DirectiveError FpySequencer::op_isub() {
     // Underflow can only occur when the left operand is negative and the right operand is positive. It occurs when the
     // left (negative) operand is less than the minimum value plus the other (positive) operand. If the right operand
     // is negative or zero, underflow cannot occur.
-    else if ((rhs > 0) && (lhs < 0) && ((std::numeric_limits<I64>::min() - rhs) > lhs)) {
+    else if ((rhs > 0) && (lhs < 0) && ((std::numeric_limits<I64>::min() + rhs) > lhs)) {
         return DirectiveError::ARITHMETIC_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<I64>(lhs - rhs));
