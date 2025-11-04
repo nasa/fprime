@@ -20,18 +20,22 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-003 | The sequencer shall support accessing telemetry.                                                                                                  | Unit Test                       |
 | FPY-SEQ-004 | The sequencer shall support accessing the parameter database.                                                                                     | Unit Test                       |
 | FPY-SEQ-005 | The sequencer shall support calling subroutines with arguments and a single return value.                                                         | Unit Test                       |
-| FPY-SEQ-006 | The sequencer shall support scoped variables. --REVIEW--                                                                                          | Unit Test                       |
+| FPY-SEQ-006 | The sequencer shall support scoped variables.                                                                                                     | Unit Test                       |
 | FPY-SEQ-007 | The sequencer shall support executing directives at relative times.                                                                               | Unit Test                       | 
 | FPY-SEQ-008 | The sequencer shall support executing directives at absolute times.                                                                               | Unit Test                       | 
 | FPY-SEQ-009 | The sequencer shall support sequence-local variables.                                                                                             | Unit Test                       |
-| FPY-SEQ-010 | The sequencer shall support executing directives with dynamic and constant arguments. --REVIEW--.                                                 | Unit Test                       |
+| FPY-SEQ-010 | The sequencer shall support dispatching commands with dynamic and constant arguments.                                                             | Unit Test                       |
 | FPY-SEQ-011 | The sequencer shall support running sequences with arguments.                                                                                     | Unit Test                       |
 | FPY-SEQ-012 | The sequencer shall read a binary-encoded sequence file of the format described in [TBD]()                                                        | Unit Test                       |
 | FPY-SEQ-013 | The sequencer shall support sending commands for dispatch.                                                                                        | Unit Test                       |
 | FPY-SEQ-014 | The sequencer shall support parameterized sequences.                                                                                              | Unit Test                       |
 | FPY-SEQ-015 | The sequencer shall support conversions between F Prime signed, unsigned, and floating-point primitive types and their equivalent 64-bit types.   | Unit Test                       |
 | FPY-SEQ-016 | The sequencer shall support exiting the sequence execution with a specified exit code.                                                            | Unit Test                       |
-| FPY-SEQ-017 | The sequencer shall support the directives described in the [Directives](#directives) section.                                                    | Unit Test                       |
+| FPY-SEQ-017 | The sequencer shall support looping constructs.                                                                                                   | Unit Test                       |
+| FPY-SEQ-018 | The sequencer shall support NO OP functionality.                                                                                                  | Unit Test                       |
+| FPY-SEQ-019 | The sequencer shall support working with complex modeled data structures (Arrays, Serializables).                                                 | Unit Test                       |
+| FPY-SEQ-020 | The sequencer shall support support setting flags as described in the [Flags](#flags) secion via command and sequence directive.                  | Unit Test                       |
+| FPY-SEQ-021 | The sequencer shall support the directives described in the [Directives](#directives) section.                                                    | Unit Test                       |
 
 ## States
 
