@@ -50,10 +50,10 @@ class ConstExternalString final : public ConstStringBase {
     }
 
     //! Gets the char buffer
-    const char* toChar() const { return this->m_bufferPtr; }
+    const char* toChar() const override { return this->m_bufferPtr; }
 
     //! Returns the buffer size
-    ConstStringBase::SizeType getCapacity() const { return this->m_bufferSize; }
+    ConstStringBase::SizeType getCapacity() const override { return this->m_bufferSize; }
 
   private:
     // ----------------------------------------------------------------------

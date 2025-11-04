@@ -30,8 +30,7 @@ ConstStringBase::SizeType ConstStringBase::length() const {
 
 ConstStringBase::SizeType ConstStringBase::maxLength() const {
     const SizeType capacity = this->getCapacity();
-    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
-    return capacity - 1;
+    return capacity == 0 ? 0 : capacity - 1;
 }
 
 ConstStringBase::SizeType ConstStringBase::serializedSize() const {
