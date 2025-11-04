@@ -342,7 +342,7 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
     // Copy buffer before recycling
     U8* data = new U8[buffer.getSize()];
-    this->buffers[buffers_index] = data;
+    this->buffers[buffers_index] = data;  // NOLINT(clang-analyzer-security.ArrayBound)
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
     Fw::Buffer buffer_new = buffer;

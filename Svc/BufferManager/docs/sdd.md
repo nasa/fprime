@@ -128,13 +128,51 @@ sequenceDiagram
 * A returned buffer has an indicated size larger than originally allocated.
 * A returned buffer has a pointer different than the one originally allocated.
 
-## 4 Dictionary
+## 4 Configuration
 
-TBD
+### 4.1 Constants
 
-## 5 Checklists
+The maximum number of buffer bins is configured in the config file [`config/BufferManagerComponentImplCfg.hpp`](../../../default/config/BufferManagerComponentImplCfg.hpp):
 
+```cpp
+namespace Svc {
+    static const U16 BUFFERMGR_MAX_NUM_BINS = 10;
+}
+```
 
-## 6 Unit Testing
+### 4.2 Runtime Setup
 
-Completed.
+To configure an instance of `BufferManager`, the following needs to be supplied to its `setup()` method:
+- `mgrID`: A unique manager ID for buffer checking
+- `memID`: ID passed to the memory allocator
+- `allocator`: An `Fw::MemAllocator` instance
+- `bins`: A `BufferBins` structure defining the buffer pools (size and number). This is defined by the user, as demonstrated below.
+
+The `setup` method configures the buffer bins, allocates memory for all buffers, and initializes the buffer tracking structures.
+
+### 4.3 Buffer Bins Configuration
+
+Buffer bins are defined using the `BufferBins` structure, which contains an array of `BufferBin` entries. Each bin entry specifies:
+- `bufferSize`: The size of each buffer in the bin (in bytes)
+- `numBuffers`: number of buffers of `bufferSize` to allocate for this bin
+
+Choosing appropriate buffer sizes and counts depends on the expected usage patterns of the system. Users should analyze their application's memory requirements to determine optimal configurations.
+
+**Example configuration:**
+
+```cpp
+Svc::BufferManager::BufferBins bins;
+memset(&bins, 0, sizeof(bins));
+bins.bins[0].bufferSize = 256;   // Small buffers
+bins.bins[0].numBuffers = 10;    // 10 small buffers
+
+bins.bins[1].bufferSize = 1024;  // Medium buffers
+bins.bins[1].numBuffers = 5;     // 5 medium buffers
+
+bins.bins[2].bufferSize = 4096;  // Large buffers
+bins.bins[2].numBuffers = 2;     // 2 large buffers
+
+bufferManager.setup(1, 0, allocator, bins);
+```
+
+A real-world usage and configuration example can be found in the [`Svc.ComCcsds` subtopology](../../Subtopologies/ComCcsds/).

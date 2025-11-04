@@ -193,7 +193,8 @@ void Os::Test::Directory::Tester::ReadAllFiles::action(Os::Test::Directory::Test
     // Number of files read should be the number of files in the directory minus the original seek position
     ASSERT_EQ(outFileCount, state.m_filenames.size());
     for (FwSizeType i = 0; i < outFileCount; i++) {
-        ASSERT_TRUE(state.is_valid_filename(std::string(outArray[i].toChar())));
+        ASSERT_TRUE(
+            state.is_valid_filename(std::string(outArray[i].toChar())));  // NOLINT(clang-analyzer-security.ArrayBound)
     }
     // readDirectory resets the seek position to the end
     state.m_seek_position = 0;
