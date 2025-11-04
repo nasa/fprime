@@ -90,8 +90,8 @@ void TokenBucketTester ::testReconfiguring() {
     ASSERT_EQ(bucket.getTokens(), newMaxTokens - 1);
 
     // set new rate, replenish quickly
-    while (bucket.trigger(Fw::Time(0, 0)))
-        ;
+    while (bucket.trigger(Fw::Time(0, 0))) {
+    }
     bucket.setReplenishInterval(1000000);
     U32 newRate = 2;
     bucket.setReplenishRate(newRate);

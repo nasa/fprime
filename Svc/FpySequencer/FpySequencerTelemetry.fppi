@@ -33,29 +33,31 @@ telemetry SeqPath: string size FileNameStringSize update on change
 # debug telemetry
 # only valid in RUNNING.PAUSED state
 @ true if there are no statements remaining in the sequence file
-telemetry Debug_ReachedEndOfFile: bool
+telemetry Debug_ReachedEndOfFile: bool update on change
 @ true if we were able to deserialize the next statement successfully
-telemetry Debug_NextStatementReadSuccess: bool
+telemetry Debug_NextStatementReadSuccess: bool update on change
 @ the opcode of the next statement to dispatch.
 telemetry Debug_NextStatementOpcode: U8 update on change
 @ if the next statement is a cmd directive, the opcode of that cmd
 telemetry Debug_NextCmdOpcode: FwOpcodeType update on change
+@ the size of the stack in bytes
+telemetry Debug_StackSize: Fpy.StackSizeType update on change
 
 # breakpoint telemetry
 @ whether or not to break at the breakpoint index
-telemetry BreakpointInUse: bool
+telemetry BreakpointInUse: bool update on change
 @ the current breakpoint index. The sequence will break at this point 
 @ just before dispatching the directive at this index
 telemetry BreakpointIndex: U32 update on change
 @ whether or not to remove the breakpoint after breaking on it
-telemetry BreakOnlyOnceOnBreakpoint: bool
+telemetry BreakOnlyOnceOnBreakpoint: bool update on change
 @ whether or not to break before dispatching the next line,
 @ independent of what line it is.
 @ can be used in combination with breakpointIndex
-telemetry BreakBeforeNextLine: bool
+telemetry BreakBeforeNextLine: bool update on change
 
 @ value of prm STATEMENT_TIMEOUT_SECS
 telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
 
 @ value of prm FLAG_DEFAULT_EXIT_ON_CMD_FAIL
-telemetry PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: bool
+telemetry PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: bool update on change

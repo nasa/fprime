@@ -113,7 +113,8 @@ void ComStubTester ::test_retry_async() {
     }
     // Retrying for as many times as the RETRY_LIMIT should be ok
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
-        invoke_to_drvAsyncSendReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        invoke_to_drvAsyncSendReturnIn(
+            0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);  // NOLINT(clang-analyzer-security.ArrayBound)
         // Test we have indeed retried (data sent on drvAsyncSendOut)
         ASSERT_from_drvAsyncSendOut_SIZE(static_cast<U32>(i + 1));
         ASSERT_from_drvAsyncSendOut(static_cast<U32>(i), buffers[i]);

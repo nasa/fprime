@@ -11,6 +11,12 @@ Sleeps for a relative duration from the current time.
 | useconds  | U32      | stack  | Wait time in microseconds (must be less than a second) |
 | seconds  | U32      | stack  | Wait time in seconds |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:** FPY-SEQ-007
+
 ## WAIT_ABS (2)
 Sleeps until an absolute time.
 | Arg Name      | Arg Type | Source | Description |
@@ -20,11 +26,23 @@ Sleeps until an absolute time.
 | time_context | FwTimeContextStoreType       | stack  | Time context (user defined value, unused by Fpy) |
 | time_base    | U16      | stack  | Time base |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:** FPY-SEQ-008
+
 ## GOTO (4)
 Sets the index of the next directive to execute.
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
 | dir_idx  | U32      | hardcoded | The statement index to execute next |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:**  FPY-SEQ-017
 
 ## IF (5)
 Pops a byte off the stack. If the byte is not 0, proceed to the next directive, otherwise goto a hardcoded directive index.
@@ -34,8 +52,24 @@ Pops a byte off the stack. If the byte is not 0, proceed to the next directive, 
 | false_goto_dir_index| U32      | hardcoded | Directive index to jump to if false |
 | condition          | bool     | stack     | Condition to evaluate |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:** FPY-SEQ-001
+
 ## NO_OP (6)
 Does nothing.
+
+| Arg Name             | Arg Type | Source     | Description |
+|---------------------|----------|------------|-------------|
+|  N/A | | | |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:**  FPY-SEQ-018
 
 ## PUSH_TLM_VAL (7)
 Pushes a telemetry value buffer to the stack.
@@ -46,6 +80,9 @@ Pushes a telemetry value buffer to the stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bytes | The raw bytes of the telemetry value buffer |
+
+**Requirement:**  FPY-SEQ-003
+
 ## PUSH_PRM (8)
 Pushes a parameter buffer to the stack.
 | Arg Name     | Arg Type | Source     | Description |
@@ -55,6 +92,8 @@ Pushes a parameter buffer to the stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bytes | The raw bytes of the parameter buffer |
+
+**Requirement:**  FPY-SEQ-004
 
 ## CONST_CMD (9)
 Runs a command with a constant opcode and a constant byte array of arguments.
@@ -67,6 +106,7 @@ Runs a command with a constant opcode and a constant byte array of arguments.
 | ------------------|-------------|
 | Fw.CmdResponse | The CmdResponse that the command returned |
 
+**Requirement:**  FPY-SEQ-007, FPY-SEQ-008
 
 ## OR (10)
 Performs an `or` between two booleans, pushes result to stack.
@@ -79,6 +119,8 @@ Performs an `or` between two booleans, pushes result to stack.
 | ------------------|-------------|
 | bool | The result |
 
+**Requirement:**  FPY-SEQ-002
+
 ## AND (11)
 Performs an `and` between two booleans, pushes result to stack.
 
@@ -90,27 +132,36 @@ Performs an `and` between two booleans, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## IEQ (12)
 Compares two integers for equality, pushes result to stack. Doesn't differentiate between signed and unsigned.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## INE (13)
 Compares two integers for inequality, pushes result to stack. Doesn't differentiate between signed and unsigned.
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## ULT (14)
 Performs an unsigned less than comparison on two unsigned integers, pushes result to stack
 | Arg Name | Arg Type | Source | Description |
@@ -121,6 +172,9 @@ Performs an unsigned less than comparison on two unsigned integers, pushes resul
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## ULE (15)
 Performs an unsigned less than or equal to comparison on two unsigned integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -131,6 +185,9 @@ Performs an unsigned less than or equal to comparison on two unsigned integers, 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## UGT (16)
 Performs an unsigned greater than comparison on two unsigned integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -141,6 +198,9 @@ Performs an unsigned greater than comparison on two unsigned integers, pushes re
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## UGE (17)
 Performs an unsigned greater than or equal to comparison on two unsigned integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -151,6 +211,9 @@ Performs an unsigned greater than or equal to comparison on two unsigned integer
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SLT (18)
 Performs a signed less than comparison on two signed integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -161,6 +224,9 @@ Performs a signed less than comparison on two signed integers, pushes result to 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SLE (19)
 Performs a signed less than or equal to comparison on two signed integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -171,6 +237,9 @@ Performs a signed less than or equal to comparison on two signed integers, pushe
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SGT (20)
 Performs a signed greater than comparison on two signed integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -181,6 +250,9 @@ Performs a signed greater than comparison on two signed integers, pushes result 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SGE (21)
 Performs a signed greater than or equal to comparison on two signed integers, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -191,6 +263,9 @@ Performs a signed greater than or equal to comparison on two signed integers, pu
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FEQ (22)
 Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -201,6 +276,9 @@ Compares two floats for equality, pushes result to stack. If neither is NaN and 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FNE (23)
 Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -211,6 +289,9 @@ Compares two floats for inequality, pushes result to stack. If either is NaN or 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FLT (24)
 Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -221,6 +302,9 @@ Performs a less than comparison on two floats, pushes result to stack. If neithe
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FLE (25)
 Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -231,6 +315,9 @@ Performs a less than or equal to comparison on two floats, pushes result to stac
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FGT (26)
 Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -241,6 +328,9 @@ Performs a greater than comparison on two floats, pushes result to stack. If nei
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FGE (27)
 Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
@@ -251,6 +341,9 @@ Performs a greater than or equal to comparison on two floats, pushes result to s
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## NOT (28)
 Performs a boolean not operation on a boolean, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -260,6 +353,9 @@ Performs a boolean not operation on a boolean, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FPTOSI (29)
 Converts a float to a signed integer, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -269,6 +365,9 @@ Converts a float to a signed integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | I64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## FPTOUI (30)
 Converts a float to an unsigned integer, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -278,14 +377,22 @@ Converts a float to an unsigned integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## SITOFP (31)
 Converts a signed integer to a float, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Integer to convert |
+
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
+
 ## UITOFP (32)
 Converts an unsigned integer to a float, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -295,36 +402,49 @@ Converts an unsigned integer to a float, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
-## IADD (33)
-Performs integer addition, pushes result to stack.
+
+**Requirement:**  FPY-SEQ-015
+
+## ADD (33)
+Performs integer addition, pushes result to stack. Integers are handled with 2's complement representation.
+
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64     | stack  | Right operand |
+| lhs      | U64     | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
-## ISUB (34)
-Performs integer subtraction, pushes result to stack.
+| U64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
+## SUB (34)
+Performs integer subtraction, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
-## IMUL (35)
-Performs integer multiplication, pushes result to stack.
+| U64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
+## MUL (35)
+Performs integer multiplication, pushes result to stack.  Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## UDIV (36)
 Performs unsigned integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
@@ -335,6 +455,9 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SDIV (37)
 Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
@@ -345,6 +468,9 @@ Performs signed integer division, pushes result to stack. A divisor of 0 will re
 | Stack Result Type | Description |
 | ------------------|-------------|
 | I64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## UMOD (38)
 Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
@@ -355,6 +481,9 @@ Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## SMOD (39)
 Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
@@ -365,6 +494,9 @@ Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will r
 | Stack Result Type | Description |
 | ------------------|-------------|
 | I64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FADD (40)
 Performs float addition, pushes result to stack. NaN, and infinity are handled consistently with C++ addition.
 | Arg Name | Arg Type | Source | Description |
@@ -375,6 +507,9 @@ Performs float addition, pushes result to stack. NaN, and infinity are handled c
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FSUB (41)
 Performs float subtraction, pushes result to stack. NaN, and infinity are handled consistently with C++ subtraction.
 | Arg Name | Arg Type | Source | Description |
@@ -385,6 +520,9 @@ Performs float subtraction, pushes result to stack. NaN, and infinity are handle
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FMUL (42)
 Performs float multiplication, pushes result to stack. NaN, and infinity are handled consistently with C++ multiplication.
 | Arg Name | Arg Type | Source | Description |
@@ -395,6 +533,9 @@ Performs float multiplication, pushes result to stack. NaN, and infinity are han
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FDIV (43)
 Performs float division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division.
 | Arg Name | Arg Type | Source | Description |
@@ -406,16 +547,8 @@ Performs float division, pushes result to stack. Zero divisors, NaN, and infinit
 | ------------------|-------------|
 | F64 | The result |
 
-## FLOAT_FLOOR_DIV (44)
-Performs float floor division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division and `std::floor`.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| rhs      | F64      | stack  | Right operand |
-| lhs      | F64      | stack  | Left operand |
+**Requirement:**  FPY-SEQ-002
 
-| Stack Result Type | Description |
-| ------------------|-------------|
-| F64 | The result |
 ## FPOW (45)
 Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
 | Arg Name | Arg Type | Source | Description |
@@ -426,6 +559,9 @@ Performs float exponentiation, pushes result to stack. NaN and infinity values a
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FLOG (46)
 Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR, NaN and infinity values are handled consistently with C++ `std::log`.
 | Arg Name | Arg Type | Source | Description |
@@ -435,6 +571,9 @@ Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FMOD (47)
 Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in a DOMAIN_ERROR. A NaN will produce a NaN result or infinity as either argument yields NaN.
 | Arg Name | Arg Type | Source | Description |
@@ -445,6 +584,9 @@ Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F64 | The result |
+
+**Requirement:**  FPY-SEQ-002
+
 ## FPTRUNC (49)
 Truncates a 64-bit float to a 32-bit float, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -454,6 +596,8 @@ Truncates a 64-bit float to a 32-bit float, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | F32 | The result |
+
+**Requirement:**  FPY-SEQ-002
 
 ## FPEXT (48)
 Extends a 32-bit float to a 64-bit float, pushes result to stack.
@@ -465,34 +609,44 @@ Extends a 32-bit float to a 64-bit float, pushes result to stack.
 | ------------------|-------------|
 | F64 | The result |
 
+**Requirement:**  FPY-SEQ-002
+
 ## SIEXT_8_64 (50)
-Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack.  Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I8       | stack  | Value to extend |
+| value    | U8       | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
+
+**Requirement:** FPY-SEQ-015
 
 ## SIEXT_16_64 (51)
-Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I16      | stack  | Value to extend |
+| value    | U16      | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
+
+**Requirement:** FPY-SEQ-015
+
 ## SIEXT_32_64 (52)
-Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I32      | stack  | Value to extend |
+| value    | U32      | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
+
+**Requirement:** FPY-SEQ-015
+
 ## ZIEXT_8_64 (53)
 Zero-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -502,6 +656,9 @@ Zero-extends an 8-bit integer to a 64-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## ZIEXT_16_64 (54)
 Zero-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -511,6 +668,9 @@ Zero-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## ZIEXT_32_64 (55)
 Zero-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
 | Arg Name | Arg Type | Source | Description |
@@ -520,8 +680,11 @@ Zero-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U64 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## ITRUNC_64_8 (56)
-Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
+Truncates a 64-bit integer to an 8-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
@@ -529,8 +692,11 @@ Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U8 | The result |
+
+**Requirement:**  FPY-SEQ-015
+
 ## ITRUNC_64_16 (57)
-Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
+Truncates a 64-bit integer to a 16-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
@@ -538,8 +704,11 @@ Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | I16 | The result |
+
+**Requirement:** FPY-SEQ-015
+
 ## ITRUNC_64_32 (58)
-Truncates a 64-bit integer to a 32-bit integer, pushes result to stack.
+Truncates a 64-bit integer to a 32-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
@@ -548,12 +717,19 @@ Truncates a 64-bit integer to a 32-bit integer, pushes result to stack.
 | ------------------|-------------|
 | I32 | The result |
 
+**Requirement:**  FPY-SEQ-015
+
 ## EXIT (59)
 Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | success    | U8      | stack  | 0 if should exit without error |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:**  FPY-SEQ-016
 
 ## ALLOCATE (60)
 Pushes a hard-coded count of 0x00-bytes to the stack.
@@ -565,6 +741,8 @@ Pushes a hard-coded count of 0x00-bytes to the stack.
 | ------------------|-------------|
 | bytes | A series of 0 bytes of length `size` |
 
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
+
 ## STORE_CONST_OFFSET (61)
 Pops a hard-coded number of bytes off the stack, and writes them to the local variable array at a hard-coded offset.
 | Arg Name    | Arg Type | Source     | Description |
@@ -572,6 +750,8 @@ Pops a hard-coded number of bytes off the stack, and writes them to the local va
 | lvar_offset | U32      | hardcoded  | Local variable offset |
 | size        | U32      | hardcoded  | Number of bytes |
 | value       | bytes    | stack      | Value to store |
+
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## LOAD (62)
 Reads a hard-coded number of bytes from the local variable array at a specific offset, and pushes them to the stack.
@@ -584,6 +764,8 @@ Reads a hard-coded number of bytes from the local variable array at a specific o
 | ------------------|-------------|
 | bytes | The bytes from the lvar array |
 
+**Requirement:** FPY-SEQ-009, FPY-SEQ-010
+
 ## PUSH_VAL (63)
 Pushes a constant array of bytes to the stack.
 | Arg Name | Arg Type | Source     | Description |
@@ -594,15 +776,20 @@ Pushes a constant array of bytes to the stack.
 | ------------------|-------------|
 | bytes | The byte array from the arg |
 
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
+
 ## DISCARD (64)
 Discards bytes from the top of the stack.
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
 | size     | U32      | hardcoded  | Bytes to discard |
 
+**Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
 ## MEMCMP (65)
-Compares two memory regions on the stack.
+
+Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison pushing a boolean true when equal and false when unequal.
+
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
 | size     | U32      | hardcoded  | Bytes to compare |
@@ -610,6 +797,8 @@ Compares two memory regions on the stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bool | The result |
+
+**Requirement:** FPY-SEQ-019
 
 ## STACK_CMD (66)
 Dispatches a command with arguments from the stack.
@@ -620,6 +809,8 @@ Dispatches a command with arguments from the stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | Fw.CmdResponse | The CmdResponse that the command returned |
+
+**Requirement:**  FPY-SEQ-010
 
 ## PUSH_TLM_VAL_AND_TIME (67)
 Gets a telemetry channel and pushes its value, and then its time, onto the stack.
@@ -632,21 +823,32 @@ Gets a telemetry channel and pushes its value, and then its time, onto the stack
 | bytes | The raw bytes of the telemetry value buffer |
 | Fw.Time | The time tag of the telemetry value |
 
+**Requirement:**  FPY-SEQ-010
+
 ## PUSH_TIME (68)
 Pushes the current time, from the `timeCaller` port, to the stack.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | Fw.Time | The current time |
 
+**Requirement:**  FPY-SEQ-010
+
 ## SET_FLAG (69)
-Pops a bool off the stack, sets a flag with a specific index to that bool.
+Pops a bool off the stack, and sets a command sequencer flag from the value.
+
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | flag_idx | U8 | hardcoded | Index of the flag to set |
 | value | bool | stack | Value to set the flag to |
 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:**  FPY-SEQ-020
+
 ## GET_FLAG (70)
-Gets a flag and pushes its value as a U8 to the stack.
+Gets a command sequencer flag and pushes its value as a U8 to the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | flag_idx | U8 | hardcoded | Index of the flag to get |
@@ -655,8 +857,11 @@ Gets a flag and pushes its value as a U8 to the stack.
 | ------------------|-------------|
 | bool | The value of the flag |
 
+**Requirement:**  FPY-SEQ-020
+
 ## GET_FIELD (71)
 Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes from top of stack, and then inside of that a second array of hard-coded number of bytes. The second array is offset by the value previously popped off the stack, with offset 0 meaning the second array starts furthest down the stack. Leaves only the second array of bytes, deleting the surrounding bytes.
+
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | parent_size | U32 | hardcoded | Size of the struct |
@@ -666,6 +871,8 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 | Stack Result Type | Description |
 | ------------------|-------------|
 | bytes | The raw bytes of the field |
+
+**Requirement:**  FPY-SEQ-019
 
 ## PEEK (72)
 Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. Let `top` be the top of the stack. Takes the region starting at `top - offset - byteCount` and going to `top - offset`, and pushes this region to the top of the stack.
@@ -678,12 +885,7 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 | ------------------|-------------|
 | bytes | The peeked bytes |
 
-## ASSERT (73)
-Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| error_code | U8 | stack | Error code to exit with if assertion fails |
-| condition | bool | stack | Condition to assert |
+**Requirement:**  FPY-SEQ-009
 
 ## STORE (74)
 Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes from the top of the stack, and moves them to the start of the lvar array plus the offset previously popped off the stack.
@@ -692,3 +894,9 @@ Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes f
 | size        | U32      | hardcoded  | Number of bytes |
 | lvar_offset | U32      | stack      | Local variable offset |
 | value       | bytes    | stack      | Value to store |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+**Requirement:**  FPY-SEQ-009

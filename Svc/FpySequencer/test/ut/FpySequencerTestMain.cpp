@@ -1692,6 +1692,53 @@ TEST_F(FpySequencerTester, cmd_STEP) {
     ASSERT_EVENTS_SequenceDone_SIZE(1);
 }
 
+TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE) {
+    // Test command in IDLE state (should fail)
+    this->tester_setState(State::IDLE);
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("test"));
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should fail in IDLE state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Test STEP command in RUNNING_PAUSED state (should succeed)
+    this->clearHistory();
+    // Setup test sequence
+    allocMem();
+    add_PUSH_VAL<U8>(0x00);
+    add_PUSH_VAL<U8>(0x11);
+    add_PUSH_VAL<U8>(0x22);
+    writeAndRun();
+
+    // tell it to break before the end
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    tester_get_m_breakpoint_ptr()->breakpointIndex = 3;
+
+    // run until we get to paused
+    dispatchUntilState(State::RUNNING_PAUSED);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 3);
+
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("output.bin"));
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // Should succeed in RUNNING_PAUSED state
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0, Fw::CmdResponse::OK);
+
+    // assert that the file was created and has the right data
+    Os::File outputFile;
+    ASSERT_EQ(outputFile.open("output.bin", Os::FileInterface::Mode::OPEN_READ), Os::File::Status::OP_OK);
+    U8 bytes[3] = {};
+    FwSizeType size = sizeof(bytes);
+    ASSERT_EQ(outputFile.read(bytes, size), Os::File::Status::OP_OK);
+    ASSERT_EQ(size, sizeof(bytes));
+    ASSERT_EQ(bytes[0], 0x00);
+    ASSERT_EQ(bytes[1], 0x11);
+    ASSERT_EQ(bytes[2], 0x22);
+
+    removeFile("output.bin");
+}
+
 TEST_F(FpySequencerTester, readHeader) {
     U8 seqBuf[Fpy::Header::SERIALIZED_SIZE] = {0};
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(seqBuf, sizeof(seqBuf));
@@ -2494,7 +2541,7 @@ TEST_F(FpySequencerTester, tlmWrite) {
     invoke_to_tlmWrite(0, 0);
     this->tester_doDispatch();
     // make sure that all tlm is written every call
-    ASSERT_TLM_SIZE(18);
+    ASSERT_TLM_SIZE(19);
 }
 
 TEST_F(FpySequencerTester, seqRunIn) {

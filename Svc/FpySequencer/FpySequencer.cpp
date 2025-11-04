@@ -241,6 +241,37 @@ void FpySequencer::SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+//! Handler for command DUMP_STACK_TO_FILE
+//!
+//! Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
+void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                                 U32 cmdSeq,                       //!< The command sequence number
+                                                 const Fw::CmdStringArg& fileName  //!< The name of the output file
+) {
+    if (this->sequencer_getState() != State::RUNNING_PAUSED) {
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    Os::File sequenceFile;
+    Os::File::Status status = sequenceFile.open(fileName.toChar(), Os::File::OPEN_WRITE);
+
+    if (status != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(status));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    FwSizeType writeSize = static_cast<FwSizeType>(this->m_runtime.stack.size);
+    status = sequenceFile.write(this->m_runtime.stack.bytes, writeSize);
+    if (status != Os::File::Status::OP_OK || writeSize != this->m_runtime.stack.size) {
+        this->log_WARNING_HI_FileWriteError(writeSize, fileName, static_cast<I32>(status));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    return;
+}
 //! Handler for input port checkTimers
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
@@ -396,6 +427,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_Debug_NextStatementOpcode(this->m_debug.nextStatementOpcode);
     this->tlmWrite_Debug_NextStatementReadSuccess(this->m_debug.nextStatementReadSuccess);
     this->tlmWrite_Debug_ReachedEndOfFile(this->m_debug.reachedEndOfFile);
+    this->tlmWrite_Debug_StackSize(this->m_debug.stackSize);
 }
 
 void FpySequencer::updateDebugTelemetryStruct() {
@@ -407,6 +439,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = false;
             this->m_debug.nextStatementOpcode = 0;
             this->m_debug.nextCmdOpcode = 0;
+            this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
 
@@ -419,6 +452,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = false;
             this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
             this->m_debug.nextCmdOpcode = 0;
+            this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
 
@@ -428,6 +462,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = true;
             this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
             this->m_debug.nextCmdOpcode = directiveUnion.constCmd.get_opCode();
+            this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
 
@@ -435,6 +470,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
         this->m_debug.nextStatementReadSuccess = true;
         this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
         this->m_debug.nextCmdOpcode = 0;
+        this->m_debug.stackSize = this->m_runtime.stack.size;
         return;
     }
     // send some default tlm when we aren't in debug break
@@ -442,6 +478,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
     this->m_debug.nextStatementReadSuccess = false;
     this->m_debug.nextStatementOpcode = 0;
     this->m_debug.nextCmdOpcode = 0;
+    this->m_debug.stackSize = 0;
 }
 
 void FpySequencer::parametersLoaded() {

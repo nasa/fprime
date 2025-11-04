@@ -213,6 +213,13 @@ class FpySequencer : public FpySequencerComponentBase {
                              U32 cmdSeq,           //!< The command sequence number
                              Svc::Fpy::FlagId flag,
                              bool value) override;
+    //! Handler for command DUMP_STACK_TO_FILE
+    //!
+    //! Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
+    void DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                       U32 cmdSeq,                       //!< The command sequence number
+                                       const Fw::CmdStringArg& fileName  //!< The name of the output file
+                                       ) override;
 
     // ----------------------------------------------------------------------
     // Functions to implement for internal state machine actions
@@ -646,6 +653,10 @@ class FpySequencer : public FpySequencerComponentBase {
         U8 nextStatementOpcode = 0;
         // if the next statement is a cmd directive, the opcode of that cmd
         FwOpcodeType nextCmdOpcode = 0;
+        // the size of the stack. store this separately from the real stack size
+        // so we can avoid changing this during runtime, only modify it during
+        // debug
+        Fpy::StackSizeType stackSize = 0;
     } m_debug;
 
     struct Telemetry {
