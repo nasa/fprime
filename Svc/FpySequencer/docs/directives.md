@@ -139,8 +139,8 @@ Performs an `and` between two booleans, pushes result to stack.
 Compares two integers for equality, pushes result to stack. Doesn't differentiate between signed and unsigned.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -153,8 +153,8 @@ Compares two integers for inequality, pushes result to stack. Doesn't differenti
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -405,42 +405,43 @@ Converts an unsigned integer to a float, pushes result to stack.
 
 **Requirement:**  FPY-SEQ-015
 
-## IADD (33)
-Performs integer addition, pushes result to stack. TODO: say 2's complement, use U64
+## ADD (33)
+Performs integer addition, pushes result to stack. Integers are handled with 2's complement representation.
+
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64 \| U64     | stack  | Right operand |
-| lhs      | I64 \| U64     | stack  | Left operand |
+| rhs      | U64     | stack  | Right operand |
+| lhs      | U64     | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 \| U64 | The result |
+| U64 | The result |
 
 **Requirement:**  FPY-SEQ-002
 
-## ISUB (34)
-Performs integer subtraction, pushes result to stack. TODO: say 2's complement, use U64
+## SUB (34)
+Performs integer subtraction, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
 
 **Requirement:**  FPY-SEQ-002
 
-## IMUL (35)
-Performs integer multiplication, pushes result to stack. TODO: say 2's complement, use U64
+## MUL (35)
+Performs integer multiplication, pushes result to stack.  Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| rhs      | I64      | stack  | Right operand |
-| lhs      | I64      | stack  | Left operand |
+| rhs      | U64      | stack  | Right operand |
+| lhs      | U64      | stack  | Left operand |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
 
 **Requirement:**  FPY-SEQ-002
 
@@ -611,38 +612,38 @@ Extends a 32-bit float to a 64-bit float, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## SIEXT_8_64 (50)
-Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack. TODO: must specified as 2's complement.
+Sign-extends an 8-bit integer to a 64-bit integer, pushes result to stack.  Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I8       | stack  | Value to extend |
+| value    | U8       | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
 
 **Requirement:** FPY-SEQ-015
 
 ## SIEXT_16_64 (51)
-Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends a 16-bit integer to a 64-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I16      | stack  | Value to extend |
+| value    | U16      | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
 
 **Requirement:** FPY-SEQ-015
 
 ## SIEXT_32_64 (52)
-Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
+Sign-extends a 32-bit integer to a 64-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| value    | I32      | stack  | Value to extend |
+| value    | U32      | stack  | Value to extend |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| I64 | The result |
+| U64 | The result |
 
 **Requirement:** FPY-SEQ-015
 
@@ -683,7 +684,7 @@ Zero-extends a 32-bit integer to a 64-bit integer, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## ITRUNC_64_8 (56)
-Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
+Truncates a 64-bit integer to an 8-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
@@ -695,7 +696,7 @@ Truncates a 64-bit integer to an 8-bit integer, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## ITRUNC_64_16 (57)
-Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
+Truncates a 64-bit integer to a 16-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
@@ -707,7 +708,7 @@ Truncates a 64-bit integer to a 16-bit integer, pushes result to stack.
 **Requirement:** FPY-SEQ-015
 
 ## ITRUNC_64_32 (58)
-Truncates a 64-bit integer to a 32-bit integer, pushes result to stack.
+Truncates a 64-bit integer to a 32-bit integer, pushes result to stack. Integers are handled with 2's complement representation.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to truncate |
