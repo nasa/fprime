@@ -11,6 +11,9 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 > [!CAUTION]
 > The FpySequencer depends on `float` and `double` conforming to IEEE-754 standard on the target system. Users should ensure `SKIP_FLOAT_IEEE_754_COMPLIANCE` is defined as `0` to guarantee compliance.
 
+> [!CAUTION]
+> The FpySequencer depends on a 2's complement representation of integers.
+
 ## Requirements
 
 | **ID**      | **Requirement**                                                                                                                                   | **Verification**                |
