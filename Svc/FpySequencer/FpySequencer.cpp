@@ -244,8 +244,8 @@ void FpySequencer::SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 //! Handler for command DUMP_STACK_TO_FILE
 //!
 //! Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
-void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,               //!< The opcode
-                                                 U32 cmdSeq,                        //!< The command sequence number
+void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                                 U32 cmdSeq,                       //!< The command sequence number
                                                  const Fw::CmdStringArg& fileName  //!< The name of the output file
 ) {
     if (this->sequencer_getState() != State::RUNNING_PAUSED) {

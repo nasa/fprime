@@ -1699,7 +1699,8 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE) {
     dispatchCurrentMessages(cmp);
     ASSERT_CMD_RESPONSE_SIZE(1);
     // Should fail in IDLE state
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
 
     // Test STEP command in RUNNING_PAUSED state (should succeed)
     this->clearHistory();
@@ -1734,7 +1735,7 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE) {
     ASSERT_EQ(bytes[0], 0x00);
     ASSERT_EQ(bytes[1], 0x11);
     ASSERT_EQ(bytes[2], 0x22);
-    
+
     removeFile("output.bin");
 }
 
