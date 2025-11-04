@@ -37,7 +37,7 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-017 | The sequencer shall support looping constructs.                                                                                                   | Unit Test                       |
 | FPY-SEQ-018 | The sequencer shall support NO OP functionality.                                                                                                  | Unit Test                       |
 | FPY-SEQ-019 | The sequencer shall support working with complex modeled data structures (Arrays, Serializables).                                                 | Unit Test                       |
-| FPY-SEQ-020 | The sequencer shall support support setting flags as described in the [Flags](#flags) secion via command and sequence directive.                  | Unit Test                       |
+| FPY-SEQ-020 | The sequencer shall support setting flags as described in the [Flags](#flags) section via command and sequence directive.                  | Unit Test                       |
 | FPY-SEQ-021 | The sequencer shall support the directives described in the [Directives](#directives) section.                                                    | Unit Test                       |
 
 ## States
