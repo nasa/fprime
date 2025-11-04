@@ -8,6 +8,7 @@
 ####
 include_guard()
 include(API)
+include(utilities)
 # Basic definitions
 get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
 # Native toolchains use the system name for the toolchain and FPRIME_PLATFORM
@@ -27,7 +28,7 @@ elseif (NOT FPRIME_PLATFORM)
 endif()
 
 # Include platform file based on system name
-message(STATUS "Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_PLATFORM}")
+fprime_cmake_status("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_PLATFORM}")
 
 # Output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
@@ -57,6 +58,6 @@ endif()
 ####
 macro(fprime__include_platform_file)
     get_property(EXPECTED_PLATFORM_FILE GLOBAL PROPERTY FPRIME_PLATFORM_FILE)
-    message(STATUS "Including ${EXPECTED_PLATFORM_FILE}")
+    fprime_cmake_status("Including ${EXPECTED_PLATFORM_FILE}")
     include("${EXPECTED_PLATFORM_FILE}")
 endmacro()

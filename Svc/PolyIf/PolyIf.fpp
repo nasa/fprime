@@ -1,7 +1,7 @@
 module Svc {
 
   @ An enumeration for measurement status
-  enum MeasurementStatus {
+  enum MeasurementStatus : U8 {
     OK = 0 @< Measurement was good
     FAILURE = 1 @< Failure to retrieve measurement
     STALE = 2 @< Measurement is stale

@@ -1,4 +1,4 @@
-enum OpState {
+enum OpState : U8 {
   ACCUMULATE = 0
   DRAIN = 1
 }
@@ -9,7 +9,7 @@ async command BA_SetMode(
                         ) \
   opcode 0x00
 
-enum BlockMode {
+enum BlockMode : U8 {
   NOBLOCK = 0
   BLOCK = 1
 }

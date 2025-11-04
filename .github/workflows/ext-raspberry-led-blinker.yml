@@ -57,13 +57,14 @@ jobs:
           fprime-util generate raspberrypi
       - name: "Build RPI"
         run: |
+          cd LedBlinker/LedBlinkerDeployment
           fprime-util build raspberrypi
       - name: "Prepare artifacts"
         run: |
           mkdir -p rpi-artifacts
           cp -r ./build-artifacts rpi-artifacts
-          cp -r Components/Led/test/int rpi-artifacts
-      - name: 'Archive Build Artifacts'
+          cp -r LedBlinker/Components/Led/test/int rpi-artifacts
+      - name: "Archive Build Artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: rpi-artifacts
@@ -78,7 +79,7 @@ jobs:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'requirements.txt'
+          sparse-checkout: "requirements.txt"
           sparse-checkout-cone-mode: false
       - name: "Setup environment"
         run: |
@@ -91,13 +92,14 @@ jobs:
           name: rpi-artifacts
       - name: Run Integration Tests
         run: |
+          DEPLOYMENT=LedBlinker_LedBlinkerDeployment
           . venv/bin/activate
           mkdir -p ci-logs
-          chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
+          chmod +x ./build-artifacts/raspberrypi/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          fprime-gds --ip-client -d ./build-artifacts/raspberrypi/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
-          pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
-      - name: 'Archive logs'
+          pytest --dictionary ./build-artifacts/raspberrypi/${DEPLOYMENT}/dict/LedBlinkerDeploymentTopologyDictionary.json ./int/led_integration_tests.py
+      - name: "Archive logs"
         uses: actions/upload-artifact@v4
         if: always()
         with:

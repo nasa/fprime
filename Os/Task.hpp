@@ -34,8 +34,18 @@ class TaskHandle {};
 
 class TaskInterface {
   public:
+    //! Sentinel value to use a default value for the task argument to which this is supplied.
+    //!
+    //! Implementations of TaskInterface::start() should make a special case to use some default value that is
+    //! valid for the target platform.
     static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
+
+    //! Sentinel value to use a default priority for the task.
+    //!
+    //! Implementations of TaskInterface::start() should make a special case to use some default task priority
+    //! that is valid for the target platform.
     static constexpr FwTaskPriorityType TASK_PRIORITY_DEFAULT = std::numeric_limits<FwTaskPriorityType>::max();
+
     enum Status {
         OP_OK,             //!< message sent/received okay
         INVALID_HANDLE,    //!< Task handle invalid

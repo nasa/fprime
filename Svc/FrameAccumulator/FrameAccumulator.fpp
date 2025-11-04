@@ -5,7 +5,7 @@ module Svc {
         # ----------------------------------------------------------------------
         # FrameAccumulator interface
         # ----------------------------------------------------------------------
-        import FrameAccumulator
+        import Svc.FrameAccumulator
 
         @ Port for deallocating buffers holding extracted frames
         output port bufferDeallocate: Fw.BufferSend
@@ -18,6 +18,11 @@ module Svc {
             severity warning high \
             format "Could not allocate a valid buffer to fit the detected frame"
 
+        @ A frame was detected whose size exceeds the internal accumulation buffer
+        @ capacity. No choice but to drop the frame.
+        event FrameDetectionSizeError(size_out: FwSizeType) \
+            severity warning high \
+            format "Reported size_out={} exceeds accumulation buffer capacity"
 
         ###############################################################################
         # Standard AC Ports for Events 
@@ -25,11 +30,8 @@ module Svc {
         @ Port for requesting the current time
         time get port timeCaller
 
-        @ Port for sending textual representation of events
-        text event port logTextOut
-
-        @ Port for sending events to downlink
-        event port logOut
+        @ Ports for logging events
+        import Fw.Event
 
     }
 }

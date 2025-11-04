@@ -33,6 +33,7 @@ baremetal
 batchmode
 BDV
 bfree
+BHn
 bibtex
 Bies
 BINDIR
@@ -42,6 +43,7 @@ bitwidth
 bocchino
 boolt
 bsd
+bst
 BUFFERALLOCATE
 BUFFERALLOCATIONFAILED
 BUFFERGETOUT
@@ -182,6 +184,7 @@ DPWRITER
 DRAINBUFFERS
 drv
 drvtcpserversocket
+DSL
 dspal
 DSSC
 Dstate
@@ -236,6 +239,7 @@ fio
 fle
 FNDELAY
 fne
+fontcolor
 FONTPATH
 foodoodie
 foodoodiehoo
@@ -278,6 +282,7 @@ gpiochip
 gpioevent
 gpiohandle
 gpioline
+GPT
 Graphviz
 grayscales
 GROUNDINTERFACERULES
@@ -285,9 +290,9 @@ GSE
 gtags
 gtest
 gtimeout
+GTK
 Guire
 GVCID
-GPT
 HACKSM
 Handcoded
 handleflags
@@ -320,12 +325,14 @@ INCLUDEDIR
 ine
 initstate
 inkscape
+inorder
 installable
 intlimits
 inttypes
 INVALIDBUFFER
 INVALIDHEADER
 INVALIDHEADERHASH
+invis
 invisi
 ioc
 ioctl
@@ -334,7 +341,9 @@ IPCFG
 IPHELPER
 isf
 isgreater
+isgreaterequal
 isless
+islessequal
 isr
 isunordered
 itimerspec
@@ -380,6 +389,7 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
+LTK
 lvar
 LVL
 lxml
@@ -426,6 +436,7 @@ ncsl
 newtio
 nmsgs
 NOBLOCK
+noinline
 NOLINT
 NOLINTNEXTLINE
 noparent
@@ -499,6 +510,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+prescaler
 prioritization
 PRIORITYQUEUE
 prm
@@ -542,6 +554,7 @@ RATELIMITERTESTER
 rawtime
 RAWTIMETESTER
 RBF
+rbt
 RCHILD
 rcvd
 rdwr
@@ -690,8 +703,8 @@ tparam
 TPP
 trinomials
 tts
-typedef'ed
 typedef
+typedef'ed
 uart
 udiv
 UDPSOCKET
@@ -725,6 +738,7 @@ wrs
 wxgui
 wxy
 Xapian
+XBee
 xdf
 xdffe
 xsltproc

@@ -5,7 +5,7 @@
 
 module Os {
     @ FPP shadow-enum representing Os::Mutex::Status
-    enum MutexStatus {
+    enum MutexStatus : U8 {
         OP_OK,          @< Operation was successful
         ERROR_BUSY,     @< Mutex is busy
         ERROR_DEADLOCK, @< Deadlock condition detected

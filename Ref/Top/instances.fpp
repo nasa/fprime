@@ -29,39 +29,39 @@ module Ref {
   instance blockDrv: Ref.BlockDriver base id 0x10000000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 140
+    priority 47
 
   instance rateGroup1Comp: Svc.ActiveRateGroup base id 0x10001000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 120
+    priority 43
 
   instance rateGroup2Comp: Svc.ActiveRateGroup base id 0x10002000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 119
+    priority 42
 
   instance rateGroup3Comp: Svc.ActiveRateGroup base id 0x10003000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 118
+    priority 41
 
   instance pingRcvr: Ref.PingReceiver base id 0x10004000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 100
+    priority 23
 
   instance typeDemo: Ref.TypeDemo base id 0x10005000
 
   instance cmdSeq: Svc.CmdSequencer base id 0x10006000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 97
+    priority 20
 
   instance dpDemo: Ref.DpDemo base id 0x0A10 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 96
+    priority 19
 
   # ----------------------------------------------------------------------
   # Queued component instances

@@ -5,7 +5,7 @@
 
 module Os {
 @ FPP shadow-enum representing Os::File::Status
-enum FileStatus {
+enum FileStatus : U8 {
     OP_OK,            @< Operation was successful
     DOESNT_EXIST,     @< File doesn't exist (for read)
     NO_SPACE,         @< No space left
@@ -20,7 +20,7 @@ enum FileStatus {
     OTHER_ERROR,      @< A catch-all for other errors. Have to look in implementation-specific code
 }
 @ FPP shadow-enum representing Os::File::Mode
-enum FileMode {
+enum FileMode : U8 {
     OPEN_NO_MODE,     @< File mode not yet selected
     OPEN_READ,        @< Open file for reading
     OPEN_CREATE,      @< Open file for writing and truncates file if it exists, ie same flags as creat()

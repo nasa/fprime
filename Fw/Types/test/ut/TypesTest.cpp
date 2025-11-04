@@ -129,6 +129,27 @@ TEST(SerializationTest, Serialization1) {
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
 
 #if DEBUG_VERBOSE
+    printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i8t1, i8t2, stat1, stat2);
+    printf("U16 Little-Endian Test\n");
+#endif
+
+    u16t1 = 0xABCD;
+    u16t2 = 0;
+
+    // Test shorts
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(u16t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
+    ASSERT_EQ(0xCD, ptr[0]);
+    ASSERT_EQ(0xAB, ptr[1]);
+    stat2 = buff.deserializeTo(u16t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(u16t1, u16t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
+
+#if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u16t1, u16t2, stat1, stat2);
     printf("I16 test\n");
 #endif
@@ -162,6 +183,39 @@ TEST(SerializationTest, Serialization1) {
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
 
 #if DEBUG_VERBOSE
+    printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u16t1, u16t2, stat1, stat2);
+    printf("I16 Little-Endian test\n");
+#endif
+
+    i16t1 = static_cast<I16>(0xABCD);
+    i16t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i16t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
+    // 2s complement
+    ASSERT_EQ(0xCD, ptr[0]);
+    ASSERT_EQ(0xAB, ptr[1]);
+    stat2 = buff.deserializeTo(i16t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(i16t1, i16t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
+
+    // double check negative number
+    i16t1 = -1000;
+    i16t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i16t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 2);
+    stat2 = buff.deserializeTo(i16t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(i16t1, i16t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 2);
+
+#if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1, stat2);
 
     printf("U32 Test\n");
@@ -181,6 +235,30 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0xEF, ptr[2]);
     ASSERT_EQ(0x12, ptr[3]);
     stat2 = buff.deserializeTo(u32t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(u32t1, u32t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1, stat2);
+
+    printf("U32 Little-Endian Test\n");
+#endif
+
+    u32t1 = 0xABCDEF12;
+    u32t2 = 0;
+
+    // Test ints
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(u32t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
+    ASSERT_EQ(0x12, ptr[0]);
+    ASSERT_EQ(0xEF, ptr[1]);
+    ASSERT_EQ(0xCD, ptr[2]);
+    ASSERT_EQ(0xAB, ptr[3]);
+    stat2 = buff.deserializeTo(u32t2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u32t1, u32t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
@@ -220,6 +298,40 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(i32t1, i32t2);
 
 #if DEBUG_VERBOSE
+    printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u32t1, u32t2, stat1, stat2);
+    printf("I32 Little-Endian Test\n");
+#endif
+
+    i32t1 = 0xABCDEF12;
+    i32t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i32t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
+    ASSERT_EQ(0x12, ptr[0]);
+    ASSERT_EQ(0xEF, ptr[1]);
+    ASSERT_EQ(0xCD, ptr[2]);
+    ASSERT_EQ(0xAB, ptr[3]);
+    stat2 = buff.deserializeTo(i32t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
+    ASSERT_EQ(i32t1, i32t2);
+
+    // double check negative number
+    i32t1 = -1000000;
+    i32t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i32t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
+    stat2 = buff.deserializeTo(i32t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
+    ASSERT_EQ(i32t1, i32t2);
+
+#if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i32t1, i32t2, stat1, stat2);
 
     printf("U64 Test\n");
@@ -243,6 +355,35 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0xCD, ptr[6]);
     ASSERT_EQ(0xEF, ptr[7]);
     stat2 = buff.deserializeTo(u64t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(u64t1, u64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i32t1, i32t2, stat1, stat2);
+
+    printf("U64 Little-Endian Test\n");
+#endif
+
+    u64t1 = 0x0123456789ABCDEF;
+    u64t2 = 0;
+
+    // Test ints
+
+    buff.resetSer();
+    ASSERT_EQ(0x23, ptr[1]);
+    stat1 = buff.serializeFrom(u64t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
+    ASSERT_EQ(0xEF, ptr[0]);
+    ASSERT_EQ(0xCD, ptr[1]);
+    ASSERT_EQ(0xAB, ptr[2]);
+    ASSERT_EQ(0x89, ptr[3]);
+    ASSERT_EQ(0x67, ptr[4]);
+    ASSERT_EQ(0x45, ptr[5]);
+    ASSERT_EQ(0x23, ptr[6]);
+    ASSERT_EQ(0x01, ptr[7]);
+    stat2 = buff.deserializeTo(u64t2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(u64t1, u64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -286,6 +427,44 @@ TEST(SerializationTest, Serialization1) {
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
 
 #if DEBUG_VERBOSE
+    printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", u64t1, u64t2, stat1, stat2);
+    printf("I64 Little-Endian Test\n");
+#endif
+
+    i64t1 = 0x0123456789ABCDEF;
+    i64t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i64t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
+    ASSERT_EQ(0xEF, ptr[0]);
+    ASSERT_EQ(0xCD, ptr[1]);
+    ASSERT_EQ(0xAB, ptr[2]);
+    ASSERT_EQ(0x89, ptr[3]);
+    ASSERT_EQ(0x67, ptr[4]);
+    ASSERT_EQ(0x45, ptr[5]);
+    ASSERT_EQ(0x23, ptr[6]);
+    ASSERT_EQ(0x01, ptr[7]);
+    stat2 = buff.deserializeTo(i64t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(i64t1, i64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
+
+    // double check negative number
+    i64t1 = -1000000000000;
+    i64t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(i64t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
+    stat2 = buff.deserializeTo(i64t2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(i64t1, i64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
+
+#if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1, stat2);
 
     printf("F32 Test\n");
@@ -305,6 +484,30 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0x70, ptr[2]);
     ASSERT_EQ(0xA4, ptr[3]);
     stat2 = buff.deserializeTo(f32t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_FLOAT_EQ(f32t1, f32t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1, stat2);
+
+    printf("F32 Little-Endian Test\n");
+#endif
+
+    f32t1 = -1.23;
+    f32t2 = 0;
+
+    // Test ints
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(f32t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 4);
+    ASSERT_EQ(0xA4, ptr[0]);
+    ASSERT_EQ(0x70, ptr[1]);
+    ASSERT_EQ(0x9D, ptr[2]);
+    ASSERT_EQ(0xBF, ptr[3]);
+    stat2 = buff.deserializeTo(f32t2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_FLOAT_EQ(f32t1, f32t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 4);
@@ -330,6 +533,31 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0x8B, ptr[6]);
     ASSERT_EQ(0xA6, ptr[7]);
     stat2 = buff.deserializeTo(f64t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_DOUBLE_EQ(f64t1, f64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %f out: %f stat1: %d stat2: %d\n", f32t1, f32t2, stat1, stat2);
+    printf("F64 Little-Endian Test\n");
+#endif
+
+    f64t1 = 100.232145345346534;
+    f64t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(f64t1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    Fw::SerializeBufferBaseTester::verifySerLocEq(buff, 8);
+    ASSERT_EQ(0xA6, ptr[0]);
+    ASSERT_EQ(0x8B, ptr[1]);
+    ASSERT_EQ(0x26, ptr[2]);
+    ASSERT_EQ(0x78, ptr[3]);
+    ASSERT_EQ(0xDB, ptr[4]);
+    ASSERT_EQ(0x0E, ptr[5]);
+    ASSERT_EQ(0x59, ptr[6]);
+    ASSERT_EQ(0x40, ptr[7]);
+    stat2 = buff.deserializeTo(f64t2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_DOUBLE_EQ(f64t1, f64t2);
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, 8);
@@ -367,9 +595,25 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(ptrt1, ptrt2);
 
 #if DEBUG_VERBOSE
-    printf("Val: in: %p out: %p stat1: %d stat2: %d\n", ptrt1, ptrt2, stat1, stat2);
+    printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,
+           stat2);
+    printf("Pointer Little-Endian Test\n");
+#endif
 
-    printf("Skip deserialization Tests\n");
+    u32Var = 0;
+    ptrt1 = &u32Var;
+    ptrt2 = nullptr;
+
+    buff.resetSer();
+    stat1 = buff.serializeFrom(ptrt1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    stat2 = buff.deserializeTo(ptrt2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(ptrt1, ptrt2);
+
+#if DEBUG_VERBOSE
+    printf("Val: in: %p out: %p stat1: %d stat2: %d\n", ptrt1, ptrt2, stat1, stat2);
+    printf("Size Test\n");
 #endif
 
     // Test sizes
@@ -386,8 +630,26 @@ TEST(SerializationTest, Serialization1) {
     Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE
+    printf("Val: in: %p out: %p stat1: %d stat2: %d\n", ptrt1, ptrt2, stat1, stat2);
+    printf("Size Little-Endian Test\n");
+#endif
+
+    // Test sizes
+
+    size1 = std::numeric_limits<FwSizeStoreType>::max();
+    size2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serializeSize(size1, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
+    stat2 = buff.deserializeSize(size2, Fw::Endianness::LITTLE);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
+    ASSERT_EQ(u64t1, u64t2);
+    Fw::SerializeBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
+
+#if DEBUG_VERBOSE
     printf("Val: in: %" PRI_FwSizeType " out: %" PRI_FwSizeType " stat1: %d stat2: %d\n", size1, size2, stat1, stat2);
-    printf("Size Test\n");
+    printf("Skip deserialization Tests\n");
 #endif
 
     // Test skipping:
@@ -625,21 +887,23 @@ struct TestStruct {
 
 class MySerializable : public Fw::Serializable {
   public:
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
-        buffer.serializeFrom(m_testStruct.m_u32);
-        buffer.serializeFrom(m_testStruct.m_u16);
-        buffer.serializeFrom(m_testStruct.m_u8);
-        buffer.serializeFrom(m_testStruct.m_f32);
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override {
+        buffer.serializeFrom(m_testStruct.m_u32, mode);
+        buffer.serializeFrom(m_testStruct.m_u16, mode);
+        buffer.serializeFrom(m_testStruct.m_u8, mode);
+        buffer.serializeFrom(m_testStruct.m_f32, mode);
         buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         return Fw::FW_SERIALIZE_OK;
     }
 
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override {
         buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
-        buffer.serializeFrom(m_testStruct.m_f32);
-        buffer.serializeFrom(m_testStruct.m_u8);
-        buffer.serializeFrom(m_testStruct.m_u16);
-        buffer.serializeFrom(m_testStruct.m_u32);
+        buffer.serializeFrom(m_testStruct.m_f32, mode);
+        buffer.serializeFrom(m_testStruct.m_u8, mode);
+        buffer.serializeFrom(m_testStruct.m_u16, mode);
+        buffer.serializeFrom(m_testStruct.m_u32, mode);
         return Fw::FW_SERIALIZE_OK;
     }
 

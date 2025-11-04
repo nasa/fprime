@@ -17,33 +17,39 @@
 
 namespace Fw {
 
-/*!
- *
- * This class is an implementation of the MemAllocator base class.
- * It uses the heap as the memory source.
- *
- * Since it is heap space, the identifier is unused, and memory is never recoverable.
- *
- */
-
+//! \brief malloc based memory allocator
+//!
+//! This class implements a memory allocator that uses malloc/free to allocate memory and deallocate memory. malloc()
+//! guarantees alignment for any type and thus does this allocator. It will not respect smaller alignments.
+//!
+//! Since this directs to heap space, the identifier is unused and memory is never recoverable.
 class MallocAllocator : public MemAllocator {
   public:
-    MallocAllocator();
-    virtual ~MallocAllocator();
+    MallocAllocator() = default;
+    virtual ~MallocAllocator() = default;
+
     //! Allocate memory
-    /*!
-     * \param identifier the memory segment identifier (not used)
-     * \param size the requested size (not changed)
-     * \param recoverable - flag to indicate the memory could be recoverable (always set to false)
-     * \return the pointer to memory. Zero if unable to allocate.
-     */
-    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable);
+    //!
+    //! Allocate memory using malloc(). The identifier is unused and memory is never recoverable.
+    //! malloc() guarantees alignment for any type and so does this allocator. It will not respect smaller alignments.
+    //!
+    //! \param identifier the memory segment identifier (not used)
+    //! \param size the requested size (not changed)
+    //! \param recoverable - flag to indicate the memory could be recoverable (always set to false)
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate.
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   bool& recoverable,
+                   FwSizeType alignment = alignof(std::max_align_t)) override;
     //! Deallocate memory
-    /*!
-     * \param identifier the memory segment identifier (not used)
-     * \param ptr the pointer to memory returned by allocate()
-     */
-    void deallocate(const FwEnumStoreType identifier, void* ptr);
+    //!
+    //! Deallocate memory previously allocated by allocate() using free(). The identifier is unused but should still
+    //! match the original call.
+    //!
+    //! \param identifier the memory segment identifier (not used)
+    //! \param ptr the pointer to memory returned by allocate()
+    void deallocate(const FwEnumStoreType identifier, void* ptr) override;
 };
 
 } /* namespace Fw */

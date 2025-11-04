@@ -11,9 +11,7 @@
 # The default implementation defines the target using `add_custom_target` and nothing more.
 ####
 function(add_global_target TARGET)
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[target] Adding default global target: ${TARGET}")
-    endif()
+    fprime_cmake_debug_message("[target] Adding default global target: ${TARGET}")
     add_custom_target(${TARGET})
 endfunction(add_global_target)
 
@@ -27,9 +25,7 @@ endfunction(add_global_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "Adding default deployment target: ${MODULE}_${TARGET}")
-    endif()
+    fprime_cmake_debug_message("Adding default deployment target: ${MODULE}_${TARGET}")
     add_custom_target("${MODULE}_${TARGET}")
     foreach(DEPENDENCY IN LISTS RESULTS)
         if (TARGET "${DEPENDENCY}_${TARGET}")
@@ -50,7 +46,5 @@ endfunction(add_deployment_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "Skipping module target: ${MODULE}_${TARGET}, default performs no action.")
-    endif()
+    fprime_cmake_debug_message("Skipping module target: ${MODULE}_${TARGET}, default performs no action.")
 endfunction(add_module_target)

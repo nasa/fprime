@@ -47,4 +47,5 @@ event EventBool (
 ) \
   severity warning low \
   format "Event Warning Low occurred {}" \
-  throttle 10
+  throttle 10 \
+  every {seconds = 5}

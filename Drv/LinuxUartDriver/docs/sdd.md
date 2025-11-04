@@ -79,7 +79,7 @@ The LinuxUartDriver should be instantiated in the FPP topology and configured us
 void configureTopology() {
     // Open UART device with configuration
     bool success = uart.open("/dev/ttyUSB0",                    // Device path
-                             Drv::LinuxUartDriver::BAUD_115K,   // 115200 baud
+                             Drv::LinuxUartDriver::BAUD_115K,   // 115200 baud rate
                              Drv::LinuxUartDriver::NO_FLOW,     // No flow control
                              Drv::LinuxUartDriver::PARITY_NONE, // No parity
                              1024);                             // Buffer size
@@ -92,8 +92,9 @@ void configureTopology() {
 // Startup function - called when starting tasks
 void setupTopology() {
     // Start receive thread
-    Os::TaskString name("UartReceiveTask");
-    uart.start(name, UART_PRIORITY, Default::STACK_SIZE);
+    uart.start(UART_PRIORITY,           // Thread priority
+               32 * 1024,               // Thread stack size
+               Os::Task::TASK_DEFAULT); // Thread CPU affinity mask
 }
 
 // Shutdown function - called during teardown
@@ -122,9 +123,9 @@ connections RateGroups {
 | Parameter | Type | Description | Valid Values |
 |-----------|------|-------------|--------------|
 | device | const char* | Path to UART device | Linux device path (e.g., "/dev/ttyUSB0") |
-| baud | UartBaudRate | Communication baud rate | See baud rate enumeration |
-| fc | UartFlowControl | Flow control setting | NO_FLOW, HW_FLOW |
-| parity | UartParity | Parity setting | PARITY_NONE, PARITY_ODD, PARITY_EVEN |
+| baud | Drv::LinuxUartDriver::UartBaudRate | Communication baud rate | See baud rate enumeration |
+| fc | Drv::LinuxUartDriver::UartFlowControl | Flow control setting | NO_FLOW, HW_FLOW |
+| parity | Drv::LinuxUartDriver::UartParity | Parity setting | PARITY_NONE, PARITY_ODD, PARITY_EVEN |
 | allocationSize | FwSizeType | Receive buffer size | Positive integer (bytes) |
 
 ### 5.2 Baud Rate Options
@@ -164,7 +165,7 @@ The receive thread can be configured with:
 
 The component generates the following events:
 - **OpenError**: UART device open failures
-- **ConfigError**: UART configuration failures  
+- **ConfigError**: UART configuration failures
 - **WriteError**: Data transmission errors
 - **ReadError**: Data reception errors
 - **PortOpened**: Successful device configuration
