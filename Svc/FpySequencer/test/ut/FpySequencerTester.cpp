@@ -643,14 +643,14 @@ DirectiveError FpySequencerTester::tester_op_sitofp() {
 DirectiveError FpySequencerTester::tester_op_uitofp() {
     return this->cmp.op_uitofp();
 }
-DirectiveError FpySequencerTester::tester_op_iadd() {
-    return this->cmp.op_iadd();
+DirectiveError FpySequencerTester::tester_op_add() {
+    return this->cmp.op_add();
 }
-DirectiveError FpySequencerTester::tester_op_isub() {
-    return this->cmp.op_isub();
+DirectiveError FpySequencerTester::tester_op_sub() {
+    return this->cmp.op_sub();
 }
-DirectiveError FpySequencerTester::tester_op_imul() {
-    return this->cmp.op_imul();
+DirectiveError FpySequencerTester::tester_op_mul() {
+    return this->cmp.op_mul();
 }
 DirectiveError FpySequencerTester::tester_op_udiv() {
     return this->cmp.op_udiv();

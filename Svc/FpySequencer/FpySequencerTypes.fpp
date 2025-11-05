@@ -62,9 +62,9 @@ module Svc {
             SITOFP = 30
             UITOFP = 31
             # integer arithmetic
-            IADD = 32
-            ISUB = 33
-            IMUL = 34
+            ADD = 32
+            SUB = 33
+            MUL = 34
             UDIV = 35
             SDIV = 36
             UMOD = 37

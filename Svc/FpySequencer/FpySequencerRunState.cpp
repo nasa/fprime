@@ -213,9 +213,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
         case Fpy::DirectiveId::UITOFP:
-        case Fpy::DirectiveId::IADD:
-        case Fpy::DirectiveId::ISUB:
-        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::ADD:
+        case Fpy::DirectiveId::SUB:
+        case Fpy::DirectiveId::MUL:
         case Fpy::DirectiveId::UDIV:
         case Fpy::DirectiveId::SDIV:
         case Fpy::DirectiveId::UMOD:
@@ -487,9 +487,9 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
         case Fpy::DirectiveId::UITOFP:
-        case Fpy::DirectiveId::IADD:
-        case Fpy::DirectiveId::ISUB:
-        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::ADD:
+        case Fpy::DirectiveId::SUB:
+        case Fpy::DirectiveId::MUL:
         case Fpy::DirectiveId::UDIV:
         case Fpy::DirectiveId::SDIV:
         case Fpy::DirectiveId::UMOD:

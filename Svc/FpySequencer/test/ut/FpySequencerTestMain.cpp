@@ -815,24 +815,24 @@ TEST_F(FpySequencerTester, uitofp) {
     ASSERT_EQ(expected, tester_pop<F64>());
 }
 
-TEST_F(FpySequencerTester, iadd) {
+TEST_F(FpySequencerTester, add) {
     tester_push<I64>(100);
     tester_push<I64>(23);
-    ASSERT_EQ(tester_op_iadd(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_op_add(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 123);
 }
 
-TEST_F(FpySequencerTester, isub) {
+TEST_F(FpySequencerTester, sub) {
     tester_push<I64>(150);
     tester_push<I64>(27);
-    ASSERT_EQ(tester_op_isub(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_op_sub(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 123);
 }
 
-TEST_F(FpySequencerTester, imul) {
+TEST_F(FpySequencerTester, mul) {
     tester_push<I64>(41);
     tester_push<I64>(3);
-    ASSERT_EQ(tester_op_imul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 123);
 }
 

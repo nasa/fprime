@@ -615,7 +615,7 @@ DirectiveError FpySequencer::op_uitofp() {
     this->m_runtime.stack.push(static_cast<F64>(this->m_runtime.stack.pop<U64>()));
     return DirectiveError::NO_ERROR;
 }
-DirectiveError FpySequencer::op_iadd() {
+DirectiveError FpySequencer::op_add() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
@@ -635,7 +635,7 @@ DirectiveError FpySequencer::op_iadd() {
     this->m_runtime.stack.push(static_cast<I64>(lhs + rhs));
     return DirectiveError::NO_ERROR;
 }
-DirectiveError FpySequencer::op_isub() {
+DirectiveError FpySequencer::op_sub() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
@@ -657,7 +657,7 @@ DirectiveError FpySequencer::op_isub() {
     this->m_runtime.stack.push(static_cast<I64>(lhs - rhs));
     return DirectiveError::NO_ERROR;
 }
-DirectiveError FpySequencer::op_imul() {
+DirectiveError FpySequencer::op_mul() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
@@ -967,14 +967,14 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::UITOFP:
             error = this->op_uitofp();
             break;
-        case Fpy::DirectiveId::IADD:
-            error = this->op_iadd();
+        case Fpy::DirectiveId::ADD:
+            error = this->op_add();
             break;
-        case Fpy::DirectiveId::ISUB:
-            error = this->op_isub();
+        case Fpy::DirectiveId::SUB:
+            error = this->op_sub();
             break;
-        case Fpy::DirectiveId::IMUL:
-            error = this->op_imul();
+        case Fpy::DirectiveId::MUL:
+            error = this->op_mul();
             break;
         case Fpy::DirectiveId::UDIV:
             error = this->op_udiv();
