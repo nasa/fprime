@@ -2,15 +2,13 @@
 # FPP file for configuration of various F Prime framework constants
 # ======================================================================
 
-@ For the simple object registry provided with the framework, this specifies how many objects the registry will store.
-constant FW_OBJ_SIMPLE_REG_ENTRIES = 500
+# ---------------------------------------------------------------------
+# Buffer sizes
+# ---------------------------------------------------------------------
 
 @ When dumping the contents of the registry, this specifies the size of the buffer used to store object names.
 @ Should be >= FW_OBJ_NAME_BUFFER_SIZE.
 constant FW_OBJ_SIMPLE_REG_BUFF_SIZE = 255
-
-@ For the simple queue registry provided with the framework, this specifies how many queues the registry will store.
-constant FW_QUEUE_SIMPLE_QUEUE_ENTRIES = 100
 
 @ Specifies the size of the string holding the queue name for queues
 constant FW_QUEUE_NAME_BUFFER_SIZE = 80
@@ -65,5 +63,24 @@ constant FW_LOG_TEXT_BUFFER_SIZE = 256
 @ Note: FPrimeBasicTypes.hpp needs to be updated to sync enum
 constant FW_FIXED_LENGTH_STRING_SIZE = 256
 
+# ---------------------------------------------------------------------
+# Other constants
+# ---------------------------------------------------------------------
+
+@ For the simple object registry provided with the framework, this specifies how many objects the registry will store.
+constant FW_OBJ_SIMPLE_REG_ENTRIES = 500
+
+@ For the simple queue registry provided with the framework, this specifies how many queues the registry will store.
+constant FW_QUEUE_SIMPLE_QUEUE_ENTRIES = 100
+
 @ Maximum number of cascading FW_ASSERT check failures before forcing a system assert
 constant FW_ASSERT_COUNT_MAX = 10
+
+@ Don't care value for time contexts in sequences
+constant FW_CONTEXT_DONT_CARE = 0xFF
+
+@ Value encoded during serialization for boolean true
+constant FW_SERIALIZE_TRUE_VALUE = 0xFF
+
+@ Value encoded during serialization for boolean false
+constant FW_SERIALIZE_FALSE_VALUE = 0x00

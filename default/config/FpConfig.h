@@ -18,22 +18,8 @@ extern "C" {
 #include <Platform/PlatformTypes.h>
 
 // ----------------------------------------------------------------------
-// Type aliases
-// ----------------------------------------------------------------------
-#define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
-
-// ----------------------------------------------------------------------
 // Configuration switches
 // ----------------------------------------------------------------------
-
-// Boolean values for serialization
-#ifndef FW_SERIALIZE_TRUE_VALUE
-#define FW_SERIALIZE_TRUE_VALUE (0xFF)  //!< Value encoded during serialization for boolean true
-#endif
-
-#ifndef FW_SERIALIZE_FALSE_VALUE
-#define FW_SERIALIZE_FALSE_VALUE (0x00)  //!< Value encoded during serialization for boolean false
-#endif
 
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
