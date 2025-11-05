@@ -235,13 +235,6 @@ void FpySequencer::directive_peek_internalInterfaceHandler(const Svc::FpySequenc
     handleDirectiveErrorCode(Fpy::DirectiveId::PEEK, error);
 }
 
-//! Internal interface handler for directive_assert
-void FpySequencer::directive_assert_internalInterfaceHandler(const Svc::FpySequencer_AssertDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->assert_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::ASSERT, error);
-}
-
 //! Internal interface handler for directive_store
 void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -789,15 +782,6 @@ DirectiveError FpySequencer::op_fdiv() {
     this->m_runtime.stack.push(static_cast<F64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
 }
-DirectiveError FpySequencer::op_float_floor_div() {
-    if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
-    }
-    F64 rhs = this->m_runtime.stack.pop<F64>();
-    F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<F64>(floor(lhs / rhs)));
-    return DirectiveError::NO_ERROR;
-}
 DirectiveError FpySequencer::op_fpow() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
@@ -1015,9 +999,6 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             break;
         case Fpy::DirectiveId::FDIV:
             error = this->op_fdiv();
-            break;
-        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
-            error = this->op_float_floor_div();
             break;
         case Fpy::DirectiveId::FPOW:
             error = this->op_fpow();
@@ -1319,26 +1300,6 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
     U8* src = this->m_runtime.stack.top() - offset - byteCount;
     this->m_runtime.stack.push(src, byteCount);
     return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < sizeof(U8) * 2) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    U8 errorCode = this->m_runtime.stack.pop<U8>();
-    U8 condition = this->m_runtime.stack.pop<U8>();
-
-    if (condition != 0) {
-        // proceed to next instruction
-        return Signal::stmtResponse_success;
-    }
-
-    // otherwise, kill the sequence here
-    // raise the user defined error code as an event
-    this->log_WARNING_HI_SequenceAsserted(this->m_sequenceFilePath, errorCode);
-    error = DirectiveError::ASSERTION_FAILURE;
-    return Signal::stmtResponse_failure;
 }
 
 Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {

@@ -678,13 +678,6 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 | ------------------|-------------|
 | bytes | The peeked bytes |
 
-## ASSERT (73)
-Pops one byte for a condition and one byte for an error code off the stack. If condition is false, raise the error code as an event.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| error_code | U8 | stack | Error code to exit with if assertion fails |
-| condition | bool | stack | Condition to assert |
-
 ## STORE (74)
 Pops an offset (StackSizeType) off the stack. Pops a hardcoded number of bytes from the top of the stack, and moves them to the start of the lvar array plus the offset previously popped off the stack.
 | Arg Name    | Arg Type | Source     | Description |

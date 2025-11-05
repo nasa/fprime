@@ -120,8 +120,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
     void add_PEEK();
     void add_PEEK(FpySequencer_PeekDirective dir);
-    void add_ASSERT();
-    void add_ASSERT(FpySequencer_AssertDirective dir);
     void add_STORE(Fpy::StackSizeType size);
     void add_STORE(FpySequencer_StoreDirective dir);
     template <typename T>
@@ -170,7 +168,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& err);
     Signal tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& err);
     Signal tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& err);
-    Signal tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& err);
     Signal tester_store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
@@ -209,7 +206,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_fsub();
     DirectiveError tester_op_fmul();
     DirectiveError tester_op_fdiv();
-    DirectiveError tester_op_float_floor_div();
     DirectiveError tester_op_fpow();
     DirectiveError tester_op_flog();
     DirectiveError tester_op_fmod();

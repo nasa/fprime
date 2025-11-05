@@ -315,15 +315,6 @@ void FpySequencerTester::add_PEEK(const FpySequencer_PeekDirective dir) {
     addDirective(Fpy::DirectiveId::PEEK, buf);
 }
 
-void FpySequencerTester::add_ASSERT() {
-    add_ASSERT(FpySequencer_AssertDirective());
-}
-
-void FpySequencerTester::add_ASSERT(const FpySequencer_AssertDirective dir) {
-    Fw::StatementArgBuffer buf;
-    addDirective(Fpy::DirectiveId::ASSERT, buf);
-}
-
 void FpySequencerTester::add_STORE(const Fpy::StackSizeType size) {
     add_STORE(FpySequencer_StoreDirective(size));
 }
@@ -476,11 +467,6 @@ Signal FpySequencerTester::tester_getField_directiveHandler(const FpySequencer_G
 Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive,
                                                         DirectiveError& err) {
     return this->cmp.peek_directiveHandler(directive, err);
-}
-
-Signal FpySequencerTester::tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive,
-                                                          DirectiveError& err) {
-    return this->cmp.assert_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_store_directiveHandler(const FpySequencer_StoreDirective& directive,
@@ -689,9 +675,6 @@ DirectiveError FpySequencerTester::tester_op_fmul() {
 }
 DirectiveError FpySequencerTester::tester_op_fdiv() {
     return this->cmp.op_fdiv();
-}
-DirectiveError FpySequencerTester::tester_op_float_floor_div() {
-    return this->cmp.op_float_floor_div();
 }
 DirectiveError FpySequencerTester::tester_op_fpow() {
     return this->cmp.op_fpow();

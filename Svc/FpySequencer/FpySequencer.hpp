@@ -69,7 +69,6 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GetFlagDirective getFlag;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
-        FpySequencer_AssertDirective assert;
         FpySequencer_StoreDirective store;
 
         DirectiveUnion() {}
@@ -544,9 +543,6 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_peek
     void directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive) override;
 
-    //! Internal interface handler for directive_assert
-    void directive_assert_internalInterfaceHandler(const Svc::FpySequencer_AssertDirective& directive) override;
-
     //! Internal interface handler for directive_store
     void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
 
@@ -818,7 +814,6 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
-    Signal assert_directiveHandler(const FpySequencer_AssertDirective& directive, DirectiveError& error);
     Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
 };
 
