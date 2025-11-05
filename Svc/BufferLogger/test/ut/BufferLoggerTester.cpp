@@ -125,8 +125,9 @@ void BufferLoggerTester ::dispatchOne() {
 }
 
 void BufferLoggerTester ::dispatchAll() {
-    while (this->component.m_queue.getMessagesAvailable() > 0)
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->dispatchOne();
+    }
 }
 
 Fw::Time BufferLoggerTester ::generateTestTime(const U32 seconds) {

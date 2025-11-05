@@ -6,6 +6,6 @@ Checks: >
     modernize-redundant-void-arg,
     modernize-use-bool-literals,
     modernize-use-nullptr,
-    readability-braces-around-statements
-    -clang-analyzer-security.insecureAPI.rand,
+    readability-braces-around-statements,
+    -clang-analyzer-security.insecureAPI.rand
 WarningsAsErrors: '*'

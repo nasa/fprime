@@ -507,8 +507,9 @@ void PrmDbImpl::clearDb(PrmDbType prmDbType) {
 
 bool PrmDbImpl::dbEqual() {
     for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (!(this->m_dbStore1[i] == this->m_dbStore2[i]))
+        if (!(this->m_dbStore1[i] == this->m_dbStore2[i])) {
             return false;
+        }
     }
     return true;
 }
