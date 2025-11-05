@@ -75,6 +75,10 @@ In the example, the driver provides an interface to the hardware device (I2C), b
 up to the manager to know how to control the servo via the driver. In our example, the driver runs an I2C bus but doesn't
 know what I2C hardware it is talking to.
 
+## How-To Guide
+
+A detailed How-To guide for implementing the Manager-Driver pattern can be found here: [How-To Implement a Device Driver](../../how-to/develop-device-driver.md)
+
 ## Conclusion
 
 By layering F´ projects using the Application Manager Driver pattern, standard software architecture techniques can be

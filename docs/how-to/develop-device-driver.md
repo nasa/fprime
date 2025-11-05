@@ -1,6 +1,19 @@
 # Develop a Device Driver
 
-This document describes the steps to create a new device manager in F Prime. A device driver is a component that interfaces with hardware peripherals (through a bus driver component). The device driver abstracts provides an interface to manage specific hardware devices.
+This document describes the steps to create a new device driver in F Prime.
+
+---
+
+## Prerequisites
+
+Before starting, you should have:
+
+* Completed the [LedBlinker Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/).
+* A general understanding of [FPP component modeling](https://nasa.github.io/fpp/fpp-users-guide.html).
+* Experience creating commands, events, and telemetry in FPP.
+* A working build of F Prime on your system (`fprime-util` runs successfully).
+
+---
 
 ## Application-Manager-Driver Pattern
 
@@ -8,11 +21,10 @@ A "device driver" traditionally refers to the entire stack of software that mana
 
 Please refer to the [Application Manager Driver pattern documentation](../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
 
-**This guide focuses on the device manager component**. The bus driver component is assumed to already exist, and implementing a bus driver will be covered in a separate guide. Linux implementations are available in core F´ with for example `Drv.LinuxUartDriver`, `Drv.LinuxI2cDriver` and `LinuxSpiDriver`.
-
 ### Example and reference
 
 Consider an [MPU6050 IMU sensor](https://cdn-learn.adafruit.com/downloads/pdf/mpu6050-6-axis-accelerometer-and-gyro.pdf) connected via I2C. An example instantiation of the Application-Manager-Driver pattern, defined in the fprime-sensors repository (see [MpuImu component](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/MpuImu)), would look like this:
+
 - The bus driver component (LinuxI2cDriver on Linux) handles I2C read and write operations at arbitrary addresses.
 - The device manager component (ImuManager) uses the bus driver layer to implement the specific data read/writes sequences that produce relevant data for the MPU6050 sensor, as per its datasheet.
 - The application layer uses the device manager component to obtain sensor data when needed.
@@ -37,8 +49,11 @@ graph LR
 > [!NOTE]
 > The reference MpuImu component linked above is implemented using a state machine to manage the device's initialization and operational modes. This is a design choice for this specific component and **not** a requirement for all device managers. Simpler devices may not need a state machine. Other device manager examples are available in [https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors).
 
+---
 
 ## How-To Develop a Device Manager
+
+This section focuses on the device manager component. The bus driver component is assumed to already exist, and its implementation is covered in a [separate section](#how-to-develop-a-bus-driver) of this guide. Linux implementations are available in core F´ with for example `Drv.LinuxUartDriver`, `Drv.LinuxI2cDriver` and `LinuxSpiDriver`.
 
 ### Step 1 - Understand the Hardware
 
@@ -79,6 +94,7 @@ static constexpr U8 DATA_SIZE = 6;
 Drv::I2cStatus MyDeviceManager::reset() {
     U8 cmd[] = {RESET_REG, RESET_VAL};  // From your datasheet
     Fw::Buffer writeBuffer(cmd, sizeof(cmd));
+    // Port call to bus driver to write the buffer
     return this->busWrite_out(0, m_address, writeBuffer);
 }
 
@@ -88,7 +104,7 @@ Drv::I2cStatus MyDeviceManager::read(ImuData& output_data) {
     U8 rawData[DATA_SIZE];
     Fw::Buffer writeBuffer(&regAddr, 1);
     Fw::Buffer readBuffer(rawData, DATA_SIZE);
-    
+    // Port call to bus driver to write register address and read data
     Drv::I2cStatus status = this->busWriteRead_out(0, m_address, writeBuffer, readBuffer);
     if (status == Drv::I2cStatus::I2C_OK) {
         // Convert to engineering units - implement as per your datasheet
@@ -212,12 +228,22 @@ void configureTopology() {
 > [!TIP]
 > A reference MpuImuManager component implementation is available in the fprime-sensors repository: [MpuImu component reference](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/MpuImu/Components/ImuManager)
 
+---
+
+## How-To Develop a Bus Driver
+
+
+
+---
+
 ## Best Practices
 
 - Use parameters for configurable device settings (ranges, modes, etc.)
 - Always check bus operation status and emit events on errors
 - Define all register addresses/values as named constants from the datasheet, don't use "magic" numbers
 - Keep device-specific logic in helper functions separate from component infrastructure
+
+---
 
 ## Additional Resources
 
