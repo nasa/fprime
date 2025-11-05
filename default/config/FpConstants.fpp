@@ -38,7 +38,7 @@ constant FW_LOG_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4 is
 constant FW_LOG_STRING_MAX_SIZE = 200
 
 @ Specifies the size of the buffer that contains the serialized telemetry value
-constant FW_TLM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4 is for some sizeofs
+constant FW_TLM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4's are sizeof TBD
 
 @ Specifies the size of the buffer that contains the serialized telemetry value
 constant FW_STATEMENT_ARG_BUFFER_MAX_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE
@@ -47,7 +47,7 @@ constant FW_STATEMENT_ARG_BUFFER_MAX_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE
 constant FW_TLM_STRING_MAX_SIZE = 40
 
 @ Specifies the size of the buffer that contains the serialized parameter value
-constant FW_PARAM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4 is for some sizeofs
+constant FW_PARAM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4's are sizeof TBD
 
 @ Specifies the maximum size of a string in a parameter
 constant FW_PARAM_STRING_MAX_SIZE = 40
@@ -64,3 +64,6 @@ constant FW_LOG_TEXT_BUFFER_SIZE = 256
 @ Configuration for Fw::String
 @ Note: FPrimeBasicTypes.hpp needs to be updated to sync enum
 constant FW_FIXED_LENGTH_STRING_SIZE = 256
+
+@ Maximum number of cascading FW_ASSERT check failures before forcing a system assert
+constant FW_ASSERT_COUNT_MAX = 10

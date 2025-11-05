@@ -43,6 +43,3 @@ constant FW_HANDLE_ALIGNMENT = 8
 
 @ Chunk size for working with files in the OSAL layer
 constant FW_FILE_CHUNK_SIZE = 512
-
-@ Maximum number of cascading FW_ASSERT check failures before forcing a system assert
-constant FW_ASSERT_COUNT_MAX = 10
