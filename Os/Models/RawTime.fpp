@@ -6,7 +6,7 @@
 module Os {
 
     @ FPP shadow-enum representing Os::RawTime::Status
-    enum RawTimeStatus {
+    enum RawTimeStatus : U8 {
         OP_OK,          @< Operation was successful
         OP_OVERFLOW,    @< Operation result caused an overflow
         INVALID_PARAMS, @< Parameters invalid for current platform

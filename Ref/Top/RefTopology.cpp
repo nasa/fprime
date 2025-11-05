@@ -32,7 +32,7 @@ U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
 enum TopologyConstants {
-    COMM_PRIORITY = 100,
+    COMM_PRIORITY = 34,
 };
 
 /**

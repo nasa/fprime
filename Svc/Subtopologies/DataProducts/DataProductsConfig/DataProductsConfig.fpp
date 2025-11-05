@@ -18,10 +18,10 @@ module DataProductsConfig {
     }
 
     module Priorities {
-        constant dpCat    = 101
-        constant dpMgr  = 100
-        constant dpWriter   = 99
-        constant dpBufferManager  = 98
+        constant dpCat    = 24
+        constant dpMgr  = 23
+        constant dpWriter   = 22
+        constant dpBufferManager  = 21
     }
 
     # Buffer management constants

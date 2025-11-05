@@ -1,12 +1,12 @@
 module ComCcsds {
 
     # ComPacket Queue enum for queue types
-    enum Ports_ComPacketQueue {
+    enum Ports_ComPacketQueue : U8 {
         EVENTS,
         TELEMETRY 
     }
 
-    enum Ports_ComBufferQueue {
+    enum Ports_ComBufferQueue : U8 {
         FILE
     }
 

@@ -9,7 +9,7 @@ module Svc {
 
     @ Severity level for event filtering
     @ Similar to Fw::LogSeverity, but no FATAL event
-    enum FilterSeverity {
+    enum FilterSeverity : U8 {
       WARNING_HI = 0 @< Filter WARNING_HI events
       WARNING_LO = 1 @< Filter WARNING_LO events
       COMMAND = 2 @< Filter COMMAND events
@@ -21,7 +21,7 @@ module Svc {
     # TODO: Consider replacing this enum with Fw::Enabled
     # However, the sense of 0 and 1 are reversed
     @ Enabled and disabled state
-    enum Enabled {
+    enum Enabled : U8 {
       ENABLED = 0 @< Enabled state
       DISABLED = 1 @< Disabled state
     }

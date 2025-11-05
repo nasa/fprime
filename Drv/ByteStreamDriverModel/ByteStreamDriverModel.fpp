@@ -1,7 +1,7 @@
 module Drv {
 
     @ Status returned by the send call
-    enum ByteStreamStatus {
+    enum ByteStreamStatus : U8 {
         OP_OK         @< Operation worked as expected
         SEND_RETRY    @< Data send should be retried
         RECV_NO_DATA  @< Receive worked, but there was no data 

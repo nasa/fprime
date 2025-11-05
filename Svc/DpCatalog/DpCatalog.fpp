@@ -7,7 +7,7 @@ module Svc {
   # data product
 
   @ Header validation error
-  enum DpHdrField {
+  enum DpHdrField : U8 {
     DESCRIPTOR,
     ID,
     PRIORITY,

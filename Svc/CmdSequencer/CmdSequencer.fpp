@@ -8,19 +8,19 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ The sequencer mode
-    enum SeqMode {
+    enum SeqMode : U8 {
       STEP = 0
       AUTO = 1
     }
 
     @ Sequencer blocking state
-    enum BlockState {
+    enum BlockState : U8 {
         BLOCK = 0
         NO_BLOCK = 1
     }
 
     @ The stage of the file read operation
-    enum FileReadStage {
+    enum FileReadStage : U8 {
       READ_HEADER
       READ_HEADER_SIZE
       DESER_SIZE

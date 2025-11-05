@@ -2,7 +2,7 @@ module Fw {
 
   type TlmBuffer
 
-  enum TlmValid {
+  enum TlmValid : U8 {
     VALID = 0
     INVALID = 1
   }

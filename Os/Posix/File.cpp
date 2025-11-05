@@ -165,7 +165,7 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     // this call is properly implemented. This code starts with a status of "NOT_SUPPORTED".  When the standard is met
     // an attempt will be made to called posix_fallocate, and should that still return NOT_SUPPORTED then fallback
     // code is engaged to synthesize this behavior.
-#if _POSIX_C_SOURCE >= 200112L
+#if _POSIX_C_SOURCE >= 200112L && !(defined(FPRIME_SYNTHETIC_FALLOCATE) && FPRIME_SYNTHETIC_FALLOCATE)
     else {
         int errno_status =
             ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));

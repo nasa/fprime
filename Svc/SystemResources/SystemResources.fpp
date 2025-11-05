@@ -1,6 +1,6 @@
 module Svc {
 
-  enum SystemResourceEnabled {
+  enum SystemResourceEnabled : U8 {
     DISABLED = 0
     ENABLED = 1
   }

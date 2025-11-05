@@ -1,6 +1,6 @@
 module Svc {
     @ An enumeration of queue data types
-    enum QueueType { COM_QUEUE, BUFFER_QUEUE }
+    enum QueueType : U8 { COM_QUEUE, BUFFER_QUEUE }
 
     @ Array of queue depths for Fw::Com types
     array ComQueueDepth = [ComQueueComPorts] U32

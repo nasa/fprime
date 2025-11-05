@@ -26,17 +26,46 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
 
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serializeFrom(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    add_ALLOCATE(1);
-    add_STORE_TLM_VAL(123, 0);
-    add_LOAD(0, 1);
+    add_PUSH_TLM_VAL(123);
+    add_IF(4);
+    // if true
+    add_PUSH_VAL(0);
+    // exit no error
+    add_EXIT();
+    // else
+    add_PUSH_VAL(1);
+    // exit with error
+    add_EXIT();
+
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 4);
+    nextTlmValue.resetSer();
+    nextTlmValue.serializeFrom(false);
+    tester_set_m_statementsDispatched(0);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 4);
+}
+
+TEST_F(FpySequencerTester, OrOfTlmAndReg) {
+    allocMem();
+
+    nextTlmId = 123;
+    ASSERT_EQ(nextTlmValue.serializeFrom(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    add_PUSH_TLM_VAL(123);
+    add_PUSH_VAL<U8>(0);
+    // or between the stored const and the tlm val
+    add_STACK_OP(Fpy::DirectiveId::OR);
     add_IF(6);
     // if true
-    add_NO_OP();
-    add_GOTO(9);  // goto end
+    add_PUSH_VAL(0);
+    add_EXIT();
     // else
-    add_NO_OP();
-    add_NO_OP();
-    add_NO_OP();
+    add_PUSH_VAL(1);
+    add_EXIT();
 
     writeAndRun();
     dispatchUntilState(State::IDLE);
@@ -47,39 +76,8 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_statementsDispatched(), 7);
-}
-
-TEST_F(FpySequencerTester, OrOfTlmAndReg) {
-    allocMem();
-
-    nextTlmId = 123;
-    ASSERT_EQ(nextTlmValue.serializeFrom(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    add_ALLOCATE(1);
-    add_STORE_TLM_VAL(123, 0);
-    add_LOAD(0, 1);
-    add_PUSH_VAL<U8>(0);
-    // or between the stored const and the tlm val
-    add_STACK_OP(Fpy::DirectiveId::OR);
-    add_IF(8);
-    // if true
-    add_NO_OP();
-    add_GOTO(11);  // goto end
-    // else
-    add_NO_OP();
-    add_NO_OP();
-    add_NO_OP();
-
-    writeAndRun();
-    dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
-    nextTlmValue.resetSer();
-    nextTlmValue.serializeFrom(false);
-    tester_set_m_statementsDispatched(0);
-    writeAndRun();
-    dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_statementsDispatched(), 9);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
 }
 
 TEST_F(FpySequencerTester, CmpIntTlm) {
@@ -87,33 +85,31 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
 
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serializeFrom(static_cast<U64>(999)), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    add_ALLOCATE(8);
-    add_STORE_TLM_VAL(123, 0);
-    add_LOAD(0, 8);
+    add_PUSH_TLM_VAL(123);
     add_PUSH_VAL(static_cast<U64>(999));
     // unsigned >= between tlm and reg
     add_STACK_OP(Fpy::DirectiveId::UGE);
-    add_IF(8);
+    add_IF(6);
     // if true
-    add_NO_OP();
-    add_GOTO(11);  // goto end
+    add_PUSH_VAL(0);
+    add_EXIT();
     // else
-    add_NO_OP();
-    add_NO_OP();
-    add_NO_OP();
+    add_PUSH_VAL(1);
+    add_EXIT();
 
     writeAndRun();
     dispatchUntilState(State::IDLE);
     // should be equal on first try
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
     nextTlmValue.resetSer();
     // should fail if tlm is 998
     nextTlmValue.serializeFrom(static_cast<U64>(998));
     tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(tester_get_m_statementsDispatched(), 9);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::EXIT_WITH_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
 }
 TEST_F(FpySequencerTester, NotTrueSeq) {
     // this sequence caught one bug
@@ -123,9 +119,9 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
     add_STACK_OP(Fpy::DirectiveId::NOT);
     add_IF(5);
     // should not get here
-    add_PUSH_VAL<U8>(false);
+    add_PUSH_VAL<U8>(1);
     add_EXIT();
-    add_PUSH_VAL<U8>(true);
+    add_PUSH_VAL<U8>(0);
     add_EXIT();
 
     writeAndRun();

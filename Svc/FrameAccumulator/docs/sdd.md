@@ -22,6 +22,9 @@ The `Svc::FrameAccumulator` receives `Fw::Buffer` objects on its `dataIn` input 
 - `FRAME_DETECTED`: indicates there is a frame at the current head of the circular buffer. The `Svc::FrameAccumulator` allocates a new `Fw::Buffer` object to hold the frame, copies the detected frame from the circular buffer into the new `Fw::Buffer` object, and emits the new `Fw::Buffer` object (containing the frame) on its `dataOut` output port. The `Svc::FrameAccumulator` then rotates the circular buffer to remove the data that was just extracted, and deallocates the original `Fw::Buffer` that was received on the `dataIn` input port.
 - `MORE_DATA_NEEDED`: indicates that more data is needed to determine whether there is a valid frame. The `Svc::FrameAccumulator` deallocates the original `Fw::Buffer` that was received on the `dataIn` input port and halts execution, effectively waiting for the next `Fw::Buffer` to be received on the `dataIn` input port.
 
+> [!NOTE]
+> If the `Svc::FrameDetector` reports a `size_out` that is larger than the capacity of the internal accumulation buffer, the frame will cannot be processed. The `Svc::FrameAccumulator` logs a warning event, and continues searching for a new frame.
+
 
 ```mermaid
 sequenceDiagram

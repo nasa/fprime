@@ -14,6 +14,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerDirectives.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerRunState.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerValidationState.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerStack.cpp"
 )
 
 register_fprime_module()
@@ -29,6 +30,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerDirectives.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerRunState.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerValidationState.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerStack.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestSequences.cpp"
