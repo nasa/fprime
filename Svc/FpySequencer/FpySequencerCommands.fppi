@@ -63,3 +63,9 @@ async command SET_FLAG(
     flag: Fpy.FlagId, value: bool
 ) \
     opcode 9 priority 7 assert
+
+@ Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
+async command DUMP_STACK_TO_FILE(
+    fileName: string size FileNameStringSize @< The name of the output file
+) \
+    opcode 10 priority 7 assert

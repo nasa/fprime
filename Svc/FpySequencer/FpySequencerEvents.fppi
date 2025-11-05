@@ -13,6 +13,14 @@ event FileOpenError(
     severity warning high \
     format "File open error encountered while opening {}: {}"
 
+event FileWriteError(
+    writeSize: FwSizeType
+    filePath: string
+    errorCode: I32
+) \
+    severity warning high \
+    format "File write error encountered while writing {} bytes to {}: {}"
+
 event FileReadError(
     readStage: FileReadStage
     filePath: string
