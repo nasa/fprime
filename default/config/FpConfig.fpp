@@ -88,7 +88,6 @@ type FwTraceIdType = U32
 @ FPP enumerations are serialized according to their representation types
 type FwEnumStoreType = I32
 
-
 @ The type used to serialize a time base value
 type FwTimeBaseStoreType = U16
 
