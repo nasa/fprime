@@ -23,20 +23,20 @@ constant FW_COM_BUFFER_MAX_SIZE = 512
 constant FW_SM_SIGNAL_BUFFER_MAX_SIZE = 128
 
 @ Specifies the size of the buffer that contains the serialized command arguments
-constant FW_CMD_ARG_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: switch `- 4 - 4` with `- sizeof(FwOpcodeType) - sizeof(FwPacketDescriptorType))`
+constant FW_CMD_ARG_BUFFER_MAX_SIZE = FW_COM_BUFFER_MAX_SIZE - SIZE_OF_FwOpcodeType - SIZE_OF_FwPacketDescriptorType
 
 @ Specifies the maximum size of a string in a command argument
 constant FW_CMD_STRING_MAX_SIZE = 40
 
 @ Specifies the size of the buffer that contains the serialized log arguments
-constant FW_LOG_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4 is for `- sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))`
+constant FW_LOG_BUFFER_MAX_SIZE = FW_COM_BUFFER_MAX_SIZE - SIZE_OF_FwEventIdType - SIZE_OF_FwPacketDescriptorType
 
 @ Specifies the maximum size of a string in a log event
 @ Note: This constant truncates file names in assertion failure event reports
 constant FW_LOG_STRING_MAX_SIZE = 200
 
 @ Specifies the size of the buffer that contains the serialized telemetry value
-constant FW_TLM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4's are sizeof TBD
+constant FW_TLM_BUFFER_MAX_SIZE = FW_COM_BUFFER_MAX_SIZE - SIZE_OF_FwChanIdType - SIZE_OF_FwPacketDescriptorType
 
 @ Specifies the size of the buffer that contains the serialized telemetry value
 constant FW_STATEMENT_ARG_BUFFER_MAX_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE
@@ -45,7 +45,7 @@ constant FW_STATEMENT_ARG_BUFFER_MAX_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE
 constant FW_TLM_STRING_MAX_SIZE = 40
 
 @ Specifies the size of the buffer that contains the serialized parameter value
-constant FW_PARAM_BUFFER_MAX_SIZE = (FW_COM_BUFFER_MAX_SIZE - 4 - 4)  # TODO: 4's are sizeof TBD
+constant FW_PARAM_BUFFER_MAX_SIZE = FW_COM_BUFFER_MAX_SIZE - SIZE_OF_FwPrmIdType - SIZE_OF_FwPacketDescriptorType
 
 @ Specifies the maximum size of a string in a parameter
 constant FW_PARAM_STRING_MAX_SIZE = 40

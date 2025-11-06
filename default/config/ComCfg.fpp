@@ -4,6 +4,7 @@
 
 @ The width of packet descriptors when they are serialized by the framework
 type FwPacketDescriptorType = U16
+constant SIZE_OF_FwPacketDescriptorType = 2  @< Size of FwPacketDescriptorType in bytes
 
 module ComCfg {
 
