@@ -253,64 +253,107 @@ Use `fprime-util new --component` to create a new component for your bus driver.
 
 ```python
 @ I2C bus driver interface
-active component ZephyrI2cDriver {
+passive component ZephyrI2cDriver {
     # This imports the Drv.I2c interface, adding the required ports to this component
     import Drv.I2c
-
-    ...
 }
 ```
 
+> [!TIP]
+> Our I2C bus driver will only be responding to read/write requests from a device manager, therefore we define it as a `passive component` and the `Drv.I2c` ports are sufficient. If your bus driver needs to perform scheduled tasks (e.g., polling, timeouts, etc.), you may consider adding a scheduling port (`Svc.Sched`) to hook to a [Svc.RateGroup](../../Svc/ActiveRateGroup/docs/sdd.md), and potentially switching to an `active` component. `queued` components can also be used but need careful design to ensure messages are dispatched.
+
 Run `fprime-util impl` to generate the component C++, including the port handler to fill out. In our case, we will need to implement the `write`, `read`, and `writeRead` port handlers.
 
-### Step 3 - Allow for bus configuration
+### Step 3 - Allow for bus configuration on startup
 
-It is recommended for bus drivers to require configuration on startup, usually done by the project inside `configureTopology()`. This may include opening the bus device, selecting pin numbers, setting baud rates, or other parameters. For example, during the LedBlinker tutorial, we had to configure the GPIO driver with the correct pin number and other parameters (see [LedBlinkerTopology.cpp](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/9147623edd1cb7df0786a60b549a12599f6f59eb/LedBlinker/LedBlinkerDeployment/Top/LedBlinkerDeploymentTopology.cpp#L57)). This allows the same component implementation to be reused for multiple devices: you don't want to hardcode device paths or pin numbers in the bus driver itself. Instead, each instance of the component is configured at runtime to open the user-specified device.
+Bus drivers will most likely require configuration on startup, usually done by the project inside `configureTopology()`. This can include opening the bus device, selecting pin numbers, setting baud rates, or other parameters. For example, during the LedBlinker tutorial, we had to configure the GPIO driver with the correct pin number and other parameters (see [LedBlinkerTopology.cpp](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/9147623edd1cb7df0786a60b549a12599f6f59eb/LedBlinker/LedBlinkerDeployment/Top/LedBlinkerDeploymentTopology.cpp#L57)). This allows the same component implementation to be reused for multiple devices: you don't want to hardcode device paths or pin numbers in the bus driver itself. Instead, each instance of the component is configured at runtime to open the user-specified device.
 
 For our ZephyrI2cDriver, we will implement a public `open()` method that takes an `device` structure to identify the I2C device. This method will store the `device` as a member variable for later use in read/write operations.
 
 ```cpp
-    Drv::I2cStatus ZephyrI2CDriver::open(const struct device i2c_device){
-      // Store device spec as a member variable for later use
-      this->m_device = i2c_device;
-      // Check if device is ready
-      if(!i2c_is_ready_dt(&this->m_device)){
+Drv::I2cStatus ZephyrI2cDriver::open(const struct device* i2c_device) {
+    this->m_device = i2c_device;
+    if (!device_is_ready(this->m_device)) {
         return Drv::I2cStatus::I2C_OPEN_ERR;
-      }
-      return Drv::I2cStatus::I2C_OK;
     }
+    return Drv::I2cStatus::I2C_OK;
+}
+```
+
+With this method, projects can now configure the bus driver in `configureTopology()`:
+
+```c++
+// In Topology.cpp
+#include <zephyr/device.h>
+static const struct device *i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
+
+void configureTopology() {
+    Drv::I2cStatus status = i2cDriver.open(i2c_dev);
+    if (status != Drv::I2cStatus::I2C_OK) {
+        Fw::Logger::log("[I2C] Failed to open I2C device\n");
+    } else {
+        Fw::Logger::log("[I2C] I2C device opened successfully\n");
+    }
+    ...
+}
 ```
 
 ### Step 4 - Implement Bus Operations
 
-Implement the `write`, `read`, and `writeRead` port handlers using the stored device specification. With the Zephyr I2C API, this may look like the following:
-
-<!-- TODO: there's a quirk between i2c_dt_spec which includes address and can be used to check whether the device is ready 
-and `device` struct which just identifies the bus but not which address to write at. -->
+Implement the port calls that are part of the bus driver interface. In our case, `Drv.I2c` contains `write`, `read`, and `writeRead` port handlers, for which the function signatures are autocoded by `fprime-util impl`. With the Zephyr I2C API, this may look like the following:
 
 ```cpp
-Drv::I2cStatus ZephyrI2cDriver ::read_handler(FwIndexType portNum, U32 addr, Fw::Buffer &serBuffer) {
-    int status = i2c_read(&this->m_device, serBuffer.getData(), serBuffer.getSize(), addr); 
-    if(status != 0){
+Drv::I2cStatus ZephyrI2cDriver ::read_handler(FwIndexType portNum, U32 addr, Fw::Buffer& buffer) {
+    int status = i2c_read(this->m_device, buffer.getData(), buffer.getSize(), addr);
+    if (status != 0) {
         return Drv::I2cStatus::I2C_READ_ERR;
     }
     return Drv::I2cStatus::I2C_OK;
 }
 
-Drv::I2cStatus ZephyrI2cDriver ::write_handler(FwIndexType portNum, U32 addr, Fw::Buffer &serBuffer) {
-    int status = i2c_write(&this->m_device, serBuffer.getData(), serBuffer.getSize(), addr); 
-    if(status != 0){
+Drv::I2cStatus ZephyrI2cDriver ::write_handler(FwIndexType portNum, U32 addr, Fw::Buffer& buffer) {
+    int status = i2c_write(this->m_device, buffer.getData(), buffer.getSize(), addr);
+    if (status != 0) {
         return Drv::I2cStatus::I2C_WRITE_ERR;
     }
     return Drv::I2cStatus::I2C_OK;
 }
 
-Drv::I2cStatus ZephyrI2cDriver ::writeRead_handler(FwIndexType portNum, U32 addr, Fw::Buffer &writeBuffer, Fw::Buffer &readBuffer) {
-    int status = i2c_write_read(&this->m_device, addr, writeBuffer.getData(), writeBuffer.getSize(), readBuffer.getData(), readBuffer.getSize()); 
-    if(status != 0){
+Drv::I2cStatus ZephyrI2cDriver ::writeRead_handler(FwIndexType portNum, U32 addr, Fw::Buffer& writeBuffer, Fw::Buffer& readBuffer) {
+    int status = i2c_write_read(this->m_device, addr, writeBuffer.getData(), writeBuffer.getSize(),
+                                readBuffer.getData(), readBuffer.getSize());
+    if (status != 0) {
         return Drv::I2cStatus::I2C_WRITE_ERR;
     }
     return Drv::I2cStatus::I2C_OK;
+}
+```
+
+### Step 5 - Swap Bus Driver in Deployment
+
+Once a different bus driver is implemented, you can use it in your deployment topology. If you were testing your deployment in Linux, you can simply replace the LinuxI2cDriver with our ZephyrI2cDriver:
+
+```diff
+-  instance i2cDriver: LinuxI2cDriver base id 0x10015000
++  instance i2cDriver: Zephyr.ZephyrI2cDriver base id 0x10015000
+```
+
+And update the configuration code in `configureTopology()` to use the Zephyr-specific device opening method shown in Step 3.
+
+```diff
+// In Topology.cpp
++ #include <zephyr/device.h>
++ static const struct device *i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
+
+void configureTopology() {
+-    Drv::I2cStatus status = i2cDriver.open("/dev/i2c-1"); // Linux open() call
++    Drv::I2cStatus status = i2cDriver.open(i2c_dev); // Zephyr open() call
+    if (status != Drv::I2cStatus::I2C_OK) {
+        Fw::Logger::log("[I2C] Failed to open I2C device\n");
+    } else {
+        Fw::Logger::log("[I2C] I2C device opened successfully\n");
+    }
+    ...
 }
 ```
 
