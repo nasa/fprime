@@ -34,32 +34,32 @@ class ActiveTest : public ActiveTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for serialAsync
-    void serialAsync_handler(FwIndexType portNum,             //!< The port number
+    void serialAsync_handler(FwIndexType portNum,          //!< The port number
                              Fw::LinearBufferBase& buffer  //!< The serialization buffer
                              ) override;
 
     //! Handler implementation for serialAsyncAssert
-    void serialAsyncAssert_handler(FwIndexType portNum,             //!< The port number
+    void serialAsyncAssert_handler(FwIndexType portNum,          //!< The port number
                                    Fw::LinearBufferBase& buffer  //!< The serialization buffer
                                    ) override;
 
     //! Handler implementation for serialAsyncBlockPriority
-    void serialAsyncBlockPriority_handler(FwIndexType portNum,             //!< The port number
+    void serialAsyncBlockPriority_handler(FwIndexType portNum,          //!< The port number
                                           Fw::LinearBufferBase& buffer  //!< The serialization buffer
                                           ) override;
 
     //! Handler implementation for serialAsyncDropPriority
-    void serialAsyncDropPriority_handler(FwIndexType portNum,             //!< The port number
+    void serialAsyncDropPriority_handler(FwIndexType portNum,          //!< The port number
                                          Fw::LinearBufferBase& buffer  //!< The serialization buffer
                                          ) override;
 
     //! Handler implementation for serialGuarded
-    void serialGuarded_handler(FwIndexType portNum,             //!< The port number
+    void serialGuarded_handler(FwIndexType portNum,          //!< The port number
                                Fw::LinearBufferBase& buffer  //!< The serialization buffer
                                ) override;
 
     //! Handler implementation for serialSync
-    void serialSync_handler(FwIndexType portNum,             //!< The port number
+    void serialSync_handler(FwIndexType portNum,          //!< The port number
                             Fw::LinearBufferBase& buffer  //!< The serialization buffer
                             ) override;
 

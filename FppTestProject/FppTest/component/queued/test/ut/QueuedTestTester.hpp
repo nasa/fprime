@@ -82,7 +82,7 @@ class QueuedTestTester : public QueuedTestGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(FwIndexType portNum,             //!< The port number
+    void from_serialOut_handler(FwIndexType portNum,          //!< The port number
                                 Fw::LinearBufferBase& Buffer  //!< The serialization buffer
     );
 
@@ -227,14 +227,13 @@ class QueuedTestTester : public QueuedTestGTestBase {
             const FwPrmIdType base_id,     //!< The component base parameter ID to deserialize
             const FwPrmIdType local_id,    //!< The parameter local ID to deserialize
             const Fw::ParamValid prmStat,  //!< The parameter validity status
-            Fw::SerialBufferBase& buff  //!< The buffer containing the parameter to deserialize
+            Fw::SerialBufferBase& buff     //!< The buffer containing the parameter to deserialize
             ) override;
 
         //! Parameter serialization function for external parameter unit testing
-        Fw::SerializeStatus serializeParam(
-            const FwPrmIdType base_id,     //!< The component base parameter ID to serialize
-            const FwPrmIdType local_id,    //!< The parameter local ID to serialize
-            Fw::SerialBufferBase& buff  //!< The buffer to serialize the parameter into
+        Fw::SerializeStatus serializeParam(const FwPrmIdType base_id,  //!< The component base parameter ID to serialize
+                                           const FwPrmIdType local_id,  //!< The parameter local ID to serialize
+                                           Fw::SerialBufferBase& buff   //!< The buffer to serialize the parameter into
         ) const override;
     };
 

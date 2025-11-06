@@ -83,8 +83,8 @@ class BasicGuardTestAbsTypeTester : public BasicGuardTestAbsTypeComponentBase {
     // ----------------------------------------------------------------------
 
     //! Overflow hook implementation for smStateBasicGuardTestAbsType
-    void smStateBasicGuardTestAbsType_stateMachineOverflowHook(SmId smId,               //!< The state machine ID
-                                                               FwEnumStoreType signal,  //!< The signal
+    void smStateBasicGuardTestAbsType_stateMachineOverflowHook(SmId smId,                    //!< The state machine ID
+                                                               FwEnumStoreType signal,       //!< The signal
                                                                Fw::SerialBufferBase& buffer  //!< The message buffer
                                                                ) override;
 

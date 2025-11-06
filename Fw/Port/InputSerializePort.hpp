@@ -21,7 +21,7 @@ class InputSerializePort final : public InputPortBase {
 
     typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp,
                                 FwIndexType portNum,
-                                LinearBufferBase& arg);                      //!< port callback definition
+                                LinearBufferBase& arg);                         //!< port callback definition
     void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr);  //!< call to register a component
 
   protected:

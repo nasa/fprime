@@ -78,8 +78,8 @@ class NestedTester : public NestedComponentBase {
     // ----------------------------------------------------------------------
 
     //! Overflow hook implementation for smInitialNested
-    void smInitialNested_stateMachineOverflowHook(SmId smId,                       //!< The state machine ID
-                                                  FwEnumStoreType signal,          //!< The signal
+    void smInitialNested_stateMachineOverflowHook(SmId smId,                    //!< The state machine ID
+                                                  FwEnumStoreType signal,       //!< The signal
                                                   Fw::SerialBufferBase& buffer  //!< The message buffer
                                                   ) override;
 
