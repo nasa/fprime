@@ -1,6 +1,6 @@
 # Develop a Device Driver
 
-This document describes the steps to create a new device driver in F Prime.
+This document describes the steps to create a new device driver in F Prime. The guide walks through the development of a device driver for an IMU sensor (MPU6050) connected over I2C, however the methodology generalizes to other types of devices and buses.
 
 ---
 
@@ -232,7 +232,87 @@ void configureTopology() {
 
 ## How-To Develop a Bus Driver
 
+This section focuses on the bus driver component. The bus driver handles communication over a specific bus (I2C, SPI, UART, etc.). If a suitable bus driver already exists in F Prime (this is the case for most common buses on Linux, see inside the `fprime/Drv/` package), you can skip this section. As mentioned earlier, the bus driver's role is to provide a generic interface for read/write operations over a specific bus that a device manager can use. By splitting the bus driver into its own component, we can reuse (a) re-use the same bus driver implementation for multiple device managers, and (b) swap out bus drivers when porting to different platforms, but re-using the same device manager logic.
 
+In this section, we will keep working with our example MPU6050 IMU sensor connected over I2C. Our goal will be to implement a bus driver for I2C communication on [Zephyr RTOS](https://zephyrproject.org/) instead of Linux. The methodology generalizes to other buses and platforms.
+
+### Step 1 - Understand the bus protocol and platform APIs
+
+Before starting development, understand the bus communication protocol you are targeting (I2C, SPI, UART, etc.) and obtain documentation for the platform-specific APIs for that protocol. Understand how to perform read and write operations on the bus using the platform's SDK or libraries. 
+
+In our case, we need to understand how to perform I2C read and write operations using Zephyr's I2C API. We look to the [Zephyr I2C documentation](https://docs.zephyrproject.org/latest/reference/peripherals/i2c.html) and [Zephyr I2C API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html). It can also be useful to look at existing Zephyr code samples that use I2C.
+
+We learn the following:
+* Zephyr uses the [`device`](https://docs.zephyrproject.org/latest/doxygen/html/structdevice.html) struct to identify an I2C device. These can be retrieved from the Device Tree through macros (see [Zephyr Device Tree How-To](https://docs.zephyrproject.org/latest/build/dts/howtos.html)).
+* With a `device` instance, we can use the `i2c_write`, `i2c_read` and `i2c_write_read` functions to perform I2C write and read operations (see [API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html#ga2cc5f49493dce89e128ccbfa9d6149a0)).
+
+
+### Step 2 - Define the Bus Driver Component
+
+Use `fprime-util new --component` to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the `Drv/Interfaces/` directory. For I2C, we can use the existing `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)).
+
+```python
+@ I2C bus driver interface
+active component ZephyrI2cDriver {
+    # This imports the Drv.I2c interface, adding the required ports to this component
+    import Drv.I2c
+
+    ...
+}
+```
+
+Run `fprime-util impl` to generate the component C++, including the port handler to fill out. In our case, we will need to implement the `write`, `read`, and `writeRead` port handlers.
+
+### Step 3 - Allow for bus configuration
+
+It is recommended for bus drivers to require configuration on startup, usually done by the project inside `configureTopology()`. This may include opening the bus device, selecting pin numbers, setting baud rates, or other parameters. For example, during the LedBlinker tutorial, we had to configure the GPIO driver with the correct pin number and other parameters (see [LedBlinkerTopology.cpp](https://github.com/fprime-community/fprime-workshop-led-blinker/blob/9147623edd1cb7df0786a60b549a12599f6f59eb/LedBlinker/LedBlinkerDeployment/Top/LedBlinkerDeploymentTopology.cpp#L57)). This allows the same component implementation to be reused for multiple devices: you don't want to hardcode device paths or pin numbers in the bus driver itself. Instead, each instance of the component is configured at runtime to open the user-specified device.
+
+For our ZephyrI2cDriver, we will implement a public `open()` method that takes an `device` structure to identify the I2C device. This method will store the `device` as a member variable for later use in read/write operations.
+
+```cpp
+    Drv::I2cStatus ZephyrI2CDriver::open(const struct device i2c_device){
+      // Store device spec as a member variable for later use
+      this->m_device = i2c_device;
+      // Check if device is ready
+      if(!i2c_is_ready_dt(&this->m_device)){
+        return Drv::I2cStatus::I2C_OPEN_ERR;
+      }
+      return Drv::I2cStatus::I2C_OK;
+    }
+```
+
+### Step 4 - Implement Bus Operations
+
+Implement the `write`, `read`, and `writeRead` port handlers using the stored device specification. With the Zephyr I2C API, this may look like the following:
+
+<!-- TODO: there's a quirk between i2c_dt_spec which includes address and can be used to check whether the device is ready 
+and `device` struct which just identifies the bus but not which address to write at. -->
+
+```cpp
+Drv::I2cStatus ZephyrI2cDriver ::read_handler(FwIndexType portNum, U32 addr, Fw::Buffer &serBuffer) {
+    int status = i2c_read(&this->m_device, serBuffer.getData(), serBuffer.getSize(), addr); 
+    if(status != 0){
+        return Drv::I2cStatus::I2C_READ_ERR;
+    }
+    return Drv::I2cStatus::I2C_OK;
+}
+
+Drv::I2cStatus ZephyrI2cDriver ::write_handler(FwIndexType portNum, U32 addr, Fw::Buffer &serBuffer) {
+    int status = i2c_write(&this->m_device, serBuffer.getData(), serBuffer.getSize(), addr); 
+    if(status != 0){
+        return Drv::I2cStatus::I2C_WRITE_ERR;
+    }
+    return Drv::I2cStatus::I2C_OK;
+}
+
+Drv::I2cStatus ZephyrI2cDriver ::writeRead_handler(FwIndexType portNum, U32 addr, Fw::Buffer &writeBuffer, Fw::Buffer &readBuffer) {
+    int status = i2c_write_read(&this->m_device, addr, writeBuffer.getData(), writeBuffer.getSize(), readBuffer.getData(), readBuffer.getSize()); 
+    if(status != 0){
+        return Drv::I2cStatus::I2C_WRITE_ERR;
+    }
+    return Drv::I2cStatus::I2C_OK;
+}
+```
 
 ---
 
@@ -250,4 +330,6 @@ void configureTopology() {
 - [Application Manager Driver Pattern](../user-manual/design-patterns/app-man-drv.md)
 - [fprime-sensors Repository](https://github.com/fprime-community/fprime-sensors) - A collection of ready-to-use device managers for specific devices
 - [fprime-sensors-reference Repository](https://github.com/fprime-community/fprime-sensors-reference) - Reference project that uses sensors defined in fprime-sensors
+- [F´ core Linux Bus Drivers](../../Drv/)
+- [fprime-zephyr package](https://github.com/fprime-community/fprime-zephyr) - F Prime support for Zephyr RTOS, including common bus drivers for Zephyr
 
