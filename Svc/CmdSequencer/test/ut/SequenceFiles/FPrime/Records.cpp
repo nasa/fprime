@@ -27,7 +27,7 @@ void serialize(Records::Descriptor desc,
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(descU8));
     if (desc != CmdSequencerComponentImpl::Sequence::Record::END_OF_SEQUENCE) {
         const U8* const buffAddr = opcodeAndArgument.getBuffAddr();
-        const U32 size = opcodeAndArgument.getBuffLength();
+        const U32 size = opcodeAndArgument.getSize();
         const U32 recSize = sizeof(FwPacketDescriptorType) + size;
         const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
         const U32 seconds = time.getSeconds();

@@ -1,13 +1,10 @@
 # ======================================================================
 # FPP file for configuration of the communications stack
-#
-# The only reason to modify these definitions is if you are writing your own
-# Framer/Deframer implementations and need more contextual data than what is
-# defined
 # ======================================================================
 
 @ The width of packet descriptors when they are serialized by the framework
 type FwPacketDescriptorType = U16
+constant SIZE_OF_FwPacketDescriptorType = 2  @< Size of FwPacketDescriptorType in bytes
 
 module ComCfg {
 

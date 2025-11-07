@@ -17,7 +17,7 @@ HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::SerializeBufferBas
 HashBuffer::~HashBuffer() {}
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -26,14 +26,14 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
 bool HashBuffer::operator==(const HashBuffer& other) const {
-    if ((this->getBuffLength() == other.getBuffLength()) &&
-        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getBuffLength())) != 0)) {
+    if ((this->getSize() == other.getSize()) &&
+        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
         return false;
     }
     return true;
@@ -51,8 +51,12 @@ U8* HashBuffer::getBuffAddr() {
     return this->m_bufferData;
 }
 
-FwSizeType HashBuffer::getBuffCapacity() const {
+FwSizeType HashBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType HashBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 U32 HashBuffer::asBigEndianU32() const {

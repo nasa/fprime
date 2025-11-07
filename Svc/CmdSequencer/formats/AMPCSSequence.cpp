@@ -108,7 +108,7 @@ bool AMPCSSequence ::validateRecords() {
     Sequence::Record record;
 
     // Deserialize all records and count the records
-    const U32 loopBound = static_cast<U32>(buffer.getBuffLeft());
+    const U32 loopBound = static_cast<U32>(buffer.getDeserializeSizeLeft());
     U32 numRecords = 0;
     for (; numRecords < loopBound; ++numRecords) {
         if (not this->hasMoreRecords()) {
@@ -129,7 +129,7 @@ bool AMPCSSequence ::validateRecords() {
 }
 
 bool AMPCSSequence ::hasMoreRecords() const {
-    return this->m_buffer.getBuffLeft() > 0;
+    return this->m_buffer.getDeserializeSizeLeft() > 0;
 }
 
 void AMPCSSequence ::nextRecord(Sequence::Record& record) {
@@ -186,7 +186,7 @@ bool AMPCSSequence ::readOpenSequenceFile() {
     }
     if (status) {
         U8* const buffAddr = this->m_buffer.getBuffAddr();
-        const FwSizeType buffLen = this->m_buffer.getBuffLength();
+        const FwSizeType buffLen = this->m_buffer.getSize();
         FW_ASSERT(buffLen == this->m_header.m_fileSize, static_cast<FwAssertArgType>(buffLen),
                   static_cast<FwAssertArgType>(this->m_header.m_fileSize));
         this->m_crc.update(buffAddr, buffLen);
@@ -223,7 +223,7 @@ bool AMPCSSequence ::readRecords() {
     U8* const addr = buffer.getBuffAddr();
 
     // Check file size
-    if (size > this->m_buffer.getBuffCapacity()) {
+    if (size > this->m_buffer.getCapacity()) {
         this->m_events.fileSizeError(static_cast<U32>(size));
         return false;
     }
@@ -298,7 +298,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeTime(Fw::Time& timeTag) {
 Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& cmdLength) {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     Fw::SerializeStatus status = buffer.deserializeTo(cmdLength);
-    if (status == Fw::FW_SERIALIZE_OK and cmdLength > buffer.getBuffLeft()) {
+    if (status == Fw::FW_SERIALIZE_OK and cmdLength > buffer.getDeserializeSizeLeft()) {
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
@@ -328,7 +328,7 @@ Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, c
         sizeOfZeros += static_cast<U32>(sizeof(zeros));
     }
     // Set the buffer length
-    const U32 fixedBuffLen = static_cast<U32>(comBuffer.getBuffLength());
+    const U32 fixedBuffLen = static_cast<U32>(comBuffer.getSize());
     FW_ASSERT(fixedBuffLen == sizeof(cmdDescriptor) + sizeOfZeros, static_cast<FwAssertArgType>(fixedBuffLen));
     const U32 totalBuffLen = fixedBuffLen + cmdLength;
     status = comBuffer.setBuffLen(totalBuffLen);

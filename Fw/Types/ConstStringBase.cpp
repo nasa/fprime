@@ -72,11 +72,11 @@ bool ConstStringBase::operator!=(const CHAR* other) const {
     return !operator==(other);
 }
 
-SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
+SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
 }
 
-SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer,
+SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer,
                                              SizeType maxLength,
                                              Fw::Endianness mode) const {
     const FwSizeType len = FW_MIN(maxLength, this->length());
@@ -84,7 +84,7 @@ SerializeStatus ConstStringBase::serializeTo(SerializeBufferBase& buffer,
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus ConstStringBase::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+SerializeStatus ConstStringBase::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     // Cannot deserialize into a read-only string
     // This should be overridden by derived classes
     return SerializeStatus::FW_DESERIALIZE_IMMUTABLE;

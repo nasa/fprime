@@ -28,7 +28,9 @@ class SmSignalBuffer final : public SerializeBufferBase {
     virtual ~SmSignalBuffer();
     SmSignalBuffer& operator=(const SmSignalBuffer& other);
 
-    Serializable::SizeType getBuffCapacity() const;  // !< returns capacity, not current size, of buffer
+    DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
+    Serializable::SizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
+
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 

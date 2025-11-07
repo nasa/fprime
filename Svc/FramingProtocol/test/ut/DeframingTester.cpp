@@ -68,7 +68,7 @@ Fw::ByteArray DeframingTester ::constructRandomFrame(U32 packetSize) {
         status = sb.serializeFrom(byte);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     }
-    const FwSizeType buffLength = sb.getBuffLength();
+    const FwSizeType buffLength = sb.getSize();
     const FwSizeType dataSize = FpFrameHeader::SIZE + packetSize;
     FW_ASSERT(buffLength == dataSize, static_cast<FwAssertArgType>(buffLength), static_cast<FwAssertArgType>(dataSize));
     // Compute the hash value

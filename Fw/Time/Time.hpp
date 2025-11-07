@@ -36,9 +36,9 @@ class Time : public Serializable {
     TimeBase getTimeBase()
         const;  // !< Time base of time. This is project specific and is meant for indicating different sources of time
     FwTimeContextStoreType getContext() const;  // !< get the context value
-    SerializeStatus serializeTo(SerializeBufferBase& buffer,
+    SerializeStatus serializeTo(SerialBufferBase& buffer,
                                 Fw::Endianness mode = Fw::Endianness::BIG) const override;  // !< Serialize method
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer,
+    SerializeStatus deserializeFrom(SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) override;  // !< Deserialize method
     bool operator==(const Time& other) const;
     bool operator!=(const Time& other) const;

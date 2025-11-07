@@ -259,7 +259,7 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
     status = buf.serializeFrom(s);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buf.getBuffLength(), serializedSize);
+    ASSERT_EQ(buf.getSize(), serializedSize);
 
     // Deserialize
     status = buf.deserializeTo(sCopy);

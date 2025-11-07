@@ -125,7 +125,7 @@ void EventManagerTester::runWithFilters(Fw::LogSeverity filter) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
     ASSERT_EQ(readVal, val);
     // packet should be empty
-    ASSERT_EQ(this->m_sentPacket.getBuffLeft(), 0u);
+    ASSERT_EQ(this->m_sentPacket.getDeserializeSizeLeft(), 0u);
 
     // Disable severity filter
     this->clearHistory();
@@ -395,7 +395,7 @@ void EventManagerTester::runEventFatal() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
     ASSERT_EQ(readVal, val);
     // packet should be empty
-    ASSERT_EQ(this->m_sentPacket.getBuffLeft(), 0u);
+    ASSERT_EQ(this->m_sentPacket.getDeserializeSizeLeft(), 0u);
     // Turn on all filters and make sure FATAL still gets through
 
     this->clearHistory();
@@ -438,7 +438,7 @@ void EventManagerTester::runEventFatal() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
     ASSERT_EQ(readVal, val);
     // packet should be empty
-    ASSERT_EQ(this->m_sentPacket.getBuffLeft(), 0u);
+    ASSERT_EQ(this->m_sentPacket.getDeserializeSizeLeft(), 0u);
 
     // turn off filters
 
@@ -489,7 +489,7 @@ void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, 
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
     ASSERT_EQ(readVal, value);
     // packet should be empty
-    ASSERT_EQ(this->m_sentPacket.getBuffLeft(), 0u);
+    ASSERT_EQ(this->m_sentPacket.getDeserializeSizeLeft(), 0u);
 }
 
 void EventManagerTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file) {

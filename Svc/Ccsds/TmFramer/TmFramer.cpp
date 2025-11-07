@@ -108,7 +108,7 @@ void TmFramer ::dataReturnIn_handler(FwIndexType portNum,
 void TmFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
-    const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
+    const U16 startIndex = static_cast<U16>(serializer.getSize());
     const U16 idlePacketSize = static_cast<U16>(endIndex - startIndex);
     // Length token is defined as the number of bytes of payload data minus 1
     const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);

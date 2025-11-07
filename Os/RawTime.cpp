@@ -43,12 +43,12 @@ RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInter
     return this->m_delegate.getTimeInterval(other, result);
 }
 
-Fw::SerializeStatus RawTime::serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) const {
+Fw::SerializeStatus RawTime::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.serializeTo(buffer, mode);
 }
 
-Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) {
+Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.deserializeFrom(buffer, mode);
 }

@@ -91,7 +91,7 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
     (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
 }
 
-SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+SerializeStatus StringBase::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     // Get the max size of the deserialized string
     const SizeType maxSize = this->maxLength();
     // Initial estimate of actual size is max size

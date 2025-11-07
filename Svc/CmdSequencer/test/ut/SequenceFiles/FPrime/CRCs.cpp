@@ -22,7 +22,7 @@ namespace CRCs {
 void serialize(Fw::SerializeBufferBase& destBuffer) {
     CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
     crc.init();
-    crc.update(destBuffer.getBuffAddr(), destBuffer.getBuffLength());
+    crc.update(destBuffer.getBuffAddr(), destBuffer.getSize());
     crc.finalize();
     ASSERT_EQ(destBuffer.serializeFrom(crc.m_computed), Fw::FW_SERIALIZE_OK);
 }

@@ -212,7 +212,7 @@ void DpContainer::setDataHash(Utils::HashBuffer hash) {
               static_cast<FwAssertArgType>(dataHashOffset + HASH_DIGEST_LENGTH),
               static_cast<FwAssertArgType>(bufferSize));
     ExternalSerializeBuffer serialBuffer(dataHashAddr, HASH_DIGEST_LENGTH);
-    hash.resetSer();
+    hash.resetDeser();
     const Fw::SerializeStatus status = hash.copyRaw(serialBuffer, HASH_DIGEST_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 }

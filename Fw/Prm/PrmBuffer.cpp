@@ -13,7 +13,7 @@ ParamBuffer::ParamBuffer() {}
 ParamBuffer::~ParamBuffer() {}
 
 ParamBuffer::ParamBuffer(const ParamBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
         return *this;
     }
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType ParamBuffer::getBuffCapacity() const {
+FwSizeType ParamBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType ParamBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* ParamBuffer::getBuffAddr() const {

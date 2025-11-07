@@ -48,7 +48,7 @@ SerializeStatus FilePacket::DataPacket ::fromSerialBuffer(SerialBuffer& serialBu
         return status;
     }
 
-    if (serialBuffer.getBuffLeft() != this->m_dataSize) {
+    if (serialBuffer.getDeserializeSizeLeft() != this->m_dataSize) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 

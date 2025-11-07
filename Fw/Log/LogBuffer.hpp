@@ -28,7 +28,9 @@ class LogBuffer final : public SerializeBufferBase {
     virtual ~LogBuffer();
     LogBuffer& operator=(const LogBuffer& other);
 
-    FwSizeType getBuffCapacity() const;  // !< returns capacity, not current size, of buffer
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
+    FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
+
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 

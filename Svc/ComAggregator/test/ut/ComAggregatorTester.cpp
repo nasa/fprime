@@ -53,7 +53,7 @@ void ComAggregatorTester ::validate_aggregation(const Fw::Buffer& buffer) {
 }
 
 void ComAggregatorTester ::validate_buffer_aggregated(const Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
-    FwSizeType start = this->component.m_frameSerializer.getBuffLength() - buffer.getSize();
+    FwSizeType start = this->component.m_frameSerializer.getSize() - buffer.getSize();
     for (FwSizeType i = 0; i < buffer.getSize(); i++) {
         ASSERT_EQ(buffer.getData()[i], this->component.m_frameBuffer.getData()[start + i]);
     }
@@ -64,7 +64,7 @@ void ComAggregatorTester ::validate_buffer_aggregated(const Fw::Buffer& buffer, 
 
 void ComAggregatorTester ::test_initial() {
     // Initial state should have empty buffer
-    ASSERT_EQ(this->component.m_frameSerializer.getBuffLength(), 0);
+    ASSERT_EQ(this->component.m_frameSerializer.getSize(), 0);
     ASSERT_EQ(this->component.m_bufferState, Fw::Buffer::OwnershipState::OWNED);
     this->component.preamble();
     ASSERT_from_comStatusOut(0, Fw::Success::SUCCESS);
@@ -77,7 +77,7 @@ void ComAggregatorTester ::test_initial() {
 //! Tests fill operation
 Fw::Buffer ComAggregatorTester ::test_fill(bool expect_hold) {
     // Precondition: initial has run
-    const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getBuffLength();
+    const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
     if (ORIGINAL_LENGTH == ComCfg::AggregationSize) {
         // Nothing to fill
         return Fw::Buffer();
@@ -90,9 +90,9 @@ Fw::Buffer ComAggregatorTester ::test_fill(bool expect_hold) {
     EXPECT_EQ(this->dispatchOne(this->component),
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
     if (expect_hold) {
-        EXPECT_EQ(ORIGINAL_LENGTH, this->component.m_frameSerializer.getBuffLength());
+        EXPECT_EQ(ORIGINAL_LENGTH, this->component.m_frameSerializer.getSize());
     } else {
-        EXPECT_EQ(ORIGINAL_LENGTH + BUFFER_LENGTH, this->component.m_frameSerializer.getBuffLength());
+        EXPECT_EQ(ORIGINAL_LENGTH + BUFFER_LENGTH, this->component.m_frameSerializer.getSize());
         this->validate_buffer_aggregated(buffer, context);
     }
     this->clearHistory();
@@ -110,7 +110,7 @@ void ComAggregatorTester ::test_fill_multi() {
 void ComAggregatorTester ::test_full() {
     // Precondition: fill has run
     // Chose a buffer that will be too large to fit but still will fit after being aggregated
-    const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getBuffLength();
+    const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
     const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(static_cast<U32>(ComCfg::AggregationSize - ORIGINAL_LENGTH + 1),
                                                       static_cast<U32>(ComCfg::AggregationSize));
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);

@@ -37,7 +37,7 @@ class StringBase : public ConstStringBase {
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) override;
+    SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void toString(StringBase& text) const override;  //!< write string with contents

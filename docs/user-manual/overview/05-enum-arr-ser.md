@@ -119,6 +119,24 @@ arbitrary C++ `class`/`struct` types. If these types are to be passed through a 
 should be defined as subclasses of the `Fw::Serializable` and define `serializeTo` and `deserializeFrom` methods to be called
 to perform the serialization.
 
+Specifically, user-defined serializable classes must implement the following methods, which operate on the
+`Fw::SerialBufferBase` interface and support selectable endianness (default: big-endian):
+
+```cpp
+Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
+                                Fw::Endianness mode = Fw::Endianness::BIG) const;
+
+Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG);
+```
+
+Notes:
+
+- `Fw::SerialBufferBase` is the abstract buffer interface accepted by `Fw::Serializable` APIs. Concrete buffers such as
+  `Fw::SerializeBufferBase` and helper wrappers like `Fw::ExternalSerializeBufferWithMemberCopy` implement this interface.
+- Endianness defaults to `Fw::Endianness::BIG` (network byte order). Pass `Fw::Endianness::LITTLE` to serialize or
+  deserialize fields in little-endian.
+
 ## Alias Types
 
 Alias types provide an alternate name for a type that is defined elsewhere. An alias type can refer to any type, including another alias type (excluding itself).

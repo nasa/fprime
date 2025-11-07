@@ -43,7 +43,7 @@ void NestedTester::FppTest_SmInstanceInitial_Nested_Nested_action_a(
 
 void NestedTester ::smInitialNested_stateMachineOverflowHook(SmId smId,
                                                              FwEnumStoreType signal,
-                                                             Fw::SerializeBufferBase& buffer) {
+                                                             Fw::SerialBufferBase& buffer) {
     // Nothing to do
 }
 

@@ -44,7 +44,7 @@ PosixRawTime::Status PosixRawTime::getTimeInterval(const Os::RawTime& other, Fw:
     return Status::OP_OK;
 }
 
-Fw::SerializeStatus PosixRawTime::serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) const {
+Fw::SerializeStatus PosixRawTime::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     static_assert(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32),
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
     Fw::SerializeStatus status = buffer.serializeFrom(static_cast<U32>(this->m_handle.m_timespec.tv_sec), mode);
@@ -54,7 +54,7 @@ Fw::SerializeStatus PosixRawTime::serializeTo(Fw::SerializeBufferBase& buffer, F
     return buffer.serializeFrom(static_cast<U32>(this->m_handle.m_timespec.tv_nsec), mode);
 }
 
-Fw::SerializeStatus PosixRawTime::deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) {
+Fw::SerializeStatus PosixRawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     static_assert(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32),
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
     U32 sec = 0;

@@ -39,7 +39,7 @@ SerializableFile::Status SerializableFile::load(const char* fileName, Serializab
         return FILE_OPEN_ERROR;
     }
 
-    FwSizeType length = this->m_buffer.getBuffCapacity();
+    FwSizeType length = this->m_buffer.getCapacity();
     status = file.read(this->m_buffer.getBuffAddr(), length, Os::File::WaitType::NO_WAIT);
     if (Os::File::OP_OK != status) {
         file.close();
@@ -71,9 +71,9 @@ SerializableFile::Status SerializableFile::save(const char* fileName, Serializab
         return FILE_OPEN_ERROR;
     }
 
-    FwSizeType length = this->m_buffer.getBuffLength();
+    FwSizeType length = this->m_buffer.getSize();
     status = file.write(this->m_buffer.getBuffAddr(), length);
-    if ((Os::File::OP_OK != status) || (length != this->m_buffer.getBuffLength())) {
+    if ((Os::File::OP_OK != status) || (length != this->m_buffer.getSize())) {
         file.close();
         return FILE_WRITE_ERROR;
     }

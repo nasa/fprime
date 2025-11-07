@@ -64,20 +64,20 @@ class ConstStringBase : public Serializable {
     bool operator!=(const ConstStringBase& other) const;  //!< Inequality with ConstStringBase
     bool operator!=(const CHAR* other) const;             //!< Inequality with CHAR*
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) const override;
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer,
+    SerializeStatus serializeTo(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) const override;
+    virtual SerializeStatus serializeTo(SerialBufferBase& buffer,
                                         SizeType maxLen,
                                         Endianness mode = Endianness::BIG) const;
     // NOTE: all derived classes should override this function; it will always return an error
     // status since ConstStringBase is immutable and deserializeFrom is not a read-only operation
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer, Endianness mode = Endianness::BIG) override;
+    SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
-    DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
+    DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
                "Use serializeTo(SerializeBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
-    DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const,
+    DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer, SizeType maxLen) const,
                "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead") {
         return this->serializeTo(buffer, maxLen);
     }
