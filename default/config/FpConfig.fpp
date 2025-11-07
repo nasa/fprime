@@ -40,6 +40,7 @@ type FwQueuePriorityType = PlatformQueuePriorityType
 
 @ The id type.
 type FwIdType = U32
+constant SIZE_OF_FwIdType = 4  @< Size of FwIdType in bytes
 
 @ The type of task priorities used.
 type FwTaskIdType = PlatformTaskIdType
@@ -51,6 +52,7 @@ type FwTaskIdType = PlatformTaskIdType
 
 @ The type of a telemetry channel identifier
 type FwChanIdType = FwIdType
+constant SIZE_OF_FwChanIdType = SIZE_OF_FwIdType  @< Size of FwChanIdType in bytes
 
 @ The type of a data product identifier
 type FwDpIdType = FwIdType
@@ -60,16 +62,18 @@ type FwDpPriorityType = U32
 
 @ The type of an event identifier
 type FwEventIdType = FwIdType
+constant SIZE_OF_FwEventIdType = SIZE_OF_FwIdType  @< Size of FwEventIdType in bytes
 
 @ The type of a command opcode
 type FwOpcodeType = FwIdType
+constant SIZE_OF_FwOpcodeType = SIZE_OF_FwIdType  @< Size of FwOpcodeType in bytes
 
 @ The type of a parameter identifier
 type FwPrmIdType = FwIdType
+constant SIZE_OF_FwPrmIdType = SIZE_OF_FwIdType  @< Size of FwPrmIdType in bytes
 
 @ The type used to serialize a size value
 type FwSizeStoreType = U16
-
 
 @ The type used to serialize a time context value
 type FwTimeContextStoreType = U8
@@ -83,7 +87,6 @@ type FwTraceIdType = U32
 @ The type used to serialize a C++ enumeration constant
 @ FPP enumerations are serialized according to their representation types
 type FwEnumStoreType = I32
-
 
 @ The type used to serialize a time base value
 type FwTimeBaseStoreType = U16

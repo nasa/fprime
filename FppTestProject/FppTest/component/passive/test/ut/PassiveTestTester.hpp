@@ -210,14 +210,13 @@ class PassiveTestTester : public PassiveTestGTestBase {
             const FwPrmIdType base_id,     //!< The component base parameter ID to deserialize
             const FwPrmIdType local_id,    //!< The parameter local ID to deserialize
             const Fw::ParamValid prmStat,  //!< The parameter validity status
-            Fw::SerializeBufferBase& buff  //!< The buffer containing the parameter to deserialize
+            Fw::SerialBufferBase& buff     //!< The buffer containing the parameter to deserialize
             ) override;
 
         //! Parameter serialization function for external parameter unit testing
-        Fw::SerializeStatus serializeParam(
-            const FwPrmIdType base_id,     //!< The component base parameter ID to serialize
-            const FwPrmIdType local_id,    //!< The parameter local ID to serialize
-            Fw::SerializeBufferBase& buff  //!< The buffer to serialize the parameter into
+        Fw::SerializeStatus serializeParam(const FwPrmIdType base_id,  //!< The component base parameter ID to serialize
+                                           const FwPrmIdType local_id,  //!< The parameter local ID to serialize
+                                           Fw::SerialBufferBase& buff   //!< The buffer to serialize the parameter into
         ) const override;
     };
 

@@ -129,7 +129,7 @@ void TlmChanTester::runOffNominal() {
 
     // Read back value
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, timeTag, buff);
-    ASSERT_EQ(0u, buff.getBuffLength());
+    ASSERT_EQ(0u, buff.getSize());
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 }
 
@@ -218,7 +218,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
         }
 
         // packet should be empty
-        ASSERT_EQ(0, this->m_rcvdBuffer[packet].getBuffLeft());
+        ASSERT_EQ(0, this->m_rcvdBuffer[packet].getDeserializeSizeLeft());
     }
 }
 

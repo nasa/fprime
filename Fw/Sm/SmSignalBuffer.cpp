@@ -16,9 +16,9 @@ SmSignalBuffer::~SmSignalBuffer() {}
 
 SmSignalBuffer::SmSignalBuffer(const SmSignalBuffer& other) : Fw::SerializeBufferBase(), m_bufferData{} {
     FW_ASSERT(other.getBuffAddr() != nullptr);
-    FW_ASSERT(other.getBuffLength() <= sizeof(this->m_bufferData));
+    FW_ASSERT(other.getSize() <= sizeof(this->m_bufferData));
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -28,15 +28,19 @@ SmSignalBuffer& SmSignalBuffer::operator=(const SmSignalBuffer& other) {
     }
 
     FW_ASSERT(other.getBuffAddr() != nullptr);
-    FW_ASSERT(other.getBuffLength() <= sizeof(this->m_bufferData));
+    FW_ASSERT(other.getSize() <= sizeof(this->m_bufferData));
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-Serializable::SizeType SmSignalBuffer::getBuffCapacity() const {
+Serializable::SizeType SmSignalBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+Serializable::SizeType SmSignalBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* SmSignalBuffer::getBuffAddr() const {

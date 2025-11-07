@@ -29,9 +29,9 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<Svc::Fpy::StackSizeType>::max(),
               "Max stack size must be below Svc::Fpy::StackSizeType max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_TLM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max tlm buffer size");
-static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_PARAM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max prm buffer size");
 static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(), "Flag count must be less than U8 max");
 

@@ -281,7 +281,7 @@ void DpCatalog::pruneAndWriteStateFile() {
             // Should always fit
             FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, serStat);
             // write the entry
-            FwSizeType size = entryBuffer.getBuffLength();
+            FwSizeType size = entryBuffer.getSize();
             // Protect against overflow
             stat = stateFile.write(buffer, size);
             if (stat != Os::File::OP_OK) {
@@ -326,7 +326,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     // should fit
     FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
     // write the entry
-    FwSizeType size = entryBuffer.getBuffLength();
+    FwSizeType size = entryBuffer.getSize();
     stat = stateFile.write(buffer, size);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);

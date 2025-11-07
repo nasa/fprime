@@ -1352,7 +1352,7 @@ void PrmDbTester::printDb(PrmDb_PrmDbType dbType) {
     printf("%s Parameter DB @ %p \n", PrmDbImpl::getDbString(dbType).toChar(), static_cast<void*>(db));
     for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
         U8* data = db[entry].val.getBuffAddr();
-        FwSizeType len = db[entry].val.getBuffLength();
+        FwSizeType len = db[entry].val.getSize();
         if (db[entry].used) {
             std::cout << "  " << std::setw(2) << entry << " :";
             printf(" ID = %08X", db[entry].id);

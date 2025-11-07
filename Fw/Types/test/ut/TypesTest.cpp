@@ -30,7 +30,7 @@
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
   public:
-    FwSizeType getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
+    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
         return sizeof(m_testBuff);
     }
 
@@ -887,7 +887,7 @@ struct TestStruct {
 
 class MySerializable : public Fw::Serializable {
   public:
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const override {
         buffer.serializeFrom(m_testStruct.m_u32, mode);
         buffer.serializeFrom(m_testStruct.m_u16, mode);
@@ -897,7 +897,7 @@ class MySerializable : public Fw::Serializable {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override {
         buffer.serializeFrom(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         buffer.serializeFrom(m_testStruct.m_f32, mode);

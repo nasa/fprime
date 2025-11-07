@@ -58,7 +58,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::loadFile(const Fw::StringBase& 
 }
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::hasMoreRecords() const {
-    return this->m_buffer.getBuffLeft() > 0;
+    return this->m_buffer.getDeserializeSizeLeft() > 0;
 }
 
 void CmdSequencerComponentImpl::FPrimeSequence ::nextRecord(Record& record) {
@@ -102,7 +102,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readOpenFile() {
         status = this->deserializeHeader() and this->readRecordsAndCRC() and this->extractCRC();
     }
     if (status) {
-        const FwSizeType buffLen = this->m_buffer.getBuffLength();
+        const FwSizeType buffLen = this->m_buffer.getSize();
         this->m_crc.update(buffAddr, buffLen);
         this->m_crc.finalize();
     }
@@ -116,7 +116,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readHeader() {
 
     FwSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
 
-    const FwSizeType capacity = buffer.getBuffCapacity();
+    const FwSizeType capacity = buffer.getCapacity();
     FW_ASSERT(capacity >= readLen, static_cast<FwAssertArgType>(capacity), static_cast<FwAssertArgType>(readLen));
     Os::File::Status fileStatus = file.read(buffer.getBuffAddr(), readLen);
 
@@ -148,7 +148,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::deserializeHeader() {
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::DESER_SIZE, serializeStatus);
         return false;
     }
-    if (header.m_fileSize > buffer.getBuffCapacity()) {
+    if (header.m_fileSize > buffer.getCapacity()) {
         this->m_events.fileSizeError(header.m_fileSize);
         return false;
     }
@@ -203,7 +203,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::extractCRC() {
     U32& crc = this->m_crc.m_stored;
 
     // Compute the data size
-    const FwSizeType buffSize = buffer.getBuffLength();
+    const FwSizeType buffSize = buffer.getSize();
     const FwSizeType crcSize = sizeof(crc);
     U8* const buffAddr = buffer.getBuffAddr();
     if (buffSize < crcSize) {
@@ -280,7 +280,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeT
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecordSize(U32& recordSize) {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     Fw::SerializeStatus status = buffer.deserializeTo(recordSize);
-    if (status == Fw::FW_SERIALIZE_OK and recordSize > buffer.getBuffLeft()) {
+    if (status == Fw::FW_SERIALIZE_OK and recordSize > buffer.getDeserializeSizeLeft()) {
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
@@ -322,7 +322,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::validateRecords() {
         }
     }
     // Check there is no data left
-    const FwSizeType buffLeftSize = buffer.getBuffLeft();
+    const FwSizeType buffLeftSize = buffer.getDeserializeSizeLeft();
     if (buffLeftSize > 0) {
         this->m_events.recordMismatch(numRecords, static_cast<U32>(buffLeftSize));
         return false;

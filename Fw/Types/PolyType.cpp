@@ -480,7 +480,7 @@ bool PolyType::operator<=(const PolyType& other) const {
     return (this->operator<(other)) || (this->operator==(other));
 }
 
-SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
+SerializeStatus PolyType::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // store type
     SerializeStatus stat = buffer.serializeFrom(static_cast<FwEnumStoreType>(this->m_dataType), mode);
     if (stat != FW_SERIALIZE_OK) {
@@ -539,7 +539,7 @@ SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer, Fw::Endiannes
     return stat;
 }
 
-SerializeStatus PolyType::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+SerializeStatus PolyType::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     // get type
     FwEnumStoreType des;
     SerializeStatus stat = buffer.deserializeTo(des, mode);

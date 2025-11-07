@@ -15,7 +15,7 @@ class InputPortBase : public PortBase {
 
 #if FW_PORT_SERIALIZATION
     virtual SerializeStatus invokeSerial(
-        SerializeBufferBase& buffer) = 0;  // !< invoke the port with a serialized version of the call
+        LinearBufferBase& buffer) = 0;  // !< invoke the port with a serialized version of the call
 #endif
 
   protected:

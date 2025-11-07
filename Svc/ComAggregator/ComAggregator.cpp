@@ -76,9 +76,9 @@ void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
 
 void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Send only when the buffer will be valid
-    if (this->m_frameSerializer.getBuffLength() > 0) {
+    if (this->m_frameSerializer.getSize() > 0) {
         this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
-        this->m_frameBuffer.setSize(this->m_frameSerializer.getBuffLength());
+        this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
     }
 }
@@ -103,12 +103,12 @@ bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
                                                          Svc_AggregationMachine::Signal signal,
                                                          const Svc::ComDataContextPair& value) const {
     FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
-    const FwSizeType remaining = this->m_frameSerializer.getBuffCapacity() - this->m_frameSerializer.getBuffLength();
+    const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
     return (remaining <= value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {
-    return this->m_frameSerializer.getBuffLength() > 0;
+    return this->m_frameSerializer.getSize() > 0;
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isGood(SmId smId,
