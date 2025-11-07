@@ -4,7 +4,7 @@ argcomplete==3.5.1
 arrow==1.3.0
 binaryornot==0.4.4
 blinker==1.8.2
-Brotli==1.1.0
+Brotli==1.2.0
 certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
