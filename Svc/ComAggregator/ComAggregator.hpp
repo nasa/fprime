@@ -7,6 +7,7 @@
 #ifndef Svc_ComAggregator_HPP
 #define Svc_ComAggregator_HPP
 
+#include <atomic>
 #include "Os/Mutex.hpp"
 #include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 
@@ -139,6 +140,7 @@ class ComAggregator final : public ComAggregatorComponentBase {
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
 
     Svc::ComDataContextPair m_held;  //!< Held data while waiting for send
+    std::atomic<bool> m_allow_timeout;  //!< Whether status has been received
 };
 
 }  // namespace Svc
