@@ -65,7 +65,7 @@ void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
-    this->m_allow_timeout = true; // Allow timeout messages in FILL state
+    this->m_allow_timeout = true;  // Allow timeout messages in FILL state
     this->m_frameSerializer.resetSer();
     this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
     if (this->m_held.get_data().isValid()) {
@@ -93,7 +93,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_Aggrega
     if (this->m_frameSerializer.getSize() > 0) {
         this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
         this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
-        this->m_allow_timeout = false; // Timeout messages should be discarded in WAIT_STATUS state
+        this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
     }
 }

@@ -33,7 +33,7 @@ Fw::Buffer ComAggregatorTester ::fill_buffer(U32 size) {
     for (U32 i = 0; i < size; i++) {
         data[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 255));
     }
-    Fw::Buffer buffer(data, size);
+    Fw::Buffer buffer(data, static_cast<FwSizeType>(size));
     return buffer;
 }
 
@@ -72,29 +72,38 @@ void ComAggregatorTester ::test_initial() {
     this->invoke_to_comStatusIn(0, good);
     ASSERT_EQ(this->dispatchOne(this->component),
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    // Ensure we dispatched all messages
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
 }
 
 //! Tests fill operation
 Fw::Buffer ComAggregatorTester ::test_fill(bool expect_hold) {
     // Precondition: initial has run
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    if (ORIGINAL_LENGTH == ComCfg::AggregationSize) {
+    // Maximum size we can fill while respecting the expect_hold flag
+    const FwSizeType MAX_FILL = ComCfg::AggregationSize - ORIGINAL_LENGTH -
+                                ((expect_hold || ORIGINAL_LENGTH == ComCfg::AggregationSize) ? 0 : 1);
+    if (MAX_FILL == 0) {
         // Nothing to fill
         return Fw::Buffer();
     }
-    const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(1, static_cast<U32>(ComCfg::AggregationSize - ORIGINAL_LENGTH));
+    // Allow a full buffer only in the case where we expect to hold
+    const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(1, static_cast<U32>(MAX_FILL));
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
-
+    EXPECT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
     this->invoke_to_dataIn(0, buffer, context);
     EXPECT_EQ(this->dispatchOne(this->component),
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    EXPECT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
     if (expect_hold) {
         EXPECT_EQ(ORIGINAL_LENGTH, this->component.m_frameSerializer.getSize());
     } else {
+        printf("DEBUG: ORIGINAL_LENGTH=%lu, BUFFER_LENGTH=%u\n", ORIGINAL_LENGTH, BUFFER_LENGTH);
         EXPECT_EQ(ORIGINAL_LENGTH + BUFFER_LENGTH, this->component.m_frameSerializer.getSize());
         this->validate_buffer_aggregated(buffer, context);
     }
+    EXPECT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
     this->clearHistory();
     return buffer;
 }
@@ -165,6 +174,45 @@ void ComAggregatorTester ::test_timeout() {
         this->validate_aggregation(this->component.m_frameBuffer);
         ASSERT_from_dataOut_SIZE(1);
     }
+    // Const cast is safe as data is not altered
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
+                                 this->fromPortHistory_dataOut->at(0).context);
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, good);
+    this->m_aggregation.clear();
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    this->clearHistory();
+}
+
+//! Tests timeout operation
+void ComAggregatorTester ::test_timeout_overflow_prevention() {
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
+    // Precondition: fill has run
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    this->validate_aggregation(this->fromPortHistory_dataOut->at(0).data);
+    // Invoke some number of failure status. These prevent the timeout from being prematurely enabled.
+    for (U32 i = 0; i < STest::Pick::lowerUpper(1, 5); i++) {
+        Fw::Success bad = Fw::Success::FAILURE;
+        this->invoke_to_comStatusIn(0, bad);
+        ASSERT_EQ(this->dispatchOne(this->component),
+                  Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+        // Should be no change
+        this->validate_aggregation(this->component.m_frameBuffer);
+        ASSERT_from_dataOut_SIZE(1);
+    }
+    // Now invoke enough extra timeouts to overflow the queue if they were all queued
+    for (U32 i = 0; i < STest::Pick::lowerUpper(1, TEST_INSTANCE_QUEUE_DEPTH) + TEST_INSTANCE_QUEUE_DEPTH; i++) {
+        // These timeouts should be dropped
+        this->invoke_to_timeout(0, 0);
+        // Should be no change
+        this->validate_aggregation(this->component.m_frameBuffer);
+        ASSERT_from_dataOut_SIZE(1);
+    }
+
     // Const cast is safe as data is not altered
     this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
                                  this->fromPortHistory_dataOut->at(0).context);

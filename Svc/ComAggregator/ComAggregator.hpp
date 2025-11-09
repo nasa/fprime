@@ -139,7 +139,7 @@ class ComAggregator final : public ComAggregatorComponentBase {
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
 
-    Svc::ComDataContextPair m_held;  //!< Held data while waiting for send
+    Svc::ComDataContextPair m_held;     //!< Held data while waiting for send
     std::atomic<bool> m_allow_timeout;  //!< Whether status has been received
 };
 
