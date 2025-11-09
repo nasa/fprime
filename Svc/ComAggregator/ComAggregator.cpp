@@ -119,7 +119,15 @@ bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
                                                          const Svc::ComDataContextPair& value) const {
     FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
     const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
-    return (remaining <= value.get_data().getSize());
+    return (remaining < value.get_data().getSize());
+}
+
+bool ComAggregator ::Svc_AggregationMachine_guard_willFill(SmId smId,
+                                                           Svc_AggregationMachine::Signal signal,
+                                                           const Svc::ComDataContextPair& value) const {
+    FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
+    const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
+    return (remaining == value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {

@@ -14,8 +14,11 @@ module Svc {
         @ Status return
         signal status: Fw.Success
 
-        @ Check if full 
+        @ Check if the aggregation buffer is full, i.e. cannot accept the incoming buffer
         guard isFull: Svc.ComDataContextPair
+
+        @ Check if the aggregation will fill, i.e. the incoming buffer will exactly fit
+        guard willFill: Svc.ComDataContextPair
 
         @ Check if not empty
         guard isNotEmpty
@@ -39,9 +42,17 @@ module Svc {
         @ Assert no status when in fill state
         action assertNoStatus
 
-        @ The IS_FULL_THEN_SEND choice
+        @ The IS_FULL_THEN_SEND choice: this will check if the aggregation buffer is too-full to allow another buffer.
+        @ Otherwise, it will continue to fill.
         choice IS_FULL_THEN_SEND {
             if isFull do { doHold, doSend } enter WAIT_STATUS \
+                else enter WILL_FILL_THEN_SEND
+        }
+
+        @ The WILL_FILL_THEN_SEND choice: this will check if the buffer will be exactly filled by the incoming buffer.
+        @ Otherwise, it will continue to fill.
+        choice WILL_FILL_THEN_SEND {
+            if willFill do { doFill, doSend } enter WAIT_STATUS \
                 else do { doFill } enter FILL
         }
 

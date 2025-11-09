@@ -31,6 +31,13 @@ TEST(Nominal, Full) {
     tester.test_full();
 }
 
+TEST(Nominal, ExactlyFull) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_fill_multi();
+    tester.test_exactly_full();
+}
+
 TEST(Nominal, Timeout) {
     Svc::ComAggregatorTester tester;
     tester.test_initial();

@@ -116,6 +116,14 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                              const Svc::ComDataContextPair& value    //!< The value
     ) const override;
 
+    //! Implementation for guard willFill of state machine Svc_AggregationMachine
+    //!
+    //! Check if the incoming buffer will exactly fill the aggregation buffer
+    bool Svc_AggregationMachine_guard_willFill(SmId smId,                              //!< The state machine id
+                                               Svc_AggregationMachine::Signal signal,  //!< The signal
+                                               const Svc::ComDataContextPair& value    //!< The value
+    ) const override;
+
     //! Implementation for guard isNotEmpty of state machine Svc_AggregationMachine
     //!
     //! Check if not empty
