@@ -8,7 +8,7 @@ namespace Os {
 namespace Stub {
 namespace Queue {
 
-QueueInterface::Status StubQueue::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status StubQueue::create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) {
     return QueueInterface::Status::UNKNOWN_ERROR;
 }
 

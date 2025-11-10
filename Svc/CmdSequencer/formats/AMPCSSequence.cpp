@@ -21,7 +21,7 @@ namespace Svc {
 
 AMPCSSequence ::AMPCSSequence(CmdSequencerComponentImpl& component) : CmdSequencerComponentImpl::Sequence(component) {}
 
-bool AMPCSSequence ::loadFile(const Fw::StringBase& fileName) {
+bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // Make sure there is a buffer allocated
     FW_ASSERT(this->m_buffer.getBuffAddr());
 
@@ -59,7 +59,7 @@ bool AMPCSSequence ::readCRCFile(Fw::CmdStringArg& crcFileName) {
     return result;
 }
 
-bool AMPCSSequence ::getFileSize(const Fw::StringBase& seqFileName) {
+bool AMPCSSequence ::getFileSize(const Fw::ConstStringBase& seqFileName) {
     bool status = true;
     FwSizeType fileSize;
     this->setFileName(seqFileName);
@@ -74,7 +74,7 @@ bool AMPCSSequence ::getFileSize(const Fw::StringBase& seqFileName) {
     return status;
 }
 
-bool AMPCSSequence ::readSequenceFile(const Fw::StringBase& seqFileName) {
+bool AMPCSSequence ::readSequenceFile(const Fw::ConstStringBase& seqFileName) {
     bool result;
 
     this->setFileName(seqFileName);

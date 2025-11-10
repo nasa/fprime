@@ -27,7 +27,7 @@ class FileNameString final : public StringBase {
 
     FileNameString(const FileNameString& src) : StringBase() { *this = src; }
 
-    FileNameString(const StringBase& src) : StringBase() { *this = src; }
+    FileNameString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit FileNameString(const char* src) : StringBase() { *this = src; }
 
@@ -38,7 +38,7 @@ class FileNameString final : public StringBase {
         return *this;
     }
 
-    FileNameString& operator=(const StringBase& src) {
+    FileNameString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

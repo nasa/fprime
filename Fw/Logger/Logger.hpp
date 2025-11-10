@@ -35,7 +35,7 @@ class Logger {
     //!
     //! Logs the string directly to the backing store without any formatting changes.
     //! \param message: message to log
-    static void log(const Fw::StringBase& message);
+    static void log(const Fw::ConstStringBase& message);
 
     //! \brief register a logger implementation
     //!
@@ -52,7 +52,7 @@ class Logger {
     //! Log implementations must provide this method used to write the output of a string to the log backing.
     //!
     //! \param message: message to log
-    virtual void writeMessage(const StringBase& message) = 0;
+    virtual void writeMessage(const ConstStringBase& message) = 0;
 
   private:
     static Logger* s_current_logger;  //!< Static logger to use when calling Fw::Logger::log function

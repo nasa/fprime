@@ -29,7 +29,7 @@ class FakeLogger : public Fw::Logger {
      * Fake implementation of the logger.
      * @param message: formatted message to log
      */
-    void writeMessage(const Fw::StringBase& message);
+    void writeMessage(const Fw::ConstStringBase& message);
 
     /**
      * Check last message.

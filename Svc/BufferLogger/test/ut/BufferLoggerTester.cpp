@@ -156,16 +156,16 @@ void BufferLoggerTester ::sendManagedBuffers(const U32 n) {
     }
 }
 
-void BufferLoggerTester ::checkFileExists(const Fw::StringBase& fileName) {
+void BufferLoggerTester ::checkFileExists(const Fw::ConstStringBase& fileName) {
     Fw::String command;
     command.format("test -f %s", fileName.toChar());
     const int status = system(command.toChar());
     ASSERT_EQ(0, status);
 }
 
-void BufferLoggerTester ::checkHashFileExists(const Fw::StringBase& fileName) {
+void BufferLoggerTester ::checkHashFileExists(const Fw::ConstStringBase& fileName) {
     Os::ValidatedFile validatedFile(fileName.toChar());
-    const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
+    const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
     this->checkFileExists(hashFileName);
 }
 

@@ -1,5 +1,6 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/ConstExternalString.hpp>
 #include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
@@ -1445,6 +1446,43 @@ TEST(TypesTest, ObjectNameTest) {
 
     ASSERT_EQ(es, es2);
     ASSERT_EQ(es2, "ExternalString");
+}
+
+TEST(TypesTest, ConstExternalStringTest) {
+    // Un-initialized string
+    Fw::ConstExternalString strUninit;
+    ASSERT_EQ(strUninit.toChar(), nullptr);
+    ASSERT_EQ(strUninit.getCapacity(), 0);
+    ASSERT_EQ(strUninit.length(), 0);
+    ASSERT_EQ(strUninit.length(), strUninit.maxLength());
+
+    // Empty string
+    const char* strLiteralEmpty = "";  // capacity 1
+    Fw::ConstExternalString strEmpty(strLiteralEmpty, 1);
+    ASSERT_EQ(strEmpty.toChar(), strLiteralEmpty);
+    ASSERT_EQ(strEmpty.getCapacity(), 1);
+    ASSERT_EQ(strEmpty.length(), 0);
+    ASSERT_EQ(strEmpty.length(), strEmpty.maxLength());
+    ASSERT_TRUE(strEmpty == "");
+    ASSERT_TRUE(strEmpty != strUninit);
+
+    // Basic non-empty string
+    const char* stLiteralFoo = "foo";  // capacity 4
+    Fw::ConstExternalString strFoo(stLiteralFoo, 4);
+    ASSERT_EQ(strFoo.toChar(), stLiteralFoo);
+    ASSERT_EQ(strFoo.getCapacity(), 4);
+    ASSERT_EQ(strFoo.length(), 3);
+    ASSERT_EQ(strFoo.length(), strFoo.maxLength());
+    ASSERT_TRUE(strFoo == "foo");
+
+    std::cout << "Stream: " << strFoo << std::endl;
+
+    // Equality with non-const string type
+    Fw::ConstExternalString a("bar", 4);
+    Fw::String b("bar");
+    Fw::String c("foo");
+    ASSERT_TRUE(a == b);
+    ASSERT_TRUE(a != c);
 }
 
 TEST(TypesTest, StringFormatTest) {

@@ -18,7 +18,8 @@ typedef enum {
     FW_DESERIALIZE_BUFFER_EMPTY,   //!< Deserialization buffer was empty when trying to read more data
     FW_DESERIALIZE_FORMAT_ERROR,   //!< Deserialization data had incorrect values (unexpected data types)
     FW_DESERIALIZE_SIZE_MISMATCH,  //!< Data was left in the buffer, but not enough to deserialize
-    FW_DESERIALIZE_TYPE_MISMATCH   //!< Deserialized type ID didn't match
+    FW_DESERIALIZE_TYPE_MISMATCH,  //!< Deserialized type ID didn't match
+    FW_DESERIALIZE_IMMUTABLE,      //!< Attempted to deserialize into an immutable buffer
 } SerializeStatus;
 
 class SerialBufferBase;  //!< forward declaration
@@ -66,6 +67,10 @@ class Serializable {
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) = 0;
+
+    //! TODO: this operator should be deleted, this must be done after RawTime is modified though
+    // as it currently depends on this being defined
+    Serializable& operator=(const Serializable& src) = default;
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility

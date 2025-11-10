@@ -89,11 +89,11 @@ class BufferLoggerTester : public BufferLoggerGTestBase {
     );
 
     //! Check that file exists
-    void checkFileExists(const Fw::StringBase& fileName  //!< The file name
+    void checkFileExists(const Fw::ConstStringBase& fileName  //!< The file name
     );
 
     //! Check that hash file exists
-    void checkHashFileExists(const Fw::StringBase& fileName  //!< The file name
+    void checkHashFileExists(const Fw::ConstStringBase& fileName  //!< The file name
     );
 
     //! Check the integrity of a log file

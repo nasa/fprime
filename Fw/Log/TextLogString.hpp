@@ -26,7 +26,7 @@ class TextLogString final : public StringBase {
 
     TextLogString(const TextLogString& src) : StringBase() { *this = src; }
 
-    TextLogString(const StringBase& src) : StringBase() { *this = src; }
+    TextLogString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     TextLogString(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class TextLogString final : public StringBase {
         return *this;
     }
 
-    TextLogString& operator=(const StringBase& src) {
+    TextLogString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

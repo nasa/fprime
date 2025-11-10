@@ -45,7 +45,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::validateCRC() {
     return result;
 }
 
-bool CmdSequencerComponentImpl::FPrimeSequence ::loadFile(const Fw::StringBase& fileName) {
+bool CmdSequencerComponentImpl::FPrimeSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // make sure there is a buffer allocated
     FW_ASSERT(this->m_buffer.getBuffAddr());
 

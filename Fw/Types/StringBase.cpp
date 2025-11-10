@@ -27,29 +27,13 @@ const CHAR* StringBase::operator+=(const CHAR* src) {
     return this->toChar();
 }
 
-const StringBase& StringBase::operator+=(const StringBase& src) {
+const StringBase& StringBase::operator+=(const ConstStringBase& src) {
     this->appendBuff(src.toChar(), src.length());
     return *this;
 }
 
-bool StringBase::operator==(const StringBase& other) const {
-    SizeType len = this->length();
-    if (len != other.length()) {
-        return false;
-    } else {
-        return this->operator==(other.toChar());
-    }
-}
-
-bool StringBase::operator==(const CHAR* other) const {
-    const CHAR* const us = this->toChar();
-    if ((us == nullptr) or (other == nullptr)) {
-        return false;
-    }
-
-    const SizeType capacity = this->getCapacity();
-    const size_t result = static_cast<size_t>(strncmp(us, other, static_cast<size_t>(capacity)));
-    return (result == 0);
+const StringBase& StringBase::operator+=(const StringBase& src) {
+    return StringBase::operator+=(static_cast<const ConstStringBase&>(src));
 }
 
 FormatStatus StringBase::format(const CHAR* formatString, ...) {
@@ -70,32 +54,21 @@ FormatStatus StringBase::vformat(const CHAR* formatString, va_list args) {
     return Fw::stringFormat(us, static_cast<FwSizeType>(cap), formatString, args);
 }
 
-bool StringBase::operator!=(const StringBase& other) const {
-    return !operator==(other);
-}
-
-bool StringBase::operator!=(const CHAR* other) const {
-    return !operator==(other);
-}
-
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
 void StringBase::toString(StringBase& text) const {
     text = *this;
 }
 #endif
 
-#ifdef BUILD_UT
-std::ostream& operator<<(std::ostream& os, const StringBase& str) {
-    os << str.toChar();
-    return os;
-}
-#endif
-
-StringBase& StringBase::operator=(const StringBase& other) {
+StringBase& StringBase::operator=(const ConstStringBase& other) {
     if (this != &other) {
         (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), other.toChar(), this->getCapacity());
     }
     return *this;
+}
+
+StringBase& StringBase::operator=(const StringBase& other) {
+    return StringBase::operator=(static_cast<const ConstStringBase&>(other));
 }
 
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
@@ -116,37 +89,6 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
     }
     FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
     (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
-}
-
-StringBase::SizeType StringBase::length() const {
-    const SizeType length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
-    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
-              static_cast<FwAssertArgType>(this->maxLength()));
-    return length;
-}
-
-StringBase::SizeType StringBase::maxLength() const {
-    const SizeType capacity = this->getCapacity();
-    FW_ASSERT(capacity > 0, static_cast<FwAssertArgType>(capacity));
-    return capacity - 1;
-}
-
-StringBase::SizeType StringBase::serializedSize() const {
-    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + this->length();
-}
-
-StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) const {
-    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
-}
-
-SerializeStatus StringBase::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
-    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
-}
-
-SerializeStatus StringBase::serializeTo(SerialBufferBase& buffer, SizeType maxLength, Fw::Endianness mode) const {
-    const FwSizeType len = FW_MIN(maxLength, this->length());
-    // Serialize length and then bytes
-    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
 SerializeStatus StringBase::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {

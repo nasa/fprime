@@ -26,7 +26,7 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::StringBase& fileName, Fw::Wait block) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
