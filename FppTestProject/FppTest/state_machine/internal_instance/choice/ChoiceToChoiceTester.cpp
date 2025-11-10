@@ -73,7 +73,7 @@ bool ChoiceToChoiceTester ::FppTest_SmChoice_ChoiceToChoice_guard_g2(
 
 void ChoiceToChoiceTester ::smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,
                                                                             FwEnumStoreType signal,
-                                                                            Fw::SerializeBufferBase& buffer) {
+                                                                            Fw::SerialBufferBase& buffer) {
     this->m_hookCalled = true;
     ASSERT_EQ(smId, SmId::smChoiceChoiceToChoice);
     ASSERT_EQ(static_cast<SmChoice_ChoiceToChoice::Signal>(signal), SmChoice_ChoiceToChoice::Signal::s);

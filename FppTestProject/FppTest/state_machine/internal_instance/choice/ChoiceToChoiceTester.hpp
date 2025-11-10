@@ -107,9 +107,9 @@ class ChoiceToChoiceTester : public ChoiceToChoiceComponentBase {
     // ----------------------------------------------------------------------
 
     //! Overflow hook implementation for smChoiceChoiceToChoice
-    void smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,                       //!< The state machine ID
-                                                         FwEnumStoreType signal,          //!< The signal
-                                                         Fw::SerializeBufferBase& buffer  //!< The message buffer
+    void smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,                    //!< The state machine ID
+                                                         FwEnumStoreType signal,       //!< The signal
+                                                         Fw::SerialBufferBase& buffer  //!< The message buffer
                                                          ) override;
 
   public:
