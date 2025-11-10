@@ -82,8 +82,8 @@ class ActiveTestTester : public ActiveTestGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(FwIndexType portNum,             //!< The port number
-                                Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+    void from_serialOut_handler(FwIndexType portNum,          //!< The port number
+                                Fw::LinearBufferBase& Buffer  //!< The serialization buffer
                                 ) final;
 
   public:
