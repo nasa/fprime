@@ -55,7 +55,7 @@ void BufferLogger::File ::init(const char* const logFilePrefix,
     FW_ASSERT(m_maxSize > sizeOfSize, static_cast<FwAssertArgType>(m_maxSize));
 }
 
-void BufferLogger::File ::setBaseName(const Fw::StringBase& baseName) {
+void BufferLogger::File ::setBaseName(const Fw::ConstStringBase& baseName) {
     if (this->m_mode == File::Mode::OPEN) {
         this->closeAndEmitEvent();
     }
@@ -165,7 +165,7 @@ void BufferLogger::File ::writeHashFile() {
     Os::ValidatedFile validatedFile(this->m_name.toChar());
     const Os::ValidateFile::Status status = validatedFile.createHashFile();
     if (status != Os::ValidateFile::VALIDATION_OK) {
-        const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
+        const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
         Fw::LogStringArg logStringArg(hashFileName.toChar());
         this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, status);
     }

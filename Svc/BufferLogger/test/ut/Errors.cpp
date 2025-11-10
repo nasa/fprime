@@ -148,7 +148,7 @@ void BufferLoggerTester ::LogFileValidation() {
                     this->component.m_file.m_suffix.toChar());
     ASSERT_EVENTS_BL_LogFileClosed(0, fileName.toChar());
     Os::ValidatedFile validatedFile(fileName.toChar());
-    const Fw::StringBase& hashFileName = validatedFile.getHashFileName();
+    const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
     ASSERT_EVENTS_BL_LogFileValidationError(0, hashFileName.toChar(), Os::ValidateFile::VALIDATION_FILE_NO_PERMISSION);
     // Restore permission
     (void)system("chmod +w buf");

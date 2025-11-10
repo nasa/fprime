@@ -19,8 +19,12 @@ namespace SequenceFiles {
 
 namespace Buffers {
 
-FwSizeType FileBuffer ::getBuffCapacity() const {
+FwSizeType FileBuffer ::getCapacity() const {
     return sizeof(m_buff);
+}
+
+FwSizeType FileBuffer ::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 U8* FileBuffer ::getBuffAddr() {
@@ -34,7 +38,7 @@ const U8* FileBuffer ::getBuffAddr() const {
 void write(const Fw::SerializeBufferBase& buffer, const char* fileName) {
     Os::File file;
     ASSERT_EQ(file.open(fileName, Os::File::OPEN_WRITE), Os::File::OP_OK);
-    FwSizeType size = buffer.getBuffLength();
+    FwSizeType size = buffer.getSize();
     const U32 expectedSize = size;
     const U8* const buffAddr = buffer.getBuffAddr();
     ASSERT_EQ(file.write(buffAddr, size, Os::File::WaitType::WAIT), Os::File::OP_OK);

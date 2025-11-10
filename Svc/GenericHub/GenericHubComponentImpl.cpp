@@ -45,7 +45,7 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serialize.serializeFrom(data, size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    outgoing.setSize(static_cast<U32>(serialize.getBuffLength()));
+    outgoing.setSize(static_cast<U32>(serialize.getSize()));
     dataOut_out(0, outgoing);
 }
 
@@ -152,7 +152,7 @@ void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     status = serializer.serializeFrom(args);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FwSizeType size = serializer.getBuffLength();
+    FwSizeType size = serializer.getSize();
     this->send_data(HubType::HUB_TYPE_EVENT, portNum, buffer, size);
 }
 
@@ -170,7 +170,7 @@ void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     status = serializer.serializeFrom(val);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FwSizeType size = serializer.getBuffLength();
+    FwSizeType size = serializer.getSize();
     this->send_data(HubType::HUB_TYPE_CHANNEL, portNum, buffer, size);
 }
 
@@ -181,7 +181,7 @@ void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
 void GenericHubComponentImpl ::portIn_handler(FwIndexType portNum,            /*!< The port number*/
                                               Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
-    send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getBuffLength());
+    send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }
 
 }  // end namespace Svc

@@ -110,7 +110,7 @@ Fw::Success FpySequencer::readHeader() {
     if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::HEADER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-            this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+            this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
         return Fw::Success::FAILURE;
     }
 
@@ -148,7 +148,7 @@ Fw::Success FpySequencer::readBody() {
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-                this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
     }
@@ -160,7 +160,7 @@ Fw::Success FpySequencer::readBody() {
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-                this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
     }
@@ -174,7 +174,7 @@ Fw::Success FpySequencer::readFooter() {
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::FOOTER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-            this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+            this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
         return Fw::Success::FAILURE;
     }
 
@@ -199,7 +199,7 @@ Fw::Success FpySequencer::readBytes(Os::File& file,
     // this has to be declared a var because file.read must take a ref
     FwSizeType actualReadLen = expectedReadLen;
 
-    const FwSizeType capacity = this->m_sequenceBuffer.getBuffCapacity();
+    const FwSizeType capacity = this->m_sequenceBuffer.getCapacity();
 
     // if this fails, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP

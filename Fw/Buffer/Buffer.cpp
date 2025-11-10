@@ -113,7 +113,7 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
     }
 }
 
-Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) const {
+Fw::SerializeStatus Buffer::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     Fw::SerializeStatus stat;
 #if FW_SERIALIZATION_TYPE_ID
     stat = buffer.serializeFrom(static_cast<U32>(Buffer::TYPE_ID));
@@ -136,7 +136,7 @@ Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer, Fw::End
     return stat;
 }
 
-Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) {
+Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     Fw::SerializeStatus stat;
 
 #if FW_SERIALIZATION_TYPE_ID

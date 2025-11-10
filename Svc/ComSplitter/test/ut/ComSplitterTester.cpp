@@ -53,9 +53,9 @@ void ComSplitterTester ::test_nominal() {
 void ComSplitterTester ::assert_comOut(const U32 index, const Fw::ComBuffer& data) const {
     ASSERT_GT(fromPortHistory_comOut->size(), index);
     const FromPortEntry_comOut& e = fromPortHistory_comOut->at(index);
-    ASSERT_EQ(data.getBuffLength(), e.data.getBuffLength());
-    ASSERT_EQ(memcmp(data.getBuffAddr(), e.data.getBuffAddr(), data.getBuffLength()), 0);
-    // for(int k=0; k < e.data.getBuffLength(); k++)
+    ASSERT_EQ(data.getSize(), e.data.getSize());
+    ASSERT_EQ(memcmp(data.getBuffAddr(), e.data.getBuffAddr(), data.getSize()), 0);
+    // for(int k=0; k < e.data.getSize(); k++)
     //   printf("0x%02x ", e.data.getBuffAddr()[k]);
     // printf("\n");
 }

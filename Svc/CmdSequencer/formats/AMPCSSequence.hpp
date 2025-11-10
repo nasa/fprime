@@ -73,7 +73,7 @@ class AMPCSSequence : public CmdSequencerComponentImpl::Sequence {
   public:
     //! Load a sequence file
     //! \return Success or failure
-    bool loadFile(const Fw::StringBase& fileName  //!< The file name
+    bool loadFile(const Fw::ConstStringBase& fileName  //!< The file name
     );
 
     //! Query whether the sequence has any more records
@@ -110,12 +110,12 @@ class AMPCSSequence : public CmdSequencerComponentImpl::Sequence {
 
     //! Get the aggregate size of the command records
     //! \return Success or failure
-    bool getFileSize(const Fw::StringBase& seqFileName  //!< The sequence file name
+    bool getFileSize(const Fw::ConstStringBase& seqFileName  //!< The sequence file name
     );
 
     //! Read a sequence file
     //! \return Success or failure
-    bool readSequenceFile(const Fw::StringBase& seqFileName  //!< The sequence file name
+    bool readSequenceFile(const Fw::ConstStringBase& seqFileName  //!< The sequence file name
     );
 
     //! Read an open sequence file

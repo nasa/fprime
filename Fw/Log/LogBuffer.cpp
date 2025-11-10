@@ -13,7 +13,7 @@ LogBuffer::LogBuffer() {}
 LogBuffer::~LogBuffer() {}
 
 LogBuffer::LogBuffer(const LogBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
         return *this;
     }
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType LogBuffer::getBuffCapacity() const {
+FwSizeType LogBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType LogBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* LogBuffer::getBuffAddr() const {

@@ -21,7 +21,7 @@ SocketComponentHelper::SocketComponentHelper() {}
 
 SocketComponentHelper::~SocketComponentHelper() {}
 
-void SocketComponentHelper::start(const Fw::StringBase& name,
+void SocketComponentHelper::start(const Fw::ConstStringBase& name,
                                   const FwTaskPriorityType priority,
                                   const Os::Task::ParamType stack,
                                   const Os::Task::ParamType cpuAffinity,

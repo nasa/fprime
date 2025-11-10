@@ -19,7 +19,7 @@ Queue::~Queue() {
     m_delegate.~QueueInterface();
 }
 
-QueueInterface::Status Queue ::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status Queue ::create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(depth > 0);
     FW_ASSERT(messageSize > 0);
@@ -93,19 +93,19 @@ QueueHandle* Queue::getHandle() {
     return this->m_delegate.getHandle();
 }
 
-QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
+QueueInterface::Status Queue::send(const Fw::LinearBufferBase& message,
                                    FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
-    return this->send(message.getBuffAddr(), message.getBuffLength(), priority, blockType);
+    return this->send(message.getBuffAddr(), message.getSize(), priority, blockType);
 }
 
-QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
+QueueInterface::Status Queue::receive(Fw::LinearBufferBase& destination,
                                       QueueInterface::BlockingType blockType,
                                       FwQueuePriorityType& priority) {
     FwSizeType actualSize = 0;
     destination.resetSer();  // Reset the buffer
     QueueInterface::Status status =
-        this->receive(destination.getBuffAddrSer(), destination.getBuffCapacity(), blockType, actualSize, priority);
+        this->receive(destination.getBuffAddrSer(), destination.getCapacity(), blockType, actualSize, priority);
     if (status == QueueInterface::Status::OP_OK) {
         Fw::SerializeStatus serializeStatus =
             destination.setBuffLen(static_cast<Fw::Serializable::SizeType>(actualSize));

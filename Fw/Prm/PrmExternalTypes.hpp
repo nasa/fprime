@@ -31,7 +31,7 @@ class ParamExternalDelegate {
     virtual SerializeStatus deserializeParam(const FwPrmIdType base_id,
                                              const FwPrmIdType local_id,
                                              const ParamValid prmStat,
-                                             SerializeBufferBase& buff) = 0;
+                                             SerialBufferBase& buff) = 0;
 
     //! Serialize a parameter into a parameter buffer
     //!
@@ -42,7 +42,7 @@ class ParamExternalDelegate {
     //! \return: The status of the serialize operation
     virtual SerializeStatus serializeParam(const FwPrmIdType base_id,
                                            const FwPrmIdType local_id,
-                                           SerializeBufferBase& buff) const = 0;
+                                           SerialBufferBase& buff) const = 0;
 };
 
 }  // namespace Fw

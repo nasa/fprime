@@ -36,7 +36,7 @@ void Console::writeMessage(const CHAR* message, const FwSizeType size) {
     this->m_delegate.writeMessage(message, size);
 }
 
-void Console::writeMessage(const Fw::StringBase& message) {
+void Console::writeMessage(const Fw::ConstStringBase& message) {
     this->writeMessage(message.toChar(), message.length());
 }
 
@@ -49,7 +49,7 @@ void Console::write(const CHAR* message, const FwSizeType size) {
     Console::getSingleton().writeMessage(message, size);
 }
 
-void Console::write(const Fw::StringBase& message) {
+void Console::write(const Fw::ConstStringBase& message) {
     Console::getSingleton().writeMessage(message.toChar(), message.length());
 }
 

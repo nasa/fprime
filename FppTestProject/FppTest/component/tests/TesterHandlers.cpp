@@ -139,23 +139,23 @@ void Tester ::from_serialOut_handler(FwIndexType portNum,             //!< The p
             break;
 
         case SerialPortIndex::PRIMITIVE:
-            status = Buffer.copyRaw(this->primitiveBuf, Buffer.getBuffCapacity());
+            status = Buffer.copyRaw(this->primitiveBuf, Buffer.getDeserializeSizeLeft());
             break;
 
         case SerialPortIndex::STRING:
-            status = Buffer.copyRaw(this->stringBuf, Buffer.getBuffCapacity());
+            status = Buffer.copyRaw(this->stringBuf, Buffer.getDeserializeSizeLeft());
             break;
 
         case SerialPortIndex::ENUM:
-            status = Buffer.copyRaw(this->enumBuf, Buffer.getBuffCapacity());
+            status = Buffer.copyRaw(this->enumBuf, Buffer.getDeserializeSizeLeft());
             break;
 
         case SerialPortIndex::ARRAY:
-            status = Buffer.copyRaw(this->arrayBuf, Buffer.getBuffCapacity());
+            status = Buffer.copyRaw(this->arrayBuf, Buffer.getDeserializeSizeLeft());
             break;
 
         case SerialPortIndex::STRUCT:
-            status = Buffer.copyRaw(this->structBuf, Buffer.getBuffCapacity());
+            status = Buffer.copyRaw(this->structBuf, Buffer.getDeserializeSizeLeft());
             break;
     }
 

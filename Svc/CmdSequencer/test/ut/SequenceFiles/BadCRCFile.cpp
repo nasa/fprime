@@ -33,7 +33,7 @@ void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
     // CRC
     const U8* const addr = buffer.getBuffAddr();
-    const U32 size = buffer.getBuffLength();
+    const U32 size = buffer.getSize();
     this->crc.init();
     this->crc.update(addr, size);
     this->crc.finalize();

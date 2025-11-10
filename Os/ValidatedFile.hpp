@@ -38,11 +38,11 @@ class ValidatedFile {
   public:
     //! Get the file name
     //! \return The file name
-    const Fw::StringBase& getFileName() const;
+    const Fw::ConstStringBase& getFileName() const;
 
     //! Get the hash file name
     //! \return The hash file name
-    const Fw::StringBase& getHashFileName() const;
+    const Fw::ConstStringBase& getHashFileName() const;
 
     //! Get the hash file buffer
     //! \return The hash file buffer

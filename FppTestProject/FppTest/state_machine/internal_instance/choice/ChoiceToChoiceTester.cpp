@@ -77,7 +77,7 @@ void ChoiceToChoiceTester ::smChoiceChoiceToChoice_stateMachineOverflowHook(SmId
     this->m_hookCalled = true;
     ASSERT_EQ(smId, SmId::smChoiceChoiceToChoice);
     ASSERT_EQ(static_cast<SmChoice_ChoiceToChoice::Signal>(signal), SmChoice_ChoiceToChoice::Signal::s);
-    ASSERT_EQ(buffer.getBuffLeft(), 0);
+    ASSERT_EQ(buffer.getDeserializeSizeLeft(), 0);
 }
 
 // ----------------------------------------------------------------------

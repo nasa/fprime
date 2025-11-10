@@ -171,7 +171,7 @@ TEST_F(PrimitiveStructTest, Serialization) {
     status = buf.serializeFrom(s);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buf.getBuffLength(), Primitive::SERIALIZED_SIZE);
+    ASSERT_EQ(buf.getSize(), Primitive::SERIALIZED_SIZE);
 
     // Deserialize
     status = buf.deserializeTo(sCopy);

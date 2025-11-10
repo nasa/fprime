@@ -69,7 +69,7 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
-    seq.get_header().set_bodySize(static_cast<U32>(buf.getBuffLength()));
+    seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();
 
     ASSERT_EQ(buf.serializeFrom(seq.get_header()), Fw::SerializeStatus::FW_SERIALIZE_OK);
@@ -81,13 +81,13 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     }
 
     U32 crc = FpySequencer::CRC_INITIAL_VALUE;
-    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getBuffLength());
+    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getSize());
 
     seq.get_footer().set_crc(~crc);
 
     ASSERT_EQ(buf.serializeFrom(seq.get_footer()), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
-    FwSizeType intendedWriteSize = buf.getBuffLength();
+    FwSizeType intendedWriteSize = buf.getSize();
     if (intendedWriteSize > maxBytes) {
         intendedWriteSize = maxBytes;
     }

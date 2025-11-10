@@ -27,13 +27,13 @@ class DpContainerTester {
     }
 
     static bool verifyDataBufferCapacity(const Fw::DpContainer& container, FwSizeType expectedCapacity) {
-        return container.m_dataBuffer.getBuffCapacity() == expectedCapacity;
+        return container.m_dataBuffer.getCapacity() == expectedCapacity;
     }
 
     static bool isDataBufferEmpty(const Fw::DpContainer& container) {
         const Fw::SerializeBufferBase& buffer = container.m_dataBuffer;
-        const FwSizeType buffLength = buffer.getBuffLength();
-        const FwSizeType buffLeft = buffer.getBuffLeft();
+        const FwSizeType buffLength = buffer.getSize();
+        const FwSizeType buffLeft = buffer.getDeserializeSizeLeft();
 
         return buffLength == 0 && buffLeft == 0;
     }

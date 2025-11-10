@@ -103,9 +103,9 @@ class PolyType : public Serializable {
     bool operator==(const PolyType& other) const;  //!< PolyType operator==
     bool operator!=(const PolyType& other) const;  //!< PolyType operator!=
 
-    SerializeStatus serializeTo(SerializeBufferBase& buffer,
+    SerializeStatus serializeTo(SerialBufferBase& buffer,
                                 Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< Serialize function
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer,
+    SerializeStatus deserializeFrom(SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) override;  //!< Deserialize function
 
   private:

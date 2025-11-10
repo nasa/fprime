@@ -20,7 +20,9 @@ class DataBuffer : public Fw::SerializeBufferBase {
     virtual ~DataBuffer();
     DataBuffer& operator=(const DataBuffer& other);
 
-    FwSizeType getBuffCapacity() const;  // !< returns capacity, not current size, of buffer
+    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
+    FwSizeType getCapacity() const;
+
     U8* getBuffAddr();
     const U8* getBuffAddr() const;
 

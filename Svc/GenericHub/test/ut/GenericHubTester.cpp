@@ -199,8 +199,8 @@ void GenericHubTester ::from_portOut_handler(FwIndexType portNum,            /*!
     m_comm_out++;
     // Assert the buffer came through exactly on the right port
     ASSERT_EQ(portNum, m_current_port);
-    ASSERT_EQ(Buffer.getBuffLength(), m_comm.getBuffLength());
-    for (U32 i = 0; i < Buffer.getBuffLength(); i++) {
+    ASSERT_EQ(Buffer.getSize(), m_comm.getSize());
+    for (U32 i = 0; i < Buffer.getSize(); i++) {
         ASSERT_EQ(Buffer.getBuffAddr()[i], m_comm.getBuffAddr()[i]);
     }
     ASSERT_from_buffersOut_SIZE(0);

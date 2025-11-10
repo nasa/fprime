@@ -82,7 +82,7 @@ class TaskInterface {
         //! \param stackSize: (optional) size of stack supplied to this task
         //! \param cpuAffinity: (optional) cpu affinity of this task. TODO: fix this into an array
         //! \param identifier: (optional) identifier for this task
-        Arguments(const Fw::StringBase& name,
+        Arguments(const Fw::ConstStringBase& name,
                   const taskRoutine routine,
                   void* const routine_argument = nullptr,
                   const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
@@ -271,7 +271,7 @@ class Task final : public TaskInterface {
     //! \param cpuAffinity: (optional) affinity of this task. Use `Task::start(Arguments&)` to supply affinity set.
     //! \param identifier: (optional) identifier of this task
     //! \return: status of the start call
-    DEPRECATED(Status start(const Fw::StringBase& name,
+    DEPRECATED(Status start(const Fw::ConstStringBase& name,
                             const taskRoutine routine,
                             void* const arg = nullptr,
                             const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,

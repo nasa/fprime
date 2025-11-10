@@ -24,7 +24,7 @@ void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
                const Fw::SerializeBufferBase& cmdField,
                Fw::SerializeBufferBase& dest) {
     const AMPCSSequence::Record::TimeFlag::Serial::t serialTimeFlag = timeFlag;
-    const AMPCSSequence::Record::CmdLength::t cmdLength = cmdField.getBuffLength();
+    const AMPCSSequence::Record::CmdLength::t cmdLength = cmdField.getSize();
     const U8* const addr = cmdField.getBuffAddr();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(serialTimeFlag));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serializeFrom(time));

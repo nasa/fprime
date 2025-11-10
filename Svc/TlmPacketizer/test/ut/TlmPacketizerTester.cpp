@@ -909,7 +909,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
     Fw::TlmBuffer val;
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, time, val);
     // hasn't received a value yet
-    ASSERT_EQ(val.getBuffLength(), 0);
+    ASSERT_EQ(val.getSize(), 0);
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 
     Fw::Time timeIn(123, 456);
@@ -919,14 +919,14 @@ void TlmPacketizerTester ::getChannelValueTest() {
 
     valid = this->invoke_to_TlmGet(0, 10, time, val);
     // should have a value
-    ASSERT_EQ(val.getBuffLength(), 4);
+    ASSERT_EQ(val.getSize(), 4);
     ASSERT_EQ(time, timeIn);
     ASSERT_EQ(valid, Fw::TlmValid::VALID);
 
     // grab an ignored chan
     valid = this->invoke_to_TlmGet(0, 25, time, val);
     // should not have a value
-    ASSERT_EQ(val.getBuffLength(), 0);
+    ASSERT_EQ(val.getSize(), 0);
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 
     // grab a nonexistent chan
@@ -934,7 +934,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
     val.setBuffLen(4);
     valid = this->invoke_to_TlmGet(0, 9123, time, val);
     // should not have a value
-    ASSERT_EQ(val.getBuffLength(), 0);
+    ASSERT_EQ(val.getSize(), 0);
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 }
 

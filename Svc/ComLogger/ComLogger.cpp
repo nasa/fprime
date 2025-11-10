@@ -87,7 +87,7 @@ void ComLogger ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 con
     FW_ASSERT(portNum == 0);
 
     // Get length of buffer:
-    FwSizeType sizeNative = data.getBuffLength();
+    FwSizeType sizeNative = data.getSize();
     // ComLogger only writes 16-bit sizes to save space
     // on disk:
     FW_ASSERT(sizeNative < 65536, static_cast<FwAssertArgType>(sizeNative));
@@ -182,8 +182,8 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
         U8 buffer[sizeof(size)];
         Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
         serialLength.serializeFrom(size);
-        if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getBuffLength()))) {
-            this->m_byteCount += static_cast<U32>(serialLength.getBuffLength());
+        if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()))) {
+            this->m_byteCount += static_cast<U32>(serialLength.getSize());
         } else {
             return;
         }
