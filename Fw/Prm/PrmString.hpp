@@ -26,7 +26,7 @@ class ParamString final : public StringBase {
 
     ParamString(const ParamString& src) : StringBase() { *this = src; }
 
-    ParamString(const StringBase& src) : StringBase() { *this = src; }
+    ParamString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     ParamString(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class ParamString final : public StringBase {
         return *this;
     }
 
-    ParamString& operator=(const StringBase& src) {
+    ParamString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

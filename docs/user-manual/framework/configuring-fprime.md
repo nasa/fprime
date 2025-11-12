@@ -27,12 +27,14 @@ This guide includes:
 All configurable files (top-level and component-specific) for F´ are available in the top-level
 `config` directory. By default, all deployments use the F´ provided default configuration options.
 
-Projects can also take ownership of the `config` directory to provide their own `AcConstants.fpp`
-and configuration `*.hpp` files. To do so, copy the `config` directory into your project and use the
-`config_directory` options in the project's `settings.ini` file.
-See the [settings.ini guide](../build-system/settings.md) for more details.
+Projects can also take ownership of the `config` directory to provide their own HPP/FPP configuration to
+override the framework defaults. To do so, copy the `config` directory into your project and use the
+[`register_fprime_config()`](../../reference/api/cmake/API.md) CMake API to let the build system know 
+to use your configuration overrides. This is demonstrated in various F´ reference projects, such as the 
+[FprimeZephyrReference](https://github.com/fprime-community/fprime-zephyr-reference/tree/devel/FprimeZephyrReference).
 
-The `FpConfig.h` file is a C header allowing the user to define global settings.
+The `FpConfig.h` file is a C header allowing the user to define global settings. Other configuration options
+can be found in `FpConfig.fpp` and `FpConstants.fpp`
 Where components allow specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
 
 ## AcConstants.fpp
@@ -59,12 +61,12 @@ number of components.
 ## FpConfig.h
 
 Some configurations may be changed during compilation time. The F′ framework has a number of optional features that can
-be enabled or disabled by editing the `config/FpConfig.h` file.  These changes affect of the whole of the F´
+be enabled or disabled by editing one of the `config/FpConfig` files (H, HPP, or FPP).  These changes affect of the whole of the F´
 deployment. Users can change or override defined *C* macro values that activate or disable code by using compiler flags
 for different deployment settings. During flight software (FSW) execution, disabling unnecessary features saves memory
 and CPU cycles.
 
-All of these settings should be set in `FpConfig.h` and for most projects, this whole file will be cloned and owned
+All of these settings should be set in `FpConfig.fpp` and for most projects, this whole file will be cloned and owned
 for their specific settings. Typically, the user will define the setting to be 0 for off and 1 for on.
 
 e.g.

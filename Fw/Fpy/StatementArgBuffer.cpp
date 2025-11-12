@@ -14,7 +14,7 @@ StatementArgBuffer::StatementArgBuffer() {}
 StatementArgBuffer::~StatementArgBuffer() {}
 
 StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -23,13 +23,17 @@ StatementArgBuffer& StatementArgBuffer::operator=(const StatementArgBuffer& othe
         return *this;
     }
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
+Serializable::SizeType StatementArgBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* StatementArgBuffer::getBuffAddr() const {
@@ -41,7 +45,7 @@ U8* StatementArgBuffer::getBuffAddr() {
 }
 
 bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
-    if (this->getBuffLength() != other.getBuffLength()) {
+    if (this->getSize() != other.getSize()) {
         return false;
     }
 
@@ -51,7 +55,7 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
     FW_ASSERT(us);
     FW_ASSERT(them);
 
-    for (Serializable::SizeType byte = 0; byte < this->getBuffLength(); byte++) {
+    for (Serializable::SizeType byte = 0; byte < this->getSize(); byte++) {
         if (us[byte] != them[byte]) {
             return false;
         }
@@ -63,7 +67,7 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
 #if FW_SERIALIZABLE_TO_STRING
 void StatementArgBuffer::toString(Fw::StringBase& text) const {
     static const char* formatString = "(data = %p, size = %" PRI_FwSizeType ")";
-    text.format(formatString, &this->m_bufferData, this->getBuffLength());
+    text.format(formatString, &this->m_bufferData, this->getSize());
 }
 #endif
 }  // namespace Fw

@@ -275,7 +275,7 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
     FwSizeType read = 0;
     // Loop reading chunk by chunk
     for (FwSizeType i = 0; i < size; i += read) {
-        FwSizeType current_chunk_size = FW_MIN(size - i, FW_FILE_CHUNK_SIZE);
+        FwSizeType current_chunk_size = FW_MIN(size - i, static_cast<FwSizeType>(FW_FILE_CHUNK_SIZE));
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {

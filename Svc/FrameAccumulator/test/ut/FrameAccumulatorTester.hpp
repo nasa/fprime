@@ -66,6 +66,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test returning ownership of a buffer
     void testBufferReturnDeallocation();
 
+    //! Test handling of errors from the FrameDetector (too large size_out)
+    void testDetectionErrorHandling();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

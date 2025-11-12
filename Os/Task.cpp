@@ -7,7 +7,7 @@
 
 namespace Os {
 
-TaskInterface::Arguments::Arguments(const Fw::StringBase& name,
+TaskInterface::Arguments::Arguments(const Fw::ConstStringBase& name,
                                     const Os::TaskInterface::taskRoutine routine,
                                     void* const routine_argument,
                                     const FwTaskPriorityType priority,
@@ -81,7 +81,7 @@ Task::State Task::getState() {
     return state;
 }
 
-Task::Status Task::start(const Fw::StringBase& name,
+Task::Status Task::start(const Fw::ConstStringBase& name,
                          const taskRoutine routine,
                          void* const arg,
                          const FwTaskPriorityType priority,

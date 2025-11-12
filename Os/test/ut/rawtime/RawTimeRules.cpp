@@ -38,10 +38,16 @@ bool Os::Test::RawTime::Tester::Now::precondition(const Os::Test::RawTime::Teste
 
 void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester& state) {
     FwIndexType index = state.pick_random_index();
+    Os::RawTime& raw_time_under_test = state.m_times[index];
 
-    Os::RawTime::Status status = state.m_times[index].now();
-    state.shadow_now(index);
+    auto lower_time = std::chrono::system_clock::now();
+    Os::RawTime::Status status = raw_time_under_test.now();
+    auto upper_time = std::chrono::system_clock::now();
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
+    // Assert that the RawTime now() call returned a time between lower_time and upper_time,
+    // and update the shadow time accordingly. This helper is platform-specific and must be implemented
+    // by the OSAL implementor.
+    Os::Test::RawTime::assert_and_update_now(raw_time_under_test, lower_time, upper_time, state.m_shadow_times[index]);
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -63,7 +69,8 @@ void Os::Test::RawTime::Tester::GetTimeDiffU32::action(Os::Test::RawTime::Tester
     U32 shadow_result = state.shadow_getDiffUsec(state.m_shadow_times[index1], state.m_shadow_times[index2]);
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
 
-    state.shadow_validate_diff_result(result, shadow_result);
+    U32 result_diff = result - shadow_result;
+    ASSERT_TRUE(result_diff == 0) << "Difference between results: " << result_diff << " microseconds";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -77,14 +84,18 @@ bool Os::Test::RawTime::Tester::GetTimeInterval::precondition(const Os::Test::Ra
 }
 
 void Os::Test::RawTime::Tester::GetTimeInterval::action(Os::Test::RawTime::Tester& state) {
-    Fw::TimeInterval interval;
+    Fw::TimeInterval measured_interval;
     FwIndexType index1 = state.pick_random_index();
     FwIndexType index2 = state.pick_random_index();
 
-    Os::RawTime::Status status = state.m_times[index1].getTimeInterval(state.m_times[index2], interval);
+    Os::RawTime::Status status = state.m_times[index1].getTimeInterval(state.m_times[index2], measured_interval);
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
 
-    state.shadow_validate_interval_result(index1, index2, interval);
+    // Get shadow interval and validate
+    Fw::TimeInterval shadow_interval;
+    state.shadow_getTimeInterval(index1, index2, shadow_interval);
+    Fw::TimeInterval result = Fw::TimeInterval::sub(shadow_interval, measured_interval);
+    ASSERT_TRUE(result == Fw::TimeInterval(0, 0)) << "Interval difference: " << result;
 }
 
 // ------------------------------------------------------------------------------------------------------

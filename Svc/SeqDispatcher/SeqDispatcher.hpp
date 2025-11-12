@@ -68,7 +68,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx, const Fw::StringBase& fileName, Fw::Wait block);
+    void runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block);
 
     // ----------------------------------------------------------------------
     // Command handler implementations

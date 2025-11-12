@@ -21,7 +21,7 @@ class TaskString final : public Fw::StringBase {
 
     TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-    TaskString(const StringBase& src) : StringBase() { *this = src; }
+    TaskString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit TaskString(const char* src) : StringBase() { *this = src; }
 
@@ -32,7 +32,7 @@ class TaskString final : public Fw::StringBase {
         return *this;
     }
 
-    TaskString& operator=(const StringBase& src) {
+    TaskString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

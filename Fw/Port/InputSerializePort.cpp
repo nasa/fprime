@@ -14,7 +14,7 @@ void InputSerializePort::init() {
     InputPortBase::init();
 }
 
-SerializeStatus InputSerializePort::invokeSerial(SerializeBufferBase& buffer) {
+SerializeStatus InputSerializePort::invokeSerial(LinearBufferBase& buffer) {
     FW_ASSERT(this->m_comp);
     FW_ASSERT(this->m_func);
 

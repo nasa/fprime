@@ -175,6 +175,102 @@ TEST(ParameterDbTest, PrmFileWriteError) {
     tester.runFileWriteError();
 }
 
+TEST(ParameterDbTest, PrmDbEqualTest) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runDbEqualTest();
+}
+
+TEST(ParameterDbTest, PrmDbCopyTest) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runDbCopyTest();
+}
+
+TEST(ParameterDbTest, PrmDbCommitTest) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runDbCommitTest();
+}
+
+TEST(ParameterDbTest, PrmDbFileLoadNominal) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmFileLoadNominal();
+}
+
+TEST(ParameterDbTest, PrmDbFileLoadWithErrors) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmFileLoadWithErrors();
+}
+
+TEST(ParameterDbTest, PrmFileLoadIllegalActions) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmFileLoadIllegal();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

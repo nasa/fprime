@@ -235,7 +235,8 @@ def test_active_logger_filter(fprime_test_api):
         fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP")
         fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP")
 
-        time.sleep(0.5)
+        # Wait >1s for ComAggregator's 1Hz timeout to flush all downlink
+        time.sleep(1.5)
 
         fprime_test_api.assert_event_count(pred, cmd_events)
         fprime_test_api.assert_event_count(pred, actHI_events)
@@ -247,7 +248,8 @@ def test_active_logger_filter(fprime_test_api):
         fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
         fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
 
-        time.sleep(0.5)
+        # Wait >1s for ComAggregator's 1Hz timeout to flush all downlink
+        time.sleep(1.5)
 
         fprime_test_api.assert_event_count(zero, cmd_events)
         fprime_test_api.assert_event_count(pred, actHI_events)

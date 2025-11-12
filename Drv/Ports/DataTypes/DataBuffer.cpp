@@ -13,7 +13,7 @@ DataBuffer::DataBuffer() {}
 DataBuffer::~DataBuffer() {}
 
 DataBuffer::DataBuffer(const DataBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getBuffLength());
+    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getBuffLength());
+    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType DataBuffer::getBuffCapacity() const {
+FwSizeType DataBuffer::getCapacity() const {
     return sizeof(this->m_data);
+}
+
+FwSizeType DataBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* DataBuffer::getBuffAddr() const {

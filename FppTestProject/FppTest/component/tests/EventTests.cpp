@@ -138,6 +138,8 @@ void Tester ::testEvent(FwIndexType portNum, FppTest::Types::BoolParam& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
+    this->setTestTime(Fw::Time(0, 0));
+
     for (U32 i = 0; i < component.EVENTID_EVENTBOOL_THROTTLE; i++) {
         testEventHelper(portNum, data, i + 1);
     }
@@ -145,9 +147,19 @@ void Tester ::testEvent(FwIndexType portNum, FppTest::Types::BoolParam& data) {
     // Test that throttling works
     testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE);
 
+    // Check that the event throttle resets after the interval passes
+
+    this->setTestTime(Fw::Time(6, 0));
+    for (U32 i = 0; i < component.EVENTID_EVENTBOOL_THROTTLE; i++) {
+        testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE + i + 1);
+    }
+
+    // Test that throttling works
+    testEventHelper(portNum, data, 2 * component.EVENTID_EVENTBOOL_THROTTLE);
+
     // Test throttle reset
     component.log_WARNING_LO_EventBool_ThrottleClear();
-    testEventHelper(portNum, data, component.EVENTID_EVENTBOOL_THROTTLE + 1);
+    testEventHelper(portNum, data, (2 * component.EVENTID_EVENTBOOL_THROTTLE) + 1);
 
     this->printTextLogHistory(stdout);
 }

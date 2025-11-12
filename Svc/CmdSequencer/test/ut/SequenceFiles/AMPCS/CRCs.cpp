@@ -61,7 +61,7 @@ void createFile(Fw::SerializeBufferBase& buffer, const char* const fileName) {
 void computeCRC(Fw::SerializeBufferBase& buffer, CRC& crc) {
     crc.init();
     const U8* const addr = buffer.getBuffAddr();
-    const U32 size = buffer.getBuffLength();
+    const U32 size = buffer.getSize();
     crc.update(addr, size);
     crc.finalize();
 }

@@ -16,45 +16,44 @@ LogPacket::LogPacket() : m_id(0) {
 
 LogPacket::~LogPacket() {}
 
-SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
+SerializeStatus LogPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     SerializeStatus stat = ComPacket::serializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_id);
+    stat = buffer.serializeFrom(this->m_id, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_timeTag);
+    stat = buffer.serializeFrom(this->m_timeTag, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
     // We want to add data but not size for the ground software
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getBuffLength(),
-                                Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
+SerializeStatus LogPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     SerializeStatus stat = deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_id);
+    stat = buffer.deserializeTo(this->m_id, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_timeTag);
+    stat = buffer.deserializeTo(this->m_timeTag, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
     // remainder of buffer must be telemetry value
-    FwSizeType size = buffer.getBuffLeft();
+    FwSizeType size = buffer.getDeserializeSizeLeft();
     stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

@@ -1,4 +1,7 @@
-message(STATUS "[F Prime] F Prime CMake package found at: ${CMAKE_CURRENT_LIST_FILE}")
+# Helper not available as fprime cmake code not loaded yet
+if (NOT FPRIME_CMAKE_QUIET)
+    message(STATUS "[F Prime] F Prime CMake package found at: ${CMAKE_CURRENT_LIST_FILE}")
+endif()
 include("${CMAKE_CURRENT_LIST_DIR}/FPrime.cmake")
 
 # By default the F Prime package will load the codebase. This can be set OFF by setting the variable

@@ -29,6 +29,14 @@ namespace File {
 #define USER_FLAGS (0)
 #endif
 
+// O_SYNC is not defined on every system. This will set up the SYNC_FLAGS variable to be O_SYNC when defined and
+// (0) when not defined. This allows OPEN_SYNC_WRITE to fall-back to OPEN_WRITE on those systems.
+#if defined(O_SYNC)
+#define SYNC_FLAGS O_SYNC
+#else
+#define SYNC_FLAGS (0)
+#endif
+
 // Create constants for the max limits of the signed types
 // These constants are used for comparisons with complementary unsigned types to avoid sign-compare warning
 using UnsignedOffT = std::make_unsigned<off_t>::type;
@@ -83,7 +91,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             mode_flags = O_WRONLY | O_CREAT;
             break;
         case OPEN_SYNC_WRITE:
-            mode_flags = O_WRONLY | O_CREAT | O_SYNC;
+            mode_flags = O_WRONLY | O_CREAT | SYNC_FLAGS;
             break;
         case OPEN_CREATE:
             mode_flags =
@@ -157,7 +165,7 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     // this call is properly implemented. This code starts with a status of "NOT_SUPPORTED".  When the standard is met
     // an attempt will be made to called posix_fallocate, and should that still return NOT_SUPPORTED then fallback
     // code is engaged to synthesize this behavior.
-#if _POSIX_C_SOURCE >= 200112L
+#if _POSIX_C_SOURCE >= 200112L && !(defined(FPRIME_SYNTHETIC_FALLOCATE) && FPRIME_SYNTHETIC_FALLOCATE)
     else {
         int errno_status =
             ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));

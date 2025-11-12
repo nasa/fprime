@@ -1,13 +1,10 @@
 # ======================================================================
 # FPP file for configuration of the communications stack
-#
-# The only reason to modify these definitions is if you are writing your own
-# Framer/Deframer implementations and need more contextual data than what is
-# defined
 # ======================================================================
 
 @ The width of packet descriptors when they are serialized by the framework
 type FwPacketDescriptorType = U16
+constant SIZE_OF_FwPacketDescriptorType = 2  @< Size of FwPacketDescriptorType in bytes
 
 module ComCfg {
 
@@ -17,6 +14,7 @@ module ComCfg {
     # - potentially APID enum ?
     constant SpacecraftId = 0x0044    # Spacecraft ID (10 bits)
     constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
     enum Apid : FwPacketDescriptorType {

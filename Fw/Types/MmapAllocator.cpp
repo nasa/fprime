@@ -21,7 +21,10 @@ MmapAllocator::MmapAllocator() : m_length(0) {}
 
 MmapAllocator::~MmapAllocator() {}
 
-void* MmapAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) {
+void* MmapAllocator::allocate(const FwEnumStoreType identifier,
+                              FwSizeType& size,
+                              bool& recoverable,
+                              FwSizeType alignment) {
     void* addr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     if (addr == MAP_FAILED) {
         size = 0;

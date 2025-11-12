@@ -26,7 +26,7 @@ class CmdStringArg final : public StringBase {
 
     CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
 
-    CmdStringArg(const StringBase& src) : StringBase() { *this = src; }
+    CmdStringArg(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit CmdStringArg(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class CmdStringArg final : public StringBase {
         return *this;
     }
 
-    CmdStringArg& operator=(const StringBase& src) {
+    CmdStringArg& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

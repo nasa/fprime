@@ -17,11 +17,11 @@ class InputSerializePort final : public InputPortBase {
     void init() override;
 
     SerializeStatus invokeSerial(
-        SerializeBufferBase& buffer) override;  // !< invoke the port with a serialized version of the call
+        LinearBufferBase& buffer) override;  // !< invoke the port with a serialized version of the call
 
     typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp,
                                 FwIndexType portNum,
-                                SerializeBufferBase& arg);                      //!< port callback definition
+                                LinearBufferBase& arg);                         //!< port callback definition
     void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr);  //!< call to register a component
 
   protected:

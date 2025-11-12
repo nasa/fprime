@@ -59,7 +59,8 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
     // -------- Attempt to extract APID from Payload --------
     ComCfg::FrameContext contextCopy = context;
-    if (deserializer.getBuffLeft() < FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
+    if (deserializer.getDeserializeSizeLeft() <
+        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
         // Not enough data to read a valid FwPacketDescriptor, emit event and skip attempting to read an APID
         this->log_WARNING_LO_PayloadTooShort();
     } else {

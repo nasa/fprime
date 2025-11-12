@@ -143,6 +143,7 @@ CYCLEOUT
 DATAPRODUCTS
 DATAPRODUCTSSUBTOPOLOGY
 DATAROOTDIR
+datasheet
 DDDTHH
 Debian
 deconstructor
@@ -341,7 +342,9 @@ IPCFG
 IPHELPER
 isf
 isgreater
+isgreaterequal
 isless
+islessequal
 isr
 isunordered
 itimerspec
@@ -434,6 +437,8 @@ ncsl
 newtio
 nmsgs
 NOBLOCK
+NODELABEL
+noinline
 NOLINT
 NOLINTNEXTLINE
 noparent
@@ -735,6 +740,7 @@ wrs
 wxgui
 wxy
 Xapian
+XBee
 xdf
 xdffe
 xsltproc

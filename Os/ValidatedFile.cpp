@@ -31,11 +31,11 @@ Os::ValidateFile::Status ValidatedFile ::createHashFile() {
     return status;
 }
 
-const Fw::StringBase& ValidatedFile ::getFileName() const {
+const Fw::ConstStringBase& ValidatedFile ::getFileName() const {
     return this->m_fileName;
 }
 
-const Fw::StringBase& ValidatedFile ::getHashFileName() const {
+const Fw::ConstStringBase& ValidatedFile ::getHashFileName() const {
     return this->m_hashFileName;
 }
 

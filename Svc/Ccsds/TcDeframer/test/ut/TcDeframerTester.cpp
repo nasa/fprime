@@ -36,6 +36,7 @@ void TcDeframerTester::testDataReturn() {
     ComCfg::FrameContext nullContext;
     this->invoke_to_dataReturnIn(0, buffer, nullContext);
     ASSERT_from_dataReturnOut_SIZE(1);  // incoming buffer should be deallocated
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);   // only port call
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), data);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), sizeof(data));
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, nullContext);
@@ -60,6 +61,7 @@ void TcDeframerTester::testNominalDeframing() {
     this->invoke_to_dataIn(0, buffer, nullContext);
 
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);  // only one port call
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ASSERT_EQ(outBuffer.getSize(), payloadLength);
     for (FwIndexType i = 0; i < payloadLength; i++) {
@@ -82,6 +84,8 @@ void TcDeframerTester::testInvalidScId() {
 
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_SCID);  // errorNotify port called with invalid SCID
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                      // exactly 1 event emitted
@@ -104,6 +108,8 @@ void TcDeframerTester::testInvalidVcId() {
 
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_VCID);  // errorNotify port called with invalid VCID
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                                           // exactly 1 event emitted
@@ -125,6 +131,8 @@ void TcDeframerTester::testInvalidLengthToken() {
 
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);   // two port calls, one for dataReturn, one for errorNotify
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_LENGTH);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);                     // exactly 1 event emitted
@@ -150,6 +158,8 @@ void TcDeframerTester::testInvalidCrc() {
     // Invalid CRC drops the frame
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);  // two port calls, one for dataReturn, one for errorNotify
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::TC_INVALID_CRC);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);  // exactly 1 event emitted
@@ -158,10 +168,6 @@ void TcDeframerTester::testInvalidCrc() {
 
 void TcDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, bool acceptAllVcid) {
     this->component.configure(vcid, scid, acceptAllVcid);
-    // this->component.m_spacecraftId = scid;
-    // this->component.m_vcId = vcid;
-    // // this->component.m_sequenceCount = sequenceNumber;
-    // this->component.m_acceptAllVcid = acceptAllVcid;
 }
 
 Fw::Buffer TcDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 scid, U8 vcid, U8 seqNumber) {

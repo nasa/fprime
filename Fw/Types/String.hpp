@@ -26,7 +26,7 @@ class String final : public StringBase {
 
     String(const String& src) : StringBase() { *this = src; }
 
-    String(const StringBase& src) : StringBase() { *this = src; }
+    String(const ConstStringBase& src) : StringBase() { *this = src; }
 
     String(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class String final : public StringBase {
         return *this;
     }
 
-    String& operator=(const StringBase& src) {
+    String& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

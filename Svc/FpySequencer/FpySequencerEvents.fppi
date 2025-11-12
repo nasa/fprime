@@ -13,6 +13,14 @@ event FileOpenError(
     severity warning high \
     format "File open error encountered while opening {}: {}"
 
+event FileWriteError(
+    writeSize: FwSizeType
+    filePath: string
+    errorCode: I32
+) \
+    severity warning high \
+    format "File write error encountered while writing {} bytes to {}: {}"
+
 event FileReadError(
     readStage: FileReadStage
     filePath: string
@@ -87,6 +95,13 @@ event SequenceCancelled(
 ) \
     severity activity high \
     format "Cancelled sequence file {}"
+
+event SequenceExitedWithError(
+    filePath: string
+    errorCode: U8
+) \
+    severity warning high \
+    format "Sequence {} exited with error code {}"
 
 event UnknownSequencerDirective(
     $opcode: U8
@@ -193,28 +208,26 @@ event TooManySequenceArgs(
     severity warning high \
     format "A sequence specified it had {} args but the max was {}"
 
-event TooManySequenceStatements(
+event TooManySequenceDirectives(
     count: U16
     max: U16
 ) \
     severity warning high \
-    format "A sequence specified it had {} statements but the max was {}"
+    format "A sequence specified it had {} directives but the max was {}"
 
-event DebugBroken(
+event SequencePaused(
     stmtIdx: U32
-    breakOnce: bool
 ) \
     severity activity high \
-    format "Debug breakpoint reached before dispatching statement index {}. Will break once: {}"
+    format "Sequence paused before dispatching directive index {}"
 
-event DebugBreakpointSet(
+event BreakpointSet(
     breakpointIdx: U32
     breakOnce: bool
 ) \
     severity activity high \
-    format "Debug breakpoint set before statement index {}. Will break once: {}"
+    format "Breakpoint set before directive index {}. Will break once: {}"
 
-event DebugBreakpointCleared() \
+event BreakpointCleared() \
     severity activity high \
-    format "Debug breakpoint cleared"
-    
+    format "Breakpoint cleared"

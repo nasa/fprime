@@ -7,7 +7,7 @@
 module Svc{
     
     @ An enumeration for version status
-    enum VersionStatus {
+    enum VersionStatus : U8 {
         OK = 0 @< Version was good
         FAILURE = 1 @< Failure to get version
     }
