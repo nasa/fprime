@@ -19,6 +19,9 @@ module Svc {
     @ Ping out
     output port pingOut: Svc.Ping
 
+    @ Announce a received file for further processing
+    output port fileAnnounce: Svc.FileAnnounce
+
     # ----------------------------------------------------------------------
     # Special Ports
     # ----------------------------------------------------------------------

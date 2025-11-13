@@ -151,6 +151,9 @@ void FileUplink ::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
         this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
         this->compareChecksums(endPacket);
         this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
+        if (this->isConnected_fileAnnounce_OutputPort(0)) {
+            this->fileAnnounce_out(0,this->m_file.name);
+        }
     } else {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_END);
     }
