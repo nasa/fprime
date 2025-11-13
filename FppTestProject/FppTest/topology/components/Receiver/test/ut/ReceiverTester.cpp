@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  ATester.cpp
+// \title  ReceiverTester.cpp
 // \author bocchino
-// \brief  cpp file for A component test harness implementation class
+// \brief  cpp file for Receiver component test harness implementation class
 // ======================================================================
 
-#include "ATester.hpp"
+#include "ReceiverTester.hpp"
 #include "STest/Pick/Pick.hpp"
 
 namespace FppTest {
@@ -13,20 +13,22 @@ namespace FppTest {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-ATester ::ATester() : AGTestBase("ATester", ATester::MAX_HISTORY_SIZE), component("A") {
+ReceiverTester::ReceiverTester() : ReceiverGTestBase("ReceiverTester", ReceiverTester::MAX_HISTORY_SIZE), component("Receiver") {
     this->initComponents();
     this->connectPorts();
 }
 
-ATester ::~ATester() {}
+ReceiverTester::~ReceiverTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void ATester::sendData() {
+void ReceiverTester::receiveData() {
     const U32 value = STest::Pick::any();
-    this->component.sendData(value);
+    this->invoke_to_dataIn(0, value);
+    this->component.doDispatch();
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataOut(0, value);
 }

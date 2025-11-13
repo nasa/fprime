@@ -1,29 +1,29 @@
 // ======================================================================
-// \title  B.hpp
+// \title  Receiver.hpp
 // \author bocchino
-// \brief  hpp file for B component implementation class
+// \brief  hpp file for Receiver component implementation class
 // ======================================================================
 
 #ifndef FppTest_B_HPP
 #define FppTest_B_HPP
 
 #include "Fw/Types/StringBase.hpp"
-#include "FppTest/topology/components/B/BComponentAc.hpp"
+#include "FppTest/topology/components/Receiver/ReceiverComponentAc.hpp"
 
 namespace FppTest {
 
-class B final : public BComponentBase {
+class Receiver final : public ReceiverComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
     //! Construct B object
-    B(const char* const compName  //!< The component name
+    Receiver(const char* const compName  //!< The component name
     );
 
     //! Destroy B object
-    ~B();
+    ~Receiver();
 
   private:
     // ----------------------------------------------------------------------

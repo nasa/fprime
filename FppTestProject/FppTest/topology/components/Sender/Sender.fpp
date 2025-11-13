@@ -1,6 +1,6 @@
 module FppTest {
 
-  passive component A {
+  passive component Sender {
 
     sync input port dataIn: Data
 

@@ -1,14 +1,14 @@
 // ======================================================================
-// \title  BTestMain.cpp
+// \title  ReceiverTestMain.cpp
 // \author bocchino
-// \brief  cpp file for B component test main function
+// \brief  cpp file for Receiver component test main function
 // ======================================================================
 
-#include "BTester.hpp"
+#include "ReceiverTester.hpp"
 #include "STest/Random/Random.hpp"
 
 TEST(Nominal, receiveData) {
-    FppTest::BTester tester;
+    FppTest::ReceiverTester tester;
     tester.receiveData();
 }
 

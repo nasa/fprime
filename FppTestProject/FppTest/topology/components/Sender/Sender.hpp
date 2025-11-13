@@ -1,29 +1,29 @@
 // ======================================================================
-// \title  A.hpp
+// \title  Sender.hpp
 // \author bocchino
-// \brief  hpp file for A component implementation class
+// \brief  hpp file for Sender component implementation class
 // ======================================================================
 
 #ifndef FppTest_A_HPP
 #define FppTest_A_HPP
 
 #include "Fw/Types/StringBase.hpp"
-#include "FppTest/topology/components/A/AComponentAc.hpp"
+#include "FppTest/topology/components/Sender/SenderComponentAc.hpp"
 
 namespace FppTest {
 
-class A final : public AComponentBase {
+class Sender final : public AComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
     //! Construct A object
-    A(const char* const compName  //!< The component name
+    Sender(const char* const compName  //!< The component name
     );
 
     //! Destroy A object
-    ~A();
+    ~Sender();
 
   private:
     // ----------------------------------------------------------------------

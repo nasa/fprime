@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  BTester.hpp
+// \title  ReceiverTester.hpp
 // \author bocchino
-// \brief  hpp file for B component test harness implementation class
+// \brief  hpp file for Receiver component test harness implementation class
 // ======================================================================
 
-#ifndef FppTest_BTester_HPP
-#define FppTest_BTester_HPP
+#ifndef FppTest_ReceiverTester_HPP
+#define FppTest_ReceiverTester_HPP
 
-#include "FppTest/topology/components/B/B.hpp"
-#include "FppTest/topology/components/B/BGTestBase.hpp"
+#include "FppTest/topology/components/Receiver/Receiver.hpp"
+#include "FppTest/topology/components/Receiver/ReceiverGTestBase.hpp"
 
 namespace FppTest {
 
-class BTester final : public BGTestBase {
+class ReceiverTester final : public ReceiverGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -33,10 +33,10 @@ class BTester final : public BGTestBase {
     // ----------------------------------------------------------------------
 
     //! Construct object BTester
-    BTester();
+    ReceiverTester();
 
     //! Destroy object BTester
-    ~BTester();
+    ~ReceiverTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ class BTester final : public BGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    B component;
+    Receiver component;
 };
 
 }  // namespace FppTest

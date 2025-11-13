@@ -1,5 +1,5 @@
 module FppTest {
-    interface TypedPorts {
+    interface TypedPortsInputs {
         # ----------------------------------------------------------------------
         # Typed input ports with no return type
         # ----------------------------------------------------------------------
@@ -27,22 +27,6 @@ module FppTest {
         sync input port structArgsSync: [2] StructArgs
 
         guarded input port structArgsGuarded: [2] StructArgs
-
-        # ----------------------------------------------------------------------
-        # Typed output ports with no return type
-        # ----------------------------------------------------------------------
-
-        output port noArgsOut: [2] NoArgs
-
-        output port primitiveArgsOut: [2] PrimitiveArgs
-
-        output port stringArgsOut: [2] StringArgs
-
-        output port enumArgsOut: [2] EnumArgs
-
-        output port arrayArgsOut: [2] ArrayArgs
-
-        output port structArgsOut: [2] StructArgs
 
         # ----------------------------------------------------------------------
         # Typed input ports with return type
@@ -79,6 +63,25 @@ module FppTest {
         sync input port structReturnSync: StructReturn
 
         guarded input port structReturnGuarded: StructReturn
+
+    }
+
+    interface TypedPortsOutputs {
+        # ----------------------------------------------------------------------
+        # Typed output ports with no return type
+        # ----------------------------------------------------------------------
+
+        output port noArgsOut: [2] NoArgs
+
+        output port primitiveArgsOut: [2] PrimitiveArgs
+
+        output port stringArgsOut: [2] StringArgs
+
+        output port enumArgsOut: [2] EnumArgs
+
+        output port arrayArgsOut: [2] ArrayArgs
+
+        output port structArgsOut: [2] StructArgs
 
         # ----------------------------------------------------------------------
         # Typed output ports with return type

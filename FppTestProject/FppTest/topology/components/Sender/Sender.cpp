@@ -1,12 +1,12 @@
 // ======================================================================
-// \title  B.cpp
+// \title  Sender.cpp
 // \author bocchino
-// \brief  cpp file for B component implementation class
+// \brief  cpp file for Sender component implementation class
 // ======================================================================
 
 #include <iostream>
 
-#include "FppTest/topology/components/B/B.hpp"
+#include "FppTest/topology/components/Sender/Sender.hpp"
 
 namespace FppTest {
 
@@ -14,19 +14,30 @@ namespace FppTest {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-B ::B(const char* const compName) : BComponentBase(compName) {}
+Sender::Sender(const char* const compName) : AComponentBase(compName) {}
 
-B ::~B() {}
+Sender::~Sender() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void B ::dataIn_handler(FwIndexType portNum, U32 data) {
+void Sender::dataIn_handler(FwIndexType portNum, U32 data) {
     Fw::String msg;
     msg.format("dataIn_handler: received %" PRI_U32, data);
     this->printMessage(msg);
+}
+
+// ----------------------------------------------------------------------
+// Public interface
+// ----------------------------------------------------------------------
+
+void Sender::sendData(U32 data  //!< The data
+) {
+    Fw::String msg;
     if (this->isConnected_dataOut_OutputPort(0)) {
+        msg.format("dataIn_handler: sending %" PRI_U32, data);
+        this->printMessage(msg);
         this->dataOut_out(0, data);
     }
 }
@@ -35,9 +46,9 @@ void B ::dataIn_handler(FwIndexType portNum, U32 data) {
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void B::printMessage(const Fw::StringBase& msg) {
+void Sender::printMessage(const Fw::StringBase& msg) {
     const auto instance = this->getInstance();
-    std::cout << "B (instance " << instance << "): " << msg.toChar() << "\n";
+    std::cout << "A (instance " << instance << "): " << msg.toChar() << "\n";
     fflush(stdout);
 }
 

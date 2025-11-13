@@ -1,6 +1,6 @@
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/A.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/A.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sender.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sender.fpp"
 )
 set(MOD_DEPS
   Fw/Comp
@@ -10,7 +10,7 @@ set(MOD_DEPS
 register_fprime_module()
 
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/A.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sender.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ATestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ATester.cpp"
 )
