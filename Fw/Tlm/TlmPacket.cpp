@@ -62,8 +62,8 @@ void TlmPacket::setBuffer(Fw::ComBuffer& buffer) {
 
 SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer) {
     // check to make sure there is room for all the fields
-    FwSizeType left = this->m_tlmBuffer.getBuffCapacity() - this->m_tlmBuffer.getBuffLength();
-    if ((sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength()) > left) {
+    FwSizeType left = this->m_tlmBuffer.getCapacity() - this->m_tlmBuffer.getSize();
+    if ((sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getSize()) > left) {
         return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
@@ -82,8 +82,7 @@ SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& b
     }
 
     // telemetry buffer
-    stat =
-        this->m_tlmBuffer.serializeFrom(buffer.getBuffAddr(), buffer.getBuffLength(), Fw::Serialization::OMIT_LENGTH);
+    stat = this->m_tlmBuffer.serializeFrom(buffer.getBuffAddr(), buffer.getSize(), Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -125,25 +124,24 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     return Fw::FW_SERIALIZE_OK;
 }
 
-SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer, Fw::Endianness mode) const {
+SerializeStatus TlmPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // serialize the number of packets
     SerializeStatus stat = buffer.serializeFrom(this->m_numEntries, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     // Serialize the ComBuffer
-    return buffer.serializeFrom(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getBuffLength(),
-                                Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
 }
 
-SerializeStatus TlmPacket::deserializeFrom(SerializeBufferBase& buffer, Fw::Endianness mode) {
+SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     // deserialize the number of packets
     SerializeStatus stat = buffer.deserializeTo(this->m_numEntries, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     // deserialize the channel value entry buffers
-    FwSizeType size = buffer.getBuffLeft();
+    FwSizeType size = buffer.getDeserializeSizeLeft();
     stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

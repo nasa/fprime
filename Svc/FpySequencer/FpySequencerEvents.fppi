@@ -13,6 +13,14 @@ event FileOpenError(
     severity warning high \
     format "File open error encountered while opening {}: {}"
 
+event FileWriteError(
+    writeSize: FwSizeType
+    filePath: string
+    errorCode: I32
+) \
+    severity warning high \
+    format "File write error encountered while writing {} bytes to {}: {}"
+
 event FileReadError(
     readStage: FileReadStage
     filePath: string
@@ -87,6 +95,20 @@ event SequenceCancelled(
 ) \
     severity activity high \
     format "Cancelled sequence file {}"
+
+event SequenceExitedWithError(
+    filePath: string
+    errorCode: U8
+) \
+    severity warning high \
+    format "Sequence {} exited with error code {}"
+
+event SequenceAsserted(
+    filePath: string
+    errorCode: U8
+) \
+    severity warning high \
+    format "Sequence {} failed an assertion with error code {}"
 
 event UnknownSequencerDirective(
     $opcode: U8
@@ -216,4 +238,3 @@ event BreakpointSet(
 event BreakpointCleared() \
     severity activity high \
     format "Breakpoint cleared"
-    

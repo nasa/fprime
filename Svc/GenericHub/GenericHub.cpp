@@ -41,7 +41,7 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serialize.serializeFrom(data, size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    outgoing.setSize(static_cast<U32>(serialize.getBuffLength()));
+    outgoing.setSize(static_cast<U32>(serialize.getSize()));
     toBufferDriver_out(0, outgoing);
 }
 
@@ -55,7 +55,8 @@ void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffe
 }
 
 void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO: Send fwBuffer on fromBufferDriverReturn_out
+    // Return the buffer
+    fromBufferDriverReturn_out(0, fwBuffer); 
 }
 
 void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -129,13 +130,15 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
         // Send it!
         this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
 
-        // Deallocate the existing buffer
+        // Return the received buffer
         fromBufferDriverReturn_out(0, fwBuffer);
     }
 }
 
 void GenericHub::toBufferDriverReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // TODO: Send fwBuffer on deallocate_out
+    // Deallocate the existing buffer
+    deallocate_out(portNum, fwBuffer); 
+
 }
 
 void GenericHub::eventIn_handler(const FwIndexType portNum,
@@ -156,7 +159,7 @@ void GenericHub::eventIn_handler(const FwIndexType portNum,
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     status = serializer.serializeFrom(args);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FwSizeType size = serializer.getBuffLength();
+    FwSizeType size = serializer.getSize();
     this->send_data(HubType::HUB_TYPE_EVENT, portNum, buffer, size);
 }
 
@@ -171,7 +174,7 @@ void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::T
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     status = serializer.serializeFrom(val);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FwSizeType size = serializer.getBuffLength();
+    FwSizeType size = serializer.getSize();
     this->send_data(HubType::HUB_TYPE_CHANNEL, portNum, buffer, size);
 }
 
@@ -182,7 +185,7 @@ void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::T
 void GenericHub::serialIn_handler(FwIndexType portNum,            /*!< The port number*/
                                   Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
-    send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getBuffLength());
+    send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }
 
 }  // end namespace Svc

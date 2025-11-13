@@ -32,7 +32,7 @@ InjectableStlQueue::~InjectableStlQueue() {
     StaticData::data.lastCalled = StaticData::LastFn::DESTRUCT_FN;
 }
 
-QueueInterface::Status InjectableStlQueue::create(const Fw::StringBase& name,
+QueueInterface::Status InjectableStlQueue::create(const Fw::ConstStringBase& name,
                                                   FwSizeType depth,
                                                   FwSizeType messageSize) {
     StaticData::data.lastCalled = StaticData::LastFn::CREATE_FN;

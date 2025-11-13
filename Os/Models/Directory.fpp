@@ -5,7 +5,7 @@
 
 module Os {
 @ FPP shadow-enum representing Os::Directory::Status
-enum DirectoryStatus {
+enum DirectoryStatus : U8 {
     OP_OK,          @<  Operation was successful
     DOESNT_EXIST,   @<  Directory doesn't exist
     NO_PERMISSION,  @<  No permission to read directory
@@ -19,7 +19,7 @@ enum DirectoryStatus {
     OTHER_ERROR,    @<  A catch-all for other errors. Have to look in implementation-specific code
 }
 
-enum DirectoryOpenMode {
+enum DirectoryOpenMode : U8 {
     READ,               @<  Error if directory doesn't exist
     CREATE_IF_MISSING,  @<  Create directory if it doesn't exist
     CREATE_EXCLUSIVE,   @<  Create directory and error if it already exists

@@ -38,12 +38,12 @@ TestRawTime::Status TestRawTime::getTimeInterval(const Os::RawTime& other, Fw::T
     return Status::OP_OK;
 }
 
-Fw::SerializeStatus TestRawTime::serializeTo(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) const {
+Fw::SerializeStatus TestRawTime::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     StaticData::data.lastCalled = StaticData::LastFn::SERIALIZE_FN;
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus TestRawTime::deserializeFrom(Fw::SerializeBufferBase& buffer, Fw::Endianness mode) {
+Fw::SerializeStatus TestRawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     StaticData::data.lastCalled = StaticData::LastFn::DESERIALIZE_FN;
     return Fw::FW_SERIALIZE_OK;
 }

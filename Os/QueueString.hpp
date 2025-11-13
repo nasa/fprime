@@ -21,7 +21,7 @@ class QueueString final : public Fw::StringBase {
 
     QueueString(const QueueString& src) : StringBase() { *this = src; }
 
-    QueueString(const StringBase& src) : StringBase() { *this = src; }
+    QueueString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     explicit QueueString(const char* src) : StringBase() { *this = src; }
 
@@ -32,7 +32,7 @@ class QueueString final : public Fw::StringBase {
         return *this;
     }
 
-    QueueString& operator=(const StringBase& src) {
+    QueueString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

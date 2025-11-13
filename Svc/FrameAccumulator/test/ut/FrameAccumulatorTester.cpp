@@ -160,6 +160,49 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
+void FrameAccumulatorTester ::testDetectionErrorHandling() {
+    FwSizeType too_large_size = this->component.m_inRing.get_capacity() + 1;
+    // Using buffer_size=1 to simplify test since otherwise Accumulator will loop `buffer_size` times
+    Fw::Buffer::SizeType buffer_size = 1;
+    U8 data[buffer_size];
+    Fw::Buffer buffer(data, buffer_size);
+    ComCfg::FrameContext context;
+
+    // Too large size reported by detector should emit event and continue
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, too_large_size);
+    this->invoke_to_dataIn(0, buffer, context);
+    // Checks
+    ASSERT_from_dataReturnOut_SIZE(1);                         // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                               // No frame was sent out
+    ASSERT_EVENTS_SIZE(1);                                     // One event should be logged:
+    ASSERT_EVENTS_FrameDetectionSizeError_SIZE(1);             // FrameDetectionSizeError
+    ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
+
+    this->clearHistory();
+
+    // Too large size reported by detector should emit event and continue
+    this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, too_large_size);
+    this->invoke_to_dataIn(0, buffer, context);
+    // Checks
+    ASSERT_from_dataReturnOut_SIZE(1);                         // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                               // No frame was sent out
+    ASSERT_EVENTS_SIZE(1);                                     // One event should be logged:
+    ASSERT_EVENTS_FrameDetectionSizeError_SIZE(1);             // FrameDetectionSizeError
+    ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
+
+    this->clearHistory();
+
+    // Too large size reported by detector should emit event and continue
+    this->mockDetector.set_next_result(FrameDetector::Status::NO_FRAME_DETECTED, too_large_size);
+    this->invoke_to_dataIn(0, buffer, context);
+    // Checks
+    ASSERT_from_dataReturnOut_SIZE(1);                         // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);                               // No frame was sent out
+    ASSERT_EVENTS_SIZE(1);                                     // One event should be logged:
+    ASSERT_EVENTS_FrameDetectionSizeError_SIZE(1);             // FrameDetectionSizeError
+    ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------

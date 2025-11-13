@@ -182,7 +182,7 @@ TYPED_TEST_P(ArrayTest, Serialization) {
     status = buf.serializeFrom(a);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buf.getBuffLength(), serializedSize);
+    ASSERT_EQ(buf.getSize(), serializedSize);
 
     // Deserialize
     status = buf.deserializeTo(aCopy);
@@ -199,7 +199,7 @@ TYPED_TEST_P(ArrayTest, Serialization) {
     status = buf2.serializeFrom(a);
 
     ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_NE(buf2.getBuffLength(), serializedSize);
+    ASSERT_NE(buf2.getSize(), serializedSize);
 
     // Deserialize
     status = buf2.deserializeTo(aCopy2);

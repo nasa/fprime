@@ -2,7 +2,7 @@ module Svc {
     @ Dispatches command sequences to available command sequencers
     active component SeqDispatcher {
 
-        enum CmdSequencerState {
+        enum CmdSequencerState : U8 {
             AVAILABLE = 0
             RUNNING_SEQUENCE_BLOCK = 1
             RUNNING_SEQUENCE_NO_BLOCK = 2

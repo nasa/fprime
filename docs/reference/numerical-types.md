@@ -109,8 +109,8 @@ printf("Index %" PRI_PlatformIndexType ". Min %" PRI_PlatformIndexType, index, s
 
 ### Configurable Integer Types
 
-Project may configure the framework types that the framework and components use for implementation through
-`FpConfig.h`. The default configuration as supplied with F´ uses the above platform types where applicable.
+Projects may configure the framework types that the framework and components use for implementation through
+`FpConfig.[h|fpp]`. The default configuration as supplied with F´ uses the above platform types where applicable.
 
 | Framework Type   | Logical Usage                | Default                | Format Specifier     | Signed | Size            |
 |------------------|------------------------------|------------------------|----------------------|--------|-----------------|

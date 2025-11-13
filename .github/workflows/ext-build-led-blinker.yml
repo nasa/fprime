@@ -32,6 +32,6 @@ jobs:
     with: 
       target_repository: fprime-community/fprime-workshop-led-blinker
       fprime_location: lib/fprime
-      build_location: LedBlinker
+      build_location: LedBlinker/LedBlinkerDeployment
       run_unit_tests: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}

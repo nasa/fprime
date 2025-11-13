@@ -49,8 +49,9 @@ void ComLoggerTester ::dispatchOne() {
 }
 
 void ComLoggerTester ::dispatchAll() {
-    while (this->comLogger.m_queue.getMessagesAvailable() > 0)
+    while (this->comLogger.m_queue.getMessagesAvailable() > 0) {
         this->dispatchOne();
+    }
 }
 
 // ----------------------------------------------------------------------

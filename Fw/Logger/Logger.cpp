@@ -28,7 +28,7 @@ void Logger::log(const char* format, ...) {
     Logger::log(formatted_string);
 }
 
-void Logger::log(const StringBase& string) {
+void Logger::log(const ConstStringBase& string) {
     if (Logger::s_current_logger != nullptr) {
         Logger::s_current_logger->writeMessage(string);
     }

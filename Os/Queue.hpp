@@ -73,7 +73,7 @@ class QueueInterface {
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    virtual Status create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) = 0;
+    virtual Status create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) = 0;
 
     //! \brief send a message into the queue
     //!
@@ -179,7 +179,7 @@ class Queue final : public QueueInterface {
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    Status create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) override;
+    Status create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) override;
 
     //! \brief send a message into the queue through delegate
     //!
@@ -248,7 +248,7 @@ class Queue final : public QueueInterface {
     //! \param priority: priority of the message
     //! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full
     //! \return status of the send
-    Status send(const Fw::SerializeBufferBase& message, FwQueuePriorityType priority, BlockingType blockType);
+    Status send(const Fw::LinearBufferBase& message, FwQueuePriorityType priority, BlockingType blockType);
 
     //! \brief receive a message from a queue
     //!
@@ -261,7 +261,7 @@ class Queue final : public QueueInterface {
     //! \param priority: (output) priority of the message
     //! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full
     //! \return status of the send
-    Status receive(Fw::SerializeBufferBase& destination, BlockingType blockType, FwQueuePriorityType& priority);
+    Status receive(Fw::LinearBufferBase& destination, BlockingType blockType, FwQueuePriorityType& priority);
 
     //! \brief get the queue's depth in messages
     FwSizeType getDepth() const;

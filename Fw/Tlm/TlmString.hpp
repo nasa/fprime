@@ -26,7 +26,7 @@ class TlmString final : public StringBase {
 
     TlmString(const TlmString& src) : StringBase() { *this = src; }
 
-    TlmString(const StringBase& src) : StringBase() { *this = src; }
+    TlmString(const ConstStringBase& src) : StringBase() { *this = src; }
 
     TlmString(const char* src) : StringBase() { *this = src; }
 
@@ -37,7 +37,7 @@ class TlmString final : public StringBase {
         return *this;
     }
 
-    TlmString& operator=(const StringBase& src) {
+    TlmString& operator=(const ConstStringBase& src) {
         (void)StringBase::operator=(src);
         return *this;
     }

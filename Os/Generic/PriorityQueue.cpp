@@ -44,7 +44,9 @@ PriorityQueue::~PriorityQueue() {
     delete[] this->m_handle.m_sizes;
 }
 
-QueueInterface::Status PriorityQueue::create(const Fw::StringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status PriorityQueue::create(const Fw::ConstStringBase& name,
+                                             FwSizeType depth,
+                                             FwSizeType messageSize) {
     // Ensure we are created exactly once
     FW_ASSERT(this->m_handle.m_indices == nullptr);
     FW_ASSERT(this->m_handle.m_sizes == nullptr);

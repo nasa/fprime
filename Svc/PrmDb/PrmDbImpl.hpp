@@ -96,10 +96,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
             if (id != other.id)
                 return false;
             // Compare lengths first
-            if (val.getBuffLength() != other.val.getBuffLength())
+            if (val.getSize() != other.val.getSize())
                 return false;
             // Compare buffer contents
-            return std::memcmp(val.getBuffAddr(), other.val.getBuffAddr(), val.getBuffLength()) == 0;
+            return std::memcmp(val.getBuffAddr(), other.val.getBuffAddr(), val.getSize()) == 0;
         }
     };
 

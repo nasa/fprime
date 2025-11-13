@@ -71,12 +71,12 @@ File::Status readHash(const char* hashFileName, Utils::HashBuffer& hashBuffer) {
 
     // Read hash from checksum file:
     unsigned char savedHash[HASH_DIGEST_LENGTH];
-    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getBuffCapacity());
+    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getCapacity());
     status = hashFile.read(savedHash, size);
     if (File::OP_OK != status) {
         return status;
     }
-    if (static_cast<FwSizeType>(size) != hashBuffer.getBuffCapacity()) {
+    if (static_cast<FwSizeType>(size) != hashBuffer.getCapacity()) {
         return File::BAD_SIZE;
     }
     hashFile.close();
@@ -98,12 +98,12 @@ File::Status writeHash(const char* hashFileName, Utils::HashBuffer hashBuffer) {
     }
 
     // Write out the hash
-    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getBuffLength());
+    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getSize());
     status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
     if (File::OP_OK != status) {
         return status;
     }
-    if (static_cast<FwSizeType>(size) != hashBuffer.getBuffLength()) {
+    if (static_cast<FwSizeType>(size) != hashBuffer.getSize()) {
         return File::BAD_SIZE;
     }
     hashFile.close();

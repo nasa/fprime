@@ -53,17 +53,16 @@ bool BasicGuardTestAbsTypeTester::FppTest_SmState_BasicGuardTestAbsType_guard_g(
 // Overflow hook implementations for internal state machines
 // ----------------------------------------------------------------------
 
-void BasicGuardTestAbsTypeTester::smStateBasicGuardTestAbsType_stateMachineOverflowHook(
-    SmId smId,
-    FwEnumStoreType signal,
-    Fw::SerializeBufferBase& buffer) {
+void BasicGuardTestAbsTypeTester::smStateBasicGuardTestAbsType_stateMachineOverflowHook(SmId smId,
+                                                                                        FwEnumStoreType signal,
+                                                                                        Fw::SerialBufferBase& buffer) {
     this->m_hookCalled = true;
     ASSERT_EQ(smId, SmId::smStateBasicGuardTestAbsType);
     ASSERT_EQ(static_cast<SmState_BasicGuardTestAbsType::Signal>(signal), SmState_BasicGuardTestAbsType::Signal::s);
     SmHarness::TestAbsType value;
     const auto status = buffer.deserializeTo(value);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buffer.getBuffLeft(), 0);
+    ASSERT_EQ(buffer.getDeserializeSizeLeft(), 0);
     ASSERT_EQ(value, this->m_value);
 }
 

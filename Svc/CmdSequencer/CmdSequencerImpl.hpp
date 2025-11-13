@@ -210,7 +210,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         );
 
         //! Set the file name. Also sets the log file name.
-        void setFileName(const Fw::StringBase& fileName);
+        void setFileName(const Fw::ConstStringBase& fileName);
 
         //! Get the file name
         //! \return The file name
@@ -229,7 +229,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
 
         //! Load a sequence file
         //! \return Success or failure
-        virtual bool loadFile(const Fw::StringBase& fileName  //!< The file name
+        virtual bool loadFile(const Fw::ConstStringBase& fileName  //!< The file name
                               ) = 0;
 
         //! Query whether the sequence has any more records
@@ -315,7 +315,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
       public:
         //! Load a sequence file
         //! \return Success or failure
-        bool loadFile(const Fw::StringBase& fileName  //!< The file name
+        bool loadFile(const Fw::ConstStringBase& fileName  //!< The file name
         );
 
         //! Query whether the sequence has any more records
@@ -491,7 +491,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
 
     //! (Optional) Load a sequence to run later.
     //! When you call this function, the event ports must be connected.
-    void loadSequence(const Fw::StringBase& fileName  //!< The file name
+    void loadSequence(const Fw::ConstStringBase& fileName  //!< The file name
     );
 
     //! Return allocated buffer. Call during shutdown.
@@ -598,7 +598,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
 
     //! Load a sequence file
     //! \return Success or failure
-    bool loadFile(const Fw::StringBase& fileName  //!< The file name
+    bool loadFile(const Fw::ConstStringBase& fileName  //!< The file name
     );
 
     //! Perform a Cancel command

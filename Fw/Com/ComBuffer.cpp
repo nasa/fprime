@@ -13,7 +13,7 @@ ComBuffer::ComBuffer() {}
 ComBuffer::~ComBuffer() {}
 
 ComBuffer::ComBuffer(const ComBuffer& other) : Fw::SerializeBufferBase() {
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,13 +22,17 @@ ComBuffer& ComBuffer::operator=(const ComBuffer& other) {
         return *this;
     }
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
+    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType ComBuffer::getBuffCapacity() const {
+FwSizeType ComBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
+}
+
+FwSizeType ComBuffer::getBuffCapacity() const {
+    return this->getCapacity();
 }
 
 const U8* ComBuffer::getBuffAddr() const {

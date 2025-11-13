@@ -8,7 +8,7 @@ async command BL_OpenFile(
 async command BL_CloseFile \
   opcode 0x01
 
-enum LogState {
+enum LogState : U8 {
   LOGGING_ON = 0
   LOGGING_OFF = 1
 }

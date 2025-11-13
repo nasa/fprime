@@ -67,9 +67,9 @@ class TestRawTime : public RawTimeInterface {
     // ------------------------------------------------------------
     Status now() override;
     Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override;
-    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const override;
-    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer,
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override;
 
   private:

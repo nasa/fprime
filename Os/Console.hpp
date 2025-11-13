@@ -90,10 +90,10 @@ class Console : public ConsoleInterface, public Fw::Logger {
 
     //! \brief write message to console
     //!
-    //! Write a message to the console as stored as a StringBase
+    //! Write a message to the console as stored as a ConstStringBase type
     //!
-    //! \param message: raw message to write (StringBase)
-    void writeMessage(const Fw::StringBase& message) override;
+    //! \param message: raw message to write (ConstStringBase)
+    void writeMessage(const Fw::ConstStringBase& message) override;
 
     //! \brief returns the raw console handle
     //!
@@ -106,10 +106,10 @@ class Console : public ConsoleInterface, public Fw::Logger {
 
     //! \brief write message to console
     //!
-    //! Write a message to the console as stored as a StringBase
+    //! Write a message to the console as stored as a ConstStringBase type
     //!
-    //! \param message: raw message to write (StringBase)
-    static void write(const Fw::StringBase& message);
+    //! \param message: raw message to write (ConstStringBase)
+    static void write(const Fw::ConstStringBase& message);
 
     //! \brief write message to the global console
     //!

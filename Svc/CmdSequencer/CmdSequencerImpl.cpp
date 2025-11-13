@@ -54,7 +54,7 @@ void CmdSequencerComponentImpl ::allocateBuffer(const FwEnumStoreType identifier
     this->m_sequence->allocateBuffer(identifier, allocator, bytes);
 }
 
-void CmdSequencerComponentImpl ::loadSequence(const Fw::StringBase& fileName) {
+void CmdSequencerComponentImpl ::loadSequence(const Fw::ConstStringBase& fileName) {
     FW_ASSERT(this->m_runMode == STOPPED, this->m_runMode);
     if (not this->loadFile(fileName)) {
         this->m_sequence->clear();
@@ -212,7 +212,7 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
 // Private helper methods
 // ----------------------------------------------------------------------
 
-bool CmdSequencerComponentImpl ::loadFile(const Fw::StringBase& fileName) {
+bool CmdSequencerComponentImpl ::loadFile(const Fw::ConstStringBase& fileName) {
     const bool status = this->m_sequence->loadFile(fileName);
     if (status) {
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();

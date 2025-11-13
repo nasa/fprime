@@ -91,12 +91,13 @@ void GenericHubTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_siz
 
 void GenericHubTester ::test_telemetry() {
     Fw::TlmBuffer buffer;
+    clearFromPortHistory();
     random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
 
     Fw::Time time(100, 200);
     invoke_to_tlmIn(0, 123, time, buffer);
 
-    // **must** deallocate buffer
+    // **must** return buffer
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
     ASSERT_from_tlmOut_SIZE(1);
     ASSERT_from_tlmOut(0, 123, time, buffer);
@@ -190,8 +191,9 @@ void GenericHubTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Bu
         U8 byte2 = reinterpret_cast<U8*>(m_buffer.getData())[i];
         ASSERT_EQ(byte1, byte2);
     }
-    // Pretend to deallocate like file uplink would
-    this->from_fromBufferDriverReturn_handler(0, fwBuffer);
+
+    this->invoke_to_bufferOutReturn(portNum,fwBuffer);
+    //this->from_fromBufferDriverReturn_handler(0, fwBuffer);
 }
 
 void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
@@ -200,8 +202,8 @@ void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /
     m_comm_out++;
     // Assert the buffer came through exactly on the right port
     ASSERT_EQ(portNum, m_current_port);
-    ASSERT_EQ(Buffer.getBuffLength(), m_comm.getBuffLength());
-    for (U32 i = 0; i < Buffer.getBuffLength(); i++) {
+    ASSERT_EQ(Buffer.getSize(), m_comm.getSize());
+    for (U32 i = 0; i < Buffer.getSize(); i++) {
         ASSERT_EQ(Buffer.getBuffAddr()[i], m_comm.getBuffAddr()[i]);
     }
     ASSERT_from_bufferOut_SIZE(0);
@@ -209,7 +211,7 @@ void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /
 
 Fw::Buffer GenericHubTester ::from_allocate_handler(const FwIndexType portNum, const FwSizeType size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
-    EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
+    EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer size mismatch";
     m_allocate.set(m_data_for_allocation, size);
     return m_allocate;
 }
@@ -227,8 +229,9 @@ void GenericHubTester ::from_fromBufferDriverReturn_handler(const FwIndexType po
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
         << "Incorrect data pointer deallocated";
 
-    m_allocate.set(nullptr, 0);
     this->pushFromPortEntry_fromBufferDriverReturn(fwBuffer);
+    invoke_to_toBufferDriverReturn(portNum,fwBuffer);
+    m_allocate.set(nullptr, 0);
 }
 
 // ----------------------------------------------------------------------
@@ -266,11 +269,22 @@ void GenericHubTester ::connectPorts() {
     // toBufferDriver
     this->componentIn.set_toBufferDriver_OutputPort(0, this->get_from_toBufferDriver(0));
 
+    // toBufferDriverReturn
+    this->connect_to_toBufferDriverReturn(0, this->componentIn.get_toBufferDriverReturn_InputPort(0));
+
+    // bufferOutReturn
+    for (U32 i = 0; i < max; ++i) {
+        this->connect_to_bufferOutReturn(i, this->componentOut.get_bufferOutReturn_InputPort(i));
+    }
+
     // bufferAllocate
     this->componentIn.set_allocate_OutputPort(0, this->get_from_allocate(0));
 
-    // dataDeallocate
+    // buffer Return 
     this->componentOut.set_fromBufferDriverReturn_OutputPort(0, this->get_from_fromBufferDriverReturn(0));
+
+    // dataDeallocate
+    this->componentIn.set_deallocate_OutputPort(0, this->get_from_deallocate(0));
 
     // bufferInReturn
     for (FwIndexType i = 0; i < GenericHubCfg::NumBufferInputPorts; i++) {

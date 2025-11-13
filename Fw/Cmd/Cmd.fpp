@@ -15,7 +15,7 @@ module Fw {
           )
 
   @ Enum representing a command response
-  enum CmdResponse {
+  enum CmdResponse : U8 {
     OK = 0 @< Command successfully executed
     INVALID_OPCODE = 1 @< Invalid opcode dispatched
     VALIDATION_ERROR = 2 @< Command failed validation

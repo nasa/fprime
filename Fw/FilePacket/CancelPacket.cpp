@@ -31,7 +31,7 @@ SerializeStatus FilePacket::CancelPacket ::toBuffer(Buffer& buffer) const {
 SerializeStatus FilePacket::CancelPacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_CANCEL);
 
-    if (serialBuffer.getBuffLeft() != 0) {
+    if (serialBuffer.getDeserializeSizeLeft() != 0) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 

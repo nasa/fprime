@@ -37,8 +37,10 @@ void BadDescriptorFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     for (U32 record = 0; record < this->n; record++) {
         Fw::Time t(TimeBase::TB_WORKSTATION_TIME, 0, 0);
         // Force an invalid record descriptor
-        FPrime::Records::Descriptor descriptor = static_cast<FPrime::Records::Descriptor>(
-            10);  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange) intentional test
+        FPrime::Records::Descriptor descriptor =
+            static_cast<FPrime::Records::Descriptor>(  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange)
+                                                       // intentional test
+                10);
         FPrime::Records::serialize(descriptor, t, record, record + 1, buffer);
     }
     // CRC
@@ -51,8 +53,10 @@ void BadDescriptorFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
     // Records
     for (U32 i = 0; i < this->n; ++i) {
         // Force an invalid time flag
-        const AMPCSSequence::Record::TimeFlag::t timeFlag = static_cast<AMPCSSequence::Record::TimeFlag::t>(
-            10);  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange) intentional test
+        const AMPCSSequence::Record::TimeFlag::t timeFlag =
+            static_cast<AMPCSSequence::Record::TimeFlag::t>(  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange)
+                                                              // intentional test
+                10);
         const AMPCSSequence::Record::Time::t time = 0;
         const AMPCSSequence::Record::Opcode::t opcode = i;
         const U32 argument = i + 1;
