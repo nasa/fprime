@@ -1,14 +1,14 @@
 // ======================================================================
-// \title  ATestMain.cpp
+// \title  SenderTestMain.cpp
 // \author bocchino
-// \brief  cpp file for A component test main function
+// \brief  cpp file for Sender component test main function
 // ======================================================================
 
-#include "ATester.hpp"
+#include "SenderTester.hpp"
 #include "STest/Random/Random.hpp"
 
 TEST(Nominal, sendData) {
-    FppTest::ATester tester;
+    FppTest::SenderTester tester;
     tester.sendData();
 }
 

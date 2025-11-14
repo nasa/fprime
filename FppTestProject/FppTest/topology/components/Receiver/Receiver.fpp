@@ -2,7 +2,8 @@ module FppTest {
 
   active component Receiver {
 
-    import TypedPortsInputs
+    import TypedPortsSyncInputs
+    import TypedPortsGuardedInputs
 
   }
 

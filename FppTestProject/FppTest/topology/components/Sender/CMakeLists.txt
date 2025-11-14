@@ -11,8 +11,8 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Sender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ATestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ATester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SenderTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SenderTester.cpp"
 )
 
 set(UT_MOD_DEPS

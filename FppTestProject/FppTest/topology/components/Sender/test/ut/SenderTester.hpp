@@ -7,12 +7,12 @@
 #ifndef FppTest_ATester_HPP
 #define FppTest_ATester_HPP
 
-#include "FppTest/topology/components/A/A.hpp"
-#include "FppTest/topology/components/A/AGTestBase.hpp"
+#include "FppTest/topology/components/Sender/Sender.hpp"
+#include "FppTest/topology/components/Sender/SenderGTestBase.hpp"
 
 namespace FppTest {
 
-class ATester final : public AGTestBase {
+class SenderTester final : public SenderGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
