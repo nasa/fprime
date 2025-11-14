@@ -1,57 +1,28 @@
 // ======================================================================
 // \title  Sender.hpp
-// \author bocchino
+// \author tumbar
 // \brief  hpp file for Sender component implementation class
 // ======================================================================
 
-#ifndef FppTest_A_HPP
-#define FppTest_A_HPP
+#ifndef FppTest_Sender_HPP
+#define FppTest_Sender_HPP
 
-#include "Fw/Types/StringBase.hpp"
 #include "FppTest/topology/components/Sender/SenderComponentAc.hpp"
 
 namespace FppTest {
 
-class Sender final : public AComponentBase {
+class Sender final : public SenderComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct A object
+    //! Construct Sender object
     Sender(const char* const compName  //!< The component name
     );
 
-    //! Destroy A object
+    //! Destroy Sender object
     ~Sender();
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handler implementations for typed input ports
-    // ----------------------------------------------------------------------
-
-    //! Handler implementation for dataIn
-    void dataIn_handler(FwIndexType portNum,  //!< The port number
-                        U32 data              //!< The data
-                        ) override;
-
-  public:
-    // ----------------------------------------------------------------------
-    // Public interface
-    // ----------------------------------------------------------------------
-
-    //! Send data
-    void sendData(U32 data  //!< The data
-    );
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private helper methods
-    // ----------------------------------------------------------------------
-
-    //! Print a message
-    void printMessage(const Fw::StringBase& msg  //!< The message
-    );
 };
 
 }  // namespace FppTest

@@ -4,6 +4,7 @@ module FppTest {
 
     import TypedPortsSyncInputs
     import TypedPortsGuardedInputs
+    import TypedPortsAsync
 
   }
 

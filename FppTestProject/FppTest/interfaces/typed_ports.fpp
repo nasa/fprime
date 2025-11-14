@@ -60,21 +60,21 @@ module FppTest {
         # Typed input ports with return type
         # ----------------------------------------------------------------------
 
-        guarded input port noArgsReturnGuarded: NoArgsReturn
+        guarded input port noArgsReturnGuarded: [2] NoArgsReturn
 
-        guarded input port primitiveReturnGuarded: PrimitiveReturn
+        guarded input port primitiveReturnGuarded: [2] PrimitiveReturn
 
-        guarded input port stringReturnGuarded: StringReturn
+        guarded input port stringReturnGuarded: [2] StringReturn
 
-        guarded input port stringAliasReturnGuarded: StringAliasReturn
+        guarded input port stringAliasReturnGuarded: [2] StringAliasReturn
 
-        guarded input port enumReturnGuarded: EnumReturn
+        guarded input port enumReturnGuarded: [2] EnumReturn
 
-        guarded input port arrayReturnGuarded: ArrayReturn
+        guarded input port arrayReturnGuarded: [2] ArrayReturn
 
-        guarded input port arrayStringAliasReturnGuarded: ArrayStringAliasReturn
+        guarded input port arrayStringAliasReturnGuarded: [2] ArrayStringAliasReturn
 
-        guarded input port structReturnGuarded: StructReturn
+        guarded input port structReturnGuarded: [2] StructReturn
 
     }
 

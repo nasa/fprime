@@ -3,7 +3,8 @@ passive component PassiveTest {
 
   import FppTest.SerialPorts
   import FppTest.SpecialPorts
-  import FppTest.TypedPortsInputs
+  import FppTest.TypedPortsSyncInputs
+  import FppTest.TypedPortsGuardedInputs
   import FppTest.TypedPortsOutputs
 
   include "../include/commands.fppi"

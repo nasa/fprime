@@ -5,7 +5,8 @@ active component ActiveTest {
   import FppTest.SerialPorts
   import FppTest.SerialPortsAsync
   import FppTest.SpecialPorts
-  import FppTest.TypedPortsInputs
+  import FppTest.TypedPortsSyncInputs
+  import FppTest.TypedPortsGuardedInputs
   import FppTest.TypedPortsOutputs
   import FppTest.TypedPortsAsync
   import FppTest.OutputPorts
