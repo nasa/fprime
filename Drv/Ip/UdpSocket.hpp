@@ -21,7 +21,7 @@
 #include <inetLib.h>
 #include <socket.h>
 
-// Undefining these Vxworks-defined macros because
+// Undefine these Vxworks-defined macros because
 // they collide with member variables in F Prime.
 // These macros are defined somewhere in inetLib.h.
 #undef m_type
