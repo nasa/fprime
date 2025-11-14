@@ -14,8 +14,11 @@ module Svc {
       SEQUENCE_FILE_PORT = 0
       @ Bundle file port
       BUNDLE_FILE_PORT = 1
+      @ User file port (make up your own file types starting here)
+      USER_FILE_PORT = 2
       @ Maximum number of file dispatch ports
-      MAX_FILE_DISPATCH_PORTS = 2}
+      MAX_FILE_DISPATCH_PORTS = 3
+      }
 
   }
 

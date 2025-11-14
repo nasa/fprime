@@ -64,7 +64,7 @@ void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   Svc::FileDispatcherCfg::FileDispatchPort file_type,
                                                   Fw::Enabled enable) {
-    this->m_dispatchTable[file_type].enabled = (enable == Fw::Enabled::ENABLED);
+    this->m_dispatchTable[file_type].enabled = enable;
     this->log_ACTIVITY_LO_FileDispatchStateEvent(file_type, enable);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
