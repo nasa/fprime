@@ -682,4 +682,48 @@ void DpCatalogTester ::test_PingIn() {
     ASSERT_from_pingOut(0, key);
 }
 
+void DpCatalogTester ::test_BadFileDone() {
+    // Test on unconfigured non-waiting component
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(1);
+
+    // Now configure and place component in wait operations
+
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+
+    Fw::FileNameString dirs[1];
+    this->component.configure(dirs, 0, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Clear that catalog to short circuit removal logic
+    // Simulate a file that failed after cleanup (otherwise it'd be in the catalog)
+    this->sendCmd_CLEAR_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_CLEAR_CATALOG, 12, Fw::CmdResponse::OK);
+
+    // Now send a file that will generate a wait response
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(2);
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Finally, a file done that won't generate a delayed cmd response
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(3);
+    ASSERT_CMD_RESPONSE_SIZE(3);
+}
+
 }  // namespace Svc

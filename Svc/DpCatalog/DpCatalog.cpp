@@ -1123,9 +1123,6 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
     // start transmission
     this->m_xmitBytes = 0;
 
-    // make sure we have valid pointers
-    FW_ASSERT(this->m_dpTree);
-
     this->m_xmitInProgress = true;
     // Step 3b - search for and send first entry
     this->sendNextEntry();

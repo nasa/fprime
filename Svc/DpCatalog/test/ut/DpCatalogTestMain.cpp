@@ -294,6 +294,11 @@ TEST(NominalManual, PingIn) {
     tester.test_PingIn();
 }
 
+TEST(NominalManual, BadFileDone) {
+    Svc::DpCatalogTester tester;
+    tester.test_BadFileDone();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
