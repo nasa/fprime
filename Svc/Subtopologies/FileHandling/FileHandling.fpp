@@ -28,6 +28,11 @@ module FileHandling {
         stack size FileHandlingConfig.StackSizes.fileManager \
         priority FileHandlingConfig.Priorities.fileManager
 
+    instance fileDispatcher: Svc.FileDispatcher base id FileHandlingConfig.BASE_ID + 0x02500 \
+        queue size FileHandlingConfig.QueueSizes.fileDispatcher \
+        stack size FileHandlingConfig.StackSizes.fileDispatcher \
+        priority FileHandlingConfig.Priorities.fileDispatcher
+
     instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x03000 \
         queue size FileHandlingConfig.QueueSizes.prmDb \
         stack size FileHandlingConfig.StackSizes.prmDb \
@@ -46,6 +51,7 @@ module FileHandling {
         instance fileUplink
         instance fileDownlink
         instance fileManager
+        instance fileDispatcher
         instance prmDb
 
     } # end topology

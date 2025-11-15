@@ -43,7 +43,7 @@ class FileDispatcher final : public FileDispatcherComponentBase {
     //! Handler implementation for fileRecv
     //!
     //! Port for receiving files to dispatch
-    void fileRecv_handler(FwIndexType portNum,       //!< The port number
+    void fileAnnounceRecv_handler(FwIndexType portNum,       //!< The port number
                           Fw::StringBase& file_name  //!< The successfully uplinked file
                           ) override;
 

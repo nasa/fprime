@@ -13,7 +13,12 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-FileDispatcher ::FileDispatcher(const char* const compName) : FileDispatcherComponentBase(compName) {}
+FileDispatcher ::FileDispatcher(const char* const compName) : FileDispatcherComponentBase(compName) {
+    // disable entries
+    for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {
+        this->m_dispatchTable[i].enabled = false;
+    }
+}
 
 FileDispatcher ::~FileDispatcher() {}
 
@@ -36,7 +41,7 @@ void FileDispatcher ::configure(FileDispatcherEntry* entries, FwSizeType numEntr
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void FileDispatcher ::fileRecv_handler(FwIndexType portNum, Fw::StringBase& file_name) {
+void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBase& file_name) {
     // determine file extension and dispatch accordingly
 
     // walk table to find match
@@ -44,10 +49,11 @@ void FileDispatcher ::fileRecv_handler(FwIndexType portNum, Fw::StringBase& file
         if (this->m_dispatchTable[i].enabled) {
             if (Fw::StringUtils::substring_find(
                 file_name.toChar(),file_name.length(),
-                this->m_dispatchTable[i].fileExt.toChar(),this->m_dispatchTable[i].fileExt.length()
+                    this->m_dispatchTable[i].fileExt.toChar(),
+                    this->m_dispatchTable[i].fileExt.length()
                 ) != -1) {
                 // dispatch on this port
-                this->fileSend_out(this->m_dispatchTable[i].port, file_name);
+                this->fileDispatch_out(this->m_dispatchTable[i].port, file_name);
                 this->log_ACTIVITY_HI_FileDispatched( file_name, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
                 return; // dispatched, return   
             }

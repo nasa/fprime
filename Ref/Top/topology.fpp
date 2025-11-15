@@ -14,7 +14,7 @@ module Ref {
 
   topology Ref {
     # ----------------------------------------------------------------------
-    # Subtopology imports
+    # Subtopology imports - from Svc/Subtopologies
     # ----------------------------------------------------------------------
     import CdhCore.Subtopology
     import ComCcsds.Subtopology
@@ -166,6 +166,8 @@ module Ref {
       # Router <-> FileUplink
       ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
       FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn
+      FileHandling.fileUplink.fileAnnounce -> FileHandling.fileDispatcher.fileAnnounceRecv
+      FileHandling.fileDispatcher.fileDispatch[Svc.FileDispatcherCfg.FileDispatchPort.SEQUENCE_FILE_PORT] -> cmdSeq.seqDispatchIn
     }
 
     connections FileHandling_DataProducts{

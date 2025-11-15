@@ -5,6 +5,7 @@
     "Svc.FileDownlink": "FileHandling.fileDownlink",
     "Svc.FileManager": "FileHandling.fileManager",
     "Svc.FileUplink": "Ref.fileUplink",
+    "Svc.FileDispatcher": "FileHandling.fileDispatcher",
     "Ref.PingReceiver": "Ref.pingRcvr",
     "Svc.EventManager": "CdhCore.events",
     "Svc.TlmChan": "Ref.tlmSend",

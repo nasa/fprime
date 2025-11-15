@@ -43,12 +43,12 @@ void FileDispatcherTester ::dispatchTest() {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(1); 
         ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(), static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
-        ASSERT_from_fileSend_SIZE(1);
-        ASSERT_from_fileSend(0, testFileName); 
+        ASSERT_from_fileDispatch_SIZE(1);
+        ASSERT_from_fileDispatch(0, testFileName); 
     }
     
 }
@@ -71,10 +71,10 @@ void FileDispatcherTester ::dispatchAllDisabledTest() {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(0); 
-        ASSERT_from_fileSend_SIZE(0);
+        ASSERT_from_fileDispatch_SIZE(0);
     }
     
 }
@@ -109,10 +109,10 @@ void FileDispatcherTester ::dispatchAllCmdDisabledTest() {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(0); 
-        ASSERT_from_fileSend_SIZE(0);
+        ASSERT_from_fileDispatch_SIZE(0);
     }
     
 }
@@ -146,12 +146,12 @@ void FileDispatcherTester ::dispatchAllCmdEnabledTest() {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(1); 
         ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(), static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
-        ASSERT_from_fileSend_SIZE(1);
-        ASSERT_from_fileSend(0, testFileName); 
+        ASSERT_from_fileDispatch_SIZE(1);
+        ASSERT_from_fileDispatch(0, testFileName); 
     }
     
 }
@@ -174,12 +174,12 @@ void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(1); 
         ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(), static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
-        ASSERT_from_fileSend_SIZE(1);
-        ASSERT_from_fileSend(0, testFileName); 
+        ASSERT_from_fileDispatch_SIZE(1);
+        ASSERT_from_fileDispatch(0, testFileName); 
     }
 
     // now test skipped entries
@@ -187,10 +187,10 @@ void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
         this->clearHistory();
         Fw::String testFileName;
         testFileName.format("afile.file%d",i);
-        this->invoke_to_fileRecv(0, testFileName);
+        this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(0); 
-        ASSERT_from_fileSend_SIZE(0);
+        ASSERT_from_fileDispatch_SIZE(0);
     }
     
 }

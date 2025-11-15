@@ -56,14 +56,14 @@ module Svc {
         ###############################################################################
 
         @ Port for receiving files to dispatch
-        async input port fileRecv: Svc.FileAnnounce
+        async input port fileAnnounceRecv: Svc.FileAnnounce
 
         ###############################################################################
         # Output ports                                                                 #
         ###############################################################################
 
         @ Port for sending files to dispatch
-        output port fileSend: [Svc.FileDispatcherCfg.FileDispatchPort.MAX_FILE_DISPATCH_PORTS] Svc.FileDispatch
+        output port fileDispatch: [Svc.FileDispatcherCfg.FileDispatchPort.MAX_FILE_DISPATCH_PORTS] Svc.FileDispatch
 
 
     }

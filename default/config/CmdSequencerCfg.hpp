@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-    static const char* CMD_SEQ_EXTENSION = ".sqb"; // standard extension for command sequence files; used by FileDispatcher
+    static const char* CMD_SEQ_AUTORUN_EXTENSION = ".sqa"; // standard extension for compiled command autorun sequence files; used by FileDispatcher
 
 }  // namespace Svc
 

@@ -16,6 +16,7 @@
 #include "Os/File.hpp"
 #include "Os/ValidateFile.hpp"
 #include "Svc/CmdSequencer/CmdSequencerComponentAc.hpp"
+#include "config/CmdSequencerCfg.hpp"
 
 namespace Svc {
 
@@ -523,6 +524,13 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                           const Fw::StringBase& filename  //!< The sequence file
     );
 
+    //! Handler implementation for seqDispatchIn
+    //!
+    //! Port for file dispatches to run sequences
+    void seqDispatchIn_handler(FwIndexType portNum,       //!< The port number
+                               Fw::StringBase& file_name  //!< The file to dispatch
+                               ) override;
+
     //! Handler for ping port
     void pingIn_handler(FwIndexType portNum,  //!< The port number
                         U32 key               //!< Value to return to pinger
@@ -639,6 +647,10 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! Set command timeout timer
     void setCmdTimeout(const Fw::Time& currentTime  //!< The current time
     );
+
+    //! Sequence run helper
+    void doSequenceRun(const Fw::StringBase& fileName
+    );  
 
   private:
     // ----------------------------------------------------------------------

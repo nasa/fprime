@@ -6,6 +6,7 @@ module FileHandlingConfig {
         constant fileUplink    = 10
         constant fileDownlink  = 10
         constant fileManager   = 10
+        constant fileDispatcher   = 10
         constant prmDb         = 10
     }
     
@@ -13,6 +14,7 @@ module FileHandlingConfig {
         constant fileUplink    = 64 * 1024
         constant fileDownlink  = 64 * 1024
         constant fileManager   = 64 * 1024
+        constant fileDispatcher   = 64 * 1024
         constant prmDb         = 64 * 1024
     }
 
@@ -20,6 +22,7 @@ module FileHandlingConfig {
         constant fileUplink    = 24
         constant fileDownlink  = 23
         constant fileManager   = 22
+        constant fileDispatcher   = 21
         constant prmDb         = 21
     }
 
