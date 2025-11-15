@@ -189,6 +189,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// #brief fill  the binary tree from DP files
     Fw::CmdResponse fillBinaryTree();
 
+    /// @brief prints a single node's memory address & those of it's links
+    /// @param node the node to print
+    void printNode(DpBtreeNode* node);
+
+    /// @brief renders the tree as a line for each node, with parent and child relations
+    void printBinaryTree();
+
     /// @brief reset the state file data
     void resetStateFileData();
 

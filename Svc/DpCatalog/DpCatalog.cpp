@@ -134,6 +134,74 @@ void DpCatalog::resetBinaryTree() {
     this->m_catalogBuilt = false;
 }
 
+void DpCatalog::printNode(DpBtreeNode* node) {
+    if (node == nullptr) {
+        printf("nullptr node\n");
+    } else {
+        printf("%14p: > %14p | <= %14p | ^ %14p [%c%c]\n", static_cast<void*>(node), static_cast<void*>(node->left),
+               static_cast<void*>(node->right), static_cast<void*>(node->parent),
+               (node == this->m_currentNode) ? 'C' : ' ', (node == this->m_currentXmitNode) ? 'X' : ' ');
+    }
+}
+
+void DpCatalog::printBinaryTree() {
+    // This function assumes the tree is not modified during execution
+    // This is mostly here for debugging unit tests
+    // If real use statistics are needed (e.g. avg depth)
+    // separate counters should really be consulted
+
+    // Perform, in order traversal w/o any modification
+    // Using the slightly different algorithm from Fw/DataStructures
+    if (this->m_dpTree == nullptr) {
+        printf("%s", "Tree is null\n");
+        return;
+    }
+
+    // start at the top
+    DpBtreeNode* node = this->m_dpTree;
+
+    // Nav left until nullptr
+    // Leads to highest priority node
+    // bounded while loop (in case we're linked onto the free list somehow)
+    for (FwSizeType record = 0; record < this->m_numDpSlots && node->left != nullptr; record++) {
+        node = node->left;
+
+        // I really hope these never fire
+        FW_ASSERT(node != this->m_freeListHead);
+        FW_ASSERT(node != nullptr);
+    }
+
+    // Node is now the highest prio
+    DpBtreeNode* prevNode = nullptr;
+
+    // Walk the rest of the tree in order
+    for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
+        if (node == nullptr) {
+            return;
+        }
+
+        // Don't print if we came from the right
+        // Keep navigating up since we've already been here
+        if (prevNode == node->right) {
+            prevNode = node;
+
+            node = node->parent;
+            continue;
+        }
+
+        printNode(node);
+        prevNode = node;
+
+        // Explore the node to the right, if available,
+        // otherwise navigate upwards
+        if (node->right != nullptr) {
+            node = node->right;
+        } else {
+            node = node->parent;
+        }
+    }
+}
+
 void DpCatalog::resetStateFileData() {
     // clear state file data
     for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
@@ -990,6 +1058,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // we should have a tree w/ at least one element
     FW_ASSERT(this->m_dpTree);
 
+    printBinaryTree();
+
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
     this->m_pendingFiles--;
@@ -1037,6 +1107,8 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     // Both of these are grabbed from the header
     (void)priority;
     (void)size;
+
+    printBinaryTree();
 
     // Since this is a runtime addition
     // Check if file is in one of our directories
