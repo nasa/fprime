@@ -144,6 +144,8 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RandomDp();
     void test_XmitBeforeInit();
     void test_StopWarn();
+    void test_CompareEntries();
+    void test_PingIn();
 };
 
 }  // namespace Svc

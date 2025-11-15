@@ -309,7 +309,7 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
 }
 
 void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
-    // TODO
+    this->pushFromPortEntry_pingOut(key);
 }
 
 // ----------------------------------------------------------------------
@@ -663,6 +663,23 @@ void DpCatalogTester ::test_StopWarn() {
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 111, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_XmitNotActive_SIZE(1);
+}
+
+void DpCatalogTester ::test_CompareEntries() {
+    DpCatalog::DpStateEntry left = {0, {1, 1, 1, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
+    DpCatalog::DpStateEntry right = {0, {1, 1, 2, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
+    FW_ASSERT(right == right);
+    FW_ASSERT(left != right);
+    FW_ASSERT(left < right);
+    FW_ASSERT(right > left);
+}
+
+void DpCatalogTester ::test_PingIn() {
+    const U32 key = 0xDEADBEEF;
+    this->invoke_to_pingIn(0, key);
+    this->component.doDispatch();
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
 }
 
 }  // namespace Svc

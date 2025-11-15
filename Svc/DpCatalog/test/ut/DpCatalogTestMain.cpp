@@ -284,6 +284,16 @@ TEST(NominalManual, StopWarn) {
     tester.test_StopWarn();
 }
 
+TEST(NominalManual, CompareEntries) {
+    Svc::DpCatalogTester tester;
+    tester.test_CompareEntries();
+}
+
+TEST(NominalManual, PingIn) {
+    Svc::DpCatalogTester tester;
+    tester.test_PingIn();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

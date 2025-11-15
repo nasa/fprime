@@ -32,6 +32,7 @@ Dict
 
 **/coverage/
 *.gcov
+lcov.info
 !**/test/ut/output/*.gcov
 GTestBase.*
 TesterBase.*
