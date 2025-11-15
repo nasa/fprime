@@ -118,10 +118,15 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     Fw::MallocAllocator alloc;
     this->clearHistory();
 
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+
     this->component.configure(dpDirs, numDirs, stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
+
+    ASSERT_EVENTS_DpFileAdded_SIZE(numDps - numRuntime);
+
     // TODO: Modify to use and check WAIT
     this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT, true);
     // this->component.doDispatch();
@@ -162,7 +167,6 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
         // Potentially dispatch file done port call that is sent on fileOut_handler
         // Since files are "instantly" marked done, delay the doDispatch to simulate a delay
-        // TODO: Fix the file out count issue when we delay the dispatch
         if (stopAfter == 0 && numRuntime > 0) {
             if (STest::Pick::lowerUpper(0, 1) < 1) {
                 this->component.doDispatch();
@@ -193,6 +197,11 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     }
 
     this->component.shutdown();
+
+    // clean old Dps
+    for (FwSizeType dp = 0; dp < numDps; dp++) {
+        this->delDp(dpSet[dp].id, dpSet[dp].time, dpSet[dp].dir);
+    }
 
     ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
@@ -590,7 +599,7 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
 
 void DpCatalogTester ::test_RandomDp() {
     static constexpr FwIndexType NUM_ENTRIES = DP_MAX_FILES;
-    static constexpr FwIndexType NUM_ITERS = 2;
+    static constexpr FwIndexType NUM_ITERS = 100;
     static constexpr FwIndexType NUM_DIRS = DP_MAX_DIRECTORIES;
 
     static constexpr FwSizeStoreType MAX_SIZE = 1000;
@@ -608,7 +617,7 @@ void DpCatalogTester ::test_RandomDp() {
         Fw::FileNameString stateFile("./dpState.dat");
         Svc::DpCatalogTester::DpSet dpSet[NUM_ENTRIES];
 
-        FwIndexType entries = STest::Pick::startLength(0, NUM_ENTRIES);
+        FwIndexType entries = STest::Pick::startLength(1, NUM_ENTRIES);
         FwIndexType runtimeEntries = STest::Pick::startLength(0, entries);
 
         // fill the input entries with random priorities
