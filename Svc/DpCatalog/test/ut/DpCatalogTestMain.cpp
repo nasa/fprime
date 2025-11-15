@@ -51,7 +51,7 @@ TEST(NominalManual, OneDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
     dir = "./DpTest_OneDp";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet;
     dpSet.id = 0x123;
@@ -69,7 +69,7 @@ TEST(NominalManual, FiveDp) {
     Fw::FileNameString dirs[2];
     dirs[0] = "./DpTest_FiveDp_1";
     dirs[1] = "./DpTest_FiveDp_2";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[5];
 
@@ -115,7 +115,7 @@ TEST(NominalManual, TwoDp_OneNotify) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
     dir = "./DpTest_TwoDp";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[2];
 
@@ -141,7 +141,7 @@ TEST(NominalManual, SixDp_ThreeNotify) {
     Fw::FileNameString dirs[2];
     dirs[0] = "./DpTest_SixDp_1";
     dirs[1] = "./DpTest_SixDp_2";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[6];
 
@@ -195,7 +195,7 @@ TEST(NominalManual, SixDp_ThreeStop) {
     Fw::FileNameString dirs[2];
     dirs[0] = "./DpTest_SixDp_1";
     dirs[1] = "./DpTest_SixDp_2";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[6];
 
@@ -248,7 +248,7 @@ TEST(NominalManual, TwoDp_OneStop) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
     dir = "./DpTest_TwoDp";
-    Fw::FileNameString stateFile("./dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[2];
 
