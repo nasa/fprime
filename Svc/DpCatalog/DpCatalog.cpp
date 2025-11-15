@@ -1058,8 +1058,6 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // we should have a tree w/ at least one element
     FW_ASSERT(this->m_dpTree);
 
-    printBinaryTree();
-
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
     this->m_pendingFiles--;
@@ -1107,8 +1105,6 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     // Both of these are grabbed from the header
     (void)priority;
     (void)size;
-
-    printBinaryTree();
 
     // Since this is a runtime addition
     // Check if file is in one of our directories
