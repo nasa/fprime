@@ -6,6 +6,7 @@
 
 #include "DpCatalogTester.hpp"
 #include <algorithm>
+#include <cstdlib>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -24,6 +25,9 @@ DpCatalogTester ::DpCatalogTester()
     : DpCatalogGTestBase("DpCatalogTester", DpCatalogTester::MAX_HISTORY_SIZE), component("DpCatalog") {
     this->initComponents();
     this->connectPorts();
+
+    // Clear out any garbage left behind
+    std::system("rm -rf ./DpTest*");
 }
 
 DpCatalogTester ::~DpCatalogTester() {}
@@ -202,8 +206,6 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     for (FwSizeType dp = 0; dp < numDps; dp++) {
         this->delDp(dpSet[dp].id, dpSet[dp].time, dpSet[dp].dir);
     }
-
-    ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
 
 Fw::String DpCatalogTester::genDP(FwDpIdType id,
@@ -614,7 +616,7 @@ void DpCatalogTester ::test_RandomDp() {
             std::cout << dirs[ind] << std::endl;
         }
 
-        Fw::FileNameString stateFile("./dpState.dat");
+        Fw::FileNameString stateFile("./DpTest/dpState.dat");
         Svc::DpCatalogTester::DpSet dpSet[NUM_ENTRIES];
 
         FwIndexType entries = STest::Pick::startLength(1, NUM_ENTRIES);
