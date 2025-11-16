@@ -698,6 +698,7 @@ uge
 uitofp
 UML
 umod
+unconfigured
 UNEXP
 unistd
 UNITTESTASSERT
