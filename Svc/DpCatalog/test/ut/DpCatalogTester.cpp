@@ -101,7 +101,8 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
                               const DpSet* dpSet,
                               FwSizeType numDps,
                               FwSizeType numRuntime,
-                              FwSizeType stopAfter) {
+                              FwSizeType stopAfter,
+                              Fw::Wait wait) {
     ASSERT_GE(numDps, numRuntime);
     // make a directory for the files
     for (FwSizeType dir = 0; dir < numDirs; dir++) {
@@ -128,12 +129,12 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
 
     ASSERT_EVENTS_DpFileAdded_SIZE(numDps - numRuntime);
 
-    // TODO: Modify to use and check WAIT
-    this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT, true);
-    // this->component.doDispatch();
+    this->sendCmd_START_XMIT_CATALOG(0, 11, wait, true);
 
     ASSERT_from_fileOut_SIZE(0);
 
@@ -190,14 +191,25 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
         ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
         ASSERT_EVENTS_XmitUnbuiltCatalog_SIZE(1);
         ASSERT_from_fileOut_SIZE(stopAfter);
-    } else if (numRuntime > 0) {
-        // Since we are remaining active, num completed events will be larger than 1
-        ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
-        ASSERT_from_fileOut_SIZE(numDps);
+
+        // BUILD, START, STOP, CLEAR, START
+        ASSERT_CMD_RESPONSE_SIZE(5);
+        ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+        ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 123, Fw::CmdResponse::OK);
+        ASSERT_CMD_RESPONSE(3, DpCatalog::OPCODE_CLEAR_CATALOG, 124, Fw::CmdResponse::OK);
+        // This should fail since we just cleaned up the catalog
+        ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_START_XMIT_CATALOG, 125, Fw::CmdResponse::EXECUTION_ERROR);
     } else {
-        ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
         ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
         ASSERT_from_fileOut_SIZE(numDps);
+
+        ASSERT_CMD_RESPONSE_SIZE(2);
+        ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+
+        if (numRuntime == 0) {
+            // Remain active w/ runtime elements would not satisfy this
+            ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+        }
     }
 
     this->component.shutdown();
@@ -642,7 +654,9 @@ void DpCatalogTester ::test_RandomDp() {
             }
         }
 
-        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries, 0);
+        Fw::Wait wait = static_cast<Fw::Wait::T>(STest::Pick::lowerUpper(0, 1));
+
+        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries, 0, wait);
     }
 }
 

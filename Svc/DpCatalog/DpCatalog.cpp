@@ -874,14 +874,7 @@ void DpCatalog::sendNextEntry() {
         // if no entry found, we are done
         this->m_xmitInProgress = false;
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
-        if (this->m_xmitCmdWait) {
-            this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::OK);
-
-            // Prevent a Duplicate Cmd Response
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        }
+        this->dispatchWaitedResponse(Fw::CmdResponse::OK);
         return;
     } else {
         // build file name based on the found entry
@@ -972,14 +965,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
         this->m_xmitInProgress = false;
-
-        if (this->m_xmitCmdWait) {
-            this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        }
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
     }
 
     // Catalog cleared while this file was sent
@@ -1138,6 +1124,11 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->log_ACTIVITY_HI_CatalogXmitStopped(this->m_xmitBytes);
         // Disarm the flag so next sendNextEntry stops transmission
         this->m_xmitInProgress = false;
+        // Respond to original cmd to start xmit
+        // (if we haven't already)
+        this->dispatchWaitedResponse(Fw::CmdResponse::OK);
+
+        // Respond to this command
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }
@@ -1147,6 +1138,17 @@ void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->resetStateFileData();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {
+    if (this->m_xmitCmdWait) {
+        this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, response);
+
+        // Prevent a Duplicate Cmd Response
+        this->m_xmitCmdWait = false;
+        this->m_xmitOpCode = 0;
+        this->m_xmitCmdSeq = 0;
+    }
 }
 
 }  // namespace Svc

@@ -236,6 +236,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return command response for pass/fail
     Fw::CmdResponse doCatalogXmit();
 
+    /// @brief send a cmdResponse to the start xmit cmd if user waited
+    /// @param response the command response for pass/fail
+    void dispatchWaitedResponse(Fw::CmdResponse response);
+
     // ----------------------------------
     // Private data
     // ----------------------------------

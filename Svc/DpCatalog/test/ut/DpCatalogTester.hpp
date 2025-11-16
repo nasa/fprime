@@ -67,7 +67,8 @@ class DpCatalogTester : public DpCatalogGTestBase {
                  const DpSet* dpSet,
                  FwSizeType numDps,
                  FwSizeType numRuntime = 0,
-                 FwSizeType stopAfter = 0);
+                 FwSizeType stopAfter = 0,
+                 Fw::Wait wait = Fw::Wait::NO_WAIT);
 
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
