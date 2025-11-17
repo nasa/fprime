@@ -9,6 +9,7 @@
 #include <cstring>
 
 #include "Fw/Logger/Logger.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/Posix/Task.hpp"
 #include "Os/Posix/error.hpp"
@@ -115,6 +116,26 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
     return status;
 }
 
+int set_task_name(pthread_t thread, const Os::Task::Arguments& arguments) {
+    int status = 0;
+// pthread_setname_np is a non-POSIX function.
+// Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
+// That's the circumstance in which we expect this feature to work.
+#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
+
+    // Construct a sixteen char long version of the task name
+    const FwSizeType PTHREAD_NAME_LENGTH = 16;
+    char name_sixteen_capped[PTHREAD_NAME_LENGTH];
+    Fw::StringUtils::string_copy(name_sixteen_capped, arguments.m_name.toChar(), PTHREAD_NAME_LENGTH);
+
+    status = pthread_setname_np(thread, name_sixteen_capped);
+#else
+    Fw::Logger::log("[WARNING] %s setting thread name is only available with GNU pthreads\n",
+                    const_cast<CHAR*>(arguments.m_name.toChar()));
+#endif
+    return status;
+}
+
 Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
                                    const PosixTask::PermissionExpectation permissions) {
     int pthread_status = PosixTaskHandle::SUCCESS;
@@ -139,6 +160,10 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         pthread_status =
             pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper, arguments.m_routine_argument);
+    }
+    if ((expect_permission) &&
+        (pthread_status == PosixTaskHandle::SUCCESS)) {
+        pthread_status = set_task_name(handle.m_task_descriptor, arguments);
     }
     // Successful execution of all precious steps will result in a valid task handle
     if (pthread_status == PosixTaskHandle::SUCCESS) {
