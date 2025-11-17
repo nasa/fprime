@@ -8,16 +8,16 @@
 ####
 restrict_platforms(Posix)
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.cpp"
 )
-
-register_fprime_module()
 ### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeMain.cpp"
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeMain.cpp"
 )
-register_fprime_ut()

@@ -6,16 +6,17 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.cpp"
-)
 
-register_fprime_module()
-### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComSplitterTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComSplitterMain.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.cpp"
 )
-register_fprime_ut()
+### UTs ###
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ComSplitter.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComSplitterTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComSplitterMain.cpp"
+)

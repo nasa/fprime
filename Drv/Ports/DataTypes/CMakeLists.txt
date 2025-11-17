@@ -5,13 +5,11 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/DataTypes.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
-)
 
-set(MOD_DEPS
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/DataTypes.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
+  DEPENDS
     Fw/Port
 )
-
-register_fprime_module()

@@ -8,11 +8,11 @@
 add_compile_options(
   -Wno-double-promotion
 )
-set(SOURCE_FILES
+
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.cpp"
-)
-set(MOD_DEPS
+  DEPENDS
     Os
 )
-register_fprime_module()

@@ -5,8 +5,10 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SmSignalBuffer.cpp"
+
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/SmSignalBuffer.cpp"
+  DEPENDS
+    Fw_Types
 )
-set(MOD_DEPS Fw_Types)
-register_fprime_module()

@@ -6,28 +6,24 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.cpp"
-)
 
-set(MOD_DEPS
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.cpp"
+  DEPENDS
     Utils/Types
     Svc/FprimeProtocol
 )
 
-register_fprime_module()
-
-
 #### UTs ####
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTestMain.cpp"
-)
-set(UT_MOD_DEPS
-    STest
-)
-set(UT_AUTO_HELPERS ON)
 
-register_fprime_ut()
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTestMain.cpp"
+  DEPENDS
+    STest
+  UT_AUTO_HELPERS
+)

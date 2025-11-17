@@ -8,16 +8,17 @@
 ####
 restrict_platforms(Linux Darwin) # Uses sys/time
 
-set(SOURCE_FILES
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ArrayFIFOBuffer.cpp"
 )
 
-register_fprime_module()
-
 ### UTS ###
-set(UT_SOURCE_FILES
+
+register_fprime_ut(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferAccumulatorTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Accumulate.cpp"
@@ -26,5 +27,4 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferAccumulatorMain.cpp"
 )
-register_fprime_ut()
 

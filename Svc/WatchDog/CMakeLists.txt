@@ -6,12 +6,10 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/WatchDog.fpp"
-)
 
-set(MOD_DEPS
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/WatchDog.fpp"
+  DEPENDS
     Fw/Port
 )
-
-register_fprime_module()

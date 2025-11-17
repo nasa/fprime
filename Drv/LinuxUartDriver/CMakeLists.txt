@@ -7,9 +7,10 @@
 ####
 restrict_platforms(Linux Darwin)
 
-set(MOD_DEPS Os)
-set(SOURCE_FILES
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.cpp"
+  DEPENDS
+    Os
 )
-register_fprime_module()

@@ -6,14 +6,13 @@
 #
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
+  DEPENDS
+    "Fw/Types"
 )
-set(MOD_DEPS
-  "Fw/Types"
-)
-register_fprime_module()
 
 # Rules based unit testing
 set(UT_MOD_DEPS

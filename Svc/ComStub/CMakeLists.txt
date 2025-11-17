@@ -6,22 +6,21 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
+
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.cpp"
-)
-set(MOD_DEPS
+  DEPENDS
     Fw/Logger
 )
-register_fprime_module()
 
-set(UT_SOURCE_FILES
+register_fprime_ut(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComStubTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComStubTestMain.cpp"
-)
-set(UT_MOD_DEPS
+  DEPENDS
     STest
+  UT_AUTO_HELPERS
 )
-set(UT_AUTO_HELPERS ON)
-register_fprime_ut()

@@ -7,20 +7,17 @@
 ####
 restrict_platforms(Posix SOCKETS)
 
-set(SOURCE_FILES
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/IpSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpClientSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpServerSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/UdpSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SocketComponentHelper.cpp"
-)
-
-set(MOD_DEPS
+  DEPENDS
     Os
     Fw/Buffer
 )
-
-register_fprime_module()
 
 # The PortSelector library and testing helper is only needed on Testing build
 if (BUILD_TESTING)

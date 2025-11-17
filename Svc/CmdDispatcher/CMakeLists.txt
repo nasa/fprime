@@ -7,16 +7,17 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"
-)
 
-register_fprime_module()
-### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"
 )
-register_fprime_ut()
+### UTs ###
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
+)

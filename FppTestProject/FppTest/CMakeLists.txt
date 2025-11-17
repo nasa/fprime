@@ -11,8 +11,10 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/interfaces/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
 
-set(SOURCE_FILES "source.cpp")
-set(MOD_DEPS
+register_fprime_deployment(
+  SOURCES
+    "source.cpp"
+  DEPENDS
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/component/active
     ${PROJECT_NAME}/component/empty
@@ -29,6 +31,4 @@ set(MOD_DEPS
     ${PROJECT_NAME}/state_machine/internal_instance/state
     ${PROJECT_NAME}/struct
 )
-
-register_fprime_deployment()
 

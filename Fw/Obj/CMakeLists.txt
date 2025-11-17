@@ -5,13 +5,12 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ObjBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/SimpleObjRegistry.cpp"
-)
-set(MOD_DEPS
-  Fw/Types
-  Fw/Logger
-)
 
-register_fprime_module()
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ObjBase.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SimpleObjRegistry.cpp"
+  DEPENDS
+    Fw/Types
+    Fw/Logger
+)

@@ -5,23 +5,20 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Checksum.cpp"
+
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Checksum.cpp"
+  DEPENDS
+    Fw/Types
 )
 
-set(MOD_DEPS
-  Fw/Types
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChecksumMain.cpp"
+  DEPENDS
+    "${FPRIME_FRAMEWORK_PATH}/CFDP/Checksum"
+    "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
 )
-register_fprime_module()
-
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChecksumMain.cpp"
-)
-
-set(UT_MOD_DEPS
-  "${FPRIME_FRAMEWORK_PATH}/CFDP/Checksum"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
-)
-register_fprime_ut()
 # Add GTest directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
