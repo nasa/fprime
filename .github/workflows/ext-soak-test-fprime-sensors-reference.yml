@@ -15,11 +15,31 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
+    inputs:
+      service_user:
+        description: "Linux user to run services as (default: fprime)"
+        required: false
+        default: fprime
+      gds_service_name:
+        description: "Name of service that runs the F Prime GDS"
+        required: false
+        default: fprime-sensors-reference-soak-gds
+      fsw_service_name:
+        description: "Name of service that runs the F Prime FSW"
+        required: false
+        default: fprime-sensors-reference-soak-fsw
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+env:
+  FSW_SERVICE_NAME: "fprime-sensors-reference-soak-fsw"
+  GDS_SERVICE_NAME: "fprime-sensors-reference-soak-gds"
+  INSTALL_DIR: /opt/fprime-sensors-reference-soak
+  SERVICE_USER: "fprime"
 
 jobs:
 
@@ -44,13 +64,15 @@ jobs:
           mkdir -p build-artifacts-soak
           cp -r ./build-artifacts build-artifacts-soak
           cp ./lib/fprime/.github/actions/soak-test/soak_monitor.py build-artifacts-soak
+          cp ./lib/fprime/.github/actions/soak-test/${{ env.GDS_SERVICE_NAME }}.service build-artifacts-soak
+          cp ./lib/fprime/.github/actions/soak-test/${{ env.FSW_SERVICE_NAME }}.service build-artifacts-soak
 
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts-soak
           path: build-artifacts-soak
-          retention-days: 5
+          retention-days: 1
 
   deploy-service:
     name: "Deploy as System Service"
@@ -66,5 +88,33 @@ jobs:
       - name: "Stop Services"
         shell: bash
         run: |
-          ls
+          sudo systemctl stop ${{ env.FSW_SERVICE_NAME }}.service || true
+          sudo systemctl disable ${{ env.FSW_SERVICE_NAME }}.service || true
+          sudo systemctl stop ${{ env.GDS_SERVICE_NAME }}.service || true
+          sudo systemctl disable ${{ env.GDS_SERVICE_NAME }}.service || true
 
+      - name: "Create systemd Service File"
+        run: |
+          sudo cp ${{ env.FSW_SERVICE_NAME }}.service /etc/systemd/system/${{ env.FSW_SERVICE_NAME }}.service
+          sudo sed -i s/\$\{SERVICE_USER\}/}
+          sudo cp ${{ env.GDS_SERVICE_NAME }}.service /etc/systemd/system/${{ env.GDS_SERVICE_NAME }}.service
+
+      - name: "Start and enable services"
+        run: |
+          echo "Starting and enabling services..."
+          sudo systemctl daemon-reload
+
+          # start and enable gds service
+          sudo systemctl enable ${GDS_SERVICE_NAME}
+          sudo systemctl start ${GDS_SERVICE_NAME}
+
+          # start and enable binary
+          sudo systemctl start ${FSW_SERVICE_NAME}
+          sudo systemctl enable ${FSW_SERVICE_NAME}
+
+          echo "Waiting for services to stabilize..."
+          sleep 5 # Wait for services to stabilize
+
+          echo "Checking final service status..."
+          sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 50
+          sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l -n 150
