@@ -4,8 +4,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/QueuedTest.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
 )
 
 # Sets MODULE_NAME to unique name based on path
@@ -27,7 +28,6 @@ set_target_properties(
 include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/QueuedTestTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
@@ -49,6 +49,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/../tests/OverflowTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
   DEPENDS
     Fw_Test
     STest

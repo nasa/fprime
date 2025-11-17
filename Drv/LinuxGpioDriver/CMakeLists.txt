@@ -11,17 +11,19 @@ endif()
 
 if(FPRIME_USE_STUBBED_DRIVERS)
     register_fprime_module(
-        SOURCES
-            "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver.fpp"
+  SOURCES
             "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverCommon.cpp"
             "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverStub.cpp"
+  AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver.fpp"
     )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     register_fprime_module(
-        SOURCES
-            "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver.fpp"
+  SOURCES
             "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverCommon.cpp"
             "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver.cpp"
+  AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver.fpp"
     )
 endif()
 

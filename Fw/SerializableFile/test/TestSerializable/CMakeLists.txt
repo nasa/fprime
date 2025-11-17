@@ -7,7 +7,7 @@
 ####
 
 register_fprime_module(
-  SOURCES
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/TestSerializable.fpp"
   DEPENDS
     Fw_Types

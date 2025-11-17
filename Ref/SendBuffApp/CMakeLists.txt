@@ -11,6 +11,7 @@ add_compile_options(
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/SendBuffApp.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SendBuffApp.fpp"
 )

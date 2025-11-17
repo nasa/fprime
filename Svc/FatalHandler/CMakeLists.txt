@@ -8,7 +8,6 @@
 ####
 
 set(FATAL_HANDLER_SOURCES
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
 )
 
@@ -23,6 +22,8 @@ endif()
 register_fprime_module(
   SOURCES
     ${FATAL_HANDLER_SOURCES}
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
   DEPENDS
     Os
     Fw_Logger

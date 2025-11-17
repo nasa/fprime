@@ -12,8 +12,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
   DEPENDS
     Svc_FprimeProtocol
 )
@@ -22,8 +23,9 @@ register_fprime_module(
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
   UT_AUTO_HELPERS
 )

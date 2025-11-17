@@ -9,8 +9,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.hpp"
 )
@@ -18,10 +19,11 @@ register_fprime_module(
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
   DEPENDS
     STest
 )

@@ -1,8 +1,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Harness.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TestAbsType.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Harness.fpp"
 )
 
 register_fprime_ut(

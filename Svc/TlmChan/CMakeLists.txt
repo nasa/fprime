@@ -9,16 +9,18 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/TlmChan.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TlmChan.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/TlmChan.fpp"
 )
 
 ### UTs ###
 
 register_fprime_ut(
   SOURCES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChan.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanTester.cpp"
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChan.fpp"
 )
 

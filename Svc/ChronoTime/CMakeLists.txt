@@ -12,14 +12,16 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
   UT_AUTO_HELPERS
 )

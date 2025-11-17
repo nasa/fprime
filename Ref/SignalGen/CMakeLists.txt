@@ -13,8 +13,9 @@ add_compile_options(
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SignalGen.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/SignalGen.hpp"
 )
@@ -23,9 +24,10 @@ register_fprime_module(
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SignalGenTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SignalGenTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SignalGenTester.hpp"
   UT_AUTO_HELPERS

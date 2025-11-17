@@ -8,17 +8,19 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.fpp"
 )
 
 ### UTs ###
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferRepeaterTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferRepeaterTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.fpp"
 )
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
 if (TARGET "${UT_TARGET_NAME}")

@@ -3,7 +3,7 @@
 # ====================================================================== 
 
 register_fprime_module(
-  SOURCES
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/implicit.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/explicit.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/default.fpp"

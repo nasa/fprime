@@ -9,17 +9,19 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
   DEPENDS
     Fw_Logger
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComStubTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComStubTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
   DEPENDS
     STest
   UT_AUTO_HELPERS

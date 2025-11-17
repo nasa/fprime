@@ -10,14 +10,16 @@ restrict_platforms(Posix)
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PosixTime.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
 )
 ### UTs ###
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PosixTime.fpp"
 )

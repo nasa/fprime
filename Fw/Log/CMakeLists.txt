@@ -10,6 +10,7 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/LogBuffer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Log.fpp"
   DEPENDS
     Fw_Com

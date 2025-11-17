@@ -9,5 +9,6 @@
 register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/StatementArgBuffer.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/StatementArgBuffer.fpp"
 )

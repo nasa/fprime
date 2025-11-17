@@ -8,9 +8,10 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
   DEPENDS
     Fw_Com
 )

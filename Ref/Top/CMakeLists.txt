@@ -10,9 +10,10 @@ add_compile_options(
 
 register_fprime_module(
   SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/RefTopology.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/RefTopology.cpp"
   DEPENDS
     Fw_Logger
     Svc_PosixTime

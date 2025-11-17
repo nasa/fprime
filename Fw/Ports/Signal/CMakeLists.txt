@@ -5,6 +5,6 @@
 ####
 
 register_fprime_module(
-  SOURCES
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Signal.fpp"
 )

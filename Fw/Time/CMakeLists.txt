@@ -8,9 +8,10 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Time.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TimeInterval.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Time.fpp"
 )
 ### UTs ###
 

@@ -10,17 +10,19 @@ if (NOT FPRIME_USE_STUBBED_DRIVERS)
 endif()
 if(FPRIME_USE_STUBBED_DRIVERS)
     register_fprime_module(
-        SOURCES
-            "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
+  SOURCES
             "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
             "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplStub.cpp"
+  AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
     )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     register_fprime_module(
-        SOURCES
-            "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
+  SOURCES
             "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
             "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
+  AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
     )
 endif()
 

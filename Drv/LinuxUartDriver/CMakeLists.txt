@@ -9,8 +9,9 @@ restrict_platforms(Linux Darwin)
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.fpp"
   DEPENDS
     Os
 )

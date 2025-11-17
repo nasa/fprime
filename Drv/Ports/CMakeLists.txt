@@ -8,7 +8,7 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataTypes/")
 
 register_fprime_module(
-  SOURCES
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/GpioDriverPorts.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/I2cDriverPorts.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SpiDriverPorts.fpp"

@@ -8,8 +8,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Buffer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Buffer.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Buffer.fpp"
   DEPENDS
     Fw_Types
 )

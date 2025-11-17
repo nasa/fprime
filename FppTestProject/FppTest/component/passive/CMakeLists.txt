@@ -4,8 +4,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveTest.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
 )
 
 # Sets MODULE_NAME to unique name based on path
@@ -27,7 +28,6 @@ set_target_properties(
 include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
@@ -43,6 +43,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveTestTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
   DEPENDS
     Fw_Test
     STest

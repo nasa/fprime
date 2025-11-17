@@ -9,17 +9,19 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
 )
 
 #### UTS ###
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StaticMemoryTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StaticMemoryMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
   DEPENDS
     STest
 )

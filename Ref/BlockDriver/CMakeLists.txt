@@ -8,17 +8,19 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.fpp"
 )
 
 ### Unit Tests ###
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BlockDriverTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BlockDriverTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.fpp"
   DEPENDS
     STest
   UT_AUTO_HELPERS

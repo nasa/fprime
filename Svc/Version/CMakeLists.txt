@@ -12,8 +12,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Version.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
   DEPENDS
     Os
     version
@@ -22,8 +23,9 @@ register_fprime_module(
 set (UT_AUTO_HELPERS ON)
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/version.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
 )

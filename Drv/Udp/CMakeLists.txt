@@ -11,8 +11,9 @@ restrict_platforms(Posix SOCKETS)
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/UdpComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
   DEPENDS
     Fw_Logger
     Drv_ByteStreamDriverModel
@@ -23,9 +24,10 @@ register_fprime_module(
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
   DEPENDS
     STest
     SocketTestHelper

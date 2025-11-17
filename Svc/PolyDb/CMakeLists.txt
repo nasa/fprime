@@ -9,8 +9,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PolyDb.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
 )
 ### UTs ###
 ####
@@ -21,9 +22,10 @@ register_fprime_module(
 
 register_fprime_ut(
   SOURCES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/PolyDb/PolyDb.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTestMain.cpp"
     #    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTester.cpp"
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/PolyDb/PolyDb.fpp"
   UT_AUTO_HELPERS
 )

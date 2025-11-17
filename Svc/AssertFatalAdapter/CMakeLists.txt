@@ -9,16 +9,18 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapterComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter.fpp"
 )
 # UTs ###
 
 register_fprime_ut(
   SOURCES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/AssertFatalAdapter/AssertFatalAdapter.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AssertFatalAdapterTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/AssertFatalAdapter/AssertFatalAdapter.fpp"
 )
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
 if (TARGET "${UT_TARGET_NAME}")

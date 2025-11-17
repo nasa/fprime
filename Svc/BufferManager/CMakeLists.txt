@@ -9,17 +9,19 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/BufferManager.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/BufferManager.fpp"
 )
 
 ### UTS ###
 
 register_fprime_ut(
   SOURCES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/BufferManager/BufferManager.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferManagerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferManagerTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/BufferManager/BufferManager.fpp"
   DEPENDS
     STest
 )

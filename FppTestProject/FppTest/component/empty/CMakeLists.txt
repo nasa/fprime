@@ -4,8 +4,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Empty.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
 )
 
 # Sets MODULE_NAME to unique name based on path
@@ -25,10 +26,11 @@ set_target_properties(
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/empty.fpp"
   DEPENDS
     Fw_Test
     STest

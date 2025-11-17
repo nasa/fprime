@@ -12,8 +12,9 @@ add_compile_options(
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp.fpp"
   DEPENDS
     Os" "Fw_Cmd
 )

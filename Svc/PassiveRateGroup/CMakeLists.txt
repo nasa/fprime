@@ -10,6 +10,7 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.hpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.fpp"
   DEPENDS
     ...
@@ -25,6 +26,7 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTester.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.fpp"
   DEPENDS
     ...

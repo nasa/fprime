@@ -9,8 +9,9 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
   DEPENDS
     Fw_Logger
 )

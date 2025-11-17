@@ -2,13 +2,13 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/DpManager.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/DpManager.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/DpManager.fpp"
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/DpManager.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpManagerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpManagerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/BufferGetStatus.cpp"
@@ -19,6 +19,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/SchedIn.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/Testers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Scenarios/Random.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/DpManager.fpp"
   DEPENDS
     STest
   UT_AUTO_HELPERS

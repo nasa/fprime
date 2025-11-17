@@ -8,6 +8,7 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PingReceiver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentImpl.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PingReceiver.fpp"
 )

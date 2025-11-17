@@ -6,7 +6,7 @@
 # However, only the UT build is allowed here.
 
 register_fprime_module(
-  SOURCES
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/alias.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/array.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/enum.fpp"

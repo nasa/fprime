@@ -17,13 +17,15 @@ endif()
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerCommon.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxTimerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
 )

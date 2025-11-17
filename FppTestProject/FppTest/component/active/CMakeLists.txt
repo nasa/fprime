@@ -5,6 +5,7 @@
 register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/ActiveTest.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
@@ -49,12 +50,13 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../tests/TlmTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTestTester.cpp"
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTestTester.cpp"
   DEPENDS
     Fw_Test
     STest

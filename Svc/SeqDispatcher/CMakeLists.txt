@@ -9,16 +9,18 @@
 
 register_fprime_module(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/SeqDispatcher.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SeqDispatcher.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SeqDispatcher.fpp"
 )
 
 ### UTS ###
 
 register_fprime_ut(
   SOURCES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/SeqDispatcher/SeqDispatcher.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SeqDispatcherTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SeqDispatcherTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${FPRIME_FRAMEWORK_PATH}/Svc/SeqDispatcher/SeqDispatcher.fpp"
   UT_AUTO_HELPERS
 )
