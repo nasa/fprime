@@ -8,10 +8,16 @@
 
 # Note: no autocoding files, so basic dependencies must be hard-coded
 
+set(FILE_PACKET_DEPS
+    Fw/Types
+    CFDP/Checksum
+    Fw/Buffer
+)
 # For shared libraries, Os must exist in the module list
 if (BUILD_SHARED_LIBS)
-    list(APPEND MOD_DEPS "Os")
+    list(APPEND FILE_PACKET_DEPS "Os")
 endif()
+
 register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/CancelPacket.cpp"
@@ -22,9 +28,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/PathName.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/StartPacket.cpp"
   DEPENDS
-    Fw/Types
-    CFDP/Checksum
-    Fw/Buffer
+    ${FILE_PACKET_DEPS}
 )
 # Add GTest directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
