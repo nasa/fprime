@@ -11,5 +11,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/DataTypes.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
   DEPENDS
-    Fw/Port
+    Fw_Port
 )

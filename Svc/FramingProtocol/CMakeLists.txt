@@ -13,10 +13,10 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/FramingProtocol.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol.cpp"
   DEPENDS
-    Fw/Buffer
-    Fw/Time
-    Utils/Hash
-    Utils/Types
+    Fw_Buffer
+    Fw_Time
+    Utils_Hash
+    Utils_Types
 )
 
 register_fprime_ut(

@@ -7,7 +7,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
   DEPENDS
-    Fw/Sm
+    Fw_Sm
 )
 
 register_fprime_ut(

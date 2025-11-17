@@ -20,12 +20,12 @@ if (BUILD_TESTING)
     "${CMAKE_CURRENT_LIST_DIR}/StartPacket.cpp"
   DEPENDS
     gtest
-    Fw/Types
-    Fw/Types/GTest
-    CFDP/Checksum
-    CFDP/Checksum/GTest
-    Fw/FilePacket
-    Fw/Comp
-    Fw/Port
+    Fw_Types
+    Fw_Types_GTest
+    CFDP_Checksum
+    CFDP_Checksum_GTest
+    Fw_FilePacket
+    Fw_Comp
+    Fw_Port
 )
 endif()

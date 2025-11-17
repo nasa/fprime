@@ -12,7 +12,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Log.fpp"
   DEPENDS
-    Fw/Com
+    Fw_Com
 )
 ### UTs ###
 
@@ -20,9 +20,9 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LogTest.cpp"
   DEPENDS
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Com"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Obj"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Port"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
+    Fw_Com
+    Fw_Obj
+    Fw_Port
+    Fw_Time
+    Fw_Types
 )

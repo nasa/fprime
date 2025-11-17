@@ -12,5 +12,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/CmdPacket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Cmd.fpp"
   DEPENDS
-    Fw/Com
+    Fw_Com
 )

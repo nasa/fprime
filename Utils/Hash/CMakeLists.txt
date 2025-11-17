@@ -13,5 +13,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/HashBufferCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/HashCommon.cpp"
   DEPENDS
-    "Fw/Types"
+    Fw_Types
 )

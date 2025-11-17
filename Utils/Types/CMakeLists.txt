@@ -11,7 +11,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
   DEPENDS
-    "Fw/Types"
+    Fw_Types
 )
 
 # Rules based unit testing
@@ -24,7 +24,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularBuffer/Main.cpp"
   DEPENDS
     STest
-    Fw/Types
+    Fw_Types
 )
 # STest Includes for this UT
 set (UT_TARGET_NAME "Types_Circular_Buffer_ut_exe")

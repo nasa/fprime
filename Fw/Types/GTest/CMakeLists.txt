@@ -14,8 +14,8 @@ if(BUILD_TESTING)
     "${CMAKE_CURRENT_LIST_DIR}/Bytes.cpp"
   DEPENDS
     gtest
-    Fw/Types
-    Fw/Comp
-    Fw/Port
+    Fw_Types
+    Fw_Comp
+    Fw_Port
 )
 endif()

@@ -9,9 +9,9 @@
 # Note: no autocoding files, so basic dependencies must be hard-coded
 
 set(FILE_PACKET_DEPS
-    Fw/Types
-    CFDP/Checksum
-    Fw/Buffer
+    Fw_Types
+    CFDP_Checksum
+    Fw_Buffer
 )
 # For shared libraries, Os must exist in the module list
 if (BUILD_SHARED_LIBS)
@@ -37,5 +37,5 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FilePacketMain.cpp"
   DEPENDS
-    Fw/FilePacket/GTest
+    Fw_FilePacket_GTest
 )

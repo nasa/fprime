@@ -15,10 +15,10 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Warnings.cpp"
   DEPENDS
     Os
-    Fw/Buffer
-    Fw/FilePacket
-    Utils/Hash
-    CFDP/Checksum
+    Fw_Buffer
+    Fw_FilePacket
+    Utils_Hash
+    CFDP_Checksum
 )
 
 ### UTs ###

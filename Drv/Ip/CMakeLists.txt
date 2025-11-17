@@ -16,7 +16,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/SocketComponentHelper.cpp"
   DEPENDS
     Os
-    Fw/Buffer
+    Fw_Buffer
 )
 
 # The PortSelector library and testing helper is only needed on Testing build

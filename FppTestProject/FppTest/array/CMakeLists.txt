@@ -26,6 +26,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
   DEPENDS
-    Fw/Test
+    Fw_Test
     STest
 )

@@ -14,6 +14,6 @@ if (BUILD_TESTING)
     "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
   DEPENDS
     gtest
-    CFDP/Checksum
+    CFDP_Checksum
 )
 endif()

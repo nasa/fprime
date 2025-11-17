@@ -14,7 +14,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/OutputSerializePort.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/PortBase.cpp"
   DEPENDS
-    Fw/Types
-    Fw/Logger
-    Fw/Obj
+    Fw_Types
+    Fw_Logger
+    Fw_Obj
 )

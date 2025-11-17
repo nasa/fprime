@@ -15,7 +15,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.cpp"
   DEPENDS
-    Svc/FprimeProtocol
+    Svc_FprimeProtocol
 )
 
 ### Unit Tests ###

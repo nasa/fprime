@@ -20,6 +20,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeIntervalTester.cpp"
   DEPENDS
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
+    Fw_Time
+    Fw_Types
 )

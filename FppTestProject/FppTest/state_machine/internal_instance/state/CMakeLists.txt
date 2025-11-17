@@ -25,7 +25,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/StateToSelf.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/StateToState.fpp"
   DEPENDS
-    FppTest/state_machine/internal/harness
+    FppTest_state_machine_internal_harness
 )
 
 register_fprime_ut(

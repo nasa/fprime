@@ -11,6 +11,6 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/DpPorts.fpp"
   DEPENDS
-    Fw/Types
-    Fw/Port
+    Fw_Types
+    Fw_Port
 )

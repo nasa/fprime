@@ -12,9 +12,9 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/PassiveComponentBase.cpp"
   DEPENDS
-    Fw/Types
-    Fw/Obj
-    Fw/Port
+    Fw_Types
+    Fw_Obj
+    Fw_Port
 )
 # Makes active component its own library such that it can depend on Os where
 # passive components do not.
@@ -25,5 +25,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
   DEPENDS
     Os
-    Fw/Comp
+    Fw_Comp
 )

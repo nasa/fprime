@@ -6,10 +6,10 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.cpp"
   DEPENDS
-    Fw/Types
-    Fw/Time
+    Fw_Types
+    Fw_Time
     Os
-    Utils/Hash
+    Utils_Hash
 )
 
 register_fprime_ut(
@@ -19,8 +19,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
   DEPENDS
     STest
-    Fw/Types
-    Fw/Time
+    Fw_Types
+    Fw_Time
     Os
 )
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")

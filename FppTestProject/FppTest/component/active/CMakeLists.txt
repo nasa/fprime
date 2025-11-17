@@ -56,6 +56,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTestTester.cpp"
   DEPENDS
-    Fw/Test
+    Fw_Test
     STest
 )

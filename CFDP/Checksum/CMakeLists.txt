@@ -10,15 +10,15 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/Checksum.cpp"
   DEPENDS
-    Fw/Types
+    Fw_Types
 )
 
 register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChecksumMain.cpp"
   DEPENDS
-    "${FPRIME_FRAMEWORK_PATH}/CFDP/Checksum"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
+    CFDP_Checksum
+    Fw_Types
 )
 # Add GTest directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

@@ -11,7 +11,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Buffer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Buffer.cpp"
   DEPENDS
-    Fw/Types
+    Fw_Types
 )
 
 register_fprime_ut(

@@ -12,5 +12,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
   DEPENDS
-    Fw/Logger
+    Fw_Logger
 )

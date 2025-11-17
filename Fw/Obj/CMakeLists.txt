@@ -11,6 +11,6 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/ObjBase.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SimpleObjRegistry.cpp"
   DEPENDS
-    Fw/Types
-    Fw/Logger
+    Fw_Types
+    Fw_Logger
 )

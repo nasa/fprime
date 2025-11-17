@@ -10,7 +10,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Sequence.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.fpp"
   DEPENDS
-    FppTest/state_machine/internal/harness
+    FppTest_state_machine_internal_harness
 )
 
 register_fprime_ut(

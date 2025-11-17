@@ -25,5 +25,5 @@ register_fprime_module(
     ${FATAL_HANDLER_SOURCES}
   DEPENDS
     Os
-    Fw/Logger
+    Fw_Logger
 )

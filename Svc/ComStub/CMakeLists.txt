@@ -12,7 +12,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComStub.cpp"
   DEPENDS
-    Fw/Logger
+    Fw_Logger
 )
 
 register_fprime_ut(

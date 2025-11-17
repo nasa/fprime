@@ -12,5 +12,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Cycle.fpp"
   DEPENDS
     Os
-    Fw/Port
+    Fw_Port
 )

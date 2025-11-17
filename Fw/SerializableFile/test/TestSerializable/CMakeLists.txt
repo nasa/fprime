@@ -10,9 +10,9 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TestSerializable.fpp"
   DEPENDS
-    Fw/Types
-    Fw/Comp
-    Fw/Port
+    Fw_Types
+    Fw_Comp
+    Fw_Port
 )
 
 # Sets MODULE_NAME to unique name based on path

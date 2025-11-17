@@ -13,7 +13,7 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
   DEPENDS
-    Fw/Types
+    Fw_Types
     Os
 )
 ### UTs ###
@@ -22,9 +22,9 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Test.cpp"
   DEPENDS
-    Fw/SerializableFile
-    Fw/SerializableFile/test/TestSerializable
-    Fw/Types
-    Utils/Hash
+    Fw_SerializableFile
+    Fw_SerializableFile_test_TestSerializable
+    Fw_Types
+    Utils_Hash
     Os
 )

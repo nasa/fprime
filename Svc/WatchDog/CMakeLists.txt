@@ -11,5 +11,5 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/WatchDog.fpp"
   DEPENDS
-    Fw/Port
+    Fw_Port
 )

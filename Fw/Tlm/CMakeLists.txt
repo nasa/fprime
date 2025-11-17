@@ -12,7 +12,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
   DEPENDS
-    Fw/Com
+    Fw_Com
 )
 ### UTs ###
 
@@ -20,10 +20,10 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmTest.cpp"
   DEPENDS
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Tlm"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Com"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Obj"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Port"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
-    "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
+    Fw_Tlm
+    Fw_Com
+    Fw_Obj
+    Fw_Port
+    Fw_Time
+    Fw_Types
 )

@@ -12,8 +12,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.cpp"
   DEPENDS
-    Utils/Types
-    Svc/FprimeProtocol
+    Utils_Types
+    Svc_FprimeProtocol
 )
 
 #### UTs ####

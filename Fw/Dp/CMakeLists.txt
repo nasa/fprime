@@ -5,7 +5,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Dp.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/DpContainer.cpp"
   DEPENDS
-    Utils/Hash
+    Utils_Hash
 )
 
 register_fprime_ut(
