@@ -19,7 +19,7 @@ register_fprime_module(
 # Makes active component its own library such that it can depend on Os where
 # passive components do not.
 register_fprime_module(
-  "Fw_CompQueued"
+  Fw_CompQueued
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
