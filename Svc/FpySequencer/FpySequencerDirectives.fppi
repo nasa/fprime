@@ -146,13 +146,6 @@ struct PeekDirective {
     _empty: U8
 }
 
-@ asserts that a condition is true, raise an error code if not
-struct AssertDirective {
-    # pops two U8s off the stack
-    # condition and error code
-    _empty: U8
-}
-
 @ stores bytes from the top of the stack into a memory location, determined by the stack
 struct StoreDirective {
     # pops an Fpy.StackSizeType offset off of stack
@@ -205,7 +198,5 @@ internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
 internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
 internal port directive_peek(directive: PeekDirective) priority 6 assert
-
-internal port directive_assert(directive: AssertDirective) priority 6 assert
 
 internal port directive_store(directive: StoreDirective) priority 6 assert

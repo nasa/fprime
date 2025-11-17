@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "ComAggregatorTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Nominal, Initial) {
     Svc::ComAggregatorTester tester;
@@ -30,6 +31,13 @@ TEST(Nominal, Full) {
     tester.test_full();
 }
 
+TEST(Nominal, ExactlyFull) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_fill_multi();
+    tester.test_exactly_full();
+}
+
 TEST(Nominal, Timeout) {
     Svc::ComAggregatorTester tester;
     tester.test_initial();
@@ -43,6 +51,16 @@ TEST(OffNominal, TimeoutEmpty) {
     tester.test_timeout_zero();
     tester.test_fill_multi();
     tester.test_full();
+}
+
+TEST(OffNominal, TimeoutOverflowPrevention) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_fill_multi();
+    tester.test_timeout_overflow_prevention();
+    // Now ensure normal operation resumes
+    tester.test_fill_multi();
+    tester.test_timeout();
 }
 
 TEST(Nominal, HoldWhileWaiting) {
@@ -64,6 +82,7 @@ TEST(Nominal, Clear) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

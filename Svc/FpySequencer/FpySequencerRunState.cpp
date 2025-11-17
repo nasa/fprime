@@ -213,9 +213,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
         case Fpy::DirectiveId::UITOFP:
-        case Fpy::DirectiveId::IADD:
-        case Fpy::DirectiveId::ISUB:
-        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::ADD:
+        case Fpy::DirectiveId::SUB:
+        case Fpy::DirectiveId::MUL:
         case Fpy::DirectiveId::UDIV:
         case Fpy::DirectiveId::SDIV:
         case Fpy::DirectiveId::UMOD:
@@ -224,7 +224,6 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FSUB:
         case Fpy::DirectiveId::FMUL:
         case Fpy::DirectiveId::FDIV:
-        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
         case Fpy::DirectiveId::FLOG:
         case Fpy::DirectiveId::FMOD:
@@ -399,16 +398,6 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::ASSERT: {
-            new (&deserializedDirective.assert) FpySequencer_AssertDirective();
-            if (argBuf.getDeserializeSizeLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
-                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
-                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
-                return Fw::Success::FAILURE;
-            }
-            break;
-        }
         case Fpy::DirectiveId::STORE: {
             new (&deserializedDirective.store) FpySequencer_StoreDirective();
             status = argBuf.deserializeTo(deserializedDirective.store);
@@ -499,9 +488,9 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
         case Fpy::DirectiveId::UITOFP:
-        case Fpy::DirectiveId::IADD:
-        case Fpy::DirectiveId::ISUB:
-        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::ADD:
+        case Fpy::DirectiveId::SUB:
+        case Fpy::DirectiveId::MUL:
         case Fpy::DirectiveId::UDIV:
         case Fpy::DirectiveId::SDIV:
         case Fpy::DirectiveId::UMOD:
@@ -510,7 +499,6 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FSUB:
         case Fpy::DirectiveId::FMUL:
         case Fpy::DirectiveId::FDIV:
-        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
         case Fpy::DirectiveId::FLOG:
         case Fpy::DirectiveId::FMOD:
@@ -576,10 +564,6 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::PEEK: {
             this->directive_peek_internalInterfaceInvoke(directive.peek);
-            return;
-        }
-        case Fpy::DirectiveId::ASSERT: {
-            this->directive_assert_internalInterfaceInvoke(directive.assert);
             return;
         }
         case Fpy::DirectiveId::STORE: {

@@ -16,7 +16,8 @@ ComAggregator ::ComAggregator(const char* const compName)
     : ComAggregatorComponentBase(compName),
       m_bufferState(Fw::Buffer::OwnershipState::OWNED),
       m_frameBuffer(m_frameBufferStore, sizeof(m_frameBufferStore)),
-      m_frameSerializer(m_frameBuffer.getSerializer()) {}
+      m_frameSerializer(m_frameBuffer.getSerializer()),
+      m_allow_timeout(false) {}
 
 ComAggregator ::~ComAggregator() {}
 
@@ -44,7 +45,19 @@ void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data,
 }
 
 void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
-    this->aggregationMachine_sendSignal_timeout();
+    // Timeout is ignored in WAIT_STATUS state. However, the queue may not process timeout messages until the wait
+    // status is returned because the port chain may be synchronous and downstream components (radio, retry, etc) may
+    // take a long time to complete the transmission of data. This can cause the queue to overflow with messages that
+    // will soon be discarded.
+    //
+    // Therefore, to fix the risk of queue overflow we only queue timeout messages when they would be processed by the
+    // state machine (i.e. in the FILL state). Otherwise, these messages are not queued.
+    //
+    // Behaviorally, this solution will work exactly like the naive implementation with an infinite queue depth, but
+    // prevents queue overflow when using finite queues.
+    if (this->m_allow_timeout) {
+        this->aggregationMachine_sendSignal_timeout();
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -52,6 +65,7 @@ void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
+    this->m_allow_timeout = true;  // Allow timeout messages in FILL state
     this->m_frameSerializer.resetSer();
     this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
     if (this->m_held.get_data().isValid()) {
@@ -79,6 +93,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_Aggrega
     if (this->m_frameSerializer.getSize() > 0) {
         this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
         this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
+        this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
     }
 }
@@ -104,7 +119,15 @@ bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
                                                          const Svc::ComDataContextPair& value) const {
     FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
     const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
-    return (remaining <= value.get_data().getSize());
+    return (remaining < value.get_data().getSize());
+}
+
+bool ComAggregator ::Svc_AggregationMachine_guard_willFill(SmId smId,
+                                                           Svc_AggregationMachine::Signal signal,
+                                                           const Svc::ComDataContextPair& value) const {
+    FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
+    const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
+    return (remaining == value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {

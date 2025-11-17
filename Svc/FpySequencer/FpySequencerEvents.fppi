@@ -103,13 +103,6 @@ event SequenceExitedWithError(
     severity warning high \
     format "Sequence {} exited with error code {}"
 
-event SequenceAsserted(
-    filePath: string
-    errorCode: U8
-) \
-    severity warning high \
-    format "Sequence {} failed an assertion with error code {}"
-
 event UnknownSequencerDirective(
     $opcode: U8
     stmtIdx: U32

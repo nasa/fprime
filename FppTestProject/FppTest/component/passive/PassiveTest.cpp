@@ -22,14 +22,14 @@ PassiveTest ::~PassiveTest() {}
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void PassiveTest ::serialGuarded_handler(FwIndexType portNum,             //!< The port number
-                                         Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void PassiveTest ::serialGuarded_handler(FwIndexType portNum,          //!< The port number
+                                         Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }
 
-void PassiveTest ::serialSync_handler(FwIndexType portNum,             //!< The port number
-                                      Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void PassiveTest ::serialSync_handler(FwIndexType portNum,          //!< The port number
+                                      Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }

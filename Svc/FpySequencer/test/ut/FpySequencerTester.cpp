@@ -315,15 +315,6 @@ void FpySequencerTester::add_PEEK(const FpySequencer_PeekDirective dir) {
     addDirective(Fpy::DirectiveId::PEEK, buf);
 }
 
-void FpySequencerTester::add_ASSERT() {
-    add_ASSERT(FpySequencer_AssertDirective());
-}
-
-void FpySequencerTester::add_ASSERT(const FpySequencer_AssertDirective dir) {
-    Fw::StatementArgBuffer buf;
-    addDirective(Fpy::DirectiveId::ASSERT, buf);
-}
-
 void FpySequencerTester::add_STORE(const Fpy::StackSizeType size) {
     add_STORE(FpySequencer_StoreDirective(size));
 }
@@ -476,11 +467,6 @@ Signal FpySequencerTester::tester_getField_directiveHandler(const FpySequencer_G
 Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive,
                                                         DirectiveError& err) {
     return this->cmp.peek_directiveHandler(directive, err);
-}
-
-Signal FpySequencerTester::tester_assert_directiveHandler(const FpySequencer_AssertDirective& directive,
-                                                          DirectiveError& err) {
-    return this->cmp.assert_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_store_directiveHandler(const FpySequencer_StoreDirective& directive,
@@ -657,14 +643,14 @@ DirectiveError FpySequencerTester::tester_op_sitofp() {
 DirectiveError FpySequencerTester::tester_op_uitofp() {
     return this->cmp.op_uitofp();
 }
-DirectiveError FpySequencerTester::tester_op_iadd() {
-    return this->cmp.op_iadd();
+DirectiveError FpySequencerTester::tester_op_add() {
+    return this->cmp.op_add();
 }
-DirectiveError FpySequencerTester::tester_op_isub() {
-    return this->cmp.op_isub();
+DirectiveError FpySequencerTester::tester_op_sub() {
+    return this->cmp.op_sub();
 }
-DirectiveError FpySequencerTester::tester_op_imul() {
-    return this->cmp.op_imul();
+DirectiveError FpySequencerTester::tester_op_mul() {
+    return this->cmp.op_mul();
 }
 DirectiveError FpySequencerTester::tester_op_udiv() {
     return this->cmp.op_udiv();
@@ -689,9 +675,6 @@ DirectiveError FpySequencerTester::tester_op_fmul() {
 }
 DirectiveError FpySequencerTester::tester_op_fdiv() {
     return this->cmp.op_fdiv();
-}
-DirectiveError FpySequencerTester::tester_op_float_floor_div() {
-    return this->cmp.op_float_floor_div();
 }
 DirectiveError FpySequencerTester::tester_op_fpow() {
     return this->cmp.op_fpow();

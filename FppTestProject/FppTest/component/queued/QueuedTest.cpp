@@ -29,38 +29,38 @@ QueuedTest ::~QueuedTest() {}
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void QueuedTest ::serialAsync_handler(FwIndexType portNum,             //!< The port number
-                                      Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialAsync_handler(FwIndexType portNum,          //!< The port number
+                                      Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }
 
-void QueuedTest ::serialAsyncAssert_handler(FwIndexType portNum,             //!< The port number
-                                            Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialAsyncAssert_handler(FwIndexType portNum,          //!< The port number
+                                            Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
 }
 
-void QueuedTest ::serialAsyncBlockPriority_handler(FwIndexType portNum,             //!< The port number
-                                                   Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialAsyncBlockPriority_handler(FwIndexType portNum,          //!< The port number
+                                                   Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
 }
 
-void QueuedTest ::serialAsyncDropPriority_handler(FwIndexType portNum,             //!< The port number
-                                                  Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialAsyncDropPriority_handler(FwIndexType portNum,          //!< The port number
+                                                  Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
 }
 
-void QueuedTest ::serialGuarded_handler(FwIndexType portNum,             //!< The port number
-                                        Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialGuarded_handler(FwIndexType portNum,          //!< The port number
+                                        Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }
 
-void QueuedTest ::serialSync_handler(FwIndexType portNum,             //!< The port number
-                                     Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void QueuedTest ::serialSync_handler(FwIndexType portNum,          //!< The port number
+                                     Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
 }

@@ -21,97 +21,95 @@ module Svc {
             INVALID = 0
             WAIT_REL = 1
             WAIT_ABS = 2
-            GOTO = 4
-            IF = 5
-            NO_OP = 6
-            PUSH_TLM_VAL = 7
-            PUSH_PRM = 8
-            CONST_CMD = 9
+            GOTO = 3
+            IF = 4
+            NO_OP = 5
+            PUSH_TLM_VAL = 6
+            PUSH_PRM = 7
+            CONST_CMD = 8
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
             # you MUST keep them all in between OR and ITRUNC_64_32 inclusive
             # boolean ops
-            OR = 10
-            AND = 11
+            OR = 9
+            AND = 10
             # integer equalities
-            IEQ = 12
-            INE = 13
+            IEQ = 11
+            INE = 12
             # unsigned integer inequalities
-            ULT = 14
-            ULE = 15
-            UGT = 16
-            UGE = 17
+            ULT = 13
+            ULE = 14
+            UGT = 15
+            UGE = 16
             # signed integer inequalities
-            SLT = 18
-            SLE = 19
-            SGT = 20
-            SGE = 21
+            SLT = 17
+            SLE = 18
+            SGT = 19
+            SGE = 20
             # floating point equalities
-            FEQ = 22
-            FNE = 23
+            FEQ = 21
+            FNE = 22
             # floating point inequalities
-            FLT = 24
-            FLE = 25
-            FGT = 26
-            FGE = 27
-            NOT = 28
+            FLT = 23
+            FLE = 24
+            FGT = 25
+            FGE = 26
+            NOT = 27
             # floating point conversion to signed/unsigned integer,
             # and vice versa
-            FPTOSI = 29
-            FPTOUI = 30
-            SITOFP = 31
-            UITOFP = 32
+            FPTOSI = 28
+            FPTOUI = 29
+            SITOFP = 30
+            UITOFP = 31
             # integer arithmetic
-            IADD = 33
-            ISUB = 34
-            IMUL = 35
-            UDIV = 36
-            SDIV = 37
-            UMOD = 38
-            SMOD = 39
+            ADD = 32
+            SUB = 33
+            MUL = 34
+            UDIV = 35
+            SDIV = 36
+            UMOD = 37
+            SMOD = 38
             # float arithmetic
-            FADD = 40
-            FSUB = 41
-            FMUL = 42
-            FDIV = 43
-            FLOAT_FLOOR_DIV = 44
-            FPOW = 45
-            FLOG = 46
-            FMOD = 47
+            FADD = 39
+            FSUB = 40
+            FMUL = 41
+            FDIV = 42
+            FPOW = 43
+            FLOG = 44
+            FMOD = 45
             # floating point bitwidth conversions
-            FPEXT = 48
-            FPTRUNC = 49
+            FPEXT = 46
+            FPTRUNC = 47
             # integer bitwidth conversions
             # signed integer extend
-            SIEXT_8_64 = 50
-            SIEXT_16_64 = 51
-            SIEXT_32_64 = 52
+            SIEXT_8_64 = 48
+            SIEXT_16_64 = 49
+            SIEXT_32_64 = 50
             # zero (unsigned) integer extend
-            ZIEXT_8_64 = 53
-            ZIEXT_16_64 = 54
-            ZIEXT_32_64 = 55
+            ZIEXT_8_64 = 51
+            ZIEXT_16_64 = 52
+            ZIEXT_32_64 = 53
             # integer truncate
-            ITRUNC_64_8 = 56
-            ITRUNC_64_16 = 57
-            ITRUNC_64_32 = 58
+            ITRUNC_64_8 = 54
+            ITRUNC_64_16 = 55
+            ITRUNC_64_32 = 56
             # end stack op dirs
 
-            EXIT = 59
-            ALLOCATE = 60
-            STORE_CONST_OFFSET = 61
-            LOAD = 62
-            PUSH_VAL = 63
-            DISCARD = 64
-            MEMCMP = 65
-            STACK_CMD = 66
-            PUSH_TLM_VAL_AND_TIME = 67
-            PUSH_TIME = 68
-            SET_FLAG = 69
-            GET_FLAG = 70
-            GET_FIELD = 71
-            PEEK = 72
-            ASSERT = 73
-            STORE = 74
+            EXIT = 57
+            ALLOCATE = 58
+            STORE_CONST_OFFSET = 59
+            LOAD = 60
+            PUSH_VAL = 61
+            DISCARD = 62
+            MEMCMP = 63
+            STACK_CMD = 64
+            PUSH_TLM_VAL_AND_TIME = 65
+            PUSH_TIME = 66
+            SET_FLAG = 67
+            GET_FLAG = 68
+            GET_FIELD = 69
+            PEEK = 70
+            STORE = 71
         }
 
         enum DirectiveErrorCode : U8 {
@@ -127,10 +125,9 @@ module Svc {
             STACK_OVERFLOW = 9
             DOMAIN_ERROR = 10
             FLAG_IDX_OUT_OF_BOUNDS = 11
-            ASSERTION_FAILURE = 12
-            ARRAY_OUT_OF_BOUNDS = 13
-            ARITHMETIC_OVERFLOW = 14
-            ARITHMETIC_UNDERFLOW = 15
+            ARRAY_OUT_OF_BOUNDS = 12
+            ARITHMETIC_OVERFLOW = 13
+            ARITHMETIC_UNDERFLOW = 14
         }
 
         struct Header {

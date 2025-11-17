@@ -160,7 +160,7 @@ macro(fprime_initialize_build_system)
 
     # Perform necessary sub-builds
     if (NOT FPRIME_IS_SUB_BUILD)
-        run_sub_build(info-cache target/sub-build/fpp_locs target/sub-build/fpp_depend target/sub-build/module_info)
+        run_sub_build(info-cache target/sub-build/fpp_locs target/sub-build/fpp_depend target/sub-build/fpp_to_json target/sub-build/module_info)
         # Import the pre-computed properties!
         include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
     endif()

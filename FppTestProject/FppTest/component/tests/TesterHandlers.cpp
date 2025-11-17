@@ -128,8 +128,8 @@ FormalParamStruct Tester ::from_structReturnOut_handler(const FwIndexType portNu
 // Handlers for serial from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_serialOut_handler(FwIndexType portNum,             //!< The port number
-                                     Fw::SerializeBufferBase& Buffer  //!< The serialization buffer
+void Tester ::from_serialOut_handler(FwIndexType portNum,          //!< The port number
+                                     Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
     Fw::SerializeStatus status;
 
