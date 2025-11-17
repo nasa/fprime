@@ -126,7 +126,24 @@ int set_task_name(pthread_t thread, const Os::Task::Arguments& arguments) {
     // Construct a sixteen char long version of the task name
     const FwSizeType PTHREAD_NAME_LENGTH = 16;
     char name_sixteen_capped[PTHREAD_NAME_LENGTH];
-    Fw::StringUtils::string_copy(name_sixteen_capped, arguments.m_name.toChar(), PTHREAD_NAME_LENGTH);
+    status = pthread_getname_np(pthread_self(), name_sixteen_capped, PTHREAD_NAME_LENGTH);
+
+    FwSizeType thread_name_offset = 0;
+    if (status == 0) {
+        thread_name_offset = Fw::StringUtils::string_length(name_sixteen_capped, PTHREAD_NAME_LENGTH);
+
+
+        if (thread_name_offset < PTHREAD_NAME_LENGTH) {
+            name_sixteen_capped[thread_name_offset] = '/';
+            thread_name_offset++;
+        }
+    }
+
+    // We should copy nothing of the task name if we ran out of chars
+    FW_ASSERT(PTHREAD_NAME_LENGTH >= thread_name_offset);
+    const FwSizeType remaining_chars = PTHREAD_NAME_LENGTH - thread_name_offset;
+
+    Fw::StringUtils::string_copy(&name_sixteen_capped[thread_name_offset], arguments.m_name.toChar(), remaining_chars);
 
     status = pthread_setname_np(thread, name_sixteen_capped);
 #else
