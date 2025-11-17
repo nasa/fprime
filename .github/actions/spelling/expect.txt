@@ -594,6 +594,7 @@ serializables
 setaffinity
 setinheritsched
 SETLOGGING
+setname
 setprotocol
 setschedparam
 setschedpolicy
