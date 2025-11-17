@@ -32,18 +32,20 @@ if (BUILD_TESTING)
     target_link_libraries(SocketTestHelper STest Fw_Buffer)
 endif()
 
-set(UT_MOD_DEPS
+### UTs ###
+register_fprime_ut(
+  "Drv_Ip_Tcp_test"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestTcp.cpp"
+  DEPENDS
     SocketTestHelper
 )
 
-### UTs ###
-set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestTcp.cpp"
-)
-register_fprime_ut("Drv_Ip_Tcp_test")
-
-set(UT_SOURCE_FILES
+register_fprime_ut(
+  "Drv_Ip_Udp_test"
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestUdp.cpp"
+  DEPENDS
+    SocketTestHelper
 )
-register_fprime_ut("Drv_Ip_Udp_test")
 
