@@ -174,6 +174,11 @@ bool Task::isCooperative() {
     return this->m_delegate.isCooperative();
 }
 
+TaskString Task::getName() {
+    Os::ScopeLock lock(this->m_lock);
+    return this->m_name;
+}
+
 FwTaskPriorityType Task::getPriority() {
     Os::ScopeLock lock(this->m_lock);
     return this->m_priority;

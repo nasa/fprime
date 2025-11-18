@@ -297,7 +297,7 @@ void SocketComponentHelper::reconnectLoop() {
             // Reopen Case 3: Keep trying to reconnect - NO reconnect
             // state change
             else {
-                Fw::Logger::log("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
+                Fw::Logger::log("[WARNING] %s failed to open port with status %d and errno %d\n", this->m_task.getName().toChar(), status, errno);
                 (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
             }
         } else {
