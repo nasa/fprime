@@ -9,8 +9,8 @@
 #include <cstring>
 
 #include "Fw/Logger/Logger.hpp"
-#include "Fw/Types/StringUtils.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/Posix/Task.hpp"
 #include "Os/Posix/error.hpp"
 #include "Os/Task.hpp"
@@ -130,6 +130,7 @@ int set_task_name(pthread_t thread, const Os::Task::Arguments& arguments) {
 
     status = pthread_setname_np(thread, name_sixteen_capped);
 #else
+
     Fw::Logger::log("[WARNING] %s setting thread name is only available with GNU pthreads\n",
                     const_cast<CHAR*>(arguments.m_name.toChar()));
 #endif
@@ -161,8 +162,7 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         pthread_status =
             pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper, arguments.m_routine_argument);
     }
-    if ((expect_permission) &&
-        (pthread_status == PosixTaskHandle::SUCCESS)) {
+    if ((expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_task_name(handle.m_task_descriptor, arguments);
     }
     // Successful execution of all precious steps will result in a valid task handle
