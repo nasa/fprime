@@ -1,3 +1,7 @@
+
+if (NOT FPRIME_ENABLE_TEXT_LOGGERS)
+    return()
+endif()
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CdhCoreConfig/")
 
 register_fprime_module(
