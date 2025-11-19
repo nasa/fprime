@@ -4,9 +4,10 @@
 // ======================================================================
 
 #include "PriorityQueue.hpp"
-#include <Fw/Types/Assert.hpp>
+#include "Fw/Types/Assert.hpp"
+#include "Fw/Types/MemAllocator.hpp"
+#include "config/MemoryAllocatorTypeEnumAc.hpp"
 #include <cstring>
-#include <new>
 
 namespace Os {
 namespace Generic {
@@ -52,7 +53,13 @@ QueueInterface::Status PriorityQueue::create(const Fw::ConstStringBase& name,
     FW_ASSERT(this->m_handle.m_sizes == nullptr);
     FW_ASSERT(this->m_handle.m_data == nullptr);
 
+    // Get the memory allocator configured for priority queues
+    Fw::MemAllocator allocator = Fw::MemAllocatorRegistry::getInstance().getAllocator(Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+
+
     // Allocate indices list
+    
     FwSizeType* indices = new (std::nothrow) FwSizeType[depth];
     if (indices == nullptr) {
         return QueueInterface::Status::ALLOCATION_FAILED;
