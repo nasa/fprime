@@ -10,9 +10,11 @@
 // ======================================================================
 #ifndef FW_TYPES_LANGUAGEHELPERS_HPP_
 #define FW_TYPES_LANGUAGEHELPERS_HPP_
-#include <Fw/ByteArray.hpp>
+#include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ByteArray.hpp"
+#include <new>
 #include <type_traits>
-
+namespace Fw {
 //! \brief placement new for arrays
 //!
 //! C++ as a language does not guaranteed that placement new for a C++ array of length N will fit within a memory
@@ -36,7 +38,7 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     static_assert(std::is_trivially_constructible<T>::value, "Cannot use arrayPlacementNew for non-trivially constructible types");
     void* base_pointer = reinterpret_cast<void*>(array.bytes);
     FW_ASSERT(base_pointer != nullptr); // Confirm non-null
-    FW_ASSERT((array.bytes % alignof(T)) == 0); // Confirm alignment
+    FW_ASSERT((reinterpret_cast<std::uintptr_t>(base_pointer) % alignof(T)) == 0); // Confirm alignment
     FW_ASSERT(array.size >= (sizeof(T) * arraySize)); // Confirm size
     T* type_pointer = static_cast<T*>(base_pointer);
     for (FwSizeType index = 0; index < arraySize; index++) {
@@ -44,4 +46,5 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     }
     return type_pointer;
 }
+} // namespace Fw
 #endif

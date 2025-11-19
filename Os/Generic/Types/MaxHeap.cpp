@@ -18,9 +18,8 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include "Fw/Types/Assert.hpp"
-
+#include "Fw/LanguageHelpers.hpp"
 #include <cstdio>
-#include <new>
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)
@@ -38,20 +37,15 @@ MaxHeap::MaxHeap() {
 }
 
 MaxHeap::~MaxHeap() {
-    delete[] this->m_heap;
     this->m_heap = nullptr;
 }
 
-bool MaxHeap::create(FwSizeType capacity) {
+void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
     FW_ASSERT(this->m_heap == nullptr);
     // Loop bounds will overflow if capacity set to the max allowable value
     FW_ASSERT(capacity < std::numeric_limits<FwSizeType>::max());
-    this->m_heap = new (std::nothrow) Node[capacity];
-    if (nullptr == this->m_heap) {
-        return false;
-    }
+    this->m_heap = Fw::arrayPlacementNew<Node>(heap_allocation, capacity);
     this->m_capacity = capacity;
-    return true;
 }
 
 bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {

@@ -21,6 +21,9 @@ using namespace Ref;
 // Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
 
+// Instantiate a malloc allocator for cmdSeq buffer allocation
+Fw::MemAllocatorRegistry registry;
+
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
 Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}}};
@@ -43,7 +46,7 @@ enum TopologyConstants {
  * desired, but is extracted here for clarity.
  */
 void configureTopology() {
-    // Rate group driver needs a divisor list
+   // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
     // Rate groups require context arrays. Empty for Reference example.
@@ -58,6 +61,7 @@ void configureTopology() {
 // Public functions for use in main program are namespaced with deployment name Ref
 namespace Ref {
 void setupTopology(const TopologyState& state) {
+    registry.registerAllocator(Fw::MemoryAllocation::MemoryAllocatorType::SYSTEM, mallocator);
     // Autocoded initialization. Function provided by autocoder.
     initComponents(state);
     // Autocoded id setup. Function provided by autocoder.

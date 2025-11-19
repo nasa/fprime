@@ -28,7 +28,7 @@ Os::Queue::Queue::Status QueuedComponentBase::createQueue(FwSizeType depth, FwSi
 #else
     queueName.format("CompQ_%" PRI_FwSizeType, Os::Queue::getNumQueues());
 #endif
-    return this->m_queue.create(queueName, depth, msgSize);
+    return this->m_queue.create(this->getInstance(), queueName, depth, msgSize);
 }
 
 FwSizeType QueuedComponentBase::getNumMsgsDropped() {
