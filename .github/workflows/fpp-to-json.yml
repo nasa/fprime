@@ -30,7 +30,7 @@ jobs:
       - name: "Generate Ref Deployment"
         working-directory: ./Ref
         run: |
-          fprime-util generate
+          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         shell: bash
       - name: "Run fpp-to-json on Ref topology"
         working-directory: ./Ref/Top
