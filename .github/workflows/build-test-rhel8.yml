@@ -38,7 +38,7 @@ jobs:
     - uses: ./.github/actions/setup
     - name: Build Framework
       run: |
-        fprime-util generate
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         fprime-util build --all -j4
 
   Ref:
@@ -59,7 +59,7 @@ jobs:
     - name: Build Ref
       run: |
         cd Ref
-        fprime-util generate
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         fprime-util build -j4
 
   UTs:
