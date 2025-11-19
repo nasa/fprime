@@ -9,7 +9,6 @@ certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
 clang-format==20.1.8
-clang-tidy==21.1.1
 click==8.1.7
 cmake==3.26.0
 colorlog==6.8.2
