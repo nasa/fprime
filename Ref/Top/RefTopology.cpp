@@ -46,7 +46,7 @@ enum TopologyConstants {
  * desired, but is extracted here for clarity.
  */
 void configureTopology() {
-   // Rate group driver needs a divisor list
+    // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
     // Rate groups require context arrays. Empty for Reference example.
