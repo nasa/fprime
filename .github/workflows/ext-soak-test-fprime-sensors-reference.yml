@@ -94,7 +94,7 @@ jobs:
         shell: bash
         run: |
           echo `pwd`
-          ls
+          ls -R build-artifacts/*
 
       - name: "Start and enable services"
         run: |
