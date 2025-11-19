@@ -37,7 +37,7 @@ development process, and helpful tips sections below.
 
 ## Code Contribution Process
 
-All code contributions to F´ begin with an issue. Whether you’re fixing a bug, adding a feature, or improving documentation, please start by opening an issue describing your proposal. The Change Control Board (CCB) reviews and approves issues before work begins to ensure alignment with project goals and standards. Once approved, you can proceed with implementation and submit a pull request (PR).
+All code contributions to F´ begin with an issue. Whether you're fixing a bug, adding a feature, or improving documentation, please start by opening an issue describing your proposal. The Change Control Board (CCB) reviews and approves issues before work begins to ensure alignment with project goals and standards. Once approved, you can proceed with implementation and submit a pull request (PR).
 
 If a PR is opened for work that does not correspond to an approved issue, the PR will be routed through the CCB process first—reviewed on a best-effort basis—and may be delayed or declined depending on CCB decisions.You can read more about how this process works in the [F´ Governance document](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md).
 
@@ -160,25 +160,23 @@ pip install -Ur requirements.txt
 # Initialize googletest submodule:
 git submodule update --init --recursive
 
-# Run CI tests on fprime
-./ci/tests/Framework.bash
-
-# Run CI tests on the reference application
-./ci/tests/Ref.bash
-
 # Run the static analyzer with the basic configuration
 # Purge unit test directory
 fprime-util purge
-# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
-fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
+# Generate the build files for clang-tidy
+# On macOS, expect a CMake Warning 'Leak sanitizer is not supported on macOS in cmake/sanitizers.cmake'
+fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 # Build fprime with the static analyzer
 fprime-util build --all --ut -j16
+
+# Run Unit Tests
+fprime-util check --all
 
 # Run the static analyzer with additional flight code checks
 # Purge release directory
 fprime-util purge
-# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
-fprime-util generate -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+# Generate the build files for clang-tidy.
+fprime-util generate -DCMAKE_CXX_CLANG_TIDY="clang-tidy;--config-file=$PWD/release.clang-tidy
 # Build fprime with the static analyzer
 fprime-util build --all -j16
 ```
