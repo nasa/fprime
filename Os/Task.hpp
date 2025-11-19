@@ -346,6 +346,9 @@ class Task final : public TaskInterface {
     //! \return true if cooperative, false otherwise
     bool isCooperative() override;
 
+    //! \brief get the task name
+    TaskString getName();
+
     //! \brief get the task priority
     FwTaskPriorityType getPriority();
 
