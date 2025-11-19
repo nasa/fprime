@@ -151,7 +151,7 @@ extern "C" {
 // Posix thread names are limited to 16 characters, this can lead to collisions. In the event of a
 // collision, set this to 0.
 #ifndef POSIX_THREADS_ENABLE_NAMES
-#define POSIX_THREADS_ENABLE_NAMES 0  //!< Enable/Disable assigning names to threads
+#define POSIX_THREADS_ENABLE_NAMES 1  //!< Enable/Disable assigning names to threads
 #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have

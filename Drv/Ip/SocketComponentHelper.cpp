@@ -33,7 +33,7 @@ void SocketComponentHelper::start(const Fw::ConstStringBase& name,
               Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_reconnectStop = false;
     Fw::String reconnectName;
-    reconnectName.format("%s_reconnect", name.toChar());
+    reconnectName.format("conn_%s", name.toChar());
     Os::Task::Arguments reconnectArguments(reconnectName, SocketComponentHelper::reconnectTask, this, priorityReconnect,
                                            stackReconnect, cpuAffinityReconnect);
     Os::Task::Status reconnectStat = m_reconnectTask.start(reconnectArguments);
