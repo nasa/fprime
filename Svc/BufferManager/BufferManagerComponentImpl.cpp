@@ -15,7 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include <new>
-
+#include <cstring>
 namespace Svc {
 
 // ----------------------------------------------------------------------
