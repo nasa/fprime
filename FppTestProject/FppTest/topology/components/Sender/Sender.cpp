@@ -14,6 +14,6 @@ namespace FppTest {
 
 Sender ::Sender(const char* const compName) : SenderComponentBase(compName) {}
 
-Sender ::~Sender() {}
+Sender ::~Sender() = default;
 
 }  // namespace FppTest

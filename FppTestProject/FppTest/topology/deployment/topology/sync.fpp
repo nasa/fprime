@@ -6,7 +6,7 @@ module FppTest {
         instance sender1Sync
         instance sender2Sync
 
-        connections Instance1 {
+        connections SyncInstance1 {
             sender1Sync.noArgsOut[0] -> receiver1.noArgsSync[0]
             sender1Sync.noArgsOut[1] -> receiver1.noArgsSync[1]
 
@@ -50,7 +50,7 @@ module FppTest {
             sender1Sync.structReturnOut[1] -> receiver1.structReturnSync[1]
         }
 
-        connections Instance2 {
+        connections SyncInstance2 {
             sender2Sync.noArgsOut[0] -> receiver2.noArgsSync[0]
             sender2Sync.noArgsOut[1] -> receiver2.noArgsSync[1]
 

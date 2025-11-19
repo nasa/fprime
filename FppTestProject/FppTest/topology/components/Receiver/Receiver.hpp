@@ -8,6 +8,8 @@
 #define FppTest_Receiver_HPP
 
 #include "FppTest/topology/components/Receiver/ReceiverComponentAc.hpp"
+#include "Fw/Buffer/Buffer.hpp"
+#include "Fw/Types/SerialBuffer.hpp"
 
 namespace FppTest {
 
@@ -23,6 +25,13 @@ class Receiver final : public ReceiverComponentBase {
 
     //! Destroy Receiver object
     ~Receiver();
+
+    U32 numMessages;
+    FwIndexType lastPortNum;
+    Fw::SerialBuffer recv;
+
+private:
+    U8 m_data[1024];
 
   private:
     // ----------------------------------------------------------------------

@@ -6,15 +6,18 @@
 
 #include "FppTest/topology/components/Receiver/Receiver.hpp"
 
+#include "Fw/Types/SerialBuffer.hpp"
+
 namespace FppTest {
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-Receiver ::Receiver(const char* const compName) : ReceiverComponentBase(compName) {}
+Receiver ::Receiver(const char* const compName)
+    : ReceiverComponentBase(compName), numMessages(0), lastPortNum(-1), recv(m_data, sizeof(m_data)), m_data{} {}
 
-Receiver ::~Receiver() {}
+Receiver ::~Receiver() = default;
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
@@ -27,7 +30,14 @@ void Receiver ::arrayArgsAsync_handler(FwIndexType portNum,
                                        FormalAliasArray& bRef,
                                        const FormalAliasStringArray& c,
                                        FormalAliasStringArray& cRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    b.serializeTo(recv);
+    bRef.serializeTo(recv);
+    c.serializeTo(recv);
+    cRef.serializeTo(recv);
 }
 
 void Receiver ::arrayArgsGuarded_handler(FwIndexType portNum,
@@ -37,7 +47,14 @@ void Receiver ::arrayArgsGuarded_handler(FwIndexType portNum,
                                          FormalAliasArray& bRef,
                                          const FormalAliasStringArray& c,
                                          FormalAliasStringArray& cRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    b.serializeTo(recv);
+    bRef.serializeTo(recv);
+    c.serializeTo(recv);
+    cRef.serializeTo(recv);
 }
 
 void Receiver ::arrayArgsSync_handler(FwIndexType portNum,
@@ -47,31 +64,54 @@ void Receiver ::arrayArgsSync_handler(FwIndexType portNum,
                                       FormalAliasArray& bRef,
                                       const FormalAliasStringArray& c,
                                       FormalAliasStringArray& cRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    b.serializeTo(recv);
+    bRef.serializeTo(recv);
+    c.serializeTo(recv);
+    cRef.serializeTo(recv);
 }
 
 FormalParamArray Receiver ::arrayReturnGuarded_handler(FwIndexType portNum,
                                                        const FormalParamArray& a,
                                                        FormalParamArray& aRef) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    return aRef;
 }
 
 FormalParamArray Receiver ::arrayReturnSync_handler(FwIndexType portNum,
                                                     const FormalParamArray& a,
                                                     FormalParamArray& aRef) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    return aRef;
 }
 
 FormalAliasStringArray Receiver ::arrayStringAliasReturnGuarded_handler(FwIndexType portNum,
                                                                         const FormalParamArray& a,
                                                                         FormalParamArray& aRef) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    return FormalAliasStringArray({"a", "b", "c"});
 }
 
 FormalAliasStringArray Receiver ::arrayStringAliasReturnSync_handler(FwIndexType portNum,
                                                                      const FormalParamArray& a,
                                                                      FormalParamArray& aRef) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    a.serializeTo(recv);
+    aRef.serializeTo(recv);
+    return FormalAliasStringArray({"a", "b", "c"});
 }
 
 void Receiver ::enumArgsAsync_handler(FwIndexType portNum,
@@ -109,33 +149,40 @@ void Receiver ::enumArgsSync_handler(FwIndexType portNum,
 FormalParamEnum Receiver ::enumReturnGuarded_handler(FwIndexType portNum,
                                                      const FormalParamEnum& en,
                                                      FormalParamEnum& enRef) {
-    // TODO return
+    return enRef;
 }
 
 FormalParamEnum Receiver ::enumReturnSync_handler(FwIndexType portNum,
                                                   const FormalParamEnum& en,
                                                   FormalParamEnum& enRef) {
-    // TODO return
+    return enRef;
 }
 
 void Receiver ::noArgsAsync_handler(FwIndexType portNum) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
 }
 
 void Receiver ::noArgsGuarded_handler(FwIndexType portNum) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
 }
 
 bool Receiver ::noArgsReturnGuarded_handler(FwIndexType portNum) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    return true;
 }
 
 bool Receiver ::noArgsReturnSync_handler(FwIndexType portNum) {
-    // TODO return
+    lastPortNum = portNum;
+    numMessages++;
+    return true;
 }
 
 void Receiver ::noArgsSync_handler(FwIndexType portNum) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
 }
 
 void Receiver ::primitiveArgsAsync_handler(FwIndexType portNum,
@@ -175,7 +222,7 @@ U32 Receiver ::primitiveReturnGuarded_handler(FwIndexType portNum,
                                               F32& f32Ref,
                                               bool b,
                                               bool& bRef) {
-    // TODO return
+    return u32;
 }
 
 U32 Receiver ::primitiveReturnSync_handler(FwIndexType portNum,
@@ -185,19 +232,19 @@ U32 Receiver ::primitiveReturnSync_handler(FwIndexType portNum,
                                            F32& f32Ref,
                                            bool b,
                                            bool& bRef) {
-    // TODO return
+    return u32;
 }
 
 Fw::String Receiver ::stringAliasReturnGuarded_handler(FwIndexType portNum,
                                                        const Fw::StringBase& str,
                                                        Fw::StringBase& strRef) {
-    // TODO return
+    return str;
 }
 
 Fw::String Receiver ::stringAliasReturnSync_handler(FwIndexType portNum,
                                                     const Fw::StringBase& str,
                                                     Fw::StringBase& strRef) {
-    // TODO return
+    return str;
 }
 
 void Receiver ::stringArgsAsync_handler(FwIndexType portNum,
@@ -227,11 +274,11 @@ void Receiver ::stringArgsSync_handler(FwIndexType portNum,
 Fw::String Receiver ::stringReturnGuarded_handler(FwIndexType portNum,
                                                   const Fw::StringBase& str,
                                                   Fw::StringBase& strRef) {
-    // TODO return
+    return str;
 }
 
 Fw::String Receiver ::stringReturnSync_handler(FwIndexType portNum, const Fw::StringBase& str, Fw::StringBase& strRef) {
-    // TODO return
+    return str;
 }
 
 void Receiver ::structArgsAsync_handler(FwIndexType portNum, const FormalParamStruct& s, FormalParamStruct& sRef) {
@@ -249,13 +296,13 @@ void Receiver ::structArgsSync_handler(FwIndexType portNum, const FormalParamStr
 FormalParamStruct Receiver ::structReturnGuarded_handler(FwIndexType portNum,
                                                          const FormalParamStruct& s,
                                                          FormalParamStruct& sRef) {
-    // TODO return
+    return s;
 }
 
 FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
                                                       const FormalParamStruct& s,
                                                       FormalParamStruct& sRef) {
-    // TODO return
+    return s;
 }
 
 // ----------------------------------------------------------------------

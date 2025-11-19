@@ -4,46 +4,109 @@
 // \brief  Main program for FppTest deployment
 // ======================================================================
 
-#include <signal.h>
-#include <cstdlib>
+#include "FppTest/component/types/FormalParamTypes.hpp"
+#include "gtest/gtest.h"
 
 #include "FppTest/topology/deployment/topology/FppTestTopologyAc.hpp"
-#include "Fw/Logger/Logger.hpp"
 #include "Os/Os.hpp"
+#include "topology/FppTestTopologyDefs.hpp"
 
-volatile sig_atomic_t terminate = 0;
-
-static void signalHandler(int signum) {
-    terminate = 1;
-}
-
-static const Fw::TimeInterval oneSecond(1, 0);
-
-int main(int argc, char* argv[]) {
-    Os::init();
-
-    FppTest::TopologyState state;
-    FppTest::setup(state);
-
-    // Register signal handlers to exit program
-    signal(SIGABRT, signalHandler);
-    signal(SIGINT, signalHandler);
-    signal(SIGTERM, signalHandler);
-
-    // Poll for terminate flag at 1 Hz
-    U32 cycle = 0;
-    while (!terminate) {
-        Fw::Logger::log("cycle %" PRI_U32 "\n", cycle);
-        FppTest::a1.sendData(10 * cycle);
-        FppTest::a2.sendData(10 * cycle + 1);
-        cycle++;
-        Os::Task::delay(oneSecond);
+#define SYNC_PORT_CALL_NO_ARGS(sender_with_port, receiver, argsType, portNum) \
+    {                                                                         \
+        auto args = argsType();                                               \
+        U8 expected_data[1024];                                               \
+        Fw::SerialBuffer expected(expected_data, sizeof(expected_data));      \
+        args.serializeTo(expected, Fw::Endianness::BIG);                      \
+        receiver.numMessages = 0;                                             \
+        receiver.recv.resetSer();                                             \
+        sender_with_port(portNum);                                            \
+        ASSERT_TRUE(expected == FppTest::receiver.recv);                      \
+        ASSERT_EQ(FppTest::receiver.lastPortNum, portNum);                    \
+        ASSERT_EQ(FppTest::receiver.numMessages, 1);                          \
     }
 
-    // Tear down topology
-    FppTest::teardown(state);
-    // Give time for threads to exit
-    Os::Task::delay(oneSecond);
+/**
+ * Macro for generating sync/guarded port calls from a sender to a receiver and checking for data integrity.
+ *
+ * Note: This does not work with 0 argument ports. Use `SYNC_PORT_CALL_NO_ARGS` instead.
+ *
+ * @param sender_with_port i.e. sender1Sync.arrayArgsOut_out
+ * @param receiver receiver1
+ * @param argsType A type in FormalParamTypes.hpp
+ * @param portNum port number
+ */
+#define SYNC_PORT_CALL(sender_with_port, receiver, argsType, portNum, ...) \
+    {                                                                      \
+        auto args = argsType();                                            \
+        U8 expected_data[1024];                                            \
+        Fw::SerialBuffer expected(expected_data, sizeof(expected_data));   \
+        args.serializeTo(expected, Fw::Endianness::BIG);                   \
+        receiver.numMessages = 0;                                          \
+        receiver.recv.resetSer();                                          \
+        sender_with_port(portNum, __VA_ARGS__);                            \
+        ASSERT_TRUE(expected == FppTest::receiver.recv);                   \
+        ASSERT_EQ(FppTest::receiver.lastPortNum, portNum);                 \
+        ASSERT_EQ(FppTest::receiver.numMessages, 1);                       \
+    }
 
-    return 0;
+namespace FppTest {
+class SenderTester : public testing::Test {
+  public:
+    TopologyState state;
+
+    void SetUp() override {
+        Os::init();
+        setup(state);
+    }
+
+    void TearDown() override { teardown(state); }
+
+    static void test_no_args() {
+        // Sync -> Receiver
+        SYNC_PORT_CALL_NO_ARGS(sender1Sync.noArgsOut_out, receiver1, Types::Empty, 0);
+        SYNC_PORT_CALL_NO_ARGS(sender1Sync.noArgsOut_out, receiver1, Types::Empty, 1);
+        SYNC_PORT_CALL_NO_ARGS(sender2Sync.noArgsOut_out, receiver2, Types::Empty, 0);
+        SYNC_PORT_CALL_NO_ARGS(sender2Sync.noArgsOut_out, receiver2, Types::Empty, 1);
+        SYNC_PORT_CALL_NO_ARGS(sender1Guarded.noArgsOut_out, receiver1, Types::Empty, 0);
+        SYNC_PORT_CALL_NO_ARGS(sender1Guarded.noArgsOut_out, receiver1, Types::Empty, 1);
+        SYNC_PORT_CALL_NO_ARGS(sender2Guarded.noArgsOut_out, receiver2, Types::Empty, 0);
+        SYNC_PORT_CALL_NO_ARGS(sender2Guarded.noArgsOut_out, receiver2, Types::Empty, 1);
+    }
+
+    static void test_array_args() {
+        // Sync -> Receiver
+        SYNC_PORT_CALL(sender1Sync.arrayArgsOut_out, receiver1, Types::ArrayTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender1Sync.arrayArgsOut_out, receiver1, Types::ArrayTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Sync.arrayArgsOut_out, receiver2, Types::ArrayTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Sync.arrayArgsOut_out, receiver2, Types::ArrayTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4, args.val5, args.val6);
+
+        // Guarded -> Receiver
+        SYNC_PORT_CALL(sender1Guarded.arrayArgsOut_out, receiver1, Types::ArrayTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender1Guarded.arrayArgsOut_out, receiver1, Types::ArrayTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Guarded.arrayArgsOut_out, receiver2, Types::ArrayTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Guarded.arrayArgsOut_out, receiver2, Types::ArrayTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+    }
+};
+
+TEST_F(SenderTester, NoArgs) {
+    test_no_args();
 }
+
+TEST_F(SenderTester, ArrayArgs) {
+    test_array_args();
+}
+}  // namespace FppTest
