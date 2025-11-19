@@ -121,12 +121,12 @@ int set_task_name(pthread_t thread, const Os::Task::Arguments& arguments) {
 // pthread_setname_np is a non-POSIX function.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
 // That's the circumstance in which we expect this feature to work.
-#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
+#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE) && POSIX_THREADS_ENABLE_NAMES
 
-    // Construct a sixteen char long version of the task name
-    const FwSizeType PTHREAD_NAME_LENGTH = 16;
-    char name_sixteen_capped[PTHREAD_NAME_LENGTH];
-    Fw::StringUtils::string_copy(name_sixteen_capped, arguments.m_name.toChar(), PTHREAD_NAME_LENGTH);
+    // Construct a sixteen char long version of the task name. This length is fixed by the posix thread
+    // specification and is a constant.
+    char name_sixteen_capped[PosixTask::PTHREAD_NAME_LENGTH];
+    Fw::StringUtils::string_copy(name_sixteen_capped, arguments.m_name.toChar(), sizeof(name_sixteen_capped));
 
     status = pthread_setname_np(thread, name_sixteen_capped);
 #else

@@ -33,6 +33,7 @@ struct PosixTaskHandle : public TaskHandle {
 //! Posix task implementation as driven by pthreads implementation
 class PosixTask : public TaskInterface {
   public:
+    const FwSizeType PTHREAD_NAME_LENGTH = 16;  //!< Length of pthread name
     //! Enumeration of permission expectations
     enum PermissionExpectation {
         EXPECT_PERMISSION,    //!< Expect that you hold necessary permissions
