@@ -63,9 +63,6 @@ jobs:
         run: |
           mkdir -p build-artifacts-soak
           cp -r ./build-artifacts build-artifacts-soak
-          cp ./lib/fprime/.github/actions/soak-test/soak_monitor.py build-artifacts-soak
-          cp ./lib/fprime/.github/actions/soak-test/${{ env.GDS_SERVICE_NAME }}.service build-artifacts-soak
-          cp ./lib/fprime/.github/actions/soak-test/${{ env.FSW_SERVICE_NAME }}.service build-artifacts-soak
 
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
@@ -93,28 +90,28 @@ jobs:
           systemctl stop ${{ env.GDS_SERVICE_NAME }}.service || true
           systemctl disable ${{ env.GDS_SERVICE_NAME }}.service || true
 
-      - name: "Create systemd Service File"
+      - name: "Prepare software"
+        shell: bash
         run: |
-          cp ${{ env.FSW_SERVICE_NAME }}.service /etc/systemd/system/${{ env.FSW_SERVICE_NAME }}.service
-          sed -i s/\$\{SERVICE_USER\}/}
-          cp ${{ env.GDS_SERVICE_NAME }}.service /etc/systemd/system/${{ env.GDS_SERVICE_NAME }}.service
+          echo `pwd`
+          ls
 
       - name: "Start and enable services"
         run: |
           echo "Starting and enabling services..."
           systemctl daemon-reload
 
-          # start and enable gds service
-          systemctl enable ${GDS_SERVICE_NAME}
-          systemctl start ${GDS_SERVICE_NAME}
-
           # start and enable binary
-          systemctl start ${FSW_SERVICE_NAME}
-          systemctl enable ${FSW_SERVICE_NAME}
+          systemctl start ${{ env.FSW_SERVICE_NAME }}
+          systemctl enable ${{ env.FSW_SERVICE_NAME }}
+
+          # start and enable gds service
+          systemctl enable ${{ env.GDS_SERVICE_NAME }}
+          systemctl start ${{ env.GDS_SERVICE_NAME }}
 
           echo "Waiting for services to stabilize..."
           sleep 5 # Wait for services to stabilize
 
           echo "Checking final service status..."
-          systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 50
-          systemctl status ${GDS_SERVICE_NAME} --no-pager -l -n 150
+          systemctl status ${{ env.FSW_SERVICE_NAME }} --no-pager -l -n 50
+          systemctl status ${{ env.GDS_SERVICE_NAME }} --no-pager -l -n 150
