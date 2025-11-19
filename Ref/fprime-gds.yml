@@ -1,3 +1,2 @@
 command-line-options:
-  scid: 0x0044 
   framing-selection: space-packet-space-data-link
