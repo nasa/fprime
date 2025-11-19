@@ -93,8 +93,7 @@ jobs:
       - name: "Prepare software"
         shell: bash
         run: |
-          echo `pwd`
-          ls -R build-artifacts/*
+          chmod +x build-artifacts/aarch64-linux/FprimeSensorsReference_ReferenceDeployment/bin/FprimeSensorsReference_ReferenceDeployment
 
       - name: "Start and enable services"
         run: |
