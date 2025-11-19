@@ -148,6 +148,16 @@ struct ArrayTypes : Fw::Serializable {
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
+struct ArrayTypesShort : Fw::Serializable {
+    ArrayTypesShort();
+
+    FormalParamArray val1;
+    FormalParamArray val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
+};
+
 struct StructType : Fw::Serializable {
     StructType();
 

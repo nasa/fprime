@@ -152,7 +152,19 @@ Fw::SerializeStatus ArrayTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::En
 Fw::SerializeStatus ArrayTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+ArrayTypesShort::ArrayTypesShort() {
+    getRandomFormalParamArray(val1);
+    getRandomFormalParamArray(val2);
+}
 
+Fw::SerializeStatus ArrayTypesShort::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
+    buffer.serializeFrom(val1, mode);
+    buffer.serializeFrom(val2, mode);
+    return Fw::SerializeStatus::FW_SERIALIZE_OK;
+}
+Fw::SerializeStatus ArrayTypesShort::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
+    return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
+}
 StructType::StructType() {
     val = getRandomFormalParamStruct();
 }

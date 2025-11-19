@@ -404,7 +404,7 @@ FormalParamStruct Receiver ::structReturnGuarded_handler(FwIndexType portNum,
     lastPortNum = portNum;
     numMessages++;
     s.serializeTo(recv);
-    sRef.serializeTo(recv);
+    // sRef.serializeTo(recv);
     return s;
 }
 
@@ -414,7 +414,7 @@ FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
     lastPortNum = portNum;
     numMessages++;
     s.serializeTo(recv);
-    sRef.serializeTo(recv);
+    // sRef.serializeTo(recv);
     return s;
 }
 
