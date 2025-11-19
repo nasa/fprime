@@ -119,7 +119,12 @@ void Receiver ::enumArgsAsync_handler(FwIndexType portNum,
                                       FormalParamEnum& enRef,
                                       const FormalAliasEnum& enA,
                                       FormalAliasEnum& enARef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
+    enA.serializeTo(recv);
+    enARef.serializeTo(recv);
 }
 
 void Receiver ::enumArgsGuarded_handler(FwIndexType portNum,
@@ -127,7 +132,12 @@ void Receiver ::enumArgsGuarded_handler(FwIndexType portNum,
                                         FormalParamEnum& enRef,
                                         const FormalAliasEnum& enA,
                                         FormalAliasEnum& enARef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
+    enA.serializeTo(recv);
+    enARef.serializeTo(recv);
 }
 
 void Receiver ::enumArgsHook_handler(FwIndexType portNum,
@@ -135,7 +145,12 @@ void Receiver ::enumArgsHook_handler(FwIndexType portNum,
                                      FormalParamEnum& enRef,
                                      const FormalAliasEnum& enA,
                                      FormalAliasEnum& enARef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
+    enA.serializeTo(recv);
+    enARef.serializeTo(recv);
 }
 
 void Receiver ::enumArgsSync_handler(FwIndexType portNum,
@@ -143,18 +158,31 @@ void Receiver ::enumArgsSync_handler(FwIndexType portNum,
                                      FormalParamEnum& enRef,
                                      const FormalAliasEnum& enA,
                                      FormalAliasEnum& enARef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
+    enA.serializeTo(recv);
+    enARef.serializeTo(recv);
 }
 
 FormalParamEnum Receiver ::enumReturnGuarded_handler(FwIndexType portNum,
                                                      const FormalParamEnum& en,
                                                      FormalParamEnum& enRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
     return enRef;
 }
 
 FormalParamEnum Receiver ::enumReturnSync_handler(FwIndexType portNum,
                                                   const FormalParamEnum& en,
                                                   FormalParamEnum& enRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
     return enRef;
 }
 
@@ -192,7 +220,14 @@ void Receiver ::primitiveArgsAsync_handler(FwIndexType portNum,
                                            F32& f32Ref,
                                            bool b,
                                            bool& bRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    recv.serializeFrom(u32);
+    recv.serializeFrom(u32Ref);
+    recv.serializeFrom(f32);
+    recv.serializeFrom(f32Ref);
+    recv.serializeFrom(b);
+    recv.serializeFrom(bRef);
 }
 
 void Receiver ::primitiveArgsGuarded_handler(FwIndexType portNum,
@@ -202,7 +237,14 @@ void Receiver ::primitiveArgsGuarded_handler(FwIndexType portNum,
                                              F32& f32Ref,
                                              bool b,
                                              bool& bRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    recv.serializeFrom(u32);
+    recv.serializeFrom(u32Ref);
+    recv.serializeFrom(f32);
+    recv.serializeFrom(f32Ref);
+    recv.serializeFrom(b);
+    recv.serializeFrom(bRef);
 }
 
 void Receiver ::primitiveArgsSync_handler(FwIndexType portNum,
@@ -212,7 +254,14 @@ void Receiver ::primitiveArgsSync_handler(FwIndexType portNum,
                                           F32& f32Ref,
                                           bool b,
                                           bool& bRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    recv.serializeFrom(u32);
+    recv.serializeFrom(u32Ref);
+    recv.serializeFrom(f32);
+    recv.serializeFrom(f32Ref);
+    recv.serializeFrom(b);
+    recv.serializeFrom(bRef);
 }
 
 U32 Receiver ::primitiveReturnGuarded_handler(FwIndexType portNum,
@@ -222,6 +271,14 @@ U32 Receiver ::primitiveReturnGuarded_handler(FwIndexType portNum,
                                               F32& f32Ref,
                                               bool b,
                                               bool& bRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    recv.serializeFrom(u32);
+    recv.serializeFrom(u32Ref);
+    recv.serializeFrom(f32);
+    recv.serializeFrom(f32Ref);
+    recv.serializeFrom(b);
+    recv.serializeFrom(bRef);
     return u32;
 }
 
@@ -232,18 +289,34 @@ U32 Receiver ::primitiveReturnSync_handler(FwIndexType portNum,
                                            F32& f32Ref,
                                            bool b,
                                            bool& bRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    recv.serializeFrom(u32);
+    recv.serializeFrom(u32Ref);
+    recv.serializeFrom(f32);
+    recv.serializeFrom(f32Ref);
+    recv.serializeFrom(b);
+    recv.serializeFrom(bRef);
     return u32;
 }
 
 Fw::String Receiver ::stringAliasReturnGuarded_handler(FwIndexType portNum,
                                                        const Fw::StringBase& str,
                                                        Fw::StringBase& strRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    str.serializeTo(recv);
+    strRef.serializeTo(recv);
     return str;
 }
 
 Fw::String Receiver ::stringAliasReturnSync_handler(FwIndexType portNum,
                                                     const Fw::StringBase& str,
                                                     Fw::StringBase& strRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    str.serializeTo(recv);
+    strRef.serializeTo(recv);
     return str;
 }
 
@@ -252,7 +325,12 @@ void Receiver ::stringArgsAsync_handler(FwIndexType portNum,
                                         Fw::StringBase& str80Ref,
                                         const Fw::StringBase& str100,
                                         Fw::StringBase& str100Ref) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    str80.serializeTo(recv);
+    str80Ref.serializeTo(recv);
+    str100.serializeTo(recv);
+    str100Ref.serializeTo(recv);
 }
 
 void Receiver ::stringArgsGuarded_handler(FwIndexType portNum,
@@ -260,7 +338,12 @@ void Receiver ::stringArgsGuarded_handler(FwIndexType portNum,
                                           Fw::StringBase& str80Ref,
                                           const Fw::StringBase& str100,
                                           Fw::StringBase& str100Ref) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    str80.serializeTo(recv);
+    str80Ref.serializeTo(recv);
+    str100.serializeTo(recv);
+    str100Ref.serializeTo(recv);
 }
 
 void Receiver ::stringArgsSync_handler(FwIndexType portNum,
@@ -268,40 +351,70 @@ void Receiver ::stringArgsSync_handler(FwIndexType portNum,
                                        Fw::StringBase& str80Ref,
                                        const Fw::StringBase& str100,
                                        Fw::StringBase& str100Ref) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    str80.serializeTo(recv);
+    str80Ref.serializeTo(recv);
+    str100.serializeTo(recv);
+    str100Ref.serializeTo(recv);
 }
 
 Fw::String Receiver ::stringReturnGuarded_handler(FwIndexType portNum,
                                                   const Fw::StringBase& str,
                                                   Fw::StringBase& strRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    str.serializeTo(recv);
+    strRef.serializeTo(recv);
     return str;
 }
 
 Fw::String Receiver ::stringReturnSync_handler(FwIndexType portNum, const Fw::StringBase& str, Fw::StringBase& strRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    str.serializeTo(recv);
+    strRef.serializeTo(recv);
     return str;
 }
 
 void Receiver ::structArgsAsync_handler(FwIndexType portNum, const FormalParamStruct& s, FormalParamStruct& sRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    s.serializeTo(recv);
+    sRef.serializeTo(recv);
 }
 
 void Receiver ::structArgsGuarded_handler(FwIndexType portNum, const FormalParamStruct& s, FormalParamStruct& sRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    s.serializeTo(recv);
+    sRef.serializeTo(recv);
 }
 
 void Receiver ::structArgsSync_handler(FwIndexType portNum, const FormalParamStruct& s, FormalParamStruct& sRef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    s.serializeTo(recv);
+    sRef.serializeTo(recv);
 }
 
 FormalParamStruct Receiver ::structReturnGuarded_handler(FwIndexType portNum,
                                                          const FormalParamStruct& s,
                                                          FormalParamStruct& sRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    s.serializeTo(recv);
+    sRef.serializeTo(recv);
     return s;
 }
 
 FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
                                                       const FormalParamStruct& s,
                                                       FormalParamStruct& sRef) {
+    lastPortNum = portNum;
+    numMessages++;
+    s.serializeTo(recv);
+    sRef.serializeTo(recv);
     return s;
 }
 
@@ -314,7 +427,12 @@ void Receiver ::enumArgsHook_overflowHook(FwIndexType portNum,
                                           FormalParamEnum& enRef,
                                           const FormalAliasEnum& enA,
                                           FormalAliasEnum& enARef) {
-    // TODO
+    lastPortNum = portNum;
+    numMessages++;
+    en.serializeTo(recv);
+    enRef.serializeTo(recv);
+    enA.serializeTo(recv);
+    enARef.serializeTo(recv);
 }
 
 }  // namespace FppTest

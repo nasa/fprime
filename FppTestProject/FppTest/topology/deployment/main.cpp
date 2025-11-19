@@ -50,18 +50,19 @@
     }
 
 namespace FppTest {
+static TopologyState state;
+
 class SenderTester : public testing::Test {
   public:
-    TopologyState state;
 
-    void SetUp() override {
+    static void SetUpTestSuite() {
         Os::init();
         setup(state);
     }
 
-    void TearDown() override { teardown(state); }
+    static void TearDownTestSuite() { teardown(state); }
 
-    static void test_no_args() {
+    static void testNoArgs() {
         // Sync -> Receiver
         SYNC_PORT_CALL_NO_ARGS(sender1Sync.noArgsOut_out, receiver1, Types::Empty, 0);
         SYNC_PORT_CALL_NO_ARGS(sender1Sync.noArgsOut_out, receiver1, Types::Empty, 1);
@@ -73,7 +74,91 @@ class SenderTester : public testing::Test {
         SYNC_PORT_CALL_NO_ARGS(sender2Guarded.noArgsOut_out, receiver2, Types::Empty, 1);
     }
 
-    static void test_array_args() {
+    static void testPrimitiveArgs() {
+        // Sync -> Receiver
+        SYNC_PORT_CALL(sender1Sync.primitiveArgsOut_out, receiver1, Types::PrimitiveTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender1Sync.primitiveArgsOut_out, receiver1, Types::PrimitiveTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Sync.primitiveArgsOut_out, receiver2, Types::PrimitiveTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Sync.primitiveArgsOut_out, receiver2, Types::PrimitiveTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        // Guarded -> Receiver
+        SYNC_PORT_CALL(sender1Guarded.primitiveArgsOut_out, receiver1, Types::PrimitiveTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender1Guarded.primitiveArgsOut_out, receiver1, Types::PrimitiveTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Guarded.primitiveArgsOut_out, receiver2, Types::PrimitiveTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+
+        SYNC_PORT_CALL(sender2Guarded.primitiveArgsOut_out, receiver2, Types::PrimitiveTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4, args.val5, args.val6);
+    }
+
+    static void testStringArgs() {
+        // Sync -> Receiver
+        SYNC_PORT_CALL(sender1Sync.stringArgsOut_out, receiver1, Types::PortStringTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender1Sync.stringArgsOut_out, receiver1, Types::PortStringTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender2Sync.stringArgsOut_out, receiver2, Types::PortStringTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender2Sync.stringArgsOut_out, receiver2, Types::PortStringTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        // Guarded -> Receiver
+        SYNC_PORT_CALL(sender1Guarded.stringArgsOut_out, receiver1, Types::PortStringTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender1Guarded.stringArgsOut_out, receiver1, Types::PortStringTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender2Guarded.stringArgsOut_out, receiver2, Types::PortStringTypes, 0, args.val1, args.val2,
+                       args.val3, args.val4);
+
+        SYNC_PORT_CALL(sender2Guarded.stringArgsOut_out, receiver2, Types::PortStringTypes, 1, args.val1, args.val2,
+                       args.val3, args.val4);
+    }
+
+    static void testEnumArgs() {
+        // Sync -> Receiver
+        SYNC_PORT_CALL(sender1Sync.enumArgsOut_out, receiver1, Types::EnumTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender1Sync.enumArgsOut_out, receiver1, Types::EnumTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender2Sync.enumArgsOut_out, receiver2, Types::EnumTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender2Sync.enumArgsOut_out, receiver2, Types::EnumTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        // Guarded -> Receiver
+        SYNC_PORT_CALL(sender1Guarded.enumArgsOut_out, receiver1, Types::EnumTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender1Guarded.enumArgsOut_out, receiver1, Types::EnumTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender2Guarded.enumArgsOut_out, receiver2, Types::EnumTypes, 0, args.val1, args.val2, args.val3,
+                       args.val4);
+
+        SYNC_PORT_CALL(sender2Guarded.enumArgsOut_out, receiver2, Types::EnumTypes, 1, args.val1, args.val2, args.val3,
+                       args.val4);
+    }
+
+    static void testArrayArgs() {
         // Sync -> Receiver
         SYNC_PORT_CALL(sender1Sync.arrayArgsOut_out, receiver1, Types::ArrayTypes, 0, args.val1, args.val2, args.val3,
                        args.val4, args.val5, args.val6);
@@ -103,10 +188,23 @@ class SenderTester : public testing::Test {
 };
 
 TEST_F(SenderTester, NoArgs) {
-    test_no_args();
+    testNoArgs();
+}
+
+TEST_F(SenderTester, PrimitiveArgs) {
+    testPrimitiveArgs();
+}
+
+TEST_F(SenderTester, StringArgs) {
+    testStringArgs();
+}
+
+TEST_F(SenderTester, EnumArgs) {
+    testEnumArgs();
 }
 
 TEST_F(SenderTester, ArrayArgs) {
-    test_array_args();
+    testArrayArgs();
 }
+
 }  // namespace FppTest
