@@ -34,13 +34,22 @@ namespace Drv {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+// @TODO: SpiReadWrite is deprecated.  Just call the other function and throw away the status
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& writeBuffer,
                                                        Fw::Buffer& readBuffer) {
+    (void) SpiWriteRead_handler(portNum,
+                                writeBuffer,
+                                readBuffer);
+}
+
+SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType portNum,
+                                                            Fw::Buffer& writeBuffer,
+                                                            Fw::Buffer& readBuffer) {
     FW_ASSERT(writeBuffer.getSize() == readBuffer.getSize());
 
     if (this->m_fd == -1) {
-        return;
+        return SpiStatus::SPI_OPEN_ERR;
     }
 
     spi_ioc_transfer tr;
@@ -67,6 +76,8 @@ void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum
     }
     this->m_bytes += readBuffer.getSize();
     this->tlmWrite_SPI_Bytes(this->m_bytes);
+
+    return SpiStatus::SPI_OK;  // @TODO: catch errors.
 }
 
 bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
