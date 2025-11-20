@@ -168,7 +168,7 @@ git submodule update --init --recursive
 # Run the static analyzer with the basic configuration
 # Purge unit test directory
 fprime-util purge
-# Generate the build files for clang-tidy
+# Generate the build files. Using clang-tidy is optional, but recommended to match the CI checks.
 # On macOS, expect a CMake Warning 'Leak sanitizer is not supported on macOS in cmake/sanitizers.cmake'
 fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 # Build fprime with the static analyzer
