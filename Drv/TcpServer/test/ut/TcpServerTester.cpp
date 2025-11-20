@@ -24,7 +24,6 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect, bool expect_started) {
-    static FwSizeType receiver_count = 0;
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     U16 port = 0;
     EXPECT_FALSE(component.isStarted());
@@ -33,7 +32,7 @@ void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect, bool expec
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name;
-        name.format("%s%" PRI_FwSizeType, "recv", receiver_count++);
+        name.format("r%" PRI_U32, STest::Pick::any());
         this->component.setAutomaticOpen(reconnect);
         this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }

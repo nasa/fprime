@@ -27,7 +27,6 @@ void TcpClientTester ::setup_helper(Drv::TcpServerSocket& server,
                                     Drv::SocketDescriptor& server_fd,
                                     bool recv_thread,
                                     bool reconnect) {
-    static FwSizeType receiver_count = 0;
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
     U16 port = 0;
@@ -42,7 +41,7 @@ void TcpClientTester ::setup_helper(Drv::TcpServerSocket& server,
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name;
-        name.format("%s%" PRI_FwSizeType, "recv", receiver_count++);
+        name.format("r%" PRI_U32, STest::Pick::any());
         this->component.setAutomaticOpen(reconnect);
         this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
