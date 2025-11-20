@@ -57,7 +57,6 @@ class UdpTester : public UdpGTestBase {
     //!
     void test_multiple_messaging();
 
-
     //! Test basic messaging in unidirectional mode
     //!
     void test_basic_unidirectional_messaging();
