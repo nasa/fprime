@@ -9,7 +9,7 @@ In this test configuration data from the event-in, tlm-in or serial-in ports is 
 
 In this test method a port connection is also established fromBufferDriverReturn port of Generic Hub out to toBufferDriverInReturn. This is done to test that original buffer allocation from Generic Hub In is deallocated after the test.
 
-**Note:** The two Generic Hubs are directly connected in this test, instead of being connecetd via Buffer Driver. The red lines show the interface between the two hubs 
+**Note:** The two Generic Hubs are directly connected in this test, instead of being connected via Buffer Driver. The red lines show the interface between the two hubs 
 
 The numbering (1,2,3..) in red shows the order in which the data will be processed by the two Generic Hub components 
 
