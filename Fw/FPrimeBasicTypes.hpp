@@ -30,9 +30,6 @@ extern "C" {
 #define FW_ASSERT_TEXT_SIZE FwAssertTextSize  //!< Size of string used to store assert description
 #endif
 
-
-#include <cstring>
-#include <stdio.h>
 //// Configuration validation checks ////
 
 // Check that Fw::String is big enough to hold any string that can be given a
