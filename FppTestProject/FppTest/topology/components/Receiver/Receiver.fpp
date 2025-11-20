@@ -6,6 +6,8 @@ module FppTest {
     import TypedPortsGuardedInputs
     import TypedPortsAsync
 
+    output port replyOut: [SenderId.N] Reply
+
   }
 
 }

@@ -6,6 +6,7 @@ set(MOD_DEPS
   Fw/Comp
   Fw/Types
   Os
+  ${PROJECT_NAME}/topology/ports
 )
 register_fprime_module()
 
@@ -19,6 +20,8 @@ set(UT_MOD_DEPS
   FppTest/topology/ports
   STest
 )
+
+target_link_libraries(FppTest_topology_components_Sender PRIVATE gtest)
 
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()

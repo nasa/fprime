@@ -6,6 +6,11 @@ module FppTest {
         instance sender1Sync
         instance sender2Sync
 
+        connections SyncReply {
+            receiver1.replyOut[SenderId.SYNC] -> sender1Sync.replyIn
+            receiver2.replyOut[SenderId.SYNC] -> sender2Sync.replyIn
+        }
+
         connections SyncInstance1 {
             sender1Sync.noArgsOut[0] -> receiver1.noArgsSync[0]
             sender1Sync.noArgsOut[1] -> receiver1.noArgsSync[1]

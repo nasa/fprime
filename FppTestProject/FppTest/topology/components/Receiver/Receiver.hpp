@@ -26,12 +26,9 @@ class Receiver final : public ReceiverComponentBase {
     //! Destroy Receiver object
     ~Receiver();
 
-    U32 numMessages;
-    FwIndexType lastPortNum;
-    Fw::SerialBuffer recv;
-
 private:
     U8 m_data[1024];
+    Fw::SerialBuffer m_recv;
 
   private:
     // ----------------------------------------------------------------------

@@ -6,6 +6,11 @@ module FppTest {
         instance sender1Guarded
         instance sender2Guarded
 
+        connections GuardedReply {
+            receiver1.replyOut[SenderId.GUARDED] -> sender1Guarded.replyIn
+            receiver2.replyOut[SenderId.GUARDED] -> sender2Guarded.replyIn
+        }
+
         connections GuardedInstance1 {
             sender1Guarded.noArgsOut[0] -> receiver1.noArgsGuarded[0]
             sender1Guarded.noArgsOut[1] -> receiver1.noArgsGuarded[1]

@@ -1,8 +1,11 @@
 module FppTest {
 
-  passive component Sender {
+  queued component Sender {
 
     import TypedPortsOutputs
+
+    internal port done
+    sync input port replyIn: Reply
 
   }
 

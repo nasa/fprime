@@ -9,8 +9,7 @@ module FppTest {
 
     import Sync
     import Guarded
-    # import Async
-
+    import Async
   }
 
 }
