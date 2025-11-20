@@ -8,8 +8,8 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
-#ifndef FW_TYPES_LANGUAGEHELPERS_HPP_
-#define FW_TYPES_LANGUAGEHELPERS_HPP_
+#ifndef FW_TYPES_LANGUAGE_HELPERS_HPP_
+#define FW_TYPES_LANGUAGE_HELPERS_HPP_
 #include <new>
 #include <type_traits>
 #include "Fw/Types/Assert.hpp"
@@ -38,9 +38,9 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     static_assert(std::is_constructible<T>::value,
                   "Cannot use arrayPlacementNew on types without a default zero-argument constructor");
     void* base_pointer = reinterpret_cast<void*>(array.bytes);
-    FW_ASSERT(base_pointer != nullptr);                                             // Confirm non-null
-    FW_ASSERT((reinterpret_cast<std::uintptr_t>(base_pointer) % alignof(T)) == 0);  // Confirm alignment
-    FW_ASSERT(array.size >= (sizeof(T) * arraySize));                               // Confirm size
+    FW_ASSERT(base_pointer != nullptr);
+    FW_ASSERT((reinterpret_cast<PlatformPointerCastType>(base_pointer) % alignof(T)) == 0);
+    FW_ASSERT(array.size >= (sizeof(T) * arraySize));
     T* type_pointer = static_cast<T*>(base_pointer);
     for (FwSizeType index = 0; index < arraySize; index++) {
         new (&type_pointer[index]) T();
@@ -48,4 +48,4 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     return type_pointer;
 }
 }  // namespace Fw
-#endif
+#endif // FW_TYPES_LANGUAGE_HELPERS_HPP_
