@@ -64,7 +64,7 @@ MemAllocator& MemAllocatorRegistry::getAnAllocator(const MemoryAllocation::Memor
 
 MemAllocator& MemAllocatorRegistry::getDefaultAllocator() {
     static_assert(std::is_constructible<MemoryAllocation::DefaultMemoryAllocatorType>::value,
-              "DefaultMemoryAllocatorType must be constructible without arguments");
+                  "DefaultMemoryAllocatorType must be constructible without arguments");
     static MemoryAllocation::DefaultMemoryAllocatorType defaultAllocator;
     return defaultAllocator;
 }

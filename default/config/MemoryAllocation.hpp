@@ -14,7 +14,7 @@
 namespace Fw {
 namespace MemoryAllocation {
 using DefaultMemoryAllocatorType = Fw::MallocAllocator;
-} // namespace MemoryAllocation
-} // namespace Fw
+}  // namespace MemoryAllocation
+}  // namespace Fw
 
-#endif // CONFIG_MEMORY_ALLOCATION_HPP
+#endif  // CONFIG_MEMORY_ALLOCATION_HPP

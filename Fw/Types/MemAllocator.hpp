@@ -181,7 +181,6 @@ class MemAllocatorRegistry {
     //! Array of allocators for each type defaulted to nullptr
     MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
     MemAllocator& m_defaultAllocator;  //!< default allocator
-
 };
 } /* namespace Fw */
 

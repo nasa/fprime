@@ -48,4 +48,4 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     return type_pointer;
 }
 }  // namespace Fw
-#endif // FW_TYPES_LANGUAGE_HELPERS_HPP_
+#endif  // FW_TYPES_LANGUAGE_HELPERS_HPP_
