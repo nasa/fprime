@@ -25,6 +25,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
+    static FwSizeType receiver_count = 0;
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
@@ -51,7 +52,8 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Start up a receive thread
     if (recv_thread) {
-        Os::TaskString name("receiver thread");
+        Os::TaskString name;
+        name.format("%s%" PRI_FwSizeType, "recv", receiver_count++);
         this->component.start(name, true, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
