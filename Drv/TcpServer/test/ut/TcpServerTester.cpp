@@ -31,8 +31,7 @@ void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect, bool expec
     EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
     // Start up a receive thread
     if (recv_thread) {
-        Os::TaskString name;
-        name.format("r%" PRI_U32, STest::Pick::any());
+        Os::TaskString name("receiver thread");
         this->component.setAutomaticOpen(reconnect);
         this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }

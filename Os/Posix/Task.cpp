@@ -23,9 +23,17 @@ static const int SCHED_POLICY = SCHED_RR;
 
 typedef void* (*pthread_func_ptr)(void*);
 
+// Forward declaration
+int set_task_name(pthread_t thread, char* name);
+
 void* pthread_entry_wrapper(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
+    // Both downcasts are safe because we know the types
     Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
+    auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
+    FW_ASSERT(handle != nullptr);
+    // Task name is on a best effort basis
+    (void)set_task_name(handle->m_task_descriptor, handle->m_name);
     wrapper.run(&wrapper);
     return nullptr;
 }
@@ -116,25 +124,16 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
     return status;
 }
 
-int set_task_name(pthread_t thread, const Os::Task::Arguments& arguments) {
+int set_task_name(pthread_t thread, char* name) {
     int status = 0;
 // pthread_setname_np is a non-POSIX function.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
 // That's the circumstance in which we expect this feature to work.
 #if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE) && defined(POSIX_THREADS_ENABLE_NAMES) && \
     POSIX_THREADS_ENABLE_NAMES
-    // Construct a sixteen char long version of the task name. This length is fixed by the posix thread
-    // specification and is a constant.
-    char name_sixteen_capped[PosixTask::PTHREAD_NAME_LENGTH];
-    Fw::StringUtils::string_copy(name_sixteen_capped, arguments.m_name.toChar(), sizeof(name_sixteen_capped));
-
-    status = pthread_setname_np(thread, name_sixteen_capped);
-#else
-// Only warn if the flag is on
-#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
-    Fw::Logger::log("[WARNING] %s setting thread name is only available with GNU pthreads\n",
-                    const_cast<CHAR*>(arguments.m_name.toChar()));
-#endif
+    // Force safe name usage
+    name[Os::Posix::Task::PosixTaskHandle::PTHREAD_NAME_LENGTH - 1] = '\0';
+    status = pthread_setname_np(thread, name);
 #endif
     return status;
 }
@@ -164,13 +163,14 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         pthread_status =
             pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper, arguments.m_routine_argument);
     }
-    if ((expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
-        pthread_status = set_task_name(handle.m_task_descriptor, arguments);
-    }
     // Successful execution of all precious steps will result in a valid task handle
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         handle.m_is_valid = true;
     }
+
+#if defined(PTHREAD_NAME_LENGTH) && PTHREAD_NAME_LENGTH
+    Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
+#endif
 
     (void)pthread_attr_destroy(&attributes);
     return Posix::posix_status_to_task_status(pthread_status);

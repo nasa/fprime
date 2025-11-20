@@ -51,8 +51,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Start up a receive thread
     if (recv_thread) {
-        Os::TaskString name;
-        name.format("r%" PRI_U32, STest::Pick::any());
+        Os::TaskString name("receiver thread");
         this->component.start(name, true, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
