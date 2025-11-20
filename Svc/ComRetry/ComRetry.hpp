@@ -42,7 +42,7 @@ class ComRetry final : public ComRetryComponentBase {
 
     //! Handler implementation for dataIn
     //!
-    //! Port to receive data to frame, in a Fw::Buffer with optional context
+    //! Port to receive data in a Fw::Buffer with optional context
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;
