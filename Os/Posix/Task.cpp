@@ -168,7 +168,7 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         handle.m_is_valid = true;
     }
 
-#if defined(PTHREAD_NAME_LENGTH) && PTHREAD_NAME_LENGTH
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
 #endif
 
