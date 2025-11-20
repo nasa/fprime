@@ -42,7 +42,8 @@ MaxHeap::~MaxHeap() {
 
 void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
     FW_ASSERT(this->m_heap == nullptr);
-    FW_ASSERT(heap_allocation.size >= (capacity * sizeof(Node)));
+    FW_ASSERT(heap_allocation.size >= (capacity * sizeof(Node)), static_cast<FwAssertArgType>(capacity),
+              static_cast<FwAssertArgType>(heap_allocation.size));
     FW_ASSERT(heap_allocation.bytes != nullptr);
     // Loop bounds will overflow if capacity set to the max allowable value
     FW_ASSERT(capacity < std::numeric_limits<FwSizeType>::max());
