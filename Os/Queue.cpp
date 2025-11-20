@@ -19,7 +19,10 @@ Queue::~Queue() {
     m_delegate.~QueueInterface();
 }
 
-QueueInterface::Status Queue ::create(FwEnumStoreType id, const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status Queue ::create(FwEnumStoreType id,
+                                      const Fw::ConstStringBase& name,
+                                      FwSizeType depth,
+                                      FwSizeType messageSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(depth > 0);
     FW_ASSERT(messageSize > 0);

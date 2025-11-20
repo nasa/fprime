@@ -132,11 +132,12 @@ class MemAllocator {
 };
 
 class MemAllocatorRegistry {
-  public:
+  private:
     // Constructor which will register itself as the singleton
     MemAllocatorRegistry();
     ~MemAllocatorRegistry() = default;
 
+  public:
     //! \brief get the singleton registry
     //!
     //! \return the singleton registry
@@ -169,11 +170,18 @@ class MemAllocatorRegistry {
     MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType type);
 
   private:
+    //! \brief get the default allocator
+    //!
+    //! Creates a single instance of the default allocator and returns a reference to it. This is done to ensure that
+    //! the default allocator is only created once and is available when ill-ordered static initialization occurs.
+    //!
+    //! \return the default allocator
+    static MemAllocator& getDefaultAllocator();
+
     //! Array of allocators for each type defaulted to nullptr
     MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
+    MemAllocator& m_defaultAllocator;  //!< default allocator
 
-    //! The singleton registry pointer
-    static MemAllocatorRegistry* s_registry;  //!< singleton registry
 };
 } /* namespace Fw */
 

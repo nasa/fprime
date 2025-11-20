@@ -12,6 +12,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/FpConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpySequencerCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PlatformCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"

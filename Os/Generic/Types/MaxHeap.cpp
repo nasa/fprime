@@ -17,9 +17,9 @@
 #include "Os/Generic/Types/MaxHeap.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include "Fw/Types/Assert.hpp"
-#include "Fw/LanguageHelpers.hpp"
 #include <cstdio>
+#include "Fw/LanguageHelpers.hpp"
+#include "Fw/Types/Assert.hpp"
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)

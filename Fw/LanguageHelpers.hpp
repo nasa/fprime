@@ -10,10 +10,10 @@
 // ======================================================================
 #ifndef FW_TYPES_LANGUAGEHELPERS_HPP_
 #define FW_TYPES_LANGUAGEHELPERS_HPP_
-#include "Fw/Types/Assert.hpp"
-#include "Fw/Types/ByteArray.hpp"
 #include <new>
 #include <type_traits>
+#include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ByteArray.hpp"
 namespace Fw {
 //! \brief placement new for arrays
 //!
@@ -35,16 +35,17 @@ namespace Fw {
 template <typename T>
 T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     static_assert(!std::is_array<T>::value, "Cannot use arrayPlacementNew new for arrays of arrays");
-    static_assert(std::is_trivially_constructible<T>::value, "Cannot use arrayPlacementNew for non-trivially constructible types");
+    static_assert(std::is_constructible<T>::value,
+                  "Cannot use arrayPlacementNew on types without a default zero-argument constructor");
     void* base_pointer = reinterpret_cast<void*>(array.bytes);
-    FW_ASSERT(base_pointer != nullptr); // Confirm non-null
-    FW_ASSERT((reinterpret_cast<std::uintptr_t>(base_pointer) % alignof(T)) == 0); // Confirm alignment
-    FW_ASSERT(array.size >= (sizeof(T) * arraySize)); // Confirm size
+    FW_ASSERT(base_pointer != nullptr);                                             // Confirm non-null
+    FW_ASSERT((reinterpret_cast<std::uintptr_t>(base_pointer) % alignof(T)) == 0);  // Confirm alignment
+    FW_ASSERT(array.size >= (sizeof(T) * arraySize));                               // Confirm size
     T* type_pointer = static_cast<T*>(base_pointer);
     for (FwSizeType index = 0; index < arraySize; index++) {
         new (&type_pointer[index]) T();
     }
     return type_pointer;
 }
-} // namespace Fw
+}  // namespace Fw
 #endif

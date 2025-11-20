@@ -20,7 +20,7 @@ namespace Generic {
 //! the data region and index list have queue depth number of entries.
 struct PriorityQueueHandle : public QueueHandle {
     Types::MaxHeap m_heap;            //!< MaxHeap data store for tracking priority
-    Types::MaxHeap* m_heap_pointer;   //!< Pointer to the MaxHeap data store
+    U8* m_heap_pointer;               //!< Pointer to the MaxHeap data store
     U8* m_data = nullptr;             //!< Pointer to data allocation
     FwSizeType* m_indices = nullptr;  //!< List of indices into data
     FwSizeType* m_sizes = nullptr;    //!< Size store for each method
@@ -32,7 +32,7 @@ struct PriorityQueueHandle : public QueueHandle {
     Os::Mutex m_data_lock;            //!< Lock against data manipulation
     Os::ConditionVariable m_full;     //!< Queue full condition variable to support blocking
     Os::ConditionVariable m_empty;    //!< Queue empty condition variable to support blocking
-    FwEnumStoreType m_id;              //!< Identifier for the queue, used for memory allocation
+    FwEnumStoreType m_id;             //!< Identifier for the queue, used for memory allocation
 
     //!\brief find an available index to store data from the list
     FwSizeType find_index();
@@ -83,7 +83,10 @@ class PriorityQueue : public Os::QueueInterface {
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    Status create(FwEnumStoreType id, const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) override;
+    Status create(FwEnumStoreType id,
+                  const Fw::ConstStringBase& name,
+                  FwSizeType depth,
+                  FwSizeType messageSize) override;
 
     //! \brief send a message into the queue
     //!

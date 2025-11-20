@@ -165,13 +165,13 @@ TEST(InterfaceUninitialized, ReceiveBuffer) {
 TEST(InterfaceInvalid, CreateInvalidDepth) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    ASSERT_DEATH_IF_SUPPORTED(queue.create(name, 0, 10), "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.create(0, name, 0, 10), "Assert:.*Queue\\.cpp");
 }
 
 TEST(InterfaceInvalid, CreateInvalidSize) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    ASSERT_DEATH_IF_SUPPORTED(queue.create(name, 10, 0), "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.create(0, name, 10, 0), "Assert:.*Queue\\.cpp");
 }
 
 TEST(InterfaceInvalid, SendPointerNull) {

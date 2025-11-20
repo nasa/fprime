@@ -61,7 +61,7 @@ void Os::Test::Queue::Tester::Create::action(Os::Test::Queue::Tester& state  //!
     FwSizeType depth = STest::Random::lowerUpper(1, QUEUE_DEPTH_UPPER_BOUND);
     FwSizeType messageSize = STest::Random::lowerUpper(1, QUEUE_MESSAGE_SIZE_UPPER_BOUND);
     QueueInterface::Status status = state.shadow_create(depth, messageSize);
-    QueueInterface::Status test_status = state.queue.create(name, depth, messageSize);
+    QueueInterface::Status test_status = state.queue.create(0, name, depth, messageSize);
     ASSERT_EQ(status, created ? QueueInterface::Status::ALREADY_CREATED : QueueInterface::Status::OP_OK);
     ASSERT_EQ(status, test_status);
     ASSERT_EQ(name, state.queue.getName());

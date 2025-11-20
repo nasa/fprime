@@ -2,12 +2,12 @@
 // \title Os/Generic/PriorityQueue.cpp
 // \brief priority queue implementation for Os::Queue
 // ======================================================================
+#include "Os/Generic/PriorityQueue.hpp"
+#include <cstring>
 #include "Fw/LanguageHelpers.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "config/MemoryAllocatorTypeEnumAc.hpp"
-#include "Os/Generic/PriorityQueue.hpp"
-#include <cstring>
 
 namespace Os {
 namespace Generic {
@@ -41,29 +41,31 @@ void PriorityQueueHandle ::load_data(FwSizeType index, U8* destination, FwSizeTy
 
 PriorityQueue::~PriorityQueue() {
     const FwEnumStoreType identifier = this->m_handle.m_id;
-    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAllocator(Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
+        Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
     if (this->m_handle.m_data != nullptr) {
         allocator.deallocate(identifier, this->m_handle.m_data);
         allocator.deallocate(identifier, this->m_handle.m_indices);
         allocator.deallocate(identifier, this->m_handle.m_sizes);
-        this->m_handle.m_heap_pointer->~MaxHeap();
+        this->m_handle.m_heap.~MaxHeap();
         allocator.deallocate(identifier, this->m_handle.m_heap_pointer);
     }
 }
 
 QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
-    const Fw::ConstStringBase& name,
+                                             const Fw::ConstStringBase& name,
                                              FwSizeType depth,
                                              FwSizeType messageSize) {
     const FwEnumStoreType identifier = id;
-    QueueInterface::Status status = Os::QueueInterface::Status::OP_OK;                          
+    QueueInterface::Status status = Os::QueueInterface::Status::OP_OK;
     // Ensure we are created exactly once
     FW_ASSERT(this->m_handle.m_indices == nullptr);
     FW_ASSERT(this->m_handle.m_sizes == nullptr);
     FW_ASSERT(this->m_handle.m_data == nullptr);
 
     // Get the memory allocator configured for priority queues
-    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
+        Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Allocate indices list
     void* allocation = nullptr;
@@ -71,18 +73,17 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
     FwSizeType* indices = nullptr;
     FwSizeType* sizes = nullptr;
     U8* data = nullptr;
+    U8* heap_pointer = nullptr;
 
     // Allocate indicies list and construct it when valid
     size = depth * sizeof(FwSizeType);
     allocation = allocator.allocate(identifier, size, alignof(FwSizeType));
     if (allocation == nullptr) {
         status = QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    else if (size < (depth * sizeof(FwSizeType))) {
+    } else if (size < (depth * sizeof(FwSizeType))) {
         allocator.deallocate(identifier, allocation);
         status = QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    else {
+    } else {
         indices = Fw::arrayPlacementNew<FwSizeType>(Fw::ByteArray(static_cast<U8*>(allocation), size), depth);
     }
 
@@ -93,13 +94,11 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
         if (allocation == nullptr) {
             allocator.deallocate(identifier, indices);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else if (size < (depth * sizeof(FwSizeType))) {
+        } else if (size < (depth * sizeof(FwSizeType))) {
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, allocation);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else {
+        } else {
             sizes = Fw::arrayPlacementNew<FwSizeType>(Fw::ByteArray(static_cast<U8*>(allocation), size), depth);
         }
     }
@@ -111,14 +110,12 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, sizes);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else if (size < (depth * sizeof(FwSizeType))) {
+        } else if (size < (depth * sizeof(FwSizeType))) {
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, sizes);
             allocator.deallocate(identifier, allocation);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else {
+        } else {
             data = static_cast<U8*>(allocation);
         }
     }
@@ -131,15 +128,14 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
             allocator.deallocate(identifier, sizes);
             allocator.deallocate(identifier, data);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else if (size < (Types::MaxHeap::ELEMENT_SIZE * depth)) {
+        } else if (size < (Types::MaxHeap::ELEMENT_SIZE * depth)) {
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, sizes);
             allocator.deallocate(identifier, data);
             allocator.deallocate(identifier, allocation);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        }
-        else {
+        } else {
+            heap_pointer = static_cast<U8*>(allocation);
             this->m_handle.m_heap.create(depth, Fw::ByteArray(static_cast<U8*>(allocation), size));
         }
     }
@@ -156,6 +152,7 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
         this->m_handle.m_indices = indices;
         this->m_handle.m_data = data;
         this->m_handle.m_sizes = sizes;
+        this->m_handle.m_heap_pointer = heap_pointer;
         this->m_handle.m_startIndex = 0;
         this->m_handle.m_stopIndex = 0;
         this->m_handle.m_depth = depth;
