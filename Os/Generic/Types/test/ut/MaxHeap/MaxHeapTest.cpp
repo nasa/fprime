@@ -8,7 +8,6 @@
 #define BIG 100000
 
 TEST(Nominal, Creation) {
- 
     alignas(Types::MaxHeap::ALIGNMENT) U8 heap_allocation[Types::MaxHeap::ELEMENT_SIZE * BIG];
     {
         Types::MaxHeap heap;

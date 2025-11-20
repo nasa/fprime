@@ -75,7 +75,7 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
     U8* data = nullptr;
     U8* heap_pointer = nullptr;
 
-    // Allocate indicies list and construct it when valid
+    // Allocate indices list and construct it when valid
     size = depth * sizeof(FwSizeType);
     allocation = allocator.allocate(identifier, size, alignof(FwSizeType));
     if (allocation == nullptr) {
