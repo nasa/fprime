@@ -178,6 +178,15 @@ fprime-util build --all --ut
 fprime-util check --all
 ```
 
+### Code formatting
+
+The F´ repository enforces formatting with `clang-format`. Most IDEs offer tools to format on demand or auto-format on "Save". To run formatting yourself, `fprime-util` provides a quick way to format all files that have been modified since you branched off of `devel`:
+
+```bash
+git diff --name-only devel...HEAD | fprime-util format --stdin
+```
+
+
 ### Development with modified FPP version
 
 In case FPP needs to be locally changed, first uninstall all `fprime-fpp-*` `pip` packages, and install FPP
