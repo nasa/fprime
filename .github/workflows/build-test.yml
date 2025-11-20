@@ -31,8 +31,6 @@ jobs:
         fetch-depth: 0
         submodules: true
     - uses: ./.github/actions/setup
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
     # Archive the outputs
