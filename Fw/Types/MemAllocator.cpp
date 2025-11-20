@@ -8,7 +8,6 @@
 #include <Fw/Types/MemAllocator.hpp>
 #include <config/MemoryAllocation.hpp>
 #include <type_traits>
-#include <stdio.h>
 namespace Fw {
 
 MemAllocator::MemAllocator() {}
