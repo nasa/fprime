@@ -19,6 +19,7 @@
 #include <Svc/PrmDb/PrmDb_PrmDbFileLoadStateEnumAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbTypeEnumAc.hpp>
 #include <config/PrmDbImplCfg.hpp>
+#include <cstring>
 
 namespace Svc {
 

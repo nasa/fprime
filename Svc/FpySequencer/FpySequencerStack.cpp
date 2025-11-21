@@ -1,4 +1,5 @@
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include <cstring>
 namespace Svc {
 
 template <typename T>

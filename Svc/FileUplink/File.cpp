@@ -14,6 +14,7 @@
 #include <Fw/Types/StringUtils.hpp>
 #include <Svc/FileUplink/FileUplink.hpp>
 
+#include <cstring>
 namespace Svc {
 
 Os::File::Status FileUplink::File ::open(const Fw::FilePacket::StartPacket& startPacket) {
