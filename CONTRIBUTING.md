@@ -37,7 +37,7 @@ development process, and helpful tips sections below.
 
 ## Code Contribution Process
 
-All code contributions to F´ begin with an issue. Whether you’re fixing a bug, adding a feature, or improving documentation, please start by opening an issue describing your proposal. The Change Control Board (CCB) reviews and approves issues before work begins to ensure alignment with project goals and standards. Once approved, you can proceed with implementation and submit a pull request (PR).
+All code contributions to F´ begin with an issue. Whether you're fixing a bug, adding a feature, or improving documentation, please start by opening an issue describing your proposal. The Change Control Board (CCB) reviews and approves issues before work begins to ensure alignment with project goals and standards. Once approved, you can proceed with implementation and submit a pull request (PR).
 
 If a PR is opened for work that does not correspond to an approved issue, the PR will be routed through the CCB process first—reviewed on a best-effort basis—and may be delayed or declined depending on CCB decisions.You can read more about how this process works in the [F´ Governance document](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md).
 
@@ -59,6 +59,11 @@ git checkout -b <desired branch name>
 ```
 
 Once a pull request has been submitted the following process will begin.
+
+**Best practice: commit messages and PRs**
+
+We recommend users to use an [imperative-style phrasing](https://cbea.ms/git-commit/#imperative) when writing commit messages. F´ uses the "Squash & Merge" strategy, meaning that all commits made on a PR branch will be combined into one squashed commit when merged into F´. The commit message for the squashed commit defaults to use the title of the Pull Request, so we do ask contributors to please follow the imperative-style phrasing for the title of their Pull Requests.  
+When opening a Pull Request, please fill in the given template, and link to any relevant issue on the repository.
 
 ### Submission Review
 
@@ -160,28 +165,27 @@ pip install -Ur requirements.txt
 # Initialize googletest submodule:
 git submodule update --init --recursive
 
-# Run CI tests on fprime
-./ci/tests/Framework.bash
-
-# Run CI tests on the reference application
-./ci/tests/Ref.bash
-
 # Run the static analyzer with the basic configuration
 # Purge unit test directory
 fprime-util purge
-# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
-fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
+# Generate the build files. Using clang-tidy is optional, but recommended to match the CI checks.
+# On macOS, expect a CMake Warning 'Leak sanitizer is not supported on macOS in cmake/sanitizers.cmake'
+fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 # Build fprime with the static analyzer
-fprime-util build --all --ut -j16
+fprime-util build --all --ut
 
-# Run the static analyzer with additional flight code checks
-# Purge release directory
-fprime-util purge
-# Generate the build files for clang-tidy. Make sure clang-tidy is installed.
-fprime-util generate -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
-# Build fprime with the static analyzer
-fprime-util build --all -j16
+# Run Unit Tests
+fprime-util check --all
 ```
+
+### Code formatting
+
+The F´ repository enforces formatting with `clang-format`. Most IDEs offer tools to format on demand or auto-format on "Save". To run formatting yourself, `fprime-util` provides a quick way to format all files that have been modified since you branched off of `devel`:
+
+```bash
+git diff --name-only devel...HEAD | fprime-util format --stdin
+```
+
 
 ### Development with modified FPP version
 
@@ -197,5 +201,5 @@ cp MY_FPRIME_DIRECTORY
 # Generate the build files without checking the FPP version
 fprime-util generate -DFPRIME_SKIP_TOOLS_VERSION_CHECK=1
 # Build the project
-fprime-util build -j4
+fprime-util build
 ```
