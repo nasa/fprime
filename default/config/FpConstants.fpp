@@ -80,7 +80,7 @@ constant FW_ASSERT_COUNT_MAX = 10
 constant FW_CONTEXT_DONT_CARE = 0xFF
 
 @ Value encoded during serialization for boolean true
-constant FW_SERIALIZE_TRUE_VALUE = 0xFF
+dictionary constant FW_SERIALIZE_TRUE_VALUE = 0xFF
 
 @ Value encoded during serialization for boolean false
-constant FW_SERIALIZE_FALSE_VALUE = 0x00
+dictionary constant FW_SERIALIZE_FALSE_VALUE = 0x00
