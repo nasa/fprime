@@ -1,13 +1,11 @@
 module Drv {
 
-  @ TODO: Update description: Serial Peripheral Interface Write a set of bytes then read a set of bytes
-  @ TODO: Why is no chip select required?  Or SPI mode?  Is FPrime always presumed to be the slave?
   port SpiWriteRead(
                      ref writeBuffer: Fw.Buffer
                      ref readBuffer:  Fw.Buffer
                    ) -> Drv.SpiStatus
 
-  @ TODO Mark SpiReadWrite as deprecated because it does not return a status, and indicate when it will be removed from FPrime
+  @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
   port SpiReadWrite(
                      ref writeBuffer: Fw.Buffer
                      ref readBuffer:  Fw.Buffer

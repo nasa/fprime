@@ -82,7 +82,7 @@ class LinuxSpiDriverComponentImpl final : public LinuxSpiDriverComponentBase {
                                    Fw::Buffer& WriteBuffer,
                                    Fw::Buffer& readBuffer);
 
-    // TODO: Mark SpiReadWrite as deprecated
+    // @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
     //! Handler implementation for SpiReadWrite
     //!
     void SpiReadWrite_handler(const FwIndexType portNum, /*!< The port number*/

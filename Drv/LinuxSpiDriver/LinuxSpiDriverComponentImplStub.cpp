@@ -29,7 +29,7 @@ SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType po
     return SpiStatus::SPI_OK;
 }
 
-// TODO: Mark SpiReadWrite as deprecated
+// @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& WriteBuffer,
                                                        Fw::Buffer& readBuffer) {}

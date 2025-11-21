@@ -34,18 +34,18 @@ namespace Drv {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-// @TODO: SpiReadWrite is deprecated.  Just call the other function and throw away the status
+// @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& writeBuffer,
                                                        Fw::Buffer& readBuffer) {
-    (void) SpiWriteRead_handler(portNum,
-                                writeBuffer,
-                                readBuffer);
+    (void)SpiWriteRead_handler(portNum, writeBuffer, readBuffer);
 }
 
 SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType portNum,
                                                             Fw::Buffer& writeBuffer,
                                                             Fw::Buffer& readBuffer) {
+    FW_ASSERT(writeBuffer != nullptr);
+    FW_ASSERT(readBuffer  != nullptr);
     FW_ASSERT(writeBuffer.getSize() == readBuffer.getSize());
 
     if (this->m_fd == -1) {
@@ -73,11 +73,12 @@ SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType po
 
     if (stat < 1) {
         this->log_WARNING_HI_SPI_WriteError(this->m_device, this->m_select, stat);
+        return SpiStatus::SPI_OTHER_ERR;
     }
     this->m_bytes += readBuffer.getSize();
     this->tlmWrite_SPI_Bytes(this->m_bytes);
 
-    return SpiStatus::SPI_OK;  // @TODO: catch errors.
+    return SpiStatus::SPI_OK;
 }
 
 bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
