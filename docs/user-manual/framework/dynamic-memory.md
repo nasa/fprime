@@ -9,7 +9,7 @@ dynamically allocate memory through a port call to a component designed to manag
 
 1. Call allocation port receiving an`Fw::Buffer`
 2. Use allocated in the `Fw::Buffer`
-3. Call deallocation port providing the `Fw::Buffer`
+3. Call deallocation port returning the `Fw::Buffer`
 
 ## Component Setup and Buffer Usage
 
@@ -23,23 +23,25 @@ memory allocation should include two output ports:
 1. Output port of type `Fw::BufferGet` to request a buffer
 2. Output port of type `Fw::BufferSend` to deallocate the requested buffer.
 
+This can be done by importing the `Svc.BufferAllocation` FPP interface in the component's FPP definition file as shown in the examples below.
+
 In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will have a size of zero.
 Developers must check that the size is not smaller than requested before proceeding to use the memory.
 
-In the example below, the ports are called `allocate` and `deallocate`. First the port definitions are presented
-followed by the usage in C++.
-
 **Example Component Definition**
-```fpp
-    @ Allocation port for a buffer
-    output port allocate: Fw.BufferGet
 
-    @ Deallocation port for buffers
-    output port deallocate: Fw.BufferSend
-    
+```python
+passive component MyComponent {
+    @ Add allocation and deallocation output ports for interfacing with a BufferManager
+    import Svc.BufferAllocation
+
     @ Allocation failed event
     event MemoryAllocationFailed() severity warning low id 0 format "Failed to allocate memory"
+}
 ```
+
+> [!TIP]
+> You can inspect the contents of the `Svc.BufferAllocation` interface in [Svc/Interfaces/BufferAllocation.fpp](../../../Svc/Interfaces/BufferAllocation.fpp).
 
 **Example Component Allocation and Deallocation**
 ```c++
@@ -74,19 +76,20 @@ object which you can then call `.serializeFrom()` or `.deserializeTo()` on. This
 ```c++
 U32 my_value = 123;
 Fw::Buffer my_buffer = ...;
-// Defaults to big-endian
+// Serializes my_value into my_buffer - defaults to big-endian
 my_buffer.getSerializer().serializeFrom(mv_value);
 // Or for little-endian
 my_buffer.getSerializer().serializeFrom(mv_value, Fw::Endianness::LITTLE);
 
 U32 my_value_again = 0;
-// Defaults to big-endian
+// Deserializes my_buffer into my_value_again - defaults to big-endian
 my_buffer.getDeserializer().deserializeTo(mv_value_again);
 // Or for little-endian
 my_buffer.getDeserializer().deserializeTo(mv_value_again, Fw::Endianness::LITTLE);
 ```
+
 > [!NOTE]
-> To use this method types must inherit from `Fw::Serializable` or be basic types.
+> To use this method types must inherit from `Fw::Serializable` or be basic types. U32 is a basic type.
 
 Users can access the `Fw::Buffer`'s data directly using `Fw::Buffer.getData()`, which will return a `U8*` pointer to the
 buffer's memory. Care should be taken as this is a raw pointer and thus buffer overruns are possible.
@@ -232,7 +235,7 @@ The rules for specifying bins:
 > [!NOTE]
 > a pointer to the Fw::MemAllocator used in setup() is stored for later memory cleanup. The instance of the allocator must persist beyond calling the cleanup() function or the destructor of BufferManager if cleanup() is not called. If a project-specific manual memory allocator is not needed, Fw::MallocAllocator can be used to supply heap allocated memory.
 
-**Example Setup of Svc.BufferManager**
+**Example Setup of Svc.BufferManager in a Topology.cpp**
 ```c++
 Fw::MallocAllocator allocator;
 Svc::BufferManagerComponentImpl my_buffer_manager;
@@ -263,20 +266,52 @@ Buffers bins should be tailored based on expected usage. If many small requests 
 The above trivial example allows for a few small allocations and one large allocation. In this case, there is a risk that the large allocation is used for the small allocation use case and thus care should be taken to ensure that the smaller use
 cases have a sufficient number of buffers to prevent stealing of larger allocations.
 
-## Separation of `Fw::Buffer` Allocation and Deallocation
+## Deallocation strategy
 
-There is no requirement that the allocating component and the deallocating component are the same. Thus components may
-be chained together for multiple processing steps before deallocation. There are two requirements:
+While there is no requirement that the allocating component and the deallocating component are the same; it is a recommended practice. There are two hard requirements:
 
-1. `Fw::Buffers` must eventually be returned to the instance that allocated them
-2. `Svc.StaticMemory` cannot be used in chains involving asynchronous calls
+1. `Fw::Buffers` must eventually be returned to the same instance that allocated them
+2. `Svc.StaticMemory` cannot be used in chains involving asynchronous calls (for reasons discussed above)
 
-Inter-component connections typically use the same `Fw.BufferSend` port to pass the buffer along the chain. A sample
-chain is shown here using Svc.BufferManager as the allocation source.
+<!-- REVIEW NOTE: is there better/catchy name? Ownership Return? -->
+### The "Buffer Return" pattern
 
-```fpp
-      comp1.allocate -> my_buffer_manager.bufferGetCallee
-      comp1.sendToProcess -> comp2.process
-      comp2.sendToProcessMore -> comp3.processMore
-      comp3.deallocate -> my_buffer_manager.bufferSendIn
+In situations where a component allocates a buffer but cannot deallocate it directly (for example, when the buffer is sent asynchronously to another component), a common pattern is the "buffer return" mechanism.
+
+Each component returns the received buffer to its immediate sender, creating an "unwrapping" effect where buffers flow forward through the processing chain and return backward step-by-step until reaching the original allocator.
+
+```mermaid
+flowchart LR
+    BM[Buffer Manager]
+    A[Component A]
+    B[Component B]
+    C[Component C]
+    
+    %% Force layout order with invisible edge
+    BM ~~~ A
+    
+    A -->|"(1) allocate"| BM
+    A -->|"(2) forward buffer"| B
+    B -->|"(3) forward buffer"| C
+    C -->|"(4) return to sender"| B
+    B -->|"(5) return to sender"| A
+    A -->|"(6) deallocate"| BM
+    
+    style BM fill:#e1f5ff
+    style A fill:#fff4e1
+    style B fill:#f0f0f0
+    style C fill:#f0f0f0
 ```
+
+**Flow explanation:**
+
+1. Component A allocates buffer from Buffer Manager
+2. Buffer forwarded to Component B for processing.
+3. Component B forwards to Component C for further processing
+4. Component C returns buffer to Component B (its sender)
+5. Component B returns buffer to Component A (its sender)
+6. Component A deallocates buffer back to Buffer Manager
+
+This pattern enhances modularity and prevent breaking encapsulation by making topology connections agnostic to the underlying buffer management strategy of each component.  
+Let's unwrap this statement by considering the alternative to the Buffer Return pattern, where Component C returns the buffer directly to the Buffer Manager instead of going back through B and A. In this case, let's consider the case where Component B needs to append to the buffer (this can happen for example during framing operations, where the buffer grows in size). To enable that, Component B allocates a new larger buffer, and the topology connections would have to be redrawn, carefully tracking the lifetime of two allocated buffers.  
+With the Buffer Return pattern, Component B deals with buffer lifetime internally, allocating a new buffer and returning the original buffer to its sender, without affecting the broader topology.
