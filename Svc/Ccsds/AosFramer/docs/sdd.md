@@ -6,6 +6,20 @@ It receives payload data (such as a Space Packet or a VCA_SDU) on input and prod
 
 The `Svc::Ccsds::AosFramer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
 
+## AOS Framing Support
+
+The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
+
+* Single, port context driven virtual channel
+* Space Data Link Security (SDLS) disabled
+* Frame Header Error Control Field is disabled
+* Transfer Frame Insert Zone is disabled
+* Transfer Frame Data Field is driven by the per-instance, compile time `fixed_frame_size` setting
+* This component only supports the Multiplexing Protocol Data Unit (M_PDU) service
+* Operational Control Field is disabled
+* Frame Error Control Field is compile-time configurable
+* This component supports packing multiple CCSDS Recognized packets (i.e. Space Packet Protocol or Encapsulation Packet Protocol) into one AOS SDL Frame. It also supports striping a single packet across multiple frames. Extra space is padded with idle packets.
+
 ## Internals
 
 The TM protocol specifies a fixed frame size. This can be configured in the `config/ComCfg.fpp` file.
