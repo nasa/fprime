@@ -1,6 +1,6 @@
 module Svc {
 module Ccsds {
-    @ Deframer for the TM Space Data Link Protocol (CCSDS Standard)
+    @ Deframer for the AOS Space Data Link Protocol (CCSDS Standard)
     passive component AosFramer {
 
         import Framer

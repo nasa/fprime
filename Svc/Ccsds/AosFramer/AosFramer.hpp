@@ -1,7 +1,8 @@
 // ======================================================================
 // \title  AosFramer.hpp
-// \author thomas-bc
+// \author Will MacCormack (Aos Modifications)
 // \brief  hpp file for AosFramer component implementation class
+// \details modified from thomas-bc's TmFramer
 // ======================================================================
 
 #ifndef Svc_Ccsds_AosFramer_HPP
@@ -19,17 +20,6 @@ namespace Ccsds {
 
 class AosFramer final : public AosFramerComponentBase {
     friend class AosFramerTester;
-
-    static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
-                  "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
-    // These are to ensure the frame can hold the packet buffer, its SP header and an idle packet of 1 byte
-    // This is because TM specifies a frame to be padded with an idle packet of at least 1 byte of idle data
-    static_assert(
-        ComCfg::TmFrameFixedSize >= FW_COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1,
-        "TM Frame Fixed Size must be at least large enough to hold a full com buffer, 2 SP headers and 1 byte");
-    static_assert(
-        ComCfg::TmFrameFixedSize >= FW_FILE_BUFFER_MAX_SIZE + (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1,
-        "TM Frame Fixed Size must be at least large enough to hold a full com buffer, 2 SP headers and 1 byte");
 
     static constexpr U8 IDLE_DATA_PATTERN = 0x44;
 
@@ -50,6 +40,12 @@ class AosFramer final : public AosFramerComponentBase {
     //! Destroy AosFramer object
     ~AosFramer();
 
+    //! Configure Managed Parameters for this AOS Framer
+    //!
+    void configure(U32 fixedFixedSize,           //!< Number of bytes in each AOS SDL Frame
+                   bool frameErrorControlField,  //!< Whether to enable the frame error control field
+    );
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -66,8 +62,8 @@ class AosFramer final : public AosFramerComponentBase {
     //! Handler implementation for dataIn
     //!
     //! Port to receive data to frame, in a Fw::Buffer with optional context.
-    //! This is essentially the CCSDS TM VCP.request Service Primitive, with
-    //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
+    //! This provides the CCSDS AOS VCP.request Service, with
+    //! Packet=data and GVCID & PVN implicitly passed in context (AOS SDL Protocol 3.3.3.2)
     //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
@@ -85,6 +81,8 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
   private:
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
+    //! TODO: Correct for AOS Section
+    //! TODO: Note/decide whether to space packet only or support encapsulation idle packets
     //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
     void fill_with_idle_packet(Fw::SerializeBufferBase& serializer);
@@ -93,14 +91,13 @@ class AosFramer final : public AosFramerComponentBase {
     // Members
     // ----------------------------------------------------------------------
   private:
-    // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
+    // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
     // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
-    U8 m_frameBuffer[ComCfg::TmFrameFixedSize];                        //!< Buffer to hold the frame data
+    U8 m_frameBuffer[ComCfg::AosMaxFrameFixedSize];                    //!< Buffer to hold the frame data
     BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
-    U8 m_masterFrameCount;   //!< Master Frame Count - 8 bits - wraps around at 255
-    U8 m_virtualFrameCount;  //!< Virtual Frame Count - 8 bits - wraps around at 255
+    U32 m_virtualFrameCount;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 };
 
 }  // namespace Ccsds
