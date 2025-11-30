@@ -11,7 +11,7 @@ The `Svc::ComRetry` component forwards messages from upstream to downstream comp
 | Requirement     | Description                                                                                                                 | Rationale                                                   | Verification Method |
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------|
 | SVC-COMRETRY-001 | `Svc::ComRetry` shall accept incoming downlink data as `Fw::Buffer` and pass them to an `Svc.ComDataWithContext` port                    | The component must forward messages without modifying them | Unit Test           |
-| SVC-COMRETRY-002 | `Svc::ComRetry` shall store `Fw::Buffer` and its context on receiving buffer ownership through `dataRetrunIn` | Store the buffer in case a retry is required  | Unit test           |
+| SVC-COMRETRY-002 | `Svc::ComRetry` shall store `Fw::Buffer` and its context on receiving buffer ownership through `dataReturnIn` | Store the buffer in case a retry is required  | Unit test           |
 | SVC-COMRETRY-003 | `Svc::ComRetry` shall resend the stored `Fw::Buffer` on receiving `Fw::Success::FAILURE` | Retry delivery of message  | Unit test           |
 | SVC-COMRETRY-004 | The maximum number of retries shall be configurable | The number of retries should be adaptable for projects  | Inspection           |
 | SVC-COMRETRY-005 | `Svc::ComRetry` shall return buffer ownership to the upstream component on receiving `Fw::Success::SUCCESS` or after all retry attempts fail | Memory management       | Unit Test           |
