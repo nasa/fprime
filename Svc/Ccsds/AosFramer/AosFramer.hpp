@@ -81,9 +81,7 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
   private:
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
-    //! TODO: Correct for AOS Section
-    //! TODO: Note/decide whether to space packet only or support encapsulation idle packets
-    //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
+    //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
     void fill_with_idle_packet(Fw::SerializeBufferBase& serializer);
 
@@ -98,6 +96,8 @@ class AosFramer final : public AosFramerComponentBase {
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
     U32 m_virtualFrameCount;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
+    FwSizeType m_fixedFrameSize;  //!< AOS Fixed Frame size for this particular AosFramer instance
+    FwSizeType m_fecf;            //!< AOS Frame Error Control Field presence
 };
 
 }  // namespace Ccsds

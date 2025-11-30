@@ -21,30 +21,41 @@ AosFramer ::AosFramer(const char* const compName)
 
 AosFramer ::~AosFramer() {}
 
+void AosFramer::configure(U32 fixedFixedSize, bool frameErrorControlField) {
+    static_assert(fixedFixedSize < ComCfg::AosMaxFrameFixedSize,
+                  "fixedFrameSize must be less than the maximum defined in ComCfg.fpp");
+
+    static_assert(fixedFrameSize > AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
+                                       (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0),
+                  "AOS Frame Fixed Size must be at least large enough to hold header, trailer and data");
+
+    this->m_fixedFrameSize = fixedFixedSize;
+    this->m_fecf = frameErrorControlField;
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
 void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(data.getSize()));
+    // Ensure rest of the com stack is complying with the [communications adapter
+    // interface](docs/reference/communication-adapter-interface.md)
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
     // Header
     // -----------------------------------------------
-    TMHeader header;
+    AosHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << TMSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset);
-    globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
+    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSSubfields::virtualChannelIdOffset);
+    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << AOSSubfields::spacecraftIdLsbOffset);
 
     // Data Field Status (Standard 4.1.2.7):
     // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
     // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
     U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
+    dataFieldStatus |= 0x3 << AOSSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
 
     header.set_globalVcId(globalVcId);
     header.set_masterFrameCount(this->m_masterFrameCount);
@@ -97,8 +108,8 @@ void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition
 }
 
 void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
-                                     Fw::Buffer& frameBuffer,
-                                     const ComCfg::FrameContext& context) {
+                                      Fw::Buffer& frameBuffer,
+                                      const ComCfg::FrameContext& context) {
     // Assert that the returned buffer is the member, and set ownership state
     FW_ASSERT(frameBuffer.getData() >= &this->m_frameBuffer[0]);
     FW_ASSERT(frameBuffer.getData() < &this->m_frameBuffer[0] + sizeof(this->m_frameBuffer));

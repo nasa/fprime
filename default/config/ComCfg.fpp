@@ -15,7 +15,7 @@ module ComCfg {
     dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ Upper Bound on Fixed size of CCSDS AOS frames
-    dictionary constant AosMaxFrameFixedSize = 1024  # If used for downlink needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    constant AosMaxFrameFixedSize = 1024  # If used for downlink needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
@@ -35,13 +35,6 @@ module ComCfg {
         FW_PACKET_UNKNOWN        = 0x00FF  @< F Prime unknown packet
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
         INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
-    } default INVALID_UNINITIALIZED
-
-    @ PVNs are 3 bits with only 2 currently valid values
-    dictionary enum Pvn : U8 {
-        SPACE_PACKET_PROTOCOL         = 0x0   @< Command packet type - incoming
-        ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Telemetry packet type - outgoing
-        INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
     @ Type used to pass context info between components during framing/deframing
