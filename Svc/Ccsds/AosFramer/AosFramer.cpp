@@ -48,23 +48,34 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     AosHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << AOSSubfields::spacecraftIdLsbOffset);
+    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset);
+    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId & 0x00FF << AOSHeaderSubfields::spacecraftIdLsbOffset);
+    globalVcId |= static_cast<U16>(Ccsds::Tfvn::AOS & 0x3 << AOSHeaderSubfields::frameVersionOffset);
 
-    // Data Field Status (Standard 4.1.2.7):
-    // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
-    // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
-    U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << AOSSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
+    // Virtual Channel Frame Count (4.1.2.4)
+    U32 frameCountAndSignaling =
+        static_cast<U32>(this->m_virtualFrameCount & 0x00FF_FFFF << AOSHeaderSubfields::vcFrameCountOffset);
+
+    // Replay Flag (4.1.2.5.2)
+    frameCountAndSignaling |= static_cast<U32>(replayFlag << AOSHeaderSubfields::replayFlagOffset);
+
+    // Virtual Channel Frame Count Cycle Use Flag (4.1.2.5.3)
+    frameCountAndSignaling |= static_cast<U32>(1 << AOSHeaderSubfields::cycleCountFlagOffset);
+
+    // Spacecraft ID MSB (4.1.2.5.4)
+    frameCountAndSignaling |=
+        static_cast<U32>(ComCfg::SpacecraftId & 0x0300 >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+
+    // Virtual Channel Frame Cycle Count (4.1.2.5.5)
+    frameCountAndSignaling |=
+        static_cast<U32>(this->m_virtualFrameCount & 0x0F00_0000 >> (24 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     header.set_globalVcId(globalVcId);
-    header.set_masterFrameCount(this->m_masterFrameCount);
-    header.set_virtualFrameCount(this->m_virtualFrameCount);
-    header.set_dataFieldStatus(dataFieldStatus);
+    header.set_frameCountAndSignaling(frameCountAndSignaling);
 
-    // We use only a single Virtual Channel for now, so master and virtual frame counts are the same
-    this->m_masterFrameCount++;   // U8 intended to wrap around (modulo 256)
-    this->m_virtualFrameCount++;  // U8 intended to wrap around (modulo 256)
+    // We use only a single Virtual Channel for now, so increment the one counter
+    // Perform the modulo at serialization time we we can add vc cycle count
+    this->m_virtualFrameCount++;  // U24 intended to wrap around (modulo 16,777,216)
 
     // -------------------------------------------------
     // Data field
@@ -91,14 +102,16 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
         Ccsds::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
     // Set the Frame Error Control Field (FECF)
     trailer.set_fecf(crc);
-    // Move the serializer pointer to the end of the location where the trailer will be serialized
+    // Move the serializer pointer to the end of the location where the trailer will be
+    // serialized
     frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     this->m_bufferState = BufferOwnershipState::NOT_OWNED;
     this->dataOut_out(0, frameBuffer, context);
-    this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
+    this->dataReturnOut_out(0, data,
+                            context);  // return ownership of the original data buffer
 }
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {

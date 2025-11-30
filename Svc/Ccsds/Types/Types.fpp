@@ -94,8 +94,8 @@ module Ccsds {
     @ Describes the frame header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) Transfer Frame
     struct AOSHeader {
         globalVcId: U16,         @< 2 bit Frame Version | 8 least significant bits of spacecraft ID | 6 bit virtual channel ID
-        virtualFrameCount: U32,  @< 24 bit virtual channel frame count
-        signalingField: U8       @< 1 bit replay flag | 1 bit VC frame count cycle flag | 2 most significant bits of spacecraft ID | 4 bits VC frame count cycle
+        frameCountAndSignaling: U32,  @< 24 bit virtual channel frame count
+            @< 1 bit replay flag | 1 bit VC frame count cycle flag | 2 most significant bits of spacecraft ID | 4 bits VC frame count cycle
     }
 
     @ Offsets for serializing individual sub-fields in AOS headers
@@ -105,7 +105,8 @@ module Ccsds {
         constant spacecraftIdLsbOffset = 6
         constant virtualChannelIdOffset = 0
 
-        # signalling field offsets
+        # signaling field offsets
+        constant vcFrameCountOffset = 8
         constant replayFlagOffset = 7
         constant cycleCountFlagOffset = 6
         constant spacecraftIdMsbOffset = 4
@@ -133,14 +134,14 @@ module Ccsds {
     @ Until the release of USLP, TFVN were 2 bits long
     @ With the addition of USLP two bits were added to the trailing end that serve as the 2 most significant bits
     @ (i.e. on the wire USLP sends 0b1100)
-    @ See section 3.2.2.2 of USLP (CCSDS 700.1-G-1),
+    @ See section 3.2.2.2 of USLP Overview (CCSDS 700.1-G-1),
     @ section 4.1.2.2.2 of AOS (CCSDS 732.0-B-5),
     @ section 4.3.2 of Space Data Link Protocol Summary (CCSDS 130.2-G-3),
     @ & table 3-1 in Overview of Space Comms Protocols (CCSDS 130.0-G-4)
     dictionary enum Tfvn : U8 {
         TM_TC         = 0x0   @< Telemetry and Telecommand SDLs
         AOS           = 0x1   @< Advanced Orbiting Systems SDL
-        AOS           = 0x2   @< Proximity-1 SDL
+        PROX_ONE      = 0x2   @< Proximity-1 SDL
         USLP          = 0x3   @< Unified Space Data Link Protocol
         INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
