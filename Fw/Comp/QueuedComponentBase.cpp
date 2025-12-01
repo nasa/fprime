@@ -15,6 +15,10 @@ void QueuedComponentBase::init(FwEnumStoreType instance) {
     PassiveComponentBase::init(instance);
 }
 
+void QueuedComponentBase::deinit() {
+    this->m_queue.teardown();
+}
+
 #if FW_OBJECT_TO_STRING == 1
 const char* QueuedComponentBase::getToStringFormatString() {
     return "QueueComp: %s";

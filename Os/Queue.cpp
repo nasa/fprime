@@ -46,6 +46,11 @@ QueueInterface::Status Queue ::create(FwEnumStoreType id,
     return status;
 }
 
+void Queue::teardown() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.teardown();
+}
+
 QueueInterface::Status Queue::send(const U8* buffer,
                                    FwSizeType size,
                                    FwQueuePriorityType priority,

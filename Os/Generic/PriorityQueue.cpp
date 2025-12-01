@@ -39,18 +39,7 @@ void PriorityQueueHandle ::load_data(FwSizeType index, U8* destination, FwSizeTy
     (void)::memcpy(destination, this->m_data + offset, static_cast<size_t>(size));
 }
 
-PriorityQueue::~PriorityQueue() {
-    const FwEnumStoreType identifier = this->m_handle.m_id;
-    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
-        Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-    if (this->m_handle.m_data != nullptr) {
-        allocator.deallocate(identifier, this->m_handle.m_data);
-        allocator.deallocate(identifier, this->m_handle.m_indices);
-        allocator.deallocate(identifier, this->m_handle.m_sizes);
-        this->m_handle.m_heap.~MaxHeap();
-        allocator.deallocate(identifier, this->m_handle.m_heap_pointer);
-    }
-}
+PriorityQueue::~PriorityQueue() {}
 
 QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
                                              const Fw::ConstStringBase& name,
@@ -159,6 +148,28 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
         this->m_handle.m_highMark = 0;
     }
     return status;
+}
+
+void PriorityQueue::teardown() {
+    this->teardownInternal();
+}
+
+void PriorityQueue::teardownInternal() {
+    if (this->m_handle.m_data != nullptr) {
+        const FwEnumStoreType identifier = this->m_handle.m_id;
+        Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
+            Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+        allocator.deallocate(identifier, this->m_handle.m_data);
+        allocator.deallocate(identifier, this->m_handle.m_indices);
+        allocator.deallocate(identifier, this->m_handle.m_sizes);
+        this->m_handle.m_heap.~MaxHeap();
+        allocator.deallocate(identifier, this->m_handle.m_heap_pointer);
+
+        // Set these pointers to nullptr
+        this->m_handle.m_data = nullptr;
+        this->m_handle.m_indices = nullptr;
+        this->m_handle.m_sizes = nullptr;
+    }
 }
 
 QueueInterface::Status PriorityQueue::send(const U8* buffer,

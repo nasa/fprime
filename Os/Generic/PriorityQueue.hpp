@@ -88,6 +88,20 @@ class PriorityQueue : public Os::QueueInterface {
                   FwSizeType depth,
                   FwSizeType messageSize) override;
 
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
+    //! implementation.
+    void teardown() override;
+
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
+    //! implementation.
+    //!
+    //! Note: this is a helper to allow this to be called from the destructor.
+    void teardownInternal();
+
     //! \brief send a message into the queue
     //!
     //! Send a message into the queue, providing the message data, size, priority, and blocking type. When
