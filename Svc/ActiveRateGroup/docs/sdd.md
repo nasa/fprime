@@ -4,7 +4,6 @@
 
 `Svc::ActiveRateGroup` is an active component that drives a set of components connected to `Svc::Sched` output ports. 
 It contains an asynchronous input `Svc::Cycle` port. This port sends a message which wakes the component task. 
-It contains an asynchronous input `Svc::Cycle` port. This port sends a message which wakes the component task. 
 The task invokes each output port in order, passing an argument indicating the order. It tracks execution time and detects overruns.
 
 ## 2. Requirements

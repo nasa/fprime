@@ -9,6 +9,11 @@ TEST(Nominal, UdpBasicMessaging) {
     tester.test_basic_messaging();
 }
 
+TEST(Nominal, UdpBasicUnidirectionalMessaging) {
+    Drv::UdpTester tester;
+    tester.test_basic_unidirectional_messaging();
+}
+
 TEST(Nominal, UdpBasicReceiveThread) {
     Drv::UdpTester tester;
     tester.test_receive_thread();
@@ -17,6 +22,11 @@ TEST(Nominal, UdpBasicReceiveThread) {
 TEST(Reconnect, UdpMultiMessaging) {
     Drv::UdpTester tester;
     tester.test_multiple_messaging();
+}
+
+TEST(Reconnect, UdpMultiUnidirectionalMessaging) {
+    Drv::UdpTester tester;
+    tester.test_multiple_unidirectional_messaging();
 }
 
 TEST(Reconnect, UdpReceiveThreadReconnect) {

@@ -74,6 +74,54 @@ class MemAllocator {
     //! \param ptr the pointer to memory returned by allocate()
     virtual void deallocate(const FwEnumStoreType identifier, void* ptr) = 0;
 
+    //! Allocate memory without recoverable flag
+    //!
+    //! This is a convenience method that calls allocate() without the recoverable flag. The recoverable flag is filled
+    //! by the underlying allocator but is not returned to the caller. This is for cases when the caller does not care
+    //! about recoverability of memory.
+    //!
+    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param size the requested size - changed to actual if different
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   FwSizeType alignment = alignof(std::max_align_t));
+
+    //! Allocate memory checking that the allocation was successful
+    //!
+    //! This is a convenience method that calls allocate() and checks that the returned pointer is not null and that
+    //! size is at least as large as the requested size.
+    //!
+    //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
+    //!
+    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param size the requested size, actual allocation will be at least this size
+    //! \param recoverable - flag to indicate the memory could be recoverable
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* checkedAllocate(const FwEnumStoreType identifier,
+                          FwSizeType& size,
+                          bool& recoverable,
+                          FwSizeType alignment = alignof(std::max_align_t));
+
+    //! Allocate memory checking that the allocation was successful without recoverable flag
+    //!
+    //! This is a convenience method that calls allocate() and checks that the returned pointer is not null and that
+    //! size is at least as large as the requested size. The recoverable flag is filled by the underlying allocator
+    //! but is not returned to the caller. This is for cases when the caller does not care about recoverability of
+    //! memory.
+    //!
+    //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
+    //!
+    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param size the requested size, actual allocation will be at least this size
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* checkedAllocate(const FwEnumStoreType identifier,
+                          FwSizeType& size,
+                          FwSizeType alignment = alignof(std::max_align_t));
+
   protected:
     MemAllocator();
     virtual ~MemAllocator();

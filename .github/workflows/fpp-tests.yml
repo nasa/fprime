@@ -33,7 +33,7 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut
+          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest

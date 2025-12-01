@@ -375,7 +375,7 @@ The TimeType serializable stores timestamp information for both events and telem
 > Math operations between TimeType objects of different time_bases or time_context will return a TimeType with the same base and context as the left operand.
 
 ```python
-from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.models.serialize.time_type import TimeType
 
 t0 = TimeType() # 0.0 seconds
 

@@ -220,7 +220,8 @@ void SocketComponentHelper::readLoop() {
             status = this->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
                 (status != SOCK_NO_DATA_AVAILABLE)) {
-                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n", status, errno);
+                Fw::Logger::log("[WARNING] %s failed to recv from port with status %d and errno %d\n",
+                                this->m_task.getName().toChar(), status, errno);
                 this->close();
                 buffer.setSize(0);
             } else {
@@ -297,7 +298,8 @@ void SocketComponentHelper::reconnectLoop() {
             // Reopen Case 3: Keep trying to reconnect - NO reconnect
             // state change
             else {
-                Fw::Logger::log("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
+                Fw::Logger::log("[WARNING] %s failed to open port with status %d and errno %d\n",
+                                this->m_task.getName().toChar(), status, errno);
                 (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
             }
         } else {

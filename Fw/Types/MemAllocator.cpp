@@ -15,6 +15,27 @@ MemAllocator::MemAllocator() {}
 
 MemAllocator::~MemAllocator() {}
 
+void* MemAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& size, FwSizeType alignment) {
+    bool unused = false;
+    return this->allocate(identifier, size, unused, alignment);
+}
+
+void* MemAllocator ::checkedAllocate(const FwEnumStoreType identifier,
+                                     FwSizeType& size,
+                                     bool& recoverable,
+                                     FwSizeType alignment) {
+    FwSizeType requestedSize = size;
+    void* memory = this->allocate(identifier, size, recoverable, alignment);
+    FW_ASSERT(memory != nullptr && size >= requestedSize, static_cast<FwAssertArgType>(identifier),
+              static_cast<FwAssertArgType>(requestedSize), static_cast<FwAssertArgType>(size));
+    return memory;
+}
+
+void* MemAllocator ::checkedAllocate(const FwEnumStoreType identifier, FwSizeType& size, FwSizeType alignment) {
+    bool unused = false;
+    return this->checkedAllocate(identifier, size, unused, alignment);
+}
+
 MemAllocatorRegistry::MemAllocatorRegistry() {
     // Register self as the singleton
     MemAllocatorRegistry::s_registry = this;
