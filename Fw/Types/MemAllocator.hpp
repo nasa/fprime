@@ -55,7 +55,7 @@ class MemAllocator {
     //! identifier is a unique identifier for the allocating entity. This entity (e.g. a component) may call allocate
     //! multiple times with the same id, but no other entity in the system shall call allocate with that id.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity
     //! \param size the requested size - changed to actual if different
     //! \param recoverable - flag to indicate the memory could be recoverable
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
@@ -70,7 +70,7 @@ class MemAllocator {
     //! Deallocate memory previously allocated by allocate(). The pointer must be one returned by allocate() and the
     //! identifier must match the one used in the original allocate() call.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity, must match the call to allocate()
     //! \param ptr the pointer to memory returned by allocate()
     virtual void deallocate(const FwEnumStoreType identifier, void* ptr) = 0;
 
@@ -80,7 +80,7 @@ class MemAllocator {
     //! by the underlying allocator but is not returned to the caller. This is for cases when the caller does not care
     //! about recoverability of memory.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity
     //! \param size the requested size - changed to actual if different
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
     //! \return the pointer to memory. Zero if unable to allocate
@@ -95,7 +95,7 @@ class MemAllocator {
     //!
     //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity
     //! \param size the requested size, actual allocation will be at least this size
     //! \param recoverable - flag to indicate the memory could be recoverable
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
@@ -114,7 +114,7 @@ class MemAllocator {
     //!
     //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity
     //! \param size the requested size, actual allocation will be at least this size
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
     //! \return the pointer to memory. Zero if unable to allocate
