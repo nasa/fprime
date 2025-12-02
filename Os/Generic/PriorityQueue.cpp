@@ -99,7 +99,7 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, sizes);
             status = QueueInterface::Status::ALLOCATION_FAILED;
-        } else if (size < (depth * sizeof(FwSizeType))) {
+        } else if (size < (depth * messageSize)) {
             allocator.deallocate(identifier, indices);
             allocator.deallocate(identifier, sizes);
             allocator.deallocate(identifier, allocation);
