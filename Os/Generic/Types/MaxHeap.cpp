@@ -51,7 +51,10 @@ void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
 }
 
 void MaxHeap::teardown() {
-    Fw::arrayPlacementDestruct<Node>(this->m_heap, this->m_capacity);
+    // Only destroy the heap if it is still allocated
+    if (this->m_heap != null) {
+        Fw::arrayPlacementDestruct<Node>(this->m_heap, this->m_capacity);
+    }
     // Reset the capacity and heap so that the provider of memory
     this->m_capacity = 0;
     this->m_heap = nullptr;
