@@ -23,6 +23,13 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType portNum,
+                                                            Fw::Buffer& WriteBuffer,
+                                                            Fw::Buffer& readBuffer) {
+    return SpiStatus::SPI_OK;
+}
+
+// @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& WriteBuffer,
                                                        Fw::Buffer& readBuffer) {}

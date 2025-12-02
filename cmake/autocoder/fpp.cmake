@@ -172,8 +172,13 @@ function(fpp_info MODULE_NAME AC_INPUT_FILES)
     fpp_to_modules("${MODULE_NAME}" "${FILTERED_DIRECT_DEPENDENCIES}" MODULE_DEPENDENCIES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
-    # File dependencies are any files that this depends on
-    set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${INCLUDED})
+    # File dependencies are any files that this depends on:
+    #   - AC_INPUT_FILES (direct inputs from the call)
+    #   - STDOUT (all FPP files used in the model)
+    #   - INCLUDED (all included files from the model)
+    # Then remove overlap from these lists
+    set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${STDOUT} ${INCLUDED})
+    list(REMOVE_DUPLICATES FILE_DEPENDENCIES)
 
     # Should have been inherited from previous call to `get_generated_files`
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
