@@ -23,7 +23,9 @@ BasicGuardTestAbsTypeTester::BasicGuardTestAbsTypeTester(const char* const compN
       m_smStateBasicGuardTestAbsType_action_a_history(),
       m_smStateBasicGuardTestAbsType_guard_g() {}
 
-BasicGuardTestAbsTypeTester::~BasicGuardTestAbsTypeTester() {}
+BasicGuardTestAbsTypeTester::~BasicGuardTestAbsTypeTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

@@ -21,7 +21,9 @@ BasicTestAbsTypeTester ::BasicTestAbsTypeTester(const char* const compName)
       m_smStateBasicTestAbsType_action_a_history(),
       m_smStateBasicTestAbsType_action_b_history() {}
 
-BasicTestAbsTypeTester ::~BasicTestAbsTypeTester() {}
+BasicTestAbsTypeTester ::~BasicTestAbsTypeTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

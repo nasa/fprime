@@ -23,7 +23,9 @@ BasicU32Tester ::BasicU32Tester(const char* const compName)
       m_smChoiceBasicU32_action_b_history(),
       m_smChoiceBasicU32_guard_g() {}
 
-BasicU32Tester ::~BasicU32Tester() {}
+BasicU32Tester ::~BasicU32Tester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

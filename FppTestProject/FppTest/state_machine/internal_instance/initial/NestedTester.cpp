@@ -19,7 +19,9 @@ namespace SmInstanceInitial {
 NestedTester::NestedTester(const char* const compName)
     : NestedComponentBase(compName), m_nested_action_a_history(), m_smInitialNested_action_a_history() {}
 
-NestedTester::~NestedTester() {}
+NestedTester::~NestedTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

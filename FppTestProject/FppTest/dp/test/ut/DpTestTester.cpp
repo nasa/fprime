@@ -56,7 +56,9 @@ DpTestTester::DpTestTester()
     generateRandomString(this->stringRecordData);
 }
 
-DpTestTester::~DpTestTester() {}
+DpTestTester::~DpTestTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

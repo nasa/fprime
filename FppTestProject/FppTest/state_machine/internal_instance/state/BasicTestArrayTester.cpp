@@ -21,7 +21,9 @@ BasicTestArrayTester::BasicTestArrayTester(const char* const compName)
       m_smStateBasicTestArray_action_a_history(),
       m_smStateBasicTestArray_action_b_history() {}
 
-BasicTestArrayTester::~BasicTestArrayTester() {}
+BasicTestArrayTester::~BasicTestArrayTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

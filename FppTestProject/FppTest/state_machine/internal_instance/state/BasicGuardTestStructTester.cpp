@@ -22,7 +22,9 @@ BasicGuardTestStructTester::BasicGuardTestStructTester(const char* const compNam
       m_smStateBasicGuardTestStruct_action_a_history(),
       m_smStateBasicGuardTestStruct_guard_g() {}
 
-BasicGuardTestStructTester::~BasicGuardTestStructTester() {}
+BasicGuardTestStructTester::~BasicGuardTestStructTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

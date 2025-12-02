@@ -21,7 +21,9 @@ BasicTestStructTester::BasicTestStructTester(const char* const compName)
       m_smStateBasicTestStruct_action_a_history(),
       m_smStateBasicTestStruct_action_b_history() {}
 
-BasicTestStructTester::~BasicTestStructTester() {}
+BasicTestStructTester::~BasicTestStructTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

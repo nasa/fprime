@@ -24,7 +24,9 @@ SignalGenTester ::SignalGenTester() : SignalGenGTestBase("Tester", MAX_HISTORY_S
     this->m_reqDpBuff.set(this->m_dpBuff, sizeof(this->m_dpBuff));
 }
 
-SignalGenTester ::~SignalGenTester() {}
+SignalGenTester ::~SignalGenTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests
