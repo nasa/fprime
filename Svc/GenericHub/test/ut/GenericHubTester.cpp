@@ -192,8 +192,8 @@ void GenericHubTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Bu
         ASSERT_EQ(byte1, byte2);
     }
 
-    this->invoke_to_bufferOutReturn(portNum,fwBuffer);
-    //this->from_fromBufferDriverReturn_handler(0, fwBuffer);
+    this->invoke_to_bufferOutReturn(portNum, fwBuffer);
+    // this->from_fromBufferDriverReturn_handler(0, fwBuffer);
 }
 
 void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
@@ -230,7 +230,7 @@ void GenericHubTester ::from_fromBufferDriverReturn_handler(const FwIndexType po
         << "Incorrect data pointer deallocated";
 
     this->pushFromPortEntry_fromBufferDriverReturn(fwBuffer);
-    invoke_to_toBufferDriverReturn(portNum,fwBuffer);
+    invoke_to_toBufferDriverReturn(portNum, fwBuffer);
     m_allocate.set(nullptr, 0);
 }
 
@@ -280,7 +280,7 @@ void GenericHubTester ::connectPorts() {
     // bufferAllocate
     this->componentIn.set_allocate_OutputPort(0, this->get_from_allocate(0));
 
-    // buffer Return 
+    // buffer Return
     this->componentOut.set_fromBufferDriverReturn_OutputPort(0, this->get_from_fromBufferDriverReturn(0));
 
     // dataDeallocate
