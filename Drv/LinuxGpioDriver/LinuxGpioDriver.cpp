@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <cerrno>
+#include <cstring>
 #include <type_traits>
 
 namespace Drv {

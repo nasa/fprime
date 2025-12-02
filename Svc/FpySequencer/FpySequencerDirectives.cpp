@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstring>
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Svc/FpySequencer/FpySequencer.hpp"
 namespace Svc {
 
