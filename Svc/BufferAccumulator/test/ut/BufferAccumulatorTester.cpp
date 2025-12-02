@@ -55,6 +55,7 @@ BufferAccumulatorTester ::~BufferAccumulatorTester() {
         Fw::MallocAllocator buffAccumMallocator;
         this->component.deallocateQueue(buffAccumMallocator);
     }
+    this->component.deinit();
 }
 
 // ----------------------------------------------------------------------

@@ -30,7 +30,9 @@ TlmChanTester ::TlmChanTester()
     this->connectPorts();
 }
 
-TlmChanTester ::~TlmChanTester() {}
+TlmChanTester ::~TlmChanTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

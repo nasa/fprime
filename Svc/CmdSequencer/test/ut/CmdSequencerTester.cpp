@@ -38,6 +38,7 @@ CmdSequencerTester ::CmdSequencerTester(const SequenceFiles::File::Format::t a_f
 
 CmdSequencerTester ::~CmdSequencerTester() {
     this->component.deallocateBuffer(this->mallocator);
+    this->component.deinit();
 }
 
 // ----------------------------------------------------------------------

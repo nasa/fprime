@@ -229,6 +229,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );
 
+    //! Cleans up file queue before dispatching to underlying component
+    void deinit();
+
     //! Start FileDownlink component
     //! The component must be configured with configure() before starting.
     //!

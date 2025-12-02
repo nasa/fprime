@@ -26,7 +26,9 @@ DpCatalogTester ::DpCatalogTester()
     this->connectPorts();
 }
 
-DpCatalogTester ::~DpCatalogTester() {}
+DpCatalogTester ::~DpCatalogTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

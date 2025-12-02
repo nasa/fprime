@@ -51,6 +51,11 @@ void FileDownlink ::configure(U32 timeout, U32 cooldown, U32 cycleTime, U32 file
     FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
 }
 
+void FileDownlink ::deinit() {
+    this->m_fileQueue.teardown();
+    FileDownlinkComponentBase::deinit();
+}
+
 void FileDownlink ::preamble() {
     FW_ASSERT(this->m_configured == true);
 }

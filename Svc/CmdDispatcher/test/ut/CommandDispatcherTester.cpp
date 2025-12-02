@@ -22,7 +22,9 @@ namespace Svc {
 CommandDispatcherTester::CommandDispatcherTester(Svc::CommandDispatcherImpl& inst)
     : CommandDispatcherGTestBase("testerbase", 100), m_impl(inst) {}
 
-CommandDispatcherTester::~CommandDispatcherTester() {}
+CommandDispatcherTester::~CommandDispatcherTester() {
+    this->m_impl.deinit();
+}
 
 void CommandDispatcherTester::from_compCmdSend_handler(FwIndexType portNum,
                                                        FwOpcodeType opCode,

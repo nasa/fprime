@@ -23,7 +23,9 @@ FpySequencerTester ::FpySequencerTester()
     clearSeq();
 }
 
-FpySequencerTester ::~FpySequencerTester() {}
+FpySequencerTester ::~FpySequencerTester() {
+    this->component.deinit();
+}
 
 // dispatches events from the queue until the cmp reaches the given state
 void FpySequencerTester::dispatchUntilState(State state, U32 bound) {

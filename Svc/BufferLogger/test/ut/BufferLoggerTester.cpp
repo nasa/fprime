@@ -43,7 +43,9 @@ BufferLoggerTester ::BufferLoggerTester(bool doInitLog)
     }
 }
 
-BufferLoggerTester ::~BufferLoggerTester() {}
+BufferLoggerTester ::~BufferLoggerTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

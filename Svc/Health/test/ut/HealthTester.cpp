@@ -33,7 +33,9 @@ HealthTester ::HealthTester() : HealthGTestBase("Tester", MAX_HISTORY_SIZE), com
     this->initComponents();
 }
 
-HealthTester ::~HealthTester() {}
+HealthTester ::~HealthTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports

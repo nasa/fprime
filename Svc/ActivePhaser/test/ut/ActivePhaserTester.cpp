@@ -79,7 +79,9 @@ ActivePhaserTester ::ActivePhaserTester()
     this->connectPorts();
 }
 
-ActivePhaserTester ::~ActivePhaserTester() {}
+ActivePhaserTester ::~ActivePhaserTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Test helpers

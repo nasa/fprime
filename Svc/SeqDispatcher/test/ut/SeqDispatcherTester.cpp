@@ -18,7 +18,9 @@ SeqDispatcherTester ::SeqDispatcherTester()
     this->initComponents();
 }
 
-SeqDispatcherTester ::~SeqDispatcherTester() {}
+SeqDispatcherTester ::~SeqDispatcherTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests
