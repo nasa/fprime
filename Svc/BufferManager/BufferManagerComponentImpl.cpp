@@ -14,8 +14,9 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
-#include <new>
 #include <cstring>
+#include <new>
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
