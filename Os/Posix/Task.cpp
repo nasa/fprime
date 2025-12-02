@@ -30,10 +30,12 @@ void* pthread_entry_wrapper(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
     // Both downcasts are safe because we know the types
     Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
     FW_ASSERT(handle != nullptr);
     // Task name is on a best effort basis
     (void)set_task_name(handle->m_task_descriptor, handle->m_name);
+#endif
     wrapper.run(&wrapper);
     return nullptr;
 }
