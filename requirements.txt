@@ -61,7 +61,7 @@ tomli==2.0.1
 types-python-dateutil==2.9.0.20241003
 typing-extensions==4.12.2
 urllib3==2.5.0
-Werkzeug==3.0.6
+Werkzeug==3.1.4
 zipp==3.19.1
 zstandard==0.23.0
 pip
