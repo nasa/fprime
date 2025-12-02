@@ -45,6 +45,8 @@ class MaxHeap {
     //! \param heap_allocation the memory to use for the heap
     //!
     void create(FwSizeType capacity, Fw::ByteArray heap_allocation);
+    //! \brief MaxHeap teardown
+    void teardown();
     //! \brief Push an item onto the heap.
     //!
     //! The item will be put into the heap according to its value. The

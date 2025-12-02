@@ -162,7 +162,7 @@ void PriorityQueue::teardownInternal() {
         allocator.deallocate(identifier, this->m_handle.m_data);
         allocator.deallocate(identifier, this->m_handle.m_indices);
         allocator.deallocate(identifier, this->m_handle.m_sizes);
-        this->m_handle.m_heap.~MaxHeap();
+        this->m_handle.m_heap.teardown();
         allocator.deallocate(identifier, this->m_handle.m_heap_pointer);
 
         // Set these pointers to nullptr

@@ -47,5 +47,24 @@ T* arrayPlacementNew(Fw::ByteArray array, FwSizeType arraySize) {
     }
     return type_pointer;
 }
+
+//! \brief placement delete for arrays
+//!
+//! This is the partner of tha above function that performs the destructor operation on every element of type T in the
+//! array. This assumes that all elements have been constructed.
+//!
+//! \warning this function cannot be used for arrays of arrays (i.e. T cannot be an array type).
+//!
+//! \tparam T the type of the array elements
+//! \param arrayPointer pointer to an array of type T
+//! \param arraySize the number of elements in the array
+template <typename T>
+void arrayPlacementDestruct(T* arrayPointer, FwSizeType arraySize) {
+    static_assert(!std::is_array<T>::value, "Cannot use arrayPlacementDestruct new for arrays of arrays");
+    FW_ASSERT(arrayPointer != nullptr);
+    for (FwSizeType index = 0; index < arraySize; index++) {
+        arrayPointer[index].~T();
+    }
+}
 }  // namespace Fw
 #endif  // FW_TYPES_LANGUAGE_HELPERS_HPP_

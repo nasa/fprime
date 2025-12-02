@@ -29,7 +29,6 @@
 namespace Types {
 
 MaxHeap::MaxHeap() {
-    // Initialize the heap:
     this->m_capacity = 0;
     this->m_heap = nullptr;
     this->m_size = 0;
@@ -49,6 +48,15 @@ void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
     FW_ASSERT(capacity < std::numeric_limits<FwSizeType>::max());
     this->m_heap = Fw::arrayPlacementNew<Node>(heap_allocation, capacity);
     this->m_capacity = capacity;
+}
+
+void MaxHeap::teardown() {
+    Fw::arrayPlacementDestruct<Node>(this->m_heap, this->m_capacity);
+    // Reset the capacity and heap so that the provider of memory
+    this->m_capacity = 0;
+    this->m_heap = nullptr;
+    this->m_size = 0;
+    this->m_order = 0;
 }
 
 bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {
