@@ -34,13 +34,26 @@ namespace Drv {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+// @ DEPRECATED: Use SpiWriteRead port instead (same operation with a return value)
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& writeBuffer,
                                                        Fw::Buffer& readBuffer) {
+    FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+    FW_ASSERT(writeBuffer.isValid());
+    FW_ASSERT(readBuffer.isValid());
+    (void)SpiWriteRead_handler(portNum, writeBuffer, readBuffer);
+}
+
+SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType portNum,
+                                                            Fw::Buffer& writeBuffer,
+                                                            Fw::Buffer& readBuffer) {
+    FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+    FW_ASSERT(writeBuffer.isValid());
+    FW_ASSERT(readBuffer.isValid());
     FW_ASSERT(writeBuffer.getSize() == readBuffer.getSize());
 
     if (this->m_fd == -1) {
-        return;
+        return SpiStatus::SPI_OPEN_ERR;
     }
 
     spi_ioc_transfer tr;
@@ -64,9 +77,12 @@ void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum
 
     if (stat < 1) {
         this->log_WARNING_HI_SPI_WriteError(this->m_device, this->m_select, stat);
+        return SpiStatus::SPI_OTHER_ERR;
     }
     this->m_bytes += readBuffer.getSize();
     this->tlmWrite_SPI_Bytes(this->m_bytes);
+
+    return SpiStatus::SPI_OK;
 }
 
 bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
