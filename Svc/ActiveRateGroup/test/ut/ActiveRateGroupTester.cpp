@@ -32,7 +32,9 @@ void ActiveRateGroupTester::clearPortCalls() {
     this->m_callOrder = 0;
 }
 
-ActiveRateGroupTester::~ActiveRateGroupTester() {}
+ActiveRateGroupTester::~ActiveRateGroupTester() {
+    this->m_impl.deinit();
+}
 
 void ActiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context) {
     ASSERT_TRUE(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));

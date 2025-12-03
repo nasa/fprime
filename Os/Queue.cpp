@@ -19,7 +19,10 @@ Queue::~Queue() {
     m_delegate.~QueueInterface();
 }
 
-QueueInterface::Status Queue ::create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) {
+QueueInterface::Status Queue ::create(FwEnumStoreType id,
+                                      const Fw::ConstStringBase& name,
+                                      FwSizeType depth,
+                                      FwSizeType messageSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(depth > 0);
     FW_ASSERT(messageSize > 0);
@@ -27,7 +30,7 @@ QueueInterface::Status Queue ::create(const Fw::ConstStringBase& name, FwSizeTyp
     if (this->m_depth > 0 || this->m_size > 0) {
         return QueueInterface::Status::ALREADY_CREATED;
     }
-    QueueInterface::Status status = this->m_delegate.create(name, depth, messageSize);
+    QueueInterface::Status status = this->m_delegate.create(id, name, depth, messageSize);
     if (status == QueueInterface::Status::OP_OK) {
         this->m_name = name;
         this->m_depth = depth;
@@ -41,6 +44,11 @@ QueueInterface::Status Queue ::create(const Fw::ConstStringBase& name, FwSizeTyp
 #endif
     }
     return status;
+}
+
+void Queue::teardown() {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.teardown();
 }
 
 QueueInterface::Status Queue::send(const U8* buffer,

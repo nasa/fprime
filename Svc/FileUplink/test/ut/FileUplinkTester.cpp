@@ -37,6 +37,7 @@ FileUplinkTester ::FileUplinkTester()
 
 FileUplinkTester ::~FileUplinkTester() {
     this->component.m_file.osFile.close();
+    this->component.deinit();
 }
 
 // ----------------------------------------------------------------------

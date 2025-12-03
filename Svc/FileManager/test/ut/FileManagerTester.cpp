@@ -31,7 +31,9 @@ FileManagerTester ::FileManagerTester() : FileManagerGTestBase("Tester", MAX_HIS
     this->initComponents();
 }
 
-FileManagerTester ::~FileManagerTester() {}
+FileManagerTester ::~FileManagerTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

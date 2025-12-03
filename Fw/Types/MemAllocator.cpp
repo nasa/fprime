@@ -6,10 +6,9 @@
  */
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MemAllocator.hpp>
-
+#include <config/MemoryAllocation.hpp>
+#include <type_traits>
 namespace Fw {
-
-MemAllocatorRegistry* MemAllocatorRegistry::s_registry = nullptr;  //!< singleton registry
 
 MemAllocator::MemAllocator() {}
 
@@ -36,9 +35,8 @@ void* MemAllocator ::checkedAllocate(const FwEnumStoreType identifier, FwSizeTyp
     return this->checkedAllocate(identifier, size, unused, alignment);
 }
 
-MemAllocatorRegistry::MemAllocatorRegistry() {
-    // Register self as the singleton
-    MemAllocatorRegistry::s_registry = this;
+MemAllocatorRegistry::MemAllocatorRegistry() : m_defaultAllocator(MemAllocatorRegistry::getDefaultAllocator()) {
+    this->registerAllocator(MemoryAllocation::MemoryAllocatorType::SYSTEM, m_defaultAllocator);
 }
 
 void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type,
@@ -47,8 +45,8 @@ void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAlloc
 }
 
 MemAllocatorRegistry& MemAllocatorRegistry::getInstance() {
-    FW_ASSERT(s_registry != nullptr);
-    return *s_registry;
+    static MemAllocatorRegistry registry;
+    return registry;
 }
 
 MemAllocator& MemAllocatorRegistry::getAllocator(const MemoryAllocation::MemoryAllocatorType type) {
@@ -63,4 +61,12 @@ MemAllocator& MemAllocatorRegistry::getAnAllocator(const MemoryAllocation::Memor
     }
     return *this->m_allocators[type];
 }
+
+MemAllocator& MemAllocatorRegistry::getDefaultAllocator() {
+    static_assert(std::is_constructible<MemoryAllocation::DefaultMemoryAllocatorType>::value,
+                  "DefaultMemoryAllocatorType must be constructible without arguments");
+    static MemoryAllocation::DefaultMemoryAllocatorType defaultAllocator;
+    return defaultAllocator;
+}
+
 } /* namespace Fw */

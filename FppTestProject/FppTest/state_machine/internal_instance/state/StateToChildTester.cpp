@@ -19,7 +19,9 @@ namespace SmInstanceState {
 StateToChildTester::StateToChildTester(const char* const compName)
     : StateToChildComponentBase(compName), m_smStateStateToChild_actionHistory() {}
 
-StateToChildTester::~StateToChildTester() {}
+StateToChildTester::~StateToChildTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

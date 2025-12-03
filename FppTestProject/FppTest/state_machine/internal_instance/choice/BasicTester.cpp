@@ -26,7 +26,9 @@ BasicTester::BasicTester(const char* const compName)
       m_smChoiceBasic_action_b_history(),
       m_smChoiceBasic_guard_g() {}
 
-BasicTester::~BasicTester() {}
+BasicTester::~BasicTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports

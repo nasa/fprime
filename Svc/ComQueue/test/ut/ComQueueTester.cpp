@@ -24,7 +24,9 @@ ComQueueTester ::ComQueueTester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE
     this->connectPorts();
 }
 
-ComQueueTester ::~ComQueueTester() {}
+ComQueueTester ::~ComQueueTester() {
+    this->component.deinit();
+}
 
 void ComQueueTester ::dispatchAll() {
     while (this->component.m_queue.getMessagesAvailable() > 0) {

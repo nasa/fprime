@@ -22,7 +22,9 @@ BasicGuardTestEnumTester::BasicGuardTestEnumTester(const char* const compName)
       m_smStateBasicGuardTestEnum_action_a_history(),
       m_smStateBasicGuardTestEnum_guard_g() {}
 
-BasicGuardTestEnumTester::~BasicGuardTestEnumTester() {}
+BasicGuardTestEnumTester::~BasicGuardTestEnumTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

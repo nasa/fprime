@@ -28,7 +28,9 @@ TlmPacketizerTester ::TlmPacketizerTester()
     this->connectPorts();
 }
 
-TlmPacketizerTester ::~TlmPacketizerTester() {}
+TlmPacketizerTester ::~TlmPacketizerTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

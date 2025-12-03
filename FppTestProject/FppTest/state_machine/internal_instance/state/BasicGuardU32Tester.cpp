@@ -22,7 +22,9 @@ BasicGuardU32Tester::BasicGuardU32Tester(const char* const compName)
       m_smStateBasicGuardU32_action_a_history(),
       m_smStateBasicGuardU32_guard_g() {}
 
-BasicGuardU32Tester::~BasicGuardU32Tester() {}
+BasicGuardU32Tester::~BasicGuardU32Tester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

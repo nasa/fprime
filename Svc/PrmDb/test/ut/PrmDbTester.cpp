@@ -1341,7 +1341,9 @@ PrmDbTester::PrmDbTester(Svc::PrmDbImpl& inst) : PrmDbGTestBase("testerbase", 10
     PrmDbTester::PrmDbTestFile::setTester(this);
 }
 
-PrmDbTester::~PrmDbTester() {}
+PrmDbTester::~PrmDbTester() {
+    this->m_impl.deinit();
+}
 
 void PrmDbTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);

@@ -39,6 +39,7 @@ FileDownlinkTester ::~FileDownlinkTester() {
     for (U32 i = 0; i < buffers_index; i++) {
         delete[] buffers[i];
     }
+    this->component.deinit();
 }
 
 // ----------------------------------------------------------------------

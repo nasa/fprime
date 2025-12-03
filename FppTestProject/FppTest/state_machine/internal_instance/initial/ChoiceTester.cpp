@@ -24,7 +24,9 @@ ChoiceTester::ChoiceTester(const char* const compName)
       m_choice_guard_g(),
       m_smInitialChoice_guard_g() {}
 
-ChoiceTester::~ChoiceTester() {}
+ChoiceTester::~ChoiceTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

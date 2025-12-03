@@ -46,9 +46,14 @@ void FileDownlink ::configure(U32 timeout, U32 cooldown, U32 cycleTime, U32 file
     this->m_configured = true;
 
     Os::Queue::Status stat =
-        m_fileQueue.create(Os::QueueString("fileDownlinkQueue"), static_cast<FwSizeType>(fileQueueDepth),
-                           static_cast<FwSizeType>(sizeof(struct FileEntry)));
+        m_fileQueue.create(this->getInstance(), Os::QueueString("fileDownlinkQueue"),
+                           static_cast<FwSizeType>(fileQueueDepth), static_cast<FwSizeType>(sizeof(struct FileEntry)));
     FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
+}
+
+void FileDownlink ::deinit() {
+    this->m_fileQueue.teardown();
+    FileDownlinkComponentBase::deinit();
 }
 
 void FileDownlink ::preamble() {

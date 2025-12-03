@@ -28,7 +28,9 @@ ComLoggerTester ::ComLoggerTester(const char* const compName, bool standardCLIni
     (void)standardCLInit;
 }
 
-ComLoggerTester ::~ComLoggerTester() {}
+ComLoggerTester ::~ComLoggerTester() {
+    this->comLogger.deinit();
+}
 
 void ComLoggerTester ::connectPorts() {
     comLogger.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));

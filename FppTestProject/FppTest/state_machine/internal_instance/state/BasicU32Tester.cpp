@@ -19,7 +19,9 @@ namespace SmInstanceState {
 BasicU32Tester::BasicU32Tester(const char* const compName)
     : BasicU32ComponentBase(compName), m_smStateBasicU32_action_a_history(), m_smStateBasicU32_action_b_history() {}
 
-BasicU32Tester::~BasicU32Tester() {}
+BasicU32Tester::~BasicU32Tester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
