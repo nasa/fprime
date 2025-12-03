@@ -7,7 +7,7 @@ module Svc {
         # ----------------------------------------------------------------------
         import Router
 
-        enum AllocationReason {
+        enum AllocationReason : U8{
             FILE_UPLINK,  @< Buffer allocation for file uplink
             USER_BUFFER   @< Buffer allocation for user handled buffer
         }
