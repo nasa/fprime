@@ -18,7 +18,6 @@ arduino
 ARef
 argcomplete
 ARGN
-binaryfile
 ARINC
 arpa
 ASize
@@ -36,6 +35,7 @@ bfree
 BHn
 bibtex
 Bies
+binaryfile
 BINDIR
 bitmaps
 bitshifts
@@ -43,6 +43,7 @@ bitwidth
 bocchino
 boolt
 bsd
+BSDI
 bst
 BUFFERALLOCATE
 BUFFERALLOCATIONFAILED

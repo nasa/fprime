@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  GenericHubComponentImpl.cpp
+// \title  GenericHub.cpp
 // \author mstarch
 // \brief  cpp file for GenericHub component implementation class
 //
@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Svc/GenericHub/GenericHubComponentImpl.hpp>
+#include <Svc/GenericHub/GenericHub.hpp>
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/Assert.hpp"
 
@@ -24,19 +24,15 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-GenericHubComponentImpl ::GenericHubComponentImpl(const char* const compName) : GenericHubComponentBase(compName) {}
+GenericHub::GenericHub(const char* const compName) : GenericHubComponentBase(compName) {}
 
-GenericHubComponentImpl ::~GenericHubComponentImpl() {}
+GenericHub::~GenericHub() {}
 
-void GenericHubComponentImpl ::send_data(const HubType type,
-                                         const FwIndexType port,
-                                         const U8* data,
-                                         const FwSizeType size) {
+void GenericHub::send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size) {
     FW_ASSERT(data != nullptr);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer outgoing =
-        dataOutAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+    Fw::Buffer outgoing = allocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     auto serialize = outgoing.getSerializer();
     // Write data to our buffer
     status = serialize.serializeFrom(static_cast<U32>(type));
@@ -46,19 +42,24 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     status = serialize.serializeFrom(data, size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     outgoing.setSize(static_cast<U32>(serialize.getSize()));
-    dataOut_out(0, outgoing);
+    toBufferDriver_out(0, outgoing);
 }
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::buffersIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
-    bufferDeallocate_out(0, fwBuffer);
+    bufferInReturn_out(portNum, fwBuffer);
 }
 
-void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Return the buffer
+    fromBufferDriverReturn_out(0, fwBuffer);
+}
+
+void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
@@ -85,13 +86,13 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
         status = wrapper.setBuffLen(rawSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        portOut_out(static_cast<FwIndexType>(port), wrapper);
+        serialOut_out(static_cast<FwIndexType>(port), wrapper);
         // Deallocate the existing buffer
-        dataInDeallocate_out(0, fwBuffer);
+        fromBufferDriverReturn_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
         // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
         fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
-        buffersOut_out(static_cast<FwIndexType>(port), fwBuffer);
+        bufferOut_out(static_cast<FwIndexType>(port), fwBuffer);
     } else if (type == HUB_TYPE_EVENT) {
         FwEventIdType id;
         Fw::Time timeTag;
@@ -109,10 +110,10 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
         // Send it!
-        this->LogSend_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
+        this->eventOut_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
 
         // Deallocate the existing buffer
-        dataInDeallocate_out(0, fwBuffer);
+        fromBufferDriverReturn_out(0, fwBuffer);
     } else if (type == HUB_TYPE_CHANNEL) {
         FwChanIdType id;
         Fw::Time timeTag;
@@ -127,18 +128,23 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
         // Send it!
-        this->TlmSend_out(static_cast<FwIndexType>(port), id, timeTag, val);
+        this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
 
-        // Deallocate the existing buffer
-        dataInDeallocate_out(0, fwBuffer);
+        // Return the received buffer
+        fromBufferDriverReturn_out(0, fwBuffer);
     }
 }
 
-void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
-                                               FwEventIdType id,
-                                               Fw::Time& timeTag,
-                                               const Fw::LogSeverity& severity,
-                                               Fw::LogBuffer& args) {
+void GenericHub::toBufferDriverReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Deallocate the existing buffer
+    deallocate_out(portNum, fwBuffer);
+}
+
+void GenericHub::eventIn_handler(const FwIndexType portNum,
+                                 FwEventIdType id,
+                                 Fw::Time& timeTag,
+                                 const Fw::LogSeverity& severity,
+                                 Fw::LogBuffer& args) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + Fw::LogSeverity::SERIALIZED_SIZE +
               FW_LOG_BUFFER_MAX_SIZE];
@@ -156,10 +162,7 @@ void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
     this->send_data(HubType::HUB_TYPE_EVENT, portNum, buffer, size);
 }
 
-void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
-                                               FwChanIdType id,
-                                               Fw::Time& timeTag,
-                                               Fw::TlmBuffer& val) {
+void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + FW_TLM_BUFFER_MAX_SIZE];
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
@@ -178,8 +181,8 @@ void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::portIn_handler(FwIndexType portNum,            /*!< The port number*/
-                                              Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHub::serialIn_handler(FwIndexType portNum,            /*!< The port number*/
+                                  Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }
