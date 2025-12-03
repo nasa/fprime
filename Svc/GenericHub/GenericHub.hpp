@@ -32,7 +32,6 @@ class GenericHub final : public GenericHubComponentBase {
         HUB_TYPE_MAX
     };
 
-    constexpr static FwSizeType GENERIC_HUB_DATA_SIZE = 1024;
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
