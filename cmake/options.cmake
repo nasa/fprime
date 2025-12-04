@@ -148,7 +148,7 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
 ####
-# `FPRIME_ENABLE_TEXT_LOGGERS:`
+# `FPRIME_ENABLE_TEXT_LOGGERS`:
 #
 # When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
 # svc components are included in the build. When unset, those components are excluded, 
@@ -162,6 +162,20 @@ option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 # e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
 ####
 option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
+
+####
+# `FPRIME_ENABLE_JSON_MODEL_GENERATION`:
+#
+# Turns on the generation of JSON models for all modules in the build system. This will run `fpp-to-json` and may
+# require the user to install `java` and the .jar variants of FPP.
+#
+# **Values:**
+# - ON: enable JSON model generation
+# - OFF: (default) disable JSON model generation
+#
+# e.g. `-DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON`
+####
+option(FPRIME_ENABLE_JSON_MODEL_GENERATION "Enable JSON model generation" OFF)
 
 ####
 # `FPRIME_SKIP_TOOLS_VERSION_CHECK`:

@@ -57,6 +57,14 @@ class UdpTester : public UdpGTestBase {
     //!
     void test_multiple_messaging();
 
+    //! Test basic messaging in unidirectional mode
+    //!
+    void test_basic_unidirectional_messaging();
+
+    //! Test basic reconnection behavior in unidirectional mode
+    //!
+    void test_multiple_unidirectional_messaging();
+
     //! Test receive via thread
     //!
     void test_receive_thread();
@@ -69,7 +77,7 @@ class UdpTester : public UdpGTestBase {
     void test_buffer_deallocation();
 
     // Helpers
-    void test_with_loop(U32 iterations, bool recv_thread = false);
+    void test_with_loop(U32 iterations, bool recv_thread = false, bool send_only = false);
 
     bool wait_on_change(Drv::IpSocket& socket, bool open, U32 iterations);
 

@@ -5,8 +5,6 @@ register_fprime_deployment(
         "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../../component/types/FormalParamTypes.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../../../../Fw/Comp/ActiveComponentBase.cpp"
-        # "${CMAKE_CURRENT_LIST_DIR}/../../../../Fw/Comp/QueuedComponentBase.cpp"
     DEPENDS
         ${PROJECT_NAME}_topology_deployment_topology
         STest

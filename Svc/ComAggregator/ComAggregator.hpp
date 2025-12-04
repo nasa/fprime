@@ -7,6 +7,7 @@
 #ifndef Svc_ComAggregator_HPP
 #define Svc_ComAggregator_HPP
 
+#include <atomic>
 #include "Os/Mutex.hpp"
 #include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 
@@ -115,6 +116,14 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                              const Svc::ComDataContextPair& value    //!< The value
     ) const override;
 
+    //! Implementation for guard willFill of state machine Svc_AggregationMachine
+    //!
+    //! Check if the incoming buffer will exactly fill the aggregation buffer
+    bool Svc_AggregationMachine_guard_willFill(SmId smId,                              //!< The state machine id
+                                               Svc_AggregationMachine::Signal signal,  //!< The signal
+                                               const Svc::ComDataContextPair& value    //!< The value
+    ) const override;
+
     //! Implementation for guard isNotEmpty of state machine Svc_AggregationMachine
     //!
     //! Check if not empty
@@ -138,7 +147,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
 
-    Svc::ComDataContextPair m_held;  //!< Held data while waiting for send
+    Svc::ComDataContextPair m_held;     //!< Held data while waiting for send
+    std::atomic<bool> m_allow_timeout;  //!< Whether status has been received
 };
 
 }  // namespace Svc

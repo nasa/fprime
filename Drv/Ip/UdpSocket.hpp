@@ -20,6 +20,13 @@
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <inetLib.h>
 #include <socket.h>
+
+// Undefine these Vxworks-defined macros because
+// they collide with member variables in F Prime.
+// These macros are defined somewhere in inetLib.h.
+#undef m_type
+#undef m_data
+
 #else
 #include <arpa/inet.h>
 #include <sys/socket.h>
