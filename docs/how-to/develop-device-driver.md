@@ -71,7 +71,7 @@ For example, a `Drv.I2c` component provides an ***input*** port of type `Drv.I2c
 ```python
 # In: ImuManager.fpp
 @ Component emitting telemetry read from an MpuImu
-active component ImuManager {
+passive component ImuManager {
     @ Output port allowing to connect to an I2c bus driver for writeRead operations
     output port busWriteRead: Drv.I2cWriteRead
 
@@ -167,7 +167,7 @@ struct ImuData {
 Add a run port to connect to a RateGroup, and implement the run handler to read data and emit telemetry on a regular cadence:
 ```python
 # In: Components/ImuManager/ImuManager.fpp
-active component ImuManager {
+passive component ImuManager {
     [... other code ...]
 
     @ Telemetry channel for IMU data (struct of acceleration, rotation, temperature)
@@ -241,7 +241,7 @@ topology MyTopology {
 Then configure the bus driver to open the correct device. This is platform specific. On Linux, this may look like the following:
 
 ```cpp
-// In Topology.cpp
+// In: Topology.cpp
 void configureTopology() {
     ...
 
