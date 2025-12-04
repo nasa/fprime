@@ -84,7 +84,7 @@ By default, when FW\_ASSERT is called the framework prints a message
 (location of and arguments to the macro), and then calls the C assert()
 function. The framework also provides a function that allows the
 registration of a user-defined handler. The handler is
-registerAssertHook and can be found in FwAssert.hpp. The assert hook is
+registerHook and can be found in Fw/Types/Assert.hpp. The assert hook is
 called with a string representing the text of the assert. The user
 implements a derived class that implements the reportAssert() pure
 virtual method, and does whatever project-specific logic is required.
