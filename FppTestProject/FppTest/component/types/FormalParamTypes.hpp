@@ -75,6 +75,9 @@ struct I32Type : Fw::Serializable {
     I32Type();
 
     I32 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
 struct F32Type : Fw::Serializable {

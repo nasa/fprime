@@ -55,6 +55,12 @@ Fw::SerializeStatus U32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::E
 I32Type::I32Type() {
     val = static_cast<I32>(STest::Pick::lowerUpper(0, INT32_MAX));
 }
+Fw::SerializeStatus I32Type::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
+    return buffer.serializeFrom(val, mode);
+}
+Fw::SerializeStatus I32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
+    return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
+}
 
 F32Type::F32Type() {
     val = static_cast<F32>(STest::Pick::any());
