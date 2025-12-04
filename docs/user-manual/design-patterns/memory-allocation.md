@@ -38,7 +38,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
     };
     ```
 
-2. **Specify (or Modify) the Setup Method**: Update or create a setup method for your component, usually called `configure()`/`setup()`. This method should accept a reference to an `Fw::MemAllocator`. Use this allocator to allocate the required memory blocks in the setup setup method.
+2. **Specify (or Modify) the Setup Method**: Update or create a setup method for your component, usually called `configure()`/`setup()`. This method should accept a reference to an `Fw::MemAllocator`. Use this allocator to allocate the required memory blocks in the setup method.
 
     ```cpp
     void MyComponent::setup(Fw::MemAllocator& memAllocator, FwSizeType memorySize /* other params */) {
