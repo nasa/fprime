@@ -1,2 +1,2 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/A/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/B/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sender/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Receiver/")
