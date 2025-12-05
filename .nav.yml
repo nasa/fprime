@@ -38,6 +38,8 @@ nav:
         - Svc:
           - "Svc/**/docs/sdd.md"
         - Fw:
+          - DataStructures: 
+            - "Fw/DataStructures/docs/**.md"
           - "Fw/**/docs/sdd.md"
         - Drv:
           - "Drv/**/docs/sdd.md"
