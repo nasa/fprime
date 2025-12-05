@@ -48,9 +48,11 @@ Fw::SerializeStatus BoolType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::
 U32Type::U32Type() {
     val = STest::Pick::any();
 }
+
 Fw::SerializeStatus U32Type::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus U32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -58,9 +60,11 @@ Fw::SerializeStatus U32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::E
 I32Type::I32Type() {
     val = static_cast<I32>(STest::Pick::lowerUpper(0, INT32_MAX));
 }
+
 Fw::SerializeStatus I32Type::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus I32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
