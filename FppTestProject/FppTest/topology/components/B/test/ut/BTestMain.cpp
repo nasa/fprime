@@ -1,0 +1,19 @@
+// ======================================================================
+// \title  BTestMain.cpp
+// \author bocchino
+// \brief  cpp file for B component test main function
+// ======================================================================
+
+#include "BTester.hpp"
+#include "STest/Random/Random.hpp"
+
+TEST(Nominal, receiveData) {
+    FppTest::BTester tester;
+    tester.receiveData();
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
+    return RUN_ALL_TESTS();
+}
