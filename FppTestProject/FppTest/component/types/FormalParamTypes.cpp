@@ -28,6 +28,7 @@ namespace Types {
 Fw::SerializeStatus Empty::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus Empty::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -35,9 +36,11 @@ Fw::SerializeStatus Empty::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::End
 BoolType::BoolType() {
     val = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
 }
+
 Fw::SerializeStatus BoolType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus BoolType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -65,9 +68,11 @@ Fw::SerializeStatus I32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::E
 F32Type::F32Type() {
     val = static_cast<F32>(STest::Pick::any());
 }
+
 Fw::SerializeStatus F32Type::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus F32Type::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -103,9 +108,11 @@ Fw::SerializeStatus PrimitiveTypes::deserializeFrom(Fw::SerialBufferBase& buffer
 EnumType::EnumType() {
     val = getRandomFormalParamEnum();
 }
+
 Fw::SerializeStatus EnumType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus EnumType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -124,15 +131,19 @@ Fw::SerializeStatus EnumTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::End
     buffer.serializeFrom(val4, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus EnumTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 ArrayType::ArrayType() {
     getRandomFormalParamArray(val);
 }
+
 Fw::SerializeStatus ArrayType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus ArrayType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -155,9 +166,11 @@ Fw::SerializeStatus ArrayTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::En
     buffer.serializeFrom(val6, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus ArrayTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 ArrayTypesShort::ArrayTypesShort() {
     getRandomFormalParamArray(val1);
     getRandomFormalParamArray(val2);
@@ -168,15 +181,19 @@ Fw::SerializeStatus ArrayTypesShort::serializeTo(Fw::SerialBufferBase& buffer, F
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus ArrayTypesShort::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 StructType::StructType() {
     val = getRandomFormalParamStruct();
 }
+
 Fw::SerializeStatus StructType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus StructType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -195,15 +212,19 @@ Fw::SerializeStatus StructTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::E
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus StructTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 PortStringType::PortStringType() {
     setRandomString(val);
 }
+
 Fw::SerializeStatus PortStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus PortStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -222,15 +243,19 @@ Fw::SerializeStatus PortStringTypes::serializeTo(Fw::SerialBufferBase& buffer, F
     buffer.serializeFrom(val4, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus PortStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 InternalInterfaceStringType::InternalInterfaceStringType() {
     setRandomString(val);
 }
+
 Fw::SerializeStatus InternalInterfaceStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus InternalInterfaceStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -245,15 +270,19 @@ Fw::SerializeStatus InternalInterfaceStringTypes::serializeTo(Fw::SerialBufferBa
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus InternalInterfaceStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 CmdStringType::CmdStringType() {
     setRandomString(val, FW_CMD_STRING_MAX_SIZE);
 }
+
 Fw::SerializeStatus CmdStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus CmdStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -268,15 +297,19 @@ Fw::SerializeStatus CmdStringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus CmdStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 LogStringType::LogStringType() {
     setRandomString(val, FW_LOG_STRING_MAX_SIZE);
 }
+
 Fw::SerializeStatus LogStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus LogStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -291,15 +324,19 @@ Fw::SerializeStatus LogStringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus LogStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 TlmStringType::TlmStringType() {
     setRandomString(val, FW_TLM_STRING_MAX_SIZE);
 }
+
 Fw::SerializeStatus TlmStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus TlmStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -314,15 +351,19 @@ Fw::SerializeStatus TlmStringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus TlmStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 PrmStringType::PrmStringType() {
     setRandomString(val, FW_PARAM_STRING_MAX_SIZE);
 }
+
 Fw::SerializeStatus PrmStringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus PrmStringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -337,15 +378,19 @@ Fw::SerializeStatus PrmStringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus PrmStringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 StringType::StringType() {
     setRandomString(val, decltype(val)::STRING_SIZE);
 }
+
 Fw::SerializeStatus StringType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return buffer.serializeFrom(val, mode);
 }
+
 Fw::SerializeStatus StringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -353,10 +398,12 @@ Fw::SerializeStatus StringType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw
 AliasStringArrayType::AliasStringArrayType() {
     getRandomFormalStringArray(val);
 }
+
 Fw::SerializeStatus AliasStringArrayType::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     buffer.serializeFrom(val, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus AliasStringArrayType::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
@@ -375,9 +422,11 @@ Fw::SerializeStatus StringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::E
     buffer.serializeFrom(val2, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
+
 Fw::SerializeStatus StringTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+
 SerialType::SerialType() : val(data, sizeof(data)) {
     U32 len = STest::Pick::lowerUpper(1, SERIAL_ARGS_BUFFER_CAPACITY);
 

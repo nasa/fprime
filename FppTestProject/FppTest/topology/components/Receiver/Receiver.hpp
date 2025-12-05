@@ -26,7 +26,7 @@ class Receiver final : public ReceiverComponentBase {
     //! Destroy Receiver object
     ~Receiver();
 
-private:
+  private:
     U8 m_data[1024];
     Fw::SerialBuffer m_recv;
 
