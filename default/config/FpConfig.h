@@ -23,7 +23,7 @@ extern "C" {
 
 // Direct port calls (TODO)
 #ifndef FW_DIRECT_PORT_CALLS
-#define FW_DIRECT_PORT_CALLS 1
+#define FW_DIRECT_PORT_CALLS 0
 #endif
 
 // Allow objects to have names. Allocates storage for each instance

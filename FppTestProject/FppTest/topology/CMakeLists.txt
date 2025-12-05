@@ -1,3 +1,3 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/components")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ports")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/deployment")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/main")

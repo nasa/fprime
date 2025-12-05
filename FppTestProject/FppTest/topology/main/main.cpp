@@ -7,9 +7,9 @@
 #include "FppTest/component/types/FormalParamTypes.hpp"
 #include "gtest/gtest.h"
 
-#include "FppTest/topology/deployment/topology/FppTestTopologyAc.hpp"
+#include "FppTest/topology/main/FppTestTopologyAc.hpp"
+#include "FppTestTopologyDefs.hpp"
 #include "Os/Os.hpp"
-#include "topology/FppTestTopologyDefs.hpp"
 
 namespace FppTest {
 static TopologyState state;

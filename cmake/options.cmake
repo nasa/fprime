@@ -148,6 +148,13 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
 ####
+# `FPRIME_ENABLE_DIRECT_PORT_CALLS`:
+#
+# TODO
+####
+option(FPRIME_ENABLE_DIRECT_PORT_CALLS "Call port connections through symbols rather than function pointers" OFF)
+
+####
 # `FPRIME_ENABLE_TEXT_LOGGERS`:
 #
 # When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
