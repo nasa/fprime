@@ -20,7 +20,7 @@ A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd
 A commonly used implementation of `Fw::MemAllocator` is the [`Fw::MallocAllocator`](../../../Fw/Types/MallocAllocator.cpp) which delegates to the C/C++ `malloc()` and `free()` functions.
 
 >[!WARNING]
-> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memrory management during operation, please consult the [Dynamic Memory and Buffer Management](../framework/dynamic-memory.md) document.
+> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memory management during operation, please consult the [Dynamic Memory and Buffer Management](../framework/dynamic-memory.md) document.
 
 ## Pattern to use the Fw::MemAllocator
 
