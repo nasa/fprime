@@ -9,7 +9,6 @@ cmake_policy(SET CMP0048 NEW)
 project(FppTest C CXX)
 
 include(CheckCXXCompilerFlag)
-set(BUILD_TESTING ON)
 
 if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
     set(FPRIME_ENABLE_FRAMEWORK_UTS OFF)
