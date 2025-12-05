@@ -1,16 +1,6 @@
 set(SOURCE_FILES
-        # "${CMAKE_CURRENT_LIST_DIR}/FppTestTopologyAc.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/async.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/sync.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/guarded.fpp"
-)
-
-set(MOD_DEPS
-        ${PROJECT_NAME}/topology/ports
-        ${PROJECT_NAME}/topology/components/Sender
-        ${PROJECT_NAME}/topology/components/Receiver
+  "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
 )
 
 register_fprime_module()

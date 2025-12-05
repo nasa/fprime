@@ -9,7 +9,6 @@ cmake_policy(SET CMP0048 NEW)
 project(FppTest C CXX)
 
 include(CheckCXXCompilerFlag)
-set(BUILD_TESTING ON)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 
