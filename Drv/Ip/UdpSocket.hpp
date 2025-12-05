@@ -26,6 +26,7 @@
 // These macros are defined somewhere in inetLib.h.
 #undef m_type
 #undef m_data
+#undef m_len
 
 #else
 #include <arpa/inet.h>
