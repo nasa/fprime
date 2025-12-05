@@ -10,6 +10,7 @@ project(FppTest C CXX)
 
 include(CheckCXXCompilerFlag)
 set(BUILD_TESTING ON)
+set(FPRIME_ENABLE_UT_COVERAGE ON)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 
