@@ -268,15 +268,16 @@ cases have a sufficient number of buffers to prevent stealing of larger allocati
 
 ## Deallocation strategy
 
-While there is no requirement that the allocating component and the deallocating component are the same; it is a recommended practice. There are two hard requirements:
+The requirements for deallocation are as follows:
 
-1. `Fw::Buffers` must eventually be returned to the same instance that allocated them
-2. `Svc.StaticMemory` cannot be used in chains involving asynchronous calls (for reasons discussed above)
+1. `Fw::Buffer`s **must** eventually be returned to the same instance that allocated them
+2. `Svc.StaticMemory` **cannot** be used in chains involving asynchronous calls (for reasons discussed above)
 
-<!-- REVIEW NOTE: is there better/catchy name? Ownership Return? -->
-### The "Buffer Return" pattern
+Additionally, it is a recommended practice to deallocate a buffer in the same component where it was allocated. This is accomplished using the buffer ownership "Return-To-Sender" pattern described below.
 
-In situations where a component allocates a buffer but cannot deallocate it directly (for example, when the buffer is sent asynchronously to another component), a common pattern is the "buffer return" mechanism.
+### Design Pattern: Return-To-Sender
+
+In situations where a component allocates a buffer but cannot deallocate it directly (for example, when the buffer is sent asynchronously to another component), a common pattern is the buffer "return-to-sender" design pattern.
 
 Each component returns the received buffer to its immediate sender, creating an "unwrapping" effect where buffers flow forward through the processing chain and return backward step-by-step until reaching the original allocator.
 
@@ -306,12 +307,14 @@ flowchart LR
 **Flow explanation:**
 
 1. Component A allocates buffer from Buffer Manager
-2. Buffer forwarded to Component B for processing.
+2. Component A forwards buffer to Component B for processing.
 3. Component B forwards to Component C for further processing
 4. Component C returns buffer to Component B (its sender)
 5. Component B returns buffer to Component A (its sender)
 6. Component A deallocates buffer back to Buffer Manager
 
 This pattern enhances modularity and prevent breaking encapsulation by making topology connections agnostic to the underlying buffer management strategy of each component.  
-Let's unwrap this statement by considering the alternative to the Buffer Return pattern, where Component C returns the buffer directly to the Buffer Manager instead of going back through B and A. In this case, let's consider the case where Component B needs to append to the buffer (this can happen for example during framing operations, where the buffer grows in size). To enable that, Component B allocates a new larger buffer, and the topology connections would have to be redrawn, carefully tracking the lifetime of two allocated buffers.  
-With the Buffer Return pattern, Component B deals with buffer lifetime internally, allocating a new buffer and returning the original buffer to its sender, without affecting the broader topology.
+Let's unwrap this statement by considering the alternative to the Return-To-Sender pattern, where Component C returns the buffer directly to the Buffer Manager, bypassing B and A on the way back. In this case, let's consider the scenario where Component B needs to append to the buffer (this can happen for example during framing operations, where the buffer grows in size). To enable that, Component B allocates a new larger buffer, and the topology connections would have to be redrawn, carefully tracking the lifetime of two allocated buffers.  
+With the Return-To-Sender pattern, Component B can handle the lifetime of each buffers internally: it allocates a new larger buffer to send down the chain (and expects it to come back), and returns the smaller buffer directly to its sender. This does not affect the broader topology, and the extra memory management is isolated to Component B. 
+
+An example of this pattern can be found in the [`Svc.ComFprime`](../../../Svc/Subtopologies/ComFprime/docs/sdd.md) and [`Svc.ComCcsds`](../../../Svc/Subtopologies/ComCcsds/docs/sdd.md) subtopologies, in the `connections Uplink` blocks.
