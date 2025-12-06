@@ -85,8 +85,8 @@ FormalParamArray Receiver ::arrayReturnGuarded_handler(FwIndexType portNum,
     a.serializeTo(m_recv);
     aRef.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
-    replyOut_out(0, portNum, TestDeploymentPort::ARRAY_RETURN_GUARDED, data);
-    return aRef;
+    replyOut_out(SenderId::GUARDED, portNum, TestDeploymentPort::ARRAY_RETURN_GUARDED, data);
+    return a;
 }
 
 FormalParamArray Receiver ::arrayReturnSync_handler(FwIndexType portNum,
@@ -97,7 +97,7 @@ FormalParamArray Receiver ::arrayReturnSync_handler(FwIndexType portNum,
     aRef.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
     replyOut_out(SenderId::SYNC, portNum, TestDeploymentPort::ARRAY_RETURN_SYNC, data);
-    return aRef;
+    return a;
 }
 
 FormalAliasStringArray Receiver ::arrayStringAliasReturnGuarded_handler(FwIndexType portNum,
@@ -180,7 +180,7 @@ FormalParamEnum Receiver ::enumReturnGuarded_handler(FwIndexType portNum,
     enRef.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
     replyOut_out(SenderId::GUARDED, portNum, TestDeploymentPort::ENUM_RETURN_GUARDED, data);
-    return enRef;
+    return en;
 }
 
 FormalParamEnum Receiver ::enumReturnSync_handler(FwIndexType portNum,
@@ -191,7 +191,7 @@ FormalParamEnum Receiver ::enumReturnSync_handler(FwIndexType portNum,
     enRef.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
     replyOut_out(SenderId::SYNC, portNum, TestDeploymentPort::ENUM_RETURN_SYNC, data);
-    return enRef;
+    return en;
 }
 
 void Receiver ::noArgsAsync_handler(FwIndexType portNum) {

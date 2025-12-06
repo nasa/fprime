@@ -97,7 +97,7 @@ void Sender::testNoArgsReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::Empty>(i, portId);
         auto out = noArgsReturnOut_out(m_expectedPortNum);
-        ASSERT_EQ(out, true);
+        EXPECT_EQ(out, true);
         wait();
     }
 
@@ -109,7 +109,7 @@ void Sender::testPrimitiveReturn(const TestDeploymentPort& portId) {
         auto args = initTestCase<Types::PrimitiveTypes>(i, portId);
         auto out =
             primitiveReturnOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4, args.val5, args.val6);
-        ASSERT_EQ(out, args.val1);
+        EXPECT_EQ(out, args.val1);
         wait();
     }
 
@@ -140,7 +140,7 @@ void Sender::testStringAliasReturn(const TestDeploymentPort& portId) {
 
 void Sender::testEnumReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
-        auto args = initTestCase<Types::EnumTypes>(i, portId);
+        auto args = initTestCase<Types::EnumTypesShort>(i, portId);
         auto out = enumReturnOut_out(m_expectedPortNum, args.val1, args.val2);
         ASSERT_EQ(out, args.val1);
         wait();
@@ -151,7 +151,7 @@ void Sender::testEnumReturn(const TestDeploymentPort& portId) {
 
 void Sender::testArrayReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
-        auto args = initTestCase<Types::ArrayTypes>(i, portId);
+        auto args = initTestCase<Types::ArrayTypesShort>(i, portId);
         auto out = arrayReturnOut_out(m_expectedPortNum, args.val1, args.val2);
         ASSERT_EQ(out, args.val1);
         wait();
@@ -186,12 +186,12 @@ void Sender::replyIn_handlerImpl(FwIndexType portNum,
                                  FwIndexType handlerPortNum,
                                  const FppTest::TestDeploymentPort& portId,
                                  const Fw::Buffer& inputData) {
-    ASSERT_EQ(m_expectedPortNum, handlerPortNum);
-    ASSERT_EQ(m_expectedPortId, portId);
+    EXPECT_EQ(m_expectedPortNum, handlerPortNum);
+    EXPECT_EQ(m_expectedPortId, portId);
 
     Fw::ExternalSerializeBuffer inputDataSer(inputData.getData(), inputData.getSize());
     inputDataSer.moveSerToOffset(inputData.getSize());
-    ASSERT_EQ(inputDataSer, m_expected);
+    EXPECT_EQ(inputDataSer, m_expected);
 }
 
 void Sender::replyIn_handler(FwIndexType portNum,

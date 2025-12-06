@@ -92,6 +92,13 @@ TEST_F(SenderTester, PrimitiveReturn) {
     sender2Guarded.testPrimitiveReturn(TestDeploymentPort::PRIMITIVE_RETURN_GUARDED);
 }
 
+TEST_F(SenderTester, EnumReturn) {
+    sender1Sync.testEnumReturn(TestDeploymentPort::ENUM_RETURN_SYNC);
+    sender2Sync.testEnumReturn(TestDeploymentPort::ENUM_RETURN_SYNC);
+    sender1Guarded.testEnumReturn(TestDeploymentPort::ENUM_RETURN_GUARDED);
+    sender2Guarded.testEnumReturn(TestDeploymentPort::ENUM_RETURN_GUARDED);
+}
+
 TEST_F(SenderTester, StringReturn) {
     sender1Sync.testStringReturn(TestDeploymentPort::STRING_RETURN_SYNC);
     sender2Sync.testStringReturn(TestDeploymentPort::STRING_RETURN_SYNC);
@@ -111,6 +118,13 @@ TEST_F(SenderTester, ArrayStringAliasReturn) {
     sender2Sync.testArrayStringAliasReturn(TestDeploymentPort::ARRAY_STRING_ALIAS_RETURN_SYNC);
     sender1Guarded.testArrayStringAliasReturn(TestDeploymentPort::ARRAY_STRING_ALIAS_RETURN_GUARDED);
     sender2Guarded.testArrayStringAliasReturn(TestDeploymentPort::ARRAY_STRING_ALIAS_RETURN_GUARDED);
+}
+
+TEST_F(SenderTester, ArrayReturn) {
+    sender1Sync.testArrayReturn(TestDeploymentPort::ARRAY_RETURN_SYNC);
+    sender2Sync.testArrayReturn(TestDeploymentPort::ARRAY_RETURN_SYNC);
+    sender1Guarded.testArrayReturn(TestDeploymentPort::ARRAY_RETURN_GUARDED);
+    sender2Guarded.testArrayReturn(TestDeploymentPort::ARRAY_RETURN_GUARDED);
 }
 
 TEST_F(SenderTester, StructReturn) {

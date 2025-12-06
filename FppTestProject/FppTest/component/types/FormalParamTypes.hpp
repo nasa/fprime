@@ -128,6 +128,16 @@ struct EnumTypes : Fw::Serializable {
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
+struct EnumTypesShort : Fw::Serializable {
+    EnumTypesShort();
+
+    FormalParamEnum val1;
+    FormalParamEnum val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
+};
+
 struct ArrayType : Fw::Serializable {
     ArrayType();
 

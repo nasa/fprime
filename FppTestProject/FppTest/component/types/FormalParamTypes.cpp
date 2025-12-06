@@ -139,7 +139,19 @@ Fw::SerializeStatus EnumTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::End
 Fw::SerializeStatus EnumTypes::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
 }
+EnumTypesShort::EnumTypesShort() {
+    val1 = getRandomFormalParamEnum();
+    val2 = getRandomFormalParamEnum();
+}
 
+Fw::SerializeStatus EnumTypesShort::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
+    buffer.serializeFrom(val1, mode);
+    buffer.serializeFrom(val2, mode);
+    return Fw::SerializeStatus::FW_SERIALIZE_OK;
+}
+Fw::SerializeStatus EnumTypesShort::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
+    return Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR;
+}
 ArrayType::ArrayType() {
     getRandomFormalParamArray(val);
 }
