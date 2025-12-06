@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 
 #include "FppTest/topology/main/FppTestTopologyAc.hpp"
+#include "FppTest/topology/ports/SenderIdEnumAc.hpp"
 #include "FppTestTopologyDefs.hpp"
 #include "Os/Os.hpp"
 
@@ -22,6 +23,53 @@ class SenderTester : public testing::Test {
     }
 
     static void TearDownTestSuite() { teardown(state); }
+
+    static void testIsConnected() {
+#define CHECK_IS_CONNECTED_TYPE(kind, portName)                        \
+    ASSERT_TRUE(sender1##kind.isConnected_##portName##_OutputPort(0)); \
+    ASSERT_TRUE(sender1##kind.isConnected_##portName##_OutputPort(1)); \
+    ASSERT_TRUE(sender2##kind.isConnected_##portName##_OutputPort(0)); \
+    ASSERT_TRUE(sender2##kind.isConnected_##portName##_OutputPort(1));
+
+#define CHECK_IS_CONNECTED_SG(portName)     \
+    CHECK_IS_CONNECTED_TYPE(Sync, portName) \
+    CHECK_IS_CONNECTED_TYPE(Guarded, portName)
+
+#define CHECK_IS_CONNECTED_SGA(portName)       \
+    CHECK_IS_CONNECTED_TYPE(Sync, portName)    \
+    CHECK_IS_CONNECTED_TYPE(Guarded, portName) \
+    CHECK_IS_CONNECTED_TYPE(Async, portName)
+
+        CHECK_IS_CONNECTED_SGA(noArgsOut)
+        CHECK_IS_CONNECTED_SGA(primitiveArgsOut)
+        CHECK_IS_CONNECTED_SGA(stringArgsOut)
+        CHECK_IS_CONNECTED_SGA(enumArgsOut)
+        CHECK_IS_CONNECTED_SGA(arrayArgsOut)
+        CHECK_IS_CONNECTED_SGA(structArgsOut)
+
+        CHECK_IS_CONNECTED_SG(noArgsReturnOut)
+        CHECK_IS_CONNECTED_SG(primitiveReturnOut)
+        CHECK_IS_CONNECTED_SG(stringReturnOut)
+        CHECK_IS_CONNECTED_SG(stringAliasReturnOut)
+        CHECK_IS_CONNECTED_SG(enumReturnOut)
+        CHECK_IS_CONNECTED_SG(arrayReturnOut)
+        CHECK_IS_CONNECTED_SG(arrayStringAliasReturnOut)
+        CHECK_IS_CONNECTED_SG(structReturnOut)
+    }
+};
+
+class ReceiverTester {
+  public:
+    virtual ~ReceiverTester() = default;
+
+    static void testIsConnected() {
+        ASSERT_TRUE(receiver1.isConnected_replyOut_OutputPort(SenderId::SYNC));
+        ASSERT_TRUE(receiver2.isConnected_replyOut_OutputPort(SenderId::SYNC));
+        ASSERT_TRUE(receiver1.isConnected_replyOut_OutputPort(SenderId::GUARDED));
+        ASSERT_TRUE(receiver2.isConnected_replyOut_OutputPort(SenderId::GUARDED));
+        ASSERT_TRUE(receiver1.isConnected_replyOut_OutputPort(SenderId::ASYNC));
+        ASSERT_TRUE(receiver2.isConnected_replyOut_OutputPort(SenderId::ASYNC));
+    }
 };
 
 TEST_F(SenderTester, NoArgs) {
@@ -132,6 +180,14 @@ TEST_F(SenderTester, StructReturn) {
     sender2Sync.testStructReturn(TestDeploymentPort::STRUCT_RETURN_SYNC);
     sender1Guarded.testStructReturn(TestDeploymentPort::STRUCT_RETURN_GUARDED);
     sender2Guarded.testStructReturn(TestDeploymentPort::STRUCT_RETURN_GUARDED);
+}
+
+TEST_F(SenderTester, IsReceiverConnected) {
+    ReceiverTester::testIsConnected();
+}
+
+TEST_F(SenderTester, IsSenderConnected) {
+    testIsConnected();
 }
 
 }  // namespace FppTest
