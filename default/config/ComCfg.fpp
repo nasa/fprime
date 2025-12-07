@@ -45,6 +45,7 @@ module ComCfg {
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for TC, TM, and AOS
         replayFlag: bool            @< AOS bool for realtime vs replay (passed directly into the frame)
+        sendNow: bool               @< Flag to AOS Framer that VC Frame packet goes into should be sent ASAP
 
     } default {
         comQueueIndex = 0

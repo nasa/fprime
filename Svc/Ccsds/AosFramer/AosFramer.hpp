@@ -21,11 +21,41 @@ namespace Ccsds {
 class AosFramer final : public AosFramerComponentBase {
     friend class AosFramerTester;
 
-    static constexpr U8 IDLE_DATA_PATTERN = 0x44;
+    static constexpr U8 SPP_IDLE_DATA_PATTERN = 0x44;
+    static constexpr U8 MIN_SPP_LENGTH = 7;
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the AosFramer
         OWNED,      //!< The buffer is currently owned by the AosFramer
+    };
+
+    struct AosVc {
+        U8 virtualChannelId;  // VCID for this particular virtual channel
+
+        // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
+        // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
+        U8 frameBufferBacker[ComCfg::AosMaxFrameFixedSize];  //!< Buffer to hold the frame data
+        Fw::Buffer frameBuffer;                              //!< Buffer object pointing at frameBufferBacker
+        BufferOwnershipState bufferState =
+            BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
+
+        // Current implementation uses a single virtual channel, so we can use a single virtual frame count
+        U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
+
+        // multi frame per PDU support
+        Fw::Buffer outstanding_packet;             //!< User Packet to be spread across M_PDUs
+        ComCfg::FrameContext outstanding_context;  //!< Context for above user packet
+        FwSizeType outstanding_offset = 0;         //!< Offset into the above packet to write
+
+        // SPP Idle packet backstop
+        // Technically we'd only use 6 of the 7 bytes at worst
+        // cuz the first one had to go into the prev frame
+        U8 spp_idle_backer[MIN_SPP_LENGTH];
+        U8 spp_idle_offset = 0;
+
+        // Multi PDU per frame and
+        FwSizeType current_payload_offset = 0;  //!< How far into the current PDU we are
+        bool past_first_fresh_packet = false;   //!< Past the first fresh packet in an M_PDU
     };
 
   public:
@@ -83,21 +113,34 @@ class AosFramer final : public AosFramerComponentBase {
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
     //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet(Fw::SerializeBufferBase& serializer);
+    void fill_with_idle_packet();
+
+    void serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length);
+
+    //! Fill out the Transfer Frame Primary Header (4.1.2)
+    void setup_header(ComCfg::FrameContext& context);
+
+    // TODO: Desc & Section marking
+    void setup_m_pdu_header(ComCfg::FrameContext& context);
+
+    void pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, FwSizeType offset = 0);
+
+    // TODO: Desc & Section marking
+    void compute_fecf();
+
+    //! Map frame context onto index into array of Virtual Channel structs
+    //! currently returns 0 regardless
+    //! TODO: Implement multiple VCs
+    void get_vc_index(ComCfg::FrameContext& context);
 
     // ----------------------------------------------------------------------
     // Members
     // ----------------------------------------------------------------------
   private:
-    // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
-    // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
-    U8 m_frameBuffer[ComCfg::AosMaxFrameFixedSize];                    //!< Buffer to hold the frame data
-    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
+    // Config Parameters
+    bool m_fecf;  //!< AOS Frame Error Control Field presence
 
-    // Current implementation uses a single virtual channel, so we can use a single virtual frame count
-    U32 m_virtualFrameCount;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
-    FwSizeType m_fixedFrameSize;  //!< AOS Fixed Frame size for this particular AosFramer instance
-    FwSizeType m_fecf;            //!< AOS Frame Error Control Field presence
+    AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
 };
 
 }  // namespace Ccsds
