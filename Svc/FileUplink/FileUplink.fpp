@@ -23,7 +23,7 @@ module Svc {
     output port fileAnnounce: Svc.FileAnnounce
 
     # ----------------------------------------------------------------------
-    # Special Ports
+    # F Prime Role Ports
     # ----------------------------------------------------------------------
 
     @ Time get
