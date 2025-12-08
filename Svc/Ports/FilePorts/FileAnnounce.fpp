@@ -1,7 +1,7 @@
 #####
 # File announce ports:
 #
-# A port setting/getting custom versions per project.
+# A port for announcing the availability of new files, e.g., after a successful file uplink.
 #####
 
 module Svc{

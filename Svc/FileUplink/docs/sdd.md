@@ -53,7 +53,7 @@ Name | Type | Kind | Purpose
 <a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | output | Returns buffers for deallocation.
 <a name="pingIn">`pingIn`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | async input | Receives ping calls from [`Svc::Health`](../../../Svc/Health/docs/sdd.md) for aliveness check
 <a name="pingOut">`pingOut`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | output | Returns ping request to [`Svc::Health`](../../../Svc/Health/docs/sdd.md) to respond to liveness check
-<a name="fileAnnounce">`fileAnnounce`</a> | [`Svc::FileAnnounce`](../../../Svc/Ports/FilePorts/FileAnnounce.fpp) | output | 
+<a name="fileAnnounce">`fileAnnounce`</a> | [`Svc::FileAnnounce`](../../../Svc/Ports/FilePorts/FileAnnounce.fpp) | output | Announces the receipt of an uplinked file
 
 ### 3.4 State
 
