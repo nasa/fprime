@@ -96,8 +96,8 @@ void FileDispatcherTester ::dispatchAllCmdDisabledTest() {
         this->clearHistory();
         this->sendCmd_ENABLE_DISPATCH(0,0x10, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::DISABLED);
         this->component.doDispatch();
-        ASSERT_EVENTS_FileDispatchStateEvent_SIZE(1);
-        ASSERT_EVENTS_FileDispatchStateEvent(0,static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::DISABLED);
+        ASSERT_EVENTS_FileDispatchState_SIZE(1);
+        ASSERT_EVENTS_FileDispatchState(0,static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);  
         ASSERT_CMD_RESPONSE(0, 0, 0x10, Fw::CmdResponse::OK); 
 
@@ -134,8 +134,8 @@ void FileDispatcherTester ::dispatchAllCmdEnabledTest() {
         this->clearHistory();
         this->sendCmd_ENABLE_DISPATCH(0,0x10, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::ENABLED);
         this->component.doDispatch();
-        ASSERT_EVENTS_FileDispatchStateEvent_SIZE(1);
-        ASSERT_EVENTS_FileDispatchStateEvent(0,static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::ENABLED);
+        ASSERT_EVENTS_FileDispatchState_SIZE(1);
+        ASSERT_EVENTS_FileDispatchState(0,static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i), Fw::Enabled::ENABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);  
         ASSERT_CMD_RESPONSE(0, 0, 0x10, Fw::CmdResponse::OK); 
     }
@@ -153,6 +153,17 @@ void FileDispatcherTester ::dispatchAllCmdEnabledTest() {
         ASSERT_from_fileDispatch_SIZE(1);
         ASSERT_from_fileDispatch(0, testFileName); 
     }
+    
+}
+
+void FileDispatcherTester::dispatchPingTest() {
+    // dispatch ping
+    this->invoke_to_pingIn(0,0x1234);
+    // dispatch ping message
+    this->component.doDispatch();
+    // verify return port call
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0,0x1234);
     
 }
 

@@ -60,6 +60,13 @@ class FileDispatcher final : public FileDispatcherComponentBase {
           Fw::Enabled enable                                  //!< whether to enable or disable dispatch
         ) override;
 
+    //! Handler implementation for pingIn
+    //!
+    //! Ping in
+    void pingIn_handler(FwIndexType portNum,  //!< The port number
+        U32 key               //!< Value to return to pinger
+        ) override;
+
 
     //! table of dispatch entries
     FileDispatcherEntry m_dispatchTable[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];

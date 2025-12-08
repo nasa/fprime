@@ -33,7 +33,7 @@ packets of the next file.
 
 ### 3.2 Block Description Diagram (BDD)
 
-![`FileUplink` BDD](img/FileUplink.drawio.png "FileUplink")
+![`FileUplink` Diagram](img/FileUplink.drawio.png "FileUplink")
 
 ### 3.3 Ports
 

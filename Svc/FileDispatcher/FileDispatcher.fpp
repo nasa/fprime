@@ -13,19 +13,11 @@ module Svc {
         #### Uncomment the following examples to start customizing your component ####
         ##############################################################################
 
-
-        # @ Example telemetry counter
-        # telemetry ExampleCounter: U64
-
         # @ File type dispatch enabled/disabled event
-        event FileDispatchStateEvent(file_type: Svc.FileDispatcherCfg.FileDispatchPort, enabled: Fw.Enabled) severity activity low format "File dispatch {} state changed: to {}"
+        event FileDispatchState(file_type: Svc.FileDispatcherCfg.FileDispatchPort, enabled: Fw.Enabled) severity activity high format "File dispatch {} state changed: to {}"
+
+        # @ File dispatched event
         event FileDispatched(file_name: string size 80, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity activity high format "File {} dispatched to {}"
-
-        # @ Example port: receiving calls from the rate group
-        # sync input port run: Svc.Sched
-
-        # @ Example parameter
-        # param PARAMETER_NAME: U32
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -48,15 +40,15 @@ module Svc {
         @ Port for sending events to downlink
         event port logOut
 
-        @ Port for sending telemetry channels to downlink
-        telemetry port tlmOut
-
         ###############################################################################
         # Input ports                                                                 #
         ###############################################################################
 
         @ Port for receiving files to dispatch
         async input port fileAnnounceRecv: Svc.FileAnnounce
+
+        @ Ping in
+        async input port pingIn: Svc.Ping
 
         ###############################################################################
         # Output ports                                                                 #
@@ -65,6 +57,8 @@ module Svc {
         @ Port for sending files to dispatch
         output port fileDispatch: [Svc.FileDispatcherCfg.FileDispatchPort.MAX_FILE_DISPATCH_PORTS] Svc.FileDispatch
 
+        @ Ping out
+        output port pingOut: Svc.Ping
 
     }
 }

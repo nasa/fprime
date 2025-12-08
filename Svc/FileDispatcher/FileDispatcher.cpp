@@ -71,8 +71,13 @@ void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                   Svc::FileDispatcherCfg::FileDispatchPort file_type,
                                                   Fw::Enabled enable) {
     this->m_dispatchTable[file_type].enabled = enable;
-    this->log_ACTIVITY_LO_FileDispatchStateEvent(file_type, enable);
+    this->log_ACTIVITY_HI_FileDispatchState(file_type, enable);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void FileDispatcher ::pingIn_handler(FwIndexType portNum, U32 key) {
+    // return key
+    this->pingOut_out(0,key);
 }
 
 }  // namespace Svc

@@ -31,6 +31,10 @@ TEST(Nominal, DispatchNotFullConfigTest) {
     tester.dispatchNotFullConfigTest(1);
 }
 
+TEST(Nominal, DispatchPingTest) {
+    Svc::FileDispatcherTester tester;
+    tester.dispatchPingTest();
+}
 
 
 int main(int argc, char** argv) {
