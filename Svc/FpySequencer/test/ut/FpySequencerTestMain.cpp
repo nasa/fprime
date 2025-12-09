@@ -3133,4 +3133,25 @@ TEST_F(FpySequencerTester, StackMixedTypes) {
     ASSERT_EQ(runtime->stack.size, 0);
 }
 
+// Test that returning a value greater than MAX_STACK_SIZE is rejected
+// This is a safety check: since stack.size can never exceed MAX_STACK_SIZE,
+// any returnValSize > MAX_STACK_SIZE will always fail the "stack has enough bytes" check
+TEST_F(FpySequencerTester, returnDirectiveRejectsOversizedReturnValue) {
+    // Create a directive with returnValSize > MAX_STACK_SIZE
+    // StackSizeType is U32, so we can specify values larger than MAX_STACK_SIZE (65535)
+    Fpy::StackSizeType oversizedReturnVal = Fpy::MAX_STACK_SIZE + 1;
+    FpySequencer_ReturnDirective directive(oversizedReturnVal, 0);
+    
+    // Set up stack at maximum possible size
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_return_directiveHandler(directive, err);
+    
+    // Should fail because stack.size (65535) < returnValSize (65536)
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
 }  // namespace Svc

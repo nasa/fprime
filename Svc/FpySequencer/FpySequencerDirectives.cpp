@@ -1394,14 +1394,14 @@ Signal FpySequencer::call_directiveHandler(const FpySequencer_CallDirective& dir
         return Signal::stmtResponse_failure;
     }
     
+    // Pop the target directive index from the stack
+    U32 target = this->m_runtime.stack.pop<U32>();
+    
     // Check if we have space to push return address and saved frame pointer (8 bytes total)
     if (this->m_runtime.stack.size + sizeof(Fpy::StackSizeType) + sizeof(U32) > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    
-    // Pop the target directive index from the stack
-    U32 target = this->m_runtime.stack.pop<U32>();
     
     // Check target is within bounds (will also be checked at execution time)
     if (target > m_sequenceObj.get_header().get_statementCount()) {
@@ -1436,6 +1436,9 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
+
+    // returnValSize is guaranteed to be less than Fpy::MAX_STACK_SIZE because it's less than the stack.size
+    // thus the memcpy won't fail
     
     // Save the return value if there is one
     U8 returnValue[Fpy::MAX_STACK_SIZE] = {};
@@ -1451,13 +1454,13 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     this->m_runtime.stack.size = this->m_runtime.stack.currentFrameStart;
     
     // Check we have enough bytes for saved frame pointer and return address (8 bytes)
-    if (this->m_runtime.stack.size < 8) {
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) + sizeof(U32)) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     
     // Pop the saved frame pointer
-    Fpy::StackSizeType savedFramePtr = this->m_runtime.stack.pop<U32>();
+    Fpy::StackSizeType savedFramePtr = this->m_runtime.stack.pop<Fpy::StackSizeType>();
     
     // Pop the return address
     U32 returnAddr = this->m_runtime.stack.pop<U32>();
