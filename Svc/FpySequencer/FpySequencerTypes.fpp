@@ -97,8 +97,8 @@ module Svc {
 
             EXIT = 57
             ALLOCATE = 58
-            STORE_CONST_OFFSET = 59
-            LOAD = 60
+            STORE_LOCAL_CONST_OFFSET = 59
+            LOAD_LOCAL = 60
             PUSH_VAL = 61
             DISCARD = 62
             MEMCMP = 63
@@ -109,7 +109,12 @@ module Svc {
             GET_FLAG = 68
             GET_FIELD = 69
             PEEK = 70
-            STORE = 71
+            STORE_LOCAL = 71
+            CALL = 72
+            RETURN = 73
+            LOAD_GLOBAL = 74
+            STORE_GLOBAL = 75
+            STORE_GLOBAL_CONST_OFFSET = 76
         }
 
         enum DirectiveErrorCode : U8 {

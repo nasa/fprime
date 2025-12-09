@@ -1134,34 +1134,62 @@ TEST_F(FpySequencerTester, getField) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
-TEST_F(FpySequencerTester, store) {
-    FpySequencer_StoreDirective directive(2);
+TEST_F(FpySequencerTester, storeLocal) {
+    // Test storing 2 bytes at offset 4 from stack_frame_start
+    FpySequencer_StoreLocalDirective directive(2);  // size = 2
     tester_get_m_runtime_ptr()->stack.size = 10;
-    tester_push<U8>(123);
-    tester_push<U8>(100);
-    tester_push<Fpy::StackSizeType>(4);
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;  // frame starts at 0
+    tester_push<U8>(123);  // value byte 1
+    tester_push<U8>(100);  // value byte 2
+    tester_push<I32>(4);   // lvar_offset = 4 (signed)
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_store_directiveHandler(directive, err);
+    Signal result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);  // size after pop of offset and value
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 123);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 100);
 
-    // Test out of bounds storage
+    // Test with negative offset (accessing function arguments)
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;  // frame starts at 4
+    tester_push<U8>(55);   // value byte 1
+    tester_push<U8>(66);   // value byte 2
+    tester_push<I32>(-4);  // lvar_offset = -4 (negative, points to bytes 0-1)
+    err = DirectiveError::NO_ERROR;
+    result = tester_storeLocal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 55);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], 66);
+
+    // Test out of bounds storage (address too high)
     tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     tester_push<U8>(123);
     tester_push<U8>(100);
-    tester_push<Fpy::StackSizeType>(4);
-    directive.set_size(123);
-    result = tester_store_directiveHandler(directive, err);
+    tester_push<I32>(100);  // offset too high
+    directive.set_size(2);
+    result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
-    // Test stack underflow
+    // Test negative offset going below zero
     tester_get_m_runtime_ptr()->stack.size = 0;
-    directive.set_size(1);
-    result = tester_store_directiveHandler(directive, err);
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 2;  // frame at 2
+    tester_push<U8>(123);
+    tester_push<U8>(100);
+    tester_push<I32>(-10);  // offset would result in negative address
+    directive.set_size(2);
+    result = tester_storeLocal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+
+    // Test stack underflow (not enough bytes for value and offset)
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
+    directive.set_size(100);  // request more bytes than available
+    result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
@@ -1254,6 +1282,217 @@ TEST_F(FpySequencerTester, peek) {
     tester_push<Fpy::StackSizeType>(0);
     tester_get_m_runtime_ptr()->stack.size = 0;
     result = tester_peek_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, call) {
+    // Set up a basic call scenario
+    FpySequencer_CallDirective directive(0);  // empty U8 placeholder, target is popped from stack
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;  // existing frame at offset 4
+    
+    // Set up a sequence with 20 statements for bounds checking
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(20);
+    
+    // Set current statement index
+    tester_get_m_runtime_ptr()->nextStatementIndex = 5;
+    
+    // Push target address (U32) - call to statement 10
+    tester_push<U32>(10);
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_call_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    
+    // Check that return address (5) and old frame pointer (4) were pushed
+    // Stack should now have: [old_frame_ptr(4 bytes), return_addr(4 bytes)]
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 8);
+    
+    // Check nextStatementIndex was set to target
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 10);
+    
+    // Check new frame start is at old stack size (0 + 8 = 8)
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.currentFrameStart, 8);
+    
+    // Test stack underflow (no target address)
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    err = DirectiveError::NO_ERROR;
+    result = tester_call_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    
+    // Test target out of bounds
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(5);
+    tester_push<U32>(10);  // target 10 is out of bounds for 5 statements
+    result = tester_call_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, returnDirective) {
+    // Set up a return scenario
+    FpySequencer_ReturnDirective directive(4, 8);  // return_val_size = 4, call_args_size = 8
+    
+    // Initialize stack with:
+    // [args (8 bytes)] [return_addr (4 bytes)] [old_frame_ptr (4 bytes)] [locals...] [return_val (4 bytes)]
+    // Note: CALL pushes return address first, then frame pointer
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    
+    // Push 8 bytes of args
+    tester_push<U64>(0x1122334455667788);
+    
+    // Push return address (statement 15) - pushed first by CALL
+    tester_push<U32>(15);
+    
+    // Push old frame pointer (offset 2) - pushed second by CALL
+    tester_push<U32>(2);
+    
+    // Stack frame starts here (after saved frame ptr)
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 16;  // 8 + 4 + 4 = 16
+    
+    // Push some locals (let's say 4 bytes)
+    tester_push<U32>(0xDEADBEEF);
+    
+    // Push return value (4 bytes) - this is the value we want to keep
+    tester_push<U32>(0x12345678);
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_return_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    
+    // After return:
+    // - Stack should have just the return value (4 bytes)
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);
+    
+    // Check return value bytes are at the bottom (stack stores big-endian)
+    // 0x12345678 stored big-endian is: 0x12, 0x34, 0x56, 0x78
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 0x12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[1], 0x34);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], 0x56);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[3], 0x78);
+    
+    // Check frame pointer was restored
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.currentFrameStart, 2);
+    
+    // Check next statement index was set to return address
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 15);
+}
+
+TEST_F(FpySequencerTester, loadGlobal) {
+    // Set up a load global scenario
+    FpySequencer_LoadGlobalDirective directive(4, 2);  // globalOffset = 4, size = 2
+    
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    // Put some values in the stack at offset 4
+    tester_get_m_runtime_ptr()->stack.bytes[4] = 0xAB;
+    tester_get_m_runtime_ptr()->stack.bytes[5] = 0xCD;
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_loadGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    
+    // Check bytes were pushed
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[10], 0xAB);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[11], 0xCD);
+    
+    // Test out of bounds (offset beyond stack)
+    tester_get_m_runtime_ptr()->stack.size = 3;
+    directive = FpySequencer_LoadGlobalDirective(4, 2);  // offset 4 is beyond size 3
+    result = tester_loadGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    
+    // Test stack overflow
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
+    directive = FpySequencer_LoadGlobalDirective(0, 2);  // would overflow
+    result = tester_loadGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
+TEST_F(FpySequencerTester, storeGlobal) {
+    // Set up a store global scenario
+    FpySequencer_StoreGlobalDirective directive(2);  // size = 2
+    
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    
+    // Push value to store
+    tester_push<U8>(0xEE);
+    tester_push<U8>(0xFF);
+    
+    // Push global offset
+    tester_push<Fpy::StackSizeType>(4);
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_storeGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    
+    // Check bytes were stored at offset 4
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 0xEE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 0xFF);
+    
+    // Stack size should be back to what it was before pushes
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
+    
+    // Test out of bounds (offset too high)
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_push<U8>(0x11);
+    tester_push<U8>(0x22);
+    tester_push<Fpy::StackSizeType>(100);  // offset way too high
+    result = tester_storeGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    
+    // Test stack underflow (not enough bytes)
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    directive.set_size(10);
+    result = tester_storeGlobal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, storeGlobalConstOffset) {
+    // Set up a store global const offset scenario
+    FpySequencer_StoreGlobalConstOffsetDirective directive(4, 2);  // globalOffset = 4, size = 2
+    
+    tester_get_m_runtime_ptr()->stack.size = 10;
+    
+    // Push value to store
+    tester_push<U8>(0xAA);
+    tester_push<U8>(0xBB);
+    
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    
+    // Check bytes were stored at offset 4
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[4], 0xAA);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[5], 0xBB);
+    
+    // Stack size should be back to what it was before push
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
+    
+    // Test out of bounds (offset + size > stack size after pop)
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    tester_push<U8>(0x11);
+    tester_push<U8>(0x22);
+    directive = FpySequencer_StoreGlobalConstOffsetDirective(100, 2);  // offset too high
+    result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    
+    // Test stack underflow
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    directive = FpySequencer_StoreGlobalConstOffsetDirective(0, 10);
+    result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
@@ -2300,13 +2539,13 @@ TEST_F(FpySequencerTester, deserialize_getField) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_store) {
+TEST_F(FpySequencerTester, deserialize_storeLocal) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_StoreDirective dir(123);
-    add_STORE(dir);
+    FpySequencer_StoreLocalDirective dir(123);
+    add_STORE_LOCAL(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.store, dir);
+    ASSERT_EQ(actual.storeLocal, dir);
     // write some junk after buf, make sure it fails
     seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
@@ -2546,6 +2785,352 @@ TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::OK);
+}
+
+// ----------------------------------------------------------------------
+// Stack Unit Tests
+// ----------------------------------------------------------------------
+
+// Test push/pop template methods for various types
+TEST_F(FpySequencerTester, StackPushPopU8) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U8 val = 0xAB;
+    tester_push<U8>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(U8));
+    
+    U8 popped = tester_pop<U8>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopU16) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U16 val = 0xABCD;
+    tester_push<U16>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(U16));
+    
+    U16 popped = tester_pop<U16>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopU32) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U32 val = 0xDEADBEEF;
+    tester_push<U32>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(U32));
+    
+    U32 popped = tester_pop<U32>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopU64) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U64 val = 0xDEADBEEFCAFEBABE;
+    tester_push<U64>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(U64));
+    
+    U64 popped = tester_pop<U64>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopI8) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    I8 val = -42;
+    tester_push<I8>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(I8));
+    
+    I8 popped = tester_pop<I8>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopI16) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    I16 val = -12345;
+    tester_push<I16>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(I16));
+    
+    I16 popped = tester_pop<I16>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopI32) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    I32 val = -123456789;
+    tester_push<I32>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(I32));
+    
+    I32 popped = tester_pop<I32>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopI64) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    I64 val = -1234567890123456789LL;
+    tester_push<I64>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(I64));
+    
+    I64 popped = tester_pop<I64>();
+    ASSERT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopF32) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    F32 val = 3.14159f;
+    tester_push<F32>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(F32));
+    
+    F32 popped = tester_pop<F32>();
+    ASSERT_FLOAT_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+TEST_F(FpySequencerTester, StackPushPopF64) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    F64 val = 2.718281828459045;
+    tester_push<F64>(val);
+    ASSERT_EQ(runtime->stack.size, sizeof(F64));
+    
+    F64 popped = tester_pop<F64>();
+    ASSERT_DOUBLE_EQ(popped, val);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+// Test pushing/popping multiple values
+TEST_F(FpySequencerTester, StackPushPopMultiple) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U32 val1 = 0x11111111;
+    U32 val2 = 0x22222222;
+    U32 val3 = 0x33333333;
+    
+    tester_push<U32>(val1);
+    tester_push<U32>(val2);
+    tester_push<U32>(val3);
+    ASSERT_EQ(runtime->stack.size, 3 * sizeof(U32));
+    
+    // Pop in LIFO order
+    ASSERT_EQ(tester_pop<U32>(), val3);
+    ASSERT_EQ(tester_pop<U32>(), val2);
+    ASSERT_EQ(tester_pop<U32>(), val1);
+    ASSERT_EQ(runtime->stack.size, 0);
+}
+
+// Test byte array push/pop
+TEST_F(FpySequencerTester, StackPushPopByteArray) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U8 src[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    runtime->stack.push(src, 10);
+    ASSERT_EQ(runtime->stack.size, 10);
+    
+    U8 dest[10] = {0};
+    runtime->stack.pop(dest, 10);
+    ASSERT_EQ(runtime->stack.size, 0);
+    
+    for (int i = 0; i < 10; i++) {
+        ASSERT_EQ(dest[i], src[i]);
+    }
+}
+
+// Test pushZeroes
+TEST_F(FpySequencerTester, StackPushZeroes) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    // Put some non-zero data first
+    U8 nonZero[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+    memcpy(runtime->stack.bytes, nonZero, 4);
+    
+    runtime->stack.pushZeroes(4);
+    ASSERT_EQ(runtime->stack.size, 4);
+    
+    // Verify the bytes are zero
+    for (int i = 0; i < 4; i++) {
+        ASSERT_EQ(runtime->stack.bytes[i], 0);
+    }
+}
+
+// Test top() pointer
+TEST_F(FpySequencerTester, StackTop) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    ASSERT_EQ(runtime->stack.top(), runtime->stack.bytes);
+    
+    runtime->stack.size = 10;
+    ASSERT_EQ(runtime->stack.top(), runtime->stack.bytes + 10);
+    
+    runtime->stack.size = 100;
+    ASSERT_EQ(runtime->stack.top(), runtime->stack.bytes + 100);
+}
+
+// Test copy with non-overlapping regions
+TEST_F(FpySequencerTester, StackCopyNonOverlapping) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    // Set up source data at offset 0
+    U8 srcData[8] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x11, 0x22};
+    memcpy(runtime->stack.bytes, srcData, 8);
+    runtime->stack.size = 16;  // 8 bytes source + 8 bytes dest space
+    
+    // Copy from offset 0 to offset 8
+    runtime->stack.copy(8, 0, 8);
+    
+    // Verify both regions have the same data
+    for (int i = 0; i < 8; i++) {
+        ASSERT_EQ(runtime->stack.bytes[i], srcData[i]);
+        ASSERT_EQ(runtime->stack.bytes[8 + i], srcData[i]);
+    }
+}
+
+// Test copy with zero size (should be no-op)
+TEST_F(FpySequencerTester, StackCopyZeroSize) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 16;
+    
+    // This should not crash or modify anything
+    runtime->stack.copy(0, 8, 0);
+}
+
+// Test move with overlapping regions (dest < src)
+TEST_F(FpySequencerTester, StackMoveOverlappingDestBeforeSrc) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 16;
+    
+    // Set up data: [0x00, 0x00, 0x00, 0x00, 0xAA, 0xBB, 0xCC, 0xDD, ...]
+    memset(runtime->stack.bytes, 0, 16);
+    runtime->stack.bytes[4] = 0xAA;
+    runtime->stack.bytes[5] = 0xBB;
+    runtime->stack.bytes[6] = 0xCC;
+    runtime->stack.bytes[7] = 0xDD;
+    
+    // Move 4 bytes from offset 4 to offset 2 (overlapping)
+    runtime->stack.move(2, 4, 4);
+    
+    // Verify the moved data
+    ASSERT_EQ(runtime->stack.bytes[2], 0xAA);
+    ASSERT_EQ(runtime->stack.bytes[3], 0xBB);
+    ASSERT_EQ(runtime->stack.bytes[4], 0xCC);
+    ASSERT_EQ(runtime->stack.bytes[5], 0xDD);
+}
+
+// Test move with overlapping regions (dest > src)
+TEST_F(FpySequencerTester, StackMoveOverlappingDestAfterSrc) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 16;
+    
+    // Set up data: [0xAA, 0xBB, 0xCC, 0xDD, 0x00, 0x00, ...]
+    memset(runtime->stack.bytes, 0, 16);
+    runtime->stack.bytes[0] = 0xAA;
+    runtime->stack.bytes[1] = 0xBB;
+    runtime->stack.bytes[2] = 0xCC;
+    runtime->stack.bytes[3] = 0xDD;
+    
+    // Move 4 bytes from offset 0 to offset 2 (overlapping)
+    runtime->stack.move(2, 0, 4);
+    
+    // Verify the moved data
+    ASSERT_EQ(runtime->stack.bytes[2], 0xAA);
+    ASSERT_EQ(runtime->stack.bytes[3], 0xBB);
+    ASSERT_EQ(runtime->stack.bytes[4], 0xCC);
+    ASSERT_EQ(runtime->stack.bytes[5], 0xDD);
+}
+
+// Test move with zero size (should be no-op)
+TEST_F(FpySequencerTester, StackMoveZeroSize) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 16;
+    
+    // This should not crash or modify anything
+    runtime->stack.move(0, 8, 0);
+}
+
+// Test move non-overlapping (move should work like copy here)
+TEST_F(FpySequencerTester, StackMoveNonOverlapping) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 16;
+    
+    // Set up source data at offset 0
+    U8 srcData[4] = {0x11, 0x22, 0x33, 0x44};
+    memcpy(runtime->stack.bytes, srcData, 4);
+    memset(runtime->stack.bytes + 8, 0, 4);
+    
+    // Move from offset 0 to offset 8 (non-overlapping)
+    runtime->stack.move(8, 0, 4);
+    
+    // Verify both source and dest
+    for (int i = 0; i < 4; i++) {
+        ASSERT_EQ(runtime->stack.bytes[i], srcData[i]);      // source unchanged
+        ASSERT_EQ(runtime->stack.bytes[8 + i], srcData[i]);  // dest has copy
+    }
+}
+
+// Test big-endian byte order in push/pop
+TEST_F(FpySequencerTester, StackBigEndianByteOrder) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    // Push a known U32 value
+    U32 val = 0x12345678;
+    tester_push<U32>(val);
+    
+    // Verify big-endian byte order in stack bytes
+    ASSERT_EQ(runtime->stack.bytes[0], 0x12);  // MSB first
+    ASSERT_EQ(runtime->stack.bytes[1], 0x34);
+    ASSERT_EQ(runtime->stack.bytes[2], 0x56);
+    ASSERT_EQ(runtime->stack.bytes[3], 0x78);  // LSB last
+}
+
+// Test stack with mixed type operations
+TEST_F(FpySequencerTester, StackMixedTypes) {
+    auto* runtime = tester_get_m_runtime_ptr();
+    runtime->stack.size = 0;
+    
+    U8 val8 = 0xAB;
+    U16 val16 = 0xCDEF;
+    U32 val32 = 0x12345678;
+    
+    tester_push<U8>(val8);
+    tester_push<U16>(val16);
+    tester_push<U32>(val32);
+    
+    ASSERT_EQ(runtime->stack.size, sizeof(U8) + sizeof(U16) + sizeof(U32));
+    
+    // Pop in reverse order
+    ASSERT_EQ(tester_pop<U32>(), val32);
+    ASSERT_EQ(tester_pop<U16>(), val16);
+    ASSERT_EQ(tester_pop<U8>(), val8);
+    ASSERT_EQ(runtime->stack.size, 0);
 }
 
 }  // namespace Svc

@@ -101,10 +101,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_EXIT();
     void add_ALLOCATE(Fpy::StackSizeType size);
     void add_ALLOCATE(FpySequencer_AllocateDirective dir);
-    void add_STORE_CONST_OFFSET(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
-    void add_STORE_CONST_OFFSET(FpySequencer_StoreConstOffsetDirective dir);
-    void add_LOAD(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size);
-    void add_LOAD(FpySequencer_LoadDirective dir);
+    void add_STORE_LOCAL_CONST_OFFSET(I32 lvarOffset, Fpy::StackSizeType size);
+    void add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalConstOffsetDirective dir);
+    void add_LOAD_LOCAL(I32 lvarOffset, Fpy::StackSizeType size);
+    void add_LOAD_LOCAL(FpySequencer_LoadLocalDirective dir);
     void add_DISCARD(Fpy::StackSizeType size);
     void add_DISCARD(FpySequencer_DiscardDirective dir);
     void add_STACK_CMD(Fpy::StackSizeType size);
@@ -120,8 +120,18 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
     void add_PEEK();
     void add_PEEK(FpySequencer_PeekDirective dir);
-    void add_STORE(Fpy::StackSizeType size);
-    void add_STORE(FpySequencer_StoreDirective dir);
+    void add_STORE_LOCAL(Fpy::StackSizeType size);
+    void add_STORE_LOCAL(FpySequencer_StoreLocalDirective dir);
+    void add_CALL();
+    void add_CALL(FpySequencer_CallDirective dir);
+    void add_RETURN(Fpy::StackSizeType return_val_size, Fpy::StackSizeType call_args_size);
+    void add_RETURN(FpySequencer_ReturnDirective dir);
+    void add_LOAD_GLOBAL(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size);
+    void add_LOAD_GLOBAL(FpySequencer_LoadGlobalDirective dir);
+    void add_STORE_GLOBAL(Fpy::StackSizeType size);
+    void add_STORE_GLOBAL(FpySequencer_StoreGlobalDirective dir);
+    void add_STORE_GLOBAL_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size);
+    void add_STORE_GLOBAL_CONST_OFFSET(FpySequencer_StoreGlobalConstOffsetDirective dir);
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -168,7 +178,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& err);
     Signal tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& err);
     Signal tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& err);
-    Signal tester_store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& err);
+    Signal tester_storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive, DirectiveError& err);
+    Signal tester_call_directiveHandler(const FpySequencer_CallDirective& directive, DirectiveError& err);
+    Signal tester_return_directiveHandler(const FpySequencer_ReturnDirective& directive, DirectiveError& err);
+    Signal tester_loadGlobal_directiveHandler(const FpySequencer_LoadGlobalDirective& directive, DirectiveError& err);
+    Signal tester_storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive, DirectiveError& err);
+    Signal tester_storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
