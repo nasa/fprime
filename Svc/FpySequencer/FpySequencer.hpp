@@ -114,10 +114,6 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // returns a pointer to the next unused byte at the top of the stack
         U8* top();
-        // returns a pointer to the first byte of the lvars array
-        U8* lvars();
-        // returns the stack height at which the lvar array begins
-        Fpy::StackSizeType lvarOffset();
 
         // Copies data from one region of the stack to another
         // Asserts that both regions are within bounds and do not overlap

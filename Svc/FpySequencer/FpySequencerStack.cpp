@@ -141,18 +141,6 @@ U8* FpySequencer::Stack::top() {
     return &this->bytes[this->size];
 }
 
-U8* FpySequencer::Stack::lvars() {
-    return this->bytes + this->lvarOffset();
-}
-
-Fpy::StackSizeType FpySequencer::Stack::lvarOffset() {
-    // NOTE: This function is deprecated for use with the new CALL/RETURN directives.
-    // Directive handlers should use stack.currentFrameStart directly instead.
-    // This function is kept for backwards compatibility with existing code that
-    // doesn't use function calls.
-    return 0;
-}
-
 // Copies data from one region of the stack to another
 // Asserts that both regions are within bounds and do not overlap
 void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType copySize) {
