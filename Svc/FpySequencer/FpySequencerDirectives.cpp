@@ -1448,12 +1448,12 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     
     // Truncate the stack to stack_frame_start (discard all local variables)
     if (this->m_runtime.stack.currentFrameStart > this->m_runtime.stack.size) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::FRAME_START_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     this->m_runtime.stack.size = this->m_runtime.stack.currentFrameStart;
     
-    // Check we have enough bytes for saved frame pointer and return address (8 bytes)
+    // Check we have enough bytes for saved frame pointer and return address
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) + sizeof(U32)) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -1465,29 +1465,37 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     // Pop the return address
     U32 returnAddr = this->m_runtime.stack.pop<U32>();
     
+    // Restore the frame pointer
+    if (savedFramePtr > this->m_runtime.stack.size) {
+        error = DirectiveError::FRAME_START_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    this->m_runtime.stack.currentFrameStart = savedFramePtr;
+    
+    // Validate the return address is within bounds
+    if (returnAddr > m_sequenceObj.get_header().get_statementCount()) {
+        error = DirectiveError::STMT_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    
+    // Set the next instruction to the return address
+    this->m_runtime.nextStatementIndex = returnAddr;
+    
+    
     // Check that we have enough bytes for the call arguments
     if (this->m_runtime.stack.size < callArgsSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    
-    // Restore the frame pointer
-    this->m_runtime.stack.currentFrameStart = savedFramePtr;
-    
-    // Set the next instruction to the return address
-    this->m_runtime.nextStatementIndex = returnAddr;
-    
     // Discard the function arguments
     this->m_runtime.stack.size -= callArgsSize;
     
-    // Push the return value if there is one
-    if (returnValSize > 0) {
-        if (this->m_runtime.stack.size + returnValSize > Fpy::MAX_STACK_SIZE) {
-            error = DirectiveError::STACK_OVERFLOW;
-            return Signal::stmtResponse_failure;
-        }
-        this->m_runtime.stack.push(returnValue, returnValSize);
+    // Push the return value
+    if (this->m_runtime.stack.size + returnValSize > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
     }
+    this->m_runtime.stack.push(returnValue, returnValSize);
     
     return Signal::stmtResponse_success;
 }

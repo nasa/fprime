@@ -133,6 +133,7 @@ module Svc {
             ARRAY_OUT_OF_BOUNDS = 12
             ARITHMETIC_OVERFLOW = 13
             ARITHMETIC_UNDERFLOW = 14
+            FRAME_START_OUT_OF_BOUNDS = 15
         }
 
         struct Header {

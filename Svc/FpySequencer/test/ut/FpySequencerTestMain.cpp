@@ -1336,6 +1336,9 @@ TEST_F(FpySequencerTester, returnDirective) {
     // Set up a return scenario
     FpySequencer_ReturnDirective directive(4, 8);  // return_val_size = 4, call_args_size = 8
     
+    // Set up a sequence with enough statements for return address
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(20);
+    
     // Initialize stack with:
     // [args (8 bytes)] [return_addr (4 bytes)] [old_frame_ptr (4 bytes)] [locals...] [return_val (4 bytes)]
     // Note: CALL pushes return address first, then frame pointer
@@ -1380,6 +1383,69 @@ TEST_F(FpySequencerTester, returnDirective) {
     
     // Check next statement index was set to return address
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 15);
+
+    // Test that return fails gracefully if return address is invalid (out of bounds)
+    directive = FpySequencer_ReturnDirective(0, 0);  // return_val_size = 0, call_args_size = 0
+    
+    // Set up a sequence with only 10 statements
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(10);
+    
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    
+    // Push an invalid return address (statement 100, but only 10 statements exist)
+    tester_push<U32>(100);
+    
+    // Push old frame pointer
+    tester_push<U32>(0);
+    
+    // Stack frame starts here
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 8;
+    
+    err = DirectiveError::NO_ERROR;
+    result = tester_return_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
+
+    // Test that return fails gracefully if saved frame pointer is invalid
+    directive = FpySequencer_ReturnDirective(0, 0);  // return_val_size = 0, call_args_size = 0
+    
+    // Set up a sequence with enough statements
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(100);
+    
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    
+    // Push a valid return address
+    tester_push<U32>(5);
+    
+    // Push an invalid saved frame pointer (points beyond where stack will be after popping)
+    // After popping return addr and frame ptr, stack size will be 0
+    // So a saved frame ptr of 100 is invalid
+    tester_push<U32>(100);
+    
+    // Stack frame starts here
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 8;
+    
+    err = DirectiveError::NO_ERROR;
+    result = tester_return_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::FRAME_START_OUT_OF_BOUNDS);
+
+    // Test that return fails gracefully if currentFrameStart is invalid (beyond stack size)
+    directive = FpySequencer_ReturnDirective(0, 0);  // return_val_size = 0, call_args_size = 0
+    
+    tester_get_m_runtime_ptr()->stack.size = 8;
+    
+    // Push return address and frame pointer
+    tester_push<U32>(5);
+    tester_push<U32>(0);
+    
+    // Set currentFrameStart beyond current stack size (invalid)
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = 100;
+    
+    err = DirectiveError::NO_ERROR;
+    result = tester_return_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::FRAME_START_OUT_OF_BOUNDS);
 }
 
 TEST_F(FpySequencerTester, loadGlobal) {
