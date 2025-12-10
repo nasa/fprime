@@ -143,6 +143,7 @@ U8* FpySequencer::Stack::top() {
 
 // Copies data from one region of the stack to another
 // Asserts that both regions are within bounds and do not overlap
+// Does not modify stack size
 void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType copySize) {
     FW_ASSERT(destOffset + copySize <= Fpy::MAX_STACK_SIZE, 
               static_cast<FwAssertArgType>(destOffset), 
@@ -162,6 +163,7 @@ void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType
 
 // Moves data within the stack
 // Asserts that both source and destination are within bounds
+// Does not modify stack size
 void FpySequencer::Stack::move(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType moveSize) {
     FW_ASSERT(destOffset + moveSize <= Fpy::MAX_STACK_SIZE, 
               static_cast<FwAssertArgType>(destOffset), 

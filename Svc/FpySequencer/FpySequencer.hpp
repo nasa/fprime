@@ -117,10 +117,12 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // Copies data from one region of the stack to another
         // Asserts that both regions are within bounds and do not overlap
+        // Does not modify stack size
         void copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType copySize);
 
         // Moves data within the stack (handles overlapping regions)
         // Asserts that both source and destination are within bounds
+        // Does not modify stack size
         void move(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType moveSize);
     };
 
@@ -840,6 +842,10 @@ class FpySequencer : public FpySequencerComponentBase {
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
+    //! Helper to pop value from stack top and store at destOffset
+    Signal storeHelper(Fpy::StackSizeType destOffset, Fpy::StackSizeType size, DirectiveError& error);
+    //! Helper to load value from srcOffset and push to stack top
+    Signal loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error);
     Signal storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
                                              DirectiveError& error);
     Signal loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive, DirectiveError& error);

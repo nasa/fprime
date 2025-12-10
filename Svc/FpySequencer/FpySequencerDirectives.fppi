@@ -178,7 +178,7 @@ struct LoadGlobalDirective {
 
 @ stores a value to an absolute address in the stack (for global variables), offset from stack
 struct StoreGlobalDirective {
-    # pops an I32 global_offset off of stack
+    # pops an Fpy.StackSizeType global_offset off of stack
     $size: Fpy.StackSizeType
 }
 
