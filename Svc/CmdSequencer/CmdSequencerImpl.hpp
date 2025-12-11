@@ -512,17 +512,17 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                                FwOpcodeType opcode,             //!< The command opcode
                                U32 cmdSeq,                      //!< The command sequence number
                                const Fw::CmdResponse& response  //!< The command response
-    );
+    ) override;
 
     //! Handler for input port schedIn
     void schedIn_handler(FwIndexType portNum,  //!< The port number
                          U32 order             //!< The call order
-    );
+    ) override;
 
     //! Handler for input port seqRunIn
     void seqRunIn_handler(FwIndexType portNum,            //!< The port number
                           const Fw::StringBase& filename  //!< The sequence file
-    );
+    ) override;
 
     //! Handler implementation for seqDispatchIn
     //!
@@ -534,12 +534,12 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! Handler for ping port
     void pingIn_handler(FwIndexType portNum,  //!< The port number
                         U32 key               //!< Value to return to pinger
-    );
+    ) override;
 
     //! Handler implementation for seqCancelIn
     //!
     void seqCancelIn_handler(const FwIndexType portNum /*!< The port number*/
-    );
+    ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -597,7 +597,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! then wait for them to finish before allowing more seq run request.
     void CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                  const U32 cmdSeq           /*!< The command sequence number*/
-    );
+    ) override;
 
   private:
     // ----------------------------------------------------------------------
