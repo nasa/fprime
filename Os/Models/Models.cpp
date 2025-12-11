@@ -75,6 +75,8 @@ static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_HANDLE) =
               "Task status and FPP shadow enum do not match");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_PARAMS) == Os::TaskStatus::T::INVALID_PARAMS,
               "Task status and FPP shadow enum do not match");
+static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_PRIORITY) == Os::TaskStatus::T::INVALID_PRIORITY,
+              "Task status and FPP shadow enum do not match");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_STACK) == Os::TaskStatus::T::INVALID_STACK,
               "Task status and FPP shadow enum do not match");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::UNKNOWN_ERROR) == Os::TaskStatus::T::UNKNOWN_ERROR,
