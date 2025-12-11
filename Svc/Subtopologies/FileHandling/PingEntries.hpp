@@ -19,5 +19,5 @@ namespace FileHandling_fileDispatcher {
 enum { WARN = 3, FATAL = 5 };
 }
 }  // namespace PingEntries
-    
+
 #endif
