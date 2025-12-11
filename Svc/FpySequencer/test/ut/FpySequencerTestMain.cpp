@@ -3430,6 +3430,14 @@ TEST_F(FpySequencerTester, loadLocal) {
     result = tester_loadLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+    
+    // Test addr exceeding MAX_STACK_SIZE (currentFrameStart + lvarOffset > MAX_STACK_SIZE)
+    tester_get_m_runtime_ptr()->stack.size = 100;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = Fpy::MAX_STACK_SIZE;
+    directive = FpySequencer_LoadLocalDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
+    result = tester_loadLocal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
 // Test storeLocalConstOffset directive - stores stack top to frame-relative offset
@@ -3491,6 +3499,15 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     tester_get_m_runtime_ptr()->stack.size = 50;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     directive = FpySequencer_StoreLocalConstOffsetDirective(0, 100);
+    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    
+    // Test addr exceeding MAX_STACK_SIZE (currentFrameStart + lvarOffset > MAX_STACK_SIZE)
+    tester_get_m_runtime_ptr()->stack.size = 100;
+    tester_get_m_runtime_ptr()->stack.currentFrameStart = Fpy::MAX_STACK_SIZE;
+    tester_push<U8>(0x77);
+    directive = FpySequencer_StoreLocalConstOffsetDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
     result = tester_storeLocalConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);

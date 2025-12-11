@@ -1151,7 +1151,7 @@ Signal FpySequencer::loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType
 Signal FpySequencer::storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
                                                        DirectiveError& error) {
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
-    if (addr < 0) {
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -1160,7 +1160,7 @@ Signal FpySequencer::storeLocalConstOffset_directiveHandler(const FpySequencer_S
 
 Signal FpySequencer::loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive, DirectiveError& error) {
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
-    if (addr < 0) {
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
