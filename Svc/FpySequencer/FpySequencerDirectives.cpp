@@ -1391,7 +1391,7 @@ Signal FpySequencer::storeLocal_directiveHandler(const FpySequencer_StoreLocalDi
     I32 lvarOffset = this->m_runtime.stack.pop<I32>();
     
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + lvarOffset;
-    if (addr < 0) {
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
