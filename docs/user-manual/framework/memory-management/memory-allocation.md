@@ -10,11 +10,11 @@ The [`Fw::MemAllocator` interface](../../../Fw/Types/MemAllocator.hpp) provides 
 
 ### When to use Fw::MemAllocator
 
-Components may need memory internally to function. There are several reasons why dynamic (heap) allocation through `Fw::MemAllocator` is used instead of stack or component member variables:
+Components may need memory internally to function. There are several reasons why dynamic (heap) allocation through `Fw::MemAllocator` is used instead of global, static, stack or component member variables:
 
 1. **Size constraints**: Certain buffers are too large for stack allocation. Stack sizes are typically limited and large allocations can cause stack overflow.
 
-2. **Runtime sizing**: The size of the memory required may not be known at compile time, which is a requirement for both stack and member variables. This includes cases where multiple instances of a component may require different sizes of memory.
+2. **Runtime sizing**: The size of the memory required may not be known at compile time. This includes cases where multiple instances of a component may require different sizes of memory.
 
 A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd.md) component, which manages pools of buffers of configurable sizes. These pools are often large and the number can vary widely based on project requirements. There can also be the need to have multiple instances of the `Svc::BufferManager`, each instance with different size configurations. Using `Fw::MemAllocator` allows each instance of `Svc::BufferManager` to independently allocate the necessary memory during system initialization.
 
