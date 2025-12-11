@@ -522,7 +522,7 @@ Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekD
 }
 
 Signal FpySequencerTester::tester_storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive,
-                                                         DirectiveError& err) {
+                                                              DirectiveError& err) {
     return this->cmp.storeLocal_directiveHandler(directive, err);
 }
 
@@ -546,8 +546,9 @@ Signal FpySequencerTester::tester_storeGlobal_directiveHandler(const FpySequence
     return this->cmp.storeGlobal_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive,
-                                                                          DirectiveError& err) {
+Signal FpySequencerTester::tester_storeGlobalConstOffset_directiveHandler(
+    const FpySequencer_StoreGlobalConstOffsetDirective& directive,
+    DirectiveError& err) {
     return this->cmp.storeGlobalConstOffset_directiveHandler(directive, err);
 }
 
@@ -571,8 +572,9 @@ Signal FpySequencerTester::tester_loadLocal_directiveHandler(const FpySequencer_
     return this->cmp.loadLocal_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
-                                                                         DirectiveError& err) {
+Signal FpySequencerTester::tester_storeLocalConstOffset_directiveHandler(
+    const FpySequencer_StoreLocalConstOffsetDirective& directive,
+    DirectiveError& err) {
     return this->cmp.storeLocalConstOffset_directiveHandler(directive, err);
 }
 

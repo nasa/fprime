@@ -577,10 +577,12 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_loadGlobal_internalInterfaceHandler(const Svc::FpySequencer_LoadGlobalDirective& directive) override;
 
     //! Internal interface handler for directive_storeGlobal
-    void directive_storeGlobal_internalInterfaceHandler(const Svc::FpySequencer_StoreGlobalDirective& directive) override;
+    void directive_storeGlobal_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreGlobalDirective& directive) override;
 
     //! Internal interface handler for directive_storeGlobalConstOffset
-    void directive_storeGlobalConstOffset_internalInterfaceHandler(const Svc::FpySequencer_StoreGlobalConstOffsetDirective& directive) override;
+    void directive_storeGlobalConstOffset_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreGlobalConstOffsetDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -847,7 +849,7 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Helper to load value from srcOffset and push to stack top
     Signal loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error);
     Signal storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
-                                             DirectiveError& error);
+                                                  DirectiveError& error);
     Signal loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
@@ -863,7 +865,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal return_directiveHandler(const FpySequencer_ReturnDirective& directive, DirectiveError& error);
     Signal loadGlobal_directiveHandler(const FpySequencer_LoadGlobalDirective& directive, DirectiveError& error);
     Signal storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive, DirectiveError& error);
-    Signal storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive, DirectiveError& error);
+    Signal storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive,
+                                                   DirectiveError& error);
 };
 
 }  // namespace Svc

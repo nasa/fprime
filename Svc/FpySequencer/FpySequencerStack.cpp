@@ -144,18 +144,17 @@ U8* FpySequencer::Stack::top() {
 // Copies data from one region of the stack to another
 // Asserts that both regions are within bounds and do not overlap
 // Does not modify stack size
-void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType copySize) {
-    FW_ASSERT(destOffset + copySize <= Fpy::MAX_STACK_SIZE, 
-              static_cast<FwAssertArgType>(destOffset), 
+void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset,
+                               Fpy::StackSizeType srcOffset,
+                               Fpy::StackSizeType copySize) {
+    FW_ASSERT(destOffset + copySize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(destOffset),
               static_cast<FwAssertArgType>(copySize));
-    FW_ASSERT(srcOffset + copySize <= Fpy::MAX_STACK_SIZE, 
-              static_cast<FwAssertArgType>(srcOffset), 
+    FW_ASSERT(srcOffset + copySize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(srcOffset),
               static_cast<FwAssertArgType>(copySize));
     // Check for overlap: regions overlap if one starts before the other ends
     // No overlap if: destEnd <= srcStart OR srcEnd <= destStart
     FW_ASSERT(copySize == 0 || (destOffset + copySize <= srcOffset) || (srcOffset + copySize <= destOffset),
-              static_cast<FwAssertArgType>(destOffset),
-              static_cast<FwAssertArgType>(srcOffset));
+              static_cast<FwAssertArgType>(destOffset), static_cast<FwAssertArgType>(srcOffset));
     if (copySize > 0) {
         memcpy(this->bytes + destOffset, this->bytes + srcOffset, copySize);
     }
@@ -164,12 +163,12 @@ void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset, Fpy::StackSizeType
 // Moves data within the stack
 // Asserts that both source and destination are within bounds
 // Does not modify stack size
-void FpySequencer::Stack::move(Fpy::StackSizeType destOffset, Fpy::StackSizeType srcOffset, Fpy::StackSizeType moveSize) {
-    FW_ASSERT(destOffset + moveSize <= Fpy::MAX_STACK_SIZE, 
-              static_cast<FwAssertArgType>(destOffset), 
+void FpySequencer::Stack::move(Fpy::StackSizeType destOffset,
+                               Fpy::StackSizeType srcOffset,
+                               Fpy::StackSizeType moveSize) {
+    FW_ASSERT(destOffset + moveSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(destOffset),
               static_cast<FwAssertArgType>(moveSize));
-    FW_ASSERT(srcOffset + moveSize <= this->size, 
-              static_cast<FwAssertArgType>(srcOffset), 
+    FW_ASSERT(srcOffset + moveSize <= this->size, static_cast<FwAssertArgType>(srcOffset),
               static_cast<FwAssertArgType>(moveSize));
     if (moveSize > 0) {
         memmove(this->bytes + destOffset, this->bytes + srcOffset, moveSize);
