@@ -14,7 +14,7 @@ Flight software coding standards typically forbid dynamic memory allocation duri
 ## Memory Allocation Pattern
 
 **Used during:** System initialization  
-**Document:** [Memory Allocation with Fw::MemAllocator](../../design-patterns/memory-allocation.md)
+**Document:** [Memory Allocation with Fw::MemAllocator](./memory-allocation.md)
 
 The Memory Allocation pattern uses the `Fw::MemAllocator` interface to allocate memory blocks during system initialization. This is appropriate in the following scenarios:
 
