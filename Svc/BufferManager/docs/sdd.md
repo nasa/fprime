@@ -5,7 +5,7 @@
 `BufferManager` is a passive F Prime component.
 It allocates a set of fixed-sized buffers as specified by the user. The overall memory for the buffers is allocated by a memory allocator provided to the component at runtime.
 
-**For a detailed guide on how to use the BufferManager component, please refer to the [Dynamic Memory Management User Manual](../../../docs/user-manual/framework/dynamic-memory.md).**
+**For a detailed guide on how to use the BufferManager component, please refer to the [Buffer Pool Guide](../../../docs/user-manual/framework/memory-management/buffer-pool.md).**
 
 ## 2 Requirements
 

@@ -16,7 +16,7 @@ driver layer handles writing data to and from the hardware.
 
 
 Also of note is the framing protocol, which breaks out the handling of the byte serialization for quick adaptation. Each
-of these stages need to allocate memory and thus users should also consult the [buffer management](../framework/dynamic-memory.md)
+of these stages need to allocate memory and thus users should also consult the [buffer pool management](../framework/memory-management/buffer-pool.md)
 guide.
 
 > [!NOTE]

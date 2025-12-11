@@ -1,14 +1,14 @@
-# Dynamic Memory and Buffer Management
+# Buffer Pools with Svc.BufferManager
 
 In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady-state
 variability in a running system. Avoiding dynamic memory allocation also avoids the problem of what to do in the case of
 a failed allocation. However, sometimes dynamic allocation provides for a simpler or more efficient solution.
 
-Safe dynamic allocation is available using the buffer manager pattern in F´. In short, this pattern allows components to
+Safe dynamic allocation is available using the buffer pool pattern in F´, implemented through the [`Svc::BufferManager`](../../../../Svc/BufferManager/docs/sdd.md) component. In short, this pattern allows components to
 dynamically allocate memory through a port call to a component designed to manage memory for the system. There are three steps in this process:
 
-1. Call allocation port receiving an`Fw::Buffer`
-2. Use allocated in the `Fw::Buffer`
+1. Call allocation port receiving an `Fw::Buffer`
+2. Use the allocated `Fw::Buffer`
 3. Call deallocation port returning the `Fw::Buffer`
 
 ## Component Setup and Buffer Usage
@@ -115,57 +115,6 @@ thus can be used interchangeably subject to the descriptions in this section.
 
 Each section will describe any special setup needed in the topology and how to hook up the manager's ports.
 
-### Svc.StaticMemory
-
-Svc.StaticMemory uses a stack-based pool of memory to support allocation. This pool is composed of fixed-size regions
-each of which is tied to a specific client. Each client's allocation **must** be deallocated before a subsequent request by
-the same client. Since allocation and deallocation ports are port arrays, each client's allocation and deallocation
-ports must be hooked up in parallel.
-
-This component is designed for simplicity of implementation. System memory usage is **always** the number of clients
-multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
-allocations will always be returned or a software error will be tripped.
-
-[Svc.StaticMemory is described in more detail](../../../Svc/StaticMemory/docs/sdd.md).
-
-**When To Use Svc.StaticMemory**
-
-Use Svc.StaticMemory in situations where memory must always be available and sharing or efficient use of memory is a concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
-allocation and deallocation.
-
-***Usage Requirements***
-
-Since this component is designed to be simple, its usage has several caveats. These caveats are, for the most part, enforced by assertions, and thus failure to abide by them will result in software termination.
-
-1. Allocations will always return with the size of `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE`
-2. Allocations above `Svc::StaticMemoryConfig::STATIC_MEMORY_ALLOCATION_SIZE` is considered an error
-3. It is an error for a client to allocate memory before deallocating previously allocated memory
-
-These rules imply that memory allocated from Svc.StaticMemory should never be sent through an asynchronous port as this will risk violating item 3.
-
-
-**Connections**
-
-All connections to Svc.StaticMemory are done using parallel port indices per-client. This is shown in the Topology
-snippet shown below:
-
-```fpp
-      client1.allocate -> my_static_memory.bufferAllocate[0]
-      client1.deallocate -> my_static_memory.bufferDeallocate[0]
-      
-      client2.allocate -> my_static_memory.bufferAllocate[1]
-      client2.deallocate -> my_static_memory.bufferDeallocate[1]
-```
-
-Svc.StaticMemory does not use any other ports. Please review the configuration to ensure that sufficient regions are
-available for the number of clients used.
-
-***Configuration and Setup***
-
-Allocation region size is configured in the `StaticMemoryConfig.hpp` header using the `STATIC_MEMORY_ALLOCATION_SIZE`
-value and maximum client number is configured in `AcConstants.fpp` using the `StaticMemoryAllocations` value. No other
-configuration or setup is necessary.
-
 ### Svc.BufferManager
 
 Svc.BufferManager uses multiple bins of memory with fixed-size sub-allocations within a bin. It has a single allocate
@@ -268,10 +217,7 @@ cases have a sufficient number of buffers to prevent stealing of larger allocati
 
 ## Deallocation strategy
 
-The requirements for deallocation are as follows:
-
-1. `Fw::Buffer`s **must** eventually be returned to the same instance that allocated them
-2. `Svc.StaticMemory` **cannot** be used in chains involving asynchronous calls (for reasons discussed above)
+`Fw::Buffer`s **must** eventually be returned to the same instance that allocated them.
 
 Additionally, it is a recommended practice to deallocate a buffer in the same component where it was allocated. This is accomplished using the buffer ownership "Return-To-Sender" pattern described below.
 
