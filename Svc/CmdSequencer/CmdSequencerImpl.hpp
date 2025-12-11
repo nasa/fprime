@@ -649,8 +649,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     );
 
     //! Sequence run helper
-    void doSequenceRun(const Fw::StringBase& fileName
-    );  
+    void doSequenceRun(const Fw::StringBase& fileName);
 
   private:
     // ----------------------------------------------------------------------
