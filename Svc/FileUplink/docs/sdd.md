@@ -170,7 +170,7 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 
 ## 4 Dictionary
 
-See [here](../FileUplink.fpp) for a list of events and telemetry.
+See [FileUplink.fpp](../FileUplink.fpp) for a list of events and telemetry.
 
 ## 5 Checklists
 

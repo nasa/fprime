@@ -79,7 +79,7 @@ void FileUplinkTester ::sendFile() {
     ASSERT_EVENTS_FileReceived(0, destPath);
     ASSERT_from_fileAnnounce_SIZE(1);
     Fw::String announceArg(destPath);
-    ASSERT_from_fileAnnounce(0,announceArg);
+    ASSERT_from_fileAnnounce(0, announceArg);
 
     // Assert we are back in START mode
     ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
