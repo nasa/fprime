@@ -1,6 +1,6 @@
 # Svc::FileDispatcher
 
-Component to dispatch delivered files to various services. The user passes in a table that maps file extensions to numbered output ports represented by their own version of the enumeration in the configuration [file](../../../default/config/FileDispatcherCfg.fpp). The user then connects the components that process the files to the output ports.
+Component to dispatch delivered files to various services. The user passes in a table that maps file extensions to numbered output ports represented by their own version of the enumeration in the configuration [FileDispatcherCfg.fpp file](../../../default/config/FileDispatcherCfg.fpp). The user then connects the components that process the files to the output ports.
 
 ## Requirements
 
@@ -29,7 +29,9 @@ The `Ref` example connects `Svc::FIleUplink` to `FileDispatcher` to process upli
 | Name | Description |
 |---|---|
 |`fileAnnounceRecv`|Input port that receives file name of new file|
-|`fileDispatch`|Output port that dipatches a new file based on a user supplied table|
+|`fileDispatch`|Array of output ports that dipatch a new files based on a user supplied table|
+|`pingIn`|Input port for Health pinging
+|`pingOut`|Output port for returning Health pings
 
 ## Component States
 No state machines
@@ -61,9 +63,10 @@ No telemetry
 |`dispatchAllCmdDisabledTest`|Tests dispatches of files with all file types initially enabled, but then disabled by command|---|---|
 |`dispatchAllCmdEnabledTest`|Tests dispatches of files with all file types initially disabled, but then enaabled by command|---|---|
 |`dispatchNotFullConfigTest`|Tests dispatches of files with a table with less entries than output ports|---|---|
+|`dispatchPingTest`|Tests ping returns|---|---|
 
 
 ## Change Log
 | Date | Description |
 |---|---|
-|12/7/2025| Initial Draft |
+|12/10/2025| Initial Draft |
