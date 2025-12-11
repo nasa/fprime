@@ -61,7 +61,7 @@ class FileDispatcherTester final : public FileDispatcherGTestBase {
     //! Dispatch ping test
     void dispatchPingTest();
 
-    private:
+  private:
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
@@ -85,7 +85,6 @@ class FileDispatcherTester final : public FileDispatcherGTestBase {
                    const Fw::LogSeverity severity,  //!< The severity
                    const Fw::TextLogString& text    //!< The event string
                    ) override;
-
 };
 
 }  // namespace Svc

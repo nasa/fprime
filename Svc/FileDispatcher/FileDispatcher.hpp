@@ -12,9 +12,9 @@
 namespace Svc {
 
 struct FileDispatcherEntry {
-  Fw::String fileExt; // file extension for dispatch
-  Svc::FileDispatcherCfg::FileDispatchPort port; // port to dispatch to
-  bool enabled; // whether dispatching is enabled for this type
+    Fw::String fileExt;                             // file extension for dispatch
+    Svc::FileDispatcherCfg::FileDispatchPort port;  // port to dispatch to
+    bool enabled;                                   // whether dispatching is enabled for this type
 };
 
 class FileDispatcher final : public FileDispatcherComponentBase {
@@ -31,9 +31,9 @@ class FileDispatcher final : public FileDispatcherComponentBase {
     ~FileDispatcher();
 
     //! configure the component
-    void configure(FileDispatcherEntry* entries, //!< array of entries
-                   FwSizeType numEntries    //!< number of entries
-                   );
+    void configure(FileDispatcherEntry* entries,  //!< array of entries
+                   FwSizeType numEntries          //!< number of entries
+    );
 
   private:
     // ----------------------------------------------------------------------
@@ -44,8 +44,8 @@ class FileDispatcher final : public FileDispatcherComponentBase {
     //!
     //! Port for receiving files to dispatch
     void fileAnnounceRecv_handler(FwIndexType portNum,       //!< The port number
-                          Fw::StringBase& file_name  //!< The successfully uplinked file
-                          ) override;
+                                  Fw::StringBase& file_name  //!< The successfully uplinked file
+                                  ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -54,19 +54,18 @@ class FileDispatcher final : public FileDispatcherComponentBase {
 
     //! Handler implementation for command DISABLE_DISPATCH
     void ENABLE_DISPATCH_cmdHandler(
-          FwOpcodeType opCode,                                //!< The opcode
-          U32 cmdSeq,                                         //!< The command sequence number
-          Svc::FileDispatcherCfg::FileDispatchPort file_type,  //!< the file type dispatch to disable
-          Fw::Enabled enable                                  //!< whether to enable or disable dispatch
+        FwOpcodeType opCode,                                 //!< The opcode
+        U32 cmdSeq,                                          //!< The command sequence number
+        Svc::FileDispatcherCfg::FileDispatchPort file_type,  //!< the file type dispatch to disable
+        Fw::Enabled enable                                   //!< whether to enable or disable dispatch
         ) override;
 
     //! Handler implementation for pingIn
     //!
     //! Ping in
     void pingIn_handler(FwIndexType portNum,  //!< The port number
-        U32 key               //!< Value to return to pinger
-        ) override;
-
+                        U32 key               //!< Value to return to pinger
+                        ) override;
 
     //! table of dispatch entries
     FileDispatcherEntry m_dispatchTable[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];
