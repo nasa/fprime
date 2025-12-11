@@ -7,6 +7,7 @@ queued component QueuedTest {
   import FppTest.TypedPortsSyncInputs
   import FppTest.TypedPortsGuardedInputs
   import FppTest.TypedPortsOutputs
+  import FppTest.TypedPortsHelpers
   import FppTest.TypedPortsAsync
   import FppTest.OutputPorts
 

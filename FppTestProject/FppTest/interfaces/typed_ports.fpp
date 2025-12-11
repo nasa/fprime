@@ -115,6 +115,9 @@ module FppTest {
 
         output port structReturnOut: [2] StructReturn
 
+    }
+
+    interface TypedPortsHelpers {
         # ----------------------------------------------------------------------
         # Ports for testing special ports
         # ----------------------------------------------------------------------

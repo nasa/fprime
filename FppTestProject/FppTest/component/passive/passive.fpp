@@ -6,6 +6,7 @@ passive component PassiveTest {
   import FppTest.TypedPortsSyncInputs
   import FppTest.TypedPortsGuardedInputs
   import FppTest.TypedPortsOutputs
+  import FppTest.TypedPortsHelpers
 
   include "../include/commands.fppi"
   include "../include/events.fppi"
