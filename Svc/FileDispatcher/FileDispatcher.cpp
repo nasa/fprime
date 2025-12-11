@@ -20,7 +20,9 @@ FileDispatcher ::FileDispatcher(const char* const compName) : FileDispatcherComp
     }
 }
 
-FileDispatcher ::~FileDispatcher() {}
+FileDispatcher ::~FileDispatcher() {
+    this->deinit();
+}
 
 void FileDispatcher ::configure(FileDispatcherEntry* entries, FwSizeType numEntries) {
     FW_ASSERT(entries != nullptr);
