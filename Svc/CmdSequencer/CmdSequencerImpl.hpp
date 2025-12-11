@@ -550,46 +550,46 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! Set the run mode to AUTO.
     void CS_AUTO_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                             U32 cmdSeq            //!< The command sequence number
-    );
+    ) override;
 
     //! Handler for command CS_CANCEL
     //! Validate a command sequence file
     void CS_CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                               U32 cmdSeq            //!< The command sequence number
-    );
+    ) override;
 
     //! Handler for command CS_MANUAL
     //! Set the run mode to MANUAL.
     void CS_MANUAL_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                               U32 cmdSeq            //!< The command sequence number
-    );
+    ) override;
 
     //! Handler for command CS_RUN
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
                            Svc::CmdSequencer_BlockState block /*!< Return command status when complete or not*/
-    );
+    ) override;
 
     //! Handler for command CS_START
     //! Start running a command sequence
     void CS_START_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                              U32 cmdSeq            //!< The command sequence number
-    );
+    ) override;
 
     //! Handler for command CS_STEP
     //! Perform one step in a command sequence.
     //! Valid only if SequenceRunner is in MANUAL run mode.
     void CS_STEP_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                             U32 cmdSeq            //!< The command sequence number
-    );
+    ) override;
 
     //! Handler for command CS_VALIDATE
     //! Run a command sequence file
     void CS_VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
                                 U32 cmdSeq,                       //!< The command sequence number
                                 const Fw::CmdStringArg& fileName  //!< The name of the sequence file
-    );
+    ) override;
 
     //! Implementation for CS_JOIN command handler
     //! Wait for sequences that are running to finish.
