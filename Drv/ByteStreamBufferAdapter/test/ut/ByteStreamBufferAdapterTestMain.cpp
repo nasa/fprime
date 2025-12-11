@@ -6,9 +6,18 @@
 
 #include "ByteStreamBufferAdapterTester.hpp"
 
-TEST(Nominal, toDo) {
+TEST(Nominal, Test_Stream_out) {
     Drv::ByteStreamBufferAdapterTester tester;
-    tester.toDo();
+    tester.test_byte_stream_out();
+}
+
+TEST(Nominal, Test_Stream_in) {
+    Drv::ByteStreamBufferAdapterTester tester;
+    tester.test_byte_stream_in();
+}
+TEST(Nominal, Test_Stream_Return) {
+    Drv::ByteStreamBufferAdapterTester tester;
+    tester.test_byte_stream_return();
 }
 
 int main(int argc, char** argv) {

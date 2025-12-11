@@ -10,6 +10,9 @@
 #include "Drv/ByteStreamBufferAdapter/ByteStreamBufferAdapter.hpp"
 #include "Drv/ByteStreamBufferAdapter/ByteStreamBufferAdapterGTestBase.hpp"
 
+// Larger than com buffer size
+#define DATA_SIZE (FW_COM_BUFFER_MAX_SIZE * 10 + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType))
+
 namespace Drv {
 
 class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestBase {
@@ -40,8 +43,22 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     // Tests
     // ----------------------------------------------------------------------
 
-    //! To do
-    void toDo();
+    //! 
+    void test_byte_stream_out();
+
+    //! 
+    void test_byte_stream_in();
+
+    void test_byte_stream_return();
+
+    Drv::ByteStreamStatus from_toByteStreamDriver_handler(
+        FwIndexType portNum,
+        Fw::Buffer& sendBuffer) override;
+
+    void textLogIn(FwEventIdType id, 
+        const Fw::Time& timeTag,        
+        const Fw::LogSeverity severity,
+        const Fw::TextLogString& text) override; 
 
   private:
     // ----------------------------------------------------------------------
@@ -54,6 +71,8 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     //! Initialize components
     void initComponents();
 
+    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -61,6 +80,9 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
 
     //! The component under test
     ByteStreamBufferAdapter component;
+    Fw::Buffer m_buffer;
+    U8 m_data_store[DATA_SIZE];
+    bool m_byte_stream_driver_fail; 
 };
 
 }  // namespace Drv
