@@ -61,7 +61,7 @@ No telemetry
 |`dispatchTest`|Tests dispatches of files|---|---|
 |`dispatchAllDisabledTest`|Tests dispatches of files with all file types initially disabled|---|---|
 |`dispatchAllCmdDisabledTest`|Tests dispatches of files with all file types initially enabled, but then disabled by command|---|---|
-|`dispatchAllCmdEnabledTest`|Tests dispatches of files with all file types initially disabled, but then enaabled by command|---|---|
+|`dispatchAllCmdEnabledTest`|Tests dispatches of files with all file types initially disabled, but then enabled by command|---|---|
 |`dispatchNotFullConfigTest`|Tests dispatches of files with a table with less entries than output ports|---|---|
 |`dispatchPingTest`|Tests ping returns|---|---|
 

@@ -6,6 +6,7 @@ ACTIVERATEGROUPTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
+afile
 aleem
 ALLEXTERNALS
 alphanums
@@ -27,7 +28,6 @@ autocode
 autocoded
 autocoders
 autocoding
-AUTORUN
 autorun
 AYYYY
 baremetal
@@ -94,6 +94,7 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
+CMDSEQUENCERCFG
 cntx
 CODEFILE
 COLORSTYLE

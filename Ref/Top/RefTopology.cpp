@@ -56,7 +56,7 @@ void configureTopology() {
 
     // set up file dispatcher table
     Svc::FileDispatcherEntry fileDispatcherEntries[1] = {
-        {Svc::CMD_SEQ_AUTORUN_EXTENSION, Svc::FileDispatcherCfg::FileDispatchPort::SEQUENCE_FILE_PORT, true},
+        {".sqa", Svc::FileDispatcherCfg::FileDispatchPort::SEQUENCE_FILE_PORT, true},
     };
     FileHandling::fileDispatcher.configure(fileDispatcherEntries, FW_NUM_ARRAY_ELEMENTS(fileDispatcherEntries));
 }
