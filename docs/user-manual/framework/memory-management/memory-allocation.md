@@ -2,11 +2,11 @@
 
 This document treats the design pattern of how to allocate blocks of memory in F´ using dynamic (heap) memory allocation. This is restricted to system initialization only, as dynamic memory allocation during runtime is forbidden by flight software coding standards for safety and reliability reasons.
 
-To learn more about working with buffers beyond system initialization in F´, please refer to the [Buffer Pool Guide](../framework/memory-management/buffer-pool.md) document.
+To learn more about working with buffers beyond system initialization in F´, please refer to the [Buffer Pool Guide](./buffer-pool.md) document.
 
 ## Fw::MemAllocator Overview
 
-The [`Fw::MemAllocator` interface](../../../Fw/Types/MemAllocator.hpp) provides an abstraction for memory allocation to be used during system initialization. Components that require memory to be allocated at startup can use this interface to request memory blocks with sizes specified at runtime.
+The [`Fw::MemAllocator` interface](../../../../Fw/Types/MemAllocator.hpp) provides an abstraction for memory allocation to be used during system initialization. Components that require memory to be allocated at startup can use this interface to request memory blocks with sizes specified at runtime.
 
 ### When to use Fw::MemAllocator
 
@@ -21,10 +21,10 @@ A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd
 > [!TIP]
 > Many other components in F´ also use `Fw::MemAllocator`, you can search the codebase for `MemAllocator` to find more examples.
 
-The core framework ships with an implementation of `Fw::MemAllocator`, called [`Fw::MallocAllocator`](../../../Fw/Types/MallocAllocator.cpp), which delegates to the C/C++ `malloc()` and `free()` functions. Projects are free to implement their own versions of `Fw::MemAllocator` if desired.
+The core framework ships with an implementation of `Fw::MemAllocator`, called [`Fw::MallocAllocator`](../../../../Fw/Types/MallocAllocator.cpp), which delegates to the C/C++ `malloc()` and `free()` functions. Projects are free to implement their own versions of `Fw::MemAllocator` if desired.
 
 >[!WARNING]
-> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memory management during operation, please consult the [Dynamic Memory and Buffer Management](../framework/memory-management/buffer-pool.md) document.
+> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memory management during operation, please consult the [Buffer Pools with Svc.BufferManager](./buffer-pool.md) document.
 
 ## Pattern to use the Fw::MemAllocator
 
@@ -110,12 +110,11 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
     }
     ```
 
-Once the memory is allocated in the `setup()` method, the component can use the allocated memory as needed until shutdown. The memory will be properly deallocated in the `cleanup()` method when the component is shut down. To see examples of this pattern in practice, refer to components like [`Svc::BufferManager`](../../../Svc/BufferManager/BufferManagerComponentImpl.cpp), [`Svc::FrameAccumulator`](../../../Svc/FrameAccumulator/FrameAccumulator.cpp), and others, in the F´ codebase.
+Once the memory is allocated in the `setup()` method, the component can use the allocated memory as needed until shutdown. The memory will be properly deallocated in the `cleanup()` method when the component is shut down. To see examples of this pattern in practice, refer to components like [`Svc::BufferManager`](../../../../Svc/BufferManager/BufferManagerComponentImpl.cpp), [`Svc::FrameAccumulator`](../../../../Svc/FrameAccumulator/FrameAccumulator.cpp), and others, in the F´ codebase.
 
 ## Fw::MemAllocatorRegistry
 
-The [`Fw::MemAllocatorRegistry`](../../../Fw/Types/MemAllocator.hpp) is a singleton registry that allows registering different memory allocators for different purposes within the system. This is useful when projects want to manage multiple types of memory allocators in a centralized way. Projects may define project-specific allocators that implement the `Fw::MemAllocator` interface and register them with the registry.
-
+The [`Fw::MemAllocatorRegistry`](../../../../Fw/Types/MemAllocator.hpp) is a singleton registry that allows registering different memory allocators for different purposes within the system. This is useful when projects want to manage multiple types of memory allocators in a centralized way. Projects may define project-specific allocators that implement the `Fw::MemAllocator` interface and register them with the registry.
 ### Basic Usage
 
 ```cpp
@@ -141,4 +140,4 @@ Fw::MemAllocator& allocator = registry.getAllocator(Fw::MemoryAllocation::Memory
 > [!NOTE]
 > The registry maintains pointers to allocators; it does not take ownership. Registered allocators must remain valid for the duration of the program.
 
-The types of allocators available are defined in [`config/MemoryAllocation.fpp`](../../../default/config/MemoryAllocation.fpp) and can be customized per deployment.
+The types of allocators available are defined in [`config/MemoryAllocation.fpp`](../../../../default/config/MemoryAllocation.fpp) and can be customized per deployment.

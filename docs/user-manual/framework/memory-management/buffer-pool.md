@@ -41,7 +41,7 @@ passive component MyComponent {
 ```
 
 > [!TIP]
-> You can inspect the contents of the `Svc.BufferAllocation` interface in [Svc/Interfaces/BufferAllocation.fpp](../../../Svc/Interfaces/BufferAllocation.fpp).
+> You can inspect the contents of the `Svc.BufferAllocation` interface in [Svc/Interfaces/BufferAllocation.fpp](../../../../Svc/Interfaces/BufferAllocation.fpp).
 
 **Example Component Allocation and Deallocation**
 ```c++
@@ -104,7 +104,7 @@ FW_ASSERT(my_buffer.getSize() >= 4); // Prevent overrun on next line
 data[3] = 1;
 ```
 
-Full [`Fw::Buffer` documentation is available](../../reference/api/cpp/html/class_fw_1_1_buffer.html).
+Full [`Fw::Buffer` documentation is available](../../../reference/api/cpp/html/class_fw_1_1_buffer.html).
 
 
 ## Topology Consideration
@@ -123,7 +123,7 @@ size larger than the request for an available buffer, which it then marks as use
 
 There is no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple outstanding allocations and thus asynchronous usage of these allocations is supported.
 
-For more details, see the [Svc.BufferManager SDD](../../../Svc/BufferManager/docs/sdd.md).
+For more details, see the [Svc.BufferManager SDD](../../../../Svc/BufferManager/docs/sdd.md).
 
 **When To Use Svc.BufferManager**
 
@@ -164,9 +164,9 @@ The number of sub allocations is configured in the `BufferManagerComponentImplCf
 `BUFFERMGR_MAX_NUM_BINS` value.
 
 When using Svc.BufferManager the `Svc::BufferManagerComponentImpl.setup()` method must be called supplying a U16 manager
-ID, a buffer id, an implementation of [Fw::MemAllocator](../../reference/api/cpp/html/class_fw_1_1_mem_allocator.html) used to
+ID, a buffer id, an implementation of [Fw::MemAllocator](../../../reference/api/cpp/html/class_fw_1_1_mem_allocator.html) used to
 allocate memory for the sub-allocations, and a
-[Svc::BufferManagerComponentImpl::BufferBins](../../reference/api/cpp/html/struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html)
+[Svc::BufferManagerComponentImpl::BufferBins](../../../reference/api/cpp/html/struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html)
 struct configuring the sub allocations.
 
 The Svc::BufferManagerComponentImpl::BufferBins is a table specifying N buffers of M size per bin. Up to MAX_NUM_BINS
@@ -263,4 +263,4 @@ This pattern enhances modularity and prevent breaking encapsulation by making to
 Let's unwrap this statement by considering the alternative to the Return-To-Sender pattern, where Component C returns the buffer directly to the Buffer Manager, bypassing B and A on the way back. In this case, let's consider the scenario where Component B needs to append to the buffer (this can happen for example during framing operations, where the buffer grows in size). To enable that, Component B allocates a new larger buffer, and the topology connections would have to be redrawn, carefully tracking the lifetime of two allocated buffers.  
 With the Return-To-Sender pattern, Component B can handle the lifetime of each buffers internally: it allocates a new larger buffer to send down the chain (and expects it to come back), and returns the smaller buffer directly to its sender. This does not affect the broader topology, and the extra memory management is isolated to Component B. 
 
-An example of this pattern can be found in the [`Svc.ComFprime`](../../../Svc/Subtopologies/ComFprime/docs/sdd.md) and [`Svc.ComCcsds`](../../../Svc/Subtopologies/ComCcsds/docs/sdd.md) subtopologies, in the `connections Uplink` blocks.
+An example of this pattern can be found in the [`Svc.ComFprime`](../../../../Svc/Subtopologies/ComFprime/docs/sdd.md) and [`Svc.ComCcsds`](../../../../Svc/Subtopologies/ComCcsds/docs/sdd.md) subtopologies, in the `connections Uplink` blocks.
