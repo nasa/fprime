@@ -561,6 +561,26 @@ Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_P
     return this->cmp.pushTime_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.allocate_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive,
+                                                             DirectiveError& err) {
+    return this->cmp.loadLocal_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
+                                                                         DirectiveError& err) {
+    return this->cmp.storeLocalConstOffset_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_pushVal_directiveHandler(const FpySequencer_PushValDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.pushVal_directiveHandler(directive, err);
+}
+
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {
     return this->cmp.dispatchStatement();
 }

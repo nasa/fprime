@@ -185,6 +185,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive, DirectiveError& err);
     Signal tester_storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
+    Signal tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& err);
+    Signal tester_loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive, DirectiveError& err);
+    Signal tester_storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive, DirectiveError& err);
+    Signal tester_pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();
