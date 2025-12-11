@@ -512,17 +512,17 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                                FwOpcodeType opcode,             //!< The command opcode
                                U32 cmdSeq,                      //!< The command sequence number
                                const Fw::CmdResponse& response  //!< The command response
-    ) override;
+                               ) override;
 
     //! Handler for input port schedIn
     void schedIn_handler(FwIndexType portNum,  //!< The port number
                          U32 order             //!< The call order
-    ) override;
+                         ) override;
 
     //! Handler for input port seqRunIn
     void seqRunIn_handler(FwIndexType portNum,            //!< The port number
                           const Fw::StringBase& filename  //!< The sequence file
-    ) override;
+                          ) override;
 
     //! Handler implementation for seqDispatchIn
     //!
@@ -534,12 +534,12 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! Handler for ping port
     void pingIn_handler(FwIndexType portNum,  //!< The port number
                         U32 key               //!< Value to return to pinger
-    ) override;
+                        ) override;
 
     //! Handler implementation for seqCancelIn
     //!
     void seqCancelIn_handler(const FwIndexType portNum /*!< The port number*/
-    ) override;
+                             ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -550,46 +550,46 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! Set the run mode to AUTO.
     void CS_AUTO_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                             U32 cmdSeq            //!< The command sequence number
-    ) override;
+                            ) override;
 
     //! Handler for command CS_CANCEL
     //! Validate a command sequence file
     void CS_CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                               U32 cmdSeq            //!< The command sequence number
-    ) override;
+                              ) override;
 
     //! Handler for command CS_MANUAL
     //! Set the run mode to MANUAL.
     void CS_MANUAL_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                               U32 cmdSeq            //!< The command sequence number
-    ) override;
+                              ) override;
 
     //! Handler for command CS_RUN
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
                            Svc::CmdSequencer_BlockState block /*!< Return command status when complete or not*/
-    ) override;
+                           ) override;
 
     //! Handler for command CS_START
     //! Start running a command sequence
     void CS_START_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                              U32 cmdSeq            //!< The command sequence number
-    ) override;
+                             ) override;
 
     //! Handler for command CS_STEP
     //! Perform one step in a command sequence.
     //! Valid only if SequenceRunner is in MANUAL run mode.
     void CS_STEP_cmdHandler(FwOpcodeType opcode,  //!< The opcode
                             U32 cmdSeq            //!< The command sequence number
-    ) override;
+                            ) override;
 
     //! Handler for command CS_VALIDATE
     //! Run a command sequence file
     void CS_VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
                                 U32 cmdSeq,                       //!< The command sequence number
                                 const Fw::CmdStringArg& fileName  //!< The name of the sequence file
-    ) override;
+                                ) override;
 
     //! Implementation for CS_JOIN command handler
     //! Wait for sequences that are running to finish.
@@ -597,7 +597,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! then wait for them to finish before allowing more seq run request.
     void CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                  const U32 cmdSeq           /*!< The command sequence number*/
-    ) override;
+                                 ) override;
 
   private:
     // ----------------------------------------------------------------------
