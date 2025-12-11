@@ -1352,13 +1352,22 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
 
     Fpy::StackSizeType offset = this->m_runtime.stack.pop<Fpy::StackSizeType>();
     Fpy::StackSizeType byteCount = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+    
+    // Check offset doesn't exceed stack size (after both pops)
+    if (offset > this->m_runtime.stack.size) {
+        // would access past the bottom of the stack
+        // note we allow the equals case because the byteCount might be 0
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
     if (byteCount > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         // we would overflow the stack if we pushed this many bytes to it
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    // Overflow-safe: check offset <= stack.size first, then byteCount <= stack.size - offset
-    if (offset > this->m_runtime.stack.size || byteCount > this->m_runtime.stack.size - offset) {
+    // Overflow-safe check: byteCount + offset > stack.size
+    // Rewritten as: check offset <= stack.size (done above), then byteCount > stack.size - offset
+    if (byteCount > this->m_runtime.stack.size - offset) {
         // would access past the bottom of the stack
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -1379,9 +1388,9 @@ Signal FpySequencer::storeLocal_directiveHandler(const FpySequencer_StoreLocalDi
     }
     
     // Pop the signed offset from the stack
-    I32 frameOffset = this->m_runtime.stack.pop<I32>();
+    I32 lvarOffset = this->m_runtime.stack.pop<I32>();
     
-    I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + frameOffset;
+    I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + lvarOffset;
     if (addr < 0) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
