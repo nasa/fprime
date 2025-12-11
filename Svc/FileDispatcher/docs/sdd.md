@@ -8,9 +8,9 @@ Add requirements in the chart below
 
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
-|FPRIME-FDISP-001|File dipatcher will provide a way to dispatch files to other components|Need to have a way to supply a new file name|Unit Test/System Test|
-|FPRIME-FDISP-002|File dipatcher will provide user configuration to map file types to output ports|Projects will want to customize the dipatching types|Unit Test/System Test|
-|FPRIME-FDISP-003|File dipatcher will dispatch to specified output ports based on the supplied table|Projects will want to connect the dispatch types to components for utilizing files|Unit Test/System Test|
+|FPRIME-FDISP-001|File dispatcher will provide a way to dispatch files to other components|Need to have a way to supply a new file name|Unit Test/System Test|
+|FPRIME-FDISP-002|File dispatcher will provide user configuration to map file types to output ports|Projects will want to customize the dispatching types|Unit Test/System Test|
+|FPRIME-FDISP-003|File dispatcher will dispatch to specified output ports based on the supplied table|Projects will want to connect the dispatch types to components for utilizing files|Unit Test/System Test|
 
 ## Usage Examples
 
@@ -29,7 +29,7 @@ The `Ref` example connects `Svc::FIleUplink` to `FileDispatcher` to process upli
 | Name | Description |
 |---|---|
 |`fileAnnounceRecv`|Input port that receives file name of new file|
-|`fileDispatch`|Array of output ports that dipatch a new files based on a user supplied table|
+|`fileDispatch`|Array of output ports that dispatch a new files based on a user supplied table|
 |`pingIn`|Input port for Health pinging
 |`pingOut`|Output port for returning Health pings
 
