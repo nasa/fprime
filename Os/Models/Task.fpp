@@ -9,6 +9,7 @@ enum TaskStatus : U8 {
     OP_OK,             @< message sent/received okay
     INVALID_HANDLE,    @< Task handle invalid
     INVALID_PARAMS,    @< started task with invalid parameters
+    INVALID_PRIORITY,  @< started task with invalid priority
     INVALID_STACK,     @< started with invalid stack size
     UNKNOWN_ERROR,     @< unexpected error return value
     INVALID_AFFINITY,  @< unable to set the task affinity
