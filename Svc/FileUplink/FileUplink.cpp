@@ -21,7 +21,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-FileUplink ::FileUplink(const char* const name)
+FileUplink::FileUplink(const char* const name)
     : FileUplinkComponentBase(name),
       m_receiveMode(START),
       m_lastSequenceIndex(0),
@@ -30,13 +30,13 @@ FileUplink ::FileUplink(const char* const name)
       m_packetsReceived(this),
       m_warnings(this) {}
 
-FileUplink ::~FileUplink() {}
+FileUplink::~FileUplink() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
+void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
     // If packet is too small to contain a packet type, log + deallocate and return
     if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {
         this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
@@ -86,7 +86,7 @@ void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& bu
     this->bufferSendOut_out(0, buffer);
 }
 
-void FileUplink ::pingIn_handler(const FwIndexType portNum, U32 key) {
+void FileUplink::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }
@@ -95,7 +95,7 @@ void FileUplink ::pingIn_handler(const FwIndexType portNum, U32 key) {
 // Private helper functions
 // ----------------------------------------------------------------------
 
-void FileUplink ::handleStartPacket(const Fw::FilePacket::StartPacket& startPacket) {
+void FileUplink::handleStartPacket(const Fw::FilePacket::StartPacket& startPacket) {
     // Clear all event throttles in preparation for new start packet
     this->log_WARNING_HI_FileWriteError_ThrottleClear();
     this->log_WARNING_HI_InvalidReceiveMode_ThrottleClear();
@@ -115,7 +115,7 @@ void FileUplink ::handleStartPacket(const Fw::FilePacket::StartPacket& startPack
     }
 }
 
-void FileUplink ::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) {
+void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) {
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode != DATA) {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
@@ -144,33 +144,36 @@ void FileUplink ::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket)
     this->m_lastPacketWriteStatus = status;
 }
 
-void FileUplink ::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
+void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
         this->m_filesReceived.fileReceived();
         this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
         this->compareChecksums(endPacket);
         this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
+        if (this->isConnected_fileAnnounce_OutputPort(0)) {
+            this->fileAnnounce_out(0, this->m_file.name);
+        }
     } else {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_END);
     }
     this->goToStartMode();
 }
 
-void FileUplink ::handleCancelPacket() {
+void FileUplink::handleCancelPacket() {
     this->m_packetsReceived.packetReceived();
     this->log_ACTIVITY_HI_UplinkCanceled();
     this->goToStartMode();
 }
 
-void FileUplink ::checkSequenceIndex(const U32 sequenceIndex) {
+void FileUplink::checkSequenceIndex(const U32 sequenceIndex) {
     if (sequenceIndex != this->m_lastSequenceIndex + 1) {
         this->m_warnings.packetOutOfOrder(sequenceIndex, this->m_lastSequenceIndex);
     }
     this->m_lastSequenceIndex = sequenceIndex;
 }
 
-bool FileUplink ::checkDuplicatedPacket(const U32 sequenceIndex) {
+bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
     // check for duplicate packet
     if (sequenceIndex == this->m_lastSequenceIndex) {
         this->m_warnings.packetDuplicate(sequenceIndex);
@@ -180,7 +183,7 @@ bool FileUplink ::checkDuplicatedPacket(const U32 sequenceIndex) {
     return false;
 }
 
-void FileUplink ::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
+void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
     CFDP::Checksum computed, stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
@@ -189,14 +192,14 @@ void FileUplink ::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
     }
 }
 
-void FileUplink ::goToStartMode() {
+void FileUplink::goToStartMode() {
     this->m_file.osFile.close();
     this->m_receiveMode = START;
     this->m_lastSequenceIndex = 0;
     this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;
 }
 
-void FileUplink ::goToDataMode() {
+void FileUplink::goToDataMode() {
     this->m_receiveMode = DATA;
     this->m_lastSequenceIndex = 0;
     this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;

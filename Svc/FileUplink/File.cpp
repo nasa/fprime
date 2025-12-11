@@ -17,7 +17,7 @@
 #include <cstring>
 namespace Svc {
 
-Os::File::Status FileUplink::File ::open(const Fw::FilePacket::StartPacket& startPacket) {
+Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& startPacket) {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
     memcpy(path, startPacket.getDestinationPath().getValue(), length);
@@ -30,7 +30,7 @@ Os::File::Status FileUplink::File ::open(const Fw::FilePacket::StartPacket& star
     return this->osFile.open(path, Os::File::OPEN_WRITE);
 }
 
-Os::File::Status FileUplink::File ::write(const U8* const data, const U32 byteOffset, const U32 length) {
+Os::File::Status FileUplink::File::write(const U8* const data, const U32 byteOffset, const U32 length) {
     Os::File::Status status;
     status = this->osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {

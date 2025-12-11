@@ -77,6 +77,9 @@ void FileUplinkTester ::sendFile() {
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileReceived(0, destPath);
+    ASSERT_from_fileAnnounce_SIZE(1);
+    Fw::String announceArg(destPath);
+    ASSERT_from_fileAnnounce(0, announceArg);
 
     // Assert we are back in START mode
     ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
@@ -419,6 +422,9 @@ void FileUplinkTester ::connectPorts() {
 
     // pingOut
     this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
+
+    // announce
+    this->component.set_fileAnnounce_OutputPort(0, this->get_from_fileAnnounce(0));
 }
 
 void FileUplinkTester ::initComponents() {

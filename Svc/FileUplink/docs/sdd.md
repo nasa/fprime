@@ -2,14 +2,15 @@
 
 ## 1 Introduction
 
-`FileUplink` is an active ISF component.
-It manages uplink of files to the spacecraft.
+`FileUplink` is an active F Prime component.
+It manages uplink of files to the software deployment.
 
 ## 2 Requirements
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-ISF-FU-001 | `FileUplink` shall receive file packets, assemble them into files, and store the files in the on-board non-volatile storage. | This requirement provides the capability to uplink files to the spacecraft. | Test
+FPRIME-FU-001 | `FileUplink` shall receive file packets, assemble them into files, and store the files in the on-board non-volatile storage. | This requirement provides the capability to uplink files to the spacecraft. | Unit Test, System Test
+FPRIME-FU-002 | `FileUplink` shall announce the completion of uplinked files.| This requirement provides the capability to inform other components of newly uplinked files | Unit Test, System Test
 
 ## 3 Design
 
@@ -28,9 +29,11 @@ packets of the next file.
 
     b. Within a file, packets are received in order.
 
+    c. When the file is successfully uplinked (including verification of a valid set of packets), the file name is announced via the `fileAnnounce` port.
+
 ### 3.2 Block Description Diagram (BDD)
 
-![`FileUplink` BDD](img/FileUplinkBDD.jpg "FileUplink")
+![`FileUplink` BDD](img/FileUplink.drawio.png "FileUplink")
 
 ### 3.3 Ports
 
@@ -48,6 +51,9 @@ Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
 <a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | async input | Receives buffers containing file packets.
 <a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | output | Returns buffers for deallocation.
+<a name="pingIn">`pingIn`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | async input | Receives ping calls from [`Svc::Health`](../../../Svc/Health/docs/sdd.md) for aliveness check
+<a name="pingOut">`pingOut`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | output | Returns ping request to [`Svc::Health`](../../../Svc/Health/docs/sdd.md) to respond to liveness check
+<a name="fileAnnounce">`fileAnnounce`</a> | [`Svc::FileAnnounce`](../../../Svc/Ports/FilePorts/FileAnnounce.fpp) | output | Announces the receipt of an uplinked file
 
 ### 3.4 State
 
@@ -164,7 +170,7 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 
 ## 4 Dictionary
 
-TBD
+See [FileUplink.fpp](../FileUplink.fpp) for a list of events and telemetry.
 
 ## 5 Checklists
 
@@ -176,4 +182,4 @@ Checklist |
 
 ## 6 Unit Testing
 
-TODO
+
