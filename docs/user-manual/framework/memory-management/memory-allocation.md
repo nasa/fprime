@@ -21,7 +21,7 @@ A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd
 > [!TIP]
 > Many other components in F´ also use `Fw::MemAllocator`, you can search the codebase for `MemAllocator` to find more examples.
 
-A commonly used implementation of `Fw::MemAllocator` is the [`Fw::MallocAllocator`](../../../Fw/Types/MallocAllocator.cpp) which delegates to the C/C++ `malloc()` and `free()` functions.
+The core framework ships with an implementation of `Fw::MemAllocator`, called [`Fw::MallocAllocator`](../../../Fw/Types/MallocAllocator.cpp), which delegates to the C/C++ `malloc()` and `free()` functions. Projects are free to implement their own versions of `Fw::MemAllocator` if desired.
 
 >[!WARNING]
 > Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memory management during operation, please consult the [Dynamic Memory and Buffer Management](../framework/memory-management/buffer-pool.md) document.
@@ -59,6 +59,8 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
     }
     // [... component code can use the allocated memory after setup() has been called in Topology.cpp ...]
     ```
+
+    The `memId` parameter is the memory segment identifier and should be unique per component. The usage of this identifier is specific to each implementation of `Fw::MemAllocator`. The `Fw::MallocAllocator` implementation does not use this value.
 
     > [!IMPORTANT]
     > The `Fw::MemAllocator` instance's lifespan must persist at least through the `cleanup()` method call (or until the component's destructor if `cleanup()` is not called), as it will be used for deallocation.
