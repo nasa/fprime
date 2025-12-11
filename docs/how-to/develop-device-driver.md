@@ -61,15 +61,25 @@ Before starting development, obtain the datasheet and any relevant documentation
 
 ### Step 2 - Define the Device Manager Component
 
-Use `fprime-util new --component` to create a new component for your device manager. This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports by mirroring the bus driver's interface.
+Use `fprime-util new --component` to create a new component for your device manager. It is often useful (although not required) to use Events and Telemetry. It is often sufficient to start with a `passive` component, and upgrade to `active` or `queued` later if needed.
 
-For our example `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)). A `Drv.I2c` provides an input port of type `Drv.I2cWriteRead`, so we need to define an output port of that type in our component:
+This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports by mirroring the bus driver's interface.
+
+For our `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)).  
+For example, a `Drv.I2c` component provides an ***input*** port of type `Drv.I2cWriteRead`, so we need to define an ***output*** port of that type in our component in order to connect to a bus driver component. We mirror each Bus Driver port that we need to use in our Device Manager.
 
 ```python
+# In: ImuManager.fpp
 @ Component emitting telemetry read from an MpuImu
-active component ImuManager {
+passive component ImuManager {
+    @ Output port allowing to connect to an I2c bus driver for writeRead operations
     output port busWriteRead: Drv.I2cWriteRead
+
+    @ Output port allowing to connect to an I2c bus driver for write operations
     output port busWrite: Drv.I2c
+
+    # We could also mirror the Drv.I2c 'read' port if needed
+    # but we do not need them for this example
 }
 ```
 
@@ -78,20 +88,28 @@ active component ImuManager {
 It is good practice to create helper functions for device operations, based on your datasheet. These helpers will then be called from your component's port handlers to respond to requests, or for example update telemetry on a schedule.
 
 ```cpp
-// ------------- Snippet from Component.hpp -------------
-// Register addresses (from datasheet)
-static constexpr U8 RESET_REG = 0x00;
-static constexpr U8 CONFIG_REG = 0x01;
-static constexpr U8 DATA_REG = 0x10;
+// In: ImuManager.hpp
+class ImuManager final : public ImuManagerComponentBase {
+  public:
+    // Register addresses (from datasheet)
+    static constexpr U8 RESET_REG = 0x00;
+    static constexpr U8 CONFIG_REG = 0x01;
+    static constexpr U8 DATA_REG = 0x10;
 
-// Register values
-static constexpr U8 RESET_VAL = 0x80;
-static constexpr U8 DEFAULT_ADDR = 0x48;
-static constexpr U8 DATA_SIZE = 6;
+    // Register values
+    static constexpr U8 RESET_VAL = 0x80;
+    static constexpr U8 DEFAULT_ADDR = 0x48;
+    static constexpr U8 DATA_SIZE = 6;
 
-// ------------- Snippet from Component.cpp -------------
+    // [... other component code ...]
+};
+```
+
+```cpp
+// In: ImuManager.cpp
+
 // Reset device
-Drv::I2cStatus MyDeviceManager::reset() {
+Drv::I2cStatus ImuManager::reset() {
     U8 cmd[] = {RESET_REG, RESET_VAL};  // From your datasheet
     Fw::Buffer writeBuffer(cmd, sizeof(cmd));
     // Port call to bus driver to write the buffer
@@ -99,7 +117,7 @@ Drv::I2cStatus MyDeviceManager::reset() {
 }
 
 // Read sensor data
-Drv::I2cStatus MyDeviceManager::read(ImuData& output_data) {
+Drv::I2cStatus ImuManager::read(ImuData& output_data) {
     U8 regAddr = DATA_REG;
     U8 rawData[DATA_SIZE];
     Fw::Buffer writeBuffer(&regAddr, 1);
@@ -123,16 +141,20 @@ Once the device-specific helper functions are implemented, integrate them into y
 - a) Emit telemetry on a schedule by connecting to a RateGroup
 - b) Expose data to the application layer through additional ports
 
+>[!NOTE]
+> Functionalities (a) and (b) are shown for illustrative purposes. You may not need to implement both telemetry and data ports depending on your requirements and use case.
+
 First, let's represent our ImuData in FPP so we can use it in telemetry and ports:
 
 ```python
+# In: MyProject/Types/ImuTypes.fpp
 @ Struct representing X, Y, Z data
 struct GeometricVector3 {
     x: F32
     y: F32
     z: F32
 }
-
+@ Struct representing IMU data
 struct ImuData {
     acceleration: GeometricVector3
     rotation: GeometricVector3
@@ -144,8 +166,9 @@ struct ImuData {
 
 Add a run port to connect to a RateGroup, and implement the run handler to read data and emit telemetry on a regular cadence:
 ```python
-active component ImuManager {
-    ...
+# In: Components/ImuManager/ImuManager.fpp
+passive component ImuManager {
+    [... other code ...]
 
     @ Telemetry channel for IMU data (struct of acceleration, rotation, temperature)
     telemetry ImuData: ImuData
@@ -153,10 +176,13 @@ active component ImuManager {
     @ Scheduling port for reading from IMU and writing to telemetry
     sync input port run: Svc.Sched
 
+    @ Event for logging I2C read errors
+    event ImuReadError(status: Drv.I2cStatus) severity warning high format "I2C read error with status {}"
 }
 ```
 
 ```cpp
+// In: Components/ImuManager/ImuManager.cpp
 void ImuManager::run_handler(FwIndexType portNum, U32 context) {
     ImuData data;
     Drv::I2cStatus status = this->read(data);
@@ -174,17 +200,19 @@ void ImuManager::run_handler(FwIndexType portNum, U32 context) {
 Add a port that returns data on request:
 
 ```python
+# In: Components/ImuManager/ImuManager.fpp
 @ Port to read IMU data on request. Update data reference and return status
 port ImuDataRead(ref data: ImuData) -> Fw.Success
 
-active component ImuManager {
-    ...
+passive component ImuManager {
+    [... other code ...]
 
     sync input port getData: ImuDataRead
 }
 ```
 
 ```cpp
+// In: Components/ImuManager/ImuManager.cpp
 Fw::Success ImuManager::getData_handler(FwIndexType portNum, ImuData& data) {
     Drv::I2cStatus status = this->read(data);
     return (status == Drv::I2cStatus::I2C_OK) ? Fw::SUCCESS : Fw::FAILURE;
@@ -198,7 +226,8 @@ Fw::Success ImuManager::getData_handler(FwIndexType portNum, ImuData& data) {
 
 Wire your device manager to the bus driver in a topology:
 
-```fpp
+```python
+# In: topology.fpp
 instance imuManager: MyProject.ImuManager base id 0x1000
 instance busDriver: Drv.LinuxI2cDriver base id 0x2000
 
@@ -212,7 +241,7 @@ topology MyTopology {
 Then configure the bus driver to open the correct device. This is platform specific. On Linux, this may look like the following:
 
 ```cpp
-// In Topology.cpp
+// In: Topology.cpp
 void configureTopology() {
     ...
 
@@ -232,7 +261,7 @@ void configureTopology() {
 
 ## How-To Develop a Bus Driver
 
-This section focuses on the bus driver component. The bus driver handles communication over a specific bus (I2C, SPI, UART, etc.). If a suitable bus driver already exists in F Prime (this is the case for most common buses on Linux, see inside the `fprime/Drv/` package), you can skip this section. As mentioned earlier, the bus driver's role is to provide a generic interface for read/write operations over a specific bus that a device manager can use. By splitting the bus driver into its own component, we can reuse (a) re-use the same bus driver implementation for multiple device managers, and (b) swap out bus drivers when porting to different platforms, but re-using the same device manager logic.
+This section focuses on the bus driver component. The bus driver handles communication over a specific bus (I2C, SPI, UART, etc.). If a suitable bus driver already exists in F Prime (this is the case for most common buses on Linux, see inside the `fprime/Drv/` package), you can skip this section. As mentioned earlier, the bus driver's role is to provide a generic interface for read/write operations over a specific bus that a device manager can use. By splitting the bus driver into its own component, we can (a) re-use the same bus driver implementation for multiple device managers, and (b) swap out bus drivers when porting to different platforms, but re-using the same device manager logic.
 
 In this section, we will keep working with our example MPU6050 IMU sensor connected over I2C. Our goal will be to implement a bus driver for I2C communication on [Zephyr RTOS](https://zephyrproject.org/) instead of Linux. The methodology generalizes to other buses and platforms.
 
@@ -252,6 +281,7 @@ We learn the following:
 Use `fprime-util new --component` to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the `Drv/Interfaces/` directory. For I2C, we can use the existing `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)).
 
 ```python
+# In: ZephyrI2cDriver.fpp
 @ I2C bus driver interface
 passive component ZephyrI2cDriver {
     # This imports the Drv.I2c interface, adding the required ports to this component
@@ -271,6 +301,7 @@ Bus drivers will most likely require configuration on startup, usually done by t
 For our ZephyrI2cDriver, we will implement a public `open()` method that takes an `device` structure to identify the I2C device. This method will store the `device` as a member variable for later use in read/write operations.
 
 ```cpp
+// In: ZephyrI2cDriver.cpp
 Drv::I2cStatus ZephyrI2cDriver::open(const struct device* i2c_device) {
     this->m_device = i2c_device;
     if (!device_is_ready(this->m_device)) {
@@ -283,7 +314,7 @@ Drv::I2cStatus ZephyrI2cDriver::open(const struct device* i2c_device) {
 With this method, projects can now configure the bus driver in `configureTopology()`:
 
 ```c++
-// In Topology.cpp
+// In: Topology.cpp
 #include <zephyr/device.h>
 static const struct device *i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
 
@@ -303,6 +334,7 @@ void configureTopology() {
 Implement the port calls that are part of the bus driver interface. In our case, `Drv.I2c` contains `write`, `read`, and `writeRead` port handlers, for which the function signatures are autocoded by `fprime-util impl`. With the Zephyr I2C API, this may look like the following:
 
 ```cpp
+// In: ZephyrI2cDriver.cpp
 Drv::I2cStatus ZephyrI2cDriver ::read_handler(FwIndexType portNum, U32 addr, Fw::Buffer& buffer) {
     int status = i2c_read(this->m_device, buffer.getData(), buffer.getSize(), addr);
     if (status != 0) {
@@ -334,6 +366,7 @@ Drv::I2cStatus ZephyrI2cDriver ::writeRead_handler(FwIndexType portNum, U32 addr
 Once a different bus driver is implemented, you can use it in your deployment topology. If you were testing your deployment in Linux, you can simply replace the LinuxI2cDriver with our ZephyrI2cDriver:
 
 ```diff
+# In: topology.fpp
 -  instance i2cDriver: LinuxI2cDriver base id 0x10015000
 +  instance i2cDriver: Zephyr.ZephyrI2cDriver base id 0x10015000
 ```
@@ -341,12 +374,12 @@ Once a different bus driver is implemented, you can use it in your deployment to
 And update the configuration code in `configureTopology()` to use the Zephyr-specific device opening method shown in Step 3.
 
 ```diff
-// In Topology.cpp
+// In: Topology.cpp
 + #include <zephyr/device.h>
 + static const struct device *i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
 
 void configureTopology() {
--    Drv::I2cStatus status = i2cDriver.open("/dev/i2c-1"); // Linux open() call
+-    bool status = i2cDriver.open("/dev/i2c-1"); // Linux open() call
 +    Drv::I2cStatus status = i2cDriver.open(i2c_dev); // Zephyr open() call
     if (status != Drv::I2cStatus::I2C_OK) {
         Fw::Logger::log("[I2C] Failed to open I2C device\n");
