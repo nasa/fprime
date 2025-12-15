@@ -23,10 +23,8 @@
  * CFDP protocol data structure encode/decode implementation
  */
 
-#include "cf_app.h"
 #include "cf_cfdp_pdu.h"
 #include "cf_codec.h"
-#include "cf_events.h"
 
 #include <stdint.h>
 

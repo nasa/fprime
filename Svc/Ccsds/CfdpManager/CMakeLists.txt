@@ -19,6 +19,7 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_codec.c"
 #   DEPENDS
 #       MyPackage_MyOtherModule
 )
