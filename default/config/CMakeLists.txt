@@ -8,6 +8,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/AcConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/FileDispatcherCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpySequencerCfg.fpp"
