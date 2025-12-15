@@ -482,11 +482,11 @@ void CmdSequencerTester ::runSequenceByPortCall(const char* const fileName) {
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName);
+}
 
-    // reset
-    this->clearHistory();
-
-    // Invoke the seqDispatch port
+void CmdSequencerTester ::runSequenceByFileDispatcherPortCall(const char* const fileName) {
+    // Invoke the seqRun port
+    Fw::String fArg(fileName);
     this->invoke_to_seqDispatchIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -496,6 +496,7 @@ void CmdSequencerTester ::runSequenceByPortCall(const char* const fileName) {
     ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName);
 }
+
 
 void CmdSequencerTester ::runLoadedSequence() {
     // Invoke the port

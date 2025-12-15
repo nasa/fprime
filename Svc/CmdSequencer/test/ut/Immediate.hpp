@@ -64,6 +64,9 @@ class CmdSequencerTester : public ImmediateBase::CmdSequencerTester {
     //! Run an automatic sequence through a port call
     void AutoByPort();
 
+    //! Run an automatic sequence through a port call
+    void AutoByFileDispatcherPort();
+
     //! Send invalid manual commands while a sequence is running
     void InvalidManualCommands();
 

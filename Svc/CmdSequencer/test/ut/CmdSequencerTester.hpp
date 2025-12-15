@@ -334,6 +334,10 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     void runSequenceByPortCall(const char* const fileName  //!< The file name
     );
 
+    //! Run a sequence by the file dispatcher port call
+    void runSequenceByFileDispatcherPortCall(const char* const fileName  //!< The file name
+    );
+
     //! Send a step command
     void stepSequence(const U32 cmdSeq  //!< The command sequence number
     );
