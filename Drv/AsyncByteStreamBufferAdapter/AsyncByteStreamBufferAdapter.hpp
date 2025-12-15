@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  AsyncByteStreamBufferAdapter.hpp
-// \author bocchino
+// \author shahab
 // \brief  hpp file for AsyncByteStreamBufferAdapter component implementation class
 // ======================================================================
 
@@ -43,10 +43,10 @@ class AsyncByteStreamBufferAdapter final : public AsyncByteStreamBufferAdapterCo
                                  Fw::Buffer& fwBuffer  //!< The buffer
                                  ) override;
 
-    //! Handler implementation for byteStreamDriver
+    //! Handler implementation for byteStreamDriverReady
     //!
     //! Port for receiving ready signals from the driver
-    //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamReady
+    //! Sample connection: byteStreamDriver.ready -> byteStreamDriverClient.byteStreamDriverReady
     void byteStreamDriverReady_handler(FwIndexType portNum  //!< The port number
                                        ) override;
 
@@ -65,7 +65,7 @@ class AsyncByteStreamBufferAdapter final : public AsyncByteStreamBufferAdapterCo
     void toByteStreamDriverReturn_handler(FwIndexType portNum,  //!< The port number
                                           Fw::Buffer& buffer,
                                           const Drv::ByteStreamStatus& status) override;
-
+  
   private:
     // ----------------------------------------------------------------------
     // Private member variables
