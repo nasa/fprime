@@ -6,6 +6,7 @@ ACTIVERATEGROUPTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
+afile
 aleem
 ALLEXTERNALS
 alphanums
@@ -27,6 +28,7 @@ autocode
 autocoded
 autocoders
 autocoding
+autorun
 AYYYY
 baremetal
 batchmode
@@ -219,6 +221,7 @@ evt
 externalproject
 FAKELOGGER
 fbuild
+FDISP
 fdp
 featherm
 fecf
@@ -229,6 +232,8 @@ ffff
 Ffs
 fge
 fgt
+FILEDISPATCHER
+FILEDISPATCHERCFG
 FILEDOWNLINK
 FILEDOWNLINKCFG
 FILEHANDLING
@@ -629,6 +634,7 @@ spdx
 spi
 spidev
 spsc
+sqa
 srandom
 SRCS
 sreddy
