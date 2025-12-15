@@ -28,8 +28,6 @@
 #include "FppTest/component/active/FormalParamArrayArrayAc.hpp"
 #include "FppTest/component/active/FormalParamEnumEnumAc.hpp"
 #include "FppTest/component/active/FormalParamStructSerializableAc.hpp"
-#include "FppTest/component/active/StringArgsPortAc.hpp"
-#include "FppTest/utils/Utils.hpp"
 
 #define SERIAL_ARGS_BUFFER_CAPACITY 256
 
@@ -43,7 +41,10 @@ struct FormalParamsWithReturn {
 };
 
 // Empty type
-struct Empty {};
+struct Empty : Fw::Serializable {
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
+};
 
 template <typename ArgType>
 using FormalParams = FormalParamsWithReturn<ArgType, Empty>;
@@ -52,31 +53,43 @@ using FormalParams = FormalParamsWithReturn<ArgType, Empty>;
 // Primitive types
 // ----------------------------------------------------------------------
 
-struct BoolType {
+struct BoolType : Fw::Serializable {
     BoolType();
 
     bool val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct U32Type {
+struct U32Type : Fw::Serializable {
     U32Type();
 
     U32 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct I32Type {
+struct I32Type : Fw::Serializable {
     I32Type();
 
     I32 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct F32Type {
+struct F32Type : Fw::Serializable {
     F32Type();
 
     F32 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct PrimitiveTypes {
+struct PrimitiveTypes : Fw::Serializable {
     PrimitiveTypes();
 
     U32 val1;
@@ -85,34 +98,56 @@ struct PrimitiveTypes {
     F32 val4;
     bool val5;
     bool val6;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
 // ----------------------------------------------------------------------
 // FPP types
 // ----------------------------------------------------------------------
 
-struct EnumType {
+struct EnumType : Fw::Serializable {
     EnumType();
 
     FormalParamEnum val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct EnumTypes {
+struct EnumTypes : Fw::Serializable {
     EnumTypes();
 
     FormalParamEnum val1;
     FormalParamEnum val2;
     FormalAliasEnum val3;
     FormalAliasEnum val4;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct ArrayType {
+struct EnumTypesShort : Fw::Serializable {
+    EnumTypesShort();
+
+    FormalParamEnum val1;
+    FormalParamEnum val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
+};
+
+struct ArrayType : Fw::Serializable {
     ArrayType();
 
     FormalParamArray val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct ArrayTypes {
+struct ArrayTypes : Fw::Serializable {
     ArrayTypes();
 
     FormalParamArray val1;
@@ -121,19 +156,38 @@ struct ArrayTypes {
     FormalAliasArray val4;
     FormalAliasStringArray val5;
     FormalAliasStringArray val6;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct StructType {
+struct ArrayTypesShort : Fw::Serializable {
+    ArrayTypesShort();
+
+    FormalParamArray val1;
+    FormalParamArray val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
+};
+
+struct StructType : Fw::Serializable {
     StructType();
 
     FormalParamStruct val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct StructTypes {
+struct StructTypes : Fw::Serializable {
     StructTypes();
 
     FormalParamStruct val1;
     FormalParamStruct val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
 // ----------------------------------------------------------------------
@@ -143,103 +197,148 @@ struct StructTypes {
 using String1 = Fw::StringTemplate<80>;
 using String2 = Fw::StringTemplate<100>;
 
-struct PortStringType {
+struct PortStringType : Fw::Serializable {
     PortStringType();
 
     String1 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct PortStringTypes {
+struct PortStringTypes : Fw::Serializable {
     PortStringTypes();
 
     String1 val1;
     String1 val2;
     String2 val3;
     String2 val4;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct InternalInterfaceStringType {
+struct InternalInterfaceStringType : Fw::Serializable {
     InternalInterfaceStringType();
 
     Fw::InternalInterfaceString val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct InternalInterfaceStringTypes {
+struct InternalInterfaceStringTypes : Fw::Serializable {
     InternalInterfaceStringTypes();
 
     Fw::InternalInterfaceString val1;
     Fw::InternalInterfaceString val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct CmdStringType {
+struct CmdStringType : Fw::Serializable {
     CmdStringType();
 
     Fw::CmdStringArg val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct CmdStringTypes {
+struct CmdStringTypes : Fw::Serializable {
     CmdStringTypes();
 
     Fw::CmdStringArg val1;
     Fw::CmdStringArg val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct LogStringType {
+struct LogStringType : Fw::Serializable {
     LogStringType();
 
     Fw::LogStringArg val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct LogStringTypes {
+struct LogStringTypes : Fw::Serializable {
     LogStringTypes();
 
     Fw::LogStringArg val1;
     Fw::LogStringArg val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct TlmStringType {
+struct TlmStringType : Fw::Serializable {
     TlmStringType();
 
     Fw::TlmString val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct TlmStringTypes {
+struct TlmStringTypes : Fw::Serializable {
     TlmStringTypes();
 
     Fw::TlmString val1;
     Fw::TlmString val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct PrmStringType {
+struct PrmStringType : Fw::Serializable {
     PrmStringType();
 
     Fw::ParamString val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct PrmStringTypes {
+struct PrmStringTypes : Fw::Serializable {
     PrmStringTypes();
 
     Fw::ParamString val1;
     Fw::ParamString val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct StringType {
+struct StringType : Fw::Serializable {
     StringType();
 
     String1 val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct AliasStringArrayType {
+struct AliasStringArrayType : Fw::Serializable {
     AliasStringArrayType();
 
     FormalAliasStringArray val;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
-struct StringTypes {
+struct StringTypes : Fw::Serializable {
     StringTypes();
 
     String1 val1;
     String1 val2;
+
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;
 };
 
 // ----------------------------------------------------------------------
