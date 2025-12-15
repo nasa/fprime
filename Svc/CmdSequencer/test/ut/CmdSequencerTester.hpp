@@ -374,6 +374,14 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
 
     //! Open/Read interceptor
     Interceptor interceptor;
+
+    void textLogIn(FwEventIdType id,                //!< The event ID
+        const Fw::Time& timeTag,         //!< The time
+        const Fw::LogSeverity severity,  //!< The severity
+        const Fw::TextLogString& text    //!< The event string
+        ) override;
+
+
 };
 
 }  // namespace Svc

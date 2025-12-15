@@ -391,6 +391,9 @@ void CmdSequencerTester ::connectPorts() {
     // seqRunIn
     this->connect_to_seqRunIn(0, this->component.get_seqRunIn_InputPort(0));
 
+    // fileDispatch
+    this->connect_to_seqDispatchIn(0, this->component.get_seqDispatchIn_InputPort(0));
+
     // timeCaller
     this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
 
@@ -469,9 +472,22 @@ void CmdSequencerTester ::runSequence(const U32 cmdSeq, const char* const fileNa
 }
 
 void CmdSequencerTester ::runSequenceByPortCall(const char* const fileName) {
-    // Invoke the port
+    // Invoke the seqRun port
     Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
+    this->clearAndDispatch();
+    // Assert no command response
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    // Assert events
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_CS_SequenceLoaded(0, fileName);
+    ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName);
+
+    // reset
+    this->clearHistory();
+
+    // Invoke the seqDispatch port
+    this->invoke_to_seqDispatchIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
     ASSERT_CMD_RESPONSE_SIZE(0);
@@ -577,6 +593,17 @@ void CmdSequencerTester ::stepSequence(const U32 cmdSeq) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_STEP, cmdSeq, Fw::CmdResponse(Fw::CmdResponse::OK));
 }
+
+void CmdSequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
+    const Fw::Time& timeTag,         //!< The time
+    const Fw::LogSeverity severity,  //!< The severity
+    const Fw::TextLogString& text    //!< The event string
+) {
+    TextLogEntry e = {id, timeTag, severity, text};
+
+    printTextLogHistoryEntry(e, stdout);
+}
+
 }  // namespace Svc
 
 namespace Os {
@@ -607,5 +634,6 @@ DirectoryInterface* DirectoryInterface::getDelegate(DirectoryHandleStorage& alig
     return Os::Delegate::makeDelegate<DirectoryInterface, Os::Posix::Directory::PosixDirectory>(
         aligned_placement_new_memory);
 }
+
 
 }  // namespace Os
