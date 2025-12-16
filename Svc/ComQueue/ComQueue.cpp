@@ -135,10 +135,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,
                                        U32 cmdSeq,
                                        Svc::QueueType queueType,
-                                       FwIndexType indexType) {
+                                       FwIndexType index) {
     // Acquire the queue that we need to drain
     FwIndexType queueIndex =
-        (queueType == QueueType::COM_QUEUE) ? indexType : static_cast<FwIndexType>(indexType + COM_PORT_COUNT);
+        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
     this->drainQueue(queueIndex);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
