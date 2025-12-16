@@ -101,6 +101,67 @@ void ComQueueTester ::testQueueSend() {
     component.cleanup();
 }
 
+void ComQueueTester ::testQueueFlush() {
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
+
+    // Iterate over queues dispatch and flush each
+    for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::COM_QUEUE, portNum);
+        this->dispatchAll();
+        ASSERT_from_dataOut_SIZE(0);
+    }
+    clearFromPortHistory();
+    // Similar for buffer queues but the buffer should be returned
+    for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
+        invoke_to_bufferQueueIn(portNum, buffer);
+        this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, portNum);
+        this->dispatchAll();
+        ASSERT_from_bufferReturnOut(portNum, buffer);
+        ASSERT_from_dataOut_SIZE(0);
+    }
+    this->emitOne();  // Ensure that nothing is emitted
+    ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
+    clearFromPortHistory();
+    component.cleanup();
+}
+
+void ComQueueTester ::testQueueFlushAll() {
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
+
+    // Iterate over queues and queue a message to each
+    for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        this->dispatchAll();
+    }
+    // Same with buffer queues
+    for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
+        invoke_to_bufferQueueIn(portNum, buffer);
+        this->dispatchAll();
+    }
+    // Flush everything ensuring nothing is sent
+    this->sendCmd_FLUSH_ALL_QUEUES(0, 0);
+    this->dispatchAll();
+    this->emitOne();  // Ensure that nothing is emitted
+    ASSERT_from_dataOut_SIZE(0);
+    // Check that all buffers are returned (by count)
+    ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
+
+    // Check that each buffer returned is the expected one. Although, the order isn't guaranteed, the set should match
+    // since the implementation is in queue order. This thus makes an easy "did we get them all" check.
+    for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
+        ASSERT_from_bufferReturnOut(portNum, buffer);
+    }
+    clearFromPortHistory();
+    component.cleanup();
+}
+
 void ComQueueTester ::testQueuePause() {
     U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));

@@ -29,11 +29,6 @@ TEST(FileDownlink, DownlinkPartial) {
     tester.downlinkPartial();
 }
 
-TEST(FileDownlink, DownlinkTimeout) {
-    Svc::FileDownlinkTester tester;
-    tester.timeout();
-}
-
 TEST(FileDownlink, SendFilePort) {
     Svc::FileDownlinkTester tester;
     tester.sendFilePort();

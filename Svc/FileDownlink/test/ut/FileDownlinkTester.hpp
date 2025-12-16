@@ -102,10 +102,6 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //!
     void downlinkPartial();
 
-    //! Timeout
-    //!
-    void timeout();
-
     //! sendFilePort
     //! Test downlinking a file via a port
     //!

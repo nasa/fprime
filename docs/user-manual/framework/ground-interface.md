@@ -83,99 +83,23 @@ nothing to retry.
 ### Uplink
 
 Uplink handles received data, unpacks F´ data types, and routes these to the greater F´ system. In a typical formation,
-these com buffers are sent to the command dispatcher and raw buffers are sent to the file uplink. Uplink is implemented with
-the [Svc.Deframer](../../../Svc/Deframer/docs/sdd.md) component. This component may be rate group driven in which case
-it polls for data or it may be driven by a driver's receive output port in which case it handles the data on that
-incoming port call. Svc.Deframer implements the
-[DeframingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol_interface.html).
-
-Svc.Deframer unpacks F´ data from the supplied buffer using a
-[Svc::DeframingProtocol](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol.html), which calls back through the
-DeframingProtocolInterface to send deframed packets out to F´ components.
-
-Internally, Svc.Deframer uses a circular buffer to store incoming data such that messages are not required to be
-complete. This buffer is updated with the latest data and then processed for messages on each poll or receiving of data.
+these com buffers are sent to the command dispatcher and raw buffers are sent to the file uplink. Uplink is implemented by chaining multiple components:
+- a [Svc.FrameAccumulator](../../../Svc/FrameAccumulator/docs/sdd.md) component, accumulating bytes from the driver until it detects a full frame
+- a component implementing the [Svc.DeframerInterface](../../../Svc/Interfaces/docs/sdd.md) port interface to unpack the frame into F´ data types. F´ ships with implementations for various protocols:
+  - [Svc.FprimeDeframer](../../../Svc/FprimeDeframer/docs/sdd.md) for the lightweight F´ protocol
+  - [Svc.Ccsds package](../../../Svc/Ccsds) containing implementations for the CCSDS TC and Space Packet protocols
+- a router component implementing the [Svc.RouterInterface](../../../Svc/Interfaces/docs/sdd.md) port interface to route unpacked F´ data types to their destinations (e.g. command dispatcher, file uplink, etc). F´ ships with the [Svc.FprimeRouter](../../../Svc/FprimeRouter/docs/sdd.md) implementation for routing F´ data types
 
 ### Downlink
 
 Downlink takes in F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
-sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../../../Svc/Framer/docs/sdd.md)
-component, which implements the [FramingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_framing_protocol_interface.html).
-
-Svc.Framer packs F´ data using a [Svc::FramingProtocol](../../reference/api/cpp/html/class_svc_1_1_framing_protocol.html), which
-calls back through the FramingProtocolInterface to send framed packets out to the driver.
+sent to the driver for handling. Downlink is implemented with a component implementing the [Svc.FramerInterface](../../../Svc/Interfaces/docs/sdd.md) port interface. F´ ships with implementations for two different protocols:
+- [Svc.FprimeFramer](../../../Svc/FprimeFramer/docs/sdd.md)
+- [Svc.Ccsds Package](../../../Svc/Ccsds) containing implementations for the CCSDS TM and Space Packet protocols
 
 ## Adding a Custom Wire Protocol
 
-To add a custom wire protocol an implementation needs to be written for two interfaces (virtual base classes). These are
-[Svc::FramingProtocol](../../reference/api/cpp/html/class_svc_1_1_framing_protocol.html) and
-[Svc::DeframingProtocol](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol.html).
-
-Svc::FramingProtocol implementors need to implement one function: frame, taking in a pointer to the data to frame, the
-size of the data, and a packet type for the data. The base class supplies a
-[FramingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_framing_protocol_interface.html) member variable, `m_interface`, that
-allows implementors to call out for allocating data and sending the newly framed data. A minimal implementation is:
-
-```c++
-class MyFrameProtocol : public Svc::FramingProtocol {
-  public:
-    MyFrameProtocol() {}
-
-    void frame(const U8 *const data, const U32 size, Fw::ComPacketType packet_type) {
-        Fw::Buffer my_framed_data = m_interface.allocate(size);
-        auto serializer = my_framed_data.getSerializer();
-        serializer.serializeFrom(0xdeadbeef); // Some start word
-        serializer.serializeFrom(size);       // Write size
-        serializer.serializeFrom(data, size, Fw::Serialization::OMIT_LENGTH); // Data copied to buffer no length included
-        m_interface.send(my_framed_data);
-    }
-};
-```
-Here the protocol starts a frame with `0xdeadbeef`, followed by the data size, and then the data.
-
-Svc::DeframingProtocol implementors need to implement one function: deframe, taking in a circular buffer supplying data,
-filling the needed variable, and returning a status. The base class supplies a
-[DeframingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol_interface.html) member variable, `m_interface`,
-that allows implementors to call out for allocating data and routing the deframed data. A minimal implementation is:
-
-```c++
-class MyDeframeProtocol : public DeframingProtocol {
-  public:
-    MyDeframeProtocol() {}
-    
-    DeframingProtocol::DeframingStatus deframe(Types::CircularBuffer& ring, U32& needed) {
-        U32 start = 0;
-        U32 size = 0;
-        // Check for header or ask for more data
-        if (ring.get_remaining_size() < 8) {
-            needed = 8;
-            return DeframingProtocol::DEFRAMING_MORE_NEEDED;
-        }
-        // Peek into the header and read out values
-        (void) ring.peek(start, 0);
-        (void) ring.peek(size, 0);
-        needed = 4 + 4 + size; // start + size + data
-        
-        // Not enough data, call out for more
-        if (ring.get_remaining_size() < size) {
-            return DeframingProtocol::DEFRAMING_MORE_NEEDED;
-        }
-        // Protocol violation
-         else if (start != 0xdeadbeef) {
-            return DeframingProtocol::DEFRAMING_INVALID_CHECKSUM;
-        }
-        Fw::Buffer buffer = m_interface->allocate(size);
-        buffer.setSize(size);
-        ring.peek(buffer.getData(), size, 8);
-        m_interface->route(buffer);
-        return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
-    }
-```
-Here the protocol starts a frame with `0xdeadbeef` and uses size to extra the data. Deframing is typically the inverse
-of the framing protocol as seen in this example.
-
-> [!NOTE]
-> implementors should always use `peak` to get data and never rotate it, as Svc.Deframer will rotate the buffer based on the status.
+To add custom protocols (e.g. CCSDS, custom telemetry formats, etc), users should follow the detailed [How-To Implement a Framing Protocol Guide](../../how-to/custom-framing.md)
 
 ## Adding a Custom Driver 
 

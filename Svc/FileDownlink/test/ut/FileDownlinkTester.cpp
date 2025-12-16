@@ -18,7 +18,6 @@
 #define CMD_SEQ 0
 #define QUEUE_DEPTH 10
 
-#define TIMEOUT_MS 1000
 #define COOLDOWN_MS 500
 #define CYCLE_MS 100
 #define MAX_ALLOCATED 100
@@ -30,7 +29,7 @@ namespace Svc {
 
 FileDownlinkTester ::FileDownlinkTester()
     : FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE), component("FileDownlink"), buffers_index(0) {
-    this->component.configure(TIMEOUT_MS, COOLDOWN_MS, CYCLE_MS, 10);
+    this->component.configure(COOLDOWN_MS, CYCLE_MS, 10);
     this->connectPorts();
     this->initComponents();
 }
@@ -226,54 +225,6 @@ void FileDownlinkTester ::downlinkPartial() {
 
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
-
-    // Remove the outgoing file
-    this->removeFile(sourceFileName);
-}
-
-void FileDownlinkTester ::timeout() {
-    // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
-
-    // Create a file
-    const char* const sourceFileName = "source.bin";
-    const char* const destFileName = "dest.bin";
-    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    FileBuffer fileBufferOut(data, sizeof(data));
-    fileBufferOut.write(sourceFileName);
-
-    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
-    Fw::CmdStringArg destCmdStringArg(destFileName);
-    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
-    this->component.doDispatch();       // Dispatch sendfile command
-    this->component.Run_handler(0, 0);  // Pull file from queue
-
-    // Continue running the component without dispatching the responses
-    for (U32 i = 0; i < TIMEOUT_MS / CYCLE_MS; i++) {
-        this->component.Run_handler(0, 0);
-        ASSERT_CMD_RESPONSE_SIZE(0);
-    }
-
-    this->component.Run_handler(0, 0);
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    Fw::CmdResponse expResp =
-        FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR;
-    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, expResp);
-
-    // Assert telemetry
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_PacketsSent_SIZE(1);
-
-    // Assert events
-    ASSERT_EVENTS_SIZE(2);
-    ASSERT_EVENTS_DownlinkTimeout_SIZE(1);
-    ASSERT_EVENTS_SendStarted_SIZE(1);
-    //    printTextLogHistory(stdout);
-    ASSERT_EVENTS_SendStarted(0, 10, sourceFileName, destFileName);
-    ASSERT_EVENTS_DownlinkTimeout(0, sourceFileName, destFileName);
-
-    // Assert idle mode
-    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
 
     // Remove the outgoing file
     this->removeFile(sourceFileName);
