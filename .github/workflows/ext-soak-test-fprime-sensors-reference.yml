@@ -82,7 +82,6 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: build-artifacts-soak
-          retry: 5
 
       - name: "Stop Services"
         shell: bash
