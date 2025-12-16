@@ -30,21 +30,11 @@
  *  R (rx) and S (tx) logic.
  */
 
-#include "cfe.h"
-#include "cf_verify.h"
-#include "cf_app.h"
-#include "cf_events.h"
-#include "cf_perfids.h"
 #include "cf_cfdp.h"
-#include "cf_utils.h"
-
 #include "cf_cfdp_r.h"
 #include "cf_cfdp_s.h"
-#include "cf_cfdp_dispatch.h"
-#include "cf_cfdp_sbintf.h"
 
 #include <string.h>
-#include "cf_assert.h"
 
 /*----------------------------------------------------------------
  *
@@ -133,7 +123,7 @@ void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 static inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
 {
-    CF_Assert(txn->flags.com.q_index != CF_QueueIdx_FREE);
+    FW_ASSERT(txn->flags.com.q_index != CF_QueueIdx_FREE, txn->flags.com.q_index);
     return !!((txn->state == CF_TxnState_S2) || (txn->state == CF_TxnState_R2));
 }
 
@@ -144,7 +134,7 @@ static inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 static inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
 {
-    CF_Assert(txn->history);
+    FW_ASSERT(txn->history);
 
     return (txn->history->dir == CF_Direction_TX);
 }
@@ -225,7 +215,7 @@ static CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direct
     chunklist_head = CF_GetChunkListHead(chan, dir);
 
     /* this should never be null */
-    CF_Assert(chunklist_head);
+    FW_ASSERT(chunklist_head);
 
     if (*chunklist_head == NULL)
     {
@@ -352,7 +342,7 @@ CFE_Status_t CF_CFDP_SendMd(CF_Transaction_t *txn)
     {
         md = &ph->int_header.md;
 
-        CF_Assert((txn->state == CF_TxnState_S1) || (txn->state == CF_TxnState_S2));
+        FW_ASSERT((txn->state == CF_TxnState_S1) || (txn->state == CF_TxnState_S2), txn->state);
 
         md->size = txn->fsize;
 
@@ -484,7 +474,7 @@ CFE_Status_t CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, C
     CF_EntityId_t           src_eid;
     CF_EntityId_t           dst_eid;
 
-    CF_Assert((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN));
+    FW_ASSERT((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN), dir_code);
 
     if (CF_CFDP_IsSender(txn))
     {
@@ -577,7 +567,8 @@ CFE_Status_t CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     }
     else
     {
-        CF_Assert(CF_CFDP_GetClass(txn) == CF_CFDP_CLASS_2);
+        CF_CFDP_Class_t tx_class = CF_CFDP_GetClass(txn);
+        FW(tx_class == CF_CFDP_CLASS_2, tx_class);
 
         nak = &ph->int_header.nak;
 
@@ -604,7 +595,7 @@ CFE_Status_t CF_CFDP_RecvPh(uint8 chan_num, CF_Logical_PduBuffer_t *ph)
 {
     CFE_Status_t ret = CFE_SUCCESS;
 
-    CF_Assert(chan_num < CF_NUM_CHANNELS);
+    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
     /*
      * If the source eid, destination eid, or sequence number fields
      * are larger than the sizes configured in the cf platform config
@@ -1083,7 +1074,8 @@ CFE_Status_t CF_CFDP_InitEngine(void)
             {
                 list_head = CF_GetChunkListHead(&CF_AppData.engine.channels[i], k);
 
-                CF_Assert((chunk_mem_offset + CF_DIR_MAX_CHUNKS[k][i]) <= CF_NUM_CHUNKS_ALL_CHANNELS);
+                FW_ASSERT((chunk_mem_offset + CF_DIR_MAX_CHUNKS[k][i]) <= CF_NUM_CHUNKS_ALL_CHANNELS,
+                          chunk_mem_offset, CF_DIR_MAX_CHUNKS[k][i], CF_NUM_CHUNKS_ALL_CHANNELS);
                 CF_ChunkListInit(&cw->chunks, CF_DIR_MAX_CHUNKS[k][i], &CF_AppData.engine.chunk_mem[chunk_mem_offset]);
                 chunk_mem_offset += CF_DIR_MAX_CHUNKS[k][i];
                 CF_CList_InitNode(&cw->cl_node);
@@ -1125,7 +1117,7 @@ CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t *node, void 
     }
     else
     {
-        CF_Assert(txn->flags.com.q_index == CF_QueueIdx_TXA); /* huh? */
+        FW_ASSERT(txn->flags.com.q_index == CF_QueueIdx_TXA); /* huh? */
 
         /* if no more messages, then chan->cur will be set.
          * If the transaction sent the last filedata PDU and EOF, it will move itself
@@ -1248,7 +1240,7 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan)
                                                                      CF_CFDP_S_Tick_Nak};
     int qs[CF_TickType_NUM_TYPES]                                 = {CF_QueueIdx_RX, CF_QueueIdx_TXW, CF_QueueIdx_TXW};
 
-    CF_Assert(chan->tick_type < CF_TickType_NUM_TYPES);
+    FW_ASSERT(chan->tick_type < CF_TickType_NUM_TYPES, chan->tick_type);
 
     for (; chan->tick_type < CF_TickType_NUM_TYPES; ++chan->tick_type)
     {
@@ -1350,7 +1342,7 @@ CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, 
 {
     CF_Transaction_t *txn;
     CF_Channel_t *    chan = &CF_AppData.engine.channels[chan_num];
-    CF_Assert(chan_num < CF_NUM_CHANNELS);
+    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
 
     CFE_Status_t ret = CFE_SUCCESS;
 
@@ -1579,7 +1571,7 @@ static void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, uint8 *counte
         }
         else
         {
-            CF_Assert(*counter); /* sanity check it isn't zero */
+            FW_ASSERT(*counter); /* sanity check it isn't zero */
             --*counter;
         }
     }
@@ -1732,7 +1724,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
     chan = CF_GetChannelFromTxn(txn);
 
     /* this should always be */
-    CF_Assert(chan != NULL);
+    FW_ASSERT(chan != NULL);
 
     /* If this was on the TXA queue (transmit side) then we need to move it out
      * so the tick processor will stop trying to actively transmit something -

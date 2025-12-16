@@ -25,20 +25,11 @@
  *  Handles all CFDP engine functionality specific to TX transactions.
  */
 
-#include "cfe.h"
-#include "cf_verify.h"
-#include "cf_app.h"
-#include "cf_events.h"
-#include "cf_perfids.h"
 #include "cf_cfdp.h"
-#include "cf_utils.h"
-
 #include "cf_cfdp_s.h"
-#include "cf_cfdp_dispatch.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "cf_assert.h"
 
 /*----------------------------------------------------------------
  *
@@ -192,7 +183,7 @@ CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, uint32 foffs, uint32 
             CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CFE_SUCCESS */
 
             CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.file_data_bytes += actual_bytes;
-            CF_Assert((foffs + actual_bytes) <= txn->fsize); /* sanity check */
+            FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, actual_bytes, txn->fsize); /* sanity check */
             if (calc_crc)
             {
                 CF_CRC_Digest(&txn->crc, fd->data_ptr, fd->data_len);

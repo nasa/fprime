@@ -26,6 +26,8 @@
 #ifndef CF_CFDP_H
 #define CF_CFDP_H
 
+#include <Fw/FPrimeBasicTypes.h>
+
 #include "cf_cfdp_types.h"
 
 /**

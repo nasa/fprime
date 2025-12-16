@@ -23,20 +23,11 @@
  *
  *  Handles all CFDP engine functionality specific to RX transactions.
  */
-#include "cfe.h"
-#include "cf_verify.h"
-#include "cf_app.h"
-#include "cf_events.h"
-#include "cf_perfids.h"
 #include "cf_cfdp.h"
-#include "cf_utils.h"
-
 #include "cf_cfdp_r.h"
-#include "cf_cfdp_dispatch.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "cf_assert.h"
 
 /*----------------------------------------------------------------
  *
@@ -460,7 +451,7 @@ void CF_CFDP_R2_GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk
     /* This function is only invoked for NAK types */
     nak      = args->nak;
     pseglist = &nak->segment_list;
-    CF_Assert(chunk->size > 0);
+    FW_ASSERT(chunk->size > 0, chunk->size);
 
     /* it seems that scope in the old engine is not used the way I read it in the spec, so
      * leave this code here for now for future reference */
@@ -520,9 +511,9 @@ CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
                 nak->scope_end            = 0;
                 sret                      = CF_CFDP_SendNak(txn, ph);
                 txn->flags.rx.fd_nak_sent = true; /* latch that at least one NAK has been sent requesting filedata */
-                CF_Assert(sret != CF_SEND_PDU_ERROR); /* NOTE: this CF_Assert is here because CF_CFDP_SendNak()
-                                                     does not return CF_SEND_PDU_ERROR, so if it's ever added to
-                                                     that function we need to test handling it here */
+                /* NOTE: this assert is here because CF_CFDP_SendNak() does not return CF_SEND_PDU_ERROR,
+                   so if it's ever added to that function we need to test handling it here */
+                FW_ASSERT(sret != CF_SEND_PDU_ERROR); 
                 if (sret == CFE_SUCCESS)
                 {
                     CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.nak_segment_requests += cret;
@@ -545,8 +536,8 @@ CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
             nak->segment_list.num_segments             = 1;
 
             sret = CF_CFDP_SendNak(txn, ph);
-            CF_Assert(sret != CF_SEND_PDU_ERROR); /* this CF_Assert is here because CF_CFDP_SendNak() does not
-                                                    return CF_SEND_PDU_ERROR */
+            // this assert is here because CF_CFDP_SendNak() does not return CF_SEND_PDU_ERROR */
+            FW_ASSERT(sret != CF_SEND_PDU_ERROR);
             if (sret == CFE_SUCCESS)
             {
                 ret = CFE_SUCCESS;
@@ -736,7 +727,8 @@ CFE_Status_t CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn)
     {
         sret = CF_CFDP_SendFin(txn, txn->state_data.receive.r2.dc, txn->state_data.receive.r2.fs,
                                CF_TxnStatus_To_ConditionCode(txn->history->txn_stat));
-        CF_Assert(sret != CF_SEND_PDU_ERROR); /* CF_CFDP_SendFin does not return CF_SEND_PDU_ERROR */
+        /* CF_CFDP_SendFin does not return CF_SEND_PDU_ERROR */
+        FW_ASSERT(sret != CF_SEND_PDU_ERROR); 
         txn->state_data.receive.sub_state =
             CF_RxSubState_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
         if (sret != CFE_SUCCESS)
@@ -1056,7 +1048,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     {
         sret = CF_CFDP_SendAck(txn, CF_CFDP_AckTxnStatus_ACTIVE, CF_CFDP_FileDirective_EOF,
                                txn->state_data.receive.r2.eof_cc, txn->history->peer_eid, txn->history->seq_num);
-        CF_Assert(sret != CF_SEND_PDU_ERROR);
+        FW_ASSERT(sret != CF_SEND_PDU_ERROR);
 
         /* if CFE_SUCCESS, then move on in the state machine. CF_CFDP_SendAck does not return
          * CF_SEND_PDU_ERROR */

@@ -23,6 +23,8 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp.c"
         "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_r.c"
         "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_s.c"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_chunk.c"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_clist.c"
 #   DEPENDS
 #       MyPackage_MyOtherModule
 )
