@@ -65,7 +65,7 @@ class AsyncByteStreamBufferAdapter final : public AsyncByteStreamBufferAdapterCo
     void toByteStreamDriverReturn_handler(FwIndexType portNum,  //!< The port number
                                           Fw::Buffer& buffer,
                                           const Drv::ByteStreamStatus& status) override;
-  
+
   private:
     // ----------------------------------------------------------------------
     // Private member variables

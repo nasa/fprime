@@ -26,14 +26,12 @@ AsyncByteStreamBufferAdapterTester ::AsyncByteStreamBufferAdapterTester()
 AsyncByteStreamBufferAdapterTester ::~AsyncByteStreamBufferAdapterTester() {}
 
 // --------------------------------
-// Overriden functions 
+// Overriden functions
 // --------------------------------
-void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(
-        FwIndexType portNum,
-        Fw::Buffer& fwBuffer) {
+void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_toByteStreamDriver(fwBuffer);
 
-    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK; 
+    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
 
     if (this->m_byte_stream_driver_fail) {
         status = Drv::ByteStreamStatus::OTHER_ERROR;
@@ -41,12 +39,11 @@ void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(
     invoke_to_toByteStreamDriverReturn(portNum, fwBuffer, status);
 }
 
-
 //! Handle a text event
-void AsyncByteStreamBufferAdapterTester ::textLogIn(FwEventIdType id, //!< The event ID
-                                const Fw::Time& timeTag,         //!< The time
-                                const Fw::LogSeverity severity,  //!< The severity
-                                const Fw::TextLogString& text    //!< The event string
+void AsyncByteStreamBufferAdapterTester ::textLogIn(FwEventIdType id,                //!< The event ID
+                                                    const Fw::Time& timeTag,         //!< The time
+                                                    const Fw::LogSeverity severity,  //!< The severity
+                                                    const Fw::TextLogString& text    //!< The event string
 ) {
     TextLogEntry e = {id, timeTag, severity, text};
 
@@ -59,7 +56,7 @@ void AsyncByteStreamBufferAdapterTester ::textLogIn(FwEventIdType id, //!< The e
 
 void AsyncByteStreamBufferAdapterTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
-    //buffer.resetSer();
+    // buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
         buffer.serializeFrom(static_cast<U8>(STest::Pick::any()));
     }
@@ -68,7 +65,7 @@ void AsyncByteStreamBufferAdapterTester ::random_fill(Fw::SerializeBufferBase& b
 void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
     clearFromPortHistory();
     this->clearHistory();
-    
+
     U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
@@ -78,24 +75,24 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
 
     invoke_to_bufferIn(0, m_buffer);
 
-    //driver is not ready by default, verify no data flow
+    // driver is not ready by default, verify no data flow
     ASSERT_from_toByteStreamDriver_SIZE(0);
     ASSERT_EVENTS_DriverNotReady_SIZE(1);
 
-    //driver ready, verify data is flowing
+    // driver ready, verify data is flowing
     invoke_to_byteStreamDriverReady(0);
     invoke_to_bufferIn(0, m_buffer);
     ASSERT_from_toByteStreamDriver_SIZE(1);
-    ASSERT_from_bufferInReturn_SIZE(1); 
+    ASSERT_from_bufferInReturn_SIZE(1);
     ASSERT_from_toByteStreamDriver(0, m_buffer);
 
-    //Force data failure
-    this->m_byte_stream_driver_fail = true; 
+    // Force data failure
+    this->m_byte_stream_driver_fail = true;
     invoke_to_bufferIn(0, m_buffer);
 
-    //Verify data send error
+    // Verify data send error
     ASSERT_EVENTS_DataSendError_SIZE(1);
-    ASSERT_EVENTS_DataSendError(0,3);
+    ASSERT_EVENTS_DataSendError(0, 3);
     ASSERT_EVENTS_DriverNotReady_SIZE(1);
     ASSERT_from_toByteStreamDriver_SIZE(2);
     this->m_byte_stream_driver_fail = false;
@@ -113,18 +110,18 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
 
     invoke_to_byteStreamDriverReady(0);
 
-    //Faulty data from byte stream driver; send with bad status
+    // Faulty data from byte stream driver; send with bad status
     invoke_to_fromByteStreamDriver(0, m_buffer, Drv::ByteStreamStatus::RECV_NO_DATA);
 
-    //Verify no data at buffer out as the status was bad
+    // Verify no data at buffer out as the status was bad
     ASSERT_from_bufferOut_SIZE(0);
     ASSERT_EVENTS_DataReceiveError_SIZE(1);
-    
-    //Good data
+
+    // Good data
     this->clearHistory();
     invoke_to_fromByteStreamDriver(0, m_buffer, Drv::ByteStreamStatus::OP_OK);
-    
-    //Verify no errors and data is sent out
+
+    // Verify no errors and data is sent out
     ASSERT_EVENTS_DataReceiveError_SIZE(0);
     ASSERT_from_bufferOut_SIZE(1);
     ASSERT_from_bufferOut(0, m_buffer);

@@ -43,22 +43,20 @@ class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAda
     // Tests
     // ----------------------------------------------------------------------
 
-    //! 
+    //!
     void test_byte_stream_out();
 
-    //! 
+    //!
     void test_byte_stream_in();
 
     void test_byte_stream_return();
 
-    void from_toByteStreamDriver_handler(
-        FwIndexType portNum,
-        Fw::Buffer& fwBuffer) override;
+    void from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
-    void textLogIn(FwEventIdType id, 
-        const Fw::Time& timeTag,        
-        const Fw::LogSeverity severity,
-        const Fw::TextLogString& text) override; 
+    void textLogIn(FwEventIdType id,
+                   const Fw::Time& timeTag,
+                   const Fw::LogSeverity severity,
+                   const Fw::TextLogString& text) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -82,8 +80,8 @@ class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAda
     AsyncByteStreamBufferAdapter component;
     Fw::Buffer m_buffer;
     U8 m_data_store[DATA_SIZE];
-    bool m_byte_stream_driver_fail; 
-  };
+    bool m_byte_stream_driver_fail;
+};
 
 }  // namespace Drv
 
