@@ -103,7 +103,7 @@ TEST_F(FpySequencerTester, if) {
     // check underflow
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
     err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
@@ -376,7 +376,7 @@ TEST_F(FpySequencerTester, stackOp) {
     FpySequencer_StackOpDirective directiveOOB(Fpy::DirectiveId::IEQ);
     result = tester_stackOp_directiveHandler(directiveOOB, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test invalid operation
     FpySequencer_StackOpDirective directiveInvalid(Fpy::DirectiveId::NO_OP);
@@ -943,7 +943,7 @@ TEST_F(FpySequencerTester, discard) {
     directive.set_size(2);
     result = tester_discard_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, stackCmd) {
@@ -963,7 +963,7 @@ TEST_F(FpySequencerTester, stackCmd) {
     tester_push<U8>(0x12);
     result = tester_stackCmd_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: argsSize near max U32
     // If we use naive check (stack.size < argsSize + sizeof(FwOpcodeType)),
@@ -973,7 +973,7 @@ TEST_F(FpySequencerTester, stackCmd) {
     tester_get_m_runtime_ptr()->stack.size = 0;
     result = tester_stackCmd_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, memCmp) {
@@ -1002,7 +1002,7 @@ TEST_F(FpySequencerTester, memCmp) {
     directive.set_size(3);
     result = tester_memCmp_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: size * 2 would overflow U32
     // With size = 0x80000001, size * 2 = 0x100000002 which truncates to 0x2 in U32
@@ -1011,7 +1011,7 @@ TEST_F(FpySequencerTester, memCmp) {
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
     result = tester_memCmp_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, setFlag) {
@@ -1042,7 +1042,7 @@ TEST_F(FpySequencerTester, setFlag) {
     directive.set_flagIdx(0);
     result = tester_setFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, getFlag) {
@@ -1134,7 +1134,7 @@ TEST_F(FpySequencerTester, getField) {
     directive = FpySequencer_GetFieldDirective(20, 1);
     result = tester_getField_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test member out of bounds
     tester_get_m_runtime_ptr()->stack.size = 0;
@@ -1150,7 +1150,7 @@ TEST_F(FpySequencerTester, getField) {
     directive = FpySequencer_GetFieldDirective(0, 0);
     result = tester_getField_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: offset + memberSize > parentSize
     directive = FpySequencer_GetFieldDirective(100, 50);  // parentSize=100, memberSize=50
@@ -1182,7 +1182,7 @@ TEST_F(FpySequencerTester, getField) {
     tester_push<Fpy::StackSizeType>(0);  // Only 4 bytes, not enough for parentSize=100
     result = tester_getField_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, storeLocal) {
@@ -1242,7 +1242,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     directive.set_size(100);  // request more bytes than available
     result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: size near max
     directive.set_size(Fpy::MAX_STACK_SIZE);
@@ -1250,7 +1250,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, peek) {
@@ -1259,7 +1259,7 @@ TEST_F(FpySequencerTester, peek) {
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_peek_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
     // okay now try duplicating two bytes on the top of the stack
     tester_push<U8>(12);
     tester_push<U8>(34);
@@ -1342,7 +1342,7 @@ TEST_F(FpySequencerTester, peek) {
     tester_get_m_runtime_ptr()->stack.size = 0;
     result = tester_peek_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: byteCount exceeds available stack space
     tester_get_m_runtime_ptr()->stack.size = 100;
@@ -1388,7 +1388,7 @@ TEST_F(FpySequencerTester, call) {
     err = DirectiveError::NO_ERROR;
     result = tester_call_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test target out of bounds
     tester_get_m_runtime_ptr()->stack.size = 0;
@@ -1531,7 +1531,7 @@ TEST_F(FpySequencerTester, returnDirective) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     result = tester_return_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: discarding more args than available
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(100);
@@ -1548,7 +1548,7 @@ TEST_F(FpySequencerTester, returnDirective) {
     directive = FpySequencer_ReturnDirective(10, 50);  // try to discard 50 args but only 20 available
     result = tester_return_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, loadGlobal) {
@@ -1631,14 +1631,14 @@ TEST_F(FpySequencerTester, storeGlobal) {
     directive.set_size(10);
     result = tester_storeGlobal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: size near max
     directive.set_size(Fpy::MAX_STACK_SIZE);
     tester_get_m_runtime_ptr()->stack.size = 10;
     result = tester_storeGlobal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
 TEST_F(FpySequencerTester, storeGlobalConstOffset) {
@@ -1677,7 +1677,7 @@ TEST_F(FpySequencerTester, storeGlobalConstOffset) {
     directive = FpySequencer_StoreGlobalConstOffsetDirective(0, 10);
     result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: globalOffset near max
     directive = FpySequencer_StoreGlobalConstOffsetDirective(Fpy::MAX_STACK_SIZE, 100);
@@ -3501,7 +3501,7 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     directive = FpySequencer_StoreLocalConstOffsetDirective(0, 100);
     result = tester_storeLocalConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test addr exceeding MAX_STACK_SIZE (currentFrameStart + lvarOffset > MAX_STACK_SIZE)
     tester_get_m_runtime_ptr()->stack.size = 100;
