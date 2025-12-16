@@ -28,9 +28,12 @@
  *  This file is intended to be a generic class that can be used in other apps.
  */
 
-#include "cf_clist.h"
+#include "cf_clist.hpp"
 
 #include <Fw/Types/Assert.hpp>
+
+namespace Svc {
+namespace Ccsds {
 
 /*----------------------------------------------------------------
  *
@@ -266,3 +269,6 @@ void CF_CList_Traverse_R(CF_CListNode_t *end, CF_CListFn_t fn, void *context)
         }
     }
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

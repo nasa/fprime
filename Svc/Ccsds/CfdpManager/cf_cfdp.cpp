@@ -30,11 +30,14 @@
  *  R (rx) and S (tx) logic.
  */
 
-#include "cf_cfdp.h"
-#include "cf_cfdp_r.h"
-#include "cf_cfdp_s.h"
+#include "cf_cfdp.hpp"
+#include "cf_cfdp_r.hpp"
+#include "cf_cfdp_s.hpp"
 
 #include <string.h>
+
+namespace Svc {
+namespace Ccsds {
 
 /*----------------------------------------------------------------
  *
@@ -49,7 +52,7 @@ void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, void *msgbuf, CF_Logical_PduBu
     memset(ph, 0, sizeof(*ph));
 
     /* attach encoder object to PDU buffer which is attached to SB (encapsulation) buffer */
-    penc->base = (uint8 *)msgbuf;
+    penc->base = (U8 *)msgbuf;
     ph->penc   = penc;
 
     CF_CFDP_CodecReset(&penc->codec_state, total_size);
@@ -83,7 +86,7 @@ void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const void *msgbuf, CF_Logical
     memset(ph, 0, sizeof(*ph));
 
     /* attach decoder object to PDU buffer which is attached to SB (encapsulation) buffer */
-    pdec->base = (const uint8 *)msgbuf;
+    pdec->base = (const U8 *)msgbuf;
     ph->pdec   = pdec;
 
     CF_CFDP_CodecReset(&pdec->codec_state, total_size);
@@ -236,7 +239,7 @@ static CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direct
  *-----------------------------------------------------------------*/
 static void CF_CFDP_SetPduLength(CF_Logical_PduBuffer_t *ph)
 {
-    uint16 final_pos;
+    U16 final_pos;
 
     /* final position of the encoder state should reflect the entire PDU length */
     final_pos = CF_CODEC_GET_POSITION(ph->penc);
@@ -263,7 +266,7 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     /* directive_code == 0 if file data */
     CF_Logical_PduBuffer_t *ph;
     CF_Logical_PduHeader_t *hdr;
-    uint8                   eid_len;
+    U8                   eid_len;
 
     ph = CF_CFDP_MsgOutGet(txn, silent);
 
@@ -591,7 +594,7 @@ CFE_Status_t CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvPh(uint8 chan_num, CF_Logical_PduBuffer_t *ph)
+CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
 {
     CFE_Status_t ret = CFE_SUCCESS;
 
@@ -727,13 +730,13 @@ CFE_Status_t CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     /* if the CRC flag is set, need to deduct the size of the CRC from the data - always 32 bits */
     if (CF_CODEC_IS_OK(ph->pdec) && ph->pdu_header.crc_flag)
     {
-        if (ph->int_header.fd.data_len < sizeof(CF_CFDP_uint32_t))
+        if (ph->int_header.fd.data_len < sizeof(CF_CFDP_U32_t))
         {
             CF_CODEC_SET_DONE(ph->pdec);
         }
         else
         {
-            ph->int_header.fd.data_len -= sizeof(CF_CFDP_uint32_t);
+            ph->int_header.fd.data_len -= sizeof(CF_CFDP_U32_t);
         }
     }
 
@@ -1145,7 +1148,7 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
 {
     CF_Transaction_t *     txn;
     CF_CFDP_CycleTx_args_t args;
-    uint8                  chan_num = (chan - CF_AppData.engine.channels);
+    U8                  chan_num = (chan - CF_AppData.engine.channels);
 
     if (CF_AppData.config_table->chan[chan_num].dequeue_enabled)
     {
@@ -1296,7 +1299,7 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, uint8 keep, uint8 chan, uint8 priority)
+void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority)
 {
     txn->chan_num = chan;
     txn->priority = priority;
@@ -1309,8 +1312,8 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, ui
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, uint8 keep, uint8 chan,
-                                    uint8 priority, CF_EntityId_t dest_id)
+static void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan,
+                                    U8 priority, CF_EntityId_t dest_id)
 {
     CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
                       "CF: start class %d tx of file %lu:%.*s -> %lu:%.*s", cfdp_class + 1,
@@ -1337,8 +1340,8 @@ static void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, uint8 keep,
-                            uint8 chan_num, uint8 priority, CF_EntityId_t dest_id)
+CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+                            U8 chan_num, U8 priority, CF_EntityId_t dest_id)
 {
     CF_Transaction_t *txn;
     CF_Channel_t *    chan = &CF_AppData.engine.channels[chan_num];
@@ -1383,7 +1386,7 @@ CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, 
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CF_Transaction_t *CF_CFDP_StartRxTransaction(uint8 chan_num)
+CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
 {
     CF_Channel_t *    chan = &CF_AppData.engine.channels[chan_num];
     CF_Transaction_t *txn;
@@ -1416,7 +1419,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(uint8 chan_num)
  *
  *-----------------------------------------------------------------*/
 static CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
-                                                 CF_CFDP_Class_t cfdp_class, uint8 keep, uint8 chan, uint8 priority,
+                                                 CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
                                                  CF_EntityId_t dest_id)
 {
     CFE_Status_t ret;
@@ -1456,7 +1459,7 @@ static CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *
  *
  *-----------------------------------------------------------------*/
 CFE_Status_t CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
-                                 uint8 keep, uint8 chan, uint8 priority, uint16 dest_id)
+                                 U8 keep, U8 chan, U8 priority, U16 dest_id)
 {
     int            i;
     CF_Playback_t *pb;
@@ -1558,7 +1561,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, uint8 *counter)
+static void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
 {
     if (pb->counted != up)
     {
@@ -1758,7 +1761,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
         /* extra bookkeeping for tx direction only */
         if (txn->history->dir == CF_Direction_TX && txn->flags.tx.cmd_tx)
         {
-            CF_Assert(chan->num_cmd_tx); /* sanity check */
+            FW_ASSERT(chan->num_cmd_tx); /* sanity check */
 
             --chan->num_cmd_tx;
         }
@@ -1769,7 +1772,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
     if (txn->pb)
     {
         /* a playback's transaction is now done, decrement the playback counter */
-        CF_Assert(txn->pb->num_ts);
+        FW_ASSERT(txn->pb->num_ts);
         --txn->pb->num_ts;
     }
 
@@ -2012,7 +2015,7 @@ void CF_CFDP_DisableEngine(void)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-bool CF_CFDP_IsPollingDir(const char *src_file, uint8 chan_num)
+bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
 {
     bool                return_code                  = false;
     char                src_dir[CF_FILENAME_MAX_LEN] = "\0";
@@ -2110,3 +2113,6 @@ void CF_CFDP_MoveFile(const char *src, const char *dest_dir)
         OS_remove(src);
     }
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

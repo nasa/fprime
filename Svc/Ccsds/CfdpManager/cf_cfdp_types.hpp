@@ -28,16 +28,16 @@
  * as the C file that defines that function.
  */
 
-#ifndef CF_CFDP_TYPES_H
-#define CF_CFDP_TYPES_H
+#ifndef CF_CFDP_TYPES_HPP
+#define CF_CFDP_TYPES_HPP
 
-#include "cf_cfdp_pdu.h"
-#include "cf_extern_typedefs.h"
-#include "cf_clist.h"
-#include "cf_chunk.h"
-#include "cf_timer.h"
-#include "cf_crc.h"
-#include "cf_codec.h"
+#include "cf_cfdp_pdu.hpp"
+#include "cf_clist.hpp"
+#include "cf_chunk.hpp"
+#include "cf_codec.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
@@ -461,4 +461,7 @@ typedef struct CF_Engine
     bool   enabled;
 } CF_Engine_t;
 
-#endif
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_CFDP_TYPES_HPP */

@@ -26,10 +26,13 @@
  * transactions which are receiving a file.
  */
 
-#ifndef CF_CFDP_R_H
-#define CF_CFDP_R_H
+#ifndef CF_CFDP_R_HPP
+#define CF_CFDP_R_HPP
 
-#include "cf_cfdp.h"
+#include "cf_cfdp.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /**
  * @brief Argument for Gap Compute function
@@ -403,4 +406,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  */
 void CF_CFDP_R_SendInactivityEvent(CF_Transaction_t *txn);
 
-#endif /* CF_CFDP_R_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* CF_CFDP_R_HPP */

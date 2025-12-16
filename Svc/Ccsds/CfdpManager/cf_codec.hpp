@@ -23,16 +23,19 @@
  * CFDP protocol data structure encode/decode API declarations
  */
 
-#ifndef CF_CODEC_H
-#define CF_CODEC_H
+#ifndef CF_CODEC_HPP
+#define CF_CODEC_HPP
 
 #include <stdbool.h>
 
 #include <Fw/FPrimeBasicTypes.h>
 
-#include "cf_cfdp_pdu.h"
-#include "cf_logical_pdu.h"
-#include "default_cf_extern_typedefs.h"
+#include "cf_cfdp_pdu.hpp"
+#include "cf_logical_pdu.hpp"
+#include "default_cf_extern_typedefs.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /**
  * @brief Tracks the current state of an encode or decode operation
@@ -825,4 +828,7 @@ void CF_CFDP_DecodeNak(CF_DecoderState_t *state, CF_Logical_PduNak_t *plnak);
  */
 void CF_CFDP_DecodeCrc(CF_DecoderState_t *state, U32 *plcrc);
 
-#endif /* !CF_CODEC_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_CODEC_HPP */

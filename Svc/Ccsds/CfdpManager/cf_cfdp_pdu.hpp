@@ -36,14 +36,17 @@
  * should change to encode/decode functions.
  */
 
-#ifndef CF_CFDP_PDU_H
-#define CF_CFDP_PDU_H
+#ifndef CF_CFDP_PDU_HPP
+#define CF_CFDP_PDU_HPP
 
 #include <stddef.h>
 
 #include <Fw/FPrimeBasicTypes.h>
 
-#include "default_cf_interface_cfg.h"
+#include "default_cf_interface_cfg.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /**
  * @brief Maximum encoded size of a CFDP PDU header
@@ -383,4 +386,7 @@ typedef struct CF_CFDP_PduFileDataContent
     U8 data[CF_MAX_PDU_SIZE - sizeof(CF_CFDP_PduFileDataHeader_t) - CF_CFDP_MIN_HEADER_SIZE];
 } CF_CFDP_PduFileDataContent_t;
 
-#endif /* !CF_CFDP_PDU_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_CFDP_PDU_HPP */

@@ -23,8 +23,11 @@
  * Declarations and prototypes for cf_extern_typedefs module
  */
 
-#ifndef CF_EXTERN_TYPEDEFS_H
-#define CF_EXTERN_TYPEDEFS_H
+#ifndef CF_EXTERN_TYPEDEFS_HPP
+#define CF_EXTERN_TYPEDEFS_HPP
+
+namespace Svc {
+namespace Ccsds {
 
 // TODO This should live in a CFDP config file
 #define CFDP_FILE_NAME_STRING_SIZE 200
@@ -113,4 +116,7 @@ typedef U32 CF_EntityId_t;
  */
 typedef U32 CF_TransactionSeq_t;
 
-#endif /* CF_EXTERN_TYPEDEFS_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* CF_EXTERN_TYPEDEFS_HPP */

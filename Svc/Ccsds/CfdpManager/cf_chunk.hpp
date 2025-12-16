@@ -23,12 +23,18 @@
  *  The CF Application chunks (spare gap tracking) header file
  */
 
-#ifndef CF_CHUNK_H
-#define CF_CHUNK_H
+#ifndef CF_CHUNK_HPP
+#define CF_CHUNK_HPP
 
-typedef uint32 CF_ChunkIdx_t;
-typedef uint32 CF_ChunkOffset_t;
-typedef uint32 CF_ChunkSize_t;
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp>
+
+namespace Svc {
+namespace Ccsds {
+
+typedef U32 CF_ChunkIdx_t;
+typedef U32 CF_ChunkOffset_t;
+typedef U32 CF_ChunkSize_t;
 
 /**
  * @brief Pairs an offset with a size to identify a specific piece of a file
@@ -174,7 +180,7 @@ const CF_Chunk_t *CF_ChunkList_GetFirstChunk(const CF_ChunkList_t *chunks);
  *
  * @returns The number of computed gaps.
  */
-uint32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_gaps, CF_ChunkSize_t total,
+U32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_gaps, CF_ChunkSize_t total,
                                 CF_ChunkOffset_t start, CF_ChunkList_ComputeGapFn_t compute_gap_fn, void *opaque);
 
 /************************************************************************/
@@ -272,11 +278,11 @@ int CF_Chunks_CombinePrevious(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_
  * @param chunk        Chunk data to combine
  *
  * @returns boolean code indicating if chunks were combined
- * @retval 1 if combined with another chunk
- * @retval 0 if not combined
+ * @retval true if combined with another chunk
+ * @retval false if not combined
  *
  */
-CFE_Status_t CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
+bool CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
 
 /************************************************************************/
 /** @brief Finds the smallest size out of all chunks.
@@ -308,4 +314,7 @@ CF_ChunkIdx_t CF_Chunks_FindSmallestSize(const CF_ChunkList_t *chunks);
  */
 void CF_Chunks_Insert(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
 
-#endif /* !CF_CHUNK_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_CHUNK_HPP */

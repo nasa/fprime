@@ -35,13 +35,14 @@
  * - Variable-size content is normalized, allocated as the maximum possible size
  */
 
-#ifndef CF_LOGICAL_PDU_H
-#define CF_LOGICAL_PDU_H
+#ifndef CF_LOGICAL_PDU_HPP
+#define CF_LOGICAL_PDU_HPP
 
-#include "default_cf_extern_typedefs.h"
+#include "default_cf_extern_typedefs.hpp"
+#include "cf_cfdp_pdu.hpp"
 
-/* many enum values in this file are based on CFDP-defined values */
-#include "cf_cfdp_pdu.h"
+namespace Svc {
+namespace Ccsds {
 
 /**
  * @brief Maximum number of TLV values in a single PDU
@@ -365,4 +366,7 @@ typedef struct CF_Logical_PduBuffer
     U32 content_crc;
 } CF_Logical_PduBuffer_t;
 
-#endif /* !CF_LOGICAL_PDU_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_LOGICAL_PDU_HPP */

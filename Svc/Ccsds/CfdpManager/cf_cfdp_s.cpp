@@ -25,11 +25,14 @@
  *  Handles all CFDP engine functionality specific to TX transactions.
  */
 
-#include "cf_cfdp.h"
-#include "cf_cfdp_s.h"
+#include "cf_cfdp.hpp"
+#include "cf_cfdp_s.hpp"
 
 #include <stdio.h>
 #include <string.h>
+
+namespace Svc {
+namespace Ccsds {
 
 /*----------------------------------------------------------------
  *
@@ -95,7 +98,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, uint32 foffs, uint32 bytes_to_read, uint8 calc_crc)
+CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc)
 {
     bool                            success = true;
     int                             status  = 0;
@@ -482,8 +485,8 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_SegmentRequest_t *sr;
     const CF_Logical_PduNak_t *        nak;
-    uint8                              counter;
-    uint8                              bad_sr;
+    U8                              counter;
+    U8                              bad_sr;
 
     bad_sr = 0;
 
@@ -832,3 +835,6 @@ void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
     if (ret == 1)
         *cont = 1; /* cause dispatcher to re-enter this wakeup */
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

@@ -23,11 +23,14 @@
  * CFDP protocol data structure encode/decode implementation
  */
 
-#include "cf_cfdp_pdu.h"
-#include "cf_codec.h"
+#include "cf_cfdp_pdu.hpp"
+#include "cf_codec.hpp"
 
 #include <stdint.h>
 #include <string.h>
+
+namespace Svc {
+namespace Ccsds {
 
 typedef struct CF_Codec_BitField
 {
@@ -1149,3 +1152,6 @@ void CF_CFDP_DecodeAllSegments(CF_DecoderState_t *state, CF_Logical_SegmentList_
         ++plseg->num_segments;
     }
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

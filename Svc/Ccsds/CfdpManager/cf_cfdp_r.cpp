@@ -23,11 +23,16 @@
  *
  *  Handles all CFDP engine functionality specific to RX transactions.
  */
-#include "cf_cfdp.h"
-#include "cf_cfdp_r.h"
+#include "cf_cfdp.hpp"
+#include "cf_cfdp_r.hpp"
+
+#include <Fw/Types/SuccessEnumAc.hpp>
 
 #include <stdio.h>
 #include <string.h>
+
+namespace Svc {
+namespace Ccsds {
 
 /*----------------------------------------------------------------
  *
@@ -79,7 +84,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, uint32 expected_crc)
+CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
 {
     CFE_Status_t ret = CFE_SUCCESS;
     CF_CRC_Finalize(&txn->crc);
@@ -103,11 +108,11 @@ CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, uint32 expected_crc)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-void CF_CFDP_R2_Complete(CF_Transaction_t *txn, int ok_to_send_nak)
+void CF_CFDP_R2_Complete(CF_Transaction_t *txn, bool ok_to_send_nak)
 {
-    uint32 ret;
-    int    send_nak = false;
-    int    send_fin = false;
+    U32 ret;
+    bool send_nak = false;
+    bool send_fin = false;
     /* checking if r2 is complete. Check NAK list, and send NAK if appropriate */
     /* if all data is present, then there will be no gaps in the chunk */
 
@@ -281,7 +286,7 @@ CFE_Status_t CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuff
 void CF_CFDP_R1_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     int                        ret = CF_CFDP_R_SubstateRecvEof(txn, ph);
-    uint32                     crc;
+    U32                     crc;
     const CF_Logical_PduEof_t *eof;
 
     /* this function is only entered for PDUs identified as EOF type */
@@ -337,7 +342,7 @@ void CF_CFDP_R2_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
             /* only check for complete if EOF with no errors */
             if (txn->state_data.receive.r2.eof_cc == CF_CFDP_ConditionCode_NO_ERROR)
             {
-                CF_CFDP_R2_Complete(txn, 1); /* CF_CFDP_R2_Complete() will change state */
+                CF_CFDP_R2_Complete(txn, true); /* CF_CFDP_R2_Complete() will change state */
             }
             else
             {
@@ -418,7 +423,7 @@ void CF_CFDP_R2_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
 
         if (txn->flags.rx.fd_nak_sent)
         {
-            CF_CFDP_R2_Complete(txn, 0); /* once nak-retransmit received, start checking for completion at each fd */
+            CF_CFDP_R2_Complete(txn, false); /* once nak-retransmit received, start checking for completion at each fd */
         }
 
         if (!txn->flags.rx.complete)
@@ -480,7 +485,7 @@ CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
                                    CF_AppData.config_table->local_eid, 1, txn->history->seq_num, 1);
     CF_Logical_PduNak_t *nak;
     CFE_Status_t         sret;
-    uint32               cret;
+    U32               cret;
     CFE_Status_t         ret = CF_ERROR;
 
     if (ph)
@@ -611,7 +616,7 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 {
-    uint8        buf[CF_R2_CRC_CHUNK_SIZE];
+    U8        buf[CF_R2_CRC_CHUNK_SIZE];
     size_t       count_bytes;
     size_t       want_offs_size;
     size_t       read_size;
@@ -850,7 +855,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                     txn->state_data.receive.cached_pos      = 0; /* reset psn due to open */
                     txn->flags.rx.md_recv                   = true;
                     txn->state_data.receive.r2.acknak_count = 0; /* in case part of NAK */
-                    CF_CFDP_R2_Complete(txn, 1);                 /* check for completion now that md is received */
+                    CF_CFDP_R2_Complete(txn, true);                 /* check for completion now that md is received */
                 }
             }
         }
@@ -966,7 +971,7 @@ void CF_CFDP_R_AckTimerTick(CF_Transaction_t *txn)
         /* ACK timer expired, so check for completion */
         if (!txn->flags.rx.complete)
         {
-            CF_CFDP_R2_Complete(txn, 1);
+            CF_CFDP_R2_Complete(txn, true);
         }
         else if (txn->state_data.receive.sub_state == CF_RxSubState_CLOSEOUT_SYNC)
         {
@@ -1098,3 +1103,6 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
         CF_CFDP_R_AckTimerTick(txn);
     }
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

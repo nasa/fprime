@@ -30,10 +30,13 @@
  * either by overriding this header or by generating definitions from a command/data
  * dictionary tool.
  */
-#ifndef CF_INTERFACE_CFG_H
-#define CF_INTERFACE_CFG_H
+#ifndef CF_INTERFACE_CFG_HPP
+#define CF_INTERFACE_CFG_HPP
 
-#include <Fw/FPrimeBasicTypes.h>
+#include <Fw/FPrimeBasicTypes.hpp>
+
+namespace Svc {
+namespace Ccsds {
 
 /**
  * \defgroup cfscfplatformcfg CFS CFDP Platform Configuration
@@ -137,5 +140,8 @@
 #define CF_PDU_ENCAPSULATION_EXTRA_TRAILING_BYTES 0
 
 /**\}*/
+
+}  // namespace Ccsds
+}  // namespace Svc
 
 #endif

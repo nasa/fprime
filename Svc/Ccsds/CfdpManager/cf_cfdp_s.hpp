@@ -26,10 +26,13 @@
  * transactions which are sending a file.
  */
 
-#ifndef CF_CFDP_S_H
-#define CF_CFDP_S_H
+#ifndef CF_CFDP_S_HPP
+#define CF_CFDP_S_HPP
 
-#include "cf_cfdp_types.h"
+#include "cf_cfdp_types.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /************************************************************************/
 /** @brief S1 receive PDU processing.
@@ -328,5 +331,8 @@ void CF_CFDP_S2_Nak_Arm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param ph Pointer to the PDU information
  */
 void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+
+}  // namespace Ccsds
+}  // namespace Svc
 
 #endif /* !CF_CFDP_S_H */

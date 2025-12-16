@@ -23,13 +23,16 @@
  *  The CF Application CFDP engine and packet parsing header file
  */
 
-#ifndef CF_CFDP_H
-#define CF_CFDP_H
+#ifndef CF_CFDP_HPP
+#define CF_CFDP_HPP
 
 #include <Fw/FPrimeBasicTypes.h>
 
-#include "cf_cfdp_types.h"
+#include "cf_cfdp_types.hpp"
 
+namespace Svc {
+namespace Ccsds {
+    
 /**
  * @brief Structure for use with the CF_CFDP_CycleTx() function
  */
@@ -201,8 +204,8 @@ void CF_CFDP_DisableEngine(void);
  * @retval #CFE_SUCCESS \copydoc CFE_SUCCESS
  * @returns CFE_SUCCESS on success. CF_ERROR on error.
  */
-CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, uint8 keep,
-                            uint8 chan, uint8 priority, CF_EntityId_t dest_id);
+CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+                            U8 chan, U8 priority, CF_EntityId_t dest_id);
 
 /************************************************************************/
 /** @brief Begin transmit of a directory.
@@ -226,7 +229,7 @@ CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, 
  * @returns CFE_SUCCESS on success. CF_ERROR on error.
  */
 CFE_Status_t CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
-                                 uint8 keep, uint8 chan, uint8 priority, uint16 dest_id);
+                                 U8 keep, U8 chan, U8 priority, U16 dest_id);
 
 /************************************************************************/
 /** @brief Build the PDU header in the output buffer to prepare to send a packet.
@@ -391,7 +394,7 @@ void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_ty
  * @retval CF_ERROR for general errors
  * @retval CF_SHORT_PDU_ERROR if PDU too short
  */
-CFE_Status_t CF_CFDP_RecvPh(uint8 chan_num, CF_Logical_PduBuffer_t *ph);
+CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack a metadata PDU from a received message.
@@ -544,7 +547,7 @@ void CF_CFDP_CancelTransaction(CF_Transaction_t *txn);
  * @param priority   Priority of transfer
  *
  */
-void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, uint8 keep, uint8 chan, uint8 priority);
+void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority);
 
 /************************************************************************/
 /** @brief Helper function to start a new RX transaction
@@ -560,7 +563,7 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, ui
  * @returns Pointer to new transaction
  *
  */
-CF_Transaction_t *CF_CFDP_StartRxTransaction(uint8 chan_num);
+CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num);
 
 /* functions to handle LVs (length-value, CFDP spec) */
 /* returns number of bytes copied, or -1 on error */
@@ -775,7 +778,7 @@ CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t *node, void *context);
  *
  * @retval true/false
  */
-bool CF_CFDP_IsPollingDir(const char *src_file, uint8 chan_num);
+bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num);
 
 /************************************************************************/
 /** @brief Remove/Move file after transaction
@@ -797,4 +800,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn);
  */
 void CF_CFDP_MoveFile(const char *src, const char *dest_dir);
 
-#endif /* !CF_CFDP_H */
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif /* !CF_CFDP_HPP */

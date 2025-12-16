@@ -33,7 +33,12 @@
 
 #include <string.h>
 
-#include "cf_chunk.h"
+#include <Fw/Types/Assert.hpp>
+
+#include "cf_chunk.hpp"
+
+namespace Svc {
+namespace Ccsds {
 
 /*----------------------------------------------------------------
  *
@@ -166,10 +171,10 @@ int CF_Chunks_CombinePrevious(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_
  * See description in cf_chunk.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk)
+bool CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk)
 {
     CF_ChunkIdx_t    combined_i = i;
-    CFE_Status_t     ret        = 0;
+    bool             ret        = false;
     CF_ChunkOffset_t chunk_end  = chunk->offset + chunk->size;
 
     /* Assert no rollover, only possible as a bug */
@@ -198,7 +203,7 @@ CFE_Status_t CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, cons
 
         /* Erase the rest of the combined chunks (if any) */
         CF_Chunks_EraseRange(chunks, i + 1, combined_i);
-        ret = 1;
+        ret = true;
     }
 
     return ret;
@@ -358,10 +363,10 @@ void CF_ChunkListReset(CF_ChunkList_t *chunks)
  * See description in cf_chunk.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-uint32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_gaps, CF_ChunkSize_t total,
+U32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_gaps, CF_ChunkSize_t total,
                                 CF_ChunkOffset_t start, CF_ChunkList_ComputeGapFn_t compute_gap_fn, void *opaque)
 {
-    uint32           ret = 0;
+    U32           ret = 0;
     CF_ChunkIdx_t    i   = 0;
     CF_ChunkOffset_t next_off;
     CF_ChunkOffset_t gap_start;
@@ -422,3 +427,6 @@ uint32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_
 
     return ret;
 }
+
+}  // namespace Ccsds
+}  // namespace Svc

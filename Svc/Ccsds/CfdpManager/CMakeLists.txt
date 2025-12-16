@@ -10,23 +10,18 @@
 #
 ####
 
-# Module names are derived from the path from the nearest project/library/framework
-# root when not specifically overridden by the developer, i.e. the module defined by
-# `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-
 register_fprime_library(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CfdpTypes.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_codec.c"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp.c"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_r.c"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_s.c"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_chunk.c"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_clist.c"
-#   DEPENDS
-#       MyPackage_MyOtherModule
+        "${CMAKE_CURRENT_LIST_DIR}/cf_codec.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_r.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_s.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_chunk.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cf_clist.cpp"
 )
 
 ### Unit Tests ###
