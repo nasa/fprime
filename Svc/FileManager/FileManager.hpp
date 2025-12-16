@@ -13,6 +13,7 @@
 #ifndef Svc_FileManager_HPP
 #define Svc_FileManager_HPP
 
+#include <atomic>
 #include "Os/FileSystem.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
 
@@ -140,6 +141,16 @@ class FileManager final : public FileManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Handler implementations for user-defined internal interfaces
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for run
+    //!
+    //! Internal port for handling schedIn
+    void run_internalInterfaceHandler() override;
+
+  private:
+    // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------
 
@@ -182,6 +193,8 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Command sequence number stored for final response
     U32 m_currentCmdSeq;
+
+    std::atomic<bool> m_runQueued;
 };
 
 }  // end namespace Svc

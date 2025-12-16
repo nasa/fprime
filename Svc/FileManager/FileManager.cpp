@@ -34,7 +34,8 @@ FileManager ::FileManager(const char* const compName  //!< The component name
       m_listState(IDLE),
       m_totalEntries(0),
       m_currentOpCode(0),
-      m_currentCmdSeq(0) {}
+      m_currentCmdSeq(0),
+      m_runQueued(false) {}
 
 FileManager ::~FileManager() {}
 
@@ -204,6 +205,17 @@ void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
 }
 
 void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
+    bool isQueued = false;  // We only update when nothing is queued
+    // Check for false (no message queued) and if false, atomically make it true
+    (void)this->m_runQueued.compare_exchange_weak(isQueued, true);
+    if (not isQueued) {
+        this->run_internalInterfaceInvoke();
+    }
+}
+
+void FileManager ::run_internalInterfaceHandler() {
+    FW_ASSERT(this->m_runQueued);
+    this->m_runQueued = false;  // Run is not queued anymore (we are running)
     // Only process if we're in the middle of a directory listing
     if (m_listState == LISTING_IN_PROGRESS) {
         // Process multiple files per rate tick based on configuration
