@@ -41,11 +41,11 @@ void ByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
                                                            Fw::Buffer& buffer,
                                                            const Drv::ByteStreamStatus& status) {
     if (status == Drv::ByteStreamStatus::OP_OK) {
-        bufferOut_out(portNum, buffer); 
+        bufferOut_out(portNum, buffer);
     } else {
         this->log_WARNING_LO_DataReceiveError(status);
     }
-    fromByteStreamDriverReturn_out(portNum, buffer); 
+    fromByteStreamDriverReturn_out(portNum, buffer);
 }
 
 void ByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {

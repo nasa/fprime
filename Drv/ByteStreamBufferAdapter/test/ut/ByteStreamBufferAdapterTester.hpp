@@ -43,22 +43,20 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     // Tests
     // ----------------------------------------------------------------------
 
-    //! 
+    //!
     void test_byte_stream_out();
 
-    //! 
+    //!
     void test_byte_stream_in();
 
     void test_byte_stream_return();
 
-    Drv::ByteStreamStatus from_toByteStreamDriver_handler(
-        FwIndexType portNum,
-        Fw::Buffer& sendBuffer) override;
+    Drv::ByteStreamStatus from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& sendBuffer) override;
 
-    void textLogIn(FwEventIdType id, 
-        const Fw::Time& timeTag,        
-        const Fw::LogSeverity severity,
-        const Fw::TextLogString& text) override; 
+    void textLogIn(FwEventIdType id,
+                   const Fw::Time& timeTag,
+                   const Fw::LogSeverity severity,
+                   const Fw::TextLogString& text) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -82,7 +80,7 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     ByteStreamBufferAdapter component;
     Fw::Buffer m_buffer;
     U8 m_data_store[DATA_SIZE];
-    bool m_byte_stream_driver_fail; 
+    bool m_byte_stream_driver_fail;
 };
 
 }  // namespace Drv
