@@ -28,4 +28,11 @@ module Fw {
     ref timeInterval: Fw.TimeInterval @< Reference to TimeInterval object
   )
 
+  enum TimeComparison {
+    LT = -1
+    EQ = 0
+    GT = 1
+    INCOMPARABLE = 2
+  }
+
 }
