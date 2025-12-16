@@ -2,8 +2,8 @@
 #define FW_TIME_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Time/TimeValueSerializableAc.hpp>
 #include <Fw/Time/TimeComparisonEnumAc.hpp>
+#include <Fw/Time/TimeValueSerializableAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <config/TimeBaseEnumAc.hpp>
@@ -58,7 +58,7 @@ class Time : public Serializable {
     //! Compare two times
     //! \return The result
     static TimeComparison compare(const Time& time1,  //!< Time 1
-                              const Time& time2   //!< Time 2
+                                  const Time& time2   //!< Time 2
     );
 
     //! Add two times
