@@ -54,6 +54,7 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-sensors-reference
+          target_ref: soak-testing
 
       - name: Cross compile
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
