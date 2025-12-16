@@ -41,6 +41,10 @@
 
 #include <stddef.h>
 
+#include <Fw/FPrimeBasicTypes.h>
+
+#include "default_cf_interface_cfg.h"
+
 /**
  * @brief Maximum encoded size of a CFDP PDU header
  *
@@ -49,7 +53,7 @@
  * the blue book permits.
  */
 #define CF_CFDP_MAX_HEADER_SIZE \
-    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_uint64_t))) /* 8 bytes for each variable item */
+    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_U64_t))) /* 8 bytes for each variable item */
 
 /**
  * @brief Minimum encoded size of a CFDP PDU header
@@ -57,7 +61,7 @@
  * Per the blue book, the size of the Entity ID and Sequence Number must be at least 1 byte.
  */
 #define CF_CFDP_MIN_HEADER_SIZE \
-    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_uint8_t))) /* 1 byte for each variable item */
+    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_U8_t))) /* 1 byte for each variable item */
 
 /**
  * @brief Maximum encoded size of a CFDP PDU that this implementation can accept
@@ -91,32 +95,32 @@
  */
 typedef struct
 {
-    uint8 octets[1];
-} CF_CFDP_uint8_t;
+    U8 octets[1];
+} CF_CFDP_U8_t;
 
 /**
  * @brief Encoded 16-bit value in the CFDP PDU
  */
 typedef struct
 {
-    uint8 octets[2];
-} CF_CFDP_uint16_t;
+    U8 octets[2];
+} CF_CFDP_U16_t;
 
 /**
  * @brief Encoded 32-bit value in the CFDP PDU
  */
 typedef struct
 {
-    uint8 octets[4];
-} CF_CFDP_uint32_t;
+    U8 octets[4];
+} CF_CFDP_U32_t;
 
 /**
  * @brief Encoded 64-bit value in the CFDP PDU
  */
 typedef struct
 {
-    uint8 octets[8];
-} CF_CFDP_uint64_t;
+    U8 octets[8];
+} CF_CFDP_U64_t;
 
 /**
  * @brief Structure representing base CFDP PDU header
@@ -133,9 +137,9 @@ typedef struct
  */
 typedef struct CF_CFDP_PduHeader
 {
-    CF_CFDP_uint8_t  flags;           /**< \brief Flags indicating the PDU type, direction, mode, etc */
-    CF_CFDP_uint16_t length;          /**< \brief Length of the entire PDU, in octets */
-    CF_CFDP_uint8_t  eid_tsn_lengths; /**< \brief Lengths of the EID+TSN data (bitfields) */
+    CF_CFDP_U8_t  flags;           /**< \brief Flags indicating the PDU type, direction, mode, etc */
+    CF_CFDP_U16_t length;          /**< \brief Length of the entire PDU, in octets */
+    CF_CFDP_U8_t  eid_tsn_lengths; /**< \brief Lengths of the EID+TSN data (bitfields) */
 
     /* variable-length data goes here - it is at least 3 additional bytes */
 } CF_CFDP_PduHeader_t;
@@ -147,7 +151,7 @@ typedef struct CF_CFDP_PduHeader
  */
 typedef struct CF_CFDP_PduFileDirectiveHeader
 {
-    CF_CFDP_uint8_t directive_code;
+    CF_CFDP_U8_t directive_code;
 } CF_CFDP_PduFileDirectiveHeader_t;
 
 /**
@@ -160,7 +164,7 @@ typedef struct CF_CFDP_PduFileDirectiveHeader
  */
 typedef struct CF_CFDP_lv
 {
-    CF_CFDP_uint8_t length; /**< \brief Length of data field */
+    CF_CFDP_U8_t length; /**< \brief Length of data field */
 } CF_CFDP_lv_t;
 
 /**
@@ -173,8 +177,8 @@ typedef struct CF_CFDP_lv
  */
 typedef struct CF_CFDP_tlv
 {
-    CF_CFDP_uint8_t type;   /**< \brief Nature of data field */
-    CF_CFDP_uint8_t length; /**< \brief Length of data field */
+    CF_CFDP_U8_t type;   /**< \brief Nature of data field */
+    CF_CFDP_U8_t length; /**< \brief Length of data field */
 } CF_CFDP_tlv_t;
 
 /**
@@ -293,9 +297,9 @@ typedef enum
  */
 typedef struct CF_CFDP_PduEof
 {
-    CF_CFDP_uint8_t  cc;
-    CF_CFDP_uint32_t crc;
-    CF_CFDP_uint32_t size;
+    CF_CFDP_U8_t  cc;
+    CF_CFDP_U32_t crc;
+    CF_CFDP_U32_t size;
 } CF_CFDP_PduEof_t;
 
 /**
@@ -305,7 +309,7 @@ typedef struct CF_CFDP_PduEof
  */
 typedef struct CF_CFDP_PduFin
 {
-    CF_CFDP_uint8_t flags;
+    CF_CFDP_U8_t flags;
 } CF_CFDP_PduFin_t;
 
 /**
@@ -315,8 +319,8 @@ typedef struct CF_CFDP_PduFin
  */
 typedef struct CF_CFDP_PduAck
 {
-    CF_CFDP_uint8_t directive_and_subtype_code;
-    CF_CFDP_uint8_t cc_and_transaction_status;
+    CF_CFDP_U8_t directive_and_subtype_code;
+    CF_CFDP_U8_t cc_and_transaction_status;
 } CF_CFDP_PduAck_t;
 
 /**
@@ -326,8 +330,8 @@ typedef struct CF_CFDP_PduAck
  */
 typedef struct CF_CFDP_SegmentRequest
 {
-    CF_CFDP_uint32_t offset_start;
-    CF_CFDP_uint32_t offset_end;
+    CF_CFDP_U32_t offset_start;
+    CF_CFDP_U32_t offset_end;
 } CF_CFDP_SegmentRequest_t;
 
 /**
@@ -337,8 +341,8 @@ typedef struct CF_CFDP_SegmentRequest
  */
 typedef struct CF_CFDP_PduNak
 {
-    CF_CFDP_uint32_t scope_start;
-    CF_CFDP_uint32_t scope_end;
+    CF_CFDP_U32_t scope_start;
+    CF_CFDP_U32_t scope_end;
 } CF_CFDP_PduNak_t;
 
 /**
@@ -348,8 +352,8 @@ typedef struct CF_CFDP_PduNak
  */
 typedef struct CF_CFDP_PduMd
 {
-    CF_CFDP_uint8_t  segmentation_control;
-    CF_CFDP_uint32_t size;
+    CF_CFDP_U8_t  segmentation_control;
+    CF_CFDP_U32_t size;
 } CF_CFDP_PduMd_t;
 
 /**
@@ -362,7 +366,7 @@ typedef struct CF_CFDP_PduFileDataHeader
      * have segment metadata prior to this, depending on how the fields in the
      * base header are set
      */
-    CF_CFDP_uint32_t offset;
+    CF_CFDP_U32_t offset;
 } CF_CFDP_PduFileDataHeader_t;
 
 /**
@@ -376,7 +380,7 @@ typedef struct CF_CFDP_PduFileDataHeader
  */
 typedef struct CF_CFDP_PduFileDataContent
 {
-    uint8 data[CF_MAX_PDU_SIZE - sizeof(CF_CFDP_PduFileDataHeader_t) - CF_CFDP_MIN_HEADER_SIZE];
+    U8 data[CF_MAX_PDU_SIZE - sizeof(CF_CFDP_PduFileDataHeader_t) - CF_CFDP_MIN_HEADER_SIZE];
 } CF_CFDP_PduFileDataContent_t;
 
 #endif /* !CF_CFDP_PDU_H */

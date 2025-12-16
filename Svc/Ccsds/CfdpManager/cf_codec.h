@@ -26,8 +26,13 @@
 #ifndef CF_CODEC_H
 #define CF_CODEC_H
 
+#include <stdbool.h>
+
+#include <Fw/FPrimeBasicTypes.h>
+
 #include "cf_cfdp_pdu.h"
 #include "cf_logical_pdu.h"
+#include "default_cf_extern_typedefs.h"
 
 /**
  * @brief Tracks the current state of an encode or decode operation
@@ -49,7 +54,7 @@ typedef struct CF_CodecState
 typedef struct CF_EncoderState
 {
     CF_CodecState_t codec_state; /**< \brief Common state */
-    uint8 *         base;        /**< \brief Pointer to start of encoded PDU data */
+    U8 *         base;        /**< \brief Pointer to start of encoded PDU data */
 } CF_EncoderState_t;
 
 /**
@@ -60,7 +65,7 @@ typedef struct CF_EncoderState
 typedef struct CF_DecoderState
 {
     CF_CodecState_t codec_state; /**< \brief Common state */
-    const uint8 *   base;        /**< \brief Pointer to start of encoded PDU data */
+    const U8 *   base;        /**< \brief Pointer to start of encoded PDU data */
 } CF_DecoderState_t;
 
 /*********************************************************************************
@@ -303,7 +308,7 @@ const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize);
  * @param Value  Integer value that needs to be encoded
  * @returns Minimum number of bytes that the value requires (between 1 and 8, inclusive)
  */
-uint8 CF_CFDP_GetValueEncodedSize(uint64 Value);
+U8 CF_CFDP_GetValueEncodedSize(U64 Value);
 
 /************************************************************************/
 /**
@@ -324,7 +329,7 @@ uint8 CF_CFDP_GetValueEncodedSize(uint64 Value);
  * @param value  Integer value that needs to be encoded
  * @param encode_size  Number of octets to encode the value in (between 1 and 8, inclusive)
  */
-void CF_EncodeIntegerInSize(CF_EncoderState_t *state, uint64 value, uint8 encode_size);
+void CF_EncodeIntegerInSize(CF_EncoderState_t *state, U64 value, U8 encode_size);
 
 /************************************************************************/
 /**
@@ -343,7 +348,7 @@ void CF_EncodeIntegerInSize(CF_EncoderState_t *state, uint64 value, uint8 encode
  * @param decode_size  Number of octets that the value is encoded in (between 1 and 8, inclusive)
  * @returns Decoded value
  */
-uint64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, uint8 decode_size);
+U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size);
 
 /*********************************************************************************
  *
@@ -595,7 +600,7 @@ void CF_CFDP_EncodeNak(CF_EncoderState_t *state, CF_Logical_PduNak_t *plnak);
  * @param state  Encoder state object
  * @param plcrc  Pointer to logical CRC value
  */
-void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, uint32 *plcrc);
+void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, U32 *plcrc);
 
 /*********************************************************************************
  *
@@ -618,10 +623,9 @@ void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, uint32 *plcrc);
  *
  * @param state  Decoder state object
  * @param plh    Pointer to logical PDU base header data
- * @retval #CFE_SUCCESS \copydoc CFE_SUCCESS
- * @retval CF_ERROR on error.
+ * @retval true if decode was successful, otherwise false
  */
-CFE_Status_t CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
+bool CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
 
 /************************************************************************/
 /**
@@ -697,7 +701,7 @@ void CF_CFDP_DecodeSegmentRequest(CF_DecoderState_t *state, CF_Logical_SegmentRe
  * @param pltlv  Pointer to logical PDU TLV header data
  * @param limit  Maximum number of TLV objects to decode
  */
-void CF_CFDP_DecodeAllTlv(CF_DecoderState_t *state, CF_Logical_TlvList_t *pltlv, uint8 limit);
+void CF_CFDP_DecodeAllTlv(CF_DecoderState_t *state, CF_Logical_TlvList_t *pltlv, U8 limit);
 
 /************************************************************************/
 /**
@@ -713,7 +717,7 @@ void CF_CFDP_DecodeAllTlv(CF_DecoderState_t *state, CF_Logical_TlvList_t *pltlv,
  * @param plseg  Pointer to logical PDU segment request header data
  * @param limit  Maximum number of Segment Request objects to decode
  */
-void CF_CFDP_DecodeAllSegments(CF_DecoderState_t *state, CF_Logical_SegmentList_t *plseg, uint8 limit);
+void CF_CFDP_DecodeAllSegments(CF_DecoderState_t *state, CF_Logical_SegmentList_t *plseg, U8 limit);
 
 /************************************************************************/
 /**
@@ -819,6 +823,6 @@ void CF_CFDP_DecodeNak(CF_DecoderState_t *state, CF_Logical_PduNak_t *plnak);
  * @param state  Decoder state object
  * @param plcrc   Pointer to logical CRC value
  */
-void CF_CFDP_DecodeCrc(CF_DecoderState_t *state, uint32 *plcrc);
+void CF_CFDP_DecodeCrc(CF_DecoderState_t *state, U32 *plcrc);
 
 #endif /* !CF_CODEC_H */
