@@ -28,7 +28,7 @@ module Fw {
     ref timeInterval: Fw.TimeInterval @< Reference to TimeInterval object
   )
 
-  enum TimeComparison {
+  dictionary enum TimeComparison {
     LT = -1
     EQ = 0
     GT = 1
