@@ -38,7 +38,6 @@ concurrency:
 env:
   FSW_SERVICE_NAME: "fprime-sensors-reference-soak-fsw"
   GDS_SERVICE_NAME: "fprime-sensors-reference-soak-gds"
-  SOAK_SERVICE_NAME: "fprime-sensors-reference-soak-monitor"
   INSTALL_DIR: /opt/fprime-sensors-reference-soak
   SERVICE_USER: "fprime"
 
@@ -87,8 +86,6 @@ jobs:
       - name: "Stop Services"
         shell: bash
         run: |
-          sudo systemctl stop ${{ env.SOAK_SERVICE_NAME }}.service || true
-          sudo systemctl disable ${{ env.SOAK_SERVICE_NAME }}.service || true
           sudo systemctl stop ${{ env.FSW_SERVICE_NAME }}.service || true
           sudo systemctl disable ${{ env.FSW_SERVICE_NAME }}.service || true
           sudo systemctl stop ${{ env.GDS_SERVICE_NAME }}.service || true
@@ -112,14 +109,9 @@ jobs:
           sudo systemctl start ${{ env.FSW_SERVICE_NAME }}
           sudo systemctl enable ${{ env.FSW_SERVICE_NAME }}
 
-          # start and enable soak-monitor service
-          sudo systemctl start ${{ env.SOAK_SERVICE_NAME }}
-          sudo systemctl enable ${{ env.SOAK_SERVICE_NAME }}
-
           echo "Waiting for services to stabilize..."
           sleep 5 # Wait for services to stabilize
 
           echo "Checking final service status..."
           sudo systemctl status ${{ env.GDS_SERVICE_NAME }} --no-pager -l -n 150
           sudo systemctl status ${{ env.FSW_SERVICE_NAME }} --no-pager -l -n 50
-          sudo systemctl status ${{ env.SOAK_SERVICE_NAME }} --no-pager -l -n 50
