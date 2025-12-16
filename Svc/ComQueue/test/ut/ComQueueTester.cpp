@@ -123,7 +123,7 @@ void ComQueueTester ::testQueueFlush() {
         ASSERT_from_bufferReturnOut(portNum, buffer);
         ASSERT_from_dataOut_SIZE(0);
     }
-    this->emitOne(); // Ensure that nothing is emitted
+    this->emitOne();  // Ensure that nothing is emitted
     ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
     clearFromPortHistory();
     component.cleanup();
@@ -148,7 +148,7 @@ void ComQueueTester ::testQueueFlushAll() {
     // Flush everything ensuring nothing is sent
     this->sendCmd_FLUSH_ALL_QUEUES(0, 0);
     this->dispatchAll();
-    this->emitOne(); // Ensure that nothing is emitted
+    this->emitOne();  // Ensure that nothing is emitted
     ASSERT_from_dataOut_SIZE(0);
     // Check that all buffers are returned (by count)
     ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
