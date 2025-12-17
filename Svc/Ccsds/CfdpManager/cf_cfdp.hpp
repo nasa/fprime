@@ -790,16 +790,6 @@ bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num);
  */
 void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn);
 
-/************************************************************************/
-/** @brief Move File
- *
- * This helper is used to move a file.
- *
- * @par Assumptions, External Events, and Notes:
- *
- */
-void CF_CFDP_MoveFile(const char *src, const char *dest_dir);
-
 }  // namespace Ccsds
 }  // namespace Svc
 

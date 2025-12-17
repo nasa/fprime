@@ -33,6 +33,9 @@
 #include "cf_cfdp.hpp"
 #include "cf_cfdp_r.hpp"
 #include "cf_cfdp_s.hpp"
+#include "CfeStubs.hpp"
+
+#include <Os/FileSystem.hpp>
 
 #include <string.h>
 
@@ -124,7 +127,7 @@ void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
+inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
 {
     FW_ASSERT(txn->flags.com.q_index != CF_QueueIdx_FREE, txn->flags.com.q_index);
     return !!((txn->state == CF_TxnState_S2) || (txn->state == CF_TxnState_R2));
@@ -135,7 +138,7 @@ static inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
+inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
 {
     FW_ASSERT(txn->history);
 
@@ -197,7 +200,7 @@ void CF_CFDP_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_DispatchTx(CF_Transaction_t *txn)
+void CF_CFDP_DispatchTx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_TxnSendDispatchTable_t state_fns = {
         .tx = {[CF_TxnState_S1] = CF_CFDP_S1_Tx, [CF_TxnState_S2] = CF_CFDP_S2_Tx}};
@@ -210,7 +213,7 @@ static void CF_CFDP_DispatchTx(CF_Transaction_t *txn)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direction_t dir)
+CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direction_t dir)
 {
     CF_ChunkWrapper_t *ret;
     CF_CListNode_t **  chunklist_head;
@@ -237,7 +240,7 @@ static CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direct
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_SetPduLength(CF_Logical_PduBuffer_t *ph)
+void CF_CFDP_SetPduLength(CF_Logical_PduBuffer_t *ph)
 {
     U16 final_pos;
 
@@ -1312,7 +1315,7 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan,
+void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan,
                                     U8 priority, CF_EntityId_t dest_id)
 {
     CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
@@ -1418,7 +1421,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
+CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
                                                  CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
                                                  CF_EntityId_t dest_id)
 {
@@ -1561,7 +1564,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
+void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
 {
     if (pb->counted != up)
     {
@@ -1585,7 +1588,7 @@ static void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-static void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
+void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
 {
     int       i;
     const int chan_index = (chan - CF_AppData.engine.channels);
@@ -2051,13 +2054,16 @@ bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
  *-----------------------------------------------------------------*/
 void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
 {
+    Os::FileSystem::Status os_status;
+
     /* Sender */
     if (CF_CFDP_IsSender(txn))
     {
         if (!CF_TxnStatus_IsError(txn->history->txn_stat))
         {
             /* If move directory is defined attempt move */
-            CF_CFDP_MoveFile(txn->history->fnames.src_filename, CF_AppData.config_table->chan[txn->chan_num].move_dir);
+            os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, CF_AppData.config_table->chan[txn->chan_num].move_dir);
+            // TODO Add failure EVR
         }
         else
         {
@@ -2065,7 +2071,8 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
             if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename, txn->chan_num))
             {
                 /* If fail directory is defined attempt move */
-                CF_CFDP_MoveFile(txn->history->fnames.src_filename, CF_AppData.config_table->fail_dir);
+                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, CF_AppData.config_table->fail_dir);
+                // TODO Add failure EVR
             }
         }
     }
@@ -2073,44 +2080,6 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
     else
     {
         OS_remove(txn->history->fnames.dst_filename);
-    }
-}
-
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
-void CF_CFDP_MoveFile(const char *src, const char *dest_dir)
-{
-    osal_status_t status = OS_ERROR;
-    char *        filename;
-    char          destination[OS_MAX_PATH_LEN];
-    int           dest_path_len;
-
-    if (dest_dir[0] != 0)
-    {
-        filename = strrchr(src, '/');
-        if (filename != NULL)
-        {
-            dest_path_len = snprintf(destination, sizeof(destination), "%s%s", dest_dir, filename);
-            if (dest_path_len >= (int)sizeof(destination))
-            {
-                /* Mark character before zero terminator to indicate truncation */
-                destination[sizeof(destination) - 2] = CF_FILENAME_TRUNCATED;
-
-                /* Send event describing that the path would be truncated */
-                CFE_EVS_SendEvent(CF_EID_INF_CFDP_BUF_EXCEED, CFE_EVS_EventType_INFORMATION,
-                                  "CF: destination has been truncated to %s", destination);
-            }
-            status = OS_mv(src, destination);
-        }
-    }
-
-    if (status != OS_SUCCESS)
-    {
-        OS_remove(src);
     }
 }
 

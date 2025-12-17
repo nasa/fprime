@@ -39,9 +39,9 @@ typedef struct CF_Codec_BitField
 } CF_Codec_BitField_t;
 
 /* NBITS == number of bits */
-#define CF_INIT_FIELD(NBITS, SHIFT)                  \
-    {                                                \
-        .shift = (SHIFT), .mask = ((1 << NBITS) - 1) \
+#define CF_INIT_FIELD(NBITS, SHIFT)      \
+    {                                    \
+        (SHIFT), ((1u << (NBITS)) - 1u)  \
     }
 
 /*
@@ -54,8 +54,8 @@ static inline U8 CF_FieldGetVal(const U8 *src, U8 shift, U8 mask)
 
 static inline void CF_FieldSetVal(U8 *dest, U8 shift, U8 mask, U8 val)
 {
-    *dest &= (U8)~(mask << shift);
-    *dest |= (U8)((val & mask) << shift);
+    *dest &= static_cast<U8>(~(mask << shift));
+    *dest |= static_cast<U8>((val & mask) << shift);
 }
 
 /* FGV, FSV, and FAV are just simple shortenings of the field macros.
@@ -64,8 +64,13 @@ static inline void CF_FieldSetVal(U8 *dest, U8 shift, U8 mask, U8 val)
  * FSV == field set val
  */
 
-#define FGV(SRC, NAME)       (CF_FieldGetVal((const U8 *)(SRC).octets, (U8)(NAME).shift, (U8)(NAME).mask))
-#define FSV(DEST, NAME, VAL) (CF_FieldSetVal((U8 *)(DEST).octets, (U8)(NAME).shift, (U8)(NAME).mask, (U8)VAL))
+#define FGV(SRC, NAME)       (CF_FieldGetVal(static_cast<const U8 *>((SRC).octets), \
+                                             static_cast<U8>((NAME).shift), \
+                                             static_cast<U8>((NAME).mask)))
+#define FSV(DEST, NAME, VAL) (CF_FieldSetVal(static_cast<U8 *>((DEST).octets), \
+                                             static_cast<U8>((NAME).shift), \
+                                             static_cast<U8>((NAME).mask), \
+                                             static_cast<U8>(VAL)))
 
 /*
  * Fields within the "flags" byte of the PDU header
@@ -145,9 +150,9 @@ static inline void CF_Codec_Store_U8(CF_CFDP_U8_t *pdst, U8 val)
  *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U16(CF_CFDP_U16_t *pdst, U16 val)
 {
-    pdst->octets[1] = (U8)(val & 0xFF);
+    pdst->octets[1] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[0] = (U8)(val & 0xFF);
+    pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
 /*----------------------------------------------------------------
@@ -157,13 +162,13 @@ static inline void CF_Codec_Store_U16(CF_CFDP_U16_t *pdst, U16 val)
  *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U32(CF_CFDP_U32_t *pdst, U32 val)
 {
-    pdst->octets[3] = (U8)(val & 0xFF);
+    pdst->octets[3] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[2] = (U8)(val & 0xFF);
+    pdst->octets[2] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[1] = (U8)(val & 0xFF);
+    pdst->octets[1] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[0] = (U8)(val & 0xFF);
+    pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
 /*----------------------------------------------------------------
@@ -173,21 +178,21 @@ static inline void CF_Codec_Store_U32(CF_CFDP_U32_t *pdst, U32 val)
  *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U64(CF_CFDP_U64_t *pdst, U64 val)
 {
-    pdst->octets[7] = (U8)(val & 0xFF);
+    pdst->octets[7] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[6] = (U8)(val & 0xFF);
+    pdst->octets[6] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[5] = (U8)(val & 0xFF);
+    pdst->octets[5] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[4] = (U8)(val & 0xFF);
+    pdst->octets[4] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[3] = (U8)(val & 0xFF);
+    pdst->octets[3] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[2] = (U8)(val & 0xFF);
+    pdst->octets[2] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[1] = (U8)(val & 0xFF);
+    pdst->octets[1] = static_cast<U8>(val & 0xFF);
     val >>= 8;
-    pdst->octets[0] = (U8)(val & 0xFF);
+    pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
 /*----------------------------------------------------------------
@@ -351,7 +356,7 @@ void CF_EncodeIntegerInSize(CF_EncoderState_t *state, U64 value, U8 encode_size)
 {
     U8 *dptr;
 
-    dptr = CF_CFDP_DoEncodeChunk(state, encode_size);
+    dptr = static_cast<U8*>(CF_CFDP_DoEncodeChunk(state, encode_size));
     if (dptr != NULL)
     {
         /* this writes from LSB to MSB, in reverse (so the result will be in network order) */
@@ -400,15 +405,15 @@ void CF_CFDP_EncodeHeaderWithoutSize(CF_EncoderState_t *state, CF_Logical_PduHea
         CF_EncodeIntegerInSize(state, plh->destination_eid, plh->eid_length);
 
         /* The position now reflects the length of the basic header */
-        plh->header_encoded_length = (U16)CF_CODEC_GET_POSITION(state);
+        plh->header_encoded_length = static_cast<U16>(CF_CODEC_GET_POSITION(state));
     }
 }
 
 /*----------------------------------------------------------------
- *
+ *q
  * Application-scope internal function
  * See description in cf_codec.h for argument/return detail
- *
+ *q
  *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeHeaderFinalSize(CF_EncoderState_t *state, CF_Logical_PduHeader_t *plh)
 {
@@ -423,7 +428,7 @@ void CF_CFDP_EncodeHeaderFinalSize(CF_EncoderState_t *state, CF_Logical_PduHeade
      */
     if (CF_CODEC_IS_OK(state) && CF_CODEC_GET_POSITION(state) >= sizeof(CF_CFDP_PduHeader_t))
     {
-        peh = (CF_CFDP_PduHeader_t *)state->base;
+        peh = reinterpret_cast<CF_CFDP_PduHeader_t *>(state->base);
 
         /* Total length is a simple 16-bit quantity */
         CF_Codec_Store_U16(&(peh->length), plh->data_encoded_length);
@@ -747,7 +752,7 @@ U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size)
     U64       temp_val;
 
     temp_val = 0;
-    sptr     = CF_CFDP_DoDecodeChunk(state, decode_size);
+    sptr     = static_cast<const U8 *>(CF_CFDP_DoDecodeChunk(state, decode_size));
     if (sptr != NULL)
     {
         /* this reads from MSB to LSB, so the result will be in native order */
@@ -800,12 +805,12 @@ bool CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh)
         else
         {
             /* Now copy variable-length fields */
-            plh->source_eid      = (U32)CF_DecodeIntegerInSize(state, plh->eid_length);
-            plh->sequence_num    = (U32)CF_DecodeIntegerInSize(state, plh->txn_seq_length);
-            plh->destination_eid = (U32)CF_DecodeIntegerInSize(state, plh->eid_length);
+            plh->source_eid      = static_cast<U32>(CF_DecodeIntegerInSize(state, plh->eid_length));
+            plh->sequence_num    = static_cast<U32>(CF_DecodeIntegerInSize(state, plh->txn_seq_length));
+            plh->destination_eid = static_cast<U32>(CF_DecodeIntegerInSize(state, plh->eid_length));
 
             /* The header length is where decoding ended at this point */
-            plh->header_encoded_length = (U16)CF_CODEC_GET_POSITION(state);
+            plh->header_encoded_length = static_cast<U16>(CF_CODEC_GET_POSITION(state));
         }
     }
     return ret;
@@ -827,7 +832,7 @@ void CF_CFDP_DecodeFileDirectiveHeader(CF_DecoderState_t *state, CF_Logical_PduF
     if (peh != NULL)
     {
         CF_Codec_Load_U8(&packet_val, &(peh->directive_code));
-        pfdir->directive_code = packet_val;
+        pfdir->directive_code = static_cast<CF_CFDP_FileDirective_t>(packet_val);
     }
 }
 
@@ -867,10 +872,10 @@ void CF_CFDP_DecodeTLV(CF_DecoderState_t *state, CF_Logical_Tlv_t *pltlv)
         CF_Codec_Load_U8(&(pltlv->length), &(tlv->length));
 
         /* the only TLV type currently implemented is entity id */
-        pltlv->type = type_val;
+        pltlv->type = static_cast<CF_CFDP_TlvType_t>(type_val);
         if (pltlv->type == CF_CFDP_TLV_TYPE_ENTITY_ID)
         {
-            pltlv->data.eid = (U32)CF_DecodeIntegerInSize(state, pltlv->length);
+            pltlv->data.eid = static_cast<U32>(CF_DecodeIntegerInSize(state, pltlv->length));
         }
         else
         {
@@ -1013,7 +1018,7 @@ void CF_CFDP_DecodeEof(CF_DecoderState_t *state, CF_Logical_PduEof_t *pleof)
     eof = CF_DECODE_FIXED_CHUNK(state, CF_CFDP_PduEof_t);
     if (eof != NULL)
     {
-        pleof->cc = FGV(eof->cc, CF_CFDP_PduEof_FLAGS_CC);
+        pleof->cc = static_cast<CF_CFDP_ConditionCode_t>(FGV(eof->cc, CF_CFDP_PduEof_FLAGS_CC));
         CF_Codec_Load_U32(&(pleof->crc), &(eof->crc));
         CF_Codec_Load_U32(&(pleof->size), &(eof->size));
 
@@ -1034,9 +1039,9 @@ void CF_CFDP_DecodeFin(CF_DecoderState_t *state, CF_Logical_PduFin_t *plfin)
     fin = CF_DECODE_FIXED_CHUNK(state, CF_CFDP_PduFin_t);
     if (fin != NULL)
     {
-        plfin->cc            = FGV(fin->flags, CF_CFDP_PduFin_FLAGS_CC);
+        plfin->cc            = static_cast<CF_CFDP_ConditionCode_t>(FGV(fin->flags, CF_CFDP_PduFin_FLAGS_CC));
         plfin->delivery_code = FGV(fin->flags, CF_CFDP_PduFin_FLAGS_DELIVERY_CODE);
-        plfin->file_status   = FGV(fin->flags, CF_CFDP_PduFin_FLAGS_FILE_STATUS);
+        plfin->file_status   = static_cast<CF_CFDP_FinFileStatus_t>(FGV(fin->flags, CF_CFDP_PduFin_FLAGS_FILE_STATUS));
 
         CF_CFDP_DecodeAllTlv(state, &plfin->tlv_list, CF_PDU_MAX_TLV);
     }
@@ -1058,8 +1063,8 @@ void CF_CFDP_DecodeAck(CF_DecoderState_t *state, CF_Logical_PduAck_t *plack)
         plack->ack_directive_code = FGV(ack->directive_and_subtype_code, CF_CFDP_PduAck_DIR_CODE);
         plack->ack_subtype_code   = FGV(ack->directive_and_subtype_code, CF_CFDP_PduAck_DIR_SUBTYPE_CODE);
 
-        plack->cc         = FGV(ack->cc_and_transaction_status, CF_CFDP_PduAck_CC);
-        plack->txn_status = FGV(ack->cc_and_transaction_status, CF_CFDP_PduAck_TRANSACTION_STATUS);
+        plack->cc         = static_cast<CF_CFDP_ConditionCode_t>(FGV(ack->cc_and_transaction_status, CF_CFDP_PduAck_CC));
+        plack->txn_status = static_cast<CF_CFDP_AckTxnStatus_t>(FGV(ack->cc_and_transaction_status, CF_CFDP_PduAck_TRANSACTION_STATUS));
     }
 }
 
