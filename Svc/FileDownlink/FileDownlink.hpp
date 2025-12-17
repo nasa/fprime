@@ -193,7 +193,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! Sources of send file requests
     enum CallerSource { COMMAND, PORT };
 
-#define FILE_ENTRY_FILENAME_LEN 101
+#define FILE_ENTRY_FILENAME_LEN (101)
 
     //! Used to track a single file downlink request
     struct FileEntry {
