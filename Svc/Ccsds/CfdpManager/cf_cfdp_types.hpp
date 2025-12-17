@@ -36,6 +36,8 @@
 #include "cf_chunk.hpp"
 #include "cf_codec.hpp"
 
+#include <Os/Directory.hpp>
+
 namespace Svc {
 namespace Ccsds {
 
@@ -196,13 +198,13 @@ typedef struct CF_ChunkWrapper
  */
 typedef struct CF_Playback
 {
-    osal_id_t         dir_id;
-    CF_CFDP_Class_t   cfdp_class;
-    CF_TxnFilenames_t fnames;
-    uint16            num_ts; /**< \brief number of transactions */
-    uint8             priority;
-    CF_EntityId_t     dest_id;
-    char              pending_file[OS_MAX_FILE_NAME];
+    Os::DirectoryHandle dir_id;
+    CF_CFDP_Class_t     cfdp_class;
+    CF_TxnFilenames_t   fnames;
+    U16                 num_ts; /**< \brief number of transactions */
+    U8                  priority;
+    CF_EntityId_t       dest_id;
+    char                pending_file[CFDP_FILE_NAME_STRING_SIZE];
 
     bool busy;
     bool diropen;
@@ -227,8 +229,8 @@ typedef struct CF_Poll
  */
 typedef struct CF_TxS2_Data
 {
-    uint8 fin_cc; /**< \brief remember the cc in the received FIN PDU to echo in eof-fin */
-    uint8 acknak_count;
+    U8 fin_cc; /**< \brief remember the cc in the received FIN PDU to echo in eof-fin */
+    U8 acknak_count;
 } CF_TxS2_Data_t;
 
 /**
@@ -237,7 +239,7 @@ typedef struct CF_TxS2_Data
 typedef struct CF_TxState_Data
 {
     CF_TxSubState_t sub_state;
-    uint32          cached_pos;
+    U32          cached_pos;
 
     CF_TxS2_Data_t s2;
 } CF_TxState_Data_t;
@@ -247,13 +249,13 @@ typedef struct CF_TxState_Data
  */
 typedef struct CF_RxS2_Data
 {
-    uint32                    eof_crc;
-    uint32                    eof_size;
-    uint32                    rx_crc_calc_bytes;
+    U32                    eof_crc;
+    U32                    eof_size;
+    U32                    rx_crc_calc_bytes;
     CF_CFDP_FinDeliveryCode_t dc;
     CF_CFDP_FinFileStatus_t   fs;
-    uint8                     eof_cc; /**< \brief remember the cc in the received EOF PDU to echo in eof-ack */
-    uint8                     acknak_count;
+    U8                     eof_cc; /**< \brief remember the cc in the received EOF PDU to echo in eof-ack */
+    U8                     acknak_count;
 } CF_RxS2_Data_t;
 
 /**
@@ -262,7 +264,7 @@ typedef struct CF_RxS2_Data
 typedef struct CF_RxState_Data
 {
     CF_RxSubState_t sub_state;
-    uint32          cached_pos;
+    U32          cached_pos;
 
     CF_RxS2_Data_t r2;
 } CF_RxState_Data_t;
@@ -272,7 +274,7 @@ typedef struct CF_RxState_Data
  */
 typedef struct CF_Flags_Common
 {
-    uint8 q_index; /**< \brief Q index this is in */
+    U8 q_index; /**< \brief Q index this is in */
     bool  ack_timer_armed;
     bool  suspended;
     bool  canceled;
@@ -345,15 +347,15 @@ typedef struct CF_Transaction
     CF_Timer_t         inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
     CF_Timer_t         ack_timer;        /**< \brief called ack_timer, but is also nak_timer */
 
-    uint32    fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
-    uint32    foffs; /**< \brief offset into file for next read */
+    U32    fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
+    U32    foffs; /**< \brief offset into file for next read */
     osal_id_t fd;
 
     CF_Crc_t crc;
 
-    uint8 keep;
-    uint8 chan_num; /**< \brief if ever more than one engine, this may need to change to pointer */
-    uint8 priority;
+    U8 keep;
+    U8 chan_num; /**< \brief if ever more than one engine, this may need to change to pointer */
+    U8 priority;
 
     CF_CListNode_t cl_node;
 
@@ -399,7 +401,7 @@ typedef struct CF_Channel
 
     CFE_SB_PipeId_t pipe;
 
-    uint32 num_cmd_tx;
+    U32 num_cmd_tx;
 
     CF_Playback_t playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];
 
@@ -410,7 +412,7 @@ typedef struct CF_Channel
 
     const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */
 
-    uint8 tick_type;
+    U8 tick_type;
 } CF_Channel_t;
 
 /**
@@ -457,7 +459,7 @@ typedef struct CF_Engine
     CF_ChunkWrapper_t chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];
     CF_Chunk_t        chunk_mem[CF_NUM_CHUNKS_ALL_CHANNELS];
 
-    uint32 outgoing_counter;
+    U32 outgoing_counter;
     bool   enabled;
 } CF_Engine_t;
 
