@@ -79,14 +79,14 @@ struct AllocateDirective {
 @ stores a value to a local variable at a compile-time-known offset relative to the current stack frame
 struct StoreLocalConstOffsetDirective {
     @ signed byte offset relative to stack_frame_start
-    lvarOffset: I32
+    lvarOffset: Fpy.SignedStackSizeType
     $size: Fpy.StackSizeType
 }
 
 @ loads a value from a local variable at a compile-time-known offset relative to the current stack frame
 struct LoadLocalDirective {
     @ signed byte offset relative to stack_frame_start
-    lvarOffset: I32
+    lvarOffset: Fpy.SignedStackSizeType
     $size: Fpy.StackSizeType
 }
 
@@ -150,7 +150,7 @@ struct PeekDirective {
 
 @ stores a value to a local variable at a runtime-determined offset relative to the current stack frame
 struct StoreLocalDirective {
-    # pops an I32 lvar_offset off of stack
+    # pops a SignedStackSizeType lvar_offset off of stack
     @ size of data to pop off stack
     $size: Fpy.StackSizeType
 }

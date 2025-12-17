@@ -17,6 +17,9 @@ module Svc {
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
         type StackSizeType = U32
 
+        @ signed version of StackSizeType, used for relative offsets that can be negative
+        type SignedStackSizeType = I32
+
         enum DirectiveId : U8 {
             INVALID = 0
             WAIT_REL = 1

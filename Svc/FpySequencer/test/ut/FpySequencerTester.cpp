@@ -223,7 +223,7 @@ void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::ALLOCATE, buf);
 }
-void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(I32 lvarOffset, Fpy::StackSizeType size) {
+void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
     add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalConstOffsetDirective(lvarOffset, size));
 }
 void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalConstOffsetDirective dir) {
@@ -231,7 +231,7 @@ void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalCon
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::STORE_LOCAL_CONST_OFFSET, buf);
 }
-void FpySequencerTester::add_LOAD_LOCAL(I32 lvarOffset, Fpy::StackSizeType size) {
+void FpySequencerTester::add_LOAD_LOCAL(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
     add_LOAD_LOCAL(FpySequencer_LoadLocalDirective(lvarOffset, size));
 }
 void FpySequencerTester::add_LOAD_LOCAL(FpySequencer_LoadLocalDirective dir) {

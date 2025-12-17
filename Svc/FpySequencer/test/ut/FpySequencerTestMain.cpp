@@ -1192,7 +1192,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;  // frame starts at 0
     tester_push<U8>(123);                                     // value byte 1
     tester_push<U8>(100);                                     // value byte 2
-    tester_push<I32>(4);                                      // lvar_offset = 4 (signed)
+    tester_push<Fpy::SignedStackSizeType>(4);                 // lvar_offset = 4 (signed)
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -1206,7 +1206,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;  // frame starts at 4
     tester_push<U8>(55);                                      // value byte 1
     tester_push<U8>(66);                                      // value byte 2
-    tester_push<I32>(-4);                                     // lvar_offset = -4 (negative, points to bytes 0-1)
+    tester_push<Fpy::SignedStackSizeType>(-4);                // lvar_offset = -4 (negative, points to bytes 0-1)
     err = DirectiveError::NO_ERROR;
     result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -1219,7 +1219,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     tester_push<U8>(123);
     tester_push<U8>(100);
-    tester_push<I32>(100);  // offset too high
+    tester_push<Fpy::SignedStackSizeType>(100);  // offset too high
     directive.set_size(2);
     result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -1230,7 +1230,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 2;  // frame at 2
     tester_push<U8>(123);
     tester_push<U8>(100);
-    tester_push<I32>(-10);  // offset would result in negative address
+    tester_push<Fpy::SignedStackSizeType>(-10);  // offset would result in negative address
     directive.set_size(2);
     result = tester_storeLocal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);

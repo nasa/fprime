@@ -1386,15 +1386,15 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
 
 Signal FpySequencer::storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive,
                                                  DirectiveError& error) {
-    // Need enough bytes for the value and the offset (I32 = 4 bytes)
-    // Overflow-safe: check stack.size >= sizeof(I32) first, then stack.size - sizeof(I32) >= size
-    if (this->m_runtime.stack.size < sizeof(I32) || this->m_runtime.stack.size - sizeof(I32) < directive.get_size()) {
+    // Need enough bytes for the value and the offset (SignedStackSizeType = 4 bytes)
+    // Overflow-safe: check stack.size >= sizeof(SignedStackSizeType) first, then stack.size - sizeof(SignedStackSizeType) >= size
+    if (this->m_runtime.stack.size < sizeof(Fpy::SignedStackSizeType) || this->m_runtime.stack.size - sizeof(Fpy::SignedStackSizeType) < directive.get_size()) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
     // Pop the signed offset from the stack
-    I32 lvarOffset = this->m_runtime.stack.pop<I32>();
+    Fpy::SignedStackSizeType lvarOffset = this->m_runtime.stack.pop<Fpy::SignedStackSizeType>();
 
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + lvarOffset;
     if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
