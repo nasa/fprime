@@ -10,7 +10,7 @@ The [`Fw::MemAllocator` interface](../../../../Fw/Types/MemAllocator.hpp) provid
 
 ### When to use Fw::MemAllocator
 
-Components may need memory internally to function. There are several reasons why dynamic (heap) allocation through `Fw::MemAllocator` is used instead of global, static, stack or component member variables:
+Components may need memory internally to function. There are several reasons why dynamic allocation through `Fw::MemAllocator` is used instead of global, static, stack or component member variables:
 
 1. **Size constraints**: Certain buffers are too large for stack allocation. Stack sizes are typically limited and large allocations can cause stack overflow.
 
@@ -24,7 +24,7 @@ A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd
 The core framework ships with an implementation of `Fw::MemAllocator`, called [`Fw::MallocAllocator`](../../../../Fw/Types/MallocAllocator.cpp), which delegates to the C/C++ `malloc()` and `free()` functions. Projects are free to implement their own versions of `Fw::MemAllocator` if desired.
 
 >[!WARNING]
-> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only. For runtime memory management during operation, please consult the [Buffer Pools with Svc.BufferManager](./buffer-pool.md) document.
+> Flight Software coding standards forbid dynamic memory allocation outside of system initialization. This is for safety and reliability reasons. Therefore, the use of `Fw::MemAllocator` is intended for use during initialization only, typically through a component `configure()`/`setup()` method called during `configureTopology()`. For runtime memory management during operation, please consult the [Buffer Pools with Svc.BufferManager](./buffer-pool.md) document.
 
 ## Pattern to use the Fw::MemAllocator
 

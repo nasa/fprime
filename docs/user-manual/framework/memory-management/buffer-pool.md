@@ -2,14 +2,15 @@
 
 In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady-state
 variability in a running system. Avoiding dynamic memory allocation also avoids the problem of what to do in the case of
-a failed allocation. However, sometimes dynamic allocation provides for a simpler or more efficient solution.
+a failed allocation. However, sometimes dynamic allocation is required for a more robust or efficient solution.
 
 Safe dynamic allocation is available using the buffer pool pattern in F´, implemented through the [`Svc::BufferManager`](../../../../Svc/BufferManager/docs/sdd.md) component. In short, this pattern allows components to
 dynamically allocate memory through a port call to a component designed to manage memory for the system. There are three steps in this process:
 
 1. Call allocation port receiving an `Fw::Buffer`
-2. Use the allocated `Fw::Buffer`
-3. Call deallocation port returning the `Fw::Buffer`
+2. Check validity of the buffer with `buffer.isValid()` and handle potential allocation failure
+3. Use the allocated `Fw::Buffer`
+4. Call deallocation port returning the `Fw::Buffer`
 
 ## Component Setup and Buffer Usage
 
@@ -25,7 +26,8 @@ memory allocation should include two output ports:
 
 This can be done by importing the `Svc.BufferAllocation` FPP interface in the component's FPP definition file as shown in the examples below.
 
-In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will have a size of zero.
+In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will be marked invalid and have a size of zero.
+This must be checked using the `Fw::Buffer::isValid()` method.
 Developers must check that the size is not smaller than requested before proceeding to use the memory.
 
 **Example Component Definition**
@@ -41,7 +43,7 @@ passive component MyComponent {
 ```
 
 > [!TIP]
-> You can inspect the contents of the `Svc.BufferAllocation` interface in [Svc/Interfaces/BufferAllocation.fpp](../../../../Svc/Interfaces/BufferAllocation.fpp).
+> You can inspect the ports defined by the `Svc.BufferAllocation` interface in [Svc/Interfaces/BufferAllocation.fpp](../../../../Svc/Interfaces/BufferAllocation.fpp).
 
 **Example Component Allocation and Deallocation**
 ```c++
@@ -249,15 +251,6 @@ flowchart LR
     style B fill:#f0f0f0
     style C fill:#f0f0f0
 ```
-
-**Flow explanation:**
-
-1. Component A allocates buffer from Buffer Manager
-2. Component A forwards buffer to Component B for processing.
-3. Component B forwards to Component C for further processing
-4. Component C returns buffer to Component B (its sender)
-5. Component B returns buffer to Component A (its sender)
-6. Component A deallocates buffer back to Buffer Manager
 
 This pattern enhances modularity and prevent breaking encapsulation by making topology connections agnostic to the underlying buffer management strategy of each component.  
 Let's unwrap this statement by considering the alternative to the Return-To-Sender pattern, where Component C returns the buffer directly to the Buffer Manager, bypassing B and A on the way back. In this case, let's consider the scenario where Component B needs to append to the buffer (this can happen for example during framing operations, where the buffer grows in size). To enable that, Component B allocates a new larger buffer, and the topology connections would have to be redrawn, carefully tracking the lifetime of two allocated buffers.  

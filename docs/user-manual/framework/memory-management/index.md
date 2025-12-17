@@ -8,8 +8,8 @@ Flight software coding standards typically forbid dynamic memory allocation duri
 
 | Pattern | Phase | Purpose | Key Components |
 |---------|-------|---------|----------------|
-| [Memory Allocation](#memory-allocation-pattern) | Initialization | Allocate memory blocks during system startup | `Fw::MemAllocator` (interface), `Fw::MallocAllocator` (implementation) |
-| [Buffer Pool](#buffer-pool-pattern) | Runtime | Safely manage pre-allocated buffer pools during operation | `Svc::BufferManager` |
+| [Memory Allocation](#memory-allocation-pattern) | Initialization | Allocate memory blocks (outside of stack) during system initialization for use during runtime | `Fw::MemAllocator` (interface), `Fw::MallocAllocator` (implementation), `Fw::MemAllocatorRegistry` |
+| [Buffer Pool](#buffer-pool-pattern) | Runtime | Allocate buffers during runtime from a pre-allocated buffer pool | `Svc::BufferManager` |
 
 ## Memory Allocation Pattern
 
@@ -19,25 +19,24 @@ Flight software coding standards typically forbid dynamic memory allocation duri
 The Memory Allocation pattern uses the `Fw::MemAllocator` interface to allocate memory blocks during system initialization. This is appropriate in the following scenarios:
 
 - Memory requirements are too large for stack allocation
-- Components need internal memory of configurable sizes determined at runtime
+- Components need internal memory of configurable sizes determined at runtime during system initialization
 - Multiple component instances require different memory configurations
 
 **Key Features:**
 - Provides abstraction layer over project-specified allocation mechanisms
-- Memory is allocated at startup, and freed later on (usually at shutdown)
 - Includes `Fw::MallocAllocator` implementation which delegates to `malloc()`/`free()`
 - Optional `Fw::MemAllocatorRegistry` for managing multiple allocator types
 
 **Example Use Cases:**
 - Component internal buffers, such as:
-    - the backing memory for `Svc::BufferManager`
-    - the accumulation buffer for `Svc::FrameAccumulator`
+    - The backing memory for `Svc::BufferManager`
+    - The accumulation buffer for `Svc::FrameAccumulator`
 
 **Typical Workflow:**
 1. Component defines setup method accepting `Fw::MemAllocator&`
-2. Memory allocated during `configureTopology()`
+2. Memory allocated during intialization (typicially in `configureTopology()` via a component `configure()` method)
 3. Component uses memory throughout its lifetime
-4. Memory deallocated during `teardownTopology()`
+4. Memory deallocated during shutdown (typically in `teardownTopology()` via a component `teardown()` method)
 
 ## Buffer Pool Pattern
 
@@ -65,6 +64,7 @@ The Buffer Pool pattern provides safe runtime buffer management through pre-allo
 **Typical Workflow:**
 1. BufferManager initialized with memory pools during startup (tip: this leverages the Memory Allocation pattern!)
 2. Component requests buffer via `allocate` port during operation
-3. Component uses buffer (possibly passing to other components)
-4. Buffer returned to BufferManager via `deallocate` port
+3. Component checks buffer validity and handles potential allocation failure
+4. Component uses buffer (possibly passing to other components)
+5. Buffer returned to BufferManager via `deallocate` port
 
