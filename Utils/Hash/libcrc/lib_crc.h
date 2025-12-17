@@ -59,8 +59,8 @@ extern "C" {
 
 
 
-#define CRC_FALSE           0
-#define CRC_TRUE            1
+#define CRC_FALSE           (0)
+#define CRC_TRUE            (1)
 
 
 
