@@ -12,6 +12,13 @@
 namespace Svc {
 
 class ComRetry final : public ComRetryComponentBase {
+    //! State of buffer delivery
+    enum RetryState {
+      WAITING_FOR_STATUS,
+      WAITING_FOR_SEND,
+      RETRYING
+    };
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -60,6 +67,7 @@ class ComRetry final : public ComRetryComponentBase {
     // ----------------------------------------------------------------------
     U32 m_num_retries;                                  //!< Maximum number of retries
     U32 m_retry_count;                                  //!< Track number of attempted retries
+    RetryState m_retry_state;                           //!< Track current retry state
     ComCfg::FrameContext m_context;                     //!< Context for the current frame
     Fw::Buffer m_buffer;                                //!< Store incoming buffer
     Fw::Buffer::OwnershipState m_bufferState;           //!< Track ownership of stored buffer
