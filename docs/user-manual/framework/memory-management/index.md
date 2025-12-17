@@ -34,7 +34,7 @@ The Memory Allocation pattern uses the `Fw::MemAllocator` interface to allocate 
 
 **Typical Workflow:**
 1. Component defines setup method accepting `Fw::MemAllocator&`
-2. Memory allocated during intialization (typicially in `configureTopology()` via a component `configure()` method)
+2. Memory allocated during initialization (typically in `configureTopology()` via a component `configure()` method)
 3. Component uses memory throughout its lifetime
 4. Memory deallocated during shutdown (typically in `teardownTopology()` via a component `teardown()` method)
 
