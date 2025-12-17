@@ -1588,6 +1588,62 @@ TEST(AllocatorTest, MallocAllocatorTest) {
     allocator.deallocate(100, ptr);
 }
 
+TEST(AllocatorTest, MallocAllocatorTestNoRecoverable) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    Fw::MemAllocator& memAllocator = allocator;
+    FwSizeType size = 100;  // one hundred bytes
+    void* ptr = memAllocator.allocate(10, size);
+    ASSERT_EQ(100, size);
+    ASSERT_NE(ptr, nullptr);
+    // deallocate memory
+    allocator.deallocate(100, ptr);
+}
+
+TEST(AllocatorTest, MallocCheckedAllocate) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    FwSizeType size = 100;  // one hundred bytes
+    bool recoverable;
+    void* ptr = allocator.checkedAllocate(10, size, recoverable);
+    ASSERT_EQ(100, size);
+    ASSERT_NE(ptr, nullptr);
+    ASSERT_FALSE(recoverable);
+    // deallocate memory
+    allocator.deallocate(100, ptr);
+}
+
+TEST(AllocatorTest, MallocCheckedAllocateNoRecoverable) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    FwSizeType size = 100;  // one hundred bytes
+    void* ptr = allocator.checkedAllocate(10, size);
+    ASSERT_EQ(100, size);
+    ASSERT_NE(ptr, nullptr);
+    // deallocate memory
+    allocator.deallocate(100, ptr);
+}
+
+TEST(AllocatorTest, MallocCheckedAllocateTrapped) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    bool recoverable;
+    FwSizeType size = std::numeric_limits<FwSizeType>::max();  // Impossible number of bytes
+    ASSERT_DEATH(allocator.checkedAllocate(10, size, recoverable), ".*");
+}
+
+TEST(AllocatorTest, MallocCheckedAllocateNoRecoverableTrapped) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    FwSizeType size = std::numeric_limits<FwSizeType>::max();  // Impossible number of bytes
+    ASSERT_DEATH(allocator.checkedAllocate(10, size), ".*");
+}
+
 TEST(Nominal, string_copy) {
     const char* copy_string = "abc123\n";  // Length of 7
     char buffer_out_test[10];

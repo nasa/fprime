@@ -28,7 +28,7 @@ class TlmChan final : public TlmChanComponentBase {
 
   protected:
     // can be overridden for alternate algorithms
-    virtual FwChanIdType doHash(FwChanIdType id);
+    FwChanIdType doHash(FwChanIdType id);
 
   private:
     // Port functions

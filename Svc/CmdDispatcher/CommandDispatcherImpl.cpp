@@ -9,6 +9,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
 #include <cstdio>
+#include <cstring>
 
 // Check the CMD_DISPATCHER_DISPATCH_TABLE_SIZE and CMD_DISPATCHER_SEQUENCER_TABLE_SIZE for overflow
 static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<FwOpcodeType>::max(),

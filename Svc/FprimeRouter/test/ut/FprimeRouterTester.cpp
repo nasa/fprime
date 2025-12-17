@@ -64,6 +64,22 @@ void FprimeRouterTester ::testRouteUnknownPacketUnconnected() {
     ASSERT_from_bufferAllocate_SIZE(0);  // no buffer allocation when port is unconnected
 }
 
+void FprimeRouterTester ::testAllocationFailureFile() {
+    this->m_forceAllocationError = true;
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_FILE);
+    ASSERT_EVENTS_AllocationError_SIZE(1);  // allocation error should be logged
+    ASSERT_EVENTS_AllocationError(0, FprimeRouter_AllocationReason::FILE_UPLINK);
+    ASSERT_from_dataReturnOut_SIZE(1);  // data ownership should always be returned
+}
+
+void FprimeRouterTester ::testAllocationFailureUnknown() {
+    this->m_forceAllocationError = true;
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_UNKNOWN);
+    ASSERT_EVENTS_AllocationError_SIZE(1);  // allocation error should be logged
+    ASSERT_EVENTS_AllocationError(0, FprimeRouter_AllocationReason::USER_BUFFER);
+    ASSERT_from_dataReturnOut_SIZE(1);  // data ownership should always be returned
+}
+
 void FprimeRouterTester ::testBufferReturn() {
     U8 data[1];
     Fw::Buffer buffer(data, sizeof(data));
@@ -116,9 +132,14 @@ void FprimeRouterTester::connectPortsExceptUnknownData() {
 // ----------------------------------------------------------------------
 Fw::Buffer FprimeRouterTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
-    this->m_buffer.setData(this->m_buffer_slot);
-    this->m_buffer.setSize(size);
-    ::memset(this->m_buffer.getData(), 0, size);
+    if (this->m_forceAllocationError) {
+        this->m_buffer.setData(nullptr);
+        this->m_buffer.setSize(0);
+    } else {
+        this->m_buffer.setData(this->m_buffer_slot);
+        this->m_buffer.setSize(size);
+        ::memset(this->m_buffer.getData(), 0, size);
+    }
     return this->m_buffer;
 }
 

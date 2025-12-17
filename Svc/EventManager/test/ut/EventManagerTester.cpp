@@ -25,7 +25,9 @@ EventManagerTester::EventManagerTester(Svc::EventManager& inst)
       m_receivedPacket(false),
       m_receivedFatalEvent(false) {}
 
-EventManagerTester::~EventManagerTester() {}
+EventManagerTester::~EventManagerTester() {
+    this->m_impl.deinit();
+}
 
 void EventManagerTester::from_PktSend_handler(const FwIndexType portNum,  //!< The port number
                                               Fw::ComBuffer& data,        //!< Buffer containing packet data

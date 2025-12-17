@@ -20,7 +20,9 @@ namespace SmInstanceState {
 StateToChoiceTester::StateToChoiceTester(const char* const compName)
     : StateToChoiceComponentBase(compName), m_smStateStateToChoice_actionHistory(), m_smStateStateToChoice_guard_g() {}
 
-StateToChoiceTester::~StateToChoiceTester() {}
+StateToChoiceTester::~StateToChoiceTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

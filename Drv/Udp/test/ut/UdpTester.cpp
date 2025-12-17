@@ -24,7 +24,7 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
+void UdpTester::test_with_loop(U32 iterations, bool recv_thread, bool send_only) {
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
@@ -47,8 +47,9 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Configure the component
     this->component.configureSend("127.0.0.1", port1, 0, 100);
-    this->component.configureRecv("127.0.0.1", port2);
-
+    if (not send_only) {
+        this->component.configureRecv("127.0.0.1", port2);
+    }
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
@@ -72,8 +73,10 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
                                              Drv::Test::get_configured_delay_ms() / 10 + 1));
         }
         EXPECT_TRUE(this->component.isOpened());
-
-        udp2.configureSend("127.0.0.1", port2, 0, 100);
+        // Other side socket only receives when component is send-only
+        if (not send_only) {
+            udp2.configureSend("127.0.0.1", port2, 0, 100);
+        }
         udp2.configureRecv("127.0.0.1", port1);
         status2 = udp2.open(udp2_fd);
 
@@ -93,7 +96,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
-            if (recv_thread) {
+            if (recv_thread and not send_only) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
                 udp2.send(udp2_fd, m_data_buffer.getData(), m_data_buffer.getSize());
@@ -142,6 +145,14 @@ void UdpTester ::test_basic_messaging() {
 
 void UdpTester ::test_multiple_messaging() {
     test_with_loop(100);
+}
+
+void UdpTester ::test_basic_unidirectional_messaging() {
+    test_with_loop(1, false, true);
+}
+
+void UdpTester ::test_multiple_unidirectional_messaging() {
+    test_with_loop(100, false, true);
 }
 
 void UdpTester ::test_receive_thread() {

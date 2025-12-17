@@ -18,7 +18,9 @@ namespace SmInstanceState {
 
 PolymorphismTester::PolymorphismTester(const char* const compName) : PolymorphismComponentBase(compName) {}
 
-PolymorphismTester::~PolymorphismTester() {}
+PolymorphismTester::~PolymorphismTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

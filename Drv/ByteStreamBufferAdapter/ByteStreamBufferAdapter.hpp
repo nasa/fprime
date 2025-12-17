@@ -29,7 +29,7 @@ class ByteStreamBufferAdapter final : public ByteStreamBufferAdapterComponentBas
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for byteStreamDriverReady
+    //! Handler implementation for bufferIn
     //!
     //! Port for receiving buffers
     void bufferIn_handler(FwIndexType portNum,  //!< The port number

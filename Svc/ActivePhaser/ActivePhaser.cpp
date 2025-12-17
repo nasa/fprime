@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "Svc/ActivePhaser/ActivePhaser.hpp"
+#include <cstring>
 
 namespace Svc {
 

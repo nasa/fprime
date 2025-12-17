@@ -22,7 +22,9 @@ BasicGuardTestArrayTester::BasicGuardTestArrayTester(const char* const compName)
       m_smStateBasicGuardTestArray_action_a_history(),
       m_smStateBasicGuardTestArray_guard_g() {}
 
-BasicGuardTestArrayTester::~BasicGuardTestArrayTester() {}
+BasicGuardTestArrayTester::~BasicGuardTestArrayTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

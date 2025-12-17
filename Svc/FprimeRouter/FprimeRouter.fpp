@@ -7,6 +7,11 @@ module Svc {
         # ----------------------------------------------------------------------
         import Router
 
+        enum AllocationReason : U8{
+            FILE_UPLINK,  @< Buffer allocation for file uplink
+            USER_BUFFER   @< Buffer allocation for user handled buffer
+        }
+
         @ Port for forwarding non-recognized packet types
         @ Ownership of the buffer is retained by the FprimeRouter, meaning receiving
         @ components should either process data synchronously, or copy the data if needed
@@ -31,6 +36,10 @@ module Svc {
             ) \
             severity warning high \
             format "Deserializing packet type failed with status {}"
+        
+        @ An allocation error occurred
+        event AllocationError(reason: AllocationReason) severity warning high \
+            format "Buffer allocation for {} failed"
 
 
         ###############################################################################

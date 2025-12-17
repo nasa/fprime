@@ -13,6 +13,7 @@
 #ifndef Svc_FileManager_HPP
 #define Svc_FileManager_HPP
 
+#include <atomic>
 #include "Os/FileSystem.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
 
@@ -45,7 +46,7 @@ class FileManager final : public FileManagerComponentBase {
     void CreateDirectory_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
                                     const U32 cmdSeq,                //!< The command sequence number
                                     const Fw::CmdStringArg& dirName  //!< The directory to create
-    );
+                                    ) override;
 
     //! Implementation for RemoveFile command handler
     //!
@@ -53,7 +54,7 @@ class FileManager final : public FileManagerComponentBase {
                                const U32 cmdSeq,                  //!< The command sequence number
                                const Fw::CmdStringArg& fileName,  //!< The file to remove
                                const bool ignoreErrors            //!< Ignore missing files
-    );
+                               ) override;
 
     //! Implementation for MoveFile command handler
     //!
@@ -61,14 +62,14 @@ class FileManager final : public FileManagerComponentBase {
                              const U32 cmdSeq,                        //!< The command sequence number
                              const Fw::CmdStringArg& sourceFileName,  //!< The source file name
                              const Fw::CmdStringArg& destFileName     //!< The destination file name
-    );
+                             ) override;
 
     //! Implementation for RemoveDirectory command handler
     //!
     void RemoveDirectory_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
                                     const U32 cmdSeq,                //!< The command sequence number
                                     const Fw::CmdStringArg& dirName  //!< The directory to remove
-    );
+                                    ) override;
 
     //! Implementation for ShellCommand command handler
     //!
@@ -76,7 +77,7 @@ class FileManager final : public FileManagerComponentBase {
                                  const U32 cmdSeq,                    //!< The command sequence number
                                  const Fw::CmdStringArg& command,     //!< The shell command string
                                  const Fw::CmdStringArg& logFileName  //!< The name of the log file
-    );
+                                 ) override;
 
     //! Implementation for ConcatFiles command handler
     //! Append 1 file's contents to the end of another.
@@ -84,27 +85,27 @@ class FileManager final : public FileManagerComponentBase {
                                const U32 cmdSeq,                //!< The command sequence number
                                const Fw::CmdStringArg& source,  //! The name of the file to take content from
                                const Fw::CmdStringArg& target   //! The name of the file to append to
-    );
+                               ) override;
 
     //! Implementation for FileSize command handler
     //!
     void FileSize_cmdHandler(const FwOpcodeType opCode,        //!< The opcode
                              const U32 cmdSeq,                 //!< The command sequence number
                              const Fw::CmdStringArg& fileName  //!< The file to get the size of
-    );
+                             ) override;
 
     //! Implementation for ListDirectory command handler
     //!
     void ListDirectory_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
                                   const U32 cmdSeq,                //!< The command sequence number
                                   const Fw::CmdStringArg& dirName  //!< The directory to list
-    );
+                                  ) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
-    );
+                        ) override;
 
     //! Handler implementation for schedIn
     //! This handler is called by a Rate Group. It processes
@@ -113,7 +114,7 @@ class FileManager final : public FileManagerComponentBase {
     //!
     void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
                          U32 context                /*!< The call order*/
-    );
+                         ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -137,6 +138,16 @@ class FileManager final : public FileManagerComponentBase {
                              const U32 cmdSeq,                    //!< The command sequence value
                              const Os::FileSystem::Status status  //!< The status
     );
+
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined internal interfaces
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for run
+    //!
+    //! Internal port for handling schedIn
+    void run_internalInterfaceHandler() override;
 
   private:
     // ----------------------------------------------------------------------
@@ -182,6 +193,8 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Command sequence number stored for final response
     U32 m_currentCmdSeq;
+
+    std::atomic<bool> m_runQueued;
 };
 
 }  // end namespace Svc

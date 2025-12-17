@@ -56,8 +56,14 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests full operation
     void test_full();
 
+    //! Tests exactly full operation
+    void test_exactly_full();
+
     //! Tests timeout operation
     void test_timeout();
+
+    //! Tests timeout operation
+    void test_timeout_overflow_prevention();
 
     //! Tests timeout operation sends no empty buffer
     void test_timeout_zero();

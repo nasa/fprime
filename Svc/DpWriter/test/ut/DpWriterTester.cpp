@@ -23,7 +23,9 @@ DpWriterTester ::DpWriterTester()
     Os::Stub::File::Test::StaticData::data.pointer = 0;
 }
 
-DpWriterTester ::~DpWriterTester() {}
+DpWriterTester ::~DpWriterTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports

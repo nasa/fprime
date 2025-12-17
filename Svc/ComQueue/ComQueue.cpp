@@ -127,6 +127,26 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset),
               static_cast<FwAssertArgType>(totalAllocation));
 }
+
+// ----------------------------------------------------------------------
+// Handler implementations for commands
+// ----------------------------------------------------------------------
+
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+    // Acquire the queue that we need to drain
+    FwIndexType queueIndex =
+        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
+    this->drainQueue(queueIndex);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
+        this->drainQueue(i);
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -285,6 +305,29 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     this->dataOut_out(0, buffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
+}
+
+void ComQueue::drainQueue(FwIndexType index) {
+    FW_ASSERT(index >= 0 && index < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(index));
+    Types::Queue& queue = this->m_queues[index];
+
+    // Read all messages from the queue and discard them
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    const FwSizeType available = queue.getQueueSize();
+    for (FwSizeType i = 0; (i < available) && (status == Fw::FW_SERIALIZE_OK); i++) {
+        if (index < COM_PORT_COUNT) {
+            // Dequeueing is reading the whole persisted Fw::ComBuffer object from the queue's storage.
+            // thus it takes an address to the object to fill and the size of the actual object
+            Fw::ComBuffer comBuffer;
+            status = queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
+        } else {
+            // For buffer queues, if the buffer requires ownership return, return it via the bufferReturnOut port
+            // Dequeueing is reading the whole persisted Fw::Buffer object from the queue's storage.
+            Fw::Buffer buffer;
+            status = queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
+            this->bufferReturnOut_out(static_cast<FwIndexType>(index - COM_PORT_COUNT), buffer);
+        }
+    }
 }
 
 void ComQueue::processQueue() {

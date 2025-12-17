@@ -124,6 +124,29 @@ class ComQueue final : public ComQueueComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Handler implementations for commands
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for command FLUSH_QUEUE
+    //!
+    //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
+    //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                U32 cmdSeq,                //!< The command sequence number
+                                Svc::QueueType queueType,  //!< The Queue data type
+                                FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
+                                ) override;
+
+    //! Handler implementation for command FLUSH_ALL_QUEUES
+    //!
+    //! Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
+    //! ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq            //!< The command sequence number
+                                     ) override;
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
@@ -190,6 +213,9 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void sendBuffer(Fw::Buffer& buffer,     //!< Reference to buffer to send
                     FwIndexType queueIndex  //!< Index of the queue emitting the message
+    );
+
+    void drainQueue(FwIndexType queueNum  //!< Index of the queue to drain
     );
 
     //! Process the queues to select the next priority message

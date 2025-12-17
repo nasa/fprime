@@ -16,17 +16,6 @@ module Fw {
                   $size: FwSizeType
                 ) -> Fw.Buffer
 
-  @ Interface for allocating and deallocating buffers
-  interface BufferAllocation {
-
-    @ Allocation request to buffer manager
-    output port allocate: Fw.BufferGet
-
-    @ Deallocation request to buffer manager
-    output port deallocate: Fw.BufferSend
-
-  }
-
   @ The bufferIn interface for a passive component
   interface PassiveBufferIn {
 

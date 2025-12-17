@@ -50,6 +50,7 @@ class TaskInterface {
         OP_OK,             //!< message sent/received okay
         INVALID_HANDLE,    //!< Task handle invalid
         INVALID_PARAMS,    //!< started task with invalid parameters
+        INVALID_PRIORITY,  //!< started task with invalid priority
         INVALID_STACK,     //!< started with invalid stack size
         UNKNOWN_ERROR,     //!< unexpected error return value
         INVALID_AFFINITY,  //!< unable to set the task affinity
@@ -345,6 +346,9 @@ class Task final : public TaskInterface {
     //! \brief determine if the task is cooperative multitasking (implementation specific)
     //! \return true if cooperative, false otherwise
     bool isCooperative() override;
+
+    //! \brief get the task name
+    TaskString getName();
 
     //! \brief get the task priority
     FwTaskPriorityType getPriority();

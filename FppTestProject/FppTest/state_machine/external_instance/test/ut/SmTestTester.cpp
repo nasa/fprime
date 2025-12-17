@@ -22,7 +22,9 @@ SmTestTester::SmTestTester() : SmTestGTestBase("SmTestTester", SmTestTester::MAX
     this->component.setIdBase(ID_BASE);
 }
 
-SmTestTester::~SmTestTester() {}
+SmTestTester::~SmTestTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

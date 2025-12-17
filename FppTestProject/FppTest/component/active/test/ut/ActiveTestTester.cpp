@@ -27,7 +27,9 @@ ActiveTestTester ::ActiveTestTester()
     this->component.registerExternalParameters(&this->paramTesterDelegate);
 }
 
-ActiveTestTester ::~ActiveTestTester() {}
+ActiveTestTester ::~ActiveTestTester() {
+    this->component.deinit();
+}
 
 void ActiveTestTester ::initComponents() {
     this->init();

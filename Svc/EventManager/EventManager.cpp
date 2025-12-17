@@ -10,6 +10,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Svc/EventManager/EventManager.hpp>
+#include <cstring>
 
 namespace Svc {
 static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE,

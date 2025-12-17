@@ -22,7 +22,9 @@ ChoiceToStateTester::ChoiceToStateTester(const char* const compName)
       m_smChoiceChoiceToState_actionHistory(),
       m_smChoiceChoiceToState_guard_g() {}
 
-ChoiceToStateTester::~ChoiceToStateTester() {}
+ChoiceToStateTester::~ChoiceToStateTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

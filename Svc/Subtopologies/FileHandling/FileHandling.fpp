@@ -15,7 +15,6 @@ module FileHandling {
     {
         phase Fpp.ToCpp.Phases.configComponents """
         FileHandling::fileDownlink.configure(
-            FileHandlingConfig::DownlinkConfig::timeout,
             FileHandlingConfig::DownlinkConfig::cooldown,
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth

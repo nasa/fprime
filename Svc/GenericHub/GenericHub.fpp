@@ -110,7 +110,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ This interface provides ports allocate and deallocate
-    import Fw.BufferAllocation
+    import Svc.BufferAllocation
 
     @ This interface provides ports toBufferDriver and toBufferDriverReturn
     import Drv.PassiveBufferDriverClientSend

@@ -82,7 +82,7 @@ class HealthImpl final : public HealthComponentBase {
     //!  \brief additional checks function
     //!
     //!  Does additional checks based on the platform
-    virtual void doOtherChecks();
+    void doOtherChecks();
 
   private:
     //!  \brief ping return handler

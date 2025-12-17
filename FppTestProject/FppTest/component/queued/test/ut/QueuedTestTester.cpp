@@ -27,7 +27,9 @@ QueuedTestTester ::QueuedTestTester()
     this->component.registerExternalParameters(&this->paramTesterDelegate);
 }
 
-QueuedTestTester ::~QueuedTestTester() {}
+QueuedTestTester ::~QueuedTestTester() {
+    this->component.deinit();
+}
 
 void QueuedTestTester ::initComponents() {
     this->init();

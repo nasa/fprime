@@ -24,7 +24,9 @@ SequenceTester ::SequenceTester(const char* const compName)
       m_smChoiceSequence_guard_g1(),
       m_smChoiceSequence_guard_g2() {}
 
-SequenceTester ::~SequenceTester() {}
+SequenceTester ::~SequenceTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

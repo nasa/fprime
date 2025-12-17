@@ -69,11 +69,23 @@ class QueueInterface {
     //! allocation is dependent on the underlying implementation and users should assume that resource allocation is
     //! possible.
     //!
+    //! \param id: identifier for the queue, used for memory allocation
     //! \param name: name of queue
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    virtual Status create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) = 0;
+    virtual Status create(FwEnumStoreType id,
+                          const Fw::ConstStringBase& name,
+                          FwSizeType depth,
+                          FwSizeType messageSize) = 0;
+
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
+    //! implementation.
+    //!
+    //! Note: the default implementation does nothing.
+    virtual void teardown() {}
 
     //! \brief send a message into the queue
     //!
@@ -179,7 +191,17 @@ class Queue final : public QueueInterface {
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    Status create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) override;
+    Status create(FwEnumStoreType id,
+                  const Fw::ConstStringBase& name,
+                  FwSizeType depth,
+                  FwSizeType messageSize) override;
+
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
+    //! implementation.
+    //! implementation.
+    void teardown() override;
 
     //! \brief send a message into the queue through delegate
     //!

@@ -137,8 +137,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
 
 void GenericHub::toBufferDriverReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Deallocate the existing buffer
-    deallocate_out(portNum, fwBuffer); 
-
+    deallocate_out(portNum, fwBuffer);
 }
 
 void GenericHub::eventIn_handler(const FwIndexType portNum,

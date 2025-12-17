@@ -23,7 +23,9 @@ ChoiceToChoiceTester ::ChoiceToChoiceTester(const char* const compName)
       m_smChoiceChoiceToChoice_guard_g1(),
       m_smChoiceChoiceToChoice_guard_g2() {}
 
-ChoiceToChoiceTester ::~ChoiceToChoiceTester() {}
+ChoiceToChoiceTester ::~ChoiceToChoiceTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

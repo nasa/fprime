@@ -55,7 +55,7 @@ class MemAllocator {
     //! identifier is a unique identifier for the allocating entity. This entity (e.g. a component) may call allocate
     //! multiple times with the same id, but no other entity in the system shall call allocate with that id.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity
     //! \param size the requested size - changed to actual if different
     //! \param recoverable - flag to indicate the memory could be recoverable
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
@@ -70,9 +70,57 @@ class MemAllocator {
     //! Deallocate memory previously allocated by allocate(). The pointer must be one returned by allocate() and the
     //! identifier must match the one used in the original allocate() call.
     //!
-    //! \param identifier the memory segment identifier, each identifier is to be used in once single allocation
+    //! \param identifier - a unique identifier for the allocating entity, must match the call to allocate()
     //! \param ptr the pointer to memory returned by allocate()
     virtual void deallocate(const FwEnumStoreType identifier, void* ptr) = 0;
+
+    //! Allocate memory without recoverable flag
+    //!
+    //! This is a convenience method that calls allocate() without the recoverable flag. The recoverable flag is filled
+    //! by the underlying allocator but is not returned to the caller. This is for cases when the caller does not care
+    //! about recoverability of memory.
+    //!
+    //! \param identifier - a unique identifier for the allocating entity
+    //! \param size the requested size - changed to actual if different
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   FwSizeType alignment = alignof(std::max_align_t));
+
+    //! Allocate memory checking that the allocation was successful
+    //!
+    //! This is a convenience method that calls allocate() and checks that the returned pointer is not null and that
+    //! size is at least as large as the requested size.
+    //!
+    //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
+    //!
+    //! \param identifier - a unique identifier for the allocating entity
+    //! \param size the requested size, actual allocation will be at least this size
+    //! \param recoverable - flag to indicate the memory could be recoverable
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* checkedAllocate(const FwEnumStoreType identifier,
+                          FwSizeType& size,
+                          bool& recoverable,
+                          FwSizeType alignment = alignof(std::max_align_t));
+
+    //! Allocate memory checking that the allocation was successful without recoverable flag
+    //!
+    //! This is a convenience method that calls allocate() and checks that the returned pointer is not null and that
+    //! size is at least as large as the requested size. The recoverable flag is filled by the underlying allocator
+    //! but is not returned to the caller. This is for cases when the caller does not care about recoverability of
+    //! memory.
+    //!
+    //! Allocations are checked using FW_ASSERT implying that an allocation failure results in a tripped assertion.
+    //!
+    //! \param identifier - a unique identifier for the allocating entity
+    //! \param size the requested size, actual allocation will be at least this size
+    //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.
+    //! \return the pointer to memory. Zero if unable to allocate
+    void* checkedAllocate(const FwEnumStoreType identifier,
+                          FwSizeType& size,
+                          FwSizeType alignment = alignof(std::max_align_t));
 
   protected:
     MemAllocator();
@@ -84,11 +132,12 @@ class MemAllocator {
 };
 
 class MemAllocatorRegistry {
-  public:
+  private:
     // Constructor which will register itself as the singleton
     MemAllocatorRegistry();
     ~MemAllocatorRegistry() = default;
 
+  public:
     //! \brief get the singleton registry
     //!
     //! \return the singleton registry
@@ -121,11 +170,17 @@ class MemAllocatorRegistry {
     MemAllocator& getAnAllocator(const MemoryAllocation::MemoryAllocatorType type);
 
   private:
+    //! \brief get the default allocator
+    //!
+    //! Creates a single instance of the default allocator and returns a reference to it. This is done to ensure that
+    //! the default allocator is only created once and is available when ill-ordered static initialization occurs.
+    //!
+    //! \return the default allocator
+    static MemAllocator& getDefaultAllocator();
+
     //! Array of allocators for each type defaulted to nullptr
     MemAllocator* m_allocators[MemoryAllocation::MemoryAllocatorType::NUM_CONSTANTS] = {nullptr};
-
-    //! The singleton registry pointer
-    static MemAllocatorRegistry* s_registry;  //!< singleton registry
+    MemAllocator& m_defaultAllocator;  //!< default allocator
 };
 } /* namespace Fw */
 
