@@ -1387,8 +1387,10 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
 Signal FpySequencer::storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive,
                                                  DirectiveError& error) {
     // Need enough bytes for the value and the offset (SignedStackSizeType = 4 bytes)
-    // Overflow-safe: check stack.size >= sizeof(SignedStackSizeType) first, then stack.size - sizeof(SignedStackSizeType) >= size
-    if (this->m_runtime.stack.size < sizeof(Fpy::SignedStackSizeType) || this->m_runtime.stack.size - sizeof(Fpy::SignedStackSizeType) < directive.get_size()) {
+    // Overflow-safe: check stack.size >= sizeof(SignedStackSizeType) first, then stack.size -
+    // sizeof(SignedStackSizeType) >= size
+    if (this->m_runtime.stack.size < sizeof(Fpy::SignedStackSizeType) ||
+        this->m_runtime.stack.size - sizeof(Fpy::SignedStackSizeType) < directive.get_size()) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
