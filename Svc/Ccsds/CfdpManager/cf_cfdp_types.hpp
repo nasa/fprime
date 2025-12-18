@@ -35,6 +35,7 @@
 #include "cf_clist.hpp"
 #include "cf_chunk.hpp"
 #include "cf_codec.hpp"
+#include "CfdpTimer.hpp"
 
 #include <Os/Directory.hpp>
 
@@ -220,7 +221,7 @@ typedef struct CF_Playback
 typedef struct CF_Poll
 {
     CF_Playback_t pb;
-    CF_Timer_t    interval_timer;
+    CfdpTimer     interval_timer;
     bool          timer_set;
 } CF_Poll_t;
 
@@ -344,8 +345,8 @@ typedef struct CF_Transaction
 
     CF_History_t *     history;          /**< \brief weird, holds active filenames and possibly other info */
     CF_ChunkWrapper_t *chunks;           /**< \brief for gap tracking, only used on class 2 */
-    CF_Timer_t         inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
-    CF_Timer_t         ack_timer;        /**< \brief called ack_timer, but is also nak_timer */
+    CfdpTimer          inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
+    CfdpTimer          ack_timer;        /**< \brief called ack_timer, but is also nak_timer */
 
     U32    fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
     U32    foffs; /**< \brief offset into file for next read */

@@ -758,9 +758,9 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     /* first, check inactivity timer */
     if (!txn->flags.com.inactivity_fired)
     {
-        if (!CF_Timer_Expired(&txn->inactivity_timer))
+        if (txn->inactivity_timer.getStatus() == CfdpTimerStatus::RUNNING)
         {
-            CF_Timer_Tick(&txn->inactivity_timer);
+            txn->inactivity_timer.run();
         }
         else
         {

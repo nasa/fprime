@@ -28,7 +28,7 @@
 
 #include <stdbool.h>
 
-#include <Fw/FPrimeBasicTypes.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "cf_cfdp_pdu.hpp"
 #include "cf_logical_pdu.hpp"

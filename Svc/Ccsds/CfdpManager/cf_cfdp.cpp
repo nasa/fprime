@@ -118,7 +118,7 @@ void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const void *msgbuf, CF_Logical
  *-----------------------------------------------------------------*/
 void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
 {
-    CF_Timer_InitRelSec(&txn->ack_timer, CF_AppData.config_table->chan[txn->chan_num].ack_timer_s);
+    txn->ack_timer.setTimer(CF_AppData.config_table->chan[txn->chan_num].ack_timer_s);
     txn->flags.com.ack_timer_armed = true;
 }
 
@@ -172,7 +172,7 @@ void CF_CFDP_ArmInactTimer(CF_Transaction_t *txn)
         Sec = CF_AppData.config_table->chan[txn->chan_num].ack_timer_s * 2;
     }
 
-    CF_Timer_InitRelSec(&txn->inactivity_timer, Sec);
+    txn->inactivity_timer.setTimer(Sec);
 }
 
 /*----------------------------------------------------------------
@@ -1005,6 +1005,7 @@ CFE_Status_t CF_CFDP_InitEngine(void)
     CF_ChunkWrapper_t *cw  = CF_AppData.engine.chunks;
     CF_CListNode_t **  list_head;
     CFE_Status_t       ret              = CFE_SUCCESS;
+    CF_Poll_t *        poll;
     int                chunk_mem_offset = 0;
     int                i;
     int                j;
@@ -1632,10 +1633,10 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
                 if (!poll->timer_set && pd->interval_sec)
                 {
                     /* timer was not set, so set it now */
-                    CF_Timer_InitRelSec(&poll->interval_timer, pd->interval_sec);
+                    poll->interval_timer.setTimer(pd->interval_sec);
                     poll->timer_set = true;
                 }
-                else if (CF_Timer_Expired(&poll->interval_timer))
+                else if (poll->interval_timer.getStatus() == CfdpTimerStatus::EXPIRED)
                 {
                     /* the timer has expired */
                     ret = CF_CFDP_PlaybackDir_Initiate(&poll->pb, pd->src_dir, pd->dst_dir, pd->cfdp_class, 0,
@@ -1649,12 +1650,12 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
                         /* error occurred in playback directory, so reset the timer */
                         /* an event is sent in CF_CFDP_PlaybackDir_Initiate so there is no reason to
                          * to have another here */
-                        CF_Timer_InitRelSec(&poll->interval_timer, pd->interval_sec);
+                        poll->interval_timer.setTimer(pd->interval_sec);
                     }
                 }
                 else
                 {
-                    CF_Timer_Tick(&poll->interval_timer);
+                    poll->interval_timer.run();
                 }
             }
             else

@@ -9,23 +9,11 @@ module Ccsds {
         async command TODO opcode 0
 
         ##############################################################################
-        #### Uncomment the following examples to start customizing your component ####
+        # Custom ports
         ##############################################################################
 
-        # @ Example async command
-        # async command COMMAND_NAME(param_name: U32)
-
-        # @ Example telemetry counter
-        # telemetry ExampleCounter: U64
-
-        # @ Example event
-        # event ExampleStateEvent(example_state: Fw.On) severity activity high id 0 format "State set to {}"
-
-        # @ Example port: receiving calls from the rate group
-        # sync input port run: Svc.Sched
-
-        # @ Example parameter
-        # param PARAMETER_NAME: U32
+        @ Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
+        async input port run1Hz: Svc.Sched
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

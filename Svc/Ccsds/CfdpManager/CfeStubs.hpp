@@ -18,6 +18,16 @@ namespace Ccsds {
 // OS abstraction layers stubs
 // ======================================================================
 
+// From <Os/File.hpp>
+// #define OS_SEEK_SET 0 /**< Seek offset set */ BPC: The file offset is set to offset bytes.
+// #define OS_SEEK_CUR 1 /**< Seek offset current */ BPC: The file offset is set to its current location plus offset bytes.
+// #define OS_SEEK_END 2 /**< Seek offset end */ BPC: The file offset is set to the size of the file plus offset bytes.
+// Status seek(FwSignedSizeType offset, SeekType seekType) override;
+// CFE_Status_t CF_WrappedLseek(osal_id_t fd, off_t offset, int mode)
+// BPC: All instances of CF_WrappedLseek use OS_SEEK_SET except one call which uses OS_SEEK_END to find the end of the file
+I32 CF_WrappedLseek(Os::FileHandle fd, I32 offset, int mode)
+{}
+
 // BPC: One CF function was already replaced with an OS call:
 // void CF_CFDP_MoveFile(const char *src, const char *dest_dir)
 // static Status moveFile(const char* sourcePath, const char* destPath);

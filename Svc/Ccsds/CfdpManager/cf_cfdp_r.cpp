@@ -962,9 +962,9 @@ void CF_CFDP_R_AckTimerTick(CF_Transaction_t *txn)
         return;
     }
 
-    if (!CF_Timer_Expired(&txn->ack_timer))
+    if (txn->ack_timer.getStatus() == CfdpTimerStatus::RUNNING)
     {
-        CF_Timer_Tick(&txn->ack_timer);
+        txn->ack_timer.run();
     }
     else
     {
@@ -1023,9 +1023,9 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
 
     if (!txn->flags.com.inactivity_fired)
     {
-        if (!CF_Timer_Expired(&txn->inactivity_timer))
+        if (txn->inactivity_timer.getStatus() == CfdpTimerStatus::RUNNING)
         {
-            CF_Timer_Tick(&txn->inactivity_timer);
+            txn->inactivity_timer.run();
         }
         else
         {

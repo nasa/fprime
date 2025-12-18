@@ -41,7 +41,7 @@
 
 #include <stddef.h>
 
-#include <Fw/FPrimeBasicTypes.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "default_cf_interface_cfg.hpp"
 

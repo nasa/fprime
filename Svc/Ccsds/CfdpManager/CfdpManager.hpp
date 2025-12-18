@@ -27,6 +27,18 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Handler implementations for typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for run1Hz
+    //!
+    //! Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
+    void run1Hz_handler(FwIndexType portNum,  //!< The port number
+                        U32 context           //!< The call order
+                        ) override;
+                        
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 
