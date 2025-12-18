@@ -72,7 +72,7 @@ class AsyncByteStreamBufferAdapter final : public AsyncByteStreamBufferAdapterCo
     // ----------------------------------------------------------------------
 
     //! Whether the driver is ready
-    bool m_driverIsReady = false;
+    std::atomic<bool> m_driverIsReady = {false};
 };
 
 }  // namespace Drv

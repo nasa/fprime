@@ -39,17 +39,6 @@ void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(FwInde
     invoke_to_toByteStreamDriverReturn(portNum, fwBuffer, status);
 }
 
-//! Handle a text event
-void AsyncByteStreamBufferAdapterTester ::textLogIn(FwEventIdType id,                //!< The event ID
-                                                    const Fw::Time& timeTag,         //!< The time
-                                                    const Fw::LogSeverity severity,  //!< The severity
-                                                    const Fw::TextLogString& text    //!< The event string
-) {
-    TextLogEntry e = {id, timeTag, severity, text};
-
-    printTextLogHistoryEntry(e, stdout);
-}
-
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -75,28 +64,31 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
 
     invoke_to_bufferIn(0, m_buffer);
 
-    // driver is not ready by default, verify no data flow
+    // driver is not ready by default, verify no data flow and buffer is returned immediately
     ASSERT_from_toByteStreamDriver_SIZE(0);
     ASSERT_EVENTS_DriverNotReady_SIZE(1);
+    ASSERT_from_bufferInReturn_SIZE(1);
 
     // driver ready, verify data is flowing
     invoke_to_byteStreamDriverReady(0);
     invoke_to_bufferIn(0, m_buffer);
     ASSERT_from_toByteStreamDriver_SIZE(1);
-    ASSERT_from_bufferInReturn_SIZE(1);
+    ASSERT_from_bufferInReturn_SIZE(2);  // Second buffer return after successful send
     ASSERT_from_toByteStreamDriver(0, m_buffer);
 
     // Force data failure
     this->m_byte_stream_driver_fail = true;
     invoke_to_bufferIn(0, m_buffer);
 
-    // Verify data send error
+    // Verify data send error - buffer sent to driver but returns with error
     ASSERT_EVENTS_DataSendError_SIZE(1);
     ASSERT_EVENTS_DataSendError(0, 3);
     ASSERT_EVENTS_DriverNotReady_SIZE(1);
     ASSERT_from_toByteStreamDriver_SIZE(2);
+    ASSERT_from_bufferInReturn_SIZE(3);  // Buffer returned after send error
     this->m_byte_stream_driver_fail = false;
 }
+
 void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
     clearFromPortHistory();
     this->clearHistory();
@@ -113,9 +105,10 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
     // Faulty data from byte stream driver; send with bad status
     invoke_to_fromByteStreamDriver(0, m_buffer, Drv::ByteStreamStatus::RECV_NO_DATA);
 
-    // Verify no data at buffer out as the status was bad
+    // Verify no data at buffer out as the status was bad, and buffer is returned
     ASSERT_from_bufferOut_SIZE(0);
     ASSERT_EVENTS_DataReceiveError_SIZE(1);
+    ASSERT_from_fromByteStreamDriverReturn_SIZE(1);
 
     // Good data
     this->clearHistory();
@@ -125,6 +118,10 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
     ASSERT_EVENTS_DataReceiveError_SIZE(0);
     ASSERT_from_bufferOut_SIZE(1);
     ASSERT_from_bufferOut(0, m_buffer);
+    // Buffer NOT returned to driver yet - waiting for bufferOutReturn
+    ASSERT_from_fromByteStreamDriverReturn_SIZE(0);
+    invoke_to_bufferOutReturn(0, m_buffer);
+    ASSERT_from_fromByteStreamDriverReturn_SIZE(1);  // Buffer returned to driver after bufferOutReturn
 }
 
 void AsyncByteStreamBufferAdapterTester ::test_byte_stream_return() {

@@ -53,11 +53,6 @@ class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAda
 
     void from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
-    void textLogIn(FwEventIdType id,
-                   const Fw::Time& timeTag,
-                   const Fw::LogSeverity severity,
-                   const Fw::TextLogString& text) override;
-
   private:
     // ----------------------------------------------------------------------
     // Helper functions
