@@ -27,25 +27,28 @@ void ByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& 
         if (status != Drv::ByteStreamStatus::OP_OK) {
             this->log_WARNING_LO_DataSendError(status);
         }
-        bufferInReturn_out(portNum, fwBuffer);
     } else {
         this->log_WARNING_LO_DriverNotReady();
     }
+    // ByteStreamDriver is Sync, so we return buffer back immediately regardless of status/readiness
+    this->bufferInReturn_out(portNum, fwBuffer);
 }
 
 void ByteStreamBufferAdapter::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    fromByteStreamDriverReturn_out(portNum, fwBuffer);
+    this->fromByteStreamDriverReturn_out(portNum, fwBuffer);
 }
 
 void ByteStreamBufferAdapter::fromByteStreamDriver_handler(FwIndexType portNum,
                                                            Fw::Buffer& buffer,
                                                            const Drv::ByteStreamStatus& status) {
     if (status == Drv::ByteStreamStatus::OP_OK) {
-        bufferOut_out(portNum, buffer);
+        this->bufferOut_out(portNum, buffer);
+        // buffer ownership will come back through bufferOutReturn so we do **not** return buffer here
     } else {
+        // If error, log and return buffer back immediately
         this->log_WARNING_LO_DataReceiveError(status);
+        this->fromByteStreamDriverReturn_out(portNum, buffer);
     }
-    fromByteStreamDriverReturn_out(portNum, buffer);
 }
 
 void ByteStreamBufferAdapter::byteStreamDriverReady_handler(FwIndexType portNum) {

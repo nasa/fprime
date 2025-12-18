@@ -15,9 +15,15 @@ TEST(Nominal, Test_Stream_in) {
     Drv::ByteStreamBufferAdapterTester tester;
     tester.test_byte_stream_in();
 }
+
 TEST(Nominal, Test_Stream_Return) {
     Drv::ByteStreamBufferAdapterTester tester;
     tester.test_byte_stream_return();
+}
+
+TEST(Nominal, Test_Driver_Ready_State) {
+    Drv::ByteStreamBufferAdapterTester tester;
+    tester.test_driver_ready_state();
 }
 
 int main(int argc, char** argv) {

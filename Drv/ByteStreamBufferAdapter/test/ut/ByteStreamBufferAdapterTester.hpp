@@ -43,20 +43,19 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     // Tests
     // ----------------------------------------------------------------------
 
-    //!
+    //! Test buffer streaming out through the ByteStreamDriver
     void test_byte_stream_out();
 
-    //!
+    //! Test buffer streaming in from the ByteStreamDriver
     void test_byte_stream_in();
 
+    //! Test buffer return handling from bufferOutReturn port
     void test_byte_stream_return();
 
-    Drv::ByteStreamStatus from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& sendBuffer) override;
+    //! Test driver ready state behavior specifically
+    void test_driver_ready_state();
 
-    void textLogIn(FwEventIdType id,
-                   const Fw::Time& timeTag,
-                   const Fw::LogSeverity severity,
-                   const Fw::TextLogString& text) override;
+    Drv::ByteStreamStatus from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& sendBuffer) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -69,6 +68,7 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     //! Initialize components
     void initComponents();
 
+    //! Fill buffer with random data
     void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
 
   private:
@@ -78,8 +78,14 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
 
     //! The component under test
     ByteStreamBufferAdapter component;
+
+    //! Buffer for testing
     Fw::Buffer m_buffer;
+
+    //! Storage for buffer data
     U8 m_data_store[DATA_SIZE];
+
+    //! Flag to control error conditions in byte stream driver handler
     bool m_byte_stream_driver_fail;
 };
 
