@@ -350,7 +350,7 @@ typedef struct CF_Transaction
 
     U32    fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
     U32    foffs; /**< \brief offset into file for next read */
-    osal_id_t fd;
+    Os::FileHandle fd;
 
     CF_Crc_t crc;
 
