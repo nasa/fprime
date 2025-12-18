@@ -577,8 +577,7 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive) override;
 
     //! Internal interface handler for directive_storeAbs
-    void directive_storeAbs_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreAbsDirective& directive) override;
+    void directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive) override;
 
     //! Internal interface handler for directive_storeAbsConstOffset
     void directive_storeAbsConstOffset_internalInterfaceHandler(
@@ -849,7 +848,7 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Helper to load value from srcOffset and push to stack top
     Signal loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error);
     Signal storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
-                                                  DirectiveError& error);
+                                                DirectiveError& error);
     Signal loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
@@ -866,7 +865,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive, DirectiveError& error);
     Signal storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error);
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
-                                                   DirectiveError& error);
+                                                DirectiveError& error);
 };
 
 }  // namespace Svc

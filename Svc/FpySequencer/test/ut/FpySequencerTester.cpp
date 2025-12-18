@@ -522,7 +522,7 @@ Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekD
 }
 
 Signal FpySequencerTester::tester_storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive,
-                                                              DirectiveError& err) {
+                                                            DirectiveError& err) {
     return this->cmp.storeRel_directiveHandler(directive, err);
 }
 
@@ -537,12 +537,12 @@ Signal FpySequencerTester::tester_return_directiveHandler(const FpySequencer_Ret
 }
 
 Signal FpySequencerTester::tester_loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive,
-                                                              DirectiveError& err) {
+                                                           DirectiveError& err) {
     return this->cmp.loadAbs_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive,
-                                                               DirectiveError& err) {
+                                                            DirectiveError& err) {
     return this->cmp.storeAbs_directiveHandler(directive, err);
 }
 
@@ -568,7 +568,7 @@ Signal FpySequencerTester::tester_allocate_directiveHandler(const FpySequencer_A
 }
 
 Signal FpySequencerTester::tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive,
-                                                             DirectiveError& err) {
+                                                           DirectiveError& err) {
     return this->cmp.loadRel_directiveHandler(directive, err);
 }
 
