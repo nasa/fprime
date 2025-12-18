@@ -87,13 +87,20 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn)
 CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
 {
     CFE_Status_t ret = CFE_SUCCESS;
-    CF_CRC_Finalize(&txn->crc);
-    if (txn->crc.result != expected_crc)
+    U32 crc_result;
+
+    // The F' version does not have an equivelent finalize call as it
+    // - Never stores a partial word internally
+    // - Never needs to "flush" anything
+    // - Always accounts for padding at update time
+    // CF_CRC_Finalize(&txn->crc);
+    crc_result = txn->crc.getValue();
+    if (crc_result != expected_crc)
     {
         CFE_EVS_SendEvent(CF_CFDP_R_CRC_ERR_EID, CFE_EVS_EventType_ERROR,
                           "CF R%d(%lu:%lu): CRC mismatch for R trans. got 0x%08lx expected 0x%08lx",
                           (txn->state == CF_TxnState_R2), (unsigned long)txn->history->src_eid,
-                          (unsigned long)txn->history->seq_num, (unsigned long)txn->crc.result,
+                          (unsigned long)txn->history->seq_num, (unsigned long)crc_result,
                           (unsigned long)expected_crc);
         ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.crc_mismatch;
         ret = CF_ERROR;
@@ -386,7 +393,7 @@ void CF_CFDP_R1_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
     if (ret == CFE_SUCCESS)
     {
         /* class 1 digests CRC */
-        CF_CRC_Digest(&txn->crc, ph->int_header.fd.data_ptr, ph->int_header.fd.data_len);
+        txn->crc.update(ph->int_header.fd.data_ptr, ph->int_header.fd.offset, ph->int_header.fd.data_len);
     }
     else
     {
@@ -631,7 +638,7 @@ CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 
     if (txn->state_data.receive.r2.rx_crc_calc_bytes == 0)
     {
-        CF_CRC_Start(&txn->crc);
+        txn->crc = CFDP::Checksum(0);
     }
 
     while ((count_bytes < CF_AppData.config_table->rx_crc_calc_bytes_per_wakeup) &&
@@ -677,7 +684,7 @@ CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
             break;
         }
 
-        CF_CRC_Digest(&txn->crc, buf, read_size);
+        txn->crc.update(buf, txn->state_data.receive.r2.rx_crc_calc_bytes, read_size);
         txn->state_data.receive.r2.rx_crc_calc_bytes += read_size;
         txn->state_data.receive.cached_pos = txn->state_data.receive.r2.rx_crc_calc_bytes;
         count_bytes += read_size;

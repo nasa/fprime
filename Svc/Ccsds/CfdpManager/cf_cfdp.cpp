@@ -449,7 +449,7 @@ CFE_Status_t CF_CFDP_SendEof(CF_Transaction_t *txn)
         eof = &ph->int_header.eof;
 
         eof->cc   = CF_TxnStatus_To_ConditionCode(txn->history->txn_stat);
-        eof->crc  = txn->crc.result;
+        eof->crc  = txn->crc.getValue();
         eof->size = txn->fsize;
 
         if (eof->cc != CF_CFDP_ConditionCode_NO_ERROR)
@@ -1894,7 +1894,7 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn)
         EotPktPtr->Payload.peer_eid   = txn->history->peer_eid;
         EotPktPtr->Payload.seq_num    = txn->history->seq_num;
         EotPktPtr->Payload.fsize      = txn->fsize;
-        EotPktPtr->Payload.crc_result = txn->crc.result;
+        EotPktPtr->Payload.crc_result = txn->crc.getValue();
 
         /*
         ** Timestamp and send eod of transaction telemetry

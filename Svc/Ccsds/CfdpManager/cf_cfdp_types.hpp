@@ -37,6 +37,8 @@
 #include "cf_codec.hpp"
 #include "CfdpTimer.hpp"
 
+#include <CFDP/Checksum/Checksum.hpp>
+#include <Os/File.hpp>
 #include <Os/Directory.hpp>
 
 namespace Svc {
@@ -352,7 +354,7 @@ typedef struct CF_Transaction
     U32    foffs; /**< \brief offset into file for next read */
     Os::FileHandle fd;
 
-    CF_Crc_t crc;
+    CFDP::Checksum crc;
 
     U8 keep;
     U8 chan_num; /**< \brief if ever more than one engine, this may need to change to pointer */

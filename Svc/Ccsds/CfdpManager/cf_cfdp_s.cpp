@@ -46,7 +46,11 @@ CFE_Status_t CF_CFDP_S_SendEof(CF_Transaction_t *txn)
     /* this is OK as we still need to put some value into the EOF */
     if (!txn->flags.com.crc_calc)
     {
-        CF_CRC_Finalize(&txn->crc);
+        // The F' version does not have an equivelent finalize call as it
+        // - Never stores a partial word internally
+        // - Never needs to "flush" anything
+        // - Always accounts for padding at update time
+        // CF_CRC_Finalize(&txn->crc);
         txn->flags.com.crc_calc = true;
     }
     return CF_CFDP_SendEof(txn);
@@ -189,7 +193,7 @@ CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_
             FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, actual_bytes, txn->fsize); /* sanity check */
             if (calc_crc)
             {
-                CF_CRC_Digest(&txn->crc, fd->data_ptr, fd->data_len);
+                txn->crc.update(fd->data_ptr, fd->offset, fd->data_len);
             }
 
             ret = actual_bytes;
@@ -409,8 +413,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
         CF_CFDP_FinishTransaction(txn, true);
     }
 
-    /* don't need CF_CRC_Start() since taken care of by reset_cfdp() */
-    /*CF_CRC_Start(&txn->crc);*/
+    /* don't need to reset the CRC since its taken care of by reset_cfdp() */
 }
 
 /*----------------------------------------------------------------
