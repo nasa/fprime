@@ -6,6 +6,11 @@
 
 #include "ComRetryTester.hpp"
 
+TEST(Nominal, NullBuffer) {
+    Svc::ComRetryTester tester;
+    tester.testNullBuffer();
+}
+
 TEST(Nominal, Send) {
     Svc::ComRetryTester tester;
     tester.testBufferSend();

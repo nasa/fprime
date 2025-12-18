@@ -53,6 +53,8 @@ class ComRetryTester final : public ComRetryGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
+    void testNullBuffer();
+
     void testBufferSend();
 
     void testBufferRetry();

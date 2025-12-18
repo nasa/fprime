@@ -41,6 +41,16 @@ void ComRetryTester ::checkDataOut(FwIndexType expectedIndex, U8* expectedData, 
 // Tests
 // ----------------------------------------------------------------------
 
+void ComRetryTester ::testNullBuffer() {
+    Fw::Success state = Fw::Success::SUCCESS;
+    invoke_to_comStatusIn(0, state);
+    ASSERT_from_comStatusOut(0, state);
+
+    state = Fw::Success::FAILURE;
+    invoke_to_comStatusIn(0, state);
+    ASSERT_from_comStatusOut(1, state);
+}
+
 void ComRetryTester ::testBufferSend() {
     U8 data_a[BUFFER_LENGTH] = DATA_A;
     U8 data_b[BUFFER_LENGTH] = DATA_B;
@@ -74,11 +84,12 @@ void ComRetryTester ::testBufferRetry() {
     configure();
 
     receiveBuffer(buffer_a, nullContext);
-    invoke_to_comStatusIn(0, state);
-    invoke_to_dataReturnIn(0, buffer_a, nullContext);
-
+    invoke_to_comStatusIn(0, state); // First delivery is a failure
     state = Fw::Success::SUCCESS;
-    invoke_to_comStatusIn(0, state);
+    invoke_to_comStatusIn(0, state); // Downstream component is ready to receive buffer
+    invoke_to_dataReturnIn(0, buffer_a, nullContext);
+    invoke_to_comStatusIn(0, state); // Redelivery is successful
+
     ASSERT_from_dataReturnOut(0, buffer_a, nullContext);
     ASSERT_from_comStatusOut(0, state);
 
@@ -98,29 +109,29 @@ void ComRetryTester ::testBufferRetryTillFailure() {
     Fw::Buffer buffer_a(&data_a[0], sizeof(data_a));
     Fw::Buffer buffer_b(&data_b[0], sizeof(data_b));
     ComCfg::FrameContext nullContext;
-    Fw::Success state = Fw::Success::FAILURE;
+    Fw::Success failure = Fw::Success::FAILURE;
+    Fw::Success success = Fw::Success::SUCCESS;
 
-    FwIndexType num_retries = 3;
-    configure(num_retries);
+    FwIndexType num_retries = 3; // This is also the default number of retries
 
     receiveBuffer(buffer_a, nullContext);
-    invoke_to_comStatusIn(0, state);
+    invoke_to_comStatusIn(0, failure);
     checkDataOut(0, buffer_a.getData(), buffer_a.getSize());
 
     for (FwIndexType i = 1; i <= num_retries; i++) {
+        invoke_to_comStatusIn(0, success);
         invoke_to_dataReturnIn(0, buffer_a, nullContext);
-        invoke_to_comStatusIn(0, state);
+        invoke_to_comStatusIn(0, failure);
         checkDataOut(i, buffer_a.getData(), buffer_a.getSize());
     }
 
     ASSERT_from_dataReturnOut(0, buffer_a, nullContext);
-    ASSERT_from_comStatusOut(0, state);
+    ASSERT_from_comStatusOut(0, failure);
 
-    state = Fw::Success::SUCCESS;
     receiveBuffer(buffer_b, nullContext);
-    invoke_to_comStatusIn(0, state);
+    invoke_to_comStatusIn(0, success);
     ASSERT_from_dataReturnOut(1, buffer_b, nullContext);
-    ASSERT_from_comStatusOut(1, state);
+    ASSERT_from_comStatusOut(1, success);
     checkDataOut(num_retries + 1, buffer_b.getData(), buffer_b.getSize());
 }
 
