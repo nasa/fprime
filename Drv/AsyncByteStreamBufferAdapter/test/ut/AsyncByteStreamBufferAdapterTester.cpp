@@ -26,7 +26,7 @@ AsyncByteStreamBufferAdapterTester ::AsyncByteStreamBufferAdapterTester()
 AsyncByteStreamBufferAdapterTester ::~AsyncByteStreamBufferAdapterTester() {}
 
 // --------------------------------
-// Overriden functions
+// Overridden functions
 // --------------------------------
 void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_toByteStreamDriver(fwBuffer);
