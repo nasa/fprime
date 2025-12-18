@@ -78,7 +78,7 @@ endfunction(fprime_setup_global_includes)
 ####
 # Function `fprime_detect_libraries`:
 #
-# This function detects libraries using the FPRIME_LIBRARY_LOCATIONS variable. Fore each library path, the following is
+# This function detects libraries using the FPRIME_LIBRARY_LOCATIONS variable. For each library path, the following is
 # done:
 # 1. Detect a manifest file from in-order: `library.cmake`, and then `<library name>.cmake`
 # 2. Add the library's top-level cmake directory to the CMAKE_MODULE_PATH

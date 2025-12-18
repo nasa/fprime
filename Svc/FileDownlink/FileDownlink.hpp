@@ -223,8 +223,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Configure FileDownlink component
     //!
-    void configure(U32 timeout,        //!< Timeout threshold (milliseconds) while in WAIT state
-                   U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
+    void configure(U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
                    U32 cycleTime,      //!< Rate at which we are running
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );

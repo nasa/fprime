@@ -17,7 +17,7 @@ The User Manual dives into F Prime concepts and usage, providing a deep understa
 
 - __FPP User's Guide__ - In-depth user guide for F Prime Prime (FPP), the F´ modeling language.
 
-- __F´ GDS__ - Learn how to use the GDS and how it can be used to test F´ applications.
+- __F´ GDS__ - Learn how to use the F Prime Ground Data System, and how it can be used to test F´ applications.
 
 - __Design Patterns__ - Learn about common design patterns used in F´ applications.
 

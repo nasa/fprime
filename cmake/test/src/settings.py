@@ -3,6 +3,7 @@ cmake/test/settings.py:
 
 Settings for the CMake tests. Mostly constants that must be tracked.
 """
+
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -52,7 +53,6 @@ REF_MODULES = [
     "Svc_FileUplink",
     "Svc_FprimeDeframer",
     "Svc_Framer",
-    "Svc_FramingProtocol",
     "Svc_Health",
     "Svc_PosixTime",
     "Svc_PassiveConsoleTextLogger",
