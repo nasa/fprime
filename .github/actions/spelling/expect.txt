@@ -42,6 +42,7 @@ bitshifts
 bitwidth
 bocchino
 boolt
+BSB
 bsd
 BSDI
 bst
