@@ -52,7 +52,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
         this->m_memAllocator = &memAllocator;  // Store the allocator for later use
         this->m_memSize = memorySize;          // Store the requested memory size
         // Allocate memory using the provided arguments
-        this->m_memPtr = this->m_memAllocator->allocate(memId, this->m_memSize, false /*unused*/);
+        this->m_memPtr = this->m_memAllocator->allocate(memId, this->m_memSize);
         if (this->m_memPtr == nullptr) {
             // Handle allocation failure
         }
