@@ -158,12 +158,12 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
 }
 
-//! Internal interface handler for directive_storeLocalConstOffset
-void FpySequencer::directive_storeLocalConstOffset_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreLocalConstOffsetDirective& directive) {
+//! Internal interface handler for directive_storeRelConstOffset
+void FpySequencer::directive_storeRelConstOffset_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreRelConstOffsetDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeLocalConstOffset_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_LOCAL_CONST_OFFSET, error);
+    this->sendSignal(this->storeRelConstOffset_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_pushVal
@@ -173,11 +173,11 @@ void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequ
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_VAL, error);
 }
 
-//! Internal interface handler for directive_loadLocal
-void FpySequencer::directive_loadLocal_internalInterfaceHandler(const Svc::FpySequencer_LoadLocalDirective& directive) {
+//! Internal interface handler for directive_loadRel
+void FpySequencer::directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->loadLocal_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_LOCAL, error);
+    this->sendSignal(this->loadRel_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_REL, error);
 }
 
 //! Internal interface handler for directive_discard
@@ -236,12 +236,12 @@ void FpySequencer::directive_peek_internalInterfaceHandler(const Svc::FpySequenc
     handleDirectiveErrorCode(Fpy::DirectiveId::PEEK, error);
 }
 
-//! Internal interface handler for directive_storeLocal
-void FpySequencer::directive_storeLocal_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreLocalDirective& directive) {
+//! Internal interface handler for directive_storeRel
+void FpySequencer::directive_storeRel_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeLocal_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_LOCAL, error);
+    this->sendSignal(this->storeRel_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL, error);
 }
 
 //! Internal interface handler for directive_call
@@ -258,28 +258,28 @@ void FpySequencer::directive_return_internalInterfaceHandler(const Svc::FpySeque
     handleDirectiveErrorCode(Fpy::DirectiveId::RETURN, error);
 }
 
-//! Internal interface handler for directive_loadGlobal
-void FpySequencer::directive_loadGlobal_internalInterfaceHandler(
-    const Svc::FpySequencer_LoadGlobalDirective& directive) {
+//! Internal interface handler for directive_loadAbs
+void FpySequencer::directive_loadAbs_internalInterfaceHandler(
+    const Svc::FpySequencer_LoadAbsDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->loadGlobal_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_GLOBAL, error);
+    this->sendSignal(this->loadAbs_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_ABS, error);
 }
 
-//! Internal interface handler for directive_storeGlobal
-void FpySequencer::directive_storeGlobal_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreGlobalDirective& directive) {
+//! Internal interface handler for directive_storeAbs
+void FpySequencer::directive_storeAbs_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreAbsDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeGlobal_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_GLOBAL, error);
+    this->sendSignal(this->storeAbs_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS, error);
 }
 
-//! Internal interface handler for directive_storeGlobalConstOffset
-void FpySequencer::directive_storeGlobalConstOffset_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreGlobalConstOffsetDirective& directive) {
+//! Internal interface handler for directive_storeAbsConstOffset
+void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeGlobalConstOffset_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_GLOBAL_CONST_OFFSET, error);
+    this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_waitRel
@@ -1152,8 +1152,8 @@ Signal FpySequencer::loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeLocalConstOffset_directiveHandler(
-    const FpySequencer_StoreLocalConstOffsetDirective& directive,
+Signal FpySequencer::storeRelConstOffset_directiveHandler(
+    const FpySequencer_StoreRelConstOffsetDirective& directive,
     DirectiveError& error) {
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
     if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
@@ -1163,7 +1163,7 @@ Signal FpySequencer::storeLocalConstOffset_directiveHandler(
     return this->storeHelper(static_cast<Fpy::StackSizeType>(addr), directive.get_size(), error);
 }
 
-Signal FpySequencer::loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive,
+Signal FpySequencer::loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive,
                                                 DirectiveError& error) {
     I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
     if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
@@ -1384,7 +1384,7 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive,
+Signal FpySequencer::storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive,
                                                  DirectiveError& error) {
     // Need enough bytes for the value and the offset (SignedStackSizeType = 4 bytes)
     // Overflow-safe: check stack.size >= sizeof(SignedStackSizeType) first, then stack.size -
@@ -1518,12 +1518,12 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::loadGlobal_directiveHandler(const FpySequencer_LoadGlobalDirective& directive,
+Signal FpySequencer::loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive,
                                                  DirectiveError& error) {
     return this->loadHelper(directive.get_globalOffset(), directive.get_size(), error);
 }
 
-Signal FpySequencer::storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive,
+Signal FpySequencer::storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive,
                                                   DirectiveError& error) {
     Fpy::StackSizeType size = directive.get_size();
 
@@ -1541,8 +1541,8 @@ Signal FpySequencer::storeGlobal_directiveHandler(const FpySequencer_StoreGlobal
     return this->storeHelper(globalOffset, size, error);
 }
 
-Signal FpySequencer::storeGlobalConstOffset_directiveHandler(
-    const FpySequencer_StoreGlobalConstOffsetDirective& directive,
+Signal FpySequencer::storeAbsConstOffset_directiveHandler(
+    const FpySequencer_StoreAbsConstOffsetDirective& directive,
     DirectiveError& error) {
     return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
 }

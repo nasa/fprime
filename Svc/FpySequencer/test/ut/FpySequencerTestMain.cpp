@@ -1185,16 +1185,16 @@ TEST_F(FpySequencerTester, getField) {
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
-TEST_F(FpySequencerTester, storeLocal) {
+TEST_F(FpySequencerTester, storeRel) {
     // Test storing 2 bytes at offset 4 from stack_frame_start
-    FpySequencer_StoreLocalDirective directive(2);  // size = 2
+    FpySequencer_StoreRelDirective directive(2);  // size = 2
     tester_get_m_runtime_ptr()->stack.size = 10;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;  // frame starts at 0
     tester_push<U8>(123);                                     // value byte 1
     tester_push<U8>(100);                                     // value byte 2
     tester_push<Fpy::SignedStackSizeType>(4);                 // lvar_offset = 4 (signed)
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_storeLocal_directiveHandler(directive, err);
+    Signal result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);  // size after pop of offset and value
@@ -1208,7 +1208,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_push<U8>(66);                                      // value byte 2
     tester_push<Fpy::SignedStackSizeType>(-4);                // lvar_offset = -4 (negative, points to bytes 0-1)
     err = DirectiveError::NO_ERROR;
-    result = tester_storeLocal_directiveHandler(directive, err);
+    result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[0], 55);
@@ -1221,7 +1221,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_push<U8>(100);
     tester_push<Fpy::SignedStackSizeType>(100);  // offset too high
     directive.set_size(2);
-    result = tester_storeLocal_directiveHandler(directive, err);
+    result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
@@ -1232,7 +1232,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_push<U8>(100);
     tester_push<Fpy::SignedStackSizeType>(-10);  // offset would result in negative address
     directive.set_size(2);
-    result = tester_storeLocal_directiveHandler(directive, err);
+    result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
@@ -1240,7 +1240,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     tester_get_m_runtime_ptr()->stack.size = 0;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
     directive.set_size(100);  // request more bytes than available
-    result = tester_storeLocal_directiveHandler(directive, err);
+    result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
@@ -1248,7 +1248,7 @@ TEST_F(FpySequencerTester, storeLocal) {
     directive.set_size(Fpy::MAX_STACK_SIZE);
     tester_get_m_runtime_ptr()->stack.size = 10;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
-    result = tester_storeLocal_directiveHandler(directive, err);
+    result = tester_storeRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
@@ -1551,9 +1551,9 @@ TEST_F(FpySequencerTester, returnDirective) {
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
-TEST_F(FpySequencerTester, loadGlobal) {
-    // Set up a load global scenario
-    FpySequencer_LoadGlobalDirective directive(4, 2);  // globalOffset = 4, size = 2
+TEST_F(FpySequencerTester, loadAbs) {
+    // Set up a load abs scenario
+    FpySequencer_LoadAbsDirective directive(4, 2);  // globalOffset = 4, size = 2
 
     tester_get_m_runtime_ptr()->stack.size = 10;
     // Put some values in the stack at offset 4
@@ -1561,7 +1561,7 @@ TEST_F(FpySequencerTester, loadGlobal) {
     tester_get_m_runtime_ptr()->stack.bytes[5] = 0xCD;
 
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_loadGlobal_directiveHandler(directive, err);
+    Signal result = tester_loadAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 
@@ -1572,29 +1572,29 @@ TEST_F(FpySequencerTester, loadGlobal) {
 
     // Test out of bounds (offset beyond stack)
     tester_get_m_runtime_ptr()->stack.size = 3;
-    directive = FpySequencer_LoadGlobalDirective(4, 2);  // offset 4 is beyond size 3
-    result = tester_loadGlobal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadAbsDirective(4, 2);  // offset 4 is beyond size 3
+    result = tester_loadAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test stack overflow
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
-    directive = FpySequencer_LoadGlobalDirective(0, 2);  // would overflow
-    result = tester_loadGlobal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadAbsDirective(0, 2);  // would overflow
+    result = tester_loadAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 
     // Test overflow protection: globalOffset + size overflow
-    directive = FpySequencer_LoadGlobalDirective(Fpy::MAX_STACK_SIZE, 100);  // offset near max
+    directive = FpySequencer_LoadAbsDirective(Fpy::MAX_STACK_SIZE, 100);  // offset near max
     tester_get_m_runtime_ptr()->stack.size = 1000;
-    result = tester_loadGlobal_directiveHandler(directive, err);
+    result = tester_loadAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
-TEST_F(FpySequencerTester, storeGlobal) {
-    // Set up a store global scenario
-    FpySequencer_StoreGlobalDirective directive(2);  // size = 2
+TEST_F(FpySequencerTester, storeAbs) {
+    // Set up a store abs scenario
+    FpySequencer_StoreAbsDirective directive(2);  // size = 2
 
     tester_get_m_runtime_ptr()->stack.size = 10;
 
@@ -1606,7 +1606,7 @@ TEST_F(FpySequencerTester, storeGlobal) {
     tester_push<Fpy::StackSizeType>(4);
 
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_storeGlobal_directiveHandler(directive, err);
+    Signal result = tester_storeAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 
@@ -1622,28 +1622,28 @@ TEST_F(FpySequencerTester, storeGlobal) {
     tester_push<U8>(0x11);
     tester_push<U8>(0x22);
     tester_push<Fpy::StackSizeType>(100);  // offset way too high
-    result = tester_storeGlobal_directiveHandler(directive, err);
+    result = tester_storeAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test stack underflow (not enough bytes)
     tester_get_m_runtime_ptr()->stack.size = 0;
     directive.set_size(10);
-    result = tester_storeGlobal_directiveHandler(directive, err);
+    result = tester_storeAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: size near max
     directive.set_size(Fpy::MAX_STACK_SIZE);
     tester_get_m_runtime_ptr()->stack.size = 10;
-    result = tester_storeGlobal_directiveHandler(directive, err);
+    result = tester_storeAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 }
 
-TEST_F(FpySequencerTester, storeGlobalConstOffset) {
-    // Set up a store global const offset scenario
-    FpySequencer_StoreGlobalConstOffsetDirective directive(4, 2);  // globalOffset = 4, size = 2
+TEST_F(FpySequencerTester, storeAbsConstOffset) {
+    // Set up a store abs const offset scenario
+    FpySequencer_StoreAbsConstOffsetDirective directive(4, 2);  // globalOffset = 4, size = 2
 
     tester_get_m_runtime_ptr()->stack.size = 10;
 
@@ -1652,7 +1652,7 @@ TEST_F(FpySequencerTester, storeGlobalConstOffset) {
     tester_push<U8>(0xBB);
 
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    Signal result = tester_storeAbsConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 
@@ -1667,22 +1667,22 @@ TEST_F(FpySequencerTester, storeGlobalConstOffset) {
     tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(0x11);
     tester_push<U8>(0x22);
-    directive = FpySequencer_StoreGlobalConstOffsetDirective(100, 2);  // offset too high
-    result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreAbsConstOffsetDirective(100, 2);  // offset too high
+    result = tester_storeAbsConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test stack underflow
     tester_get_m_runtime_ptr()->stack.size = 0;
-    directive = FpySequencer_StoreGlobalConstOffsetDirective(0, 10);
-    result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreAbsConstOffsetDirective(0, 10);
+    result = tester_storeAbsConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
     // Test overflow protection: globalOffset near max
-    directive = FpySequencer_StoreGlobalConstOffsetDirective(Fpy::MAX_STACK_SIZE, 100);
+    directive = FpySequencer_StoreAbsConstOffsetDirective(Fpy::MAX_STACK_SIZE, 100);
     tester_get_m_runtime_ptr()->stack.size = 100;
-    result = tester_storeGlobalConstOffset_directiveHandler(directive, err);
+    result = tester_storeAbsConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
@@ -2729,13 +2729,13 @@ TEST_F(FpySequencerTester, deserialize_getField) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_storeLocal) {
+TEST_F(FpySequencerTester, deserialize_storeRel) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_StoreLocalDirective dir(123);
-    add_STORE_LOCAL(dir);
+    FpySequencer_StoreRelDirective dir(123);
+    add_STORE_REL(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.storeLocal, dir);
+    ASSERT_EQ(actual.storeRel, dir);
     // write some junk after buf, make sure it fails
     seq.get_statements()[0].get_argBuf().serializeFrom(123);
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
@@ -3361,8 +3361,8 @@ TEST_F(FpySequencerTester, allocate) {
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 }
 
-// Test loadLocal directive - loads from frame-relative offset to stack top
-TEST_F(FpySequencerTester, loadLocal) {
+// Test loadRel directive - loads from frame-relative offset to stack top
+TEST_F(FpySequencerTester, loadRel) {
     // Set up stack with some data
     tester_get_m_runtime_ptr()->stack.size = 0;
     tester_push<U8>(0xAA);
@@ -3374,9 +3374,9 @@ TEST_F(FpySequencerTester, loadLocal) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
 
     // Load 2 bytes from offset 1 (should get 0xBB, 0xCC)
-    FpySequencer_LoadLocalDirective directive(1, 2);
+    FpySequencer_LoadRelDirective directive(1, 2);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_loadLocal_directiveHandler(directive, err);
+    Signal result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 6);
@@ -3388,8 +3388,8 @@ TEST_F(FpySequencerTester, loadLocal) {
     tester_get_m_runtime_ptr()->stack.bytes[4] = 0x11;
     tester_get_m_runtime_ptr()->stack.bytes[5] = 0x22;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;
-    directive = FpySequencer_LoadLocalDirective(0, 2);  // offset 0 from frame start = absolute 4
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(0, 2);  // offset 0 from frame start = absolute 4
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 12);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[10], 0x11);
@@ -3400,8 +3400,8 @@ TEST_F(FpySequencerTester, loadLocal) {
     tester_get_m_runtime_ptr()->stack.bytes[2] = 0x33;
     tester_get_m_runtime_ptr()->stack.bytes[3] = 0x44;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;
-    directive = FpySequencer_LoadLocalDirective(-2, 2);  // offset -2 from frame start = absolute 2
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(-2, 2);  // offset -2 from frame start = absolute 2
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 12);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[10], 0x33);
@@ -3410,38 +3410,38 @@ TEST_F(FpySequencerTester, loadLocal) {
     // Test negative offset going below zero
     tester_get_m_runtime_ptr()->stack.size = 10;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 2;
-    directive = FpySequencer_LoadLocalDirective(-10, 2);  // would result in negative address
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(-10, 2);  // would result in negative address
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test out of bounds (offset + size > stack.size)
     tester_get_m_runtime_ptr()->stack.size = 50;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
-    directive = FpySequencer_LoadLocalDirective(0, 100);
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(0, 100);
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test overflow protection
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 50;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
-    directive = FpySequencer_LoadLocalDirective(0, 100);
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(0, 100);
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 
     // Test addr exceeding MAX_STACK_SIZE (currentFrameStart + lvarOffset > MAX_STACK_SIZE)
     tester_get_m_runtime_ptr()->stack.size = 100;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = Fpy::MAX_STACK_SIZE;
-    directive = FpySequencer_LoadLocalDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
-    result = tester_loadLocal_directiveHandler(directive, err);
+    directive = FpySequencer_LoadRelDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
+    result = tester_loadRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
-// Test storeLocalConstOffset directive - stores stack top to frame-relative offset
-TEST_F(FpySequencerTester, storeLocalConstOffset) {
+// Test storeRelConstOffset directive - stores stack top to frame-relative offset
+TEST_F(FpySequencerTester, storeRelConstOffset) {
     // Set up stack with space and a value to store
     tester_get_m_runtime_ptr()->stack.size = 10;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
@@ -3452,9 +3452,9 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     // Stack size is now 12
 
     // Store 2 bytes at offset 4 from frame start
-    FpySequencer_StoreLocalConstOffsetDirective directive(4, 2);
+    FpySequencer_StoreRelConstOffsetDirective directive(4, 2);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    Signal result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);  // Size back to before push
@@ -3466,8 +3466,8 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;
     tester_push<U8>(0x11);
     tester_push<U8>(0x22);
-    directive = FpySequencer_StoreLocalConstOffsetDirective(2, 2);  // offset 2 from frame start = absolute 6
-    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreRelConstOffsetDirective(2, 2);  // offset 2 from frame start = absolute 6
+    result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[6], 0x11);
@@ -3478,8 +3478,8 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 4;
     tester_push<U8>(0x33);
     tester_push<U8>(0x44);
-    directive = FpySequencer_StoreLocalConstOffsetDirective(-2, 2);  // offset -2 from frame = absolute 2
-    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreRelConstOffsetDirective(-2, 2);  // offset -2 from frame = absolute 2
+    result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 10);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.bytes[2], 0x33);
@@ -3490,16 +3490,16 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 2;
     tester_push<U8>(0x55);
     tester_push<U8>(0x66);
-    directive = FpySequencer_StoreLocalConstOffsetDirective(-10, 2);  // would result in negative address
-    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreRelConstOffsetDirective(-10, 2);  // would result in negative address
+    result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 
     // Test out of bounds (dest + size > stack.size after pop)
     tester_get_m_runtime_ptr()->stack.size = 50;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = 0;
-    directive = FpySequencer_StoreLocalConstOffsetDirective(0, 100);
-    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreRelConstOffsetDirective(0, 100);
+    result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
 
@@ -3507,8 +3507,8 @@ TEST_F(FpySequencerTester, storeLocalConstOffset) {
     tester_get_m_runtime_ptr()->stack.size = 100;
     tester_get_m_runtime_ptr()->stack.currentFrameStart = Fpy::MAX_STACK_SIZE;
     tester_push<U8>(0x77);
-    directive = FpySequencer_StoreLocalConstOffsetDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
-    result = tester_storeLocalConstOffset_directiveHandler(directive, err);
+    directive = FpySequencer_StoreRelConstOffsetDirective(1, 1);  // addr = MAX_STACK_SIZE + 1
+    result = tester_storeRelConstOffset_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }

@@ -58,8 +58,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
         FpySequencer_AllocateDirective allocate;
-        FpySequencer_StoreLocalConstOffsetDirective storeLocalConstOffset;
-        FpySequencer_LoadLocalDirective loadLocal;
+        FpySequencer_StoreRelConstOffsetDirective storeRelConstOffset;
+        FpySequencer_LoadRelDirective loadRel;
         FpySequencer_PushValDirective pushVal;
         FpySequencer_DiscardDirective discard;
         FpySequencer_MemCmpDirective memCmp;
@@ -69,12 +69,12 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GetFlagDirective getFlag;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
-        FpySequencer_StoreLocalDirective storeLocal;
+        FpySequencer_StoreRelDirective storeRel;
         FpySequencer_CallDirective call;
         FpySequencer_ReturnDirective returnDirective;
-        FpySequencer_LoadGlobalDirective loadGlobal;
-        FpySequencer_StoreGlobalDirective storeGlobal;
-        FpySequencer_StoreGlobalConstOffsetDirective storeGlobalConstOffset;
+        FpySequencer_LoadAbsDirective loadAbs;
+        FpySequencer_StoreAbsDirective storeAbs;
+        FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -530,12 +530,12 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_allocate
     void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
 
-    //! Internal interface handler for directive_storeLocalConstOffset
-    void directive_storeLocalConstOffset_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreLocalConstOffsetDirective& directive) override;
+    //! Internal interface handler for directive_storeRelConstOffset
+    void directive_storeRelConstOffset_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreRelConstOffsetDirective& directive) override;
 
-    //! Internal interface handler for directive_loadLocal
-    void directive_loadLocal_internalInterfaceHandler(const Svc::FpySequencer_LoadLocalDirective& directive) override;
+    //! Internal interface handler for directive_loadRel
+    void directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive) override;
 
     //! Internal interface handler for directive_pushVal
     void directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) override;
@@ -564,8 +564,8 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_peek
     void directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive) override;
 
-    //! Internal interface handler for directive_storeLocal
-    void directive_storeLocal_internalInterfaceHandler(const Svc::FpySequencer_StoreLocalDirective& directive) override;
+    //! Internal interface handler for directive_storeRel
+    void directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive) override;
 
     //! Internal interface handler for directive_call
     void directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive) override;
@@ -573,16 +573,16 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_return
     void directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive) override;
 
-    //! Internal interface handler for directive_loadGlobal
-    void directive_loadGlobal_internalInterfaceHandler(const Svc::FpySequencer_LoadGlobalDirective& directive) override;
+    //! Internal interface handler for directive_loadAbs
+    void directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive) override;
 
-    //! Internal interface handler for directive_storeGlobal
-    void directive_storeGlobal_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreGlobalDirective& directive) override;
+    //! Internal interface handler for directive_storeAbs
+    void directive_storeAbs_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreAbsDirective& directive) override;
 
-    //! Internal interface handler for directive_storeGlobalConstOffset
-    void directive_storeGlobalConstOffset_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreGlobalConstOffsetDirective& directive) override;
+    //! Internal interface handler for directive_storeAbsConstOffset
+    void directive_storeAbsConstOffset_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -848,9 +848,9 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeHelper(Fpy::StackSizeType destOffset, Fpy::StackSizeType size, DirectiveError& error);
     //! Helper to load value from srcOffset and push to stack top
     Signal loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error);
-    Signal storeLocalConstOffset_directiveHandler(const FpySequencer_StoreLocalConstOffsetDirective& directive,
+    Signal storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
                                                   DirectiveError& error);
-    Signal loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive, DirectiveError& error);
+    Signal loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
@@ -860,12 +860,12 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
-    Signal storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive, DirectiveError& error);
+    Signal storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error);
     Signal call_directiveHandler(const FpySequencer_CallDirective& directive, DirectiveError& error);
     Signal return_directiveHandler(const FpySequencer_ReturnDirective& directive, DirectiveError& error);
-    Signal loadGlobal_directiveHandler(const FpySequencer_LoadGlobalDirective& directive, DirectiveError& error);
-    Signal storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive, DirectiveError& error);
-    Signal storeGlobalConstOffset_directiveHandler(const FpySequencer_StoreGlobalConstOffsetDirective& directive,
+    Signal loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive, DirectiveError& error);
+    Signal storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error);
+    Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                    DirectiveError& error);
 };
 

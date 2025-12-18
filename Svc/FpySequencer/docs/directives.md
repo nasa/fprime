@@ -743,7 +743,7 @@ Pushes a hard-coded count of 0x00-bytes to the stack.
 
 **Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
-## STORE_LOCAL_CONST_OFFSET (59)
+## STORE_REL_CONST_OFFSET (59)
 Stores a value to a local variable at a compile-time-known offset relative to the current stack frame.
 
 **Preconditions:**
@@ -769,7 +769,7 @@ Stores a value to a local variable at a compile-time-known offset relative to th
 
 **Requirement:**  FPY-SEQ-009, FPY-SEQ-010
 
-## LOAD_LOCAL (60)
+## LOAD_REL (60)
 Loads a value from a local variable at a compile-time-known offset relative to the current stack frame, and pushes it to the stack.
 
 **Preconditions:**
@@ -919,7 +919,7 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_LOCAL (71)
+## STORE_REL (71)
 Stores a value to a local variable at a runtime-determined offset relative to the current stack frame.
 
 **Preconditions:**
@@ -975,7 +975,7 @@ Performs a function call. Pops the target directive index from the stack, saves 
 - If `len(stack) + sizeof(U32) + sizeof(StackSizeType) > max_stack_size`: `STACK_OVERFLOW`
 - If `target > statement_count`: `STMT_OUT_OF_BOUNDS`
 
-**Note:** Function arguments must be pushed to the stack before the target address. The callee accesses arguments using negative `lvar_offset` values in LOAD_LOCAL (e.g., `lvar_offset = -(STACK_FRAME_HEADER_SIZE + arg_size)` where `STACK_FRAME_HEADER_SIZE = sizeof(U32) + sizeof(StackSizeType)`).
+**Note:** Function arguments must be pushed to the stack before the target address. The callee accesses arguments using negative `lvar_offset` values in LOAD_REL (e.g., `lvar_offset = -(STACK_FRAME_HEADER_SIZE + arg_size)` where `STACK_FRAME_HEADER_SIZE = sizeof(U32) + sizeof(StackSizeType)`).
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
@@ -1032,7 +1032,7 @@ stack_frame_start (restored)         stack top
 
 **Requirement:**  FPY-SEQ-009
 
-## LOAD_GLOBAL (74)
+## LOAD_ABS (74)
 Loads a value from an absolute address in the stack (used for global variables), and pushes it to the stack.
 
 **Preconditions:**
@@ -1058,7 +1058,7 @@ Loads a value from an absolute address in the stack (used for global variables),
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_GLOBAL (75)
+## STORE_ABS (75)
 Stores a value to an absolute address in the stack (used for global variables), with the offset determined at runtime.
 
 **Preconditions:**
@@ -1083,7 +1083,7 @@ Stores a value to an absolute address in the stack (used for global variables), 
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_GLOBAL_CONST_OFFSET (76)
+## STORE_ABS_CONST_OFFSET (76)
 Stores a value to an absolute address in the stack (used for global variables), with a compile-time-known offset.
 
 **Preconditions:**

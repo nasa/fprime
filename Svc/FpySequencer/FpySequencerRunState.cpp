@@ -266,9 +266,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_LOCAL_CONST_OFFSET: {
-            new (&deserializedDirective.storeLocalConstOffset) FpySequencer_StoreLocalConstOffsetDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storeLocalConstOffset);
+        case Fpy::DirectiveId::STORE_REL_CONST_OFFSET: {
+            new (&deserializedDirective.storeRelConstOffset) FpySequencer_StoreRelConstOffsetDirective();
+            status = argBuf.deserializeTo(deserializedDirective.storeRelConstOffset);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -276,9 +276,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::LOAD_LOCAL: {
-            new (&deserializedDirective.loadLocal) FpySequencer_LoadLocalDirective();
-            status = argBuf.deserializeTo(deserializedDirective.loadLocal);
+        case Fpy::DirectiveId::LOAD_REL: {
+            new (&deserializedDirective.loadRel) FpySequencer_LoadRelDirective();
+            status = argBuf.deserializeTo(deserializedDirective.loadRel);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -398,9 +398,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_LOCAL: {
-            new (&deserializedDirective.storeLocal) FpySequencer_StoreLocalDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storeLocal);
+        case Fpy::DirectiveId::STORE_REL: {
+            new (&deserializedDirective.storeRel) FpySequencer_StoreRelDirective();
+            status = argBuf.deserializeTo(deserializedDirective.storeRel);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -428,9 +428,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::LOAD_GLOBAL: {
-            new (&deserializedDirective.loadGlobal) FpySequencer_LoadGlobalDirective();
-            status = argBuf.deserializeTo(deserializedDirective.loadGlobal);
+        case Fpy::DirectiveId::LOAD_ABS: {
+            new (&deserializedDirective.loadAbs) FpySequencer_LoadAbsDirective();
+            status = argBuf.deserializeTo(deserializedDirective.loadAbs);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -438,9 +438,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_GLOBAL: {
-            new (&deserializedDirective.storeGlobal) FpySequencer_StoreGlobalDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storeGlobal);
+        case Fpy::DirectiveId::STORE_ABS: {
+            new (&deserializedDirective.storeAbs) FpySequencer_StoreAbsDirective();
+            status = argBuf.deserializeTo(deserializedDirective.storeAbs);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -448,9 +448,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::STORE_GLOBAL_CONST_OFFSET: {
-            new (&deserializedDirective.storeGlobalConstOffset) FpySequencer_StoreGlobalConstOffsetDirective();
-            status = argBuf.deserializeTo(deserializedDirective.storeGlobalConstOffset);
+        case Fpy::DirectiveId::STORE_ABS_CONST_OFFSET: {
+            new (&deserializedDirective.storeAbsConstOffset) FpySequencer_StoreAbsConstOffsetDirective();
+            status = argBuf.deserializeTo(deserializedDirective.storeAbsConstOffset);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
@@ -572,12 +572,12 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_allocate_internalInterfaceInvoke(directive.allocate);
             return;
         }
-        case Fpy::DirectiveId::STORE_LOCAL_CONST_OFFSET: {
-            this->directive_storeLocalConstOffset_internalInterfaceInvoke(directive.storeLocalConstOffset);
+        case Fpy::DirectiveId::STORE_REL_CONST_OFFSET: {
+            this->directive_storeRelConstOffset_internalInterfaceInvoke(directive.storeRelConstOffset);
             return;
         }
-        case Fpy::DirectiveId::LOAD_LOCAL: {
-            this->directive_loadLocal_internalInterfaceInvoke(directive.loadLocal);
+        case Fpy::DirectiveId::LOAD_REL: {
+            this->directive_loadRel_internalInterfaceInvoke(directive.loadRel);
             return;
         }
         case Fpy::DirectiveId::PUSH_VAL: {
@@ -616,8 +616,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_peek_internalInterfaceInvoke(directive.peek);
             return;
         }
-        case Fpy::DirectiveId::STORE_LOCAL: {
-            this->directive_storeLocal_internalInterfaceInvoke(directive.storeLocal);
+        case Fpy::DirectiveId::STORE_REL: {
+            this->directive_storeRel_internalInterfaceInvoke(directive.storeRel);
             return;
         }
         case Fpy::DirectiveId::CALL: {
@@ -628,16 +628,16 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_return_internalInterfaceInvoke(directive.returnDirective);
             return;
         }
-        case Fpy::DirectiveId::LOAD_GLOBAL: {
-            this->directive_loadGlobal_internalInterfaceInvoke(directive.loadGlobal);
+        case Fpy::DirectiveId::LOAD_ABS: {
+            this->directive_loadAbs_internalInterfaceInvoke(directive.loadAbs);
             return;
         }
-        case Fpy::DirectiveId::STORE_GLOBAL: {
-            this->directive_storeGlobal_internalInterfaceInvoke(directive.storeGlobal);
+        case Fpy::DirectiveId::STORE_ABS: {
+            this->directive_storeAbs_internalInterfaceInvoke(directive.storeAbs);
             return;
         }
-        case Fpy::DirectiveId::STORE_GLOBAL_CONST_OFFSET: {
-            this->directive_storeGlobalConstOffset_internalInterfaceInvoke(directive.storeGlobalConstOffset);
+        case Fpy::DirectiveId::STORE_ABS_CONST_OFFSET: {
+            this->directive_storeAbsConstOffset_internalInterfaceInvoke(directive.storeAbsConstOffset);
             return;
         }
     }

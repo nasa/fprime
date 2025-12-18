@@ -223,21 +223,21 @@ void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::ALLOCATE, buf);
 }
-void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
-    add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalConstOffsetDirective(lvarOffset, size));
+void FpySequencerTester::add_STORE_REL_CONST_OFFSET(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
+    add_STORE_REL_CONST_OFFSET(FpySequencer_StoreRelConstOffsetDirective(lvarOffset, size));
 }
-void FpySequencerTester::add_STORE_LOCAL_CONST_OFFSET(FpySequencer_StoreLocalConstOffsetDirective dir) {
+void FpySequencerTester::add_STORE_REL_CONST_OFFSET(FpySequencer_StoreRelConstOffsetDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE_LOCAL_CONST_OFFSET, buf);
+    addDirective(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, buf);
 }
-void FpySequencerTester::add_LOAD_LOCAL(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
-    add_LOAD_LOCAL(FpySequencer_LoadLocalDirective(lvarOffset, size));
+void FpySequencerTester::add_LOAD_REL(Fpy::SignedStackSizeType lvarOffset, Fpy::StackSizeType size) {
+    add_LOAD_REL(FpySequencer_LoadRelDirective(lvarOffset, size));
 }
-void FpySequencerTester::add_LOAD_LOCAL(FpySequencer_LoadLocalDirective dir) {
+void FpySequencerTester::add_LOAD_REL(FpySequencer_LoadRelDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::LOAD_LOCAL, buf);
+    addDirective(Fpy::DirectiveId::LOAD_REL, buf);
 }
 template <typename T>
 void FpySequencerTester::add_PUSH_VAL(T val) {
@@ -317,14 +317,14 @@ void FpySequencerTester::add_PEEK(const FpySequencer_PeekDirective dir) {
     addDirective(Fpy::DirectiveId::PEEK, buf);
 }
 
-void FpySequencerTester::add_STORE_LOCAL(const Fpy::StackSizeType size) {
-    add_STORE_LOCAL(FpySequencer_StoreLocalDirective(size));
+void FpySequencerTester::add_STORE_REL(const Fpy::StackSizeType size) {
+    add_STORE_REL(FpySequencer_StoreRelDirective(size));
 }
 
-void FpySequencerTester::add_STORE_LOCAL(const FpySequencer_StoreLocalDirective dir) {
+void FpySequencerTester::add_STORE_REL(const FpySequencer_StoreRelDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE_LOCAL, buf);
+    addDirective(Fpy::DirectiveId::STORE_REL, buf);
 }
 
 void FpySequencerTester::add_CALL() {
@@ -347,34 +347,34 @@ void FpySequencerTester::add_RETURN(FpySequencer_ReturnDirective dir) {
     addDirective(Fpy::DirectiveId::RETURN, buf);
 }
 
-void FpySequencerTester::add_LOAD_GLOBAL(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size) {
-    add_LOAD_GLOBAL(FpySequencer_LoadGlobalDirective(globalOffset, size));
+void FpySequencerTester::add_LOAD_ABS(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size) {
+    add_LOAD_ABS(FpySequencer_LoadAbsDirective(globalOffset, size));
 }
 
-void FpySequencerTester::add_LOAD_GLOBAL(FpySequencer_LoadGlobalDirective dir) {
+void FpySequencerTester::add_LOAD_ABS(FpySequencer_LoadAbsDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::LOAD_GLOBAL, buf);
+    addDirective(Fpy::DirectiveId::LOAD_ABS, buf);
 }
 
-void FpySequencerTester::add_STORE_GLOBAL(Fpy::StackSizeType size) {
-    add_STORE_GLOBAL(FpySequencer_StoreGlobalDirective(size));
+void FpySequencerTester::add_STORE_ABS(Fpy::StackSizeType size) {
+    add_STORE_ABS(FpySequencer_StoreAbsDirective(size));
 }
 
-void FpySequencerTester::add_STORE_GLOBAL(FpySequencer_StoreGlobalDirective dir) {
+void FpySequencerTester::add_STORE_ABS(FpySequencer_StoreAbsDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE_GLOBAL, buf);
+    addDirective(Fpy::DirectiveId::STORE_ABS, buf);
 }
 
-void FpySequencerTester::add_STORE_GLOBAL_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size) {
-    add_STORE_GLOBAL_CONST_OFFSET(FpySequencer_StoreGlobalConstOffsetDirective(globalOffset, size));
+void FpySequencerTester::add_STORE_ABS_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size) {
+    add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOffsetDirective(globalOffset, size));
 }
 
-void FpySequencerTester::add_STORE_GLOBAL_CONST_OFFSET(FpySequencer_StoreGlobalConstOffsetDirective dir) {
+void FpySequencerTester::add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOffsetDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE_GLOBAL_CONST_OFFSET, buf);
+    addDirective(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, buf);
 }
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
@@ -521,9 +521,9 @@ Signal FpySequencerTester::tester_peek_directiveHandler(const FpySequencer_PeekD
     return this->cmp.peek_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeLocal_directiveHandler(const FpySequencer_StoreLocalDirective& directive,
+Signal FpySequencerTester::tester_storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive,
                                                               DirectiveError& err) {
-    return this->cmp.storeLocal_directiveHandler(directive, err);
+    return this->cmp.storeRel_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_call_directiveHandler(const FpySequencer_CallDirective& directive,
@@ -536,20 +536,20 @@ Signal FpySequencerTester::tester_return_directiveHandler(const FpySequencer_Ret
     return this->cmp.return_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_loadGlobal_directiveHandler(const FpySequencer_LoadGlobalDirective& directive,
+Signal FpySequencerTester::tester_loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive,
                                                               DirectiveError& err) {
-    return this->cmp.loadGlobal_directiveHandler(directive, err);
+    return this->cmp.loadAbs_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeGlobal_directiveHandler(const FpySequencer_StoreGlobalDirective& directive,
+Signal FpySequencerTester::tester_storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive,
                                                                DirectiveError& err) {
-    return this->cmp.storeGlobal_directiveHandler(directive, err);
+    return this->cmp.storeAbs_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeGlobalConstOffset_directiveHandler(
-    const FpySequencer_StoreGlobalConstOffsetDirective& directive,
+Signal FpySequencerTester::tester_storeAbsConstOffset_directiveHandler(
+    const FpySequencer_StoreAbsConstOffsetDirective& directive,
     DirectiveError& err) {
-    return this->cmp.storeGlobalConstOffset_directiveHandler(directive, err);
+    return this->cmp.storeAbsConstOffset_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,
@@ -567,15 +567,15 @@ Signal FpySequencerTester::tester_allocate_directiveHandler(const FpySequencer_A
     return this->cmp.allocate_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_loadLocal_directiveHandler(const FpySequencer_LoadLocalDirective& directive,
+Signal FpySequencerTester::tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive,
                                                              DirectiveError& err) {
-    return this->cmp.loadLocal_directiveHandler(directive, err);
+    return this->cmp.loadRel_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_storeLocalConstOffset_directiveHandler(
-    const FpySequencer_StoreLocalConstOffsetDirective& directive,
+Signal FpySequencerTester::tester_storeRelConstOffset_directiveHandler(
+    const FpySequencer_StoreRelConstOffsetDirective& directive,
     DirectiveError& err) {
-    return this->cmp.storeLocalConstOffset_directiveHandler(directive, err);
+    return this->cmp.storeRelConstOffset_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_pushVal_directiveHandler(const FpySequencer_PushValDirective& directive,
