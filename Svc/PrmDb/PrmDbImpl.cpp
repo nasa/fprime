@@ -282,11 +282,6 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     FwSizeType currPosInParamFile;
 
     stat = paramFile.position(currPosInParamFile);
-    if (stat != Os::File::OP_OK) {
-        printf("CINDY FIXME: If we do it this way, make an EVR");
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
 
     // seek to beginning and write CRC value
     paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
@@ -412,8 +407,6 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     // read into CRC buffer for checking
 
     while (readSize != 0) {
-        // CINDY FIXME determine which one works
-        //readSize = static_cast<FwSizeType>(PRMDB_CRC_BUFFER_SIZE);
         readSize = PRMDB_CRC_BUFFER_SIZE;
         Os::File::Status fStat = paramFile.read(this->m_crcBuffer, readSize, Os::File::NO_WAIT);
         if (fStat != Os::File::OP_OK) {
