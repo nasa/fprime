@@ -56,7 +56,7 @@ void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffe
 
 void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Return the buffer
-    fromBufferDriverReturn_out(0, fwBuffer); 
+    fromBufferDriverReturn_out(0, fwBuffer);
 }
 
 void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {

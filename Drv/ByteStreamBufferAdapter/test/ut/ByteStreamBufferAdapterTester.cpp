@@ -26,7 +26,7 @@ ByteStreamBufferAdapterTester ::ByteStreamBufferAdapterTester()
 ByteStreamBufferAdapterTester ::~ByteStreamBufferAdapterTester() {}
 
 // --------------------------------
-// Overriden functions
+// Overridden functions
 // --------------------------------
 Drv::ByteStreamStatus ByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(FwIndexType portNum,
                                                                                       Fw::Buffer& sendBuffer) {

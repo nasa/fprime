@@ -606,6 +606,7 @@ sfregoso
 sge
 SGN
 sgt
+shahab
 SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
