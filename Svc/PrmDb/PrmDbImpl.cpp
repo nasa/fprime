@@ -122,8 +122,7 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-// CINDY FIXME. what do I change NATIVE_UINT_TYPE  to for size?
-U32 PrmDbImpl::computeCrc(U32 crc, const U8* buff, FwSizeType size) {
+U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
     for (FwSizeType byte = 0; byte < size; byte++) {
         crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
     }   
@@ -219,6 +218,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 return;
             }
 
+            // add recordSize to CRC
             crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
 
             // reset buffer
@@ -247,7 +247,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 return;
             }
 
-            // add to CRC
+            // add parameter ID to CRC
             crc = this->computeCrc(crc,buff.getBuffAddr(),writeSize);
 
             // write serialized parameter value
@@ -269,7 +269,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
                 return;
             }
 
-            // add serialized value to crc
+            // add serialized parameter value to crc
             crc = this->computeCrc(crc, db[entry].val.getBuffAddr(),writeSize);
 
             numRecords++;
@@ -277,6 +277,16 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }  // end for each record
 
     this->unLock();
+
+    // save current location of pointer in paramFile
+    FwSizeType currPosInParamFile;
+
+    stat = paramFile.position(currPosInParamFile);
+    if (stat != Os::File::OP_OK) {
+        printf("CINDY FIXME: If we do it this way, make an EVR");
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     // seek to beginning and write CRC value
     paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
@@ -288,6 +298,8 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         return;
     }
 
+    // Restore pointer to end of paramFile
+    paramFile.seek(static_cast<FwSignedSizeType>(currPosInParamFile), Os::File::SeekType::ABSOLUTE);
 
     this->log_ACTIVITY_HI_PrmFileSaveComplete(numRecords);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
