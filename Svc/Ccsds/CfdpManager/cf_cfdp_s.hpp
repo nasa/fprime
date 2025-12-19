@@ -153,7 +153,7 @@ void CF_CFDP_S_Cancel(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-CFE_Status_t CF_CFDP_S_SendEof(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Sends an EOF for S1.
@@ -195,7 +195,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn);
  * @param calc_crc Enable CRC/Checksum calculation
  *
  */
-CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
+CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
 
 /************************************************************************/
 /** @brief Standard state function to send the next file data PDU for active transaction.
@@ -229,7 +229,7 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn);
  *
  * @param txn     Pointer to the transaction object
  */
-CFE_Status_t CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Send filedata handling for S2.
@@ -267,7 +267,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn);
  *
  * @param txn     Pointer to the transaction object
  */
-CFE_Status_t CF_CFDP_S_SendFinAck(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief A FIN was received before file complete, so abandon the transaction.

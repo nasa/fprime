@@ -65,8 +65,7 @@ Fw::Buffer CfdpManager ::cfdpGetMessageBuffer(U8 channelNum, FwSizeType size)
     FW_ASSERT(channelNum < CF_NUM_CHANNELS, channelNum, CF_NUM_CHANNELS);
     portNum = static_cast<FwIndexType>(channelNum);
 
-    Fw::Buffer buffer = this->bufferAllocate_out(portNum, size);
-    return buffer;
+    return this->bufferAllocate_out(portNum, size);
 }
 
 }  // namespace Ccsds

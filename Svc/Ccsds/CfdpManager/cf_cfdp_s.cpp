@@ -40,7 +40,7 @@ namespace Ccsds {
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_S_SendEof(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn)
 {
     /* note the crc is "finalized" regardless of success or failure of the txn */
     /* this is OK as we still need to put some value into the EOF */
@@ -102,11 +102,11 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc)
+CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc)
 {
     bool                            success = true;
     int                             status  = 0;
-    CFE_Status_t                    ret     = CF_ERROR;
+    CfdpStatus::T                    ret     = CF_ERROR;
     CF_Logical_PduBuffer_t *        ph      = CF_CFDP_ConstructPduHeader(txn, 0, CF_AppData.config_table->local_eid,
                                                             txn->history->peer_eid, 0, txn->history->seq_num, 1);
     CF_Logical_PduFileDataHeader_t *fd;
@@ -240,11 +240,11 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
 {
     const CF_Chunk_t *chunk;
-    CFE_Status_t      sret;
-    CFE_Status_t      ret = CFE_SUCCESS;
+    CfdpStatus::T      sret;
+    CfdpStatus::T      ret = CFE_SUCCESS;
 
     if (txn->flags.tx.md_need_send)
     {
@@ -323,7 +323,7 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 {
-    CFE_Status_t sret;
+    CfdpStatus::T sret;
     I32          ret;
     int          status  = 0;
     bool         success = true;
@@ -422,7 +422,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
 {
     return CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN, txn->state_data.send.s2.fin_cc,
                            txn->history->peer_eid, txn->history->seq_num);

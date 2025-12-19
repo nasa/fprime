@@ -460,7 +460,7 @@ typedef struct CF_Engine
 
     /* NOTE: could have separate array of transactions as part of channel? */
     CF_Transaction_t transactions[CF_NUM_TRANSACTIONS];
-    CF_History_t     histories[CF_NUM_HISTORIES];
+    // CF_History_t     histories[CF_NUM_HISTORIES];
     CF_Channel_t     channels[CF_NUM_CHANNELS];
 
     CF_ChunkWrapper_t chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];

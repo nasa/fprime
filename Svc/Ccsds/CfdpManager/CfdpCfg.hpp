@@ -119,5 +119,19 @@ namespace Ccsds {
  */
 #define CF_R2_CRC_CHUNK_SIZE (1024)
 
+/**
+ *  @brief Total number of chunks (tx, rx, all channels)
+ *
+ *  @par Description:
+ *       Must be equal to the sum of all values input in CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION
+ *       and CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION.
+ *
+ *  @par Limits:
+ *
+ */
+/* CF_TOTAL_CHUNKS must be equal to the total number of chunks per rx/tx transactions per channel */
+/* (in other words, the summation of all elements in CF_CHANNEL_NUM_R/TX_CHUNKS_PER_TRANSACTION */
+#define CF_TOTAL_CHUNKS (CF_NAK_MAX_SEGMENTS * 4)
+
 }  // namespace Svc
 }  // namespace Ccsds

@@ -51,6 +51,7 @@ namespace Ccsds {
 void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, void *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
                          size_t total_size)
 {
+    // TODO Current thought is to rework the encore to include a buffer reference
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
 
@@ -275,7 +276,9 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
 
     ph = CF_CFDP_MsgOutGet(txn, silent);
     // TODO How to handle stuffing a buffer into the header
+    // Add a reference in the encoder state
 
+    // TODO there is meetering happening here, update it to check if the buffer is size 0
     if (ph)
     {
         hdr = &ph->pdu_header;
@@ -335,13 +338,13 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendMd(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_METADATA, CF_AppData.config_table->local_eid,
                                    txn->history->peer_eid, 0, txn->history->seq_num, 0);
     CF_Logical_PduMd_t *md;
-    CFE_Status_t        sret = CFE_SUCCESS;
+    CfdpStatus::T        sret = CFE_SUCCESS;
 
     if (!ph)
     {
@@ -378,10 +381,10 @@ CFE_Status_t CF_CFDP_SendMd(CF_Transaction_t *txn)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     /* NOTE: SendFd does not need a call to CF_CFDP_MsgOutGet, as the caller already has it */
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     /* this should check if any encoding error occurred */
 
@@ -435,13 +438,13 @@ void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_ty
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendEof(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_EOF, CF_AppData.config_table->local_eid,
                                    txn->history->peer_eid, 0, txn->history->seq_num, 0);
     CF_Logical_PduEof_t *eof;
-    CFE_Status_t         ret = CFE_SUCCESS;
+    CfdpStatus::T         ret = CFE_SUCCESS;
 
     if (!ph)
     {
@@ -474,12 +477,12 @@ CFE_Status_t CF_CFDP_SendEof(CF_Transaction_t *txn)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
+CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                              CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn)
 {
     CF_Logical_PduBuffer_t *ph;
     CF_Logical_PduAck_t *   ack;
-    CFE_Status_t            ret = CFE_SUCCESS;
+    CfdpStatus::T            ret = CFE_SUCCESS;
     CF_EntityId_t           src_eid;
     CF_EntityId_t           dst_eid;
 
@@ -525,14 +528,14 @@ CFE_Status_t CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, C
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+CfdpStatus::T CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                              CF_CFDP_ConditionCode_t cc)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_FIN, txn->history->peer_eid,
                                    CF_AppData.config_table->local_eid, 1, txn->history->seq_num, 0);
     CF_Logical_PduFin_t *fin;
-    CFE_Status_t         ret = CFE_SUCCESS;
+    CfdpStatus::T         ret = CFE_SUCCESS;
 
     if (!ph)
     {
@@ -565,10 +568,10 @@ CFE_Status_t CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     CF_Logical_PduNak_t *nak;
-    CFE_Status_t         ret = CFE_SUCCESS;
+    CfdpStatus::T         ret = CFE_SUCCESS;
 
     if (!ph)
     {
@@ -600,9 +603,9 @@ CFE_Status_t CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
     /*
@@ -660,11 +663,11 @@ CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_PduMd_t *md = &ph->int_header.md;
     int                       lv_ret;
-    CFE_Status_t              ret = CFE_SUCCESS;
+    CfdpStatus::T              ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeMd(ph->pdec, &ph->int_header.md);
     if (!CF_CODEC_IS_OK(ph->pdec))
@@ -727,9 +730,9 @@ CFE_Status_t CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeFileDataHeader(ph->pdec, ph->pdu_header.segment_meta_flag, &ph->int_header.fd);
 
@@ -773,9 +776,9 @@ CFE_Status_t CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeEof(ph->pdec, &ph->int_header.eof);
 
@@ -795,9 +798,9 @@ CFE_Status_t CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeAck(ph->pdec, &ph->int_header.ack);
 
@@ -818,9 +821,9 @@ CFE_Status_t CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeFin(ph->pdec, &ph->int_header.fin);
 
@@ -842,9 +845,9 @@ CFE_Status_t CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_RecvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_RecvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     CF_CFDP_DecodeNak(ph->pdec, &ph->int_header.nak);
 
@@ -1000,14 +1003,14 @@ void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_InitEngine(void)
+CfdpStatus::T CF_CFDP_InitEngine(void)
 {
     /* initialize all transaction nodes */
     CF_History_t *     history;
     CF_Transaction_t * txn = CF_AppData.engine.transactions;
     CF_ChunkWrapper_t *cw  = CF_AppData.engine.chunks;
     CF_CListNode_t **  list_head;
-    CFE_Status_t       ret              = CFE_SUCCESS;
+    CfdpStatus::T       ret              = CFE_SUCCESS;
     CF_Poll_t *        poll;
     int                chunk_mem_offset = 0;
     int                i;
@@ -1095,12 +1098,13 @@ CFE_Status_t CF_CFDP_InitEngine(void)
             }
         }
 
-        for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
-        {
-            history = &CF_AppData.engine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
-            CF_CList_InitNode(&history->cl_node);
-            CF_CList_InsertBack_Ex(&CF_AppData.engine.channels[i], CF_QueueIdx_HIST_FREE, &history->cl_node);
-        }
+        // TODO remove histories
+        // for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
+        // {
+        //     history = &CF_AppData.engine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
+        //     CF_CList_InitNode(&history->cl_node);
+        //     CF_CList_InsertBack_Ex(&CF_AppData.engine.channels[i], CF_QueueIdx_HIST_FREE, &history->cl_node);
+        // }
     }
 
     if (ret == CFE_SUCCESS)
@@ -1349,14 +1353,14 @@ void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, 
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
                             U8 chan_num, U8 priority, CF_EntityId_t dest_id)
 {
     CF_Transaction_t *txn;
     CF_Channel_t *    chan = &CF_AppData.engine.channels[chan_num];
     FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
 
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     if (chan->num_cmd_tx < CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN)
     {
@@ -1427,11 +1431,11 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
+CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
                                                  CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
                                                  CF_EntityId_t dest_id)
 {
-    CFE_Status_t ret;
+    CfdpStatus::T ret;
 
     /* make sure the directory can be open */
     ret = OS_DirectoryOpen(&pb->dir_id, src_filename);
@@ -1467,7 +1471,7 @@ CFE_Status_t CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fil
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
+CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
                                  U8 keep, U8 chan, U8 priority, U16 dest_id)
 {
     int            i;

@@ -17,14 +17,14 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.fpp"
         SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_codec.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_r.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_s.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_chunk.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/cf_clist.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfeStubs.hpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_codec.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_r.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_cfdp_s.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_chunk.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/cf_clist.cpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/CfeStubs.hpp"
+        # "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
         # TODO This should be moved to the F' config directory
         "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.hpp"
 )

@@ -163,7 +163,7 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn);
  * @returns anything else on error.
  *
  */
-CFE_Status_t CF_CFDP_InitEngine(void);
+CfdpStatus::T CF_CFDP_InitEngine(void);
 
 /************************************************************************/
 /** @brief Cycle the engine. Called once per wakeup.
@@ -204,7 +204,7 @@ void CF_CFDP_DisableEngine(void);
  * @retval #CFE_SUCCESS \copydoc CFE_SUCCESS
  * @returns CFE_SUCCESS on success. CF_ERROR on error.
  */
-CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
                             U8 chan, U8 priority, CF_EntityId_t dest_id);
 
 /************************************************************************/
@@ -228,7 +228,7 @@ CFE_Status_t CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, 
  * @retval #CFE_SUCCESS \copydoc CFE_SUCCESS
  * @returns CFE_SUCCESS on success. CF_ERROR on error.
  */
-CFE_Status_t CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
+CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
                                  U8 keep, U8 chan, U8 priority, U16 dest_id);
 
 /************************************************************************/
@@ -260,11 +260,11 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
  *
  * @param txn              Pointer to the transaction object
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success.
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
-CFE_Status_t CF_CFDP_SendMd(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Send a previously-assembled filedata PDU for transmit.
@@ -280,10 +280,10 @@ CFE_Status_t CF_CFDP_SendMd(CF_Transaction_t *txn);
  * sends the PDU that was previously allocated and assembled.  As such, the
  * typical failure possibilities do not apply to this call.
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success. (error checks not yet implemented)
  */
-CFE_Status_t CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Build an EOF PDU for transmit.
@@ -293,11 +293,11 @@ CFE_Status_t CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  *
  * @param txn   Pointer to the transaction object
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success.
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
-CFE_Status_t CF_CFDP_SendEof(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Build an ACK PDU for transmit.
@@ -316,11 +316,11 @@ CFE_Status_t CF_CFDP_SendEof(CF_Transaction_t *txn);
  * @param peer_eid Remote entity ID
  * @param tsn      Transaction sequence number
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success.
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
-CFE_Status_t CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
+CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                              CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn);
 
 /************************************************************************/
@@ -334,11 +334,11 @@ CFE_Status_t CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, C
  * @param fs    Final file status (retained or rejected, etc)
  * @param cc    Final CFDP condition code
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success.
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
-CFE_Status_t CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+CfdpStatus::T CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                              CF_CFDP_ConditionCode_t cc);
 
 /************************************************************************/
@@ -355,11 +355,11 @@ CFE_Status_t CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc
  * encodes and sends the previously-assembled PDU buffer.  As such, the
  * typical failure possibilities do not apply to this call.
  *
- * @returns CFE_Status_t status code
+ * @returns CfdpStatus::T status code
  * @retval CFE_SUCCESS on success.
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
-CFE_Status_t CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Appends a single TLV value to the logical PDU data
@@ -394,7 +394,7 @@ void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_ty
  * @retval CF_ERROR for general errors
  * @retval CF_SHORT_PDU_ERROR if PDU too short
  */
-CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack a metadata PDU from a received message.
@@ -412,7 +412,7 @@ CFE_Status_t CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
  * @retval CFE_SUCCESS on success
  * @retval CF_PDU_METADATA_ERROR on error
  */
-CFE_Status_t CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack a file data PDU from a received message.
@@ -431,7 +431,7 @@ CFE_Status_t CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @retval CF_ERROR for general errors
  * @retval CF_SHORT_PDU_ERROR PDU too short
  */
-CFE_Status_t CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack an EOF PDU from a received message.
@@ -449,7 +449,7 @@ CFE_Status_t CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @retval CFE_SUCCESS on success
  * @retval CF_SHORT_PDU_ERROR on error
  */
-CFE_Status_t CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack an ACK PDU from a received message.
@@ -467,7 +467,7 @@ CFE_Status_t CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @retval CFE_SUCCESS on success
  * @retval CF_SHORT_PDU_ERROR on error
  */
-CFE_Status_t CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack an FIN PDU from a received message.
@@ -485,7 +485,7 @@ CFE_Status_t CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @retval CFE_SUCCESS on success
  * @retval CF_SHORT_PDU_ERROR on error
  */
-CFE_Status_t CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Unpack a NAK PDU from a received message.
@@ -503,7 +503,7 @@ CFE_Status_t CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @retval CFE_SUCCESS on success
  * @retval CF_SHORT_PDU_ERROR on error
  */
-CFE_Status_t CF_CFDP_RecvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_RecvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Dispatch received packet to its handler.

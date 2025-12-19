@@ -84,9 +84,9 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
+CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
 {
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T ret = CFE_SUCCESS;
     U32 crc_result;
 
     // The F' version does not have an equivelent finalize call as it
@@ -190,11 +190,11 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, bool ok_to_send_nak)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_PduFileDataHeader_t *fd;
     I32                                 fret;
-    CFE_Status_t                          ret;
+    CfdpStatus::T                          ret;
 
     /* this function is only entered for data PDUs */
     fd  = &ph->int_header.fd;
@@ -250,9 +250,9 @@ CFE_Status_t CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CFE_Status_t               ret = CFE_SUCCESS;
+    CfdpStatus::T               ret = CFE_SUCCESS;
     const CF_Logical_PduEof_t *eof;
 
     if (!CF_CFDP_RecvEof(txn, ph))
@@ -485,15 +485,15 @@ void CF_CFDP_R2_GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_NAK, txn->history->peer_eid,
                                    CF_AppData.config_table->local_eid, 1, txn->history->seq_num, 1);
     CF_Logical_PduNak_t *nak;
-    CFE_Status_t         sret;
+    CfdpStatus::T         sret;
     U32               cret;
-    CFE_Status_t         ret = CF_ERROR;
+    CfdpStatus::T         ret = CF_ERROR;
 
     if (ph)
     {
@@ -621,14 +621,14 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 {
     U8        buf[CF_R2_CRC_CHUNK_SIZE];
     size_t       count_bytes;
     size_t       want_offs_size;
     size_t       read_size;
     int          fret;
-    CFE_Status_t ret;
+    CfdpStatus::T ret;
     bool         success = true;
 
     memset(buf, 0, sizeof(buf));
@@ -721,10 +721,10 @@ CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
  * See description in cf_cfdp_r.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CFE_Status_t CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn)
 {
-    CFE_Status_t sret;
-    CFE_Status_t ret = CFE_SUCCESS;
+    CfdpStatus::T sret;
+    CfdpStatus::T ret = CFE_SUCCESS;
 
     if (!CF_TxnStatus_IsError(txn->history->txn_stat) && !txn->flags.com.crc_calc)
     {
@@ -1025,7 +1025,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
      * the logic by state so that it isn't a bunch of if statements for different flags
      */
 
-    CFE_Status_t sret;
+    CfdpStatus::T sret;
     bool         pending_send;
 
     if (!txn->flags.com.inactivity_fired)

@@ -173,7 +173,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn);
  * @param txn            Pointer to the transaction object
  * @param expected_crc Expected CRC
  */
-CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc);
+CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc);
 
 /************************************************************************/
 /** @brief Checks R2 transaction state for transaction completion status.
@@ -208,7 +208,7 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, int ok_to_send_nak);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-CFE_Status_t CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Processing receive EOF common functionality for R1/R2.
@@ -228,7 +228,7 @@ CFE_Status_t CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-CFE_Status_t CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process receive EOF for R1.
@@ -325,7 +325,7 @@ void CF_CFDP_R2_GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk
  *
  * @param txn  Pointer to the transaction object
  */
-CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Calculate up to the configured amount of bytes of CRC.
@@ -348,7 +348,7 @@ CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
  * @retval CF_ERROR on non-completion.
  *
  */
-CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Send a FIN PDU.
@@ -361,7 +361,7 @@ CFE_Status_t CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  *
  */
-CFE_Status_t CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Process receive FIN-ACK PDU.
