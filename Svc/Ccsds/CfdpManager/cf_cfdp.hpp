@@ -29,6 +29,8 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include "cf_cfdp_types.hpp"
+#include "cf_cfdp_types.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -59,15 +61,15 @@ typedef struct CF_CFDP_Tick_args
  *
  * This resets the encoder and PDU buffer to initial values, and prepares for encoding a new PDU
  * for sending to a remote entity.
+ * 
+ * BPC: I have removed the encap_hdr_size argument as the F' port of CFDP is NOT encapsulating PDUs
  *
  * @param penc           Encoder state structure, will be reset/initialized by this call to point to msgbuf.
  * @param msgbuf         Pointer to encapsulation message, in this case a CFE software bus message
  * @param ph             Pointer to logical PDU buffer content, will be cleared to all zero by this call
- * @param encap_hdr_size Offset of first CFDP PDU octet within buffer
  * @param total_size     Allocated size of msgbuf encapsulation structure (encoding cannot exceed this)
  */
-void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, void *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
-                         size_t total_size);
+void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size);
 
 /********************************************************************************/
 /**
@@ -163,7 +165,7 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn);
  * @returns anything else on error.
  *
  */
-CfdpStatus::T CF_CFDP_InitEngine(void);
+CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager);
 
 /************************************************************************/
 /** @brief Cycle the engine. Called once per wakeup.
@@ -321,7 +323,7 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
  * @retval CF_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
-                             CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn);
+                              CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn);
 
 /************************************************************************/
 /** @brief Build a FIN PDU for transmit.

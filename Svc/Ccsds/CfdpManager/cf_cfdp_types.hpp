@@ -37,6 +37,7 @@
 #include "cf_codec.hpp"
 #include "CfdpTimer.hpp"
 #include "CfdpCfg.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
@@ -377,6 +378,10 @@ typedef struct CF_Transaction
      * Please ignore the duplicate declarations of the "all" flags.
      */
     CF_StateFlags_t flags;
+
+    /**< \brief Reference to the wrapper F' component in order to send PDUs */
+    CfdpManager& cfdpManager;
+
 } CF_Transaction_t;
 
 /**

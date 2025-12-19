@@ -8,6 +8,9 @@ module Ccsds {
         @ TODO
         async command TODO opcode 0
 
+        event CfdpBuffersExuasted severity warning low \
+            format "Unable to alocate a PDU buffer"
+
         ##############################################################################
         # Custom ports
         ##############################################################################
@@ -16,7 +19,7 @@ module Ccsds {
         async input port run1Hz: Svc.Sched
 
         @ Port for outputting PDU data
-        output port dataOut: [CfdpManagerNumBufferPorts] Svc.ComDataWithContext
+        output port dataOut: [CfdpManagerNumBufferPorts] Fw.BufferSend
 
         @ Port for allocating buffers to hold PDU data
         output port bufferAllocate: [CfdpManagerNumBufferPorts] Fw.BufferGet

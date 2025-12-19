@@ -107,28 +107,6 @@ namespace Ccsds {
  */
 #define CF_FILENAME_MAX_LEN FileNameStringSize
 
-/**
- * @brief Number of trailing bytes to add to CFDP PDU
- *
- * @par Description
- *      Additional padding bytes to be appended to the tail of CFDP PDUs
- *      This reserves extra space to the software bus encapsulation buffer for every
- *      CFDP PDU such that platform-specific trailer information may be added.  This
- *      includes, but is not limited to a separate CRC or error control field in addition
- *      to the error control field(s) within the the nominal CFDP protocol.
- *
- *      These extra bytes are added at the software bus encapsulation layer, they are not
- *      part of the CFDP PDU itself.
- *
- *      Set to 0 to disable this feature, such that the software bus buffer
- *      encapsulates only the CFDP PDU and no extra bytes are added.
- *
- * @par Limits:
- *       Maximum value is the difference between the maximum size of a CFDP PDU and the
- *       maximum size of an SB message.
- */
-#define CF_PDU_ENCAPSULATION_EXTRA_TRAILING_BYTES 0
-
 /**\}*/
 
 }  // namespace Ccsds

@@ -364,6 +364,11 @@ typedef struct CF_Logical_PduBuffer
      * does not permit for any other size.
      */
     U32 content_crc;
+
+    // TODO this is a temprorary workaround for buffer allocation
+    // Remove this
+    U32 index;
+
 } CF_Logical_PduBuffer_t;
 
 }  // namespace Ccsds

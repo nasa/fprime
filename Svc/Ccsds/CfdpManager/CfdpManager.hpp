@@ -8,11 +8,28 @@
 #define Ccsds_CfdpManager_HPP
 
 #include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
+#include "Svc/Ccsds/CfdpManager/cf_logical_pdu.hpp"
 
 namespace Svc {
 namespace Ccsds {
 
 class CfdpManager final : public CfdpManagerComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+    typedef struct CfdpPduBuffer
+    {
+      //!< This is the logical structure that is used to build a PDU
+      CF_Logical_PduBuffer_t pdu;
+      //!< This is where the PDU is encoded
+      U8 data[CF_MAX_PDU_SIZE];
+      //!< Flag if the buffer has already been sent
+      bool inUse;
+    } CfdpPduBuffer;
+    #define CFDP_MANAGER_NUM_BUFFERS (80)
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -33,8 +50,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // differences between F' and cFE
   // ----------------------------------------------------------------------
 
-  // TODO
-  Fw::Buffer cfdpGetMessageBuffer(U8 channelNum, FwSizeType size);
+  // Equivelent of CF_CFDP_MsgOutGet
+  CfdpStatus::T cfdpGetPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size);
+  // Not sure there is an equivelent
+  void cfdpReturnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t *);
+  // Equivelent of CF_CFDP_Send
+  void cfdpSendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
 
   private:
     // ----------------------------------------------------------------------
@@ -66,6 +87,18 @@ class CfdpManager final : public CfdpManagerComponentBase {
                          U32 cmdSeq            //!< The command sequence number
     ) override;
 
+  private:
+    // ----------------------------------------------------------------------
+    // Buffer management helpers
+    // These will probably be removed
+    // ----------------------------------------------------------------------
+    void returnBufferHelper(CF_Logical_PduBuffer_t * pdu);
+
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+    CfdpPduBuffer pduBuffers[CFDP_MANAGER_NUM_BUFFERS];
 
 };
 

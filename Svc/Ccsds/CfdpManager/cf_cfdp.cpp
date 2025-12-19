@@ -48,33 +48,17 @@ namespace Ccsds {
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, void *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
-                         size_t total_size)
+void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size)
 {
     // TODO Current thought is to rework the encore to include a buffer reference
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
 
     /* attach encoder object to PDU buffer which is attached to SB (encapsulation) buffer */
-    penc->base = (U8 *)msgbuf;
+    penc->base = msgbuf;
     ph->penc   = penc;
 
     CF_CFDP_CodecReset(&penc->codec_state, total_size);
-
-    /*
-     * adjust so that the base points to the actual PDU Header, this makes the offset
-     * refer to the real offset within the CFDP PDU, rather than the offset of the SB
-     * msg container.
-     */
-    if (total_size > encap_hdr_size)
-    {
-        penc->codec_state.max_size -= encap_hdr_size;
-        penc->base += encap_hdr_size;
-    }
-    else
-    {
-        CF_CFDP_CodecSetDone(&penc->codec_state);
-    }
 }
 
 /*----------------------------------------------------------------
@@ -268,19 +252,26 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
                                                    CF_TransactionSeq_t tsn, bool silent)
 {
     /* directive_code == 0 if file data */
-    CF_Logical_PduBuffer_t *ph;
+    CF_Logical_PduBuffer_t *ph = NULL;
     CF_Logical_PduHeader_t *hdr;
-    U8                   eid_len;
+    CF_Channel_t * chan = CF_AppData.engine.channels + txn->chan_num;
+    U8* msgPtr = NULL;
+    U8 eid_len;
+    CfdpStatus::T status;    
+
+    // This is where a message buffer is requested
     // TODO get instance of CfdpManager
-    Fw::Buffer = cfdpGetMessageBuffer(txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
-
-    ph = CF_CFDP_MsgOutGet(txn, silent);
-    // TODO How to handle stuffing a buffer into the header
-    // Add a reference in the encoder state
-
-    // TODO there is meetering happening here, update it to check if the buffer is size 0
-    if (ph)
+    status = cfdpGetMessageBuffer(ph, msgPtr, txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
+    
+    if (status)
     {
+        FW_ASSERT(ph != NULL);
+        FW_ASSERT(msgPtr != NULL);
+
+        // BPC: This was previously called as part of CF_CFDP_MsgOutGet()
+        // Call it here to attach the storage returned by cfdpGetMessageBuffer() to the encoder
+        CF_CFDP_EncodeStart(ph->penc, msgPtr, ph, CF_MAX_PDU_SIZE);
+
         hdr = &ph->pdu_header;
 
         hdr->version   = 1;
@@ -327,6 +318,12 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
 
             CF_CFDP_EncodeFileDirectiveHeader(ph->penc, &ph->fdirective);
         }
+    }
+    else
+    {
+        // BPC: This was previously executed in CF_CFDP_MsgOutGet if a buffer was failed to be allocated
+        /* stop trying to send anything until next wake up */
+        chan->tx_blocked = true;
     }
 
     return ph;
@@ -1003,7 +1000,7 @@ void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * See description in cf_cfdp.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CfdpStatus::T CF_CFDP_InitEngine(void)
+CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
 {
     /* initialize all transaction nodes */
     CF_History_t *     history;
@@ -1082,6 +1079,9 @@ CfdpStatus::T CF_CFDP_InitEngine(void)
 
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
+            // BPC: Add reference to component in order to send output buffers
+            txn->cfdpManager = cfdpManager;
+
             /* Initially put this on the free list for this channel */
             CF_FreeTransaction(txn, i);
 

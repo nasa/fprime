@@ -34,6 +34,7 @@
 #include "cf_cfdp_pdu.hpp"
 #include "cf_logical_pdu.hpp"
 #include "default_cf_extern_typedefs.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -46,8 +47,8 @@ namespace Ccsds {
 typedef struct CF_CodecState
 {
     bool   is_valid;    /**< \brief whether decode is valid or not.  Set false on end of decode or error condition. */
-    // size_t next_offset; /**< \brief Offset of next byte to encode/decode, current position in PDU */
-    // size_t max_size;    /**< \brief Maximum number of bytes in the PDU */
+    size_t next_offset; /**< \brief Offset of next byte to encode/decode, current position in PDU */
+    size_t max_size;    /**< \brief Maximum number of bytes in the PDU */
 } CF_CodecState_t;
 
 /**
@@ -58,7 +59,7 @@ typedef struct CF_CodecState
 typedef struct CF_EncoderState
 {
     CF_CodecState_t codec_state; /**< \brief Common state */
-    Fw::Buffer& base;        /**< \brief Pointer to start of encoded PDU data */
+    U8 *         base;        /**< \brief Pointer to start of encoded PDU data */
 } CF_EncoderState_t;
 
 /**
@@ -69,7 +70,7 @@ typedef struct CF_EncoderState
 typedef struct CF_DecoderState
 {
     CF_CodecState_t codec_state; /**< \brief Common state */
-    const Fw::Buffer& base;        /**< \brief Pointer to start of encoded PDU data */
+    const U8 *   base;        /**< \brief Pointer to start of encoded PDU data */
 } CF_DecoderState_t;
 
 /*********************************************************************************
@@ -112,10 +113,10 @@ static inline void CF_CFDP_CodecSetDone(CF_CodecState_t *state)
  * @param state   Encoder/Decoder common state
  * @return Current offset in PDU
  */
-// static inline size_t CF_CFDP_CodecGetPosition(const CF_CodecState_t *state)
-// {
-//     return state->next_offset;
-// }
+static inline size_t CF_CFDP_CodecGetPosition(const CF_CodecState_t *state)
+{
+    return state->next_offset;
+}
 
 /************************************************************************/
 /**
@@ -124,10 +125,10 @@ static inline void CF_CFDP_CodecSetDone(CF_CodecState_t *state)
  * @param state   Encoder/Decoder common state
  * @return Maximum size of PDU
  */
-// static inline size_t CF_CFDP_CodecGetSize(const CF_CodecState_t *state)
-// {
-//     return state->max_size;
-// }
+static inline size_t CF_CFDP_CodecGetSize(const CF_CodecState_t *state)
+{
+    return state->max_size;
+}
 
 /************************************************************************/
 /**
@@ -136,10 +137,10 @@ static inline void CF_CFDP_CodecSetDone(CF_CodecState_t *state)
  * @param state   Encoder/Decoder common state
  * @return Remaining size of PDU
  */
-// static inline size_t CF_CFDP_CodecGetRemain(const CF_CodecState_t *state)
-// {
-//     return (state->max_size - state->next_offset);
-// }
+static inline size_t CF_CFDP_CodecGetRemain(const CF_CodecState_t *state)
+{
+    return (state->max_size - state->next_offset);
+}
 
 /************************************************************************/
 /**
@@ -151,8 +152,8 @@ static inline void CF_CFDP_CodecSetDone(CF_CodecState_t *state)
 static inline void CF_CFDP_CodecReset(CF_CodecState_t *state, size_t max_size)
 {
     state->is_valid    = true;
-    // state->next_offset = 0;
-    // state->max_size    = max_size;
+    state->next_offset = 0;
+    state->max_size    = max_size;
 }
 
 /************************************************************************/
