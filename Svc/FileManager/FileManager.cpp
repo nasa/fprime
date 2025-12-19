@@ -207,7 +207,7 @@ void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
 void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
     bool isQueued = false;  // We only update when nothing is queued
     // Check for false (no message queued) and if false, atomically make it true
-    (void)this->m_runQueued.compare_exchange_weak(isQueued, true);
+    (void)this->m_runQueued.compare_exchange_strong(isQueued, true);
     if (not isQueued) {
         this->run_internalInterfaceInvoke();
     }
