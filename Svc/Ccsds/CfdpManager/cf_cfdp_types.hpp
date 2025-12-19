@@ -36,10 +36,12 @@
 #include "cf_chunk.hpp"
 #include "cf_codec.hpp"
 #include "CfdpTimer.hpp"
+#include "CfdpCfg.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
+
 
 namespace Svc {
 namespace Ccsds {
@@ -402,7 +404,8 @@ typedef struct CF_Channel
     CF_CListNode_t *qs[CF_QueueIdx_NUM];
     CF_CListNode_t *cs[CF_Direction_NUM];
 
-    CFE_SB_PipeId_t pipe;
+    // TODO remove all pipe references
+    // CFE_SB_PipeId_t pipe;
 
     U32 num_cmd_tx;
 
@@ -411,36 +414,37 @@ typedef struct CF_Channel
     /* For polling directories, the configuration data is in a table. */
     CF_Poll_t poll[CF_MAX_POLLING_DIR_PER_CHAN];
 
-    osal_id_t sem_id; /**< \brief semaphore id for output pipe */
+    // TODO remove all semaphore references
+    // osal_id_t sem_id; /**< \brief semaphore id for output pipe */
 
     const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */
 
     U8 tick_type;
 } CF_Channel_t;
 
-/**
- * @brief CF engine output state
- *
- * Keeps the state of the current output PDU in the CF engine
- */
-typedef struct CF_Output
-{
-    CFE_SB_Buffer_t *      msg;        /**< \brief Binary message to be sent to underlying transport */
-    CF_EncoderState_t      encode;     /**< \brief Encoding state (while building message) */
-    CF_Logical_PduBuffer_t tx_pdudata; /**< \brief Tx PDU logical values */
-} CF_Output_t;
+// /**
+//  * @brief CF engine output state
+//  *
+//  * Keeps the state of the current output PDU in the CF engine
+//  */
+// typedef struct CF_Output
+// {
+//     CFE_SB_Buffer_t *      msg;        /**< \brief Binary message to be sent to underlying transport */
+//     CF_EncoderState_t      encode;     /**< \brief Encoding state (while building message) */
+//     CF_Logical_PduBuffer_t tx_pdudata; /**< \brief Tx PDU logical values */
+// } CF_Output_t;
 
-/**
- * @brief CF engine input state
- *
- * Keeps the state of the current input PDU in the CF engine
- */
-typedef struct CF_Input
-{
-    CFE_SB_Buffer_t *      msg;        /**< \brief Binary message received from underlying transport */
-    CF_DecoderState_t      decode;     /**< \brief Decoding state (while interpreting message) */
-    CF_Logical_PduBuffer_t rx_pdudata; /**< \brief Rx PDU logical values */
-} CF_Input_t;
+// /**
+//  * @brief CF engine input state
+//  *
+//  * Keeps the state of the current input PDU in the CF engine
+//  */
+// typedef struct CF_Input
+// {
+//     CFE_SB_Buffer_t *      msg;        /**< \brief Binary message received from underlying transport */
+//     CF_DecoderState_t      decode;     /**< \brief Decoding state (while interpreting message) */
+//     CF_Logical_PduBuffer_t rx_pdudata; /**< \brief Rx PDU logical values */
+// } CF_Input_t;
 
 /**
  * @brief An engine represents a pairing to a local EID
@@ -451,8 +455,8 @@ typedef struct CF_Engine
 {
     CF_TransactionSeq_t seq_num; /* \brief keep track of the next sequence number to use for sends */
 
-    CF_Output_t out;
-    CF_Input_t  in;
+    // CF_Output_t out;
+    // CF_Input_t  in;
 
     /* NOTE: could have separate array of transactions as part of channel? */
     CF_Transaction_t transactions[CF_NUM_TRANSACTIONS];

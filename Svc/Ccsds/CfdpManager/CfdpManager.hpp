@@ -25,6 +25,17 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Destroy CfdpManager object
     ~CfdpManager();
 
+  public:
+  // ----------------------------------------------------------------------
+  // Port calls that are invoked by the CFDP engine
+  // These functions are analogous to the functions in cf_cfdp_sbintf.*
+  // However these functions are not direct ports due to the architectural
+  // differences between F' and cFE
+  // ----------------------------------------------------------------------
+
+  // TODO
+  Fw::Buffer cfdpGetMessageBuffer(U8 channelNum, FwSizeType size);
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -35,7 +46,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
     void run1Hz_handler(FwIndexType portNum,  //!< The port number
                         U32 context           //!< The call order
-                        ) override;
+    ) override;
+
+    void dataReturnIn_handler(
+            FwIndexType portNum, //!< The port number
+            Fw::Buffer& data,
+            const ComCfg::FrameContext& context
+    ) override;
                         
   private:
     // ----------------------------------------------------------------------
@@ -47,7 +64,9 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! TODO
     void TODO_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                          U32 cmdSeq            //!< The command sequence number
-                         ) override;
+    ) override;
+
+
 };
 
 }  // namespace Ccsds

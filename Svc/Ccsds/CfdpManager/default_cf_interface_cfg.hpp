@@ -43,17 +43,7 @@ namespace Ccsds {
  * \{
  */
 
-/**
- *  @brief Number of channels
- *
- *  @par Description:
- *       The number of channels in the engine. Changing this
- *       value changes the configuration table for the application.
- *
- *  @par Limits:
- *       Must be less <= 200. Obviously it will be smaller than that.
- */
-#define CF_NUM_CHANNELS (2)
+
 
 /**
  *  @brief Max NAK segments supported in a NAK PDU

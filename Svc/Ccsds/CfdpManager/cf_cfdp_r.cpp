@@ -193,7 +193,7 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, bool ok_to_send_nak)
 CFE_Status_t CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_PduFileDataHeader_t *fd;
-    int32                                 fret;
+    I32                                 fret;
     CFE_Status_t                          ret;
 
     /* this function is only entered for data PDUs */
@@ -568,7 +568,7 @@ CFE_Status_t CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 void CF_CFDP_R_Init(CF_Transaction_t *txn)
 {
-    int32 ret;
+    I32 ret;
 
     if (txn->state == CF_TxnState_R2)
     {
@@ -785,7 +785,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     char  fname[CF_FILENAME_MAX_LEN];
     int   status;
-    int32 ret;
+    I32 ret;
     bool  success = true;
 
     /* it isn't an error to get another MD PDU, right? */

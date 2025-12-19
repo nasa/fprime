@@ -15,6 +15,18 @@ module Ccsds {
         @ Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
         async input port run1Hz: Svc.Sched
 
+        @ Port for outputting PDU data
+        output port dataOut: [CfdpManagerNumBufferPorts] Svc.ComDataWithContext
+
+        @ Port for allocating buffers to hold PDU data
+        output port bufferAllocate: [CfdpManagerNumBufferPorts] Fw.BufferGet
+
+        @ Port for deallocating buffers allocated for PDU data
+        output port bufferDeallocate: [CfdpManagerNumBufferPorts] Fw.BufferSend
+        
+        @ Buffer that was sent via the dataOut port and is now being retruned
+        sync input port dataReturnIn: [CfdpManagerNumBufferPorts] Svc.ComDataWithContext
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

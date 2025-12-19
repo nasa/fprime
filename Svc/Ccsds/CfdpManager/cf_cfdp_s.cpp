@@ -211,7 +211,7 @@ CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_
  *-----------------------------------------------------------------*/
 void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
 {
-    int32 bytes_processed = CF_CFDP_S_SendFileData(txn, txn->foffs, (txn->fsize - txn->foffs), 1);
+    I32 bytes_processed = CF_CFDP_S_SendFileData(txn, txn->foffs, (txn->fsize - txn->foffs), 1);
 
     if (bytes_processed > 0)
     {
@@ -324,7 +324,7 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
 void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 {
     CFE_Status_t sret;
-    int32        ret;
+    I32          ret;
     int          status  = 0;
     bool         success = true;
 

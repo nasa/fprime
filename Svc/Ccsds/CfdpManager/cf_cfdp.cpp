@@ -270,8 +270,11 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     CF_Logical_PduBuffer_t *ph;
     CF_Logical_PduHeader_t *hdr;
     U8                   eid_len;
+    // TODO get instance of CfdpManager
+    Fw::Buffer = cfdpGetMessageBuffer(txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
 
     ph = CF_CFDP_MsgOutGet(txn, silent);
+    // TODO How to handle stuffing a buffer into the header
 
     if (ph)
     {
@@ -1010,7 +1013,7 @@ CFE_Status_t CF_CFDP_InitEngine(void)
     int                i;
     int                j;
     int                k;
-    char               nbuf[64];
+    // char               nbuf[64];
 
     static const int CF_DIR_MAX_CHUNKS[CF_Direction_NUM][CF_NUM_CHANNELS] = {CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
                                                                              CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION};
@@ -1019,58 +1022,60 @@ CFE_Status_t CF_CFDP_InitEngine(void)
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        snprintf(nbuf, sizeof(nbuf) - 1, "%s%d", CF_CHANNEL_PIPE_PREFIX, i);
-        ret = CFE_SB_CreatePipe(&CF_AppData.engine.channels[i].pipe, CF_AppData.config_table->chan[i].pipe_depth_input,
-                                nbuf);
-        if (ret != CFE_SUCCESS)
-        {
-            CFE_EVS_SendEvent(CF_CR_CHANNEL_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "CF: failed to create pipe %s, returned 0x%08lx", nbuf, (unsigned long)ret);
-            break;
-        }
+        // TODO remove pipe references
+        // snprintf(nbuf, sizeof(nbuf) - 1, "%s%d", CF_CHANNEL_PIPE_PREFIX, i);
+        // ret = CFE_SB_CreatePipe(&CF_AppData.engine.channels[i].pipe, CF_AppData.config_table->chan[i].pipe_depth_input,
+        //                         nbuf);
+        // if (ret != CFE_SUCCESS)
+        // {
+        //     CFE_EVS_SendEvent(CF_CR_CHANNEL_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                       "CF: failed to create pipe %s, returned 0x%08lx", nbuf, (unsigned long)ret);
+        //     break;
+        // }
 
-        ret = CFE_SB_SubscribeLocal(CFE_SB_ValueToMsgId(CF_AppData.config_table->chan[i].mid_input),
-                                    CF_AppData.engine.channels[i].pipe,
-                                    CF_AppData.config_table->chan[i].pipe_depth_input);
-        if (ret != CFE_SUCCESS)
-        {
-            CFE_EVS_SendEvent(CF_INIT_SUB_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "CF: failed to subscribe to MID 0x%lx, returned 0x%08lx",
-                              (unsigned long)CF_AppData.config_table->chan[i].mid_input, (unsigned long)ret);
-            break;
-        }
+        // ret = CFE_SB_SubscribeLocal(CFE_SB_ValueToMsgId(CF_AppData.config_table->chan[i].mid_input),
+        //                             CF_AppData.engine.channels[i].pipe,
+        //                             CF_AppData.config_table->chan[i].pipe_depth_input);
+        // if (ret != CFE_SUCCESS)
+        // {
+        //     CFE_EVS_SendEvent(CF_INIT_SUB_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                       "CF: failed to subscribe to MID 0x%lx, returned 0x%08lx",
+        //                       (unsigned long)CF_AppData.config_table->chan[i].mid_input, (unsigned long)ret);
+        //     break;
+        // }
 
-        if (CF_AppData.config_table->chan[i].sem_name[0])
-        {
-            /*
-             * There is a start up race condition because CFE starts all apps at the same time,
-             * and if this sem is instantiated by another app, it may not be created yet.
-             *
-             * Therefore if OSAL returns OS_ERR_NAME_NOT_FOUND, assume this is what is going
-             * on, delay a bit and try again.
-             */
-            ret = OS_ERR_NAME_NOT_FOUND;
-            for (j = 0; j < CF_STARTUP_SEM_MAX_RETRIES; ++j)
-            {
-                ret = OS_CountSemGetIdByName(&CF_AppData.engine.channels[i].sem_id,
-                                             CF_AppData.config_table->chan[i].sem_name);
+        // TODO remove all semaphore references
+        // if (CF_AppData.config_table->chan[i].sem_name[0])
+        // {
+        //     /*
+        //      * There is a start up race condition because CFE starts all apps at the same time,
+        //      * and if this sem is instantiated by another app, it may not be created yet.
+        //      *
+        //      * Therefore if OSAL returns OS_ERR_NAME_NOT_FOUND, assume this is what is going
+        //      * on, delay a bit and try again.
+        //      */
+        //     ret = OS_ERR_NAME_NOT_FOUND;
+        //     for (j = 0; j < CF_STARTUP_SEM_MAX_RETRIES; ++j)
+        //     {
+        //         ret = OS_CountSemGetIdByName(&CF_AppData.engine.channels[i].sem_id,
+        //                                      CF_AppData.config_table->chan[i].sem_name);
 
-                if (ret != OS_ERR_NAME_NOT_FOUND)
-                {
-                    break;
-                }
+        //         if (ret != OS_ERR_NAME_NOT_FOUND)
+        //         {
+        //             break;
+        //         }
 
-                OS_TaskDelay(CF_STARTUP_SEM_TASK_DELAY);
-            }
+        //         OS_TaskDelay(CF_STARTUP_SEM_TASK_DELAY);
+        //     }
 
-            if (ret != OS_SUCCESS)
-            {
-                CFE_EVS_SendEvent(CF_INIT_SEM_ERR_EID, CFE_EVS_EventType_ERROR,
-                                  "CF: failed to get sem id for name %s, error=%ld",
-                                  CF_AppData.config_table->chan[i].sem_name, (long)ret);
-                break;
-            }
-        }
+        //     if (ret != OS_SUCCESS)
+        //     {
+        //         CFE_EVS_SendEvent(CF_INIT_SEM_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                           "CF: failed to get sem id for name %s, error=%ld",
+        //                           CF_AppData.config_table->chan[i].sem_name, (long)ret);
+        //         break;
+        //     }
+        // }
 
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
@@ -1496,7 +1501,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
 {
     CF_Transaction_t *txn;
     os_dirent_t       dirent;
-    int32             status;
+    I32               status;
 
     /* either there's no transaction (first one) or the last one was finished, so check for a new one */
 
@@ -2009,7 +2014,8 @@ void CF_CFDP_DisableEngine(void)
         /* finally all queue counters must be reset */
         memset(&CF_AppData.hk.Payload.channel_hk[i].q_size, 0, sizeof(CF_AppData.hk.Payload.channel_hk[i].q_size));
 
-        CFE_SB_DeletePipe(chan->pipe);
+        // TODO remove pipe references
+        // CFE_SB_DeletePipe(chan->pipe);
     }
 }
 

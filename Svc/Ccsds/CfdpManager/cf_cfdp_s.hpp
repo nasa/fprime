@@ -195,7 +195,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn);
  * @param calc_crc Enable CRC/Checksum calculation
  *
  */
-CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, uint32 foffs, uint32 bytes_to_read, uint8 calc_crc);
+CFE_Status_t CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
 
 /************************************************************************/
 /** @brief Standard state function to send the next file data PDU for active transaction.

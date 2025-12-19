@@ -173,7 +173,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn);
  * @param txn            Pointer to the transaction object
  * @param expected_crc Expected CRC
  */
-CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, uint32 expected_crc);
+CFE_Status_t CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc);
 
 /************************************************************************/
 /** @brief Checks R2 transaction state for transaction completion status.
