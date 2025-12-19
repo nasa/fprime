@@ -58,6 +58,7 @@ bugprone
 buildstep
 BYTEDRV
 calcu
+CALCULATECRC
 callergraph
 callgraph
 Campuzano
