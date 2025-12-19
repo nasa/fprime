@@ -20,11 +20,11 @@ ComRetryTester ::ComRetryTester()
 
 ComRetryTester ::~ComRetryTester() {}
 
-void ComRetryTester ::configure(U32 num_retries=1) {
+void ComRetryTester ::configure(U32 num_retries = 1) {
     component.configure(num_retries);
 }
 
-void ComRetryTester ::receiveBuffer(Fw::Buffer &buffer, ComCfg::FrameContext &context) {
+void ComRetryTester ::receiveBuffer(Fw::Buffer& buffer, ComCfg::FrameContext& context) {
     invoke_to_dataIn(0, buffer, context);
     invoke_to_dataReturnIn(0, buffer, context);
 }
@@ -84,11 +84,11 @@ void ComRetryTester ::testBufferRetry() {
     configure();
 
     receiveBuffer(buffer_a, nullContext);
-    invoke_to_comStatusIn(0, state); // First delivery is a failure
+    invoke_to_comStatusIn(0, state);  // First delivery is a failure
     state = Fw::Success::SUCCESS;
-    invoke_to_comStatusIn(0, state); // Downstream component is ready to receive buffer
+    invoke_to_comStatusIn(0, state);  // Downstream component is ready to receive buffer
     invoke_to_dataReturnIn(0, buffer_a, nullContext);
-    invoke_to_comStatusIn(0, state); // Redelivery is successful
+    invoke_to_comStatusIn(0, state);  // Redelivery is successful
 
     ASSERT_from_dataReturnOut(0, buffer_a, nullContext);
     ASSERT_from_comStatusOut(0, state);
@@ -112,7 +112,7 @@ void ComRetryTester ::testBufferRetryTillFailure() {
     Fw::Success failure = Fw::Success::FAILURE;
     Fw::Success success = Fw::Success::SUCCESS;
 
-    FwIndexType num_retries = 3; // This is also the default number of retries
+    FwIndexType num_retries = 3;  // This is also the default number of retries
 
     receiveBuffer(buffer_a, nullContext);
     invoke_to_comStatusIn(0, failure);

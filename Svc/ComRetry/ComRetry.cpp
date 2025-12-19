@@ -41,9 +41,9 @@ void ComRetry ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition)
     // Nominal case where delivery of buffer is successful, and everything is passed back up the stack
     else if ((this->m_retry_state == WAITING_FOR_STATUS) && (condition == Fw::Success::SUCCESS)) {
         FW_ASSERT(this->m_buffer.isValid());
-        this->m_retry_state = WAITING_FOR_SEND; // Successful transmission, reset state
+        this->m_retry_state = WAITING_FOR_SEND;  // Successful transmission, reset state
         this->dataReturnOut_out(0, this->m_buffer, this->m_context);
-        this->m_buffer = Fw::Buffer(); // Clear buffer
+        this->m_buffer = Fw::Buffer();  // Clear buffer
         this->comStatusOut_out(0, condition);
     }
     // When retrying, and "success" is received, this is the retry case
@@ -53,8 +53,7 @@ void ComRetry ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition)
         this->m_retry_state = WAITING_FOR_STATUS;
         this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
         this->dataOut_out(0, this->m_buffer, this->m_context);
-    }
-    else {
+    } else {
         // When a failure has been seen, it can **only** be in WAITING_FOR_STATUS state
         FW_ASSERT(this->m_retry_state == WAITING_FOR_STATUS);
         FW_ASSERT(condition == Fw::Success::FAILURE);
@@ -67,7 +66,7 @@ void ComRetry ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition)
         else {
             this->m_retry_state = WAITING_FOR_SEND;
             this->dataReturnOut_out(0, this->m_buffer, this->m_context);
-            this->m_buffer = Fw::Buffer(); // Clear buffer
+            this->m_buffer = Fw::Buffer();  // Clear buffer
             this->comStatusOut_out(0, condition);
         }
     }

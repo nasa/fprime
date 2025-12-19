@@ -45,7 +45,7 @@ class ComRetryTester final : public ComRetryGTestBase {
     // ----------------------------------------------------------------------
     void configure(U32 num_retries);
 
-    void receiveBuffer(Fw::Buffer &buffer, ComCfg::FrameContext &context);
+    void receiveBuffer(Fw::Buffer& buffer, ComCfg::FrameContext& context);
 
     void checkDataOut(FwIndexType expectedIndex, U8* expectedData, FwSizeType expectedDataSize);
 
