@@ -101,6 +101,14 @@ class FileManager final : public FileManagerComponentBase {
                                   const Fw::CmdStringArg& dirName  //!< The directory to list
                                   ) override;
 
+    //! Handler implementation for command CalculateCrc
+    //!
+    //! List the contents of a directory
+    void CalculateCrc_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                 U32 cmdSeq,                       //!< The command sequence number
+                                 const Fw::CmdStringArg& filename  //!< The file to CRC
+                                 ) override;
+
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/

@@ -13,6 +13,7 @@
 #include <fstream>
 
 #include "FileManagerTester.hpp"
+#include "Os/File.hpp"
 
 #define INSTANCE 0
 #define CMD_SEQ 0
@@ -363,6 +364,43 @@ void FileManagerTester ::fileSizeFail() {
     this->component.doDispatch();
 
     this->assertFailure(FileManager::OPCODE_FILESIZE);
+}
+
+void FileManagerTester ::calculateCrcSucceed() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "crc_test_file";
+
+    // Remove and recreate the test file with deterministic content
+    this->system("rm -f crc_test_file");
+    {
+        std::ofstream outFile(fileName, std::ios::binary);
+        ASSERT_TRUE(outFile.is_open());
+        outFile << "123456789";  // Payload with a well-known CRC32
+    }
+
+    // Compute expected CRC using the same file utility as the component
+    Os::File crcFile;
+    U32 expectedCrc = 0;
+    ASSERT_EQ(Os::File::OP_OK, crcFile.open(fileName, Os::File::OPEN_READ));
+    ASSERT_EQ(Os::File::OP_OK, crcFile.calculateCrc(expectedCrc));
+    crcFile.close();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_CalculateCrc(INSTANCE, CMD_SEQ, cmdStringFile);
+    this->component.doDispatch();
+
+    // Validate command response and emitted events
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_CALCULATECRC, CMD_SEQ, Fw::CmdResponse::OK);
+
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_CalculateCrcStarted(0, fileName);
+    ASSERT_EVENTS_CalculateCrcSucceeded(0, fileName, expectedCrc);
+
+    this->system("rm -f crc_test_file");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
 }
 
 void FileManagerTester ::listDirectorySucceed() {
