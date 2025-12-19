@@ -1,7 +1,7 @@
 module Fw {
   
   @ Data structure for Time 
-  struct TimeValue {
+  dictionary struct TimeValue {
     timeBase: TimeBase  @< basis of time (defined by system)
     timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
     seconds: U32  @< seconds portion of Time
@@ -16,7 +16,7 @@ module Fw {
   )
 
   @ Data structure for Time Interval
-  struct TimeIntervalValue {
+  dictionary struct TimeIntervalValue {
     seconds: U32  @< seconds portion of TimeInterval
     useconds: U32  @< microseconds portion of TimeInterval
   }
