@@ -5,7 +5,7 @@ This guide shows a practical, repeatable test-driven development loop for buildi
 Test-Driven Development (TDD) is a software development practice where **tests are written before the flight code**. Rather than writing code and then verifying it later, TDD flips the workflow:
 
 1. Write a test that describes the desired behavior
-2. Write the ccode to make the test pass
+2. Write the code to make the test pass
 
 This approach aligns extremely well with the model-driven development of F Prime because testing only relies on the model of the component not the implementation. Thus, it is easy to develop tests that test to the desired behavior using the component's model as an interface and then implement that model to pass the tests.
 
@@ -111,7 +111,7 @@ void CounterTester::test_increment() {
 ```
 
 > [!TIP]
-> `ASSERT_TLM_Count` is used to assert on the telemetry history. `ASSERT_TLM_Count(i, i +1)` asserts that the ith telemetry channel emitted is equal to `i + 1`. `this->invoke_to_increment(0)`, which invokes the increment port (with port index 0), was called first so this assertion should hold. Finally, `STest::Pick::lowerUpper(1, MAX_HISTORY_SIZE)` picks a random number of test iterations to run through. In this case we bound this number by `MAX_HISTORY_SIZE` to avoid overflowing the history size.
+> `ASSERT_TLM_Count` is used to assert on the telemetry history. `ASSERT_TLM_Count(i, i +1)` asserts that the telemetry channel at index i is equal to `i + 1`. `this->invoke_to_increment(0)`, which invokes the increment port (with port index 0), was called first so this assertion should hold. Finally, `STest::Pick::lowerUpper(1, MAX_HISTORY_SIZE)` picks a random number of test iterations to run through. In this case we bound this number by `MAX_HISTORY_SIZE` to avoid overflowing the history size.
 
 > [!CAUTION]
 > Remember to add `test_increment` to the `CounterTester.hpp` and invoke it with a test in `CounterTestMain.cpp`.  This can be done by replacing the `toDo` test from the implementation template.
