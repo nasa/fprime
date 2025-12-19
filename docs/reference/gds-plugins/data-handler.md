@@ -11,7 +11,7 @@ Data Handler plugins are `FEATURE` plugins.  All will run unless individually di
 
 ## Usage
 
-To use a Data Handler plugin, implement the `data_callback()` method, which is invoked whenever a matching decoded data item is received. You can register for specific descriptor types  by returning them in the `get_descriptor()` method.
+To use a Data Handler plugin, implement the `data_callback()` method, which is invoked whenever a matching decoded data item is received. You can register for specific descriptor types  by returning them in the `get_handled_descriptors()` method.
 
 Typical use cases include:
 
@@ -45,18 +45,19 @@ To create a Data Handler plugin, subclass the [`DataHandlerPlugin`](https://gith
 
 ```python
 from fprime_gds.common.handlers import DataHandlerPlugin
-from fprime_gds.common.plugins import gds_plugin
+from fprime_gds.plugin.definitions import gds_plugin
 
 @gds_plugin(DataHandlerPlugin)
 class EventLogger(DataHandlerPlugin):
     """Logs all event data to a file."""
 
-    def get_descriptor(self):
+    def get_handled_descriptors(self):
         return ["FW_PACKET_LOG"]
 
     def data_callback(self, data, source):
+        value_object = data.get_val_obj()
         with open("event_log.txt", "a") as f:
-            f.write(f"{data}\n")
+            f.write(f"{value_object.val}\n")
 ```
 
 This plugin will be called for every decoded event received by the system.
