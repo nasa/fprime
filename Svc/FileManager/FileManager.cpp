@@ -225,10 +225,12 @@ void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
 }
 
 void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
-    bool isQueued = false;  // We only update when nothing is queued
-    // Check for false (no message queued) and if false, atomically make it true
-    (void)this->m_runQueued.compare_exchange_strong(isQueued, true);
-    if (not isQueued) {
+    bool isQueued = false;
+    // m_runQueued will be compared to isQueued (false). When equal (i.e. m_runQueued is false) the atomic will be
+    // set to true and the function will return true indicating that a run was successfully marked as queued and thus
+    // the internal handler should be invoked.
+    bool expects_enqueue = this->m_runQueued.compare_exchange_strong(isQueued, true);
+    if (expects_enqueue) {
         this->run_internalInterfaceInvoke();
     }
 }
