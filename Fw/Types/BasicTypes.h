@@ -91,13 +91,13 @@ typedef double F64;  //!< 64-bit floating point (double). Required for compiler-
 #define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))                 //!< MAX macro
 #define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))                 //!< MIN macro
 
-#define FW_NO_ASSERT 1  //!< Asserts turned off
+#define FW_NO_ASSERT (1)  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
-    2  //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
-#define FW_FILENAME_ASSERT 3  //!< Uses the file path in the assert - image stores filenames
+    (2)  //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
+#define FW_FILENAME_ASSERT (3)  //!< Uses the file path in the assert - image stores filenames
 #define FW_RELATIVE_PATH_ASSERT \
-    4  //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path
-       //!< to be set on the compile command line
+    (4)  //!< Uses a relative file path (within fprime/fprime library) for assert.
+         //!< Requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
 
 #ifdef __cplusplus
 }

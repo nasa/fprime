@@ -193,7 +193,6 @@ void GenericHubTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Bu
     }
 
     this->invoke_to_bufferOutReturn(portNum, fwBuffer);
-    // this->from_fromBufferDriverReturn_handler(0, fwBuffer);
 }
 
 void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/

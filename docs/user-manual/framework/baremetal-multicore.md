@@ -21,7 +21,7 @@ platforms.
 ### The Joy of Passive Components
 
 First and foremost, baremetal F´ systems should avoid using **Active Components**  at all costs because these components
-require quasi-asynchronous execution contexts in which to run. i.e. they need thread such that they can execute in
+require quasi-asynchronous execution contexts in which to run. i.e. they need threads such that they can execute in
 "parallel" with each other.
 
 > [!NOTE]
@@ -71,7 +71,7 @@ We have yet to see any issues running F´ on multi-core systems. Some users have
 components to designated cores.  In general, these systems behave just fine.
 
 > [!NOTE]
-> Some portions of F´ use `U32` types so synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed in all systems. A project should use care to ensure that its system will behave as expected.  These usages are under review and will be corrected over time.
+> Some portions of F´ use `U32` types to synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed in all systems. A project should use care to ensure that its system will behave as expected.  These usages are under review and will be corrected over time.
 
 When running F´ on multi-platform systems, users typically define a deployment for each platform in the system. These
 deployments are then linked over the platform's inter-communication architecture.  Should  users want F´ execution

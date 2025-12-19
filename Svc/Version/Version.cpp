@@ -47,7 +47,7 @@ void Version ::getVersion_handler(FwIndexType portNum,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     U8 version_slot = VersionSlot(version_id.e);
-    version_string = this->verId_db[version_slot].get_version_value();
+    version_string = static_cast<const Fw::StringBase&>(this->verId_db[version_slot].get_version_value());
     status = this->verId_db[version_slot].get_version_status();
 }
 
@@ -56,7 +56,7 @@ void Version ::setVersion_handler(FwIndexType portNum,
                                   Fw::StringBase& version_string,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
-    VersionSlot ver_slot = VersionSlot(version_id.e);
+    auto ver_slot = VersionSlot(version_id.e);
     this->verId_db[ver_slot].set_version_enum(version_id);
     this->verId_db[ver_slot].set_version_value(version_string);
     this->verId_db[ver_slot].set_version_status(status);

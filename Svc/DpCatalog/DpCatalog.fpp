@@ -43,6 +43,9 @@ module Svc {
     @ File Downlink send complete port
     async input port fileDone: SendFileComplete
 
+    @ DP Writer Add File to Cat
+    async input port addToCat: DpWritten
+
     # ----------------------------------------------------------------------
     # F Prime infrastructure ports
     # ----------------------------------------------------------------------
@@ -78,8 +81,9 @@ module Svc {
 
     @ Start transmitting catalog
     async command START_XMIT_CATALOG (
-                                    wait: Fw.Wait @< have START_XMIT command complete wait for catalog to complete transmitting
-                                  ) \    
+                                    wait: Fw.Wait, @< have START_XMIT command complete wait for catalog to complete transmitting
+                                    remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
+                                  ) \
       opcode 1
 
     @ Stop transmitting catalog
@@ -96,7 +100,7 @@ module Svc {
 
     @ Error opening directory
     event DirectoryOpenError(
-                            loc: string size 80 @< The directory
+                            loc: string size FileNameStringSize @< The directory
                             stat: I32 @< status
                           ) \
       severity warning high \
@@ -105,7 +109,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingDirectory (
-                            directory: string size 80 @< The directory 
+                            directory: string size FileNameStringSize @< The directory
                           ) \
       severity activity low \
       id 1 \
@@ -113,7 +117,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingFile (
-                            file: string size 80 @< The file 
+                            file: string size FileNameStringSize @< The file
                           ) \
       severity activity low \
       id 2 \
@@ -122,7 +126,7 @@ module Svc {
 
     @ Directory Processing complete
     event ProcessingDirectoryComplete (
-                            loc: string size 80 @< The directory 
+                            loc: string size FileNameStringSize @< The directory
                             total: U32 @< total data products
                             pending: U32 @< pending data products
                             pending_bytes: U64 @< pending data product volume
@@ -137,6 +141,14 @@ module Svc {
       id 4 \
       format "Catalog build complete"
 
+    @ Error opening directory
+    event DirectoryNotManaged(
+                            file: string size FileNameStringSize @< The file
+                          ) \
+      severity warning high \
+      id 5 \
+      format "Unable to add file {}; directory not managed"
+
     @ Catalog transmission started
     event CatalogXmitStarted \
       severity activity high \
@@ -145,7 +157,7 @@ module Svc {
 
     @ Catalog transmission stopped
     event CatalogXmitStopped (
-                            bytes: U32 @< data transmitted
+                            bytes: U64 @< data transmitted
                           ) \
       severity activity high \
       id 11 \
@@ -161,7 +173,7 @@ module Svc {
 
     @ Sending product
     event SendingProduct (
-                            file: string size 80 @< The file 
+                            file: string size FileNameStringSize @< The file
                             bytes: U32 @< file size
                             prio: U32 @< DP priority
                           ) \
@@ -171,11 +183,13 @@ module Svc {
 
     @ Product send complete
     event ProductComplete (
-                            file: string size 80 @< The file 
+                            file: string size FileNameStringSize @< The file
+                            pending: U32 @< pending data products
+                            pending_bytes: U64 @< pending data product volume
                           ) \
       severity activity low \
       id 14 \
-      format "Product {} complete"
+      format "Product {} complete. Pending products: {} Pending bytes: {}"
 
     @ Component not initialized error
     event ComponentNotInitialized \
@@ -193,7 +207,7 @@ module Svc {
 
     @ Catalog is full
     event CatalogFull (
-                            dir: string size 80 @< last directory read 
+                            dir: string size FileNameStringSize @< last directory read
                           ) \
       severity warning high \
       id 22 \
@@ -202,7 +216,7 @@ module Svc {
 
     @ Error opening file
     event FileOpenError(
-                            loc: string size 80 @< The directory
+                            loc: string size FileNameStringSize @< The directory
                             stat: I32 @< status
                           ) \
       severity warning high \
@@ -212,7 +226,7 @@ module Svc {
 
     @ Error opening file
     event FileReadError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32 @< status
                           ) \
       severity warning high \
@@ -222,7 +236,7 @@ module Svc {
 
     @ Error reading header data from DP file
     event FileHdrError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             field: DpHdrField, @< incorrect value
                             exp: U32 @< expected value
                             act: U32 @< expected value
@@ -234,7 +248,7 @@ module Svc {
 
     @ Error deserializing header data
     event FileHdrDesError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32
                           ) \
       severity warning high \
@@ -278,7 +292,7 @@ module Svc {
 
     @ Error getting file size
     event FileSizeError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32
                           ) \
       severity warning high \
@@ -291,26 +305,21 @@ module Svc {
       id 32 \
       format "No memory for DP"
 
-    event NotInitialized \
-      severity warning high \
-      id 33 \
-      format "DpCatalog not initialized"
-
     event XmitNotActive \
       severity warning low \
       id 34 \
       format "DpCatalog transmit not active"
 
     event StateFileOpenError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32
                           ) \
       severity warning high \
       id 35 \
       format "Error opening state file {}, stat: {}"
-    
+
     event StateFileReadError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32
                             offset: I32
                           ) \
@@ -319,7 +328,7 @@ module Svc {
       format "Error reading state file {}, stat {}, offset: {}"
 
     event StateFileTruncated(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             offset: I32
                             $size: I32
                           ) \
@@ -333,7 +342,7 @@ module Svc {
       format "No specified state file"
 
     event StateFileWriteError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: I32
                           ) \
       severity warning high \
@@ -341,14 +350,14 @@ module Svc {
       format "Error writing state file {}, stat {}"
 
     event NoStateFile(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                           ) \
       severity warning low \
       id 40 \
       format "State file {} doesn't exist"
 
     event DpFileXmitError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: Svc.SendFileStatus
                           ) \
       severity warning high \
@@ -357,7 +366,7 @@ module Svc {
       throttle 10
 
     event DpFileSendError(
-                            file: string size 80 @< The file
+                            file: string size FileNameStringSize @< The file
                             stat: Svc.SendFileStatus
                           ) \
       severity warning high \
@@ -365,14 +374,40 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
+    @ File added
+    event DpFileAdded(
+                          file: string size FileNameStringSize @< The file
+      ) \
+      severity activity high \
+      id 43 \
+      format "DP file {} added at runtime"
 
+    event NotLoaded(
+                            file: string size FileNameStringSize @< The file
+    ) \
+      severity activity high \
+      id 44 \
+      format "Not adding file {} now; Catalog not yet loaded"
+
+    @ Skipped a transmitted file
+    event DpFileSkipped(
+                          file: string size FileNameStringSize @< The file
+      ) \
+      severity activity high \
+      id 45 \
+      format "Already Transmitted DP file {} not added"
+
+    event XmitUnbuiltCatalog() \
+      severity warning high \
+      id 46 \
+      format "Cannot Transmit a Catalog before Building"
 
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
 
     @ Number of data products in catalog
-    telemetry CatalogDps: U32 id 0 
+    telemetry CatalogDps: U32 id 0
 
     @ Number of data products sent
     telemetry DpsSent: U32 id 1

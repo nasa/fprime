@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ByteStreamBufferAdapter.hpp
-// \author bocchino
+// \author shahab
 // \brief  hpp file for ByteStreamBufferAdapter component implementation class
 // ======================================================================
 
@@ -43,10 +43,10 @@ class ByteStreamBufferAdapter final : public ByteStreamBufferAdapterComponentBas
                                  Fw::Buffer& fwBuffer  //!< The buffer
                                  ) override;
 
-    //! Handler implementation for byteStreamIn
+    //! Handler implementation for fromByteStreamDriver
     //!
     //! Port for receiving data from the driver
-    //! Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.byteStreamIn
+    //! Sample connection: byteStreamDriver.$recv -> byteStreamDriverClient.fromDriver
     void fromByteStreamDriver_handler(FwIndexType portNum,  //!< The port number
                                       Fw::Buffer& buffer,
                                       const Drv::ByteStreamStatus& status) override;
@@ -64,7 +64,7 @@ class ByteStreamBufferAdapter final : public ByteStreamBufferAdapterComponentBas
     // ----------------------------------------------------------------------
 
     //! Whether the driver is ready
-    bool m_driverIsReady = false;
+    std::atomic<bool> m_driverIsReady = {false};
 };
 
 }  // namespace Drv

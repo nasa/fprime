@@ -49,7 +49,7 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
         return -1;
     }
     // Confirm that the output type can hold the range of valid results
-    FW_ASSERT(static_cast<FwSignedSizeType>(source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
+    FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
 
     // Loop from zero to source_size - sub_size (inclusive)
     for (FwSizeType source_index = 0;
@@ -66,6 +66,59 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
             } else if (sub_index == (sub_size - 1)) {
                 // if we matched all the way to the end of the substring
                 return static_cast<FwSignedSizeType>(source_index);
+            }
+        }
+    }
+
+    // if we make it here, no matches were found
+    return -1;
+}
+
+FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
+                                                      FwSizeType source_size,
+                                                      const CHAR* sub_string,
+                                                      FwSizeType sub_size) {
+    FW_ASSERT(source_string != nullptr);
+    FW_ASSERT(sub_string != nullptr);
+
+    FwSizeType match_index = 0;
+
+    // zero size sub-strings should always match
+    if ((source_size > 0) && (0 == sub_size)) {
+        match_index = source_size - 1;
+
+        // Ensure we can represent the match_index in a signed num
+        FW_ASSERT(static_cast<FwSizeType>(static_cast<FwSignedSizeType>(match_index)) == match_index);
+
+        return static_cast<FwSignedSizeType>(match_index);
+    }
+
+    // Cannot find a substring larger than the source
+    if (source_size < sub_size) {
+        return -1;
+    }
+    // Confirm that the output type can hold the range of valid results
+    FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
+
+    // Loop from source_size - sub_size to zero (inclusive)
+    for (FwSizeType ii = 0; ii <= (source_size - sub_size); ii++) {
+        const FwSizeType source_index = (source_size - sub_size) - ii;
+
+        // if the current character matches
+        for (FwSizeType sub_index = 0; sub_index < sub_size; sub_index++) {
+            // Prevent read overrun
+            FW_ASSERT((source_index + sub_index) < source_size);
+            // if there is a mismatch, go to next character
+            if (source_string[source_index + sub_index] != sub_string[sub_index]) {
+                break;
+            } else if (sub_index == (sub_size - 1)) {
+                // if we matched all the way to the end of the substring
+                match_index = source_index;
+
+                // Ensure the result converts properly
+                FW_ASSERT(static_cast<FwSizeType>(static_cast<FwSignedSizeType>(match_index)) == match_index);
+
+                return static_cast<FwSignedSizeType>(match_index);
             }
         }
     }

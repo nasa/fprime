@@ -53,25 +53,25 @@ components:
 
 1. Standard F Prime components for managing data products.
 
-   1. A **data product manager**.
-      This component allocates memory for empty containers.
-      It also forwards filled containers to the data product writer.
-      See [`Svc::DpManager`](../../../Svc/DpManager/docs/sdd.md).
+    1. A **data product manager**.
+        This component allocates memory for empty containers.
+        It also forwards filled containers to the data product writer.
+        See [`Svc::DpManager`](../../../Svc/DpManager/docs/sdd.md).
 
-   1. A **data product writer**.
-      This component receives filled containers from data product
-      producers. It writes the contents of the containers to non-volatile
-      storage. See [`Svc::DpWriter`](../../../Svc/DpWriter/docs/sdd.md).
+    1. A **data product writer**.
+        This component receives filled containers from data product
+        producers. It writes the contents of the containers to non-volatile
+        storage. See [`Svc::DpWriter`](../../../Svc/DpWriter/docs/sdd.md).
 
-   1. A **data product catalog**.
-      This component maintains a database of available data
-      products. By command, it downlinks and deletes data products.
-      See [`Svc::DpCatalog`](../../../Svc/DpCatalog/docs/sdd.md).
+    1. A **data product catalog**.
+        This component maintains a database of available data
+        products. By command, it downlinks and deletes data products.
+        See [`Svc::DpCatalog`](../../../Svc/DpCatalog/docs/sdd.md).
 
-   1. A **data product processor**.
-      This component is not yet developed.
-      When it is developed, it will perform in-memory processing on data
-      product containers.
+    1. A **data product processor**.
+        This component is not yet developed.
+        When it is developed, it will perform in-memory processing on data
+        product containers.
 
 Note that when using data products, you need to develop only the
 producer components. The other components are provided by F Prime.
@@ -265,30 +265,30 @@ This function takes a reference to a container _c_ and an
 optional time tag.
 It does the following:
 
-   1. If no time tag is provided, then invoke `timeGetOut`
-      to get the system time and use it to set the time tag.
+    1. If no time tag is provided, then invoke `timeGetOut`
+        to get the system time and use it to set the time tag.
 
-   1. Store the time tag into _c_.
+    1. Store the time tag into _c_.
 
-   1. Send _c_ on `productSendOut`.
+    1. Send _c_ on `productSendOut`.
 
 1. Constant expressions representing the sizes of the records.
 
-   1. If a record _R_ holds a single value, then
-      the expression `SIZE_OF_` _R_ `_RECORD`
-      evaluates to the size of that record.
+    1. If a record _R_ holds a single value, then
+       the expression `SIZE_OF_` _R_ `_RECORD`
+       evaluates to the size of that record.
 
-   1. Otherwise _R_ is an array record. In this case
-      the expression `SIZE_OF_` _R_ `_RECORD(` _size_ `)`
-      evaluates to the size of an array record _R_ with
-      _size_ array elements.
+    1. Otherwise _R_ is an array record. In this case
+    the expression `SIZE_OF_` _R_ `_RECORD(` _size_ `)`
+    evaluates to the size of an array record _R_ with
+     _size_ array elements.
 
-   You can use these expressions to compute data sizes
-   when requesting data product buffers. For example,
-   if a component specifies a record `Image`,
-   then inside the component implementation the expression
-   `10 * SIZE_OF_Image_RECORD` represents the size of the
-   storage necessary to hold 10 `Image` records.
+    You can use these expressions to compute data sizes
+    when requesting data product buffers. For example,
+    if a component specifies a record `Image`,
+    then inside the component implementation the expression
+    `10 * SIZE_OF_Image_RECORD` represents the size of the
+    storage necessary to hold 10 `Image` records.
 
 ### 3.4. Unit Test Support
 
@@ -334,51 +334,51 @@ The class _C_ `TesterBase` provides the following functions
 for managing the histories:
 
 1. If _C_ has a product get port, then _C_ `TesterBase` provides
-   the following functions:
+    the following functions:
 
-   1. `pushProductGetEntry`: This function takes a container ID and
-      a size. It constructs the corresponding `DpGet` history object
-      and pushes it on `productGetHistory`. Typically this function is
-      called by `productGet_handler` (see below).
+    1. `pushProductGetEntry`: This function takes a container ID and
+        a size. It constructs the corresponding `DpGet` history object
+        and pushes it on `productGetHistory`. Typically this function is
+        called by `productGet_handler` (see below).
 
-   1. `productGet_handler`: This function is called when the tester
-      component receives data emitted on the product get port of the
-      component under test. It takes a container ID, a size, and a
-      mutable reference to a buffer _B_. By default it calls
-      `pushProductGetEntry` with the ID and size and returns `FAILURE`,
-      indicating that no memory was allocated and _B_ was not updated.
-      This function is virtual, so you can override it with your own
-      behavior. For example, your function could call `pushProductGetEntry`,
-      allocate a buffer, store the allocated buffer into _B_, and return
-      `SUCCESS`.
+    1. `productGet_handler`: This function is called when the tester
+        component receives data emitted on the product get port of the
+        component under test. It takes a container ID, a size, and a
+        mutable reference to a buffer _B_. By default it calls
+        `pushProductGetEntry` with the ID and size and returns `FAILURE`,
+        indicating that no memory was allocated and _B_ was not updated.
+        This function is virtual, so you can override it with your own
+        behavior. For example, your function could call `pushProductGetEntry`,
+        allocate a buffer, store the allocated buffer into _B_, and return
+        `SUCCESS`.
 
 1. If _C_ has a product request port, then _C_ `TesterBase` provides
-   the following functions:
+    the following functions:
 
-   1. `pushProductRequestEntry`: This function takes a container ID and
-      a size. It constructs the corresponding `DpRequest` history object
-      and pushes it on `productRequestHistory`. Typically this function is
-      called by `productRequest_handler` (see below).
+    1. `pushProductRequestEntry`: This function takes a container ID and
+        a size. It constructs the corresponding `DpRequest` history object
+        and pushes it on `productRequestHistory`. Typically this function is
+        called by `productRequest_handler` (see below).
 
-   1. `productRequest_handler`: This function is called when the tester
-      component receives data emitted on the product request port of the
-      component under test. It takes a container ID and a size. By default
-      it calls `pushProductRequestEntry` with the ID and size. This function
-      is virtual, so you can override it with your own behavior.
+    1. `productRequest_handler`: This function is called when the tester
+        component receives data emitted on the product request port of the
+        component under test. It takes a container ID and a size. By default
+        it calls `pushProductRequestEntry` with the ID and size. This function
+        is virtual, so you can override it with your own behavior.
 
 1. _C_ `TesterBase` provides the following functions:
 
-   1. `pushProductSendEntry`: This function takes a container ID and a
-      const reference to a buffer.  It constructs the corresponding
-      `DpSend` history object and pushes it on `productSendHistory`.
-      Typically this function is called by `productSend_handler` (see below).
+    1. `pushProductSendEntry`: This function takes a container ID and a
+        const reference to a buffer.  It constructs the corresponding
+        `DpSend` history object and pushes it on `productSendHistory`.
+        Typically this function is called by `productSend_handler` (see below).
 
-   1. `productSend_handler`: This function is called when the tester
-      component receives data emitted on the product send port of the
-      component under test. It takes a container ID and a const reference
-      to a buffer. By default it calls `pushProductSendEntry` with the
-      ID and buffer. This function is virtual, so you can override it
-      with your own behavior.
+    1. `productSend_handler`: This function is called when the tester
+        component receives data emitted on the product send port of the
+        component under test. It takes a container ID and a const reference
+        to a buffer. By default it calls `pushProductSendEntry` with the
+        ID and buffer. This function is virtual, so you can override it
+        with your own behavior.
 
 #### 3.4.2. The GTestBase Class
 
@@ -387,49 +387,49 @@ The class _C_ `GTestBase` provides the following macros for
 verifying the histories managed by _C_ `TesterBase`.
 
 1. If _C_ defines data products and has a product get port, then _C_
-   `GTestBase` provides the following macros:
+    `GTestBase` provides the following macros:
 
-   1. `ASSERT_PRODUCT_GET_SIZE(size)`: This macro checks that `productGetHistory`
-      has the specified size (number of entries).
+    1. `ASSERT_PRODUCT_GET_SIZE(size)`: This macro checks that `productGetHistory`
+        has the specified size (number of entries).
 
-   1. `ASSERT_PRODUCT_GET(index, id, size)`: This macro checks that
-      `productGetHistory` has the specified container ID and size
-      at the specified history index.
+    1. `ASSERT_PRODUCT_GET(index, id, size)`: This macro checks that
+        `productGetHistory` has the specified container ID and size
+        at the specified history index.
 
 1. If _C_ defines data products and has a product request port,
-   then _C_ `GTestBase` provides the following macros:
+    then _C_ `GTestBase` provides the following macros:
 
-   1. `ASSERT_PRODUCT_REQUEST_SIZE(size)`: This macro checks that
-      `productRequestHistory` has the specified size (number of entries).
+    1. `ASSERT_PRODUCT_REQUEST_SIZE(size)`: This macro checks that
+        `productRequestHistory` has the specified size (number of entries).
 
-   1. `ASSERT_PRODUCT_REQUEST(index, id, size)`: This macro checks that
-      `productRequestHistory` has the specified container ID and size
-      at the specified history index.
+    1. `ASSERT_PRODUCT_REQUEST(index, id, size)`: This macro checks that
+        `productRequestHistory` has the specified container ID and size
+        at the specified history index.
 
 1. If _C_ defines data products, then _C_ `GTestBase` provides
-   the following macros:
+    the following macros:
 
-   1. `ASSERT_PRODUCT_SEND_SIZE(size)`: This macro checks that
-      `productSendHistory` has the specified size (number of entries).
+    1. `ASSERT_PRODUCT_SEND_SIZE(size)`: This macro checks that
+        `productSendHistory` has the specified size (number of entries).
 
-   1. `ASSERT_PRODUCT_SEND(index, id, priority, timeTag, procType, userData, dataSize, buffer)`:
-      All the arguments of this macro are inputs (read-only) except `buffer`, which is
-      a by-reference output and must be a variable of type `Fw::Buffer&`.
-      This macro verifies the entry `entry` stored at the specified
-      index of `productSendHistory`. It does the following:
+    1. `ASSERT_PRODUCT_SEND(index, id, priority, timeTag, procType, userData, dataSize, buffer)`:
+        All the arguments of this macro are inputs (read-only) except `buffer`, which is
+        a by-reference output and must be a variable of type `Fw::Buffer&`.
+        This macro verifies the entry `entry` stored at the specified
+        index of `productSendHistory`. It does the following:
 
-      1. Check that `entry.id` matches the specified ID.
+        1. Check that `entry.id` matches the specified ID.
 
-      1. Deserialize the data product header stored in `entry.buffer`.
+        1. Deserialize the data product header stored in `entry.buffer`.
 
-      1. Check that the container ID, priority, time tag, processor type,
-         user data, and data size stored in the deserialized header
-         match the specified values.
+        1. Check that the container ID, priority, time tag, processor type,
+            user data, and data size stored in the deserialized header
+            match the specified values.
 
-      1. Assign `entry.buffer` to `buffer`. After this macro runs,
-         the deserialization pointer of `buffer` points into the start
-         of the data payload of `entry.buffer`. You can write additional
-         code to deserialize and check the data payload.
+        1. Assign `entry.buffer` to `buffer`. After this macro runs,
+            the deserialization pointer of `buffer` points into the start
+            of the data payload of `entry.buffer`. You can write additional
+            code to deserialize and check the data payload.
 
 **Container IDs:**
 The container IDs emitted by the component under test are global

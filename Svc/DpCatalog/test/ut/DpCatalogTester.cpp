@@ -5,7 +5,8 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
-#include <list>
+#include <algorithm>
+#include <cstdlib>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -24,6 +25,9 @@ DpCatalogTester ::DpCatalogTester()
     : DpCatalogGTestBase("DpCatalogTester", DpCatalogTester::MAX_HISTORY_SIZE), component("DpCatalog") {
     this->initComponents();
     this->connectPorts();
+
+    // Clear out any garbage left behind
+    std::system("rm -rf ./DpTest*");
 }
 
 DpCatalogTester ::~DpCatalogTester() {
@@ -40,7 +44,7 @@ void DpCatalogTester ::doInit() {
     Fw::FileNameString dirs[2];
     dirs[0] = "dir0";
     dirs[1] = "dir1";
-    Fw::FileNameString stateFile("dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
     this->component.shutdown();
 }
@@ -56,7 +60,7 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
 
     Fw::FileNameString dirs[1];
     dirs[0] = "dir0";
-    Fw::FileNameString stateFile("dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
 
     // reset tree
@@ -67,29 +71,26 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
         ASSERT_TRUE(this->component.insertEntry(input[entry]));
     }
 
-    // reset stack to read tree
-    this->component.resetTreeStack();
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
     // retrieve entries - they should match expected output
     for (FwIndexType entry = 0; entry < numEntries + 1; entry++) {
-        DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
         if (entry == numEntries) {
             // final request should indicate empty
-            ASSERT_TRUE(res == nullptr);
-            break;
-        } else if (output[entry].record.get_state() == Fw::DpState::TRANSMITTED) {
-            // if transmitted, should not be returned
-            ASSERT_TRUE(res == nullptr);
-            // continue to next entry
-            continue;
-        } else {
-            ASSERT_TRUE(res != nullptr);
+            ASSERT_TRUE(this->component.findNextTreeNode() == nullptr);
+        } else if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            // Outputs is only composed of the UNTRANSMITTED data products
+            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
+            ASSERT_TRUE(res != nullptr) << "nullptr findNextTreeNode() at " << entry << " out of " << numEntries;
+
+            //  should match expected entry
+            if (res != nullptr) {
+                ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
+            }
+            // Deallocate the "sent" node
+            this->component.deallocateNode(res);
         }
-        // printf("CE: %u\n",entry);
-        //  should match expected entry
-        ASSERT_EQ(res->entry.record, output[entry].record);
     }
 
     this->component.shutdown();
@@ -100,45 +101,134 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
                               FwSizeType numDirs,
                               Fw::FileNameString& stateFile,
                               const DpSet* dpSet,
-                              FwSizeType numDps) {
+                              FwSizeType numDps,
+                              FwSizeType numRuntime,
+                              FwSizeType stopAfter,
+                              Fw::Wait wait) {
+    ASSERT_GE(numDps, numRuntime);
     // make a directory for the files
     for (FwSizeType dir = 0; dir < numDirs; dir++) {
         this->makeDpDir(dpDirs[dir].toChar());
     }
 
-    // clean up last DP
+    // clean old Dps
     for (FwSizeType dp = 0; dp < numDps; dp++) {
         this->delDp(dpSet[dp].id, dpSet[dp].time, dpSet[dp].dir);
 
-        this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, dpSet[dp].state, false,
-                    dpSet[dp].dir);
+        // Only make non runtime added Dps at this point
+        if (dp + numRuntime < numDps) {
+            this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, dpSet[dp].state, false,
+                        dpSet[dp].dir);
+        }
     }
 
     Fw::MallocAllocator alloc;
+    this->clearHistory();
+
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
 
     this->component.configure(dpDirs, numDirs, stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
-    this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT);
-    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    ASSERT_EVENTS_DpFileAdded_SIZE(numDps - numRuntime);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, wait, true);
+
+    ASSERT_from_fileOut_SIZE(0);
 
     // dispatch messages
-    for (FwSizeType msg = 0; msg < numDps; msg++) {
-        // dispatch file done port call
+    for (FwSizeType dp = 0; dp < numDps; dp++) {
+        if (stopAfter > 0 && dp > stopAfter) {
+            ASSERT_from_fileOut_SIZE(stopAfter);
+        } else if (numRuntime == 0) {
+            ASSERT_from_fileOut_SIZE(dp);
+        }
+
+        // Create a runtime added Dp if we've exhausted all startup Dps
+        if (dp + numRuntime >= numDps) {
+            Fw::String dpPath = this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize,
+                                            dpSet[dp].state, false, dpSet[dp].dir);
+            ASSERT_STRNE(dpPath.toChar(), "");
+
+            // Add the runtime Dp to the catalog
+            this->invoke_to_addToCat(0, dpPath, 0, 0);
+            this->component.doDispatch();
+        }
+
+        // If we've transmitted stopAfter files, then issue the stop seq
+        if (dp + 1 == stopAfter) {
+            // Stop Transmission
+            this->sendCmd_STOP_XMIT_CATALOG(0, 123);
+            // Clear the catalog so we don't send upon restart
+            this->sendCmd_CLEAR_CATALOG(0, 124);
+            // Stop Sequence Complete
+
+            // Ensure we cleared out the catalog
+            // Start up and expect an error + no additional xmit
+            this->sendCmd_START_XMIT_CATALOG(0, 125, Fw::Wait::NO_WAIT, false);
+        }
+
+        // Potentially dispatch file done port call that is sent on fileOut_handler
+        // Since files are "instantly" marked done, delay the doDispatch to simulate a delay
+        if (stopAfter == 0 && numRuntime > 0) {
+            if (STest::Pick::lowerUpper(0, 1) < 1) {
+                this->component.doDispatch();
+            }
+        } else {
+            this->component.doDispatch();
+        }
+    }
+
+    // Finish out any outstanding messages
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
 
+    if (stopAfter > 0 && stopAfter < numDps) {
+        ASSERT_EVENTS_CatalogXmitCompleted_SIZE(0);
+        ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
+        ASSERT_EVENTS_XmitUnbuiltCatalog_SIZE(1);
+        ASSERT_from_fileOut_SIZE(stopAfter);
+
+        // BUILD, START, STOP, CLEAR, START
+        ASSERT_CMD_RESPONSE_SIZE(5);
+        ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+        ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 123, Fw::CmdResponse::OK);
+        ASSERT_CMD_RESPONSE(3, DpCatalog::OPCODE_CLEAR_CATALOG, 124, Fw::CmdResponse::OK);
+        // This should fail since we just cleaned up the catalog
+        ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_START_XMIT_CATALOG, 125, Fw::CmdResponse::EXECUTION_ERROR);
+    } else {
+        ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
+        ASSERT_from_fileOut_SIZE(numDps);
+
+        ASSERT_CMD_RESPONSE_SIZE(2);
+        ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+
+        if (numRuntime == 0) {
+            // Remain active w/ runtime elements would not satisfy this
+            ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+        }
+    }
+
     this->component.shutdown();
+
+    // clean old Dps
+    for (FwSizeType dp = 0; dp < numDps; dp++) {
+        this->delDp(dpSet[dp].id, dpSet[dp].time, dpSet[dp].dir);
+    }
 }
 
-void DpCatalogTester::genDP(FwDpIdType id,
-                            FwDpPriorityType prio,
-                            const Fw::Time& time,
-                            FwSizeType dataSize,
-                            Fw::DpState dpState,
-                            bool hdrHashError,
-                            const char* dir) {
+Fw::String DpCatalogTester::genDP(FwDpIdType id,
+                                  FwDpPriorityType prio,
+                                  const Fw::Time& time,
+                                  FwSizeType dataSize,
+                                  Fw::DpState dpState,
+                                  bool hdrHashError,
+                                  const char* dir) {
     // Fill DP container
     U8 hdrData[Fw::DpContainer::MIN_PACKET_SIZE];
     Fw::Buffer hdrBuffer(hdrData, Fw::DpContainer::MIN_PACKET_SIZE);
@@ -162,32 +252,34 @@ void DpCatalogTester::genDP(FwDpIdType id,
     Os::File::Status stat = dpFile.open(fileName.toChar(), Os::File::Mode::OPEN_CREATE);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error opening file %s: status: %d\n", fileName.toChar(), stat);
-        return;
+        return "";
     }
     FwSizeType size = Fw::DpContainer::Header::SIZE;
     stat = dpFile.write(hdrData, size);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error writing DP file header %s: status: %d\n", fileName.toChar(), stat);
-        return;
+        return "";
     }
     if (static_cast<FwSizeType>(size) != Fw::DpContainer::Header::SIZE) {
         printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType "Act: %" PRI_FwSizeType "\n",
                fileName.toChar(), Fw::DpContainer::Header::SIZE, size);
-        return;
+        return "";
     }
     size = dataSize;
     stat = dpFile.write(dpData, size);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error writing DP file data %s: status: %" PRI_FwEnumStoreType "\n", fileName.toChar(),
                static_cast<FwEnumStoreType>(stat));
-        return;
+        return "";
     }
     if (static_cast<FwSizeType>(size) != dataSize) {
         printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType " Act: %" PRI_FwSizeType "\n",
                fileName.toChar(), dataSize, size);
-        return;
+        return "";
     }
     dpFile.close();
+
+    return fileName;
 }
 
 void DpCatalogTester::delDp(FwDpIdType id, const Fw::Time& time, const char* dir) {
@@ -223,34 +315,24 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
                                                              const Fw::StringBase& destFileName,
                                                              U32 offset,
                                                              U32 length) {
+    // Tell the DpCatalog that the xmit succeeded
+    this->pushFromPortEntry_fileOut(sourceFileName, destFileName, offset, length);
     this->invoke_to_fileDone(0, Svc::SendFileResponse());
 
     return Svc::SendFileResponse();
 }
 
 void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
-    // TODO
+    this->pushFromPortEntry_pingOut(key);
 }
 
 // ----------------------------------------------------------------------
 // Moved Tests due to private/protected access
 // ----------------------------------------------------------------------
 
-bool DpCatalogTester ::EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b) {
-    if (a.record.get_priority() == b.record.get_priority()) {  // check priority first - lower value = higher priority
-        if (a.record.get_tSec() == b.record.get_tSec()) {      // check time next - older = higher priority
-            return a.record.get_id() < b.record.get_id();      // finally check ID - lower = higher priority
-        } else {
-            return a.record.get_tSec() < b.record.get_tSec();
-        }
-    } else {
-        return a.record.get_priority() < b.record.get_priority();
-    }
-}
-
-void DpCatalogTester ::test_NominalManual_DISABLED_TreeTestRandomTransmitted() {
-    static const FwIndexType NUM_ENTRIES = 10;
-    static const FwIndexType NUM_ITERS = 1;
+void DpCatalogTester ::test_TreeTestRandomTransmitted() {
+    static const FwIndexType NUM_ENTRIES = 100;
+    static const FwIndexType NUM_ITERS = 100;
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
@@ -258,8 +340,6 @@ void DpCatalogTester ::test_NominalManual_DISABLED_TreeTestRandomTransmitted() {
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
-
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
@@ -271,31 +351,17 @@ void DpCatalogTester ::test_NominalManual_DISABLED_TreeTestRandomTransmitted() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            // randomly set if it is transmitted or not
+            // randomly set if it is untransmitted or partial
+            // Transmitted Dps are skipped in processFile
             randVal = STest::Pick::lowerUpper(0, 1);
             if (randVal == 0) {
                 inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
-                // only put untransmitted products in list, since the catalog algorithm only returns untransmitted
-                // product IDs
-                entryList.push_back(inputs[entry]);
-            } else {
-                inputs[entry].record.set_state(Fw::DpState::TRANSMITTED);
+            } else if (randVal == 1) {
+                inputs[entry].record.set_state(Fw::DpState::PARTIAL);
             }
         }
 
-        entryList.sort(EntryCompare);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         this->testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -433,72 +499,6 @@ void DpCatalogTester ::test_TreeTestManual5() {
     testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
 }
 
-void DpCatalogTester ::test_TreeTestManual1_Transmitted() {
-    Fw::FileNameString dir;
-
-    Svc::DpCatalog::DpStateEntry inputs[1];
-    Svc::DpCatalog::DpStateEntry outputs[1];
-
-    inputs[0].record.set_id(1);
-    inputs[0].record.set_priority(2);
-    inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[0].record.set_tSec(1000);
-    inputs[0].record.set_tSub(1500);
-    inputs[0].record.set_size(100);
-
-    outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-
-    testTree(inputs, outputs, 1);
-}
-
-void DpCatalogTester ::test_TreeTestManual_All_Transmitted() {
-    Svc::DpCatalog::DpStateEntry inputs[5];
-    Svc::DpCatalog::DpStateEntry outputs[5];
-
-    inputs[0].record.set_id(1);
-    inputs[0].record.set_priority(2);
-    inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[0].record.set_tSec(1000);
-    inputs[0].record.set_tSub(1500);
-    inputs[0].record.set_size(100);
-
-    inputs[1].record.set_id(2);
-    inputs[1].record.set_priority(1);
-    inputs[1].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[1].record.set_tSec(1000);
-    inputs[1].record.set_tSub(1500);
-    inputs[1].record.set_size(100);
-
-    inputs[2].record.set_id(3);
-    inputs[2].record.set_priority(3);
-    inputs[2].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[2].record.set_tSec(1000);
-    inputs[2].record.set_tSub(1500);
-    inputs[2].record.set_size(100);
-
-    inputs[3].record.set_id(4);
-    inputs[3].record.set_priority(5);
-    inputs[3].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[3].record.set_tSec(1000);
-    inputs[3].record.set_tSub(1500);
-    inputs[3].record.set_size(100);
-
-    inputs[4].record.set_id(5);
-    inputs[4].record.set_priority(4);
-    inputs[4].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[4].record.set_tSec(1000);
-    inputs[4].record.set_tSub(1500);
-    inputs[4].record.set_size(100);
-
-    outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[1].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[2].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[3].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[4].record.set_state(Fw::DpState::TRANSMITTED);
-
-    testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
-}
-
 void DpCatalogTester ::test_TreeTestRandomPriority() {
     static const FwIndexType NUM_ENTRIES = Svc::DP_MAX_FILES;
     static const FwIndexType NUM_ITERS = 100;
@@ -510,8 +510,6 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -521,22 +519,9 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
             inputs[entry].record.set_tSec(1000);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(1000);
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -553,8 +538,6 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -564,22 +547,9 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -596,8 +566,6 @@ void DpCatalogTester ::test_TreeTestRandomId() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -607,22 +575,9 @@ void DpCatalogTester ::test_TreeTestRandomId() {
             inputs[entry].record.set_tSec(1000);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -639,8 +594,6 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -652,25 +605,141 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
+}
+
+void DpCatalogTester ::test_RandomDp() {
+    static constexpr FwIndexType NUM_ENTRIES = DP_MAX_FILES;
+    static constexpr FwIndexType NUM_ITERS = 100;
+    static constexpr FwIndexType NUM_DIRS = DP_MAX_DIRECTORIES;
+
+    static constexpr FwSizeStoreType MAX_SIZE = 1000;
+
+    for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+        Fw::FileNameString dirs[NUM_DIRS];
+
+        for (FwIndexType ind = 0; ind < NUM_DIRS; ind++) {
+            char tmp[256];
+            snprintf(tmp, sizeof(tmp), "./DpTest_Random_%03d", ind);
+            dirs[ind] = tmp;
+            std::cout << dirs[ind] << std::endl;
+        }
+
+        Fw::FileNameString stateFile("./DpTest/dpState.dat");
+        Svc::DpCatalogTester::DpSet dpSet[NUM_ENTRIES];
+
+        FwIndexType entries = STest::Pick::startLength(1, NUM_ENTRIES);
+        FwIndexType runtimeEntries = STest::Pick::startLength(0, entries);
+
+        // fill the input entries with random priorities
+        for (FwIndexType entry = 0; entry < entries; entry++) {
+            dpSet[entry].id = STest::Pick::startLength(0, NUM_ENTRIES);
+            dpSet[entry].prio = STest::Pick::startLength(0, NUM_ENTRIES);
+
+            dpSet[entry].time.set(STest::Pick::startLength(0, 10000), STest::Pick::startLength(0, 10000));
+
+            dpSet[entry].dataSize = STest::Pick::startLength(0, MAX_SIZE);
+            dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
+
+            // randomly set if it is untransmitted or partial
+            // Transmitted Dps are skipped in processFile
+            U32 randVal = STest::Pick::lowerUpper(0, 1);
+            if (randVal == 0) {
+                dpSet[entry].state = Fw::DpState::UNTRANSMITTED;
+            } else if (randVal == 1) {
+                dpSet[entry].state = Fw::DpState::PARTIAL;
+            }
+        }
+
+        Fw::Wait wait = static_cast<Fw::Wait::T>(STest::Pick::lowerUpper(0, 1));
+
+        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries, 0, wait);
+    }
+}
+
+void DpCatalogTester ::test_XmitBeforeInit() {
+    // Start xmit before init
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComponentNotInitialized_SIZE(1);
+}
+
+void DpCatalogTester ::test_StopWarn() {
+    this->sendCmd_STOP_XMIT_CATALOG(0, 111);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 111, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_XmitNotActive_SIZE(1);
+}
+
+void DpCatalogTester ::test_CompareEntries() {
+    DpCatalog::DpStateEntry left = {0, {1, 1, 1, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
+    DpCatalog::DpStateEntry right = {0, {1, 1, 2, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
+    FW_ASSERT(right == right);
+    FW_ASSERT(left != right);
+    FW_ASSERT(left < right);
+    FW_ASSERT(right > left);
+}
+
+void DpCatalogTester ::test_PingIn() {
+    const U32 key = 0xDEADBEEF;
+    this->invoke_to_pingIn(0, key);
+    this->component.doDispatch();
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
+}
+
+void DpCatalogTester ::test_BadFileDone() {
+    // Test on unconfigured non-waiting component
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(1);
+
+    // Now configure and place component in wait operations
+
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+
+    Fw::FileNameString dirs[1];
+    this->component.configure(dirs, 0, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Clear that catalog to short circuit removal logic
+    // Simulate a file that failed after cleanup (otherwise it'd be in the catalog)
+    this->sendCmd_CLEAR_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_CLEAR_CATALOG, 12, Fw::CmdResponse::OK);
+
+    // Now send a file that will generate a wait response
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(2);
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Finally, a file done that won't generate a delayed cmd response
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileXmitError_SIZE(3);
+    ASSERT_CMD_RESPONSE_SIZE(3);
 }
 
 }  // namespace Svc

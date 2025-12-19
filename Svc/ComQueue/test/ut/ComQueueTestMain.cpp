@@ -9,6 +9,16 @@ TEST(Nominal, Send) {
     tester.testQueueSend();
 }
 
+TEST(Nominal, Flush) {
+    Svc::ComQueueTester tester;
+    tester.testQueueFlush();
+}
+
+TEST(Nominal, FlushAll) {
+    Svc::ComQueueTester tester;
+    tester.testQueueFlushAll();
+}
+
 TEST(Nominal, Pause) {
     Svc::ComQueueTester tester;
     tester.testQueuePause();
