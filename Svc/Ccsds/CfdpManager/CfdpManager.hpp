@@ -51,11 +51,11 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T cfdpGetPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size);
+  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size);
   // Not sure there is an equivelent
-  void cfdpReturnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t *);
+  void returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t *);
   // Equivelent of CF_CFDP_Send
-  void cfdpSendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
+  void sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
 
   private:
     // ----------------------------------------------------------------------

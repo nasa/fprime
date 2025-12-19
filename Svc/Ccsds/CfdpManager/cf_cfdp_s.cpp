@@ -27,6 +27,7 @@
 
 #include "cf_cfdp.hpp"
 #include "cf_cfdp_s.hpp"
+#include "cf_utils.hpp"
 
 #include <stdio.h>
 #include <string.h>
@@ -106,7 +107,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
 {
     bool                            success = true;
     int                             status  = 0;
-    CfdpStatus::T                    ret     = CF_ERROR;
+    CfdpStatus::T                    ret     = CfdpStatus::T::CFDP_ERROR;
     CF_Logical_PduBuffer_t *        ph      = CF_CFDP_ConstructPduHeader(txn, 0, CF_AppData.config_table->local_eid,
                                                             txn->history->peer_eid, 0, txn->history->seq_num, 1);
     CF_Logical_PduFileDataHeader_t *fd;
@@ -115,7 +116,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
 
     if (!ph)
     {
-        ret     = CFE_SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
+        ret     = CfdpStatus::T::CFDP_SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
         success = false;
     }
     else
@@ -187,7 +188,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
         if (success)
         {
             txn->state_data.send.cached_pos += status;
-            CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CFE_SUCCESS */
+            CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CfdpStatus::T::CFDP_SUCCESS */
 
             CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.file_data_bytes += actual_bytes;
             FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, actual_bytes, txn->fsize); /* sanity check */
@@ -244,22 +245,22 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
 {
     const CF_Chunk_t *chunk;
     CfdpStatus::T      sret;
-    CfdpStatus::T      ret = CFE_SUCCESS;
+    CfdpStatus::T      ret = CfdpStatus::T::CFDP_SUCCESS;
 
     if (txn->flags.tx.md_need_send)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CF_SEND_PDU_ERROR)
+        if (sret == CFDP_SEND_PDU_ERROR)
         {
-            ret = CF_ERROR; /* error occurred */
+            ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
         }
         else
         {
-            if (sret == CFE_SUCCESS)
+            if (sret == CfdpStatus::T::CFDP_SUCCESS)
             {
                 txn->flags.tx.md_need_send = false;
             }
-            /* unless CF_SEND_PDU_ERROR, return 1 to keep caller from sending file data */
+            /* unless CFDP_SEND_PDU_ERROR, return 1 to keep caller from sending file data */
             ret = 1; /* 1 means nak processed, so don't send filedata */
         }
     }
@@ -277,7 +278,7 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
             }
             else if (ret < 0)
             {
-                ret = CF_ERROR; /* error occurred */
+                ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
             }
             else
             {
@@ -391,7 +392,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
     if (success)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CF_SEND_PDU_ERROR)
+        if (sret == CFDP_SEND_PDU_ERROR)
         {
             /* failed to send md */
             CFE_EVS_SendEvent(CF_CFDP_S_SEND_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF S%d(%lu:%lu): failed to send md",
@@ -399,12 +400,12 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
                               (unsigned long)txn->history->seq_num);
             success = false;
         }
-        else if (sret == CFE_SUCCESS)
+        else if (sret == CfdpStatus::T::CFDP_SUCCESS)
         {
             /* once metadata is sent, switch to filedata mode */
             txn->state_data.send.sub_state = CF_TxSubState_FILEDATA;
         }
-        /* if sret==CF_SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
+        /* if sret==CfdpStatus::T::CFDP_SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
     }
 
     if (!success)
@@ -496,7 +497,7 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     /* this function is only invoked for NAK PDU types */
     nak = &ph->int_header.nak;
 
-    if (CF_CFDP_RecvNak(txn, ph) == CFE_SUCCESS && nak->segment_list.num_segments > 0)
+    if (CF_CFDP_RecvNak(txn, ph) == CfdpStatus::T::CFDP_SUCCESS && nak->segment_list.num_segments > 0)
     {
         for (counter = 0; counter < nak->segment_list.num_segments; ++counter)
         {
@@ -786,14 +787,14 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     /* tx maintenance: possibly process send_eof, or send_fin_ack */
     if (txn->flags.tx.send_eof)
     {
-        if (CF_CFDP_S_SendEof(txn) == CFE_SUCCESS)
+        if (CF_CFDP_S_SendEof(txn) == CfdpStatus::T::CFDP_SUCCESS)
         {
             txn->flags.tx.send_eof = false;
         }
     }
     else if (txn->flags.tx.send_fin_ack)
     {
-        if (CF_CFDP_S_SendFinAck(txn) == CFE_SUCCESS)
+        if (CF_CFDP_S_SendFinAck(txn) == CfdpStatus::T::CFDP_SUCCESS)
         {
             txn->flags.tx.send_fin_ack = false;
         }

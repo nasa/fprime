@@ -167,7 +167,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn);
  *       txn must not be NULL.
  *
  *
- * @retval CFE_SUCCESS on CRC match, otherwise CF_ERROR.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on CRC match, otherwise CfdpStatus::T::CFDP_ERROR.
  *
  *
  * @param txn            Pointer to the transaction object
@@ -202,7 +202,7 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, int ok_to_send_nak);
  *       txn must not be NULL.
  *
  *
- * @retval CFE_SUCCESS on success. CF_ERROR on error.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  *
  *
  * @param txn  Pointer to the transaction object
@@ -222,7 +222,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
  *       txn must not be NULL. ph must not be NULL.
  *
  *
- * @retval CFE_SUCCESS on success. Returns anything else on error.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on success. Returns anything else on error.
  *
  *
  * @param txn  Pointer to the transaction object
@@ -321,7 +321,7 @@ void CF_CFDP_R2_GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @retval CFE_SUCCESS on success. CF_ERROR on error.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  *
  * @param txn  Pointer to the transaction object
  */
@@ -344,8 +344,8 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @retval CFE_SUCCESS on completion.
- * @retval CF_ERROR on non-completion.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on completion.
+ * @retval CfdpStatus::T::CFDP_ERROR on non-completion.
  *
  */
 CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
@@ -356,7 +356,7 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @retval CFE_SUCCESS on success. CF_ERROR on error.
+ * @retval CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  *
  * @param txn  Pointer to the transaction object
  *

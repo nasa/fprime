@@ -70,7 +70,7 @@ void CfdpManager ::TODO_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 // differences between F' and cFE
 // ----------------------------------------------------------------------
 
-CfdpStatus::T CfdpManager ::cfdpGetPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size)
+CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size)
 {
     // FwIndexType portNum;
     
@@ -85,6 +85,9 @@ CfdpStatus::T CfdpManager ::cfdpGetPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8*
 
     FW_ASSERT(pduPtr == NULL);
     FW_ASSERT(msgPtr == NULL);
+
+    // TODO Add output throtteling and guards here
+    // CF implemented this in CF_CFDP_MsgOutGet()
 
     for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
     {
@@ -109,7 +112,7 @@ CfdpStatus::T CfdpManager ::cfdpGetPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8*
 
 // TODO call this from reset
 // Check for other escape routes
-void CfdpManager ::cfdpReturnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu)
+void CfdpManager ::returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu)
 {
     // FwIndexType portNum;
     
@@ -125,7 +128,7 @@ void CfdpManager ::cfdpReturnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * p
     this->returnBufferHelper(pdu);
 }
 
-void CfdpManager ::cfdpSendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr)
+void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr)
 {
     FwIndexType portNum;
     FwSizeType msgSize;
