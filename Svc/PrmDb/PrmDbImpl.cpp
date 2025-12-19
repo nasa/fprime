@@ -282,9 +282,20 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     FwSizeType currPosInParamFile;
 
     stat = paramFile.position(currPosInParamFile);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CURR_POSITION, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    
 
     // seek to beginning and write CRC value
     paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_ZERO, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
     writeSize = static_cast<FwSizeType>(sizeof(crc));
     stat = paramFile.write(reinterpret_cast<const U8*>(&crc), writeSize, Os::File::WaitType::WAIT);
     if (stat != Os::File::OP_OK) {
@@ -295,6 +306,11 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Restore pointer to end of paramFile
     paramFile.seek(static_cast<FwSignedSizeType>(currPosInParamFile), Os::File::SeekType::ABSOLUTE);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_POSITION, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     this->log_ACTIVITY_HI_PrmFileSaveComplete(numRecords);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

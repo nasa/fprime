@@ -53,6 +53,9 @@ module Svc {
       PARAMETER_VALUE_SIZE
       CRC_PLACE
       CRC_REAL
+      CURR_POSITION
+      SEEK_ZERO
+      SEEK_POSITION
     }
 
     # ----------------------------------------------------------------------
