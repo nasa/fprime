@@ -9,7 +9,7 @@ GDS Functions are `FEATURE` plugins.  All will run unless individually disabled 
 
 ## Usage
 
-This plugin is used to run custom one-time logic during the startup of the GDS. Typically, this is used to launch a process where the user needs more control than [GdsApp Plugins](./gds-app.md) allow.
+This plugin is used to run custom one-time logic during the startup of the GDS. Typically, this is used to launch a process where the user needs more control than [GdsApp Plugins](./gds-app.md) allow.  For example, should a user need to launch multiple processes `GdsFunction` is the solution.
 
 ## Considerations
 
@@ -24,11 +24,15 @@ To create a custom GDS Function Plugin, subclass the [`GdsFunction`](https://git
 ```python
 from fprime_gds.executables.apps import GdsFunction
 from fprime_gds.plugin.definitions import gds_plugin
+import subprocess
 
 @gds_plugin(GdsFunction)
 class ExampleStartupHook(GdsFunction):
     """Prints a message during GDS startup."""
 
-    def run(self):
+    def run(self, parsed_args):
+        subprocess.run("echo")
+        subprocess.run("echo")
         print("Custom GDS function plugin initialized!")
 ```
+As seen here, multiple subprocesses can be spawned directly in `GdsFunction` plugins.
