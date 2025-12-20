@@ -18,7 +18,9 @@ module Svc {
       USER_FILE_PORT = 2
       @ Maximum number of file dispatch ports
       MAX_FILE_DISPATCH_PORTS = 3
-      }
+    }
+
+    constant FILE_DISPATCHER_MAX_TABLE_SIZE = 10;
 
   }
 

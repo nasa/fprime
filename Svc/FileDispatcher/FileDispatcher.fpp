@@ -17,7 +17,7 @@ module Svc {
         event FileDispatchState(file_type: Svc.FileDispatcherCfg.FileDispatchPort, enabled: Fw.Enabled) severity activity high format "File dispatch {} state changed: to {}"
 
         # @ File dispatched event
-        event FileDispatched(file_name: string size 80, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity activity high format "File {} dispatched to {}"
+        event FileDispatched(file_name: string size FileNameStringSize, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity activity high format "File {} dispatched to {}"
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

@@ -19,7 +19,9 @@ FileDispatcherTester ::FileDispatcherTester()
     this->connectPorts();
 }
 
-FileDispatcherTester ::~FileDispatcherTester() {}
+FileDispatcherTester ::~FileDispatcherTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -164,6 +166,8 @@ void FileDispatcherTester::dispatchPingTest() {
 }
 
 void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
+
+    Svc::FileDispatcherTable table;
     Svc::FileDispatcherEntry entries[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];
 
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {

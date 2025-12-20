@@ -17,6 +17,11 @@ struct FileDispatcherEntry {
     bool enabled;                                   // whether dispatching is enabled for this type
 };
 
+struct FileDispatcherTable {
+    FileDispatcherEntry entries[Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE];
+    FwSizeType numEntries;
+};
+
 class FileDispatcher final : public FileDispatcherComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -31,9 +36,7 @@ class FileDispatcher final : public FileDispatcherComponentBase {
     ~FileDispatcher();
 
     //! configure the component
-    void configure(FileDispatcherEntry* entries,  //!< array of entries
-                   FwSizeType numEntries          //!< number of entries
-    );
+    void configure(const FileDispatcherTable& table);
 
   private:
     // ----------------------------------------------------------------------
@@ -68,7 +71,7 @@ class FileDispatcher final : public FileDispatcherComponentBase {
                         ) override;
 
     //! table of dispatch entries
-    FileDispatcherEntry m_dispatchTable[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];
+    FileDispatcherTable m_dispatchTable;
 };
 
 }  // namespace Svc
