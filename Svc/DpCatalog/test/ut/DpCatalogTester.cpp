@@ -740,6 +740,7 @@ void DpCatalogTester ::test_BadFileDone() {
     this->component.doDispatch();
     ASSERT_EVENTS_DpFileXmitError_SIZE(3);
     ASSERT_CMD_RESPONSE_SIZE(3);
+    this->component.shutdown();
 }
 
 }  // namespace Svc
