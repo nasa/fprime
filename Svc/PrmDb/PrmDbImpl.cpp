@@ -125,9 +125,9 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
 U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
     for (FwSizeType byte = 0; byte < size; byte++) {
         crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
-    }   
+    }
     return crc;
-}       
+}
 
 void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Reject PRM_SAVE_FILE command during non-idle file load states
@@ -155,11 +155,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     stat = paramFile.write(reinterpret_cast<const U8*>(&crc), writeSize, Os::File::WaitType::WAIT);
 
     if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_PLACE,0,stat);
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_PLACE, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-
 
     this->lock();
     t_dbStruct* db = getDbPtr(PrmDbType::DB_ACTIVE);
@@ -248,7 +247,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             }
 
             // add parameter ID to CRC
-            crc = this->computeCrc(crc,buff.getBuffAddr(),writeSize);
+            crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
 
             // write serialized parameter value
 
@@ -270,7 +269,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             }
 
             // add serialized parameter value to crc
-            crc = this->computeCrc(crc, db[entry].val.getBuffAddr(),writeSize);
+            crc = this->computeCrc(crc, db[entry].val.getBuffAddr(), writeSize);
 
             numRecords++;
         }  // end if record in use
@@ -287,7 +286,6 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-    
 
     // seek to beginning and write CRC value
     paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
@@ -397,7 +395,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::OPEN, 0, stat);
-        return  PrmLoadStatus::ERROR;
+        return PrmLoadStatus::ERROR;
     }
     //===========================================================================
     // read CRC from beginning of file
@@ -406,15 +404,13 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
     stat = paramFile.read(reinterpret_cast<U8*>(&fileCrc), readSize);
     if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC,  static_cast<I32>(0), stat);
-        return  PrmLoadStatus::ERROR;
-
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC, static_cast<I32>(0), stat);
+        return PrmLoadStatus::ERROR;
     }
 
     if (readSize != sizeof(fileCrc)) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_SIZE, static_cast<I32>(readSize), stat);
-        return  PrmLoadStatus::ERROR;
-
+        return PrmLoadStatus::ERROR;
     }
 
     readSize = PRMDB_CRC_BUFFER_SIZE;
@@ -427,8 +423,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         Os::File::Status fStat = paramFile.read(this->m_crcBuffer, readSize, Os::File::NO_WAIT);
         if (fStat != Os::File::OP_OK) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_BUFFER, static_cast<I32>(crcChunk), fStat);
-            return  PrmLoadStatus::ERROR;
-
+            return PrmLoadStatus::ERROR;
         }
 
         crc = this->computeCrc(crc, this->m_crcBuffer, readSize);
@@ -438,16 +433,14 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
     if (fileCrc != crc) {
         this->log_WARNING_HI_PrmFileBadCrc(fileCrc, crc);
-        return  PrmLoadStatus::ERROR;
-
+        return PrmLoadStatus::ERROR;
     }
-
 
     // seek back to just after CRC
     stat = paramFile.seek(sizeof(fileCrc), Os::File::SeekType::ABSOLUTE);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::SEEK_ZERO, 0, stat);
-        return  PrmLoadStatus::ERROR;
+        return PrmLoadStatus::ERROR;
     }
     //===========================================================================
 

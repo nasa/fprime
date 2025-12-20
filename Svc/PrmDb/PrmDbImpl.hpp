@@ -103,10 +103,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
         }
     };
 
-   U8 m_crcBuffer[PRMDB_CRC_BUFFER_SIZE]; //!< working buffer for computing CRC
+    U8 m_crcBuffer[PRMDB_CRC_BUFFER_SIZE];  //!< working buffer for computing CRC
 
-   // helper to compute CRC over a buffer
-   U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
+    // helper to compute CRC over a buffer
+    U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
 
     // Pointers to the active and staging databases
     // These point to the actual storage arrays below

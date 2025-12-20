@@ -401,7 +401,7 @@ void PrmDbTester::runFileReadError() {
                 FAIL() << "Reached unknown case";
         }
 
-        FwSizeType ya = 0;    
+        FwSizeType ya = 0;
         // Loop through various field reads
         for (FwSizeType j = 0; j < 6; j++) {
             clearEvents();
@@ -416,7 +416,7 @@ void PrmDbTester::runFileReadError() {
                 case 1:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::CRC_BUFFER, 0, this->m_status);
-                    ya++; 
+                    ya++;
                     break;
                 case 2:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
@@ -448,9 +448,9 @@ void PrmDbTester::runFileReadError() {
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
-             case 0: 
+            case 0:
                 ASSERT_EVENTS_PrmFileBadCrc_SIZE(1);
-                // Parameter read error caused by adding one to the expected read 
+                // Parameter read error caused by adding one to the expected read
                 ASSERT_EVENTS_PrmFileBadCrc(0, 0x33d79cd4, 0xc180712b);
                 xa++;
                 break;
@@ -1339,7 +1339,7 @@ Os::File::Status PrmDbTester::PrmDbTestFile::read(U8* buffer, FwSizeType& size, 
                 status = s_tester->m_status;
                 break;
             case FILE_SIZE_ERROR:
-                if (size != 0) {  
+                if (size != 0) {
                     size += 1;
                 }
                 break;
