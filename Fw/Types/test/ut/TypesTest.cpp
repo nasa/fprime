@@ -1731,6 +1731,12 @@ TEST(Nominal, sub_string_match_partway_1) {
     ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 2);
 }
 
+TEST(Nominal, sub_string_match_partway_first) {
+    const char* source_string = "abc123c123";
+    const char* sub_string = "c12";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 10, sub_string, 3), 2);
+}
+
 TEST(OffNominal, sub_string_partial_match_begin) {
     const char* source_string = "abc123";
     const char* sub_string = "ab1";
@@ -1765,6 +1771,72 @@ TEST(OffNominal, sub_string_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string = "";
     ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
+}
+
+TEST(OffNominal, sub_string_last_no_match) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "456";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), -1);
+}
+
+TEST(Nominal, sub_string_last_match_begin) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "abc";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), 0);
+}
+
+TEST(Nominal, sub_string_last_match_end) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "123";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), 3);
+}
+
+TEST(Nominal, sub_string_last_match_partway_1) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "c12";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), 2);
+}
+
+TEST(Nominal, sub_string_last_match_partway_last) {
+    const char* source_string = "abc123c123";
+    const char* sub_string_last = "c12";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 10, sub_string_last, 3), 6);
+}
+
+TEST(OffNominal, sub_string_last_partial_match_begin) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "ab1";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), -1);
+}
+
+TEST(OffNominal, sub_string_last_partial_match_middle) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "c13";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), -1);
+}
+
+TEST(OffNominal, sub_string_last_partial_match_end) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "234";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), -1);
+}
+
+TEST(Nominal, sub_string_last_exact_match) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "abc123";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 3), 0);
+}
+
+TEST(OffNominal, sub_string_last_source_zero_size) {
+    const char* source_string = "";
+    const char* sub_string_last = "234";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 0, sub_string_last, 3), -1);
+}
+
+TEST(OffNominal, sub_string_last_substring_zero_size) {
+    const char* source_string = "abc123";
+    const char* sub_string_last = "";
+    ASSERT_EQ(Fw::StringUtils::substring_find_last(source_string, 6, sub_string_last, 0), 5);
 }
 
 int main(int argc, char** argv) {

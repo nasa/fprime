@@ -199,16 +199,38 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
     // Command response will be sent when listing completes.
 }
 
+void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& filename) {
+    Os::File file;
+    U32 crcValue = 0;
+    this->log_ACTIVITY_HI_CalculateCrcStarted(filename);
+
+    Os::File::Status status = file.open(filename.toChar(), Os::File::OPEN_READ);
+    if (status == Os::File::OP_OK) {
+        status = file.calculateCrc(crcValue);
+    }
+
+    if (status == Os::File::OP_OK) {
+        this->log_ACTIVITY_HI_CalculateCrcSucceeded(filename, crcValue);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->log_WARNING_HI_CalculateCrcFailed(filename, status);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+    file.close();
+}
+
 void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }
 
 void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
-    bool isQueued = false;  // We only update when nothing is queued
-    // Check for false (no message queued) and if false, atomically make it true
-    (void)this->m_runQueued.compare_exchange_weak(isQueued, true);
-    if (not isQueued) {
+    bool isQueued = false;
+    // m_runQueued will be compared to isQueued (false). When equal (i.e. m_runQueued is false) the atomic will be
+    // set to true and the function will return true indicating that a run was successfully marked as queued and thus
+    // the internal handler should be invoked.
+    bool expects_enqueue = this->m_runQueued.compare_exchange_strong(isQueued, true);
+    if (expects_enqueue) {
         this->run_internalInterfaceInvoke();
     }
 }

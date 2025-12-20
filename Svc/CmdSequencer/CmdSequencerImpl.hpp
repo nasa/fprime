@@ -445,7 +445,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         ) {
             if (this->m_state == CLEAR) {
                 return false;
-            } else if (Fw::Time::compare(this->expirationTime, time) == Fw::Time::GT) {
+            } else if (Fw::Time::compare(this->expirationTime, time) == Fw::TimeComparison::GT) {
                 return false;
             }
             return true;

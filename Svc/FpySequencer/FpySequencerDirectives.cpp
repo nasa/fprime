@@ -158,12 +158,12 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
 }
 
-//! Internal interface handler for directive_storeConstOffset
-void FpySequencer::directive_storeConstOffset_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreConstOffsetDirective& directive) {
+//! Internal interface handler for directive_storeRelConstOffset
+void FpySequencer::directive_storeRelConstOffset_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreRelConstOffsetDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->storeConstOffset_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_CONST_OFFSET, error);
+    this->sendSignal(this->storeRelConstOffset_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_pushVal
@@ -173,11 +173,11 @@ void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequ
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_VAL, error);
 }
 
-//! Internal interface handler for directive_load
-void FpySequencer::directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) {
+//! Internal interface handler for directive_loadRel
+void FpySequencer::directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->load_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD, error);
+    this->sendSignal(this->loadRel_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_REL, error);
 }
 
 //! Internal interface handler for directive_discard
@@ -236,17 +236,53 @@ void FpySequencer::directive_peek_internalInterfaceHandler(const Svc::FpySequenc
     handleDirectiveErrorCode(Fpy::DirectiveId::PEEK, error);
 }
 
-//! Internal interface handler for directive_store
-void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+//! Internal interface handler for directive_storeRel
+void FpySequencer::directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->store_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::STORE, error);
+    this->sendSignal(this->storeRel_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL, error);
+}
+
+//! Internal interface handler for directive_call
+void FpySequencer::directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->call_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::CALL, error);
+}
+
+//! Internal interface handler for directive_return
+void FpySequencer::directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->return_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::RETURN, error);
+}
+
+//! Internal interface handler for directive_loadAbs
+void FpySequencer::directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->loadAbs_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_ABS, error);
+}
+
+//! Internal interface handler for directive_storeAbs
+void FpySequencer::directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->storeAbs_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS, error);
+}
+
+//! Internal interface handler for directive_storeAbsConstOffset
+void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < 8) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
@@ -263,7 +299,7 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
 //! Internal interface handler for directive_waitAbs
 Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < 10 + sizeof(FwTimeContextStoreType)) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
@@ -290,7 +326,7 @@ Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& dir
 //! Internal interface handler for directive_if
 Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < 1) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
@@ -411,35 +447,35 @@ Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirect
 
 DirectiveError FpySequencer::op_or() {
     if (this->m_runtime.stack.size < sizeof(U8) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<U8>() | this->m_runtime.stack.pop<U8>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_and() {
     if (this->m_runtime.stack.size < sizeof(U8) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<U8>() & this->m_runtime.stack.pop<U8>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ieq() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<I64>() == this->m_runtime.stack.pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ine() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<I64>() != this->m_runtime.stack.pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ult() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
@@ -448,7 +484,7 @@ DirectiveError FpySequencer::op_ult() {
 }
 DirectiveError FpySequencer::op_ule() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
@@ -457,7 +493,7 @@ DirectiveError FpySequencer::op_ule() {
 }
 DirectiveError FpySequencer::op_ugt() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
@@ -466,7 +502,7 @@ DirectiveError FpySequencer::op_ugt() {
 }
 DirectiveError FpySequencer::op_uge() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
@@ -475,7 +511,7 @@ DirectiveError FpySequencer::op_uge() {
 }
 DirectiveError FpySequencer::op_slt() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -484,7 +520,7 @@ DirectiveError FpySequencer::op_slt() {
 }
 DirectiveError FpySequencer::op_sle() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -493,7 +529,7 @@ DirectiveError FpySequencer::op_sle() {
 }
 DirectiveError FpySequencer::op_sgt() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -502,7 +538,7 @@ DirectiveError FpySequencer::op_sgt() {
 }
 DirectiveError FpySequencer::op_sge() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -511,7 +547,7 @@ DirectiveError FpySequencer::op_sge() {
 }
 DirectiveError FpySequencer::op_feq() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -521,7 +557,7 @@ DirectiveError FpySequencer::op_feq() {
 }
 DirectiveError FpySequencer::op_fne() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -531,7 +567,7 @@ DirectiveError FpySequencer::op_fne() {
 }
 DirectiveError FpySequencer::op_flt() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -540,7 +576,7 @@ DirectiveError FpySequencer::op_flt() {
 }
 DirectiveError FpySequencer::op_fle() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -549,7 +585,7 @@ DirectiveError FpySequencer::op_fle() {
 }
 DirectiveError FpySequencer::op_fgt() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -558,7 +594,7 @@ DirectiveError FpySequencer::op_fgt() {
 }
 DirectiveError FpySequencer::op_fge() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -567,7 +603,7 @@ DirectiveError FpySequencer::op_fge() {
 }
 DirectiveError FpySequencer::op_not() {
     if (this->m_runtime.stack.size < sizeof(U8)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<U8>() == 0));
     return DirectiveError::NO_ERROR;
@@ -575,7 +611,7 @@ DirectiveError FpySequencer::op_not() {
 DirectiveError FpySequencer::op_fpext() {
     // convert F32 to F64
     if (this->m_runtime.stack.size < sizeof(F32)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<F64>(this->m_runtime.stack.pop<F32>()));
     return DirectiveError::NO_ERROR;
@@ -583,42 +619,42 @@ DirectiveError FpySequencer::op_fpext() {
 DirectiveError FpySequencer::op_fptrunc() {
     // convert F64 to F32
     if (this->m_runtime.stack.size < sizeof(F64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<F32>(this->m_runtime.stack.pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fptosi() {
     if (this->m_runtime.stack.size < sizeof(F64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<I64>(this->m_runtime.stack.pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sitofp() {
     if (this->m_runtime.stack.size < sizeof(I64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<F64>(this->m_runtime.stack.pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fptoui() {
     if (this->m_runtime.stack.size < sizeof(F64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<U64>(this->m_runtime.stack.pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_uitofp() {
     if (this->m_runtime.stack.size < sizeof(U64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     this->m_runtime.stack.push(static_cast<F64>(this->m_runtime.stack.pop<U64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_add() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -638,7 +674,7 @@ DirectiveError FpySequencer::op_add() {
 }
 DirectiveError FpySequencer::op_sub() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -660,7 +696,7 @@ DirectiveError FpySequencer::op_sub() {
 }
 DirectiveError FpySequencer::op_mul() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
@@ -690,7 +726,7 @@ DirectiveError FpySequencer::op_mul() {
 }
 DirectiveError FpySequencer::op_udiv() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
@@ -703,7 +739,7 @@ DirectiveError FpySequencer::op_udiv() {
 }
 DirectiveError FpySequencer::op_sdiv() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
 
     I64 rhs = this->m_runtime.stack.pop<I64>();
@@ -717,7 +753,7 @@ DirectiveError FpySequencer::op_sdiv() {
 }
 DirectiveError FpySequencer::op_umod() {
     if (this->m_runtime.stack.size < sizeof(U64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     if (rhs == 0) {
@@ -729,7 +765,7 @@ DirectiveError FpySequencer::op_umod() {
 }
 DirectiveError FpySequencer::op_smod() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     if (rhs == 0) {
@@ -749,7 +785,7 @@ DirectiveError FpySequencer::op_smod() {
 }
 DirectiveError FpySequencer::op_fadd() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -758,7 +794,7 @@ DirectiveError FpySequencer::op_fadd() {
 }
 DirectiveError FpySequencer::op_fsub() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -767,7 +803,7 @@ DirectiveError FpySequencer::op_fsub() {
 }
 DirectiveError FpySequencer::op_fmul() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -776,7 +812,7 @@ DirectiveError FpySequencer::op_fmul() {
 }
 DirectiveError FpySequencer::op_fdiv() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -785,7 +821,7 @@ DirectiveError FpySequencer::op_fdiv() {
 }
 DirectiveError FpySequencer::op_fpow() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
@@ -794,7 +830,7 @@ DirectiveError FpySequencer::op_fpow() {
 }
 DirectiveError FpySequencer::op_flog() {
     if (this->m_runtime.stack.size < sizeof(F64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 val = this->m_runtime.stack.pop<F64>();
     if (val <= 0.0) {
@@ -805,7 +841,7 @@ DirectiveError FpySequencer::op_flog() {
 }
 DirectiveError FpySequencer::op_fmod() {
     if (this->m_runtime.stack.size < sizeof(F64) * 2) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     if (rhs == 0.0) {
@@ -817,7 +853,7 @@ DirectiveError FpySequencer::op_fmod() {
 }
 DirectiveError FpySequencer::op_siext_8_64() {
     if (this->m_runtime.stack.size < sizeof(I8)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I8 src = this->m_runtime.stack.pop<I8>();
     this->m_runtime.stack.push(static_cast<I64>(src));
@@ -825,7 +861,7 @@ DirectiveError FpySequencer::op_siext_8_64() {
 }
 DirectiveError FpySequencer::op_siext_16_64() {
     if (this->m_runtime.stack.size < sizeof(I16)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I16 src = this->m_runtime.stack.pop<I16>();
     this->m_runtime.stack.push(static_cast<I64>(src));
@@ -833,7 +869,7 @@ DirectiveError FpySequencer::op_siext_16_64() {
 }
 DirectiveError FpySequencer::op_siext_32_64() {
     if (this->m_runtime.stack.size < sizeof(I32)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     I32 src = this->m_runtime.stack.pop<I32>();
     this->m_runtime.stack.push(static_cast<I64>(src));
@@ -841,7 +877,7 @@ DirectiveError FpySequencer::op_siext_32_64() {
 }
 DirectiveError FpySequencer::op_ziext_8_64() {
     if (this->m_runtime.stack.size < sizeof(U8)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U8 src = this->m_runtime.stack.pop<U8>();
     this->m_runtime.stack.push(static_cast<U64>(src));
@@ -849,7 +885,7 @@ DirectiveError FpySequencer::op_ziext_8_64() {
 }
 DirectiveError FpySequencer::op_ziext_16_64() {
     if (this->m_runtime.stack.size < sizeof(U16)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U16 src = this->m_runtime.stack.pop<U16>();
     this->m_runtime.stack.push(static_cast<U64>(src));
@@ -857,7 +893,7 @@ DirectiveError FpySequencer::op_ziext_16_64() {
 }
 DirectiveError FpySequencer::op_ziext_32_64() {
     if (this->m_runtime.stack.size < sizeof(U32)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U32 src = this->m_runtime.stack.pop<U32>();
     this->m_runtime.stack.push(static_cast<U64>(src));
@@ -865,7 +901,7 @@ DirectiveError FpySequencer::op_ziext_32_64() {
 }
 DirectiveError FpySequencer::op_itrunc_64_8() {
     if (this->m_runtime.stack.size < sizeof(U64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 src = this->m_runtime.stack.pop<U64>();
     this->m_runtime.stack.push(static_cast<U8>(src));
@@ -873,7 +909,7 @@ DirectiveError FpySequencer::op_itrunc_64_8() {
 }
 DirectiveError FpySequencer::op_itrunc_64_16() {
     if (this->m_runtime.stack.size < sizeof(U64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 src = this->m_runtime.stack.pop<U64>();
     this->m_runtime.stack.push(static_cast<U16>(src));
@@ -881,7 +917,7 @@ DirectiveError FpySequencer::op_itrunc_64_16() {
 }
 DirectiveError FpySequencer::op_itrunc_64_32() {
     if (this->m_runtime.stack.size < sizeof(U64)) {
-        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return DirectiveError::STACK_UNDERFLOW;
     }
     U64 src = this->m_runtime.stack.pop<U64>();
     this->m_runtime.stack.push(static_cast<U32>(src));
@@ -1049,7 +1085,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < 1) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
     U8 errorCode = this->m_runtime.stack.pop<U8>();
@@ -1067,7 +1103,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
 }
 
 Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size + directive.get_size() > Fpy::MAX_STACK_SIZE) {
+    if (directive.get_size() > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1075,59 +1111,77 @@ Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirect
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeConstOffset_directiveHandler(const FpySequencer_StoreConstOffsetDirective& directive,
-                                                       DirectiveError& error) {
-    if (this->m_runtime.stack.size < directive.get_size()) {
-        // not enough bytes to pop
+//! Helper to pop value from stack top and store at destOffset
+Signal FpySequencer::storeHelper(Fpy::StackSizeType destOffset, Fpy::StackSizeType size, DirectiveError& error) {
+    if (this->m_runtime.stack.size < size) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // After popping the value, would the write go out of bounds?
+    Fpy::StackSizeType newStackSize = this->m_runtime.stack.size - size;
+    // Overflow-safe check: destOffset + size > newStackSize
+    // Rewritten as: check destOffset <= newStackSize first, then size > newStackSize - destOffset
+    if (destOffset > newStackSize || size > newStackSize - destOffset) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    Fpy::StackSizeType stackOffset = this->m_runtime.stack.lvarOffset() + directive.get_lvarOffset();
-    // if we popped these bytes off, and put them in lvar array, would we go out of bounds
-    if (stackOffset + directive.get_size() > this->m_runtime.stack.size - directive.get_size()) {
-        // write into lvar array would go out of bounds
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    // i believe we can be sure the regions are not overlapping, due to the above check
-    memcpy(this->m_runtime.stack.bytes + stackOffset, this->m_runtime.stack.top() - directive.get_size(),
-           directive.get_size());
-    this->m_runtime.stack.size -= directive.get_size();
+    // Copy value to the destination location
+    this->m_runtime.stack.copy(destOffset, this->m_runtime.stack.size - size, size);
+    this->m_runtime.stack.size = newStackSize;
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size + directive.get_size() > Fpy::MAX_STACK_SIZE) {
+//! Helper to load value from srcOffset and push to stack top
+Signal FpySequencer::loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error) {
+    if (size > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    // calculate the offset in the lvar array we're going to pull from
-    Fpy::StackSizeType stackOffset = this->m_runtime.stack.lvarOffset() + directive.get_lvarOffset();
-    // if we accessed these bytes, would we go out of bounds
-    if (stackOffset + directive.get_size() > this->m_runtime.stack.size) {
+    // Overflow-safe check: srcOffset + size > stack.size
+    // Rewritten as: check srcOffset <= stack.size first, then size > stack.size - srcOffset
+    if (srcOffset > this->m_runtime.stack.size || size > this->m_runtime.stack.size - srcOffset) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    // copy from lvar array to top of stack, add to stack size.
-    memcpy(this->m_runtime.stack.top(), this->m_runtime.stack.bytes + stackOffset, directive.get_size());
-    this->m_runtime.stack.size += directive.get_size();
+    // Copy from source location to top of stack
+    this->m_runtime.stack.copy(this->m_runtime.stack.size, srcOffset, size);
+    this->m_runtime.stack.size += size;
     return Signal::stmtResponse_success;
 }
 
+Signal FpySequencer::storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
+                                                          DirectiveError& error) {
+    I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    return this->storeHelper(static_cast<Fpy::StackSizeType>(addr), directive.get_size(), error);
+}
+
+Signal FpySequencer::loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& error) {
+    I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + directive.get_lvarOffset();
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    return this->loadHelper(static_cast<Fpy::StackSizeType>(addr), directive.get_size(), error);
+}
+
 Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size + directive.get__valSize() > Fpy::MAX_STACK_SIZE) {
+    if (directive.get__valSize() > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
     // copy from the bytearray in the directive to the stack, add to stack size.
-    memcpy(this->m_runtime.stack.top(), directive.get_val(), directive.get__valSize());
-    this->m_runtime.stack.size += static_cast<Fpy::StackSizeType>(directive.get__valSize());
+    this->m_runtime.stack.push(const_cast<U8*>(directive.get_val()),
+                               static_cast<Fpy::StackSizeType>(directive.get__valSize()));
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < directive.get_size()) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
     // drop the specified amount of bytes off the stack. simple as.
@@ -1136,9 +1190,16 @@ Signal FpySequencer::discard_directiveHandler(const FpySequencer_DiscardDirectiv
 }
 
 Signal FpySequencer::memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error) {
-    // we are going to pop 2x the size off the stack. check that we can
+    // Overflow-safe check: we need size * 2 bytes on the stack
+    // First check that size * 2 doesn't overflow: size > MAX/2 would overflow
+    // MAX_STACK_SIZE is the upper bound for stack.size, so if size > MAX_STACK_SIZE/2, we definitely don't have enough
+    if (directive.get_size() > Fpy::MAX_STACK_SIZE / 2) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // Now safe to compute size * 2
     if (this->m_runtime.stack.size < directive.get_size() * 2) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
@@ -1162,8 +1223,11 @@ Signal FpySequencer::memCmp_directiveHandler(const FpySequencer_MemCmpDirective&
 }
 
 Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < static_cast<U64>(directive.get_argsSize() + sizeof(FwOpcodeType))) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    // Overflow-safe check: need argsSize + sizeof(FwOpcodeType) bytes
+    // Check stack.size >= sizeof(FwOpcodeType) first, then stack.size - sizeof(FwOpcodeType) >= argsSize
+    if (this->m_runtime.stack.size < sizeof(FwOpcodeType) ||
+        this->m_runtime.stack.size - sizeof(FwOpcodeType) < directive.get_argsSize()) {
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
@@ -1207,14 +1271,13 @@ Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirect
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
     // push time to end of stack
-    memcpy(this->m_runtime.stack.bytes + this->m_runtime.stack.size, timeEsb.getBuffAddr(), timeEsb.getSize());
-    this->m_runtime.stack.size += static_cast<Fpy::StackSizeType>(timeEsb.getSize());
+    this->m_runtime.stack.push(timeEsb.getBuffAddr(), static_cast<Fpy::StackSizeType>(timeEsb.getSize()));
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stack.size < 1) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
     if (directive.get_flagIdx() >= Fpy::FLAG_COUNT) {
@@ -1245,15 +1308,23 @@ Signal FpySequencer::getFlag_directiveHandler(const FpySequencer_GetFlagDirectiv
 }
 
 Signal FpySequencer::getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) ||
-        this->m_runtime.stack.size < directive.get_parentSize()) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    // Need sizeof(StackSizeType) for the offset AND parentSize for the parent data
+    // Check we have enough for the offset first
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // After popping the offset, we need at least parentSize bytes remaining
+    if (this->m_runtime.stack.size - sizeof(Fpy::StackSizeType) < directive.get_parentSize()) {
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
     Fpy::StackSizeType offset = this->m_runtime.stack.pop<Fpy::StackSizeType>();
 
-    if (offset + directive.get_memberSize() > directive.get_parentSize()) {
+    // Overflow-safe check: offset + memberSize > parentSize
+    // Rewritten as: check offset <= parentSize first, then memberSize > parentSize - offset
+    if (offset > directive.get_parentSize() || directive.get_memberSize() > directive.get_parentSize() - offset) {
         // i think it's somewhat ambiguous whether this is a stack access out of bounds
         // but there isn't really an error code that better reflects this, and i guess
         // it's technically true
@@ -1263,10 +1334,11 @@ Signal FpySequencer::getField_directiveHandler(const FpySequencer_GetFieldDirect
 
     // the resulting bytes should move to the start of the parent array
 
-    // get pointer to the start of the parent
-    U8* parentStartPtr = this->m_runtime.stack.top() - directive.get_parentSize();
-    // move the field bytes to the start of the parent
-    memmove(parentStartPtr, parentStartPtr + offset, directive.get_memberSize());
+    // Calculate the offset of the parent start in the stack
+    Fpy::StackSizeType parentStartOffset = this->m_runtime.stack.size - directive.get_parentSize();
+    // Overflow-safe: parentStartOffset + offset cannot overflow since offset <= parentSize
+    // and parentStartOffset + parentSize == stack.size (which is bounded)
+    this->m_runtime.stack.move(parentStartOffset, parentStartOffset + offset, directive.get_memberSize());
     // adjust stack size by the diff between the member and the parent
     this->m_runtime.stack.size -= (directive.get_parentSize() - directive.get_memberSize());
     return Signal::stmtResponse_success;
@@ -1275,24 +1347,28 @@ Signal FpySequencer::getField_directiveHandler(const FpySequencer_GetFieldDirect
 Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error) {
     // must have at least two StackSizeType on stack
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) * 2) {
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
 
     Fpy::StackSizeType offset = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+    Fpy::StackSizeType byteCount = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+
+    // Check offset doesn't exceed stack size (after both pops)
     if (offset > this->m_runtime.stack.size) {
         // would access past the bottom of the stack
         // note we allow the equals case because the byteCount might be 0
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    Fpy::StackSizeType byteCount = this->m_runtime.stack.pop<Fpy::StackSizeType>();
-    if (Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size < byteCount) {
+    if (byteCount > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         // we would overflow the stack if we pushed this many bytes to it
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    if (this->m_runtime.stack.size < byteCount + offset) {
+    // Overflow-safe check: byteCount + offset > stack.size
+    // Rewritten as: check offset <= stack.size (done above), then byteCount > stack.size - offset
+    if (byteCount > this->m_runtime.stack.size - offset) {
         // would access past the bottom of the stack
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -1303,25 +1379,163 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < directive.get_size() + sizeof(Fpy::StackSizeType)) {
-        // not enough bytes to pop the value and the stack offset
+Signal FpySequencer::storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error) {
+    // Need enough bytes for the value and the offset (SignedStackSizeType = 4 bytes)
+    // Overflow-safe: check stack.size >= sizeof(SignedStackSizeType) first, then stack.size -
+    // sizeof(SignedStackSizeType) >= size
+    if (this->m_runtime.stack.size < sizeof(Fpy::SignedStackSizeType) ||
+        this->m_runtime.stack.size - sizeof(Fpy::SignedStackSizeType) < directive.get_size()) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Pop the signed offset from the stack
+    Fpy::SignedStackSizeType lvarOffset = this->m_runtime.stack.pop<Fpy::SignedStackSizeType>();
+
+    I64 addr = static_cast<I64>(this->m_runtime.stack.currentFrameStart) + lvarOffset;
+    if (addr < 0 || addr > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    Fpy::StackSizeType stackOffset =
-        this->m_runtime.stack.lvarOffset() + this->m_runtime.stack.pop<Fpy::StackSizeType>();
-    // if we popped these bytes off, and put them in lvar array, would we go out of bounds
-    if (stackOffset + directive.get_size() > this->m_runtime.stack.size - directive.get_size()) {
-        // write into lvar array would go out of bounds
-        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    return this->storeHelper(static_cast<Fpy::StackSizeType>(addr), directive.get_size(), error);
+}
+
+Signal FpySequencer::call_directiveHandler(const FpySequencer_CallDirective& directive, DirectiveError& error) {
+    // Need at least 4 bytes for the target address
+    if (this->m_runtime.stack.size < sizeof(U32)) {
+        error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
-    // i believe we can be sure the regions are not overlapping, due to the above check
-    memcpy(this->m_runtime.stack.bytes + stackOffset, this->m_runtime.stack.top() - directive.get_size(),
-           directive.get_size());
-    this->m_runtime.stack.size -= directive.get_size();
+
+    // Pop the target directive index from the stack
+    U32 target = this->m_runtime.stack.pop<U32>();
+
+    // Check if we have space to push return address and saved frame pointer (8 bytes total)
+    if (this->m_runtime.stack.size + sizeof(Fpy::StackSizeType) + sizeof(U32) > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Check target is within bounds (will also be checked at execution time)
+    if (target > m_sequenceObj.get_header().get_statementCount()) {
+        error = DirectiveError::STMT_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Save the return address (next instruction after CALL)
+    U32 returnAddr = this->m_runtime.nextStatementIndex;
+
+    // Set the next instruction to the target
+    this->m_runtime.nextStatementIndex = target;
+
+    // Push the return address to the stack
+    this->m_runtime.stack.push<U32>(returnAddr);
+
+    // Push the current frame pointer to the stack
+    this->m_runtime.stack.push<Fpy::StackSizeType>(this->m_runtime.stack.currentFrameStart);
+
+    // Set the new frame pointer to the current top of stack
+    this->m_runtime.stack.currentFrameStart = this->m_runtime.stack.size;
+
     return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective& directive, DirectiveError& error) {
+    Fpy::StackSizeType returnValSize = directive.get_returnValSize();
+    Fpy::StackSizeType callArgsSize = directive.get_callArgsSize();
+
+    // Check we have enough bytes for the return value
+    if (this->m_runtime.stack.size < returnValSize) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // returnValSize is guaranteed to be less than Fpy::MAX_STACK_SIZE because it's less than the stack.size
+    // thus the memcpy won't fail
+
+    // Save the return value if there is one
+    U8 returnValue[Fpy::MAX_STACK_SIZE] = {};
+    if (returnValSize > 0) {
+        memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
+    }
+
+    // Truncate the stack to stack_frame_start (discard all local variables)
+    if (this->m_runtime.stack.currentFrameStart > this->m_runtime.stack.size) {
+        error = DirectiveError::FRAME_START_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    this->m_runtime.stack.size = this->m_runtime.stack.currentFrameStart;
+
+    // Check we have enough bytes for saved frame pointer and return address
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) + sizeof(U32)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Pop the saved frame pointer
+    Fpy::StackSizeType savedFramePtr = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+
+    // Pop the return address
+    U32 returnAddr = this->m_runtime.stack.pop<U32>();
+
+    // Restore the frame pointer
+    if (savedFramePtr > this->m_runtime.stack.size) {
+        error = DirectiveError::FRAME_START_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    this->m_runtime.stack.currentFrameStart = savedFramePtr;
+
+    // Validate the return address is within bounds
+    if (returnAddr > m_sequenceObj.get_header().get_statementCount()) {
+        error = DirectiveError::STMT_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Set the next instruction to the return address
+    this->m_runtime.nextStatementIndex = returnAddr;
+
+    // Check that we have enough bytes for the call arguments
+    if (this->m_runtime.stack.size < callArgsSize) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // Discard the function arguments
+    this->m_runtime.stack.size -= callArgsSize;
+
+    // Push the return value
+    if (returnValSize > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    this->m_runtime.stack.push(returnValue, returnValSize);
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::loadAbs_directiveHandler(const FpySequencer_LoadAbsDirective& directive, DirectiveError& error) {
+    return this->loadHelper(directive.get_globalOffset(), directive.get_size(), error);
+}
+
+Signal FpySequencer::storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error) {
+    Fpy::StackSizeType size = directive.get_size();
+
+    // Need enough bytes for the value and the offset
+    // Overflow-safe: check stack.size >= sizeof(StackSizeType) first, then stack.size - sizeof >= size
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType) ||
+        this->m_runtime.stack.size - sizeof(Fpy::StackSizeType) < size) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Pop the global offset from the stack
+    Fpy::StackSizeType globalOffset = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+
+    return this->storeHelper(globalOffset, size, error);
+}
+
+Signal FpySequencer::storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
+                                                          DirectiveError& error) {
+    return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
 }
 
 }  // namespace Svc

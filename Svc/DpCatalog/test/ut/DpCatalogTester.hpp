@@ -20,7 +20,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const U32 MAX_HISTORY_SIZE = 100;
+    static const U32 MAX_HISTORY_SIZE = 1000;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
@@ -60,20 +60,24 @@ class DpCatalogTester : public DpCatalogGTestBase {
     };
 
     //! Read a set of DPs
+    //! Runtime addition and stopAfter should not be used together
     void readDps(Fw::FileNameString* dpDirs,
                  FwSizeType numDirs,
                  Fw::FileNameString& stateFile,
                  const DpSet* dpSet,
-                 FwSizeType numDps);
+                 FwSizeType numDps,
+                 FwSizeType numRuntime = 0,
+                 FwSizeType stopAfter = 0,
+                 Fw::Wait wait = Fw::Wait::NO_WAIT);
 
     //! Generate some data product files
-    void genDP(FwDpIdType id,
-               FwDpPriorityType prio,
-               const Fw::Time& time,
-               FwSizeType dataSize,
-               Fw::DpState dpState,
-               bool hdrHashError,
-               const char* dir);
+    Fw::String genDP(FwDpIdType id,
+                     FwDpPriorityType prio,
+                     const Fw::Time& time,
+                     FwSizeType dataSize,
+                     Fw::DpState dpState,
+                     bool hdrHashError,
+                     const char* dir);
 
     void delDp(FwDpIdType id, const Fw::Time& time, const char* dir);
 
@@ -127,8 +131,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     // ----------------------------------------------------------------------
     // Moved Tests due to private/protected access
     // ----------------------------------------------------------------------
-    static bool EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b);
-    void test_NominalManual_DISABLED_TreeTestRandomTransmitted();
+    void test_TreeTestRandomTransmitted();
     void test_TreeTestManual1();
     void test_TreeTestManual2();
     void test_TreeTestManual3();
@@ -139,6 +142,12 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_TreeTestRandomTime();
     void test_TreeTestRandomId();
     void test_TreeTestRandomPrioIdTime();
+    void test_RandomDp();
+    void test_XmitBeforeInit();
+    void test_StopWarn();
+    void test_CompareEntries();
+    void test_PingIn();
+    void test_BadFileDone();
 };
 
 }  // namespace Svc

@@ -2,6 +2,7 @@
 #define FW_TIME_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Time/TimeComparisonEnumAc.hpp>
 #include <Fw/Time/TimeValueSerializableAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
@@ -50,15 +51,14 @@ class Time : public Serializable {
 
     // Static methods:
     //! The type of a comparison result
-    typedef enum { LT = -1, EQ = 0, GT = 1, INCOMPARABLE = 2 } Comparison;
 
     //! \return time zero
     static Time zero(TimeBase timeBase = TimeBase::TB_NONE);
 
     //! Compare two times
     //! \return The result
-    static Comparison compare(const Time& time1,  //!< Time 1
-                              const Time& time2   //!< Time 2
+    static TimeComparison compare(const Time& time1,  //!< Time 1
+                                  const Time& time2   //!< Time 2
     );
 
     //! Add two times

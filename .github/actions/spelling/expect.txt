@@ -42,6 +42,7 @@ bitshifts
 bitwidth
 bocchino
 boolt
+BSB
 bsd
 BSDI
 bst
@@ -58,6 +59,7 @@ bugprone
 buildstep
 BYTEDRV
 calcu
+CALCULATECRC
 callergraph
 callgraph
 Campuzano
@@ -609,6 +611,7 @@ sfregoso
 sge
 SGN
 sgt
+shahab
 SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
@@ -652,7 +655,7 @@ strnlen
 subgrouping
 subhist
 subhistory
-subseconds
+subsecond
 subtopology
 suppr
 suseconds
@@ -719,6 +722,7 @@ uge
 uitofp
 UML
 umod
+unconfigured
 UNEXP
 unistd
 UNITTESTASSERT

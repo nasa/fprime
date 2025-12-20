@@ -16,6 +16,8 @@
 #include <config/DpCatalogCfg.hpp>
 #include <config/DpCfg.hpp>
 
+#define DIRECTORY_DELIMITER "/"
+
 namespace Svc {
 
 class DpCatalog final : public DpCatalogComponentBase {
@@ -70,6 +72,15 @@ class DpCatalog final : public DpCatalogComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
+    //! Handler implementation for addToCat
+    //!
+    //! DP Writer Add File to Cat
+    void addToCat_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& fileName,  //!< The file name
+                          FwDpPriorityType priority,       //!< The priority
+                          FwSizeType size                  //!< The file size
+                          ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -88,7 +99,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void START_XMIT_CATALOG_cmdHandler(
         FwOpcodeType opCode,  //!< The opcode
         U32 cmdSeq,           //!< The command sequence number
-        Fw::Wait wait         //!< have START_XMIT command wait for catalog to complete transmitting
+        Fw::Wait wait,        //!< have START_XMIT command wait for catalog to complete transmitting
+        bool remainActive     //!< should the catalog resume transmission when Dps are added at runtime
         ) override;
 
     //! Handler implementation for command STOP_XMIT_CATALOG
@@ -113,6 +125,17 @@ class DpCatalog final : public DpCatalogComponentBase {
         friend class DpCatalogTester;
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
+
+        /// @brief insert an entry into the sorted list; if it exists, update the metadata
+        /// @param left an entry to compare
+        /// @param right other entry to compare
+        /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
+        static int compareEntries(const DpStateEntry& left, const DpStateEntry& right);
+
+        bool operator==(const DpStateEntry& other) const;
+        bool operator!=(const DpStateEntry& other) const;
+        bool operator>(const DpStateEntry& other) const;
+        bool operator<(const DpStateEntry& other) const;
     };
 
     struct DpDstateFileEntry {
@@ -124,23 +147,31 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief A list sorted in priority order for downlink
     struct DpBtreeNode {
-        DpStateEntry entry;  //!< pointer to DP record
-        DpBtreeNode* left;   //!< left child. Also used for free list
-        DpBtreeNode* right;  //!< right child
+        DpStateEntry entry;   //!< pointer to DP record
+        DpBtreeNode* left;    //!< left child. Also used for free list
+        DpBtreeNode* right;   //!< right child
+        DpBtreeNode* parent;  //!< parent node
     };
 
     // ----------------------------------
     // Private helpers
     // ----------------------------------
 
+    /// @brief determine in which managed directory a file resides
+    /// @param fullFile full path to file to be processed
+    /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
+    FwSizeType determineDirectory(Fw::String fullFile);
+
+    /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
+    /// @param fullFile full path to file to be processed
+    /// @param dir directory index in m_directories
+    /// @return -1 for quit, 0 for failure but continue, 1 for success
+    int processFile(Fw::String fullFile, FwSizeType dir);
+
     /// @brief insert an entry into the sorted list; if it exists, update the metadata
     /// @param entry new entry
-    /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
-    bool insertEntry(DpStateEntry& entry);
-
-    /// @brief delete an entry from the sorted list
-    /// @param entry new entry
-    void deleteEntry(DpStateEntry& entry);
+    /// @return failed if couldn't find a slot
+    DpCatalog::DpBtreeNode* insertEntry(DpStateEntry& entry);
 
     /// @brief enumeration for check and insert function
     enum CheckStat {
@@ -157,9 +188,6 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// #brief fill  the binary tree from DP files
     Fw::CmdResponse fillBinaryTree();
-
-    /// @brief reset the tree stack
-    void resetTreeStack();
 
     /// @brief reset the state file data
     void resetStateFileData();
@@ -179,9 +207,14 @@ class DpCatalog final : public DpCatalogComponentBase {
     void appendFileState(const DpStateEntry& entry);
 
     /// @brief add an entry to the tree
-    /// @param entry entry to add
+    /// @param newNode pointer to newly allocated node
+    /// @param newEntry entry to add
     /// @return true if a node could be allocated
     bool allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry);
+
+    /// @brief free an entry from the tree
+    /// @param node entry to deallocate
+    void deallocateNode(DpBtreeNode* node);
 
     /// @brief send the next entry to file downlink
     void sendNextEntry();
@@ -203,6 +236,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return command response for pass/fail
     Fw::CmdResponse doCatalogXmit();
 
+    /// @brief send a cmdResponse to the start xmit cmd if user waited
+    /// @param response the command response for pass/fail
+    void dispatchWaitedResponse(Fw::CmdResponse response);
+
     // ----------------------------------
     // Private data
     // ----------------------------------
@@ -210,13 +247,10 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     DpBtreeNode* m_dpTree;           //!< The head of the binary tree
     DpBtreeNode* m_freeListHead;     //!< The head of the free list
-    DpBtreeNode* m_freeListFoot;     //!< The foot of the free list
-    DpBtreeNode** m_traverseStack;   //!< pointer to memory for stack for traversing tree
     DpBtreeNode* m_currentNode;      //!< current node for traversing tree
     DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
 
-    FwSizeType m_numDpRecords;  //!< Stores the actual number of records.
-    FwSizeType m_numDpSlots;    //!< Stores the available number of record slots.
+    FwSizeType m_numDpSlots;  //!< Stores the available number of record slots.
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
     FwSizeType m_numDirectories;                           //!< number of supplied directories
@@ -231,13 +265,20 @@ class DpCatalog final : public DpCatalogComponentBase {
     FwEnumStoreType m_allocatorId;  //!< stored for shutdown
     Fw::MemAllocator* m_allocator;  //!< stored for shutdown
 
+    bool m_catalogBuilt;                    //!< catalog build is complete (can add DPs at runtime)
     bool m_xmitInProgress;                  //!< set if DP files are in the process of being sent
-    FwIndexType m_currStackEntry;           //!< current stack entry for traversing tree
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
     bool m_xmitCmdWait;                     //!< true if waiting for transmission complete to complete xmit command
     U64 m_xmitBytes;                        //!< bytes transmitted for downlink session
     FwOpcodeType m_xmitOpCode;              //!< stored xmit command opcode
     U32 m_xmitCmdSeq;                       //!< stored command sequence id
+
+    U32 m_pendingFiles;    //!< Pending Files to Transmit
+    U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
+
+    bool m_remainActive;  //!< Does the DpCat resume transmission when
+                          //!< a runtime Dp is received after
+                          //!< the full catalog is sent
 };
 
 }  // namespace Svc
