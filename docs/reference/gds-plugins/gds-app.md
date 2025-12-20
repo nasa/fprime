@@ -59,7 +59,7 @@ For most applications that want to interact with GDS data, subclassing [`GdsStan
 - Parsing and forwarding common CLI arguments
 - Invoking your application’s `start()` method inside a proper runtime environment
 
-Required Methods
+### Required Methods
 
 You must implement:
 
@@ -74,9 +74,12 @@ You may optionally implement:
     get_additional_arguments(self) -> Dict[Tuple[str], Dict]:
     Return additional CLI arguments your app needs. These are injected into the GDS CLI parser.  It is a map of argument flags to Argparse add_argument keyword arguments.  These arguments are passed to the constructor.
 
-Example
+### Example: Sending Commands
+
+This example shows how to use standard pipeline functions. In this case, `pipeline.send_command` is used to emit a `CMD_NO_OP` at a custom interval.
 
 ```python
+import time
 from fprime_gds.executables.apps import GdsApp
 from fprime_gds.executables.apps import GdsStandardApp
 from fprime_gds.plugin.definitions import gds_plugin
@@ -85,20 +88,22 @@ from fprime_gds.plugin.definitions import gds_plugin
 class MyCustomApp(GdsStandardApp):
     """ Custom application """
 
-    def __init__(self, custom_rate, **kwargs):
+    def __init__(self, no_op_rate, **kwargs):
         super().__init__(**kwargs)
-        self.custom_rate = custom_rate
+        self.no_op_rate = custom_rate
 
     def start(self, pipeline):
-        print("App started: " + self.custom_rate)
-
+        print("App started: " + self.no_op_rate)
+        while True:
+            pipeline.send_command("cmdDisp.CMD_NO_OP", [])
+            time.sleep(self.no_op_rate)
     
     def get_additional_arguments(self):
         from argparse import ArgumentParser
-        return {("--custom-rate",): {
+        return {("--no-op-rate",): {
             "type": int,
             "default": 10,
-            "help": "Polling rate (Hz)"
+            "help": "Rate to emit no-ops"
         }
 ```
 
