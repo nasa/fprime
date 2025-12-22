@@ -4,8 +4,8 @@
 // \brief  hpp file for CfdpManager component implementation class
 // ======================================================================
 
-#ifndef Ccsds_CfdpManager_HPP
-#define Ccsds_CfdpManager_HPP
+#ifndef CCSDS_CFDPMANAGER_HPP
+#define CCSDS_CFDPMANAGER_HPP
 
 #include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
@@ -41,6 +41,9 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     //! Destroy CfdpManager object
     ~CfdpManager();
+
+    //! Configure CFDP engine
+    void configure(void);
 
   public:
   // ----------------------------------------------------------------------
@@ -105,4 +108,4 @@ class CfdpManager final : public CfdpManagerComponentBase {
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif
+#endif // CCSDS_CFDPMANAGER_HPP

@@ -36,6 +36,12 @@ CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase
 
 CfdpManager ::~CfdpManager() {}
 
+void CfdpManager ::configure(void)
+{
+    // May need a mem allocator
+    CF_CFDP_InitEngine(*this);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
