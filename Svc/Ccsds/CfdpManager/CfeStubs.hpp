@@ -36,11 +36,6 @@ I32 CF_WrappedWrite(Os::FileHandle fd, const void *buf, size_t write_size)
 I32 CF_WrappedRead(Os::FileHandle fd, void *buf, size_t read_size)
 {}
 
-//  void close(void);
-// int32 OS_close(osal_id_t filedes);
-I32 OS_close(Os::FileHandle filedes)
-{}
-
 // CfdpStatus::T CF_WrappedRead(osal_id_t fd, void *buf, size_t read_size)
 
 // BPC: This is being used as a file open check
@@ -82,16 +77,6 @@ I32 OS_remove(const char *path)
 I32 OS_DirectoryOpen(Os::DirectoryHandle *dir_id, const char *path)
 {}
 
-// Status read(char* fileNameBuffer, FwSizeType buffSize) override;
-//  * @param[out] dirent    Buffer to store directory entry information @nonnull
-// int32 OS_DirectoryRead(osal_id_t dir_id, os_dirent_t *dirent);
-I32 OS_DirectoryRead(Os::DirectoryHandle dir_id, char* dirent)
-{}
-
-// void close(void)
-// int32 OS_DirectoryClose(osal_id_t dir_id);
-I32 OS_DirectoryClose(Os::DirectoryHandle dir_id)
-{}
 
 }  // namespace Ccsds
 }  // namespace Svc

@@ -4,13 +4,12 @@
 // \brief  hpp file for CfdpManager component implementation class
 // ======================================================================
 
-#ifndef CCSDS_CFDPMANAGER_HPP
-#define CCSDS_CFDPMANAGER_HPP
+#ifndef Ccsds_CfdpManager_HPP
+#define Ccsds_CfdpManager_HPP
 
 #include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
 #include "Svc/Ccsds/CfdpManager/cf_logical_pdu.hpp"
-#include "Svc/Ccsds/CfdpManager/cf_cfdp.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -43,9 +42,6 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Destroy CfdpManager object
     ~CfdpManager();
 
-    //! Configure CFDP engine
-    void configure(void);
-    
   public:
   // ----------------------------------------------------------------------
   // Port calls that are invoked by the CFDP engine
@@ -104,11 +100,9 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // ----------------------------------------------------------------------
     CfdpPduBuffer pduBuffers[CFDP_MANAGER_NUM_BUFFERS];
 
-    CfdpEngine cfdpEngine;
-
 };
 
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif // CCSDS_CFDPMANAGER_HPP
+#endif

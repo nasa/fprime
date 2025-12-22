@@ -17,6 +17,9 @@ namespace Ccsds {
 
 CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName)
 {
+    // TODO Call engine init here or another init function?
+    // May need a mem allocator
+
     // Temporary buffer pool for prototyping
     CF_Logical_PduBuffer_t* pduPtr = NULL;
     for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
@@ -33,12 +36,6 @@ CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase
 
 CfdpManager ::~CfdpManager() {}
 
-void CfdpManager ::configure(void)
-{
-    // May need a mem allocator
-    cfdpEngine.CF_CFDP_InitEngine(*this);
-}
-
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
@@ -46,7 +43,7 @@ void CfdpManager ::configure(void)
 void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context) 
 {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
-    this->cfdpEngine.CF_CFDP_CycleEngine();
+    CF_CFDP_CycleEngine();
 }
 
 

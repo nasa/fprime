@@ -28,8 +28,6 @@
 
 #include "cf_cfdp.hpp"
 
-#include <Fw/Types/Assert.hpp>
-
 namespace Svc {
 namespace Ccsds {
 

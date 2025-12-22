@@ -35,19 +35,17 @@
 #include "cf_clist.hpp"
 #include "cf_chunk.hpp"
 #include "cf_codec.hpp"
-#include "cf_codec.hpp"
 #include "CfdpTimer.hpp"
 #include "CfdpCfg.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
 
+
 namespace Svc {
 namespace Ccsds {
-
-// Forward declaration to avoid circular depedencies
-class CfdpManager;
 
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
