@@ -163,6 +163,35 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     this->returnBufferHelper(pdu);
 }
 
+  // ----------------------------------------------------------------------
+  // Parameter helpers used by the CFDP engine
+  // ----------------------------------------------------------------------
+
+  CfdpEntityId CfdpManager:: getLocalEidParam(void)
+  {
+    Fw::ParamValid valid;
+    // check for coding errors as all CFDP parameters must have a default
+
+    CfdpEntityId localEid = this->paramGet_LocalEid(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return localEid;
+  }
+
+  
+  U32 CfdpManager:: getOutgoingFileChunkSizeParam(void)
+  {
+    Fw::ParamValid valid;
+    // check for coding errors as all CFDP parameters must have a default
+
+    U32 chunkSize = this->paramGet_OutgoingFileChunkSize(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return chunkSize;
+  }
+
 // ----------------------------------------------------------------------
 // Buffer helpers
 // ----------------------------------------------------------------------

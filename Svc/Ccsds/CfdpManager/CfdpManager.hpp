@@ -60,6 +60,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // Equivelent of CF_CFDP_Send
   void sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
 
+  public:
+  // ----------------------------------------------------------------------
+  // Parameter helpers used by the CFDP engine
+  // ----------------------------------------------------------------------
+  CfdpEntityId getLocalEidParam(void);
+  U32 getOutgoingFileChunkSizeParam(void);
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
