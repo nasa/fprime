@@ -199,7 +199,7 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
  * @retval 0 when it isn't found, which causes list traversal to continue
  *
  */
-CfdpStatus::T CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, CF_Traverse_TransSeqArg_t *context);
+CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
 
 /************************************************************************/
 /** @brief Insert a transaction into a priority sorted transaction queue.

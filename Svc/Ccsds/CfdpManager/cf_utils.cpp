@@ -186,7 +186,8 @@ void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
  *-----------------------------------------------------------------*/
 void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
 {
-    memset(txn, 0, sizeof(*txn));
+    // TODO make sure transaction default constructor is sane
+    *txn = CF_Transaction_t{};
     txn->chan_num = chan;
     CF_CList_InitNode(&txn->cl_node);
     CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CF_QueueIdx_FREE, &txn->cl_node);
@@ -198,15 +199,16 @@ void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
  * See description in cf_utils.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CfdpStatus::T CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, CF_Traverse_TransSeqArg_t *context)
+CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    CfdpStatus::T      ret = CfdpStatus::T::CFDP_SUCCESS;
+    CF_CListTraverse_Status_t ret = CF_CListTraverse_Status_CONTINUE;
+    CF_Traverse_TransSeqArg_t* seqContext = static_cast<CF_Traverse_TransSeqArg_t*>(context);
 
-    if ((txn->history->src_eid == context->src_eid) && (txn->history->seq_num == context->transaction_sequence_number))
+    if ((txn->history->src_eid == seqContext->src_eid) && (txn->history->seq_num == seqContext->transaction_sequence_number))
     {
-        context->txn = txn;
-        ret          = CfdpStatus::T::CFDP_ERROR; /* exit early */
+        seqContext->txn = txn;
+        ret = CF_CListTraverse_Status_EXIT; /* exit early */
     }
 
     return ret;
@@ -229,12 +231,11 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
     CF_Traverse_TransSeqArg_t ctx    = {transaction_sequence_number, src_eid, NULL};
     CF_CListNode_t *          ptrs[] = {chan->qs[CF_QueueIdx_RX], chan->qs[CF_QueueIdx_PEND], chan->qs[CF_QueueIdx_TXA],
                               chan->qs[CF_QueueIdx_TXW]};
-    int                       i;
     CF_Transaction_t *        ret = NULL;
 
-    for (i = 0; i < (sizeof(ptrs) / sizeof(ptrs[0])); ++i)
+    for (CF_CListNode_t* head : ptrs)
     {
-        CF_CList_Traverse(ptrs[i], (CF_CListFn_t)CF_FindTransactionBySequenceNumber_Impl, &ctx);
+        CF_CList_Traverse(head, CF_FindTransactionBySequenceNumber_Impl, &ctx);
         if (ctx.txn)
         {
             ret = ctx.txn;
@@ -254,7 +255,7 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *         txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    CF_Traverse_PriorityArg_t *arg = (CF_Traverse_PriorityArg_t *)context;
+    CF_Traverse_PriorityArg_t *arg = static_cast<CF_Traverse_PriorityArg_t *>(context);
 
     if (txn->priority <= arg->priority)
     {
@@ -319,7 +320,7 @@ void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue)
  *-----------------------------------------------------------------*/
 CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)
 {
-    CF_TraverseAll_Arg_t *traverse_all = arg;
+    CF_TraverseAll_Arg_t *traverse_all = static_cast<CF_TraverseAll_Arg_t *>(arg);
     CF_Transaction_t *    txn          = container_of_cpp(node, &CF_Transaction_t::cl_node);
     traverse_all->fn(txn, traverse_all->context);
     ++traverse_all->counter;
@@ -335,8 +336,7 @@ CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, 
 I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     CF_TraverseAll_Arg_t args = {fn, context, 0};
-    CF_QueueIdx_t        queueidx;
-    for (queueidx = CF_QueueIdx_PEND; queueidx <= CF_QueueIdx_RX; ++queueidx)
+    for (I32 queueidx = CF_QueueIdx_PEND; queueidx <= CF_QueueIdx_RX; ++queueidx)
         CF_CList_Traverse(chan->qs[queueidx], CF_TraverseAllTransactions_Impl, &args);
 
     return args.counter;
@@ -413,7 +413,7 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat)
             case CF_TxnStatus_UNSUPPORTED_CHECKSUM_TYPE:
             case CF_TxnStatus_SUSPEND_REQUEST_RECEIVED:
             case CF_TxnStatus_CANCEL_REQUEST_RECEIVED:
-                result = (CF_CFDP_ConditionCode_t)txn_stat;
+                result = static_cast<CF_CFDP_ConditionCode_t>(txn_stat);
                 break;
 
                 /* Extended status codes below here ---
@@ -450,7 +450,7 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat)
 CF_TxnStatus_t CF_TxnStatus_From_ConditionCode(CF_CFDP_ConditionCode_t cc)
 {
     /* All CFDP CC values directly correspond to a Transaction Status of the same numeric value */
-    return (CF_TxnStatus_t)cc;
+    return static_cast<CF_TxnStatus_t>(cc);
 }
 
 }  // namespace Ccsds
