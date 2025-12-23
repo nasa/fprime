@@ -26,6 +26,7 @@
 #ifndef CF_CLIST_HPP
 #define CF_CLIST_HPP
 
+#include <cstddef>
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -70,7 +71,15 @@ typedef struct CF_CListNode CF_CListNode_t;
  * Given a pointer to a CF_CListNode_t object which is known to be a member of a
  * larger container, this converts the pointer to that of the parent.
  */
-#define container_of(ptr, type, member) ((type *)((char *)(ptr) - (char *)offsetof(type, member)))
+template <typename Container, typename Member>
+constexpr Container* container_of_cpp(Member* member_ptr,
+                                      Member Container::*member)
+{
+    return reinterpret_cast<Container*>(
+        reinterpret_cast<char*>(member_ptr) - reinterpret_cast<std::ptrdiff_t>(&(reinterpret_cast<Container*>(0)->*member))
+    );
+}
+
 
 /**
  * @brief Callback function type for use with CF_CList_Traverse()

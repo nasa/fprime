@@ -27,6 +27,7 @@
 
 #include "cf_cfdp.hpp"
 #include "cf_utils.hpp"
+#include "cf_clist.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -43,7 +44,7 @@ CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn)
 
     if (txn->chan_num < CF_NUM_CHANNELS)
     {
-        chan = &CF_AppData.engine.channels[txn->chan_num];
+        chan = &cfdpEngine.channels[txn->chan_num];
     }
     else
     {
@@ -59,7 +60,7 @@ CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn)
  * See description in cf_utils.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, uint8 direction)
+CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction)
 {
     CF_CListNode_t **result;
 
@@ -125,14 +126,14 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
 {
     CF_CListNode_t *  node;
     CF_Transaction_t *txn;
-    int               q_index; /* initialized below in if */
+    CF_QueueIdx_t q_index; /* initialized below in if */
 
-    CF_Assert(chan);
+    FW_ASSERT(chan);
 
     if (chan->qs[CF_QueueIdx_FREE])
     {
         node = chan->qs[CF_QueueIdx_FREE];
-        txn  = container_of(node, CF_Transaction_t, cl_node);
+        txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
 
         CF_CList_Remove_Ex(chan, CF_QueueIdx_FREE, &txn->cl_node);
 
@@ -144,11 +145,11 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
         else
         {
             /* no free history, so take the oldest one from the channel's history queue */
-            CF_Assert(chan->qs[CF_QueueIdx_HIST]);
+            FW_ASSERT(chan->qs[CF_QueueIdx_HIST]);
             q_index = CF_QueueIdx_HIST;
         }
 
-        txn->history = container_of(chan->qs[q_index], CF_History_t, cl_node);
+        txn->history = container_of_cpp(chan->qs[q_index], &CF_History_t::cl_node);
 
         CF_CList_Remove_Ex(chan, q_index, &txn->history->cl_node);
 
@@ -183,12 +184,12 @@ void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
  * See description in cf_utils.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-void CF_FreeTransaction(CF_Transaction_t *txn, uint8 chan)
+void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
 {
     memset(txn, 0, sizeof(*txn));
     txn->chan_num = chan;
     CF_CList_InitNode(&txn->cl_node);
-    CF_CList_InsertBack_Ex(&CF_AppData.engine.channels[chan], CF_QueueIdx_FREE, &txn->cl_node);
+    CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CF_QueueIdx_FREE, &txn->cl_node);
 }
 
 /*----------------------------------------------------------------
@@ -199,7 +200,7 @@ void CF_FreeTransaction(CF_Transaction_t *txn, uint8 chan)
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, CF_Traverse_TransSeqArg_t *context)
 {
-    CF_Transaction_t *txn = container_of(node, CF_Transaction_t, cl_node);
+    CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
     CfdpStatus::T      ret = CfdpStatus::T::CFDP_SUCCESS;
 
     if ((txn->history->src_eid == context->src_eid) && (txn->history->seq_num == context->transaction_sequence_number))
@@ -252,7 +253,7 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
  *-----------------------------------------------------------------*/
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 {
-    CF_Transaction_t *         txn = container_of(node, CF_Transaction_t, cl_node);
+    CF_Transaction_t *         txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
     CF_Traverse_PriorityArg_t *arg = (CF_Traverse_PriorityArg_t *)context;
 
     if (txn->priority <= arg->priority)
@@ -277,9 +278,9 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue)
 {
     bool          insert_back = false;
-    CF_Channel_t *chan        = &CF_AppData.engine.channels[txn->chan_num];
+    CF_Channel_t *chan        = &cfdpEngine.channels[txn->chan_num];
 
-    CF_Assert(txn->chan_num < CF_NUM_CHANNELS);
+    FW_ASSERT(txn->chan_num < CF_NUM_CHANNELS, txn->chan_num, CF_NUM_CHANNELS);
 
     /* look for proper position on PEND queue for this transaction.
      * This is a simple priority sort. */
@@ -319,7 +320,7 @@ void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue)
 CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)
 {
     CF_TraverseAll_Arg_t *traverse_all = arg;
-    CF_Transaction_t *    txn          = container_of(node, CF_Transaction_t, cl_node);
+    CF_Transaction_t *    txn          = container_of_cpp(node, &CF_Transaction_t::cl_node);
     traverse_all->fn(txn, traverse_all->context);
     ++traverse_all->counter;
     return CF_CLIST_CONT;
@@ -331,7 +332,7 @@ CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, 
  * See description in cf_utils.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-int32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
+I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     CF_TraverseAll_Arg_t args = {fn, context, 0};
     CF_QueueIdx_t        queueidx;
@@ -347,12 +348,12 @@ int32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_
  * See description in cf_utils.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-int32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, void *context)
+I32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     int   i;
-    int32 ret = 0;
+    I32 ret = 0;
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
-        ret += CF_TraverseAllTransactions(CF_AppData.engine.channels + i, fn, context);
+        ret += CF_TraverseAllTransactions(cfdpEngine.channels + i, fn, context);
     return ret;
 }
 

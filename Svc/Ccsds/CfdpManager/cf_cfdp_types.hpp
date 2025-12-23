@@ -380,7 +380,7 @@ typedef struct CF_Transaction
     CF_StateFlags_t flags;
 
     /**< \brief Reference to the wrapper F' component in order to send PDUs */
-    CfdpManager& cfdpManager;
+    CfdpManager* cfdpManager;
 
 } CF_Transaction_t;
 
@@ -427,37 +427,20 @@ typedef struct CF_Channel
     U8 tick_type;
 } CF_Channel_t;
 
-// /**
-//  * @brief CF engine output state
-//  *
-//  * Keeps the state of the current output PDU in the CF engine
-//  */
-// typedef struct CF_Output
-// {
-//     CFE_SB_Buffer_t *      msg;        /**< \brief Binary message to be sent to underlying transport */
-//     CF_EncoderState_t      encode;     /**< \brief Encoding state (while building message) */
-//     CF_Logical_PduBuffer_t tx_pdudata; /**< \brief Tx PDU logical values */
-// } CF_Output_t;
-
-// /**
-//  * @brief CF engine input state
-//  *
-//  * Keeps the state of the current input PDU in the CF engine
-//  */
-// typedef struct CF_Input
-// {
-//     CFE_SB_Buffer_t *      msg;        /**< \brief Binary message received from underlying transport */
-//     CF_DecoderState_t      decode;     /**< \brief Decoding state (while interpreting message) */
-//     CF_Logical_PduBuffer_t rx_pdudata; /**< \brief Rx PDU logical values */
-// } CF_Input_t;
-
 /**
  * @brief An engine represents a pairing to a local EID
  *
  * Each engine can have at most CF_MAX_SIMULTANEOUS_TRANSACTIONS
  */
-typedef struct CF_Engine
+typedef struct CfdpEngineDataT
 {
+    CfdpEngineDataT()
+        : seq_num(0),
+        outgoing_counter(0),
+        enabled(false)
+    {
+
+    }
     CF_TransactionSeq_t seq_num; /* \brief keep track of the next sequence number to use for sends */
 
     // CF_Output_t out;
@@ -473,7 +456,7 @@ typedef struct CF_Engine
 
     U32 outgoing_counter;
     bool   enabled;
-} CF_Engine_t;
+} CfdpEngineData;
 
 }  // namespace Ccsds
 }  // namespace Svc

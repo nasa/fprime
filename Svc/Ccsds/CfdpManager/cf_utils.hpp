@@ -89,40 +89,40 @@ typedef struct CF_Traverse_PriorityArg
 static inline void CF_DequeueTransaction(CF_Transaction_t *txn)
 {
     FW_ASSERT(txn && (txn->chan_num < CF_NUM_CHANNELS));
-    CF_CList_Remove(&CF_AppData.engine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
-    FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+    CF_CList_Remove(&cfdpEngine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
+    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
+    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
 static inline void CF_MoveTransaction(CF_Transaction_t *txn, CF_QueueIdx_t queue)
 {
     FW_ASSERT(txn && (txn->chan_num < CF_NUM_CHANNELS));
-    CF_CList_Remove(&CF_AppData.engine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
-    FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-    CF_CList_InsertBack(&CF_AppData.engine.channels[txn->chan_num].qs[queue], &txn->cl_node);
+    CF_CList_Remove(&cfdpEngine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
+    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
+    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+    CF_CList_InsertBack(&cfdpEngine.channels[txn->chan_num].qs[queue], &txn->cl_node);
     txn->flags.com.q_index = queue;
-    ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+    // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
 static inline void CF_CList_Remove_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *node)
 {
     CF_CList_Remove(&chan->qs[queueidx], node);
-    FW_ASSERT(CF_AppData.hk.Payload.channel_hk[chan - CF_AppData.engine.channels].q_size[queueidx]); /* sanity check */
-    --CF_AppData.hk.Payload.channel_hk[chan - CF_AppData.engine.channels].q_size[queueidx];
+    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx]); /* sanity check */
+    // --CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
 }
 
 static inline void CF_CList_InsertAfter_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *start,
                                            CF_CListNode_t *after)
 {
     CF_CList_InsertAfter(&chan->qs[queueidx], start, after);
-    ++CF_AppData.hk.Payload.channel_hk[chan - CF_AppData.engine.channels].q_size[queueidx];
+    // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
 }
 
 static inline void CF_CList_InsertBack_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *node)
 {
     CF_CList_InsertBack(&chan->qs[queueidx], node);
-    ++CF_AppData.hk.Payload.channel_hk[chan - CF_AppData.engine.channels].q_size[queueidx];
+    // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
 }
 
 /************************************************************************/
@@ -200,21 +200,6 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
  *
  */
 CfdpStatus::T CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, CF_Traverse_TransSeqArg_t *context);
-
-/************************************************************************/
-/** @brief Write a transaction-based queue's transaction history to a file.
- *
- * @par Assumptions, External Events, and Notes:
- *       chan must not be NULL.
- *
- * @param fd Open File descriptor to write to
- * @param chan  Pointer to associated CF channel object
- * @param queue  Queue Index to write
- *
- * @retval 0 on success
- * @retval 1 on error
- */
-CfdpStatus::T CF_WriteTxnQueueDataToFile(osal_id_t fd, CF_Channel_t *chan, CF_QueueIdx_t queue);
 
 /************************************************************************/
 /** @brief Insert a transaction into a priority sorted transaction queue.

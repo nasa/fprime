@@ -29,12 +29,14 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include "cf_cfdp_types.hpp"
-#include "cf_cfdp_types.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 namespace Svc {
 namespace Ccsds {
-    
+
+// TODO Refactor global data into class member variables
+CfdpEngineData cfdpEngine;
+
 /**
  * @brief Structure for use with the CF_CFDP_CycleTx() function
  */
@@ -84,7 +86,7 @@ void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuff
  * @param encap_hdr_size Offset of first CFDP PDU octet within buffer
  * @param total_size     Total size of msgbuf encapsulation structure (decoding cannot exceed this)
  */
-void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const void *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
+void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
                          size_t total_size);
 
 /* engine execution functions */

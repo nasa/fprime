@@ -93,7 +93,7 @@ typedef struct CF_TxnFilenames
  *        CF_Transaction_Payload_t, any command that selects a transaction based on EID
  *
  * @par Limits
- *         Must be one of uint8, uint16, uint32, U64.
+ *         Must be one of U8, U16, U32, U64.
  */
 typedef U32 CF_EntityId_t;
 
@@ -112,7 +112,7 @@ typedef U32 CF_EntityId_t;
  *        CF_Transaction_Payload_t, any command that selects a transaction based on TSN
  *
  * @par Limits
- *         Must be one of uint8, uint16, uint32, U64.
+ *         Must be one of U8, U16, U32, U64.
  */
 typedef U32 CF_TransactionSeq_t;
 
