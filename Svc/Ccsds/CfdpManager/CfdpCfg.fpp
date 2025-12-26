@@ -5,7 +5,7 @@
 
 @ Number of buffer ports used to send PDUs
 @ This must match the CF_NUM_CHANNELS macro defined in CfdpCfg.hpp
-constant CfdpManagerNumBufferPorts = 2
+constant CfdpManagerNumChannels = 2
 
 @ @brief Entity id size
 @

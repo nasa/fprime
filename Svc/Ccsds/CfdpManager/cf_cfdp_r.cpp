@@ -970,7 +970,7 @@ void CF_CFDP_R_AckTimerTick(CF_Transaction_t *txn)
         return;
     }
 
-    if (txn->ack_timer.getStatus() == CfdpTimerStatus::RUNNING)
+    if (txn->ack_timer.getStatus() == CfdpTimer::Status::RUNNING)
     {
         txn->ack_timer.run();
     }
@@ -1031,7 +1031,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
 
     if (!txn->flags.com.inactivity_fired)
     {
-        if (txn->inactivity_timer.getStatus() == CfdpTimerStatus::RUNNING)
+        if (txn->inactivity_timer.getStatus() == CfdpTimer::Status::RUNNING)
         {
             txn->inactivity_timer.run();
         }

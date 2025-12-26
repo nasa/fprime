@@ -17,7 +17,7 @@ class CfdpTimer  {
   // Class types
   // ----------------------------------------------------------------------
   public:
-    enum CfdpTimerStatus {
+    enum Status {
       UNITIALIZED,
       RUNNING,
       EXPIRED
@@ -44,7 +44,7 @@ class CfdpTimer  {
     );
 
     //! Get the status of a CFDP timer
-    CfdpTimerStatus getStatus(void);
+    Status getStatus(void);
 
     //! Runs a one second increment of the CFDP timers
     void run(void);
@@ -55,7 +55,7 @@ class CfdpTimer  {
     // ----------------------------------------------------------------------
 
     //! Number of seconds until the timer expires
-    CfdpTimerStatus timerStatus;
+    Status timerStatus;
 
     //! Number of seconds until the timer expires
     U32 secondsRemaining;

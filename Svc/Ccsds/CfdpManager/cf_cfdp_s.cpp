@@ -27,8 +27,10 @@
 
 #include "cf_cfdp.hpp"
 #include "cf_cfdp_s.hpp"
+#include "cf_cfdp_dispatch.hpp"
 #include "cf_utils.hpp"
 #include "CfeStubs.hpp"
+#include "CfdpTimer.hpp"
 
 #include <stdio.h>
 #include <string.h>
@@ -618,10 +620,24 @@ void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    // TODO BPC - need to reword CFDP receive
     /* s1 doesn't need to receive anything */
-    // static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {{NULL}};
-    // CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
+    static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {{NULL}};
+    CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
+}
+
+static CF_CFDP_FileDirectiveDispatchTable_t makeFileDirectiveTable(
+    CF_CFDP_StateRecvFunc_t fin,
+    CF_CFDP_StateRecvFunc_t ack,
+    CF_CFDP_StateRecvFunc_t nak
+)
+{
+    CF_CFDP_FileDirectiveDispatchTable_t table = {};
+
+    table.fdirective[CF_CFDP_FileDirective_FIN] = fin;
+    table.fdirective[CF_CFDP_FileDirective_ACK] = ack;
+    table.fdirective[CF_CFDP_FileDirective_NAK] = nak;
+
+    return table;
 }
 
 /*----------------------------------------------------------------
@@ -630,27 +646,39 @@ void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 * See description in cf_cfdp_s.h for argument/return detail
 *
 *-----------------------------------------------------------------*/
-void CF_CFDP_S2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
+void CF_CFDP_S2_Recv(CF_Transaction_t* txn, CF_Logical_PduBuffer_t* ph)
 {
-    // TODO BPC - need to reword CFDP receive
-    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta      = {.fdirective = {
-    //                                                                  [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin,
-    //                                                              }};
-    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_fd_or_eof = {
-    //     .fdirective = {
-    //         [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin, [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak}};
-    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_wait_ack = {
-    //     .fdirective = {[CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_Fin,
-    //                    [CF_CFDP_FileDirective_ACK] = CF_CFDP_S2_EofAck,
-    //                    [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak_Arm}};
+    static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta =
+        makeFileDirectiveTable(
+            CF_CFDP_S2_EarlyFin,
+            nullptr,
+            nullptr
+        );
 
-    // static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {
-    //     .substate = {[CF_TxSubState_METADATA]      = &s2_meta,
-    //                  [CF_TxSubState_FILEDATA]      = &s2_fd_or_eof,
-    //                  [CF_TxSubState_EOF]           = &s2_fd_or_eof,
-    //                  [CF_TxSubState_CLOSEOUT_SYNC] = &s2_wait_ack}};
+    static const CF_CFDP_FileDirectiveDispatchTable_t s2_fd_or_eof =
+        makeFileDirectiveTable(
+            CF_CFDP_S2_EarlyFin,
+            nullptr,
+            CF_CFDP_S2_Nak
+        );
 
-    // CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
+    static const CF_CFDP_FileDirectiveDispatchTable_t s2_wait_ack =
+        makeFileDirectiveTable(
+            CF_CFDP_S2_Fin,
+            CF_CFDP_S2_EofAck,
+            CF_CFDP_S2_Nak_Arm
+        );
+
+    static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {
+        {
+            &s2_meta,      /* CF_TxSubState_METADATA */
+            &s2_fd_or_eof, /* CF_TxSubState_FILEDATA */
+            &s2_fd_or_eof, /* CF_TxSubState_EOF */
+            &s2_wait_ack   /* CF_TxSubState_CLOSEOUT_SYNC */
+        }
+    };
+
+    CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
 }
 
 /*----------------------------------------------------------------
@@ -662,11 +690,13 @@ void CF_CFDP_S2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 void CF_CFDP_S1_Tx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {
-        .substate = {
-            [CF_TxSubState_METADATA] = CF_CFDP_S_SubstateSendMetadata,
-            [CF_TxSubState_FILEDATA] = CF_CFDP_S_SubstateSendFileData,
-            [CF_TxSubState_EOF]      = CF_CFDP_S1_SubstateSendEof,
-        }};
+        {
+            &CF_CFDP_S_SubstateSendMetadata, // CF_TxSubState_METADATA
+            &CF_CFDP_S_SubstateSendFileData, // CF_TxSubState_FILEDATA
+            &CF_CFDP_S1_SubstateSendEof, // CF_TxSubState_EOF
+            nullptr // CF_TxSubState_CLOSEOUT_SYNC
+        }
+    };
 
     CF_CFDP_S_DispatchTransmit(txn, &substate_fns);
 }
@@ -680,11 +710,13 @@ void CF_CFDP_S1_Tx(CF_Transaction_t *txn)
 void CF_CFDP_S2_Tx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {
-        .substate = {
-            [CF_TxSubState_METADATA] = CF_CFDP_S_SubstateSendMetadata,
-            [CF_TxSubState_FILEDATA] = CF_CFDP_S2_SubstateSendFileData,
-            [CF_TxSubState_EOF]      = CF_CFDP_S2_SubstateSendEof,
-        }};
+        {
+            &CF_CFDP_S_SubstateSendMetadata, // CF_TxSubState_METADATA
+            &CF_CFDP_S2_SubstateSendFileData, // CF_TxSubState_FILEDATA
+            &CF_CFDP_S2_SubstateSendEof, // CF_TxSubState_EOF
+            nullptr // CF_TxSubState_CLOSEOUT_SYNC
+        }
+    };
 
     CF_CFDP_S_DispatchTransmit(txn, &substate_fns);
 }
@@ -712,6 +744,8 @@ void CF_CFDP_S_Cancel(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn)
 {
+    U8 ack_limit = 0;
+
     /* note: the ack timer is only ever relevant on class 2 */
     if (txn->state != CF_TxnState_S2 || !txn->flags.com.ack_timer_armed)
     {
@@ -719,14 +753,15 @@ void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn)
         return;
     }
 
-    if (!CF_Timer_Expired(&txn->ack_timer))
+    if (txn->ack_timer.getStatus() == CfdpTimer::Status::RUNNING)
     {
-        CF_Timer_Tick(&txn->ack_timer);
+        txn->ack_timer.run();
     }
     else if (txn->state_data.send.sub_state == CF_TxSubState_CLOSEOUT_SYNC)
     {
         /* Check limit and handle if needed */
-        if (txn->state_data.send.s2.acknak_count >= CF_AppData.config_table->chan[txn->chan_num].ack_limit)
+        ack_limit = txn->cfdpManager->getAckLimitParam(txn->chan_num);
+        if (txn->state_data.send.s2.acknak_count >= ack_limit)
         {
             // CFE_EVS_SendEvent(CF_CFDP_S_ACK_LIMIT_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF S2(%lu:%lu), ack limit reached, no eof-ack", (unsigned long)txn->history->src_eid,
@@ -786,7 +821,7 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     /* first, check inactivity timer */
     if (!txn->flags.com.inactivity_fired)
     {
-        if (txn->inactivity_timer.getStatus() == CfdpTimerStatus::RUNNING)
+        if (txn->inactivity_timer.getStatus() == CfdpTimer::Status::RUNNING)
         {
             txn->inactivity_timer.run();
         }

@@ -25,6 +25,18 @@ module Ccsds {
         param OutgoingFileChunkSize: U32 \
             default 480
 
+        @ Parameter configuration for an array CFDP channels
+        param ChannelConfig: CfdpChannelArrayParams \
+            default [ \
+                {
+                    ack_limit = 4 \
+                }, \
+                {
+                    ack_limit = 4 \
+                } \
+            ]
+
+
         ##############################################################################
         # Custom ports
         ##############################################################################
@@ -33,16 +45,16 @@ module Ccsds {
         async input port run1Hz: Svc.Sched
 
         @ Port for outputting PDU data
-        output port dataOut: [CfdpManagerNumBufferPorts] Fw.BufferSend
+        output port dataOut: [CfdpManagerNumChannels] Fw.BufferSend
 
         @ Port for allocating buffers to hold PDU data
-        output port bufferAllocate: [CfdpManagerNumBufferPorts] Fw.BufferGet
+        output port bufferAllocate: [CfdpManagerNumChannels] Fw.BufferGet
 
         @ Port for deallocating buffers allocated for PDU data
-        output port bufferDeallocate: [CfdpManagerNumBufferPorts] Fw.BufferSend
+        output port bufferDeallocate: [CfdpManagerNumChannels] Fw.BufferSend
         
         @ Buffer that was sent via the dataOut port and is now being retruned
-        sync input port dataReturnIn: [CfdpManagerNumBufferPorts] Svc.ComDataWithContext
+        sync input port dataReturnIn: [CfdpManagerNumChannels] Svc.ComDataWithContext
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

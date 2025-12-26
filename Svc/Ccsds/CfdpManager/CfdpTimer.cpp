@@ -31,7 +31,7 @@ void CfdpTimer ::setTimer(U32 timerDuration)
     this->secondsRemaining = timerDuration;
 }
 
-CfdpTimer::CfdpTimerStatus CfdpTimer ::getStatus(void)
+CfdpTimer::Status CfdpTimer ::getStatus(void)
 {
     return this->timerStatus;
 }

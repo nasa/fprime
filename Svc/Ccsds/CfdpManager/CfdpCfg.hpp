@@ -13,7 +13,7 @@ namespace Ccsds {
  *  @par Description:
  *       The number of channels in the engine. Changing this
  *       value changes the configuration table for the application.
- *       This must match CfdpManagerNumBufferPorts defined in CfdpCfg.fpp
+ *       This must match CfdpManagerNumChannels defined in CfdpCfg.fpp
  *
  *  @par Limits:
  *       Must be less <= 200. Obviously it will be smaller than that.

@@ -35,5 +35,14 @@ struct CfdpLogicalPduHeader {
     sequence_num: CfdpTransactionSeq @< Sequence number (normalized)
 }
 
+@< Structure for configuration parameters for a single CFDP channel
+struct CfdpChannelParams {
+  ack_limit: U8 @< number of times to retry ACK (for ex, send FIN and wait for fin-ack)
+}
+
+@< Struture for the configured array of CFDP channels
+array CfdpChannelArrayParams = [CfdpManagerNumChannels] CfdpChannelParams
+
+
 } @< Ccsds
 } @< Svc

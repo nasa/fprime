@@ -192,6 +192,22 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     return chunkSize;
   }
 
+  U8 CfdpManager:: getAckLimitParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_ack_limit();
+  }
+
 // ----------------------------------------------------------------------
 // Buffer helpers
 // ----------------------------------------------------------------------

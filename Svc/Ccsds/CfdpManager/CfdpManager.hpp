@@ -66,6 +66,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
   CfdpEntityId getLocalEidParam(void);
   U32 getOutgoingFileChunkSizeParam(void);
+  U8 getAckLimitParam(U8 channelIndex);
 
   private:
     // ----------------------------------------------------------------------

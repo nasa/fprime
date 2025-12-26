@@ -1649,7 +1649,7 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
                     poll->interval_timer.setTimer(pd->interval_sec);
                     poll->timer_set = true;
                 }
-                else if (poll->interval_timer.getStatus() == CfdpTimerStatus::EXPIRED)
+                else if (poll->interval_timer.getStatus() == CfdpTimer::Status::EXPIRED)
                 {
                     /* the timer has expired */
                     ret = CF_CFDP_PlaybackDir_Initiate(&poll->pb, pd->src_dir, pd->dst_dir, pd->cfdp_class, 0,
