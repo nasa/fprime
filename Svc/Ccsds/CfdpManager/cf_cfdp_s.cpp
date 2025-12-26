@@ -104,23 +104,24 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc)
+CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed)
 {
-    bool success = true;
-    int status = 0;
-    CfdpStatus::T ret = CfdpStatus::T::CFDP_ERROR;
-    CF_Logical_PduBuffer_t * ph = CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_INVALID_MIN,
-                                                             txn->cfdpManager->getLocalEidParam(),
-                                                             txn->history->peer_eid, 0, txn->history->seq_num, 1);
+    I32 status = 0;
+    CfdpStatus::T ret = CfdpStatus::T::CFDP_SUCCESS;
+    CF_Logical_PduBuffer_t * ph = NULL;
     CF_Logical_PduFileDataHeader_t *fd;
     size_t actual_bytes;
     void * data_ptr;
     U32 outgoing_file_chunk_size;
 
+    FW_ASSERT(bytes_processed != NULL);
+    *bytes_processed = 0;
+
+    ph = CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_INVALID_MIN, txn->cfdpManager->getLocalEidParam(),
+                                    txn->history->peer_eid, 0, txn->history->seq_num, 1);
     if (!ph)
     {
-        ret     = CfdpStatus::T::CFDP_SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
-        success = false;
+        ret = CfdpStatus::T::CFDP_SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
     }
     else
     {
@@ -141,7 +142,6 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
         {
             actual_bytes = bytes_to_read;
         }
-
         outgoing_file_chunk_size = txn->cfdpManager->getOutgoingFileChunkSizeParam();
         if (actual_bytes > outgoing_file_chunk_size)
         {
@@ -165,44 +165,46 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
         if (txn->state_data.send.cached_pos != foffs)
         {
             status = CF_WrappedLseek(txn->fd, foffs, Os::File::SeekType::ABSOLUTE);
-            if (status != foffs)
+            // TODO refactor to an Os status check
+            if (status != static_cast<I32>(foffs))
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): error seeking to offset %ld, got %ld",
                 //                   (txn->state == CF_TxnState_S2), (unsigned long)txn->history->src_eid,
                 //                   (unsigned long)txn->history->seq_num, (long)foffs, (long)status);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
-                success = false;
+                ret = CfdpStatus::T::CFDP_ERROR;
             }
         }
 
-        if (success)
+        if (ret == CfdpStatus::T::CFDP_SUCCESS)
         {
             status = CF_WrappedRead(txn->fd, data_ptr, actual_bytes);
-            if (status != actual_bytes)
+            // TODO refactor to an Os status check
+            if (status != static_cast<I32>(actual_bytes))
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_READ_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): error reading bytes: expected %ld, got %ld",
                 //                   (txn->state == CF_TxnState_S2), (unsigned long)txn->history->src_eid,
                 //                   (unsigned long)txn->history->seq_num, (long)actual_bytes, (long)status);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_read;
-                success = false;
+                ret = CfdpStatus::T::CFDP_ERROR;
             }
         }
-
-        if (success)
+        
+        if (ret == CfdpStatus::T::CFDP_SUCCESS)
         {
             txn->state_data.send.cached_pos += status;
             CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CfdpStatus::T::CFDP_SUCCESS */
 
             // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.file_data_bytes += actual_bytes;
-            FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, actual_bytes, txn->fsize); /* sanity check */
+            FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), txn->fsize); /* sanity check */
             if (calc_crc)
             {
-                txn->crc.update(fd->data_ptr, fd->offset, fd->data_len);
+                txn->crc.update(static_cast<const U8*>(fd->data_ptr), fd->offset, static_cast<U32>(fd->data_len));
             }
 
-            ret = actual_bytes;
+            *bytes_processed = actual_bytes;
         }
     }
 
@@ -217,9 +219,16 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
  *-----------------------------------------------------------------*/
 void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
 {
-    I32 bytes_processed = CF_CFDP_S_SendFileData(txn, txn->foffs, (txn->fsize - txn->foffs), 1);
+    U32 bytes_processed = 0;
+    CfdpStatus::T status = CF_CFDP_S_SendFileData(txn, txn->foffs, (txn->fsize - txn->foffs), 1, &bytes_processed);
 
-    if (bytes_processed > 0)
+    if(status != CfdpStatus::T::CFDP_SUCCESS)
+    {
+        /* IO error -- change state and send EOF */
+        CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILESTORE_REJECTION);
+        txn->state_data.send.sub_state = CF_TxSubState_EOF;
+    }
+    else if (bytes_processed > 0)
     {
         txn->foffs += bytes_processed;
         if (txn->foffs == txn->fsize)
@@ -227,12 +236,6 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
             /* file is done */
             txn->state_data.send.sub_state = CF_TxSubState_EOF;
         }
-    }
-    else if (bytes_processed < 0)
-    {
-        /* IO error -- change state and send EOF */
-        CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILESTORE_REJECTION);
-        txn->state_data.send.sub_state = CF_TxSubState_EOF;
     }
     else
     {
@@ -246,16 +249,20 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
  * See description in cf_cfdp_s.h for argument/return detail
  *
  *-----------------------------------------------------------------*/
-CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
+CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed)
 {
     const CF_Chunk_t *chunk;
-    CfdpStatus::T      sret;
-    CfdpStatus::T      ret = CfdpStatus::T::CFDP_SUCCESS;
+    CfdpStatus::T sret;
+    CfdpStatus::T ret = CfdpStatus::T::CFDP_SUCCESS;
+    U32 bytes_processed = 0;
+
+    FW_ASSERT(nakProcessed != NULL);
+    *nakProcessed = false;
 
     if (txn->flags.tx.md_need_send)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CFDP_SEND_PDU_ERROR)
+        if (sret == CfdpStatus::T::CFDP_SEND_PDU_ERROR)
         {
             ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
         }
@@ -266,7 +273,8 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
                 txn->flags.tx.md_need_send = false;
             }
             /* unless CFDP_SEND_PDU_ERROR, return 1 to keep caller from sending file data */
-            ret = 1; /* 1 means nak processed, so don't send filedata */
+            *nakProcessed = true; /* nak processed, so don't send filedata */
+            
         }
     }
     else
@@ -275,19 +283,20 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
         chunk = CF_ChunkList_GetFirstChunk(&txn->chunks->chunks);
         if (chunk != NULL)
         {
-            ret = CF_CFDP_S_SendFileData(txn, chunk->offset, chunk->size, 0);
-            if (ret > 0)
+            ret = CF_CFDP_S_SendFileData(txn, chunk->offset, chunk->size, 0, &bytes_processed);
+            if(ret != CfdpStatus::T::CFDP_SUCCESS)
+            {
+                /* error occurred */
+                ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
+            }
+            else if (bytes_processed > 0)
             {
                 CF_ChunkList_RemoveFromFirst(&txn->chunks->chunks, ret);
-                ret = 1; /* processed nak, so caller doesn't send file data */
-            }
-            else if (ret < 0)
-            {
-                ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
+                *nakProcessed = true; /* nak processed, so caller doesn't send file data */
             }
             else
             {
-                /* nothing to do if ret==0, since nothing was sent */
+                /* nothing to do if bytes_processed==0, since nothing was sent */
             }
         }
     }
@@ -303,21 +312,25 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
 {
-    int ret = CF_CFDP_S_CheckAndRespondNak(txn);
-
-    if (!ret)
-    {
-        CF_CFDP_S_SubstateSendFileData(txn);
-    }
-    else if (ret < 0)
+    CfdpStatus::T status;
+    bool nakProcessed = false;
+    
+    status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
+    if (status != CfdpStatus::CFDP_SUCCESS)
     {
         CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_NAK_RESPONSE_ERROR);
         txn->flags.tx.send_eof = true; /* do not leave the remote hanging */
         CF_CFDP_FinishTransaction(txn, true);
+        return;
+    }
+
+    if (!nakProcessed)
+    {
+        CF_CFDP_S_SubstateSendFileData(txn);
     }
     else
     {
-        /* don't care about other cases */
+        /* NAK was processed, so do not send filedata */
     }
 }
 
@@ -397,7 +410,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
     if (success)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CFDP_SEND_PDU_ERROR)
+        if (sret == CfdpStatus::T::CFDP_SEND_PDU_ERROR)
         {
             /* failed to send md */
             // CFE_EVS_SendEvent(CF_CFDP_S_SEND_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF S%d(%lu:%lu): failed to send md",
@@ -839,10 +852,14 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
 {
-    int ret = CF_CFDP_S_CheckAndRespondNak(txn);
-
-    if (ret == 1)
+    bool nakProcessed = false;
+    CfdpStatus::T status;
+    
+    status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
+    if ((status == CfdpStatus::CFDP_SUCCESS) && nakProcessed)
+    {
         *cont = 1; /* cause dispatcher to re-enter this wakeup */
+    }
 }
 
 }  // namespace Ccsds

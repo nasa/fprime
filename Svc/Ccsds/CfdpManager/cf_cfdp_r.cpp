@@ -525,7 +525,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
                 txn->flags.rx.fd_nak_sent = true; /* latch that at least one NAK has been sent requesting filedata */
                 /* NOTE: this assert is here because CF_CFDP_SendNak() does not return CFDP_SEND_PDU_ERROR,
                    so if it's ever added to that function we need to test handling it here */
-                FW_ASSERT(sret != CFDP_SEND_PDU_ERROR); 
+                FW_ASSERT(sret != CfdpStatus::T::CFDP_SEND_PDU_ERROR); 
                 if (sret == CfdpStatus::T::CFDP_SUCCESS)
                 {
                     CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.nak_segment_requests += cret;
@@ -549,7 +549,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
 
             sret = CF_CFDP_SendNak(txn, ph);
             // this assert is here because CF_CFDP_SendNak() does not return CFDP_SEND_PDU_ERROR */
-            FW_ASSERT(sret != CFDP_SEND_PDU_ERROR);
+            FW_ASSERT(sret != CfdpStatus::T::CFDP_SEND_PDU_ERROR);
             if (sret == CfdpStatus::T::CFDP_SUCCESS)
             {
                 ret = CfdpStatus::T::CFDP_SUCCESS;
@@ -740,7 +740,7 @@ CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn)
         sret = CF_CFDP_SendFin(txn, txn->state_data.receive.r2.dc, txn->state_data.receive.r2.fs,
                                CF_TxnStatus_To_ConditionCode(txn->history->txn_stat));
         /* CF_CFDP_SendFin does not return CFDP_SEND_PDU_ERROR */
-        FW_ASSERT(sret != CFDP_SEND_PDU_ERROR); 
+        FW_ASSERT(sret != CfdpStatus::T::CFDP_SEND_PDU_ERROR); 
         txn->state_data.receive.sub_state =
             CF_RxSubState_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
         if (sret != CfdpStatus::T::CFDP_SUCCESS)
@@ -1061,7 +1061,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     {
         sret = CF_CFDP_SendAck(txn, CF_CFDP_AckTxnStatus_ACTIVE, CF_CFDP_FileDirective_EOF,
                                txn->state_data.receive.r2.eof_cc, txn->history->peer_eid, txn->history->seq_num);
-        FW_ASSERT(sret != CFDP_SEND_PDU_ERROR);
+        FW_ASSERT(sret != CfdpStatus::T::CFDP_SEND_PDU_ERROR);
 
         /* if CfdpStatus::T::CFDP_SUCCESS, then move on in the state machine. CF_CFDP_SendAck does not return
          * CFDP_SEND_PDU_ERROR */

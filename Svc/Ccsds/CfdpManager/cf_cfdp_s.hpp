@@ -223,13 +223,12 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @returns CfdpStatus::T::CFDP_ERROR if error.
- * @retval 0 if no NAK processed.
- * @retval 1 if NAK processed.
+ * @returns CFDP_ERROR if error otherwise CFDP_SUCCESS
  *
- * @param txn     Pointer to the transaction object
+ * @param txn          Pointer to the transaction object
+ * @param nakProcessed true if a NAK was processed, otherwise false
  */
-CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed);
 
 /************************************************************************/
 /** @brief Send filedata handling for S2.
