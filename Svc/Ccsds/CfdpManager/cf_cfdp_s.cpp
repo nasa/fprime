@@ -204,7 +204,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
                 txn->crc.update(static_cast<const U8*>(fd->data_ptr), fd->offset, static_cast<U32>(fd->data_len));
             }
 
-            *bytes_processed = actual_bytes;
+            *bytes_processed = static_cast<U32>(actual_bytes);
         }
     }
 
@@ -349,7 +349,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
     if (!OS_ObjectIdDefined(txn->fd))
     {
-        if (OS_FileOpenCheck(txn->history->fnames.src_filename) == OS_SUCCESS)
+        // TODO BPC this should be a true check
+        if (OS_FileOpenCheck(txn->history->fnames.src_filename) == 1)
         {
             // CFE_EVS_SendEvent(CF_CFDP_S_ALREADY_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF S%d(%lu:%lu): file %s already open", (txn->state == CF_TxnState_S2),
@@ -361,7 +362,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
         if (success)
         {
-            ret = CF_WrappedOpenCreate(&txn->fd, txn->history->fnames.src_filename, OS_FILE_FLAG_NONE, OS_READ_ONLY);
+            // TODO BPC flags = OS_FILE_FLAG_NONE, access = OS_READ_ONLY
+            ret = CF_WrappedOpenCreate(&txn->fd, txn->history->fnames.src_filename, 0, 0);
             if (ret < 0)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -369,14 +371,15 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
                 //                   (unsigned long)txn->history->src_eid, (unsigned long)txn->history->seq_num,
                 //                   txn->history->fnames.src_filename, (long)ret);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_open;
-                txn->fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
+                // txn->fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
                 success = false;
             }
         }
 
         if (success)
         {
-            status = CF_WrappedLseek(txn->fd, 0, OS_SEEK_END);
+            // TODO BPC mode = OS_SEEK_END
+            status = CF_WrappedLseek(txn->fd, 0, 2);
             if (status < 0)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_END_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -443,7 +446,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
 {
-    return CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN, txn->state_data.send.s2.fin_cc,
+    return CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN, 
+                           static_cast<CF_CFDP_ConditionCode_t>(txn->state_data.send.s2.fin_cc),
                            txn->history->peer_eid, txn->history->seq_num);
 }
 
@@ -486,7 +490,7 @@ void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
             txn->state_data.send.s2.acknak_count = 0; /* in case retransmits had occurred */
 
             /* note this is a no-op unless the status was unset previously */
-            CF_CFDP_SetTxnStatus(txn, ph->int_header.fin.cc);
+            CF_CFDP_SetTxnStatus(txn, static_cast<CF_TxnStatus_t>(ph->int_header.fin.cc));
 
             /* Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
              * to send it until after the EOF+ACK.  So at this point we stop trying to send anything
@@ -546,8 +550,8 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
             }
         }
 
-        CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.nak_segment_requests +=
-            nak->segment_list.num_segments;
+        // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.nak_segment_requests +=
+        //     nak->segment_list.num_segments;
         if (bad_sr)
         {
             // CFE_EVS_SendEvent(CF_CFDP_S_INVALID_SR_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -614,37 +618,39 @@ void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  *-----------------------------------------------------------------*/
 void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
+    // TODO BPC - need to reword CFDP receive
     /* s1 doesn't need to receive anything */
-    static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {{NULL}};
-    CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
+    // static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {{NULL}};
+    // CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
 }
 
 /*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
+*
+* Application-scope internal function
+* See description in cf_cfdp_s.h for argument/return detail
+*
+*-----------------------------------------------------------------*/
 void CF_CFDP_S2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta      = {.fdirective = {
-                                                                     [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin,
-                                                                 }};
-    static const CF_CFDP_FileDirectiveDispatchTable_t s2_fd_or_eof = {
-        .fdirective = {
-            [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin, [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak}};
-    static const CF_CFDP_FileDirectiveDispatchTable_t s2_wait_ack = {
-        .fdirective = {[CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_Fin,
-                       [CF_CFDP_FileDirective_ACK] = CF_CFDP_S2_EofAck,
-                       [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak_Arm}};
+    // TODO BPC - need to reword CFDP receive
+    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta      = {.fdirective = {
+    //                                                                  [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin,
+    //                                                              }};
+    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_fd_or_eof = {
+    //     .fdirective = {
+    //         [CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_EarlyFin, [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak}};
+    // static const CF_CFDP_FileDirectiveDispatchTable_t s2_wait_ack = {
+    //     .fdirective = {[CF_CFDP_FileDirective_FIN] = CF_CFDP_S2_Fin,
+    //                    [CF_CFDP_FileDirective_ACK] = CF_CFDP_S2_EofAck,
+    //                    [CF_CFDP_FileDirective_NAK] = CF_CFDP_S2_Nak_Arm}};
 
-    static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {
-        .substate = {[CF_TxSubState_METADATA]      = &s2_meta,
-                     [CF_TxSubState_FILEDATA]      = &s2_fd_or_eof,
-                     [CF_TxSubState_EOF]           = &s2_fd_or_eof,
-                     [CF_TxSubState_CLOSEOUT_SYNC] = &s2_wait_ack}};
+    // static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {
+    //     .substate = {[CF_TxSubState_METADATA]      = &s2_meta,
+    //                  [CF_TxSubState_FILEDATA]      = &s2_fd_or_eof,
+    //                  [CF_TxSubState_EOF]           = &s2_fd_or_eof,
+    //                  [CF_TxSubState_CLOSEOUT_SYNC] = &s2_wait_ack}};
 
-    CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
+    // CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
 }
 
 /*----------------------------------------------------------------

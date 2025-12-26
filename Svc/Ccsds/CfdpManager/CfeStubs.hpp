@@ -51,6 +51,11 @@ I32 OS_close(Os::FileHandle filedes)
 inline bool OS_ObjectIdDefined(Os::FileHandle object_id)
 { return true; }
 
+// bool isOpen() const;
+// int32 OS_FileOpenCheck(const char *Filename);
+I32 OS_FileOpenCheck(const char *Filename)
+{return 0; }
+
 // void close()
 // void CF_WrappedClose(osal_id_t fd)
 void CF_WrappedClose(Os::FileHandle fd)
