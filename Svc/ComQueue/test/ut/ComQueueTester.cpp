@@ -834,4 +834,71 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     component.cleanup();
 }
 
+void ComQueueTester::testSetQueuePriorityCommand() {
+    // Configure the component
+    configure();
+
+    // Send the SET_QUEUE_PRIORITY command for queue 0, setting priority to 2
+    // Priority must be < TOTAL_PORT_COUNT, so we use a small value that's guaranteed to be valid
+    const U32 newPriority = 2;
+    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, 0, newPriority);
+    this->component.doDispatch();
+
+    // Verify command response was OK
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::OK);
+
+    // Verify the event was emitted
+    ASSERT_EVENTS_QueuePriorityChanged_SIZE(1);
+    ASSERT_EVENTS_QueuePriorityChanged(0, 0, newPriority);
+
+    component.cleanup();
+}
+
+void ComQueueTester::testSetQueuePriorityInvalidIndex() {
+    // Configure the component
+    configure();
+
+    // Send command with invalid queue index (beyond TOTAL_PORT_COUNT)
+    const U32 invalidIndex = ComQueue::TOTAL_PORT_COUNT + 1;
+    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, invalidIndex, 1);
+    this->component.doDispatch();
+
+    // Verify command response was VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Verify the InvalidQueueIndex event was emitted
+    ASSERT_EVENTS_InvalidQueueIndex_SIZE(1);
+    ASSERT_EVENTS_InvalidQueueIndex(0, invalidIndex, ComQueue::TOTAL_PORT_COUNT - 1);
+
+    // Verify no priority changed event was emitted
+    ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+
+    component.cleanup();
+}
+
+void ComQueueTester::testSetQueuePriorityInvalidPriority() {
+    // Configure the component
+    configure();
+
+    // Send command with invalid priority value (beyond TOTAL_PORT_COUNT)
+    const U32 invalidPriority = ComQueue::TOTAL_PORT_COUNT + 1;
+    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, 0, invalidPriority);
+    this->component.doDispatch();
+
+    // Verify command response was VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Verify the InvalidQueueIndex event was emitted (we reuse this event for priority validation)
+    ASSERT_EVENTS_InvalidQueueIndex_SIZE(1);
+    ASSERT_EVENTS_InvalidQueueIndex(0, invalidPriority, ComQueue::TOTAL_PORT_COUNT - 1);
+
+    // Verify no priority changed event was emitted
+    ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+
+    component.cleanup();
+}
+
 }  // end namespace Svc

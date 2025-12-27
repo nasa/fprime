@@ -192,6 +192,18 @@ class ComQueue final : public ComQueueComponentBase {
                               const ComCfg::FrameContext& context) override;
 
     // ----------------------------------------------------------------------
+    // Command handler implementations
+    // ----------------------------------------------------------------------
+
+    //! Handler for SET_QUEUE_PRIORITY command
+    //!
+    void SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                       U32 cmdSeq,           //!< The command sequence number
+                                       U32 queueIndex,       //!< Index of the queue to modify
+                                       U32 newPriority       //!< New priority value for the queue
+                                       ) override;
+
+    // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
     // ----------------------------------------------------------------------
 

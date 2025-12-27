@@ -54,6 +54,15 @@ module Svc {
       # Special ports
       # ----------------------------------------------------------------------
 
+      @ Command receive port
+      command recv port CmdDisp
+
+      @ Command registration port
+      command reg port CmdReg
+
+      @ Command response port
+      command resp port CmdStatus
+
       @ Port for emitting events
       event port Log
 
@@ -76,6 +85,17 @@ module Svc {
       command resp port CmdStatus
 
       # ----------------------------------------------------------------------
+      # Commands
+      # ----------------------------------------------------------------------
+
+      @ Set the priority of a specific queue at runtime
+      async command SET_QUEUE_PRIORITY(
+                                        queueIndex: U32 @< Index of the queue to modify
+                                        newPriority: U32 @< New priority value for the queue
+                                      ) \
+        opcode 0x00
+
+      # ----------------------------------------------------------------------
       # Events
       # ----------------------------------------------------------------------
 
@@ -86,6 +106,22 @@ module Svc {
        ) \
         severity warning high \
         format "The {} queue at index {} overflowed"
+
+      @ Queue priority changed event
+      event QueuePriorityChanged(
+            queueIndex: U32 @< Index of the queue
+            newPriority: U32 @< New priority value
+       ) \
+        severity activity high \
+        format "Queue {} priority changed to {}"
+
+      @ Invalid queue index error
+      event InvalidQueueIndex(
+            queueIndex: U32 @< Invalid queue index
+            maxIndex: U32 @< Maximum valid index
+       ) \
+        severity warning high \
+        format "Invalid queue index {} (max: {})"
 
       # ----------------------------------------------------------------------
       # Telemetry

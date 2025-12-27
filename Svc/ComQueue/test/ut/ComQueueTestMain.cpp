@@ -89,6 +89,21 @@ TEST(BufferQueueOverflowModes, DropOldest) {
     tester.testBufferQueueDropOldestMode();
 }
 
+TEST(Commands, SetQueuePriority) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityCommand();
+}
+
+TEST(Commands, SetQueuePriorityInvalidIndex) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityInvalidIndex();
+}
+
+TEST(Commands, SetQueuePriorityInvalidPriority) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityInvalidPriority();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

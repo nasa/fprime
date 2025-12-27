@@ -243,6 +243,52 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
 }
 
 // ----------------------------------------------------------------------
+// Command handler implementations
+// ----------------------------------------------------------------------
+
+void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 queueIndex, U32 newPriority) {
+    // Validate queue index
+    if (queueIndex >= TOTAL_PORT_COUNT) {
+        this->log_WARNING_HI_InvalidQueueIndex(queueIndex, TOTAL_PORT_COUNT - 1);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Validate priority range
+    if (newPriority >= TOTAL_PORT_COUNT) {
+        this->log_WARNING_HI_InvalidQueueIndex(newPriority, TOTAL_PORT_COUNT - 1);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Update priority in the prioritized list
+    m_prioritizedList[queueIndex].priority = static_cast<FwIndexType>(newPriority);
+
+    // Re-sort the prioritized list to maintain priority ordering
+    // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT - 1; i++) {
+        for (FwIndexType j = 0; j < TOTAL_PORT_COUNT - i - 1; j++) {
+            if (m_prioritizedList[j].priority > m_prioritizedList[j + 1].priority) {
+                // Swap metadata
+                QueueMetadata temp = m_prioritizedList[j];
+                m_prioritizedList[j] = m_prioritizedList[j + 1];
+                m_prioritizedList[j + 1] = temp;
+
+                // Update indices to match new positions
+                m_prioritizedList[j].index = j;
+                m_prioritizedList[j + 1].index = j + 1;
+            }
+        }
+    }
+
+    // Emit event for successful priority change
+    this->log_ACTIVITY_HI_QueuePriorityChanged(queueIndex, newPriority);
+
+    // Send command response
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+// ----------------------------------------------------------------------
 // Hook implementations for typed async input ports
 // ----------------------------------------------------------------------
 
