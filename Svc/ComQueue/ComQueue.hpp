@@ -47,10 +47,16 @@ class ComQueue final : public ComQueueComponentBase {
      * Priority is an integer between 0 (inclusive) and TOTAL_PORT_COUNT (exclusive). Queues with lower priority values
      * will be serviced first. Priorities may be repeated and queues sharing priorities will be serviced in a balanced
      * manner.
+     *
+     * Queue mode determines whether messages are dequeued in FIFO or LIFO order.
+     *
+     * Overflow mode determines whether the newest or oldest message is dropped when the queue is full.
      */
     struct QueueConfigurationEntry {
-        FwSizeType depth;      //!< Depth of the queue [0, infinity)
-        FwIndexType priority;  //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        FwSizeType depth;                  //!< Depth of the queue [0, infinity)
+        FwIndexType priority;              //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        QueueMode mode;                    //!< Queue mode (FIFO or LIFO)
+        OverflowMode overflowMode;         //!< Overflow handling mode (DROP_NEWEST or DROP_OLDEST)
     };
 
     /**
@@ -81,10 +87,12 @@ class ComQueue final : public ComQueueComponentBase {
      * method. Index and message size are calculated by the configuration call.
      */
     struct QueueMetadata {
-        FwSizeType depth;      //!< Depth of the queue in messages
-        FwIndexType priority;  //!< Priority of the queue
-        FwIndexType index;     //!< Index of this queue in the prioritized list
-        FwSizeType msgSize;    //!< Message size of messages in this queue
+        FwSizeType depth;           //!< Depth of the queue in messages
+        FwIndexType priority;       //!< Priority of the queue
+        FwIndexType index;          //!< Index of this queue in the prioritized list
+        FwSizeType msgSize;         //!< Message size of messages in this queue
+        QueueMode mode;             //!< Queue mode (FIFO or LIFO)
+        OverflowMode overflowMode;  //!< Overflow handling mode
     };
 
     /**
