@@ -25,8 +25,8 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->entries)); i++) {
         this->entries[i].priority = 0;
         this->entries[i].depth = 0;
-        this->entries[i].mode = QueueMode::FIFO;
-        this->entries[i].overflowMode = OverflowMode::DROP_NEWEST;
+        this->entries[i].mode = Types::QUEUE_FIFO;
+        this->entries[i].overflowMode = Types::QUEUE_DROP_NEWEST;
     }
 }
 
@@ -121,17 +121,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 
         // Setup queue's memory allocation, depth, and message size. Setup is skipped for a depth 0 queue
         if (allocationSize > 0) {
-            // Convert ComQueue enums to Types::Queue enums
-            Types::QueueMode queueMode = (this->m_prioritizedList[i].mode == QueueMode::FIFO)
-                                              ? Types::QUEUE_FIFO
-                                              : Types::QUEUE_LIFO;
-            Types::QueueOverflowMode overflowMode = (this->m_prioritizedList[i].overflowMode == OverflowMode::DROP_NEWEST)
-                                                         ? Types::QUEUE_DROP_NEWEST
-                                                         : Types::QUEUE_DROP_OLDEST;
-
             this->m_queues[this->m_prioritizedList[i].index].setup(
                 reinterpret_cast<U8*>(this->m_allocation) + allocationOffset, allocationSize,
-                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize, queueMode, overflowMode);
+                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize,
+                this->m_prioritizedList[i].mode, this->m_prioritizedList[i].overflowMode);
         }
         allocationOffset += allocationSize;
     }

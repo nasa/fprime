@@ -427,8 +427,8 @@ void ComQueueTester ::testFIFOMode() {
     // Configure first COM queue as FIFO (default) with sufficient depth
     configurationTable.entries[0].priority = 0;
     configurationTable.entries[0].depth = 5;
-    configurationTable.entries[0].mode = QueueMode::FIFO;
-    configurationTable.entries[0].overflowMode = OverflowMode::DROP_NEWEST;
+    configurationTable.entries[0].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_NEWEST;
 
     // Configure other queues with minimal settings
     for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -471,8 +471,8 @@ void ComQueueTester ::testLIFOMode() {
     // Configure first COM queue as LIFO with sufficient depth
     configurationTable.entries[0].priority = 0;
     configurationTable.entries[0].depth = 5;
-    configurationTable.entries[0].mode = QueueMode::LIFO;
-    configurationTable.entries[0].overflowMode = OverflowMode::DROP_NEWEST;
+    configurationTable.entries[0].mode = Types::QUEUE_LIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_NEWEST;
 
     // Configure other queues with minimal settings
     for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -515,8 +515,8 @@ void ComQueueTester ::testDropNewestMode() {
     // Configure first COM queue with DROP_NEWEST and small depth
     configurationTable.entries[0].priority = 0;
     configurationTable.entries[0].depth = 2;
-    configurationTable.entries[0].mode = QueueMode::FIFO;
-    configurationTable.entries[0].overflowMode = OverflowMode::DROP_NEWEST;
+    configurationTable.entries[0].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_NEWEST;
 
     // Configure other queues with minimal settings
     for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -568,8 +568,8 @@ void ComQueueTester ::testDropOldestMode() {
     // Configure first COM queue with DROP_OLDEST and small depth
     configurationTable.entries[0].priority = 0;
     configurationTable.entries[0].depth = 2;
-    configurationTable.entries[0].mode = QueueMode::FIFO;
-    configurationTable.entries[0].overflowMode = OverflowMode::DROP_OLDEST;
+    configurationTable.entries[0].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_OLDEST;
 
     // Configure other queues with minimal settings
     for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -620,8 +620,8 @@ void ComQueueTester ::testLIFOWithDropOldest() {
     // Configure first COM queue as LIFO with DROP_OLDEST
     configurationTable.entries[0].priority = 0;
     configurationTable.entries[0].depth = 2;
-    configurationTable.entries[0].mode = QueueMode::LIFO;
-    configurationTable.entries[0].overflowMode = OverflowMode::DROP_OLDEST;
+    configurationTable.entries[0].mode = Types::QUEUE_LIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_OLDEST;
 
     // Configure other queues with minimal settings
     for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -678,8 +678,8 @@ void ComQueueTester ::testBufferQueueFIFOMode() {
     // Configure first BUFFER queue as FIFO with higher priority (0)
     configurationTable.entries[ComQueue::COM_PORT_COUNT].priority = 0;
     configurationTable.entries[ComQueue::COM_PORT_COUNT].depth = 5;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = QueueMode::FIFO;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = OverflowMode::DROP_NEWEST;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_NEWEST;
 
     // Configure remaining buffer queues
     for (FwIndexType i = ComQueue::COM_PORT_COUNT + 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -731,8 +731,8 @@ void ComQueueTester ::testBufferQueueLIFOMode() {
     // Configure first BUFFER queue as LIFO with higher priority (0)
     configurationTable.entries[ComQueue::COM_PORT_COUNT].priority = 0;
     configurationTable.entries[ComQueue::COM_PORT_COUNT].depth = 5;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = QueueMode::LIFO;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = OverflowMode::DROP_NEWEST;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = Types::QUEUE_LIFO;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_NEWEST;
 
     // Configure remaining buffer queues
     for (FwIndexType i = ComQueue::COM_PORT_COUNT + 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
@@ -784,8 +784,8 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     // Configure first BUFFER queue with DROP_OLDEST
     configurationTable.entries[ComQueue::COM_PORT_COUNT].priority = 0;
     configurationTable.entries[ComQueue::COM_PORT_COUNT].depth = 2;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = QueueMode::FIFO;
-    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = OverflowMode::DROP_OLDEST;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_OLDEST;
 
     // Configure remaining buffer queues
     for (FwIndexType i = ComQueue::COM_PORT_COUNT + 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {

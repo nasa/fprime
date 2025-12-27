@@ -10,8 +10,6 @@
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
-#include <Svc/ComQueue/QueueModeEnumAc.hpp>
-#include <Svc/ComQueue/OverflowModeEnumAc.hpp>
 #include <Utils/Types/Queue.hpp>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
@@ -55,10 +53,10 @@ class ComQueue final : public ComQueueComponentBase {
      * Overflow mode determines whether the newest or oldest message is dropped when the queue is full.
      */
     struct QueueConfigurationEntry {
-        FwSizeType depth;                  //!< Depth of the queue [0, infinity)
-        FwIndexType priority;              //!< Priority of the queue [0, TOTAL_PORT_COUNT)
-        QueueMode mode;                    //!< Queue mode (FIFO or LIFO)
-        OverflowMode overflowMode;         //!< Overflow handling mode (DROP_NEWEST or DROP_OLDEST)
+        FwSizeType depth;                       //!< Depth of the queue [0, infinity)
+        FwIndexType priority;                   //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode (DROP_NEWEST or DROP_OLDEST)
     };
 
     /**
@@ -89,12 +87,12 @@ class ComQueue final : public ComQueueComponentBase {
      * method. Index and message size are calculated by the configuration call.
      */
     struct QueueMetadata {
-        FwSizeType depth;           //!< Depth of the queue in messages
-        FwIndexType priority;       //!< Priority of the queue
-        FwIndexType index;          //!< Index of this queue in the prioritized list
-        FwSizeType msgSize;         //!< Message size of messages in this queue
-        QueueMode mode;             //!< Queue mode (FIFO or LIFO)
-        OverflowMode overflowMode;  //!< Overflow handling mode
+        FwSizeType depth;                       //!< Depth of the queue in messages
+        FwIndexType priority;                   //!< Priority of the queue
+        FwIndexType index;                      //!< Index of this queue in the prioritized list
+        FwSizeType msgSize;                     //!< Message size of messages in this queue
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode
     };
 
     /**

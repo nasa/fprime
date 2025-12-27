@@ -2,12 +2,6 @@ module Svc {
     @ An enumeration of queue data types
     enum QueueType : U8 { COM_QUEUE, BUFFER_QUEUE }
 
-    @ An enumeration of queue modes
-    enum QueueMode { FIFO, LIFO }
-
-    @ An enumeration of overflow handling modes
-    enum OverflowMode { DROP_NEWEST, DROP_OLDEST }
-
     @ Array of queue depths for Fw::Com types
     array ComQueueDepth = [ComQueueComPorts] U32
 
