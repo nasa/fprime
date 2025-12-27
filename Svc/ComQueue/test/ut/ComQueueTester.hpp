@@ -81,6 +81,22 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testContextData();
 
+    void testFIFOMode();
+
+    void testLIFOMode();
+
+    void testDropNewestMode();
+
+    void testDropOldestMode();
+
+    void testLIFOWithDropOldest();
+
+    void testBufferQueueFIFOMode();
+
+    void testBufferQueueLIFOMode();
+
+    void testBufferQueueDropOldestMode();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods

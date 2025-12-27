@@ -49,6 +49,46 @@ TEST(Nominal, ContextData) {
     tester.testContextData();
 }
 
+TEST(QueueModes, FIFOMode) {
+    Svc::ComQueueTester tester;
+    tester.testFIFOMode();
+}
+
+TEST(QueueModes, LIFOMode) {
+    Svc::ComQueueTester tester;
+    tester.testLIFOMode();
+}
+
+TEST(OverflowModes, DropNewest) {
+    Svc::ComQueueTester tester;
+    tester.testDropNewestMode();
+}
+
+TEST(OverflowModes, DropOldest) {
+    Svc::ComQueueTester tester;
+    tester.testDropOldestMode();
+}
+
+TEST(CombinedModes, LIFOWithDropOldest) {
+    Svc::ComQueueTester tester;
+    tester.testLIFOWithDropOldest();
+}
+
+TEST(BufferQueueModes, FIFOMode) {
+    Svc::ComQueueTester tester;
+    tester.testBufferQueueFIFOMode();
+}
+
+TEST(BufferQueueModes, LIFOMode) {
+    Svc::ComQueueTester tester;
+    tester.testBufferQueueLIFOMode();
+}
+
+TEST(BufferQueueOverflowModes, DropOldest) {
+    Svc::ComQueueTester tester;
+    tester.testBufferQueueDropOldestMode();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -10,6 +10,8 @@
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
+#include <Svc/ComQueue/QueueModeEnumAc.hpp>
+#include <Svc/ComQueue/OverflowModeEnumAc.hpp>
 #include <Utils/Types/Queue.hpp>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
