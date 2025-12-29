@@ -38,6 +38,7 @@ struct CfdpLogicalPduHeader {
 @< Structure for configuration parameters for a single CFDP channel
 struct CfdpChannelParams {
   ack_limit: U8 @< number of times to retry ACK (for ex, send FIN and wait for fin-ack)
+  nack_limit: U8 @< number of times to retry NAK before giving up (resets on a single response
 }
 
 @< Struture for the configured array of CFDP channels

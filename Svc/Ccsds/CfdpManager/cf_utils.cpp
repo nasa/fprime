@@ -439,19 +439,5 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat)
     return result;
 }
 
-/*----------------------------------------------------------------
- *
- * Function: CF_TxnStatus_From_ConditionCode
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
-CF_TxnStatus_t CF_TxnStatus_From_ConditionCode(CF_CFDP_ConditionCode_t cc)
-{
-    /* All CFDP CC values directly correspond to a Transaction Status of the same numeric value */
-    return static_cast<CF_TxnStatus_t>(cc);
-}
-
 }  // namespace Ccsds
 }  // namespace Svc

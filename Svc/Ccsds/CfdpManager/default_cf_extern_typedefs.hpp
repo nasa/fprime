@@ -26,11 +26,10 @@
 #ifndef CF_EXTERN_TYPEDEFS_HPP
 #define CF_EXTERN_TYPEDEFS_HPP
 
+#include "Svc/Ccsds/CfdpManager/FppConstantsAc.hpp"
+
 namespace Svc {
 namespace Ccsds {
-
-// TODO This should live in a CFDP config file
-#define CFDP_FILE_NAME_STRING_SIZE 200
 
 /**
  * @brief Values for CFDP file transfer class
@@ -70,8 +69,8 @@ typedef enum
  */
 typedef struct CF_TxnFilenames
 {
-    char src_filename[CFDP_FILE_NAME_STRING_SIZE];
-    char dst_filename[CFDP_FILE_NAME_STRING_SIZE];
+    char src_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
+    char dst_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
 } CF_TxnFilenames_t;
 
 /**
@@ -98,6 +97,13 @@ typedef struct CF_TxnFilenames
 typedef U32 CF_EntityId_t;
 
 /**
+ * @brief Macro type for Entity id that is used in printf style formatting
+ * 
+ * @note This should match the size of CF_EntityId_t
+ */
+#define CF_PRI_ENTITY_ID PRIu32
+
+/**
  * @brief transaction sequence number size
  *
  * @par Description:
@@ -115,6 +121,13 @@ typedef U32 CF_EntityId_t;
  *         Must be one of U8, U16, U32, U64.
  */
 typedef U32 CF_TransactionSeq_t;
+
+/**
+ * @brief Macro type for transaction seqeunces that is used in printf style formatting
+ * 
+ * @note This should match the size of CF_TransactionSeq_t
+ */
+#define CF_PRI_TRANSACTION_SEQ PRIu32
 
 }  // namespace Ccsds
 }  // namespace Svc

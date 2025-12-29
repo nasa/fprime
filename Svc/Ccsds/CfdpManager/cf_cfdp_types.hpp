@@ -38,6 +38,7 @@
 #include "CfdpTimer.hpp"
 #include "CfdpCfg.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
+#include "Svc/Ccsds/CfdpManager/FppConstantsAc.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
@@ -210,7 +211,7 @@ typedef struct CF_Playback
     U16                 num_ts; /**< \brief number of transactions */
     U8                  priority;
     CF_EntityId_t       dest_id;
-    char                pending_file[CFDP_FILE_NAME_STRING_SIZE];
+    char                pending_file[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
 
     bool busy;
     bool diropen;

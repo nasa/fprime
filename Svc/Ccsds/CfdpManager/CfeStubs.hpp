@@ -75,10 +75,16 @@ I32 CF_WrappedLseek(Os::FileHandle fd, I32 offset, int mode)
 // static Status moveFile(const char* sourcePath, const char* destPath);
 // BPC: Added TODO's to report the return Status via EVR
 
+
 // From <Os/FileSystem.hpp>
 // static Status FileSystem::removeFile(const char* path);
 // int32 OS_remove(const char *path)
 I32 OS_remove(const char *path)
+{ return 0; }
+
+// static Status moveFile(const char* sourcePath, const char* destPath);
+// int32 OS_mv(const char *src, const char *dest);
+I32 OS_mv(const char *src, const char *dest)
 { return 0; }
 
 // From <Os/Directory.hpp>

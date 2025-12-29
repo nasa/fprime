@@ -2070,6 +2070,7 @@ bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
 void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
 {
     Os::FileSystem::Status os_status;
+    Fw::String fail_dir;
 
     /* Sender */
     if (CF_CFDP_IsSender(txn))
@@ -2086,7 +2087,8 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
             if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename, txn->chan_num))
             {
                 /* If fail directory is defined attempt move */
-                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, CF_AppData.config_table->fail_dir);
+                fail_dir = txn->cfdpManager->getFailDirParam();
+                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, fail_dir);
                 // TODO Add failure EVR
             }
         }

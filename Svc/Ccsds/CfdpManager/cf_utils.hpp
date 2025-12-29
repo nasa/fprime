@@ -294,18 +294,6 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
 CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
 
 /************************************************************************/
-/** @brief Converts a CFDP condition code to an internal transaction status
- *
- * @par Assumptions, External Events, and Notes:
- *       None
- *
- * @param cc   CFDP condition code
- *
- * @returns Transaction status code
- */
-CF_TxnStatus_t CF_TxnStatus_From_ConditionCode(CF_CFDP_ConditionCode_t cc);
-
-/************************************************************************/
 /** @brief Check if the internal transaction status represents an error
  *
  * @par Assumptions, External Events, and Notes:

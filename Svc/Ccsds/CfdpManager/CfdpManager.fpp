@@ -25,14 +25,29 @@ module Ccsds {
         param OutgoingFileChunkSize: U32 \
             default 480
 
+        @ The maximum number of received bytes to calculate a CRC for in a single wakup period
+        @ TODO - I am not sure if this should exist as I do not believe we are porting the concept of wakeup
+        param RxCrcCalcBytesPerWakeup: U32 \
+            default 16384
+
+        @ Location to store temporary files during uplink transactions
+        param TmpDir: string size CfdpManagerMaxFileSize \
+            default "/tmp"
+
+        @ Location to store files that were downlinked from a polling directory, but failed
+        param FailDir: string size CfdpManagerMaxFileSize \
+            default "/fail"
+
         @ Parameter configuration for an array CFDP channels
         param ChannelConfig: CfdpChannelArrayParams \
             default [ \
                 {
-                    ack_limit = 4 \
+                    ack_limit = 4, \
+                    nack_limit = 4 \
                 }, \
                 {
-                    ack_limit = 4 \
+                    ack_limit = 4, \
+                    nack_limit = 4 \
                 } \
             ]
 

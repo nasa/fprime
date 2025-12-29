@@ -170,8 +170,8 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
   CfdpEntityId CfdpManager:: getLocalEidParam(void)
   {
     Fw::ParamValid valid;
-    // check for coding errors as all CFDP parameters must have a default
-
+    
+    // Check for coding errors as all CFDP parameters must have a default
     CfdpEntityId localEid = this->paramGet_LocalEid(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
@@ -179,17 +179,51 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     return localEid;
   }
 
-  
   U32 CfdpManager:: getOutgoingFileChunkSizeParam(void)
   {
     Fw::ParamValid valid;
-    // check for coding errors as all CFDP parameters must have a default
-
+    
+    // Check for coding errors as all CFDP parameters must have a default
     U32 chunkSize = this->paramGet_OutgoingFileChunkSize(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
     return chunkSize;
+  }
+  U32 CfdpManager:: getRxCrcCalcBytesPerWakeupParam(void)
+  {
+    Fw::ParamValid valid;
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    U32 rxSize = this->paramGet_RxCrcCalcBytesPerWakeup(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return rxSize;
+  }
+  
+  Fw::String CfdpManager:: getTmpDirParam(void)
+  {
+    Fw::ParamValid valid;
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    Fw::String tmpDir = this->paramGet_TmpDir(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return tmpDir;
+  }
+
+  Fw::String CfdpManager:: getFailDirParam(void)
+  {
+    Fw::ParamValid valid;
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    Fw::String failDir = this->paramGet_TmpDir(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return failDir;
   }
 
   U8 CfdpManager:: getAckLimitParam(U8 channelIndex)
@@ -198,7 +232,7 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     
     FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
     
-    // check for coding errors as all CFDP parameters must have a default
+    // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
     CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
@@ -206,6 +240,22 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
 
     // Now get individual parameter
     return paramArray[channelIndex].get_ack_limit();
+  }
+  
+  U8 CfdpManager:: getNackLimitParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_nack_limit();
   }
 
 // ----------------------------------------------------------------------

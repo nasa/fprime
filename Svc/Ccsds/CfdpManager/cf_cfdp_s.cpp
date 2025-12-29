@@ -632,6 +632,7 @@ static CF_CFDP_FileDirectiveDispatchTable_t makeFileDirectiveTable(
 )
 {
     CF_CFDP_FileDirectiveDispatchTable_t table = {};
+    memset(&table, 0, sizeof(table));
 
     table.fdirective[CF_CFDP_FileDirective_FIN] = fin;
     table.fdirective[CF_CFDP_FileDirective_ACK] = ack;
