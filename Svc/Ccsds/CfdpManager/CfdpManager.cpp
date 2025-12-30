@@ -257,6 +257,54 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     // Now get individual parameter
     return paramArray[channelIndex].get_nack_limit();
   }
+  
+  U32 CfdpManager:: getAckTimerParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_ack_timer();
+  }
+
+  U32 CfdpManager:: getInactivityTimerParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_inactivity_timer();
+  }
+
+  Fw::Enabled CfdpManager:: getDequeueEnabledParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_dequeue_enabled();
+  }
 
 // ----------------------------------------------------------------------
 // Buffer helpers

@@ -35,7 +35,7 @@ namespace Svc {
 namespace Ccsds {
 
 // TODO Refactor global data into class member variables
-CfdpEngineData cfdpEngine;
+extern CfdpEngineData cfdpEngine;
 
 /**
  * @brief Structure for use with the CF_CFDP_CycleTx() function
@@ -377,8 +377,9 @@ CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  *
  * @param ptlv_list TLV list from current PDU buffer.
  * @param tlv_type  Type of TLV to append.  Currently must be CF_CFDP_TLV_TYPE_ENTITY_ID.
+ * @param local_eid Local entity ID to append
  */
-void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type);
+void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CF_EntityId_t local_eid);
 
 /************************************************************************/
 /** @brief Unpack a basic PDU header from a received message.

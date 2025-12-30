@@ -425,13 +425,20 @@ typedef struct CF_Channel
 
     const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */
 
+    /**< \brief Reference to the wrapper F' component in order to reference parameters */
+    CfdpManager* cfdpManager;
+
     U8 tick_type;
+
+    U8 channel_id;
 } CF_Channel_t;
 
 /**
  * @brief An engine represents a pairing to a local EID
  *
  * Each engine can have at most CF_MAX_SIMULTANEOUS_TRANSACTIONS
+ * 
+ * @note This struct8ure was ported from CF_Engine_t
  */
 typedef struct CfdpEngineDataT
 {
