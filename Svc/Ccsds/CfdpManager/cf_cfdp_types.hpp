@@ -220,16 +220,27 @@ typedef struct CF_Playback
 } CF_Playback_t;
 
 /**
- * @brief CF Poll entry
- *
+ * \brief Directory poll entry
+ * 
  * Keeps the state of CF directory polling
  */
-typedef struct CF_Poll
+typedef struct CF_PollDir
 {
-    CF_Playback_t pb;
-    CfdpTimer     interval_timer;
-    bool          timer_set;
-} CF_Poll_t;
+    CF_Playback_t pb; /**< \brief State of the currrent playback requests */
+    CfdpTimer interval_timer; /**< \brief Timer object used to poll the directory */
+    // bool timer_set;
+
+    U32 interval_sec; /**< \brief number of seconds to wait before trying a new directory */
+
+    U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
+    CF_CFDP_Class_t cfdp_class; /**< \brief the CFDP class to send */
+    CF_EntityId_t dest_eid;   /**< \brief destination entity id */
+
+    char src_dir[CfdpManagerMaxFileSize]; /**< \brief path to source dir */
+    char dst_dir[CfdpManagerMaxFileSize]; /**< \brief path to destination dir */
+
+    Fw::Enabled enabled; /**< \brief Enabled flag */
+} CF_PollDir_t;
 
 /**
  * @brief Data specific to a class 2 send file transaction
@@ -417,8 +428,8 @@ typedef struct CF_Channel
 
     CF_Playback_t playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];
 
-    /* For polling directories, the configuration data is in a table. */
-    CF_Poll_t poll[CF_MAX_POLLING_DIR_PER_CHAN];
+    /* Polling directory state */
+    CF_Polldir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
 
     // TODO remove all semaphore references
     // osal_id_t sem_id; /**< \brief semaphore id for output pipe */

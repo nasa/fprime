@@ -1456,8 +1456,8 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
  *
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
-                                 CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
-                                 CF_EntityId_t dest_id)
+                                           CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
+                                           CF_EntityId_t dest_id)
 {
     CfdpStatus::T status = CfdpStatus::T::CFDP_SUCCESS;
     I32 ret;
@@ -1502,9 +1502,10 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
 CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
                                  U8 keep, U8 chan, U8 priority, U16 dest_id)
 {
-    int            i;
+    int i;
     CF_Playback_t *pb;
 
+    // Loop through the channel's playback directories to find an open slot
     for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
         pb = &cfdpEngine.channels[chan].playback[i];
@@ -1519,6 +1520,10 @@ CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_file
         // CFE_EVS_SendEvent(CF_CFDP_DIR_SLOT_ERR_EID, CFE_EVS_EventType_ERROR, "CF: no playback dir slot available");
         return CfdpStatus::T::CFDP_ERROR;
     }
+    else
+    {
+        // TODO BPC: Populate playback CF_PollDir_t state here
+    }
 
     return CF_CFDP_PlaybackDir_Initiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
 }
@@ -1532,22 +1537,22 @@ CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_file
 void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
 {
     CF_Transaction_t *txn;
-    os_dirent_t       dirent;
+    char path[CfdpManagerMaxFileSize];
     I32               status;
 
     /* either there's no transaction (first one) or the last one was finished, so check for a new one */
 
-    memset(&dirent, 0, sizeof(dirent));
+    memset(&path, 0, sizeof(path));
 
     while (pb->diropen && (pb->num_ts < CF_NUM_TRANSACTIONS_PER_PLAYBACK))
     {
         if (pb->pending_file[0] == 0)
         {
-            // CFE_ES_PerfLogEntry(CF_PERF_ID_DIRREAD);
-            status = OS_DirectoryRead(pb->dir_id, &dirent);
-            // CFE_ES_PerfLogExit(CF_PERF_ID_DIRREAD);
-
-            if (status != OS_SUCCESS)
+            status = OS_DirectoryRead(pb->dir_id, path);
+            // TODO BPC: Refactor this into an Os::status check
+            // if (status != OS_SUCCESS)
+            // TODO BPC: F' Directory.read handles current directory and parent directory in a different fashion
+            if (status < 0)
             {
                 /* PFTO: can we figure out the difference between "end of dir" and an error? */
                 OS_DirectoryClose(pb->dir_id);
@@ -1555,12 +1560,12 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                 break;
             }
 
-            if (!strcmp(dirent.FileName, ".") || !strcmp(dirent.FileName, ".."))
+            if (!strcmp(path, ".") || !strcmp(path, ".."))
             {
                 continue;
             }
 
-            strncpy(pb->pending_file, OS_DIRENTRY_NAME(dirent), sizeof(pb->pending_file) - 1);
+            strncpy(pb->pending_file, path, sizeof(pb->pending_file) - 1);
             pb->pending_file[sizeof(pb->pending_file) - 1] = 0;
         }
         else
@@ -1575,11 +1580,11 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
             }
 
             snprintf(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename), "%.*s/%.*s",
-                     CF_FILENAME_MAX_PATH - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
+                     CfdpManagerMaxFileSize - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
             snprintf(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename), "%.*s/%.*s",
-                     CF_FILENAME_MAX_PATH - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
+                     CfdpManagerMaxFileSize - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
 
-            CF_CFDP_TxFile_Initiate(txn, pb->cfdp_class, pb->keep, (chan - cfdpEngine.channels), pb->priority,
+            CF_CFDP_TxFile_Initiate(txn, pb->cfdp_class, pb->keep, chan->channel_id, pb->priority,
                                     pb->dest_id);
 
             txn->pb = pb;
@@ -1629,7 +1634,7 @@ void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
 void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
 {
     int       i;
-    const int chan_index = (chan - cfdpEngine.channels);
+    // const int chan_index = (chan - cfdpEngine.channels);
 
     for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
@@ -1647,56 +1652,48 @@ void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
  *-----------------------------------------------------------------*/
 void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
 {
-    CF_Poll_t * poll;
-    CF_ChannelConfig_t *cc;
     CF_PollDir_t * pd;
     U32 i;
-    int count_check;
+    // TODO BPC: count_check is only used for telemetry
+    I32 count_check;
     CfdpStatus::T status;
 
     for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
-        poll        = &chan->poll[i];
-        cc          = &CF_AppData.config_table->chan[chan->channel_id];
-        pd          = &cc->polldir[i];
+        pd = &chan->polldir[i];
         count_check = 0;
 
         if (pd->enabled)
         {
-            if (!poll->pb.busy && !poll->pb.num_ts)
+            if ((pd->pb.busy == false) && (pd->pb.num_ts == 0))
             {
-                if (!poll->timer_set && pd->interval_sec)
+                if ((pd->interval_timer.getStatus() != CfdpTimer::Status::RUNNING) && (pd->interval_sec > 0))
                 {
                     /* timer was not set, so set it now */
-                    poll->interval_timer.setTimer(pd->interval_sec);
-                    poll->timer_set = true;
+                    pd->interval_timer.setTimer(pd->interval_sec);
                 }
-                else if (poll->interval_timer.getStatus() == CfdpTimer::Status::EXPIRED)
+                else if (pd->interval_timer.getStatus() == CfdpTimer::Status::EXPIRED)
                 {
                     /* the timer has expired */
-                    status = CF_CFDP_PlaybackDir_Initiate(&poll->pb, pd->src_dir, pd->dst_dir, pd->cfdp_class, 0,
-                                                       chan->channel_id, pd->priority, pd->dest_eid);
-                    if (status == CfdpStatus::T::CFDP_SUCCESS)
-                    {
-                        poll->timer_set = false;
-                    }
-                    else
+                    status = CF_CFDP_PlaybackDir_Initiate(&pd->pb, pd->src_dir, pd->dst_dir, pd->cfdp_class, 0,
+                                                          chan->channel_id, pd->priority, pd->dest_eid);
+                    if (status != CfdpStatus::T::CFDP_SUCCESS)
                     {
                         /* error occurred in playback directory, so reset the timer */
                         /* an event is sent in CF_CFDP_PlaybackDir_Initiate so there is no reason to
                          * to have another here */
-                        poll->interval_timer.setTimer(pd->interval_sec);
+                        pd->interval_timer.setTimer(pd->interval_sec);
                     }
                 }
                 else
                 {
-                    poll->interval_timer.run();
+                    pd->interval_timer.run();
                 }
             }
             else
             {
                 /* playback is active, so step it */
-                CF_CFDP_ProcessPlaybackDirectory(chan, &poll->pb);
+                CF_CFDP_ProcessPlaybackDirectory(chan, &pd->pb);
             }
 
             count_check = 1;
