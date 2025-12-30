@@ -129,6 +129,12 @@ module Ccsds {
         INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
+    module PvnBitfield {
+        constant SPP_MASK = 0x1 @< 1 << 0x0
+        constant EPP_MASK = 0x8 @< 1 << 0x3
+        constant VALID_MASK = SPP_MASK + EPP_MASK
+    }
+
     @ Transfer Frame Version Numbers are 4 bits long
     @ CCSDS References add 1 to the binary value when counting versions in english (e.g. TM & TC are "version 1" but 0b00)
     @ Until the release of USLP, TFVN were 2 bits long

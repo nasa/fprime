@@ -29,29 +29,39 @@ class AosFramer final : public AosFramerComponentBase {
         OWNED,      //!< The buffer is currently owned by the AosFramer
     };
 
+    struct PDU {
+        Fw::Buffer packet;             //!< User Packet to be spread across M_PDUs
+        ComCfg::FrameContext context;  //!< Context for above user packet
+        FwSizeType offset = 0;         //!< Offset into the above packet to write
+    };
+
     struct AosVc {
         U8 virtualChannelId;  // VCID for this particular virtual channel
-
-        // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
-        // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
-        U8 frameBufferBacker[ComCfg::AosMaxFrameFixedSize];  //!< Buffer to hold the frame data
-        Fw::Buffer frameBuffer;                              //!< Buffer object pointing at frameBufferBacker
-        BufferOwnershipState bufferState =
-            BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
-
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
+        // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
+        // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
+        struct FrameBuffer {
+            U8 backer[ComCfg::AosMaxFrameFixedSize];                   //!< Buffer to hold the frame data
+            Fw::Buffer buffer;                                         //!< Buffer object pointing at frameBufferBacker
+            BufferOwnershipState state = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
+        } frame;
+
         // multi frame per PDU support
-        Fw::Buffer outstanding_packet;             //!< User Packet to be spread across M_PDUs
-        ComCfg::FrameContext outstanding_context;  //!< Context for above user packet
-        FwSizeType outstanding_offset = 0;         //!< Offset into the above packet to write
+        PDU outstanding;
+
+        // Bitfield of supported PVNs for inserted Idle Packets
+        // Default to only supporting SPP Idle packets
+        U8 idle_packet_types = PvnBitfield::SPP_MASK;
 
         // SPP Idle packet backstop
         // Technically we'd only use 6 of the 7 bytes at worst
         // cuz the first one had to go into the prev frame
-        U8 spp_idle_backer[MIN_SPP_LENGTH];
-        U8 spp_idle_offset = 0;
+        struct SppIdle {
+            U8 backer[MIN_SPP_LENGTH];
+            U8 offset = 0;
+        } spp_idle;
 
         // Multi PDU per frame and
         FwSizeType current_payload_offset = 0;  //!< How far into the current PDU we are
@@ -72,8 +82,11 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Configure Managed Parameters for this AOS Framer
     //!
-    void configure(U32 fixedFixedSize,           //!< Number of bytes in each AOS SDL Frame
-                   bool frameErrorControlField,  //!< Whether to enable the frame error control field
+    void configure(U32 fixedFixedSize,                              //!< Number of bytes in each AOS SDL Frame
+                   bool frameErrorControlField,                     //!< Whether to enable the frame error control field
+                   U8 idlePvns = (1 << Pvn::SPACE_PACKET_PROTOCOL)  //!< Bitfield of which Packet Version Numbers to use
+                                                                    //!< for idle packets
+                                                                    //!< Default to SPP
     );
 
   private:
@@ -113,7 +126,7 @@ class AosFramer final : public AosFramerComponentBase {
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
     //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet();
+    void fill_with_idle_packet(AosVc vc&);
 
     void serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length);
 

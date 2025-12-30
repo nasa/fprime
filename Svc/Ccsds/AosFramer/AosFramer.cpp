@@ -21,7 +21,7 @@ AosFramer ::AosFramer(const char* const compName)
 
 AosFramer ::~AosFramer() {}
 
-void AosFramer::configure(U32 fixedFixedSize, bool frameErrorControlField) {
+void AosFramer::configure(U32 fixedFixedSize, bool frameErrorControlField, U8 idlePvns = PvnBitfield::SPP_MASK) {
     static_assert(fixedFixedSize < ComCfg::AosMaxFrameFixedSize,
                   "fixedFrameSize must be less than the maximum defined in ComCfg.fpp");
 
@@ -29,11 +29,17 @@ void AosFramer::configure(U32 fixedFixedSize, bool frameErrorControlField) {
                                        (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0),
                   "AOS Frame Fixed Size must be at least large enough to hold header, trailer and data");
 
+    static_assert(idlePvns & PvnBitfield::VALID_MASK,
+                  "AOS Framer must be provided with a protocol to use for Idle Packets");
+
+    // TODO: is FECF supposed to be VC or Physical channel level config
     this->m_fecf = frameErrorControlField;
 
     // For each vc, init the buffer objects
     for (AosVc currentVc& : this->m_vcs) {
-        currentVc.frameBuffer = {currentVc.frameBufferBacker, fixedFixedSize};
+        currentVc.frame.buffer = {currentVc.frame.backer, fixedFixedSize};
+        // Set the bitmask of PVNs to use for idle packets
+        currentVc.idle_packet_types = idlePvns;
     }
 }
 
@@ -74,28 +80,31 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
 
     // TODO: Check if offset == end && call into compute_trailer
     if (currentVc.current_payload_offset ==) {
+        // Compute Trailer
+        // Push data out
     } else if (this->isConnected_comStatusOut_OutputPort(portNum)) {
-        // We got more room, so ask for my bytes
-        Fw::Success cesondition = Fw::Success::SUCCESS;
+        // We got more room, so ask for more bytes
+        Fw::Success condition = Fw::Success::SUCCESS;
         this->comStatusOut_out(portNum, condition);
     }
-}
-// -------------------------------------------------
-// Trailer (CRC)
-// -------------------------------------------------
-TMTrailer trailer;
-// Compute CRC over the entire frame buffer minus the FECF trailer (Standard 4.1.6)
-U16 crc = Ccsds::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
-// Set the Frame Error Control Field (FECF)
-trailer.set_fecf(crc);
-// Move the serializer pointer to the end of the location where the trailer will be
-// serialized
-frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
-status = frameSerializer.serializeFrom(trailer);
-FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-this->m_bufferState = BufferOwnershipState::NOT_OWNED;
-this->dataOut_out(0, frameBuffer, context);
+    // -------------------------------------------------
+    // Trailer (CRC)
+    // -------------------------------------------------
+    TMTrailer trailer;
+    // Compute CRC over the entire frame buffer minus the FECF trailer (Standard 4.1.6)
+    U16 crc =
+        Ccsds::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
+    // Set the Frame Error Control Field (FECF)
+    trailer.set_fecf(crc);
+    // Move the serializer pointer to the end of the location where the trailer will be
+    // serialized
+    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
+    status = frameSerializer.serializeFrom(trailer);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    this->m_bufferState = BufferOwnershipState::NOT_OWNED;
+    this->dataOut_out(0, frameBuffer, context);
 }
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
@@ -205,7 +214,8 @@ void AosFramer ::setup_m_pdu_header(ComCfg::FrameContext& context) {
     frameSerializer.serializeFrom(muxedPdu);
 }
 
-void AosFramer ::pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, FwSizeType dataOffset) {
+// TODO: Use PDU Struct?
+void AosFramer ::pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, FwSizeType dataOffset = 0) {
     // Ensure the packet is starting within the frame
     const FwSizeType min_size =
         AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
@@ -228,19 +238,18 @@ void AosFramer ::pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, Fw
     frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
                                     currentVc.current_payload_offset);
 
-    const U8* dataStart = data.getData() + currentVc.outstanding_offset;
+    const U8* dataStart = data.getData() + currentVc.outstanding.offset;
     // min of (remaining bytes in buffer and available bytes in frame)
-    U8* dataSize = data.getSize() - currentVc.outstanding_offset;
+    U8* dataSize = data.getSize() - currentVc.outstanding.offset;
 
     // Determine if we can write the whole packet or not
     if (dataSize <= bytesAvailable) {
         dataSize = bytesAvailable;
-        // Clear this out; we're done w/ this packet
-        currentVc.outstanding_offset += dataSize;
+        currentVc.outstanding.offset += dataSize;
 
     } else {
         // Clear out the outstanding; we're done w/ this packet after we serialize
-        currentVc.outstanding_offset = 0;
+        currentVc.outstanding.offset = 0;
     }
 
     status = frameSerializer.serializeFrom(dataStart, dataSize, Fw::Serialization::OMIT_LENGTH);
@@ -249,16 +258,23 @@ void AosFramer ::pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, Fw
     currentVc.m_current_payload_offset += dataSize;
 
     // Return the buffer if no bytes are outstanding
-    if (currentVc.outstanding_offset == 0) {
-        currentVc.outstanding_packet = {};
-        currentVc.outstanding_context = {};
+    if (currentVc.outstanding.offset == 0) {
+        // Return the buffer if this isn't the SPP Idle buff
+        if (frameBuffer.getData() < &currentVc.spp_idle.backer[0] &&
+            frameBuffer.getData() >= &currentVc.spp_idle.backer[0] + sizeof(currentVc.frameBufferBacker)) {
+            this->dataReturnOut_out(0, data,
+                                    context);  // return ownership of the original data buffer
+        }
 
-        this->dataReturnOut_out(0, data,
-                                context);  // return ownership of the original data buffer
+        currentVc.outstanding.packet = {};
+        currentVc.outstanding.context = {};
     }
 }
 
 void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length) {
+    // APID to use for this Idle Packet
+    constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
+
     // Length token is defined as the number of bytes of payload data minus 1
     const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);
 
@@ -267,37 +283,58 @@ void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, 
     header.set_packetSequenceControl(
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.set_packetDataLength(lengthToken);
-    // Serialize header and idle data into the frame
-    serializer.serializeFrom(header);
-    for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
-        serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
-    }
-
-    status = frameSerializer.serializeFrom(header);
+    // Serialize header into frame
+    status = serializer.serializeFrom(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    // Fill with idle pattern
+    for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
+        status = serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    }
 }
 
-void AosFramer ::fill_with_idle_packet() {
-    constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
-    constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
-    const U16 startIndex = static_cast<U16>(serializer.getSize());
-    U16 idlePacketSize = static_cast<U16>(endIndex - startIndex);
+void AosFramer ::fill_with_idle_packet(AosVc vc&) {
+    // Offset to start of payload
+    constexpr U16 startOfPayload = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE;
+    // Bytes that aren't actual PDUs
+    constexpr U16 overhead = startOfPayload + (m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
+    // Bytes for all the PDUs in this VC Frame
+    const U16 pduSize = vc.frame.buffer.getSize() - overhead;
 
+    // How many bytes are left over
+    const U16 idlePacketSize = static_cast<U16>(pduSize - vc.current_frame_offset);
+
+    // Grab a serializer @ the current offset
+    Fw::SerialBufferBase frameSerializer = vc.frame.buffer.getSerializer();
+    frameSerializer.moveSerToOffset(startOfPayload + vc.current_payload_offset);
+
+    // Use EPP if we can (solves for everything)
+    if (vc.idlePacketTypes & PvnBitfield::EPP_MASK) {
+        // TODO: Serialize an EPP of the right size
+
+    }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to
-    if (idlePacketSize < 7) {
-        idlePacketSize = 7;
+    else if (idlePacketSize < 7) {
         // Serialize the Idle packet into the spp_idle_backer
         // TODO: Call into pack_packet w/ the idle packet
-    } else if (false) {
-        // Switch to an EPP Idle packet to fill the small gap
-        // TODO: Add a configurable on EPP based idle packing option
+
+        // Make sure we aren't overwriting a packet fragment
+        FW_ASSERT(!vc.outstanding.packet.isValid());
+
+        // Setup the PDU to point at our idle buffer
+        vc.outstanding.buffer = {vc.spp_idle, MIN_SPP_LENGTH};
+
+        // Write the SPP Idle to the outstanding packet
+        Fw::SerialBufferBase pduSerializer = vc.outstanding.packet.getSerializer();
+        serialize_idle_spp_packet(pduSerializer, MIN_SPP_LENGTH);
+
+        // Use the normal pack command since we have leftovers
+        pack_packet();
     } else {
         // Serialize an idle packet right into the frame
-
-        Fw::SerializeStatus status;
-        // Use our member Fw::Buffer
-        Fw::SerialBufferBase frameSerializer = this->m_frameBuffer.getSerializer();
+        serialize_idle_spp_packet(frameSerializer, idlePacketSize);
     }
 }
 
