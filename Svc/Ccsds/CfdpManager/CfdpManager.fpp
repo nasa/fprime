@@ -46,14 +46,16 @@ module Ccsds {
                     nack_limit = 4, \
                     ack_timer = 3, \
                     inactivity_timer = 30, \
-                    dequeue_enabled = Fw.Enabled.ENABLED \
+                    dequeue_enabled = Fw.Enabled.ENABLED, \
+                    move_dir = "" \
                 }, \
                 {
                     ack_limit = 4, \
                     nack_limit = 4, \
                     ack_timer = 3, \
                     inactivity_timer = 30, \
-                    dequeue_enabled = Fw.Enabled.ENABLED \
+                    dequeue_enabled = Fw.Enabled.ENABLED, \
+                    move_dir = "" \
                 } \
             ]
 

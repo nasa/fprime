@@ -39,6 +39,7 @@
 #include "CfdpCfg.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 #include "Svc/Ccsds/CfdpManager/FppConstantsAc.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpFrozenEnumAc.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
@@ -228,7 +229,6 @@ typedef struct CF_PollDir
 {
     CF_Playback_t pb; /**< \brief State of the currrent playback requests */
     CfdpTimer interval_timer; /**< \brief Timer object used to poll the directory */
-    // bool timer_set;
 
     U32 interval_sec; /**< \brief number of seconds to wait before trying a new directory */
 
@@ -429,7 +429,7 @@ typedef struct CF_Channel
     CF_Playback_t playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];
 
     /* Polling directory state */
-    CF_Polldir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
+    CF_PollDir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
 
     // TODO remove all semaphore references
     // osal_id_t sem_id; /**< \brief semaphore id for output pipe */
@@ -438,10 +438,15 @@ typedef struct CF_Channel
 
     /**< \brief Reference to the wrapper F' component in order to reference parameters */
     CfdpManager* cfdpManager;
-
+    
     U8 tick_type;
-
+    
+    /**< \brief ID used to index into the engine channel array */
     U8 channel_id;
+    
+    /**< \brief State of the channel */
+    CfdpFrozen::T frozen;
+
 } CF_Channel_t;
 
 /**

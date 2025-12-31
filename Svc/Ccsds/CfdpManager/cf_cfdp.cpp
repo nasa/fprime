@@ -35,6 +35,7 @@
 #include "cf_cfdp_s.hpp"
 #include "cf_utils.hpp"
 #include "cf_cfdp_dispatch.hpp"
+#include "cf_logical_pdu.hpp"
 #include "CfeStubs.hpp"
 
 #include <Os/FileSystem.hpp>
@@ -1042,6 +1043,7 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         // BPC: Add pointer to component in order to send output buffers
         cfdpEngine.channels[i].cfdpManager = &cfdpManager;
         cfdpEngine.channels[i].channel_id = i;
+        cfdpEngine.channels[i].frozen = CfdpFrozen::T::NOT_FROZEN;
 
         // TODO remove pipe references
         // snprintf(nbuf, sizeof(nbuf) - 1, "%s%d", CF_CHANNEL_PIPE_PREFIX, i);
@@ -1500,7 +1502,7 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
  *
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
-                                 U8 keep, U8 chan, U8 priority, U16 dest_id)
+                                  U8 keep, U8 chan, U8 priority, U16 dest_id)
 {
     int i;
     CF_Playback_t *pb;
@@ -1522,10 +1524,9 @@ CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_file
     }
     else
     {
-        // TODO BPC: Populate playback CF_PollDir_t state here
+        return CF_CFDP_PlaybackDir_Initiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
     }
 
-    return CF_CFDP_PlaybackDir_Initiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
 }
 
 /*----------------------------------------------------------------
@@ -1538,7 +1539,8 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
 {
     CF_Transaction_t *txn;
     char path[CfdpManagerMaxFileSize];
-    I32               status;
+    I32 status;
+    I32 n = 0;
 
     /* either there's no transaction (first one) or the last one was finished, so check for a new one */
 
@@ -1579,10 +1581,51 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                 break;
             }
 
-            snprintf(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename), "%.*s/%.*s",
-                     CfdpManagerMaxFileSize - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
-            snprintf(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename), "%.*s/%.*s",
-                     CfdpManagerMaxFileSize - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
+            // snprintf(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename), "%.*s/%.*s",
+            //          CfdpManagerMaxFileSize - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
+            const size_t src_size = sizeof(txn->history->fnames.src_filename);
+
+            n = snprintf(
+                txn->history->fnames.src_filename,
+                src_size,
+                "%.*s/",
+                static_cast<int>(src_size - 2),
+                pb->fnames.src_filename
+            );
+
+            if (n > 0 && static_cast<size_t>(n) < src_size)
+            {
+                snprintf(
+                    txn->history->fnames.src_filename + n,
+                    src_size - static_cast<size_t>(n),
+                    "%.*s",
+                    static_cast<int>(src_size - static_cast<size_t>(n) - 1),
+                    pb->pending_file
+                );
+            }
+
+            // snprintf(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename), "%.*s/%.*s",
+            //          CfdpManagerMaxFileSize - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
+            const size_t dst_size = sizeof(txn->history->fnames.dst_filename);
+
+            n = snprintf(
+                txn->history->fnames.dst_filename,
+                dst_size,
+                "%.*s/",
+                static_cast<int>(dst_size - 2),
+                pb->fnames.dst_filename
+            );
+
+            if (n > 0 && static_cast<size_t>(n) < dst_size)
+            {
+                snprintf(
+                    txn->history->fnames.dst_filename + n,
+                    dst_size - static_cast<size_t>(n),
+                    "%.*s",
+                    static_cast<int>(dst_size - static_cast<size_t>(n) - 1),
+                    pb->pending_file
+                );
+            }
 
             CF_CFDP_TxFile_Initiate(txn, pb->cfdp_class, pb->keep, chan->channel_id, pb->priority,
                                     pb->dest_id);
@@ -1655,13 +1698,13 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
     CF_PollDir_t * pd;
     U32 i;
     // TODO BPC: count_check is only used for telemetry
-    I32 count_check;
+    // I32 count_check;
     CfdpStatus::T status;
 
     for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = &chan->polldir[i];
-        count_check = 0;
+        // count_check = 0;
 
         if (pd->enabled)
         {
@@ -1696,7 +1739,7 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
                 CF_CFDP_ProcessPlaybackDirectory(chan, &pd->pb);
             }
 
-            count_check = 1;
+            // count_check = 1;
         }
 
         // CF_CFDP_UpdatePollPbCounted(&poll->pb, count_check, &CF_AppData.hk.Payload.channel_hk[chan_index].poll_counter);
@@ -1718,13 +1761,14 @@ void CF_CFDP_CycleEngine(void)
     {
         for (i = 0; i < CF_NUM_CHANNELS; ++i)
         {
-            chan                               = &cfdpEngine.channels[i];
+            chan = &cfdpEngine.channels[i];
             cfdpEngine.outgoing_counter = 0;
 
             /* consume all received messages, even if channel is frozen */
-            CF_CFDP_ReceiveMessage(chan);
+            // BPC: Receive messages are consumed by the CfdpManager thread
+            // CF_CFDP_ReceiveMessage(chan);
 
-            if (!CF_AppData.hk.Payload.channel_hk[i].frozen)
+            if (chan->frozen == CfdpFrozen::T::NOT_FROZEN)
             {
                 /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
                  * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
@@ -1787,7 +1831,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
             CF_CFDP_HandleNotKeepFile(txn);
         }
 
-        txn->fd = OS_OBJECT_ID_UNDEFINED;
+        // txn->fd = OS_OBJECT_ID_UNDEFINED;
     }
 
     if (txn->history != NULL)
@@ -1840,9 +1884,9 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
      * This is not normal/expected so log it if this happens. */
     if (OS_ObjectIdDefined(txn->fd))
     {
-        CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
+        // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
         OS_close(txn->fd);
-        txn->fd = OS_OBJECT_ID_UNDEFINED;
+        // txn->fd = OS_OBJECT_ID_UNDEFINED;
     }
 
     CF_DequeueTransaction(txn); /* this makes it "float" (not in any queue) */
@@ -1903,37 +1947,40 @@ void CF_CFDP_SetTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat)
  *-----------------------------------------------------------------*/
 void CF_CFDP_SendEotPkt(CF_Transaction_t *txn)
 {
-    CF_EotPacket_t * EotPktPtr;
-    CFE_SB_Buffer_t *BufPtr;
+    // BPC: TODO This is sending a telemetry packet at the end of a completed transaction
+    // How do we want to handle this in F' telemetry?
 
-    /*
-    ** Get a Message block of memory and initialize it
-    */
-    BufPtr = CFE_SB_AllocateMessageBuffer(sizeof(*EotPktPtr));
+    // CF_EotPacket_t * EotPktPtr;
+    // CFE_SB_Buffer_t *BufPtr;
 
-    if (BufPtr != NULL)
-    {
-        EotPktPtr = (void *)BufPtr;
+    // /*
+    // ** Get a Message block of memory and initialize it
+    // */
+    // BufPtr = CFE_SB_AllocateMessageBuffer(sizeof(*EotPktPtr));
 
-        CFE_MSG_Init(CFE_MSG_PTR(EotPktPtr->TelemetryHeader), CFE_SB_ValueToMsgId(CF_EOT_TLM_MID), sizeof(*EotPktPtr));
+    // if (BufPtr != NULL)
+    // {
+    //     EotPktPtr = (void *)BufPtr;
 
-        EotPktPtr->Payload.channel    = txn->chan_num;
-        EotPktPtr->Payload.direction  = txn->history->dir;
-        EotPktPtr->Payload.fnames     = txn->history->fnames;
-        EotPktPtr->Payload.state      = txn->state;
-        EotPktPtr->Payload.txn_stat   = txn->history->txn_stat;
-        EotPktPtr->Payload.src_eid    = txn->history->src_eid;
-        EotPktPtr->Payload.peer_eid   = txn->history->peer_eid;
-        EotPktPtr->Payload.seq_num    = txn->history->seq_num;
-        EotPktPtr->Payload.fsize      = txn->fsize;
-        EotPktPtr->Payload.crc_result = txn->crc.getValue();
+    //     CFE_MSG_Init(CFE_MSG_PTR(EotPktPtr->TelemetryHeader), CFE_SB_ValueToMsgId(CF_EOT_TLM_MID), sizeof(*EotPktPtr));
 
-        /*
-        ** Timestamp and send eod of transaction telemetry
-        */
-        CFE_SB_TimeStampMsg(CFE_MSG_PTR(EotPktPtr->TelemetryHeader));
-        CFE_SB_TransmitBuffer(BufPtr, true);
-    }
+    //     EotPktPtr->Payload.channel    = txn->chan_num;
+    //     EotPktPtr->Payload.direction  = txn->history->dir;
+    //     EotPktPtr->Payload.fnames     = txn->history->fnames;
+    //     EotPktPtr->Payload.state      = txn->state;
+    //     EotPktPtr->Payload.txn_stat   = txn->history->txn_stat;
+    //     EotPktPtr->Payload.src_eid    = txn->history->src_eid;
+    //     EotPktPtr->Payload.peer_eid   = txn->history->peer_eid;
+    //     EotPktPtr->Payload.seq_num    = txn->history->seq_num;
+    //     EotPktPtr->Payload.fsize      = txn->fsize;
+    //     EotPktPtr->Payload.crc_result = txn->crc.getValue();
+
+    //     /*
+    //     ** Timestamp and send eod of transaction telemetry
+    //     */
+    //     CFE_SB_TimeStampMsg(CFE_MSG_PTR(EotPktPtr->TelemetryHeader));
+    //     CFE_SB_TransmitBuffer(BufPtr, true);
+    // }
 }
 
 /*----------------------------------------------------------------
@@ -1964,8 +2011,10 @@ int CF_CFDP_CopyStringFromLV(char *buf, size_t buf_maxsz, const CF_Logical_Lv_t 
  *-----------------------------------------------------------------*/
 void CF_CFDP_CancelTransaction(CF_Transaction_t *txn)
 {
-    void (*fns[CF_Direction_NUM])(CF_Transaction_t *) = {
-        [CF_Direction_RX] = CF_CFDP_R_Cancel, [CF_Direction_TX] = CF_CFDP_S_Cancel};
+    void (*fns[CF_Direction_NUM])(CF_Transaction_t*) = {nullptr};
+
+    fns[CF_Direction_RX] = CF_CFDP_R_Cancel;
+    fns[CF_Direction_TX] = CF_CFDP_S_Cancel;
 
     if (!txn->flags.com.canceled)
     {
@@ -2004,10 +2053,10 @@ CF_CListTraverse_Status_t CF_CFDP_CloseFiles(CF_CListNode_t *node, void *context
  *-----------------------------------------------------------------*/
 void CF_CFDP_DisableEngine(void)
 {
-    int                        i;
-    int                        j;
+    U32 i;
+    U32 j;
     static const CF_QueueIdx_t CLOSE_QUEUES[] = {CF_QueueIdx_RX, CF_QueueIdx_TXA, CF_QueueIdx_TXW};
-    CF_Channel_t *             chan;
+    CF_Channel_t * chan;
 
     cfdpEngine.enabled = false;
 
@@ -2032,9 +2081,9 @@ void CF_CFDP_DisableEngine(void)
 
         for (j = 0; j < CF_MAX_POLLING_DIR_PER_CHAN; ++j)
         {
-            if (chan->poll[j].pb.busy)
+            if (chan->polldir[j].pb.busy)
             {
-                OS_DirectoryClose(chan->poll[j].pb.dir_id);
+                OS_DirectoryClose(chan->polldir[j].pb.dir_id);
             }
         }
 
@@ -2054,22 +2103,20 @@ void CF_CFDP_DisableEngine(void)
  *-----------------------------------------------------------------*/
 bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
 {
-    bool                return_code                  = false;
-    char                src_dir[CF_FILENAME_MAX_LEN] = "\0";
-    CF_ChannelConfig_t *cc;
-    CF_PollDir_t *      pd;
-    int                 i;
+    bool return_code = false;
+    char src_dir[CF_FILENAME_MAX_LEN] = "\0";
+    CF_PollDir_t * pd;
+    int i;
 
-    char *last_slash = strrchr(src_file, '/');
+    const char* last_slash = strrchr(src_file, '/');
     if (last_slash != NULL)
     {
         strncpy(src_dir, src_file, last_slash - src_file);
     }
 
-    cc = &CF_AppData.config_table->chan[chan_num];
     for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
-        pd = &cc->polldir[i];
+        pd = &cfdpEngine.channels[chan_num].polldir[i];
         if (strcmp(src_dir, pd->src_dir) == 0)
         {
             return_code = true;
@@ -2090,6 +2137,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
 {
     Os::FileSystem::Status os_status;
     Fw::String fail_dir;
+    Fw::String move_dir;
 
     /* Sender */
     if (CF_CFDP_IsSender(txn))
@@ -2097,8 +2145,13 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
         if (!CF_TxnStatus_IsError(txn->history->txn_stat))
         {
             /* If move directory is defined attempt move */
-            os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, CF_AppData.config_table->chan[txn->chan_num].move_dir);
-            // TODO Add failure EVR
+            move_dir = txn->cfdpManager->getMoveDirParam(txn->chan_num);
+            if(move_dir.length() > 0)
+            {
+                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, move_dir.toChar());
+                // TODO Add failure EVR
+                (void) os_status;
+            }
         }
         else
         {
@@ -2107,8 +2160,12 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
             {
                 /* If fail directory is defined attempt move */
                 fail_dir = txn->cfdpManager->getFailDirParam();
-                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, fail_dir);
-                // TODO Add failure EVR
+                if(fail_dir.length() > 0)
+                {
+                    os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, fail_dir.toChar());
+                    // TODO Add failure EVR
+                    (void) os_status;
+                }
             }
         }
     }

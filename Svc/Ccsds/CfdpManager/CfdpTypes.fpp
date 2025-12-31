@@ -12,6 +12,11 @@ enum CfdpStatus {
   CFDP_SEND_PDU_ERROR @< Send PDU: Send failed
 }
 
+enum CfdpFrozen {
+  NOT_FROZEN @< CFDP channel operations are executing nominally
+  FROZEN @< CFDP channel operations are frozen
+}
+
 @< Structure representing base CFDP PDU header
 @< CF_CFDP_PduHeader_t for encoded form
 struct CfdpLogicalPduHeader {
@@ -42,11 +47,11 @@ struct CfdpChannelParams {
   ack_timer: U32 @< Acknowledge timer in seconds
   inactivity_timer: U32 @< Inactivity timer in seconds
   dequeue_enabled: Fw.Enabled @< if enabled, then the channel will make pending transactions active
+  move_dir: string size CfdpManagerMaxFileSize @< Move directory if not empty
 }
 
 @< Struture for the configured array of CFDP channels
 array CfdpChannelArrayParams = [CfdpManagerNumChannels] CfdpChannelParams
-
 
 } @< Ccsds
 } @< Svc

@@ -306,6 +306,22 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     return paramArray[channelIndex].get_dequeue_enabled();
   }
 
+  Fw::String CfdpManager:: getMoveDirParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+    
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_move_dir();
+  }
+
 // ----------------------------------------------------------------------
 // Buffer helpers
 // ----------------------------------------------------------------------

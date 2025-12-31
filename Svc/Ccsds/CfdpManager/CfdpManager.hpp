@@ -74,6 +74,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
   U32 getAckTimerParam(U8 channelIndex);
   U32 getInactivityTimerParam(U8 channelIndex);
   Fw::Enabled getDequeueEnabledParam(U8 channelIndex);
+  Fw::String getMoveDirParam(U8 channelIndex);
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
