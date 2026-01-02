@@ -1,43 +1,48 @@
-/************************************************************************
- * NASA Docket No. GSC-18,447-1, and identified as “CFS CFDP (CF)
- * Application version 3.0.0”
- *
- * Copyright (c) 2019 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration.
- * All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ************************************************************************/
+// ======================================================================
+// \title  CfdpPdu.hpp
+// \brief  Structures defining CFDP PDUs
+//
+// This file is a port of the cf_cfdp_pdu.hpp file from the 
+// NASA Core Flight System (cFS) CFDP (CF) Application,
+// version 3.0.0, adapted for use within the F-Prime (F') framework.
+//
+// The structures and enumerations defined in this file with a CF_CFDP
+// prefix are defined according to the CCSDS CFDP specification (727.0-B-5).
+// These values must match the specification for that structure/field, they are
+// not locally changeable.
+// 
+// Many of the structures defined in this file are variably-sized when
+// encoded for network transmission.  As a result, C structures used to map
+// to these structures are of limited usefulness, generally only capable
+// of describing the first element(s) where offsets are fixed.  A marker member
+// is utilized to indicate where the fixed data ends and variable
+// length data begins.  At some point, the structures in this file
+// should change to encode/decode functions.
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
 
-/**
- * @file
- *
- * Structures defining to CFDP PDUs
- *
- * Note that structures and enumerations defined in this file with a CF_CFDP
- * prefix are defined according to the CCSDS CFDP specification (727.0-B-5).
- * These values must match the specification for that structure/field, they are
- * not locally changeable.
- *
- * @note Many of the structures defined in this file are variably-sized when
- * encoded for network transmission.  As a result, C structures used to map
- * to these structures are of limited usefulness, generally only capable
- * of describing the first element(s) where offsets are fixed.  A marker member
- * is utilized to indicate where the fixed data ends and variable
- * length data begins.  At some point, the structures in this file
- * should change to encode/decode functions.
- */
-
-#ifndef CF_CFDP_PDU_HPP
-#define CF_CFDP_PDU_HPP
+#ifndef CFDP_PDU_HPP
+#define CFDP_PDU_HPP
 
 #include <stddef.h>
 
@@ -389,4 +394,4 @@ typedef struct CF_CFDP_PduFileDataContent
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif /* !CF_CFDP_PDU_HPP */
+#endif /* !CFDP_PDU_HPP */

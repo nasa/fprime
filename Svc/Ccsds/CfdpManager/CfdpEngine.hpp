@@ -1,34 +1,41 @@
-/************************************************************************
- * NASA Docket No. GSC-18,447-1, and identified as “CFS CFDP (CF)
- * Application version 3.0.0”
- *
- * Copyright (c) 2019 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration.
- * All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ************************************************************************/
+// ======================================================================
+// \title  CfdpEngine.hpp
+// \brief  CFDP Engine header
+//
+// This file is a port of the cf_cfdp.hpp file from the 
+// NASA Core Flight System (cFS) CFDP (CF) Application,
+// version 3.0.0, adapted for use within the F-Prime (F') framework.
+//
+// CFDP engine and packet parsing header file
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
 
-/**
- * @file
- *
- *  The CF Application CFDP engine and packet parsing header file
- */
-
-#ifndef CF_CFDP_HPP
-#define CF_CFDP_HPP
+#ifndef CFDP_ENGINE_HPP
+#define CFDP_ENGINE_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include "cf_cfdp_types.hpp"
+#include "CfdpTypes.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 namespace Svc {
@@ -810,4 +817,4 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn);
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif /* !CF_CFDP_HPP */
+#endif /* !CFDP_ENGINE_HPP */

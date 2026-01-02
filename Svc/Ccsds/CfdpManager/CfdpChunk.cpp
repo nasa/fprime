@@ -1,41 +1,44 @@
-/************************************************************************
- * NASA Docket No. GSC-18,447-1, and identified as “CFS CFDP (CF)
- * Application version 3.0.0”
- *
- * Copyright (c) 2019 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration.
- * All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ************************************************************************/
-
-/**
- * @file
- *
- *  The CF Application chunks (sparse gap tracking) logic file
- *
- *  This class handles the complexity of sparse gap tracking so that
- *  the CFDP engine doesn't need to worry about it. Information is given
- *  to the class and when needed calculations are made internally to
- *  help the engine build NAK packets. Received NAK segment requests
- *  are stored in this class as well and used for re-transmit processing.
- *
- *  This is intended to be mostly a generic purpose class used by CF.
- */
+// ======================================================================
+// \title  CfdpChunk.cpp
+// \brief  CFDP chunks (sparse gap tracking) logic file
+//
+// This file is a port of the cf_chunks.cpp file from the 
+// NASA Core Flight System (cFS) CFDP (CF) Application,
+// version 3.0.0, adapted for use within the F-Prime (F') framework.
+//
+// This class handles the complexity of sparse gap tracking so that
+// the CFDP engine doesn't need to worry about it. Information is given
+// to the class and when needed calculations are made internally to
+// help the engine build NAK packets. Received NAK segment requests
+// are stored in this class as well and used for re-transmit processing.
+// 
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
 
 #include <string.h>
 
 #include <Fw/Types/Assert.hpp>
 
-#include "cf_chunk.hpp"
+#include "CfdpChunk.hpp"
 
 namespace Svc {
 namespace Ccsds {

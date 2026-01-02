@@ -1,45 +1,58 @@
-/************************************************************************
- * NASA Docket No. GSC-18,447-1, and identified as “CFS CFDP (CF)
- * Application version 3.0.0”
- *
- * Copyright (c) 2019 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration.
- * All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ************************************************************************/
+// ======================================================================
+// \title  CfdpLogicalPdu.hpp
+// \brief  CFDP Logical PDU type definitions
+//
+// This file is a port of the cf_logical_pdu.hpp file from the 
+// NASA Core Flight System (cFS) CFDP (CF) Application,
+// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// 
+// Structures defining logical CFDP PDUs
+//
+// These are data structures that reflect the logical
+// content of the CFDP PDUs defined in CfdpPdu.hpp. Note these are
+// _NOT_ intended to reflect the bitwise structures defined
+// in the CCSDS blue book, but rather the values contained
+// within those structures, in a form that can be used by software.
+//
+// Specifically, this intent differs in the following ways:
+//   - All numeric fields are in native byte order
+//   - All structures are padded/aligned according to native CPU (i.e. not packed)
+//   - All bit-fields are exploded, where each field/group is a separate member
+//   - Variable-size content is normalized, allocated as the maximum possible size
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
 
 /**
  * @file
  *
- * Structures defining logical CFDP PDUs
- *
- * These are CF-specific data structures that reflect the logical
- * content of the CFDP PDUs defined in cf_cfdp_pdu.h.  Note these are
- * _NOT_ intended to reflect the bitwise structures defined
- * in the CCSDS blue book, but rather the values contained
- * within those structures, in a form that can be used by software.
- *
- * Specifically, this intent differs in the following ways:
- * - All numeric fields are in native byte order
- * - All structures are padded/aligned according to native CPU (i.e. not packed)
- * - All bit-fields are exploded, where each field/group is a separate member
- * - Variable-size content is normalized, allocated as the maximum possible size
+
  */
 
-#ifndef CF_LOGICAL_PDU_HPP
-#define CF_LOGICAL_PDU_HPP
+#ifndef CFDP_LOGICAL_PDU_HPP
+#define CFDP_LOGICAL_PDU_HPP
 
 #include "default_cf_extern_typedefs.hpp"
-#include "cf_cfdp_pdu.hpp"
+#include "CfdpPdu.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -374,4 +387,4 @@ typedef struct CF_Logical_PduBuffer
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif /* !CF_LOGICAL_PDU_HPP */
+#endif /* !CFDP_LOGICAL_PDU_HPP */

@@ -1,40 +1,43 @@
-/************************************************************************
- * NASA Docket No. GSC-18,447-1, and identified as “CFS CFDP (CF)
- * Application version 3.0.0”
- *
- * Copyright (c) 2019 United States Government as represented by the
- * Administrator of the National Aeronautics and Space Administration.
- * All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ************************************************************************/
+// ======================================================================
+// \title  CfdpTypes.hpp
+// \brief  Macros and data types used by CFDP
+//
+// This file is a port of the cf_cfdp_types.hpp file from the 
+// NASA Core Flight System (cFS) CFDP (CF) Application,
+// version 3.0.0, adapted for use within the F-Prime (F') framework.
+//
+// Functions should not be declared in this file. This should
+// be limited to shared macros and data types only. 
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
 
-/**
- * @file
- *
- * Macros and data types used across the CF application
- *
- * @note Functions should not be declared in this file.  This should
- * be limited to shared macros and data types only.  For unit testing,
- * functions should be declared only in a header file with the same name
- * as the C file that defines that function.
- */
+#ifndef CFDP_TYPES_HPP
+#define CFDP_TYPES_HPP
 
-#ifndef CF_CFDP_TYPES_HPP
-#define CF_CFDP_TYPES_HPP
-
-#include "cf_cfdp_pdu.hpp"
-#include "cf_clist.hpp"
-#include "cf_chunk.hpp"
-#include "cf_codec.hpp"
+#include "CfdpPdu.hpp"
+#include "CfdpClist.hpp"
+#include "CfdpChunk.hpp"
+#include "CfdpCodec.hpp"
 #include "CfdpTimer.hpp"
 #include "CfdpCfg.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
@@ -44,7 +47,6 @@
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
-
 
 namespace Svc {
 namespace Ccsds {
@@ -485,4 +487,4 @@ typedef struct CfdpEngineDataT
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif /* !CF_CFDP_TYPES_HPP */
+#endif /* !CFDP_TYPES_HPP */

@@ -9,7 +9,7 @@
 
 #include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
-#include "Svc/Ccsds/CfdpManager/cf_logical_pdu.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp"
 
 namespace Svc {
 namespace Ccsds {
