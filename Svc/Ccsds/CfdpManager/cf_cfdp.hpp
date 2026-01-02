@@ -83,11 +83,9 @@ void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuff
  * @param pdec           Decoder state structure, will be reset/initialized by this call to point to msgbuf.
  * @param msgbuf         Pointer to encapsulation message, in this case a CFE software bus message
  * @param ph             Pointer to logical PDU buffer content, will be cleared to all zero by this call
- * @param encap_hdr_size Offset of first CFDP PDU octet within buffer
  * @param total_size     Total size of msgbuf encapsulation structure (decoding cannot exceed this)
  */
-void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
-                         size_t total_size);
+void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size);
 
 /* engine execution functions */
 
@@ -659,6 +657,20 @@ void CF_CFDP_RecvHold(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param ph   The logical PDU buffer being received
  */
 void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+
+/************************************************************************/
+/** @brief Receive PDU processing entry point
+ *
+ * Invoked from the transport interface (e.g. software bus or equivalent) after
+ * reception of a PDU from the network.
+ *
+ * @par Assumptions, External Events, and Notes:
+ *      None
+ *
+ * @param chan            Channel pointer
+ * @param ph              Received PDU buffer
+ */
+void CF_CFDP_ReceivePdu(CF_Channel_t *chan, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief List traversal function to close all files in all active transactions.

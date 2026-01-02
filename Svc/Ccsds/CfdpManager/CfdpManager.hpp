@@ -88,10 +88,16 @@ class CfdpManager final : public CfdpManagerComponentBase {
                         U32 context           //!< The call order
     ) override;
 
+    //! Handler for input port dataReturnIn
     void dataReturnIn_handler(
             FwIndexType portNum, //!< The port number
             Fw::Buffer& data,
             const ComCfg::FrameContext& context
+    ) override;
+
+    //! Handler for input port dataIn
+    void dataIn_handler(FwIndexType portNum, //!< The port number
+                        Fw::Buffer& fwBuffer //!< The buffer
     ) override;
                         
   private:

@@ -7,6 +7,7 @@
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 
 #include "cf_cfdp.hpp"
+#include "cf_cfdp.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -57,7 +58,31 @@ void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 {
     // dataReturnIn is the allocated buffer coming back from the dataOut call
     // Port mapping is the same from bufferAllocate -> dataOut -> dataReturnIn -> bufferDeallocate
+    FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
     this->bufferDeallocate_out(portNum, data);
+}
+
+void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
+{
+  CF_Channel_t* channel = NULL;
+  CF_Logical_PduBuffer_t pdu;
+  CF_DecoderState_t decoder;
+
+  // There is a direct mapping between port number and channel index
+  // Get the channel based on the port number
+  FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
+  FW_ASSERT(portNum >= 0, portNum);
+  channel = &cfdpEngine.channels[portNum];
+
+  // This input port handler replicates the receive behavior in CF_CFDP_ReceiveMessage in cf_cfdp_sbintf.c
+  pdu.pdec = &decoder;
+  CF_CFDP_DecodeStart(pdu.pdec, fwBuffer.getData(), &pdu, fwBuffer.getSize());
+
+  // Identify and dispatch this PDU
+  CF_CFDP_ReceivePdu(channel, &pdu);
+  
+  // Return buffer
+  this->dataInReturn_out(portNum, fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -72,8 +97,8 @@ void CfdpManager ::TODO_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 // ----------------------------------------------------------------------
 // Port calls that are invoked by the CFDP engine
 // These functions are analogous to the functions in cf_cfdp_sbintf.*
-// However these functions are not direct ports due to the architectural
-// differences between F' and cFE
+// However these functions were not directly migrated due to the
+// architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
 CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size)

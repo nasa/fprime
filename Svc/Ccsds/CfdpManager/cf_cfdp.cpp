@@ -60,7 +60,8 @@ void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuff
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
 
-    /* attach encoder object to PDU buffer which is attached to SB (encapsulation) buffer */
+    /* attach encoder object to PDU buffer which is inside in an Fw::Buffer */
+    // TODO BPC: msgbuf should be passed in as the Fw::Buffer
     penc->base = msgbuf;
     ph->penc   = penc;
 
@@ -79,26 +80,12 @@ void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_P
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
 
-    /* attach decoder object to PDU buffer which is attached to SB (encapsulation) buffer */
+    /* attach decoder object to PDU buffer which is inside in an Fw::Buffer */
+    // TODO BPC: msgbuf should be passed in as the Fw::Buffer
     pdec->base = msgbuf;
     ph->pdec   = pdec;
 
     CF_CFDP_CodecReset(&pdec->codec_state, total_size);
-
-    /*
-     * adjust so that the base points to the actual PDU Header, this makes the offset
-     * refer to the real offset within the CFDP PDU, rather than the offset of the SB
-     * msg container.
-     */
-    if (total_size > encap_hdr_size)
-    {
-        pdec->codec_state.max_size -= encap_hdr_size;
-        pdec->base += encap_hdr_size;
-    }
-    else
-    {
-        CF_CFDP_CodecSetDone(&pdec->codec_state);
-    }
 }
 
 /*----------------------------------------------------------------
@@ -285,7 +272,8 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     CF_Logical_PduHeader_t *hdr;
     U8* msgPtr = NULL;
     U8 eid_len;
-    CfdpStatus::T status;    
+    CfdpStatus::T status;
+    CF_EncoderState encorder;
 
     // This is where a message buffer is requested
     // TODO get instance of CfdpManager
@@ -298,6 +286,7 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
 
         // BPC: This was previously called as part of CF_CFDP_MsgOutGet()
         // Call it here to attach the storage returned by cfdpGetMessageBuffer() to the encoder
+        ph->penc = &encorder;
         CF_CFDP_EncodeStart(ph->penc, msgPtr, ph, CF_MAX_PDU_SIZE);
 
         hdr = &ph->pdu_header;
@@ -1012,6 +1001,57 @@ void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     {
         /* state was not changed, so free the transaction */
         CF_CFDP_FinishTransaction(txn, false);
+    }
+}
+
+/*----------------------------------------------------------------
+ *
+ * Application-scope internal function
+ * See description in cf_cfdp.h for argument/return detail
+ *
+ *-----------------------------------------------------------------*/
+void CF_CFDP_ReceivePdu(CF_Channel_t *chan, CF_Logical_PduBuffer_t *ph)
+{
+    CF_Transaction_t *txn = NULL;
+
+    FW_ASSERT(chan != NULL);
+    FW_ASSERT(ph != NULL);
+
+    if (CF_CFDP_RecvPh(chan->channel_id, ph) == CfdpStatus::T::CFDP_SUCCESS)
+    {
+        /* got a valid PDU -- look it up by sequence number */
+        txn = CF_FindTransactionBySequenceNumber(chan, ph->pdu_header.sequence_num, ph->pdu_header.source_eid);
+        if (txn == NULL)
+        {
+            /* if no match found, then it must be the case that we would be the destination entity id, so verify it
+                */
+            if (ph->pdu_header.destination_eid == txn->cfdpManager->getLocalEidParam())
+            {
+                /* we didn't find a match, so assign it to a transaction */
+                /* assume this is initiating an RX transaction, as TX transactions are only commanded */
+                txn = CF_CFDP_StartRxTransaction(chan->channel_id);
+                if (txn == NULL)
+                {
+                    // CFE_EVS_SendEvent(
+                    //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
+                    //     (unsigned long)ph->pdu_header.source_eid, (unsigned long)ph->pdu_header.sequence_num);
+                }
+            }
+            else
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF: dropping packet for invalid destination eid 0x%lx",
+                //                   (unsigned long)ph->pdu_header.destination_eid);
+            }
+        }
+
+        if (txn != NULL)
+        {
+            /* found one! Send it to the transaction state processor */
+            FW_ASSERT(txn->state > CF_TxnState_UNDEF, txn->state, CF_TxnState_UNDEF);
+            CF_CFDP_DispatchRecv(txn, ph);
+        }
     }
 }
 
