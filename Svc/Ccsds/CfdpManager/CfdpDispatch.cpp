@@ -39,12 +39,6 @@
 namespace Svc {
 namespace Ccsds {
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_dispatch.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_R_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph,
                             const CF_CFDP_R_SubstateDispatchTable_t *dispatch, CF_CFDP_StateRecvFunc_t fd_fn)
 {
@@ -99,12 +93,6 @@ void CF_CFDP_R_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph,
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_dispatch.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph,
                             const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch)
 {
@@ -158,12 +146,6 @@ void CF_CFDP_S_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph,
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_dispatch.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_DispatchTransmit(CF_Transaction_t *txn, const CF_CFDP_S_SubstateSendDispatchTable_t *dispatch)
 {
     CF_CFDP_StateSendFunc_t selected_handler;
@@ -175,12 +157,6 @@ void CF_CFDP_S_DispatchTransmit(CF_Transaction_t *txn, const CF_CFDP_S_SubstateS
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_dispatch.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_TxStateDispatch(CF_Transaction_t *txn, const CF_CFDP_TxnSendDispatchTable_t *dispatch)
 {
     CF_CFDP_StateSendFunc_t selected_handler;
@@ -194,12 +170,6 @@ void CF_CFDP_TxStateDispatch(CF_Transaction_t *txn, const CF_CFDP_TxnSendDispatc
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_dispatch.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_RxStateDispatch(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph,
                              const CF_CFDP_TxnRecvDispatchTable_t *dispatch)
 {

@@ -38,24 +38,12 @@
 namespace Svc {
 namespace Ccsds {
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_InitNode(CF_CListNode_t *node)
 {
     node->next = node;
     node->prev = node;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_InsertFront(CF_CListNode_t **head, CF_CListNode_t *node)
 {
     CF_CListNode_t *last;
@@ -79,12 +67,6 @@ void CF_CList_InsertFront(CF_CListNode_t **head, CF_CListNode_t *node)
     *head = node;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_InsertBack(CF_CListNode_t **head, CF_CListNode_t *node)
 {
     CF_CListNode_t *last;
@@ -109,12 +91,6 @@ void CF_CList_InsertBack(CF_CListNode_t **head, CF_CListNode_t *node)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CListNode_t *CF_CList_Pop(CF_CListNode_t **head)
 {
     CF_CListNode_t *ret;
@@ -130,12 +106,6 @@ CF_CListNode_t *CF_CList_Pop(CF_CListNode_t **head)
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_Remove(CF_CListNode_t **head, CF_CListNode_t *node)
 {
     FW_ASSERT(head);
@@ -165,12 +135,6 @@ void CF_CList_Remove(CF_CListNode_t **head, CF_CListNode_t *node)
     CF_CList_InitNode(node);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CListNode_t *after)
 {
     /* calling insert_after with nothing to insert after (no head) makes no sense */
@@ -186,12 +150,6 @@ void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CList
     after->next->prev = after;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
 {
     CF_CListNode_t *node = start;
@@ -226,12 +184,6 @@ void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_clist.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CList_Traverse_R(CF_CListNode_t *end, CF_CListFn_t fn, void *context)
 {
     if (end)

@@ -276,12 +276,6 @@ static inline void CF_Codec_Load_U64(U64 *pdst, const CF_CFDP_U64_t *psrc)
     *pdst = val;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 bool CF_CFDP_CodecCheckSize(CF_CodecState_t *state, size_t chunksize)
 {
     size_t next_offset = state->next_offset + chunksize;
@@ -298,12 +292,6 @@ bool CF_CFDP_CodecCheckSize(CF_CodecState_t *state, size_t chunksize)
     return CF_CFDP_CodecIsOK(state);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize)
 {
     U8 *buf = state->base + CF_CFDP_CodecGetPosition(&state->codec_state);
@@ -316,12 +304,6 @@ void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize)
     return buf;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize)
 {
     const U8 *buf = state->base + CF_CFDP_CodecGetPosition(&state->codec_state);
@@ -334,12 +316,6 @@ const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize)
     return buf;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 U8 CF_CFDP_GetValueEncodedSize(U64 Value)
 {
     U8  MinSize;
@@ -353,12 +329,6 @@ U8 CF_CFDP_GetValueEncodedSize(U64 Value)
     return MinSize;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_EncodeIntegerInSize(CF_EncoderState_t *state, U64 value, U8 encode_size)
 {
     U8 *dptr;
@@ -378,12 +348,6 @@ void CF_EncodeIntegerInSize(CF_EncoderState_t *state, U64 value, U8 encode_size)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeHeaderWithoutSize(CF_EncoderState_t *state, CF_Logical_PduHeader_t *plh)
 {
     CF_CFDP_PduHeader_t *peh; /* for encoding fixed sized fields */
@@ -416,12 +380,6 @@ void CF_CFDP_EncodeHeaderWithoutSize(CF_EncoderState_t *state, CF_Logical_PduHea
     }
 }
 
-/*----------------------------------------------------------------
- *q
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *q
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeHeaderFinalSize(CF_EncoderState_t *state, CF_Logical_PduHeader_t *plh)
 {
     CF_CFDP_PduHeader_t *peh;
@@ -446,12 +404,6 @@ void CF_CFDP_EncodeHeaderFinalSize(CF_EncoderState_t *state, CF_Logical_PduHeade
     CF_CODEC_SET_DONE(state);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeFileDirectiveHeader(CF_EncoderState_t *state, CF_Logical_PduFileDirectiveHeader_t *pfdir)
 {
     CF_CFDP_PduFileDirectiveHeader_t *peh; /* for encoding fixed sized fields */
@@ -464,12 +416,6 @@ void CF_CFDP_EncodeFileDirectiveHeader(CF_EncoderState_t *state, CF_Logical_PduF
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeLV(CF_EncoderState_t *state, CF_Logical_Lv_t *pllv)
 {
     CF_CFDP_lv_t *lv; /* for encoding fixed sized fields */
@@ -494,12 +440,6 @@ void CF_CFDP_EncodeLV(CF_EncoderState_t *state, CF_Logical_Lv_t *pllv)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeTLV(CF_EncoderState_t *state, CF_Logical_Tlv_t *pltlv)
 {
     CF_CFDP_tlv_t *tlv; /* for encoding fixed sized fields */
@@ -532,12 +472,6 @@ void CF_CFDP_EncodeTLV(CF_EncoderState_t *state, CF_Logical_Tlv_t *pltlv)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeSegmentRequest(CF_EncoderState_t *state, CF_Logical_SegmentRequest_t *plseg)
 {
     CF_CFDP_SegmentRequest_t *sr; /* for encoding fixed sized fields */
@@ -550,12 +484,6 @@ void CF_CFDP_EncodeSegmentRequest(CF_EncoderState_t *state, CF_Logical_SegmentRe
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeAllTlv(CF_EncoderState_t *state, CF_Logical_TlvList_t *pltlv)
 {
     U8 i;
@@ -566,12 +494,6 @@ void CF_CFDP_EncodeAllTlv(CF_EncoderState_t *state, CF_Logical_TlvList_t *pltlv)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeAllSegments(CF_EncoderState_t *state, CF_Logical_SegmentList_t *plseg)
 {
     U8 i;
@@ -582,12 +504,6 @@ void CF_CFDP_EncodeAllSegments(CF_EncoderState_t *state, CF_Logical_SegmentList_
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeMd(CF_EncoderState_t *state, CF_Logical_PduMd_t *plmd)
 {
     CF_CFDP_PduMd_t *md; /* for encoding fixed sized fields */
@@ -606,12 +522,6 @@ void CF_CFDP_EncodeMd(CF_EncoderState_t *state, CF_Logical_PduMd_t *plmd)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeFileDataHeader(CF_EncoderState_t *state, bool with_meta, CF_Logical_PduFileDataHeader_t *plfd)
 {
     CF_CFDP_PduFileDataHeader_t *fd;
@@ -643,12 +553,6 @@ void CF_CFDP_EncodeFileDataHeader(CF_EncoderState_t *state, bool with_meta, CF_L
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeEof(CF_EncoderState_t *state, CF_Logical_PduEof_t *pleof)
 {
     CF_CFDP_PduEof_t *eof; /* for encoding fixed sized fields */
@@ -665,12 +569,6 @@ void CF_CFDP_EncodeEof(CF_EncoderState_t *state, CF_Logical_PduEof_t *pleof)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeFin(CF_EncoderState_t *state, CF_Logical_PduFin_t *plfin)
 {
     CF_CFDP_PduFin_t *fin; /* for encoding fixed sized fields */
@@ -687,12 +585,6 @@ void CF_CFDP_EncodeFin(CF_EncoderState_t *state, CF_Logical_PduFin_t *plfin)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeAck(CF_EncoderState_t *state, CF_Logical_PduAck_t *plack)
 {
     CF_CFDP_PduAck_t *ack; /* for encoding fixed sized fields */
@@ -710,12 +602,6 @@ void CF_CFDP_EncodeAck(CF_EncoderState_t *state, CF_Logical_PduAck_t *plack)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeNak(CF_EncoderState_t *state, CF_Logical_PduNak_t *plnak)
 {
     CF_CFDP_PduNak_t *nak; /* for encoding fixed sized fields */
@@ -730,12 +616,6 @@ void CF_CFDP_EncodeNak(CF_EncoderState_t *state, CF_Logical_PduNak_t *plnak)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, U32 *plcrc)
 {
     CF_CFDP_U32_t *pecrc; /* CFDP CRC values are 32-bit only, per blue book */
@@ -747,12 +627,6 @@ void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, U32 *plcrc)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size)
 {
     const U8 *sptr;
@@ -775,12 +649,6 @@ U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size)
     return temp_val;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 bool CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh)
 {
     const CF_CFDP_PduHeader_t *peh; /* for decoding fixed sized fields */
@@ -823,12 +691,6 @@ bool CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh)
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeFileDirectiveHeader(CF_DecoderState_t *state, CF_Logical_PduFileDirectiveHeader_t *pfdir)
 {
     const CF_CFDP_PduFileDirectiveHeader_t *peh;
@@ -843,12 +705,6 @@ void CF_CFDP_DecodeFileDirectiveHeader(CF_DecoderState_t *state, CF_Logical_PduF
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeLV(CF_DecoderState_t *state, CF_Logical_Lv_t *pllv)
 {
     const CF_CFDP_lv_t *lv;
@@ -861,12 +717,6 @@ void CF_CFDP_DecodeLV(CF_DecoderState_t *state, CF_Logical_Lv_t *pllv)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeTLV(CF_DecoderState_t *state, CF_Logical_Tlv_t *pltlv)
 {
     const CF_CFDP_tlv_t *tlv;
@@ -892,12 +742,6 @@ void CF_CFDP_DecodeTLV(CF_DecoderState_t *state, CF_Logical_Tlv_t *pltlv)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeSegmentRequest(CF_DecoderState_t *state, CF_Logical_SegmentRequest_t *plseg)
 {
     const CF_CFDP_SegmentRequest_t *sr; /* for decoding fixed sized fields */
@@ -910,12 +754,6 @@ void CF_CFDP_DecodeSegmentRequest(CF_DecoderState_t *state, CF_Logical_SegmentRe
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeMd(CF_DecoderState_t *state, CF_Logical_PduMd_t *plmd)
 {
     const CF_CFDP_PduMd_t *md; /* for decoding fixed sized fields */
@@ -933,12 +771,6 @@ void CF_CFDP_DecodeMd(CF_DecoderState_t *state, CF_Logical_PduMd_t *plmd)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeFileDataHeader(CF_DecoderState_t *state, bool with_meta, CF_Logical_PduFileDataHeader_t *plfd)
 {
     const CF_CFDP_PduFileDataHeader_t *fd;
@@ -995,12 +827,6 @@ void CF_CFDP_DecodeFileDataHeader(CF_DecoderState_t *state, bool with_meta, CF_L
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeCrc(CF_DecoderState_t *state, U32 *plcrc)
 {
     const CF_CFDP_U32_t *pecrc; /* CFDP CRC values are 32-bit only, per blue book */
@@ -1012,12 +838,6 @@ void CF_CFDP_DecodeCrc(CF_DecoderState_t *state, U32 *plcrc)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeEof(CF_DecoderState_t *state, CF_Logical_PduEof_t *pleof)
 {
     const CF_CFDP_PduEof_t *eof; /* for decoding fixed sized fields */
@@ -1033,12 +853,6 @@ void CF_CFDP_DecodeEof(CF_DecoderState_t *state, CF_Logical_PduEof_t *pleof)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeFin(CF_DecoderState_t *state, CF_Logical_PduFin_t *plfin)
 {
     const CF_CFDP_PduFin_t *fin; /* for decoding fixed sized fields */
@@ -1054,12 +868,6 @@ void CF_CFDP_DecodeFin(CF_DecoderState_t *state, CF_Logical_PduFin_t *plfin)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeAck(CF_DecoderState_t *state, CF_Logical_PduAck_t *plack)
 {
     const CF_CFDP_PduAck_t *ack; /* for decoding fixed sized fields */
@@ -1075,12 +883,6 @@ void CF_CFDP_DecodeAck(CF_DecoderState_t *state, CF_Logical_PduAck_t *plack)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeNak(CF_DecoderState_t *state, CF_Logical_PduNak_t *plnak)
 {
     const CF_CFDP_PduNak_t *nak; /* for encoding fixed sized fields */
@@ -1095,12 +897,6 @@ void CF_CFDP_DecodeNak(CF_DecoderState_t *state, CF_Logical_PduNak_t *plnak)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeAllTlv(CF_DecoderState_t *state, CF_Logical_TlvList_t *pltlv, U8 limit)
 {
     pltlv->num_tlv = 0;
@@ -1130,12 +926,6 @@ void CF_CFDP_DecodeAllTlv(CF_DecoderState_t *state, CF_Logical_TlvList_t *pltlv,
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in CfdpCodec.hpp for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DecodeAllSegments(CF_DecoderState_t *state, CF_Logical_SegmentList_t *plseg, U8 limit)
 {
     plseg->num_segments = 0;

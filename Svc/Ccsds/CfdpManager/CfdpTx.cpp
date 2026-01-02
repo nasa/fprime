@@ -43,12 +43,6 @@
 namespace Svc {
 namespace Ccsds {
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn)
 {
     /* note the crc is "finalized" regardless of success or failure of the txn */
@@ -65,12 +59,6 @@ CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn)
     return CF_CFDP_SendEof(txn);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S1_SubstateSendEof(CF_Transaction_t *txn)
 {
     /* set the flag, the EOF is sent by the tick handler */
@@ -83,12 +71,6 @@ void CF_CFDP_S1_SubstateSendEof(CF_Transaction_t *txn)
     CF_CFDP_FinishTransaction(txn, true);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
 {
     /* set the flag, the EOF is sent by the tick handler */
@@ -105,12 +87,6 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
     CF_CFDP_ArmAckTimer(txn);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed)
 {
     I32 status = 0;
@@ -218,12 +194,6 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
 {
     U32 bytes_processed = 0;
@@ -250,12 +220,6 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed)
 {
     const CF_Chunk_t *chunk;
@@ -311,12 +275,6 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
 {
     CfdpStatus::T status;
@@ -341,12 +299,6 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 {
     CfdpStatus::T sret;
@@ -445,12 +397,6 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
     /* don't need to reset the CRC since its taken care of by reset_cfdp() */
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
 {
     return CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN, 
@@ -458,12 +404,6 @@ CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
                            txn->history->peer_eid, txn->history->seq_num);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     /* received early fin, so just cancel */
@@ -478,12 +418,6 @@ void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     CF_CFDP_S2_Fin(txn, ph);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     if (!CF_CFDP_RecvFin(txn, ph))
@@ -508,12 +442,6 @@ void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_SegmentRequest_t *sr;
@@ -576,24 +504,12 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_Nak_Arm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     CF_CFDP_ArmAckTimer(txn);
     CF_CFDP_S2_Nak(txn, ph);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     if (!CF_CFDP_RecvAck(txn, ph) && ph->int_header.ack.ack_directive_code == CF_CFDP_FileDirective_EOF)
@@ -617,12 +533,6 @@ void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     /* s1 doesn't need to receive anything */
@@ -646,12 +556,6 @@ static CF_CFDP_FileDirectiveDispatchTable_t makeFileDirectiveTable(
     return table;
 }
 
-/*----------------------------------------------------------------
-*
-* Application-scope internal function
-* See description in cf_cfdp_s.h for argument/return detail
-*
-*-----------------------------------------------------------------*/
 void CF_CFDP_S2_Recv(CF_Transaction_t* txn, CF_Logical_PduBuffer_t* ph)
 {
     static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta =
@@ -687,12 +591,6 @@ void CF_CFDP_S2_Recv(CF_Transaction_t* txn, CF_Logical_PduBuffer_t* ph)
     CF_CFDP_S_DispatchRecv(txn, ph, &substate_fns);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S1_Tx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {
@@ -707,12 +605,6 @@ void CF_CFDP_S1_Tx(CF_Transaction_t *txn)
     CF_CFDP_S_DispatchTransmit(txn, &substate_fns);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S2_Tx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {
@@ -727,12 +619,6 @@ void CF_CFDP_S2_Tx(CF_Transaction_t *txn)
     CF_CFDP_S_DispatchTransmit(txn, &substate_fns);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_Cancel(CF_Transaction_t *txn)
 {
     if (txn->state_data.send.sub_state < CF_TxSubState_EOF)
@@ -742,12 +628,6 @@ void CF_CFDP_S_Cancel(CF_Transaction_t *txn)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn)
 {
     U8 ack_limit = 0;
@@ -811,12 +691,6 @@ void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
 {
     bool pending_send;
@@ -891,12 +765,6 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_cfdp_s.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
 {
     bool nakProcessed = false;

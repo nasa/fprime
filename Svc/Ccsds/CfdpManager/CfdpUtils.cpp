@@ -39,12 +39,6 @@
 namespace Svc {
 namespace Ccsds {
     
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn)
 {
     CF_Channel_t *chan;
@@ -61,12 +55,6 @@ CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn)
     return chan;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction)
 {
     CF_CListNode_t **result;
@@ -83,12 +71,6 @@ CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction)
     return result;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
 {
     CF_CFDP_AckTxnStatus_t LocalStatus;
@@ -123,12 +105,6 @@ CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
     return LocalStatus;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t direction)
 {
     CF_CListNode_t *  node;
@@ -173,24 +149,12 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
     return txn;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
 {
     CF_CList_Remove_Ex(chan, CF_QueueIdx_HIST, &history->cl_node);
     CF_CList_InsertBack_Ex(chan, CF_QueueIdx_HIST_FREE, &history->cl_node);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
 {
     // TODO make sure transaction default constructor is sane
@@ -200,12 +164,6 @@ void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
     CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CF_QueueIdx_FREE, &txn->cl_node);
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
@@ -221,12 +179,6 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
                                                      CF_TransactionSeq_t transaction_sequence_number,
                                                      CF_EntityId_t       src_eid)
@@ -253,12 +205,6 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *         txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
@@ -277,12 +223,6 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
     return CF_CLIST_CONT;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue)
 {
     bool          insert_back = false;
@@ -319,12 +259,6 @@ void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue)
     txn->flags.com.q_index = queue;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)
 {
     CF_TraverseAll_Arg_t *traverse_all = static_cast<CF_TraverseAll_Arg_t *>(arg);
@@ -334,12 +268,6 @@ CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, 
     return CF_CLIST_CONT;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     CF_TraverseAll_Arg_t args = {fn, context, 0};
@@ -349,12 +277,6 @@ I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn
     return args.counter;
 }
 
-/*----------------------------------------------------------------
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 I32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     int   i;
@@ -364,14 +286,6 @@ I32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, 
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Function: CF_TxnStatus_IsError
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat)
 {
     /* The value of CF_TxnStatus_UNDEFINED (-1) indicates a transaction is in progress and no error
@@ -380,14 +294,6 @@ bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat)
     return (txn_stat > CF_TxnStatus_NO_ERROR);
 }
 
-/*----------------------------------------------------------------
- *
- * Function: CF_TxnStatus_To_ConditionCode
- *
- * Application-scope internal function
- * See description in cf_utils.h for argument/return detail
- *
- *-----------------------------------------------------------------*/
 CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat)
 {
     CF_CFDP_ConditionCode_t result;
