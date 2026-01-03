@@ -21,17 +21,16 @@ FileDispatcher ::FileDispatcher(const char* const compName) : FileDispatcherComp
     this->m_dispatchTable.numEntries = 0;
 }
 
-FileDispatcher ::~FileDispatcher() {
-}
+FileDispatcher ::~FileDispatcher() {}
 
 void FileDispatcher ::configure(const FileDispatcherTable& table) {
     // validate table
     FW_ASSERT(table.numEntries <= Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE);
     for (FwSizeType entry = 0; entry < table.numEntries; entry++) {
         FW_ASSERT(table.entries[entry].port.isValid(),
-            table.entries[entry].port.e); // valid output port
+                  table.entries[entry].port.e);  // valid output port
         FW_ASSERT(table.entries[entry].fileExt.length() > 0,
-            static_cast<FwAssertArgType>(table.entries[entry].fileExt.length())); // non-zero length
+                  static_cast<FwAssertArgType>(table.entries[entry].fileExt.length()));  // non-zero length
     }
 
     // copy to local table
@@ -52,18 +51,17 @@ void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBa
         }
 
         auto loc = Fw::StringUtils::substring_find_last(file_name.toChar(), file_name.length(),
-                                            this->m_dispatchTable.entries[i].fileExt.toChar(),
-                                            this->m_dispatchTable.entries[i].fileExt.length());
+                                                        this->m_dispatchTable.entries[i].fileExt.toChar(),
+                                                        this->m_dispatchTable.entries[i].fileExt.length());
 
-        if (
-            (loc != -1) && // matches at all
-            (file_name.length() - this->m_dispatchTable.entries[i].fileExt.length() == static_cast<FwSizeType>(loc))  // match at end of string
-        )
-        {
+        if ((loc != -1) &&  // matches at all
+            (file_name.length() - this->m_dispatchTable.entries[i].fileExt.length() ==
+             static_cast<FwSizeType>(loc))  // match at end of string
+        ) {
             // dispatch on this port
             this->fileDispatch_out(this->m_dispatchTable.entries[i].port, file_name);
             this->log_ACTIVITY_HI_FileDispatched(file_name,
-                                                    static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
+                                                 static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
         }
     }
 }

@@ -30,19 +30,17 @@ void FileDispatcherTester::populateTable(Svc::FileDispatcherTable& table, bool e
         table.entries[i].enabled = enabled;
         table.entries[i].fileExt.format(".file%d", i);
         table.entries[i].port = static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
-            i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
+            i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
     }
 
     this->component.configure(table);
 }
-
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
 void FileDispatcherTester ::dispatchTest() {
-
     Svc::FileDispatcherTable table;
     this->populateTable(table, true);
 
@@ -51,12 +49,13 @@ void FileDispatcherTester ::dispatchTest() {
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE; i++) {
         this->clearHistory();
         Fw::String testFileName;
-        testFileName.format("afile.file%d", i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
+        testFileName.format("afile.file%d", i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
         this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(1);
         ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(),
-                                     static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS));
+                                     static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                         i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS));
         ASSERT_from_fileDispatch_SIZE(1);
         ASSERT_from_fileDispatch(0, testFileName);
     }
@@ -64,14 +63,14 @@ void FileDispatcherTester ::dispatchTest() {
 
 void FileDispatcherTester ::dispatchAllDisabledTest() {
     Svc::FileDispatcherTable table;
-    this->populateTable(table,false);
+    this->populateTable(table, false);
 
     // dispatch files
 
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE; i++) {
         this->clearHistory();
         Fw::String testFileName;
-        testFileName.format("afile.file%d", i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
+        testFileName.format("afile.file%d", i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
         this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(0);
@@ -81,16 +80,20 @@ void FileDispatcherTester ::dispatchAllDisabledTest() {
 
 void FileDispatcherTester ::dispatchAllCmdDisabledTest() {
     Svc::FileDispatcherTable table;
-    this->populateTable(table,true);
+    this->populateTable(table, true);
 
     // disable all via command
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {
         this->clearHistory();
-        this->sendCmd_ENABLE_DISPATCH(0, 0x10, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
+        this->sendCmd_ENABLE_DISPATCH(0, 0x10,
+                                      static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                          i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
                                       Fw::Enabled::DISABLED);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatchState_SIZE(1);
-        ASSERT_EVENTS_FileDispatchState(0, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
+        ASSERT_EVENTS_FileDispatchState(0,
+                                        static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                            i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
                                         Fw::Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(0, 0, 0x10, Fw::CmdResponse::OK);
@@ -101,28 +104,30 @@ void FileDispatcherTester ::dispatchAllCmdDisabledTest() {
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE; i++) {
         this->clearHistory();
         Fw::String testFileName;
-        testFileName.format("afile.file%d", i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
+        testFileName.format("afile.file%d", i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
         this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(0);
         ASSERT_from_fileDispatch_SIZE(0);
     }
-
 }
 
 void FileDispatcherTester ::dispatchAllCmdEnabledTest() {
     Svc::FileDispatcherTable table;
-    this->populateTable(table,false);
-
+    this->populateTable(table, false);
 
     // disable all via command
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {
         this->clearHistory();
-        this->sendCmd_ENABLE_DISPATCH(0, 0x10, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
+        this->sendCmd_ENABLE_DISPATCH(0, 0x10,
+                                      static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                          i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
                                       Fw::Enabled::ENABLED);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatchState_SIZE(1);
-        ASSERT_EVENTS_FileDispatchState(0, static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
+        ASSERT_EVENTS_FileDispatchState(0,
+                                        static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                            i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS),
                                         Fw::Enabled::ENABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(0, 0, 0x10, Fw::CmdResponse::OK);
@@ -131,12 +136,13 @@ void FileDispatcherTester ::dispatchAllCmdEnabledTest() {
     for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE; i++) {
         this->clearHistory();
         Fw::String testFileName;
-        testFileName.format("afile.file%d", i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
+        testFileName.format("afile.file%d", i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS);
         this->invoke_to_fileAnnounceRecv(0, testFileName);
         this->component.doDispatch();
         ASSERT_EVENTS_FileDispatched_SIZE(1);
         ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(),
-                                     static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i%Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS));
+                                     static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(
+                                         i % Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS));
         ASSERT_from_fileDispatch_SIZE(1);
         ASSERT_from_fileDispatch(0, testFileName);
     }
@@ -153,7 +159,6 @@ void FileDispatcherTester::dispatchPingTest() {
 }
 
 void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
-
     // Svc::FileDispatcherTable table;
     // Svc::FileDispatcherEntry entries[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];
 
@@ -163,11 +168,13 @@ void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
     //     entries[1].port = static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i);
     // }
 
-    // this->component.configure(entries, Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS - skipEntries);
+    // this->component.configure(entries, Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS -
+    // skipEntries);
 
     // // dispatch files
 
-    // for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS - skipEntries; i++) {
+    // for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS - skipEntries; i++)
+    // {
     //     this->clearHistory();
     //     Fw::String testFileName;
     //     testFileName.format("afile.file%d", i);
