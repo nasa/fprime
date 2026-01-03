@@ -25,6 +25,15 @@ FileDispatcher ::~FileDispatcher() {
 }
 
 void FileDispatcher ::configure(const FileDispatcherTable& table) {
+    // validate table
+    FW_ASSERT(table.numEntries <= Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE);
+    for (FwSizeType entry = 0; entry < table.numEntries; entry++) {
+        FW_ASSERT(table.entries[entry].port.isValid(),
+            table.entries[entry].port.e); // valid output port
+        FW_ASSERT(table.entries[entry].fileExt.length() > 0,
+            static_cast<FwAssertArgType>(table.entries[entry].fileExt.length())); // non-zero length
+    }
+
     // copy to local table
     this->m_dispatchTable = table;
 }

@@ -72,6 +72,9 @@ class FileDispatcherTester final : public FileDispatcherGTestBase {
     //! Initialize components
     void initComponents();
 
+    //! helper
+    void populateTable(Svc::FileDispatcherTable& table, bool enabled);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables

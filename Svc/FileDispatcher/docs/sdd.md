@@ -1,6 +1,6 @@
 # Svc::FileDispatcher
 
-Component to dispatch delivered files to various services. The user passes in a table that maps file extensions to numbered output ports represented by their own version of the enumeration in the configuration [FileDispatcherCfg.fpp file](../../../default/config/FileDispatcherCfg.fpp). The user then connects the components that process the files to the output ports.
+Component to dispatch delivered files to various services. The user passes in a table that maps file extensions to numbered output ports represented by a user's own version of the enumeration in the configuration [FileDispatcherCfg.fpp file](../../../default/config/FileDispatcherCfg.fpp). The user then connects the components that process the files to the output ports.
 
 ## Requirements
 
@@ -8,15 +8,34 @@ Add requirements in the chart below
 
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
-|FPRIME-FDISP-001|File dispatcher will provide a way to dispatch files to other components|Need to have a way to supply a new file name|Unit Test/System Test|
+|FPRIME-FDISP-001|File dispatcher will provide a way to dispatch files to other components|Need to have a way to supply a file name for a newly transferred file|Unit Test/System Test|
 |FPRIME-FDISP-002|File dispatcher will provide user configuration to map file types to output ports|Projects will want to customize the dispatching types|Unit Test/System Test|
-|FPRIME-FDISP-003|File dispatcher will dispatch to specified output ports based on the supplied table|Projects will want to connect the dispatch types to components for utilizing files|Unit Test/System Test|
+|FPRIME-FDISP-003|File dispatcher will dispatch to specified output ports based on the supplied table|Projects will want to connect the dispatch types to components for processing new files|Unit Test/System Test|
 
 ## Usage Examples
 
 ### Typical Usage
 
 The `Ref` example connects `Svc::FIleUplink` to `FileDispatcher` to process uplinked files. The `Ref` example configuration table has compiled sequences with a certain extension that `FileDispatcher` dispatches to `Svc::CmdSequencer` for automatic running when those files are uplinked.
+
+#### Configuration Table Structure
+
+The user should instantiate an instance of `FileDispatcherTable` and supply it to the `configure()` function during initialization. The fields should be filled in as follows:
+
+|Field|Value|Notes|
+|---|---|---|
+|`numEntries`|Should be > 0 and <= `Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE`|Values outside this range will cause an assert|
+|`entries`|An array of file extension to port mappings|Number populated should match `numEntries`|
+
+The user should configure each entry in the `entries` array in the range covered by `numEntries`.
+
+The fields should be filled as follows:
+
+|Field|Value|Notes|
+|---|---|---|
+|`fileExt`|The file extension or suffix to detect in the file name and route. The same extension/suffix can be used multiple times and be routed to different ports|Must be non-zero in length, or it will cause an assert|
+|`port`|The outgoing port number must be a member of the `FileDispatchPort` or it will cause an assert|
+|`enabled`|A boolean that indicates if the routing is initially enabled or not|Can be changed by `ENABLE_DISPATCH` command|
 
 ## Diagrams
 
