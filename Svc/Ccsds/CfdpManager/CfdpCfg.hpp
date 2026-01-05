@@ -134,6 +134,68 @@ namespace Ccsds {
 #define CF_TOTAL_CHUNKS (CF_NAK_MAX_SEGMENTS * 4)
 
 /**
+ *  @brief Max NAK segments supported in a NAK PDU
+ *
+ *  @par Description:
+ *       When a NAK PDU is sent or received, this is the max number of
+ *       segment requests supported. This number should match the ground
+ *       CFDP engine configuration as well.
+ *
+ *  @par Limits:
+ *
+ */
+#define CF_NAK_MAX_SEGMENTS (58)
+
+/**
+ *  @brief Max number of polling directories per channel.
+ *
+ *  @par Description:
+ *       This affects the configuration table. There must be an entry (can
+ *       be empty) for each of these polling directories per channel.
+ *
+ *  @par Limits:
+ *
+ */
+#define CF_MAX_POLLING_DIR_PER_CHAN (5)
+
+/**
+ *  @brief Max PDU size.
+ *
+ *  @par Description:
+ *       Limits the maximum possible Tx PDU size. Note the resulting CCSDS packet
+ *       also includes a CCSDS header and CF_PDU_ENCAPSULATION_EXTRA_TRAILING_BYTES.
+ *       The outgoing file data chunk size is also limited from the table configuration
+ *       or by set parameter command, which is checked against this value
+ *       (+ smallest possible PDU header).
+ *
+ *  @par Note:
+ *       This does NOT limit Rx PDUs, since the file data is written from
+ *       the transport packet to the file.
+ *
+ *  @par Limits:
+ *       Since PDUs are wrapped in CCSDS packets, need to respect any
+ *       CCSDS packet size limits on the system.
+ *
+ */
+#define CF_MAX_PDU_SIZE (512)
+
+/**
+ *  @brief Maximum file name length.
+ *
+ *  @par Limits:
+ *
+ */
+#define CF_FILENAME_MAX_NAME FileNameStringSize
+
+/**
+ *  @brief Max filename and path length.
+ *
+ *  @par Limits:
+ *
+ */
+#define CF_FILENAME_MAX_LEN FileNameStringSize
+
+/**
  * @brief Macro type for Entity id that is used in printf style formatting
  * 
  * @note This must match the size of CfdpEntityId as defined in CfdpCfg.fpp

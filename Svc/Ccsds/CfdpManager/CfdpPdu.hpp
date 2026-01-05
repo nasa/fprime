@@ -48,7 +48,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include "default_cf_interface_cfg.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpCfg.hpp"
 
 namespace Svc {
 namespace Ccsds {

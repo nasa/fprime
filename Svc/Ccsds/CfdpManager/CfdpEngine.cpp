@@ -1427,10 +1427,11 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                 break;
             }
 
+            // TODO BPC: Refactor snprintf to use Fw::String
             // snprintf(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename), "%.*s/%.*s",
             //          CfdpManagerMaxFileSize - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
             const size_t src_size = sizeof(txn->history->fnames.src_filename);
-
+            
             n = snprintf(
                 txn->history->fnames.src_filename,
                 src_size,
@@ -1438,7 +1439,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                 static_cast<int>(src_size - 2),
                 pb->fnames.src_filename
             );
-
+            
             if (n > 0 && static_cast<size_t>(n) < src_size)
             {
                 snprintf(
@@ -1449,7 +1450,8 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                     pb->pending_file
                 );
             }
-
+            
+            // TODO BPC: Refactor snprintf to use Fw::String
             // snprintf(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename), "%.*s/%.*s",
             //          CfdpManagerMaxFileSize - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
             const size_t dst_size = sizeof(txn->history->fnames.dst_filename);
