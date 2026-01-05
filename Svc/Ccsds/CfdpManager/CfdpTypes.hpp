@@ -34,21 +34,20 @@
 #ifndef CFDP_TYPES_HPP
 #define CFDP_TYPES_HPP
 
+#include <config/CfdpCfg.hpp>
+#include <Os/File.hpp>
+#include <Os/Directory.hpp>
+
+#include <CFDP/Checksum/Checksum.hpp>
 #include "CfdpPdu.hpp"
 #include "CfdpClist.hpp"
 #include "CfdpChunk.hpp"
 #include "CfdpCodec.hpp"
 #include "CfdpTimer.hpp"
-#include "CfdpCfg.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
-#include "Svc/Ccsds/CfdpManager/FppConstantsAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpFrozenEnumAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpClassEnumAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpQueueIdEnumAc.hpp"
-
-#include <CFDP/Checksum/Checksum.hpp>
-#include <Os/File.hpp>
-#include <Os/Directory.hpp>
+#include "Svc/Ccsds/Types/CfdpFrozenEnumAc.hpp"
+#include "Svc/Ccsds/Types/CfdpClassEnumAc.hpp"
+#include "Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp"
 
 namespace Svc {
 namespace Ccsds {

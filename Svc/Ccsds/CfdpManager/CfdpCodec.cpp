@@ -222,7 +222,7 @@ static inline void CF_Codec_Load_U16(U16 *pdst, const CF_CFDP_U16_t *psrc)
     U16 val = 0;
 
     val |= psrc->octets[0];
-    val <<= 8;
+    val = static_cast<U16>(val << 8);
     val |= psrc->octets[1];
 
     *pdst = val;
@@ -238,11 +238,11 @@ static inline void CF_Codec_Load_U32(U32 *pdst, const CF_CFDP_U32_t *psrc)
     U32 val = 0;
 
     val |= psrc->octets[0];
-    val <<= 8;
+    val = static_cast<U32>(val << 8);
     val |= psrc->octets[1];
-    val <<= 8;
+    val = static_cast<U32>(val << 8);
     val |= psrc->octets[2];
-    val <<= 8;
+    val = static_cast<U32>(val << 8);
     val |= psrc->octets[3];
 
     *pdst = val;
@@ -258,19 +258,19 @@ static inline void CF_Codec_Load_U64(U64 *pdst, const CF_CFDP_U64_t *psrc)
     U64 val = 0;
 
     val |= psrc->octets[0];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[1];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[2];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[3];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[4];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[5];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[6];
-    val <<= 8;
+    val = static_cast<U64>(val << 8);
     val |= psrc->octets[7];
 
     *pdst = val;
@@ -639,7 +639,7 @@ U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size)
         /* this reads from MSB to LSB, so the result will be in native order */
         while (decode_size > 0)
         {
-            temp_val <<= 8;
+            temp_val = static_cast<U64>(temp_val << 8);
             temp_val |= *sptr & 0xFF;
             ++sptr;
             --decode_size;

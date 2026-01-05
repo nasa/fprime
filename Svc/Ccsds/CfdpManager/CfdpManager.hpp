@@ -8,8 +8,8 @@
 #define CCSDS_CFDPMANAGER_HPP
 
 #include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp"
+#include "Svc/Ccsds/Types/CfdpStatusEnumAc.hpp"
 
 namespace Svc {
 namespace Ccsds {

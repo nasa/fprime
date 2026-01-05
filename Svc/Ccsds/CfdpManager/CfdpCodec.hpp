@@ -40,7 +40,7 @@
 
 #include "CfdpPdu.hpp"
 #include "CfdpLogicalPdu.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
+#include "Svc/Ccsds/Types/CfdpStatusEnumAc.hpp"
 
 namespace Svc {
 namespace Ccsds {

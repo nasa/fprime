@@ -46,9 +46,8 @@
 
 #include <stddef.h>
 
+#include <config/CfdpCfg.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Svc/Ccsds/CfdpManager/CfdpCfg.hpp"
 
 namespace Svc {
 namespace Ccsds {

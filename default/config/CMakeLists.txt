@@ -7,6 +7,7 @@ register_fprime_config(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AcConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/AsyncI2cCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileDispatcherCfg.fpp"
@@ -27,6 +28,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCatalogCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.hpp"

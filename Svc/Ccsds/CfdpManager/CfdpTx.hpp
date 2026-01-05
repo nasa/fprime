@@ -152,9 +152,9 @@ void CF_CFDP_S_Cancel(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @retval CfdpStatus::T::CFDP_SUCCESS on success.
- * @retval CfdpStatus::T::CFDP_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
- * @retval CFDP_SEND_PDU_ERROR if an error occurred while building the packet.
+ * @retval CfdpStatus::T::SUCCESS on success.
+ * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval SEND_PDU_ERROR if an error occurred while building the packet.
  *
  * @param txn  Pointer to the transaction object
  */
@@ -191,8 +191,8 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @returns The number of bytes sent in the file data PDU (CfdpStatus::T::CFDP_SUCCESS,
- *          i.e. 0, if no bytes were processed), or CfdpStatus::T::CFDP_ERROR on error
+ * @returns The number of bytes sent in the file data PDU (CfdpStatus::T::SUCCESS,
+ *          i.e. 0, if no bytes were processed), or CfdpStatus::T::ERROR on error
  *
  * @param txn     Pointer to the transaction object
  * @param foffs Position in file to send data from
@@ -228,7 +228,7 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @returns CFDP_ERROR if error otherwise CFDP_SUCCESS
+ * @returns ERROR if error otherwise SUCCESS
  *
  * @param txn          Pointer to the transaction object
  * @param nakProcessed true if a NAK was processed, otherwise false

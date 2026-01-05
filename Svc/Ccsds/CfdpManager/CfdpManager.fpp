@@ -1,12 +1,21 @@
 module Svc {
 module Ccsds {
+
     @ F' implementation of the CFDP file transfer prototcol
     active component CfdpManager {
+
+        ##############################################################################
+        # Commands
+        ##############################################################################
 
         # One async command/port is required for active components
         # This should be overridden by the developers with a useful command/port
         @ TODO
-        async command TODO opcode 0
+        async command TODO
+
+        ##############################################################################
+        # Events
+        ##############################################################################
 
         event CfdpBuffersExuasted severity warning low \
             format "Unable to alocate a PDU buffer"

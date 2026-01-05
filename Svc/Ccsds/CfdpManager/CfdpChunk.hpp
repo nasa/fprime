@@ -32,7 +32,8 @@
 #define CFDP_CHUNK_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp>
+
+#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {

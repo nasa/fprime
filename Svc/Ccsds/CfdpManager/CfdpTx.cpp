@@ -90,7 +90,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
 CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed)
 {
     I32 status = 0;
-    CfdpStatus::T ret = CfdpStatus::T::CFDP_SUCCESS;
+    CfdpStatus::T ret = CfdpStatus::T::SUCCESS;
     CF_Logical_PduBuffer_t * ph = NULL;
     CF_Logical_PduFileDataHeader_t *fd;
     size_t actual_bytes;
@@ -104,7 +104,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
                                     txn->history->peer_eid, 0, txn->history->seq_num, 1);
     if (!ph)
     {
-        ret = CfdpStatus::T::CFDP_SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
+        ret = CfdpStatus::T::SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
     }
     else
     {
@@ -156,11 +156,11 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
                 //                   (txn->state == CF_TxnState_S2), (unsigned long)txn->history->src_eid,
                 //                   (unsigned long)txn->history->seq_num, (long)foffs, (long)status);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
-                ret = CfdpStatus::T::CFDP_ERROR;
+                ret = CfdpStatus::T::ERROR;
             }
         }
 
-        if (ret == CfdpStatus::T::CFDP_SUCCESS)
+        if (ret == CfdpStatus::T::SUCCESS)
         {
             status = CF_WrappedRead(txn->fd, data_ptr, actual_bytes);
             // TODO refactor to an Os status check
@@ -171,14 +171,14 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
                 //                   (txn->state == CF_TxnState_S2), (unsigned long)txn->history->src_eid,
                 //                   (unsigned long)txn->history->seq_num, (long)actual_bytes, (long)status);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_read;
-                ret = CfdpStatus::T::CFDP_ERROR;
+                ret = CfdpStatus::T::ERROR;
             }
         }
         
-        if (ret == CfdpStatus::T::CFDP_SUCCESS)
+        if (ret == CfdpStatus::T::SUCCESS)
         {
             txn->state_data.send.cached_pos += status;
-            CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CfdpStatus::T::CFDP_SUCCESS */
+            CF_CFDP_SendFd(txn, ph); /* CF_CFDP_SendFd only returns CfdpStatus::T::SUCCESS */
 
             // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.file_data_bytes += actual_bytes;
             FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), txn->fsize); /* sanity check */
@@ -199,7 +199,7 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn)
     U32 bytes_processed = 0;
     CfdpStatus::T status = CF_CFDP_S_SendFileData(txn, txn->foffs, (txn->fsize - txn->foffs), 1, &bytes_processed);
 
-    if(status != CfdpStatus::T::CFDP_SUCCESS)
+    if(status != CfdpStatus::T::SUCCESS)
     {
         /* IO error -- change state and send EOF */
         CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILESTORE_REJECTION);
@@ -224,7 +224,7 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
 {
     const CF_Chunk_t *chunk;
     CfdpStatus::T sret;
-    CfdpStatus::T ret = CfdpStatus::T::CFDP_SUCCESS;
+    CfdpStatus::T ret = CfdpStatus::T::SUCCESS;
     U32 bytes_processed = 0;
 
     FW_ASSERT(nakProcessed != NULL);
@@ -233,17 +233,17 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
     if (txn->flags.tx.md_need_send)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CfdpStatus::T::CFDP_SEND_PDU_ERROR)
+        if (sret == CfdpStatus::T::SEND_PDU_ERROR)
         {
-            ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
+            ret = CfdpStatus::T::ERROR; /* error occurred */
         }
         else
         {
-            if (sret == CfdpStatus::T::CFDP_SUCCESS)
+            if (sret == CfdpStatus::T::SUCCESS)
             {
                 txn->flags.tx.md_need_send = false;
             }
-            /* unless CFDP_SEND_PDU_ERROR, return 1 to keep caller from sending file data */
+            /* unless SEND_PDU_ERROR, return 1 to keep caller from sending file data */
             *nakProcessed = true; /* nak processed, so don't send filedata */
             
         }
@@ -255,10 +255,10 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
         if (chunk != NULL)
         {
             ret = CF_CFDP_S_SendFileData(txn, chunk->offset, chunk->size, 0, &bytes_processed);
-            if(ret != CfdpStatus::T::CFDP_SUCCESS)
+            if(ret != CfdpStatus::T::SUCCESS)
             {
                 /* error occurred */
-                ret = CfdpStatus::T::CFDP_ERROR; /* error occurred */
+                ret = CfdpStatus::T::ERROR; /* error occurred */
             }
             else if (bytes_processed > 0)
             {
@@ -281,7 +281,7 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
     bool nakProcessed = false;
     
     status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
-    if (status != CfdpStatus::CFDP_SUCCESS)
+    if (status != CfdpStatus::SUCCESS)
     {
         CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_NAK_RESPONSE_ERROR);
         txn->flags.tx.send_eof = true; /* do not leave the remote hanging */
@@ -372,7 +372,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
     if (success)
     {
         sret = CF_CFDP_SendMd(txn);
-        if (sret == CfdpStatus::T::CFDP_SEND_PDU_ERROR)
+        if (sret == CfdpStatus::T::SEND_PDU_ERROR)
         {
             /* failed to send md */
             // CFE_EVS_SendEvent(CF_CFDP_S_SEND_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF S%d(%lu:%lu): failed to send md",
@@ -380,12 +380,12 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
             //                   (unsigned long)txn->history->seq_num);
             success = false;
         }
-        else if (sret == CfdpStatus::T::CFDP_SUCCESS)
+        else if (sret == CfdpStatus::T::SUCCESS)
         {
             /* once metadata is sent, switch to filedata mode */
             txn->state_data.send.sub_state = CF_TxSubState_FILEDATA;
         }
-        /* if sret==CfdpStatus::T::CFDP_SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
+        /* if sret==CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
     }
 
     if (!success)
@@ -454,7 +454,7 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     /* this function is only invoked for NAK PDU types */
     nak = &ph->int_header.nak;
 
-    if (CF_CFDP_RecvNak(txn, ph) == CfdpStatus::T::CFDP_SUCCESS && nak->segment_list.num_segments > 0)
+    if (CF_CFDP_RecvNak(txn, ph) == CfdpStatus::T::SUCCESS && nak->segment_list.num_segments > 0)
     {
         for (counter = 0; counter < nak->segment_list.num_segments; ++counter)
         {
@@ -726,14 +726,14 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont /* unused */)
     /* tx maintenance: possibly process send_eof, or send_fin_ack */
     if (txn->flags.tx.send_eof)
     {
-        if (CF_CFDP_S_SendEof(txn) == CfdpStatus::T::CFDP_SUCCESS)
+        if (CF_CFDP_S_SendEof(txn) == CfdpStatus::T::SUCCESS)
         {
             txn->flags.tx.send_eof = false;
         }
     }
     else if (txn->flags.tx.send_fin_ack)
     {
-        if (CF_CFDP_S_SendFinAck(txn) == CfdpStatus::T::CFDP_SUCCESS)
+        if (CF_CFDP_S_SendFinAck(txn) == CfdpStatus::T::SUCCESS)
         {
             txn->flags.tx.send_fin_ack = false;
         }
@@ -771,7 +771,7 @@ void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
     CfdpStatus::T status;
     
     status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
-    if ((status == CfdpStatus::CFDP_SUCCESS) && nakProcessed)
+    if ((status == CfdpStatus::SUCCESS) && nakProcessed)
     {
         *cont = 1; /* cause dispatcher to re-enter this wakeup */
     }

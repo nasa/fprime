@@ -112,7 +112,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
     // return this->bufferAllocate_out(portNum, size);
 
     // For now, just pull a buffer from the preallocated pool
-    CfdpStatus::T status = CfdpStatus::CFDP_ERROR;
+    CfdpStatus::T status = CfdpStatus::ERROR;
 
     FW_ASSERT(pduPtr == NULL);
     FW_ASSERT(msgPtr == NULL);
@@ -128,13 +128,13 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
             pduPtr = &this->pduBuffers[i].pdu;
             pduPtr->index = i;
             msgPtr = this->pduBuffers[i].data;
-            status = CfdpStatus::CFDP_SUCCESS;
+            status = CfdpStatus::SUCCESS;
             break;
         }
     }
 
     // Check if we were unable to allocate a buffer
-    if(status != CfdpStatus::CFDP_SUCCESS)
+    if(status != CfdpStatus::SUCCESS)
     {
         this->log_WARNING_LO_CfdpBuffersExuasted();
     }

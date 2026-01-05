@@ -42,18 +42,13 @@
 //
 // ======================================================================
 
-/**
- * @file
- *
-
- */
-
 #ifndef CFDP_LOGICAL_PDU_HPP
 #define CFDP_LOGICAL_PDU_HPP
 
+#include <config/CfdpEntityIdAliasAc.hpp>
+#include <config/CfdpTransactionSeqAliasAc.hpp>
+
 #include "CfdpPdu.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpEntityIdAliasAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpTransactionSeqAliasAc.hpp"
 
 namespace Svc {
 namespace Ccsds {
