@@ -81,7 +81,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn)
 
     /* always move the transaction onto the wait queue now */
     CF_DequeueTransaction(txn);
-    CF_InsertSortPrio(txn, CF_QueueIdx_TXW);
+    CF_InsertSortPrio(txn, CfdpQueueId::TXW);
 
     /* the ack timer is armed in class 2 only */
     CF_CFDP_ArmAckTimer(txn);

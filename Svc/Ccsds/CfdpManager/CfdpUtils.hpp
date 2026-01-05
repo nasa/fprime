@@ -101,7 +101,7 @@ static inline void CF_DequeueTransaction(CF_Transaction_t *txn)
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-static inline void CF_MoveTransaction(CF_Transaction_t *txn, CF_QueueIdx_t queue)
+static inline void CF_MoveTransaction(CF_Transaction_t *txn, CfdpQueueId::T queue)
 {
     FW_ASSERT(txn && (txn->chan_num < CF_NUM_CHANNELS));
     CF_CList_Remove(&cfdpEngine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
@@ -112,21 +112,21 @@ static inline void CF_MoveTransaction(CF_Transaction_t *txn, CF_QueueIdx_t queue
     // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-static inline void CF_CList_Remove_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *node)
+static inline void CF_CList_Remove_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *node)
 {
     CF_CList_Remove(&chan->qs[queueidx], node);
     // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx]); /* sanity check */
     // --CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
 }
 
-static inline void CF_CList_InsertAfter_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *start,
+static inline void CF_CList_InsertAfter_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *start,
                                            CF_CListNode_t *after)
 {
     CF_CList_InsertAfter(&chan->qs[queueidx], start, after);
     // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
 }
 
-static inline void CF_CList_InsertBack_Ex(CF_Channel_t *chan, CF_QueueIdx_t queueidx, CF_CListNode_t *node)
+static inline void CF_CList_InsertBack_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *node)
 {
     CF_CList_InsertBack(&chan->qs[queueidx], node);
     // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
@@ -151,7 +151,7 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
  *
  * @par Description
  *       There's nothing to do currently other than remove the history
- *       from its current queue and put it back on CF_QueueIdx_HIST_FREE.
+ *       from its current queue and put it back on CfdpQueueId::T::HIST_FREE.
  *
  * @par Assumptions, External Events, and Notes:
  *       chan must not be NULL. history must not be NULL.
@@ -223,7 +223,7 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
  * @param txn  Pointer to the transaction object
  * @param queue  Index of queue to insert into
  */
-void CF_InsertSortPrio(CF_Transaction_t *txn, CF_QueueIdx_t queue);
+void CF_InsertSortPrio(CF_Transaction_t *txn, CfdpQueueId::T queue);
 
 /************************************************************************/
 /** @brief Traverses all transactions on all active queues and performs an operation on them.

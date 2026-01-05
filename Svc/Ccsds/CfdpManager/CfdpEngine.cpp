@@ -91,16 +91,16 @@ void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-inline CF_CFDP_Class_t CF_CFDP_GetClass(const CF_Transaction_t *txn)
+inline CfdpClass::T CF_CFDP_GetClass(const CF_Transaction_t *txn)
 {
-    FW_ASSERT(txn->flags.com.q_index != CF_QueueIdx_FREE, txn->flags.com.q_index);
+    FW_ASSERT(txn->flags.com.q_index != CfdpQueueId::T::FREE, txn->flags.com.q_index);
     if ((txn->state == CF_TxnState_S2) || (txn->state == CF_TxnState_R2))
     {
-        return CF_CFDP_CLASS_2;
+        return CfdpClass::T::CLASS_2;
     }
     else
     {
-        return CF_CFDP_CLASS_1;
+        return CfdpClass::T::CLASS_1;
     }
 }
 
@@ -268,7 +268,7 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
         hdr->version   = 1;
         hdr->pdu_type  = (directive_code == 0);     /* set to '1' for file data PDU, '0' for a directive PDU */
         hdr->direction = (towards_sender != false); /* set to '1' for toward sender, '0' for toward receiver */
-        hdr->txm_mode  = (CF_CFDP_GetClass(txn) == CF_CFDP_CLASS_1); /* set to '1' for class 1 data, '0' for class 2 */
+        hdr->txm_mode  = (CF_CFDP_GetClass(txn) == CfdpClass::T::CLASS_1); /* set to '1' for class 1 data, '0' for class 2 */
 
         /* choose the larger of the two EIDs to determine size */
         if (src_eid > dst_eid)
@@ -518,8 +518,8 @@ CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     }
     else
     {
-        CF_CFDP_Class_t tx_class = CF_CFDP_GetClass(txn);
-        FW_ASSERT(tx_class == CF_CFDP_CLASS_2, tx_class);
+        CfdpClass::T tx_class = CF_CFDP_GetClass(txn);
+        FW_ASSERT(tx_class == CfdpClass::T::CLASS_2, tx_class);
 
         nak = &ph->int_header.nak;
 
@@ -1026,7 +1026,7 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         // {
         //     history = &cfdpEngine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
         //     CF_CList_InitNode(&history->cl_node);
-        //     CF_CList_InsertBack_Ex(&cfdpEngine.channels[i], CF_QueueIdx_HIST_FREE, &history->cl_node);
+        //     CF_CList_InsertBack_Ex(&cfdpEngine.channels[i], CfdpQueueId::T::HIST_FREE, &history->cl_node);
         // }
     }
 
@@ -1050,12 +1050,12 @@ CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t *node, void 
     }
     else
     {
-        FW_ASSERT(txn->flags.com.q_index == CF_QueueIdx_TXA); /* huh? */
+        FW_ASSERT(txn->flags.com.q_index == CfdpQueueId::TXA); /* huh? */
 
         /* if no more messages, then chan->cur will be set.
          * If the transaction sent the last filedata PDU and EOF, it will move itself
          * off the active queue. Run until either of these occur. */
-        while (!args->chan->cur && txn->flags.com.q_index == CF_QueueIdx_TXA)
+        while (!args->chan->cur && txn->flags.com.q_index == CfdpQueueId::TXA)
         {
             // CFE_ES_PerfLogEntry(CF_PERF_ID_PDUSENT(txn->chan_num));
             CF_CFDP_DispatchTx(txn);
@@ -1089,15 +1089,15 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
             while (true)
             {
                 /* Attempt to run something on TXA */
-                CF_CList_Traverse(chan->qs[CF_QueueIdx_TXA], CF_CFDP_CycleTxFirstActive, &args);
+                CF_CList_Traverse(chan->qs[CfdpQueueId::TXA], CF_CFDP_CycleTxFirstActive, &args);
 
-                /* Keep going until CF_QueueIdx_PEND is empty or something is run */
-                if (args.ran_one || chan->qs[CF_QueueIdx_PEND] == NULL)
+                /* Keep going until CfdpQueueId::T::PEND is empty or something is run */
+                if (args.ran_one || chan->qs[CfdpQueueId::T::PEND] == NULL)
                 {
                     break;
                 }
 
-                txn = container_of_cpp(chan->qs[CF_QueueIdx_PEND], &CF_Transaction_t::cl_node);
+                txn = container_of_cpp(chan->qs[CfdpQueueId::T::PEND], &CF_Transaction_t::cl_node);
 
                 /* to be processed this needs a chunklist, get one now */
                 if (txn->chunks == NULL)
@@ -1112,7 +1112,7 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
                 }
 
                 CF_CFDP_ArmInactTimer(txn);
-                CF_MoveTransaction(txn, CF_QueueIdx_TXA);
+                CF_MoveTransaction(txn, CfdpQueueId::TXA);
             }
         }
 
@@ -1154,7 +1154,7 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan)
 
     void (*fns[CF_TickType_NUM_TYPES])(CF_Transaction_t *, int *) = {CF_CFDP_R_Tick, CF_CFDP_S_Tick,
                                                                      CF_CFDP_S_Tick_Nak};
-    int qs[CF_TickType_NUM_TYPES]                                 = {CF_QueueIdx_RX, CF_QueueIdx_TXW, CF_QueueIdx_TXW};
+    int qs[CF_TickType_NUM_TYPES]                                 = {CfdpQueueId::T::RX, CfdpQueueId::TXW, CfdpQueueId::TXW};
 
     FW_ASSERT(chan->tick_type < CF_TickType_NUM_TYPES, chan->tick_type);
 
@@ -1206,7 +1206,7 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan)
     }
 }
 
-void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority)
+void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, U8 keep, U8 chan, U8 priority)
 {
     txn->chan_num = chan;
     txn->priority = priority;
@@ -1219,7 +1219,7 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8
  * Internal helper routine only, not part of API.
  *
  *-----------------------------------------------------------------*/
-void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan,
+void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, U8 keep, U8 chan,
                                     U8 priority, CfdpEntityId dest_id)
 {
     // CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
@@ -1238,10 +1238,10 @@ void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, 
     txn->history->src_eid  = txn->cfdpManager->getLocalEidParam();
     txn->history->peer_eid = dest_id;
 
-    CF_InsertSortPrio(txn, CF_QueueIdx_PEND);
+    CF_InsertSortPrio(txn, CfdpQueueId::T::PEND);
 }
 
-CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class, U8 keep,
                             U8 chan_num, U8 priority, CfdpEntityId dest_id)
 {
     CF_Transaction_t *txn;
@@ -1286,7 +1286,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
     CF_Channel_t *    chan = &cfdpEngine.channels[chan_num];
     CF_Transaction_t *txn;
 
-    // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[CF_QueueIdx_RX] < CF_MAX_SIMULTANEOUS_RX)
+    // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[CfdpQueueId::T::RX] < CF_MAX_SIMULTANEOUS_RX)
     // {
     //     txn = CF_FindUnusedTransaction(chan, CF_Direction_RX);
     // }
@@ -1303,8 +1303,8 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
         txn->state_data.receive.r2.dc = CF_CFDP_FinDeliveryCode_INCOMPLETE;
         txn->state_data.receive.r2.fs = CF_CFDP_FinFileStatus_DISCARDED;
 
-        txn->flags.com.q_index = CF_QueueIdx_RX;
-        CF_CList_InsertBack_Ex(chan, static_cast<CF_QueueIdx_t>(txn->flags.com.q_index), &txn->cl_node);
+        txn->flags.com.q_index = CfdpQueueId::T::RX;
+        CF_CList_InsertBack_Ex(chan, static_cast<CfdpQueueId::T>(txn->flags.com.q_index), &txn->cl_node);
     }
 
     return txn;
@@ -1316,7 +1316,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
  *
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
-                                           CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
+                                           CfdpClass::T cfdp_class, U8 keep, U8 chan, U8 priority,
                                            CfdpEntityId dest_id)
 {
     CfdpStatus::T status = CfdpStatus::T::CFDP_SUCCESS;
@@ -1353,7 +1353,7 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
     return status;
 }
 
-CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
+CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
                                   U8 keep, U8 chan, U8 priority, U16 dest_id)
 {
     int i;
@@ -1625,7 +1625,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
 {
     CF_Channel_t *chan;
 
-    if (txn->flags.com.q_index == CF_QueueIdx_FREE)
+    if (txn->flags.com.q_index == CfdpQueueId::T::FREE)
     {
         // CFE_EVS_SendEvent(CF_RESET_FREED_XACT_DBG_EID, CFE_EVS_EventType_DEBUG,
         //                   "CF: attempt to reset a transaction that has already been freed");
@@ -1644,10 +1644,10 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
      * RX transactions can stay on the RX queue, that does not hurt anything
      * because they are only triggered when a PDU comes in matching that seq_num
      * (RX queue is not separated into A/W parts) */
-    if (txn->flags.com.q_index == CF_QueueIdx_TXA)
+    if (txn->flags.com.q_index == CfdpQueueId::TXA)
     {
         CF_DequeueTransaction(txn);
-        CF_InsertSortPrio(txn, CF_QueueIdx_TXW);
+        CF_InsertSortPrio(txn, CfdpQueueId::TXW);
     }
 
     if (OS_ObjectIdDefined(txn->fd))
@@ -1699,7 +1699,7 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
 {
     CF_Channel_t *   chan;
     CF_CListNode_t **chunklist_head;
-    CF_QueueIdx_t    hist_destq;
+    CfdpQueueId::T    hist_destq;
 
     /* File should have been closed by the state machine, but if
      * it still hanging open at this point, close it now so its not leaked.
@@ -1731,11 +1731,11 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
         if (txn->flags.com.keep_history)
         {
             /* move transaction history to history queue */
-            hist_destq = CF_QueueIdx_HIST;
+            hist_destq = CfdpQueueId::T::HIST;
         }
         else
         {
-            hist_destq = CF_QueueIdx_HIST_FREE;
+            hist_destq = CfdpQueueId::T::HIST_FREE;
         }
         CF_CList_InsertBack_Ex(chan, hist_destq, &txn->history->cl_node);
         txn->history = NULL;
@@ -1841,7 +1841,7 @@ void CF_CFDP_DisableEngine(void)
 {
     U32 i;
     U32 j;
-    static const CF_QueueIdx_t CLOSE_QUEUES[] = {CF_QueueIdx_RX, CF_QueueIdx_TXA, CF_QueueIdx_TXW};
+    static const CfdpQueueId::T CLOSE_QUEUES[] = {CfdpQueueId::T::RX, CfdpQueueId::TXA, CfdpQueueId::TXW};
     CF_Channel_t * chan;
 
     cfdpEngine.enabled = false;

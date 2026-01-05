@@ -17,8 +17,32 @@ enum CfdpFrozen {
   FROZEN @< CFDP channel operations are frozen
 }
 
-@< Structure representing base CFDP PDU header
-@< CF_CFDP_PduHeader_t for encoded form
+ @ Values for CFDP file transfer class
+ @
+ @ The CFDP specification prescribes two classes/modes of file
+ @ transfer protocol operation - unacknowledged/simple or
+ @ acknowledged/reliable.
+ @
+ @ Defined per section 7.1 of CCSDS 727.0-B-5
+enum CfdpClass {
+  CLASS_1 = 0 @< CFDP class 1 - Unreliable transfer
+  CLASS_2 = 1 @< CFDP class 2 - Reliable transfer
+}
+
+@ CFDP queue identifiers
+enum CfdpQueueId {
+    PEND = 0, @< first one on this list is active
+    TXA = 1
+    TXW = 2
+    RX = 3
+    HIST = 4
+    HIST_FREE = 5
+    FREE = 6
+    NUM = 7
+}
+
+@ Structure representing base CFDP PDU header
+@ CF_CFDP_PduHeader_t for encoded form
 struct CfdpLogicalPduHeader {
     version: U8 @< Version of the protocol
     pdu_type: U8 @< File Directive (0) or File Data (1)

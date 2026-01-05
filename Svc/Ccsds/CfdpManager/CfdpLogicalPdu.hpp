@@ -51,7 +51,6 @@
 #ifndef CFDP_LOGICAL_PDU_HPP
 #define CFDP_LOGICAL_PDU_HPP
 
-#include "default_cf_extern_typedefs.hpp"
 #include "CfdpPdu.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpEntityIdAliasAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpTransactionSeqAliasAc.hpp"

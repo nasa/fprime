@@ -43,6 +43,8 @@
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
 #include "Svc/Ccsds/CfdpManager/FppConstantsAc.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpFrozenEnumAc.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpClassEnumAc.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpQueueIdEnumAc.hpp"
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Os/File.hpp>
@@ -175,18 +177,30 @@ typedef enum
 } CF_TxnStatus_t;
 
 /**
+ * @brief Cache of source and destination filename
+ *
+ * This pairs a source and destination file name together
+ * to be retained for future reference in the transaction/history
+ */
+typedef struct CF_TxnFilenames
+{
+    char src_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
+    char dst_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
+} CfdpTxnFilenames;
+
+/**
  * @brief CF History entry
  *
  * Records CF app operations for future reference
  */
 typedef struct CF_History
 {
-    CF_TxnFilenames_t   fnames;   /**< \brief file names associated with this history entry */
-    CF_CListNode_t      cl_node;  /**< \brief for connection to a CList */
-    CF_Direction_t      dir;      /**< \brief direction of this history entry */
-    CF_TxnStatus_t      txn_stat; /**< \brief final status of operation */
-    CfdpEntityId       src_eid;  /**< \brief the source eid of the transaction */
-    CfdpEntityId       peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
+    CfdpTxnFilenames fnames;   /**< \brief file names associated with this history entry */
+    CF_CListNode_t cl_node;  /**< \brief for connection to a CList */
+    CF_Direction_t dir;      /**< \brief direction of this history entry */
+    CF_TxnStatus_t txn_stat; /**< \brief final status of operation */
+    CfdpEntityId src_eid;  /**< \brief the source eid of the transaction */
+    CfdpEntityId peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
     CfdpTransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
 } CF_History_t;
 
@@ -209,12 +223,12 @@ typedef struct CF_ChunkWrapper
 typedef struct CF_Playback
 {
     Os::DirectoryHandle dir_id;
-    CF_CFDP_Class_t     cfdp_class;
-    CF_TxnFilenames_t   fnames;
-    U16                 num_ts; /**< \brief number of transactions */
-    U8                  priority;
-    CfdpEntityId       dest_id;
-    char                pending_file[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
+    CfdpClass::T cfdp_class;
+    CfdpTxnFilenames fnames;
+    U16 num_ts; /**< \brief number of transactions */
+    U8 priority;
+    CfdpEntityId dest_id;
+    char pending_file[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
 
     bool busy;
     bool diropen;
@@ -235,7 +249,7 @@ typedef struct CF_PollDir
     U32 interval_sec; /**< \brief number of seconds to wait before trying a new directory */
 
     U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
-    CF_CFDP_Class_t cfdp_class; /**< \brief the CFDP class to send */
+    CfdpClass::T cfdp_class; /**< \brief the CFDP class to send */
     CfdpEntityId dest_eid;   /**< \brief destination entity id */
 
     char src_dir[CfdpManagerMaxFileSize]; /**< \brief path to source dir */
@@ -420,7 +434,7 @@ typedef enum
  */
 typedef struct CF_Channel
 {
-    CF_CListNode_t *qs[CF_QueueIdx_NUM];
+    CF_CListNode_t *qs[CfdpQueueId::T::NUM];
     CF_CListNode_t *cs[CF_Direction_NUM];
 
     // TODO remove all pipe references

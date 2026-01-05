@@ -40,7 +40,6 @@
 
 #include "CfdpPdu.hpp"
 #include "CfdpLogicalPdu.hpp"
-#include "default_cf_extern_typedefs.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpStatusEnumAc.hpp"
 
 namespace Svc {

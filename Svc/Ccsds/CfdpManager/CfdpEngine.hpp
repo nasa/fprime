@@ -213,7 +213,7 @@ void CF_CFDP_DisableEngine(void);
  * @retval #CfdpStatus::T::CFDP_SUCCESS \copydoc CfdpStatus::T::CFDP_SUCCESS
  * @returns CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  */
-CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
+CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class, U8 keep,
                             U8 chan, U8 priority, CfdpEntityId dest_id);
 
 /************************************************************************/
@@ -237,7 +237,7 @@ CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename,
  * @retval #CfdpStatus::T::CFDP_SUCCESS \copydoc CfdpStatus::T::CFDP_SUCCESS
  * @returns CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  */
-CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class,
+CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
                                  U8 keep, U8 chan, U8 priority, U16 dest_id);
 
 /************************************************************************/
@@ -557,7 +557,7 @@ void CF_CFDP_CancelTransaction(CF_Transaction_t *txn);
  * @param priority   Priority of transfer
  *
  */
-void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority);
+void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, U8 keep, U8 chan, U8 priority);
 
 /************************************************************************/
 /** @brief Helper function to start a new RX transaction
