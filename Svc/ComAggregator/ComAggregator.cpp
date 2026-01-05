@@ -68,6 +68,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_Aggreg
     this->m_allow_timeout = true;  // Allow timeout messages in FILL state
     this->m_frameSerializer.resetSer();
     this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
+    this->m_lastContext = ComCfg::FrameContext();
     if (this->m_held.get_data().isValid()) {
         // Fill the held data
         this->Svc_AggregationMachine_action_doFill(smId, signal, this->m_held);
