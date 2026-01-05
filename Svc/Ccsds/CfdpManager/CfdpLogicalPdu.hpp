@@ -53,6 +53,8 @@
 
 #include "default_cf_extern_typedefs.hpp"
 #include "CfdpPdu.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpEntityIdAliasAc.hpp"
+#include "Svc/Ccsds/CfdpManager/CfdpTransactionSeqAliasAc.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -128,9 +130,9 @@ typedef struct CF_Logical_PduHeader
     U16 header_encoded_length; /**< \brief Length of the encoded PDU header, in octets (NOT sizeof struct) */
     U16 data_encoded_length;   /**< \brief Length of the encoded PDU data, in octets */
 
-    CF_EntityId_t       source_eid;      /**< \brief Source entity ID (normalized) */
-    CF_EntityId_t       destination_eid; /**< \brief Destination entity ID (normalized) */
-    CF_TransactionSeq_t sequence_num;    /**< \brief Sequence number (normalized) */
+    CfdpEntityId       source_eid;      /**< \brief Source entity ID (normalized) */
+    CfdpEntityId       destination_eid; /**< \brief Destination entity ID (normalized) */
+    CfdpTransactionSeq sequence_num;    /**< \brief Sequence number (normalized) */
 } CF_Logical_PduHeader_t;
 
 /**
@@ -175,7 +177,7 @@ typedef struct CF_Logical_Lv
  */
 typedef union CF_Logical_TlvData
 {
-    CF_EntityId_t eid;      /**< \brief Valid when type=ENTITY_ID (6) */
+    CfdpEntityId eid;      /**< \brief Valid when type=ENTITY_ID (6) */
     const void *  data_ptr; /**< \brief Source of actual data in original location (other string/binary types) */
 } CF_Logical_TlvData_t;
 

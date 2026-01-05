@@ -81,7 +81,7 @@ namespace Ccsds {
  * still correlates (e.g. if it takes 4 bytes natively, it will be encoded into
  * 4 bytes).
  */
-#define CF_APP_MAX_HEADER_SIZE (sizeof(CF_CFDP_PduHeader_t) + sizeof(CF_TransactionSeq_t) + (3 * sizeof(CF_EntityId_t)))
+#define CF_APP_MAX_HEADER_SIZE (sizeof(CF_CFDP_PduHeader_t) + sizeof(CfdpTransactionSeq) + (3 * sizeof(CfdpEntityId)))
 
 /*
  * CFDP PDU data types are based on wrapper structs which

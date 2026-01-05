@@ -180,8 +180,8 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
 }
 
 CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
-                                                     CF_TransactionSeq_t transaction_sequence_number,
-                                                     CF_EntityId_t       src_eid)
+                                                     CfdpTransactionSeq transaction_sequence_number,
+                                                     CfdpEntityId       src_eid)
 {
     /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
      * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.

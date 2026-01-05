@@ -185,9 +185,9 @@ typedef struct CF_History
     CF_CListNode_t      cl_node;  /**< \brief for connection to a CList */
     CF_Direction_t      dir;      /**< \brief direction of this history entry */
     CF_TxnStatus_t      txn_stat; /**< \brief final status of operation */
-    CF_EntityId_t       src_eid;  /**< \brief the source eid of the transaction */
-    CF_EntityId_t       peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
-    CF_TransactionSeq_t seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
+    CfdpEntityId       src_eid;  /**< \brief the source eid of the transaction */
+    CfdpEntityId       peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
+    CfdpTransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
 } CF_History_t;
 
 /**
@@ -213,7 +213,7 @@ typedef struct CF_Playback
     CF_TxnFilenames_t   fnames;
     U16                 num_ts; /**< \brief number of transactions */
     U8                  priority;
-    CF_EntityId_t       dest_id;
+    CfdpEntityId       dest_id;
     char                pending_file[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
 
     bool busy;
@@ -236,7 +236,7 @@ typedef struct CF_PollDir
 
     U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
     CF_CFDP_Class_t cfdp_class; /**< \brief the CFDP class to send */
-    CF_EntityId_t dest_eid;   /**< \brief destination entity id */
+    CfdpEntityId dest_eid;   /**< \brief destination entity id */
 
     char src_dir[CfdpManagerMaxFileSize]; /**< \brief path to source dir */
     char dst_dir[CfdpManagerMaxFileSize]; /**< \brief path to destination dir */
@@ -467,7 +467,7 @@ typedef struct CfdpEngineDataT
     {
 
     }
-    CF_TransactionSeq_t seq_num; /* \brief keep track of the next sequence number to use for sends */
+    CfdpTransactionSeq seq_num; /* \brief keep track of the next sequence number to use for sends */
 
     // CF_Output_t out;
     // CF_Input_t  in;

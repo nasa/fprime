@@ -32,8 +32,6 @@ module Svc {
         @
         @ @par Limits
         @         Must be one of U8, U16, U32, U64.
-        @
-        @ BPC TODO: Refactor use of CF_EntityId_t to use this type
         type CfdpEntityId = U32
 
         @ @brief transaction sequence number size
@@ -52,7 +50,7 @@ module Svc {
         @ @par Limits
         @         Must be one of U8, U16, U32, U64.
         @
-        @ BPC TODO: Refactor use of CF_TransactionSeq_t to use this type
+        @ BPC TODO: Refactor use of CfdpTransactionSeq to use this type
         type CfdpTransactionSeq = U32
     }
 }

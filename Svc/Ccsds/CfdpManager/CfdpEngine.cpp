@@ -238,8 +238,8 @@ void CF_CFDP_SetPduLength(CF_Logical_PduBuffer_t *ph)
 }
 
 CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, CF_CFDP_FileDirective_t directive_code,
-                                                   CF_EntityId_t src_eid, CF_EntityId_t dst_eid, bool towards_sender,
-                                                   CF_TransactionSeq_t tsn, bool silent)
+                                                   CfdpEntityId src_eid, CfdpEntityId dst_eid, bool towards_sender,
+                                                   CfdpTransactionSeq tsn, bool silent)
 {
     /* directive_code == 0 if file data */
     CF_Logical_PduBuffer_t *ph = NULL;
@@ -364,7 +364,7 @@ CfdpStatus::T CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     return ret;
 }
 
-void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CF_EntityId_t local_eid)
+void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid)
 {
     CF_Logical_Tlv_t *ptlv;
 
@@ -429,13 +429,13 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn)
 }
 
 CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
-                             CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn)
+                             CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn)
 {
     CF_Logical_PduBuffer_t *ph;
     CF_Logical_PduAck_t *   ack;
     CfdpStatus::T            ret = CfdpStatus::T::CFDP_SUCCESS;
-    CF_EntityId_t           src_eid;
-    CF_EntityId_t           dst_eid;
+    CfdpEntityId           src_eid;
+    CfdpEntityId           dst_eid;
 
     FW_ASSERT((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN), dir_code);
 
@@ -1220,7 +1220,7 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8
  *
  *-----------------------------------------------------------------*/
 void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan,
-                                    U8 priority, CF_EntityId_t dest_id)
+                                    U8 priority, CfdpEntityId dest_id)
 {
     // CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
     //                   "CF: start class %d tx of file %lu:%.*s -> %lu:%.*s", cfdp_class + 1,
@@ -1242,7 +1242,7 @@ void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CF_CFDP_Class_t cfdp_class, 
 }
 
 CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
-                            U8 chan_num, U8 priority, CF_EntityId_t dest_id)
+                            U8 chan_num, U8 priority, CfdpEntityId dest_id)
 {
     CF_Transaction_t *txn;
     CF_Channel_t *    chan = &cfdpEngine.channels[chan_num];
@@ -1317,7 +1317,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
  *-----------------------------------------------------------------*/
 CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
                                            CF_CFDP_Class_t cfdp_class, U8 keep, U8 chan, U8 priority,
-                                           CF_EntityId_t dest_id)
+                                           CfdpEntityId dest_id)
 {
     CfdpStatus::T status = CfdpStatus::T::CFDP_SUCCESS;
     I32 ret;

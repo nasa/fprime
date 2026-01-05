@@ -133,5 +133,19 @@ namespace Ccsds {
 /* (in other words, the summation of all elements in CF_CHANNEL_NUM_R/TX_CHUNKS_PER_TRANSACTION */
 #define CF_TOTAL_CHUNKS (CF_NAK_MAX_SEGMENTS * 4)
 
+/**
+ * @brief Macro type for Entity id that is used in printf style formatting
+ * 
+ * @note This must match the size of CfdpEntityId as defined in CfdpCfg.fpp
+ */
+#define CF_PRI_ENTITY_ID PRIu32
+
+/**
+ * @brief Macro type for transaction seqeunces that is used in printf style formatting
+ * 
+ * @note This must match the size of CfdpTransactionSeq as defined in CfdpCfg.fpp
+ */
+#define CF_PRI_TRANSACTION_SEQ PRIu32
+
 }  // namespace Svc
 }  // namespace Ccsds

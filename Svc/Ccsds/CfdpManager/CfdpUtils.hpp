@@ -48,8 +48,8 @@ namespace Ccsds {
  */
 typedef struct CF_Traverse_TransSeqArg
 {
-    CF_TransactionSeq_t transaction_sequence_number;
-    CF_EntityId_t       src_eid;
+    CfdpTransactionSeq transaction_sequence_number;
+    CfdpEntityId       src_eid;
     CF_Transaction_t *  txn; /**< \brief output transaction pointer */
 } CF_Traverse_TransSeqArg_t;
 
@@ -190,8 +190,8 @@ void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan);
  * @retval  NULL if the transaction is not found
  */
 CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
-                                                     CF_TransactionSeq_t transaction_sequence_number,
-                                                     CF_EntityId_t       src_eid);
+                                                     CfdpTransactionSeq transaction_sequence_number,
+                                                     CfdpEntityId       src_eid);
 
 /************************************************************************/
 /** @brief List traversal function to check if the desired sequence number matches.

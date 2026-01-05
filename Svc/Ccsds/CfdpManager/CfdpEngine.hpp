@@ -214,7 +214,7 @@ void CF_CFDP_DisableEngine(void);
  * @returns CfdpStatus::T::CFDP_SUCCESS on success. CfdpStatus::T::CFDP_ERROR on error.
  */
 CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CF_CFDP_Class_t cfdp_class, U8 keep,
-                            U8 chan, U8 priority, CF_EntityId_t dest_id);
+                            U8 chan, U8 priority, CfdpEntityId dest_id);
 
 /************************************************************************/
 /** @brief Begin transmit of a directory.
@@ -258,8 +258,8 @@ CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_file
  * @retval  NULL if no message buffer available
  */
 CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, CF_CFDP_FileDirective_t directive_code,
-                                                   CF_EntityId_t src_eid, CF_EntityId_t dst_eid, bool towards_sender,
-                                                   CF_TransactionSeq_t tsn, bool silent);
+                                                   CfdpEntityId src_eid, CfdpEntityId dst_eid, bool towards_sender,
+                                                   CfdpTransactionSeq tsn, bool silent);
 
 /************************************************************************/
 /** @brief Build a metadata PDU for transmit.
@@ -314,7 +314,7 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       txn must not be NULL.
  *
- * @note CF_CFDP_SendAck() takes a CF_TransactionSeq_t instead of getting it from transaction history because
+ * @note CF_CFDP_SendAck() takes a CfdpTransactionSeq instead of getting it from transaction history because
  * of the special case where a FIN-ACK must be sent for an unknown transaction. It's better for
  * long term maintenance to not build an incomplete CF_History_t for it.
  *
@@ -330,7 +330,7 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
  * @retval CfdpStatus::T::CFDP_SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
-                              CF_CFDP_ConditionCode_t cc, CF_EntityId_t peer_eid, CF_TransactionSeq_t tsn);
+                              CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
 
 /************************************************************************/
 /** @brief Build a FIN PDU for transmit.
@@ -384,7 +384,7 @@ CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * @param tlv_type  Type of TLV to append.  Currently must be CF_CFDP_TLV_TYPE_ENTITY_ID.
  * @param local_eid Local entity ID to append
  */
-void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CF_EntityId_t local_eid);
+void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid);
 
 /************************************************************************/
 /** @brief Unpack a basic PDU header from a received message.
