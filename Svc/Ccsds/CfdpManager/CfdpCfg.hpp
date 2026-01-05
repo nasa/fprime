@@ -94,6 +94,17 @@ namespace Ccsds {
 #define CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN (2)
 
 /**
+ *  @brief Number of histories per channel
+ *
+ *  @par Description:
+ *       Each channel can support this number of file receive transactions at a time.
+ *
+ *  @par Limits:
+ *       65536 is the current max.
+ */
+#define CF_NUM_HISTORIES_PER_CHANNEL (256)
+
+/**
  *  @brief Number of transactions per playback directory.
  *
  *  @par Description:

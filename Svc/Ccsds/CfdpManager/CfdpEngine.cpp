@@ -924,7 +924,7 @@ void CF_CFDP_ReceivePdu(CF_Channel_t *chan, CF_Logical_PduBuffer_t *ph)
 CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
 {
     /* initialize all transaction nodes */
-    // CF_History_t * history;
+    CF_History_t * history;
     CF_Transaction_t * txn = cfdpEngine.transactions;
     CF_ChunkWrapper_t *cw  = cfdpEngine.chunks;
     CF_CListNode_t **  list_head;
@@ -1022,12 +1022,12 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         }
 
         // TODO remove histories
-        // for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
-        // {
-        //     history = &cfdpEngine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
-        //     CF_CList_InitNode(&history->cl_node);
-        //     CF_CList_InsertBack_Ex(&cfdpEngine.channels[i], CfdpQueueId::T::HIST_FREE, &history->cl_node);
-        // }
+        for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
+        {
+            history = &cfdpEngine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
+            CF_CList_InitNode(&history->cl_node);
+            CF_CList_InsertBack_Ex(&cfdpEngine.channels[i], CfdpQueueId::T::HIST_FREE, &history->cl_node);
+        }
     }
 
     if (ret == CfdpStatus::T::CFDP_SUCCESS)
@@ -1057,9 +1057,7 @@ CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t *node, void 
          * off the active queue. Run until either of these occur. */
         while (!args->chan->cur && txn->flags.com.q_index == CfdpQueueId::TXA)
         {
-            // CFE_ES_PerfLogEntry(CF_PERF_ID_PDUSENT(txn->chan_num));
             CF_CFDP_DispatchTx(txn);
-            // CFE_ES_PerfLogExit(CF_PERF_ID_PDUSENT(txn->chan_num));
         }
 
         args->ran_one = 1;
