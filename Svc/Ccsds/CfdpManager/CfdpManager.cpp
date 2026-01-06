@@ -89,21 +89,19 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-  void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
-                                         Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
-                                         Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
-                                         const Fw::CmdStringArg& destFileName)
+void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
+                                       Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
+                                       Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
+                                       const Fw::CmdStringArg& destFileName)
 {
-    Fw::CmdResponse::T rspStatus;
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
     // Check channel number is in range
-    if(channelNum >= CfdpManagerNumChannels)
-    {
-        this->log_WARNING_LO_CfdpSendFileInvalidChannel(channelNum, CfdpManagerNumChannels);
-        rspStatus = Fw::CmdResponse::VALIDATION_ERROR;
-    }
-    else if (CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e, channelNum,
-                            priority, destId) == CfdpStatus::SUCCESS)
+    rspStatus = checkCommandChannelIndex(channelNum);
+
+    if ((rspStatus == Fw::CmdResponse::OK) &&
+        (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
+                                               channelNum, priority, destId)))
     {
         this->log_ACTIVITY_LO_CfdpSendFileInitiatied(sourceFileName);
         rspStatus = Fw::CmdResponse::OK;
@@ -117,6 +115,49 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
+                                                Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
+                                                Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
+                                                const Fw::CmdStringArg& destFileName)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    // Check channel number is in range
+    rspStatus = checkCommandChannelIndex(channelNum);
+
+    if ((rspStatus == Fw::CmdResponse::OK) &&
+        (CfdpStatus::SUCCESS == CF_CFDP_PlaybackDir(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
+                                                    channelNum, priority, destId)))
+    {
+        this->log_ACTIVITY_LO_CfdpPlaybackInitiatied(sourceFileName);
+    }
+    else
+    {
+        // BPC TODO Was failure reason already emitted?
+        // Do we need this EVR?
+        this->log_WARNING_LO_CfdpPlaybackInitiate(sourceFileName);
+        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+// ----------------------------------------------------------------------
+// Private command helper functions
+// ----------------------------------------------------------------------
+Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex)
+{
+    if(channelIndex >= CfdpManagerNumChannels)
+    {
+        this->log_WARNING_LO_CfdpInvalidChannel(channelIndex, CfdpManagerNumChannels);
+        return Fw::CmdResponse::VALIDATION_ERROR;
+    }
+    else
+    {
+      return Fw::CmdResponse::OK;
+    }
 }
 
 // ----------------------------------------------------------------------

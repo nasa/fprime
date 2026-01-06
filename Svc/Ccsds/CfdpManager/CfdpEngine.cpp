@@ -1352,7 +1352,7 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
 }
 
 CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
-                                  CfdpKeep::T keep, U8 chan, U8 priority, U16 dest_id)
+                                  CfdpKeep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id)
 {
     int i;
     CF_Playback_t *pb;

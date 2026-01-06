@@ -238,7 +238,7 @@ CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename,
  * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
  */
 CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
-                                 U8 keep, U8 chan, U8 priority, U16 dest_id);
+                                 U8 keep, U8 chan, U8 priority, CfdpEntityId dest_id);
 
 /************************************************************************/
 /** @brief Build the PDU header in the output buffer to prepare to send a packet.

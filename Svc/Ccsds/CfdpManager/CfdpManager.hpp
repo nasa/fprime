@@ -120,6 +120,30 @@ class CfdpManager final : public CfdpManagerComponentBase {
         const Fw::CmdStringArg& destFileName //!< The name of the destination file on the ground
     ) override;
 
+    //! Handler for command PlaybackDirectory
+    //!
+    //! Command to start a directory playback
+    void PlaybackDirectory_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        Svc::Ccsds::CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
+        Svc::Ccsds::CfdpKeep keep, //!< Whether or not to keep or delete the file(s) upon completion
+        U8 channelNum, //!< Channel number for the file transaction(s)
+        U8 priority, //!< Priority: 0=highest priority
+        Svc::Ccsds::CfdpEntityId destId, //!< Destination entity id
+        const Fw::CmdStringArg& sourceDirectory, //!< The name of the on-board directory to send
+        const Fw::CmdStringArg& destDirectory //!< The name of the destination directory on the ground
+    ) override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private command helper functions
+    // ----------------------------------------------------------------------
+
+    //! Checks if the requested channel index is valid, and emits an EVR if not
+    Fw::CmdResponse::T checkCommandChannelIndex(U8 channelIndex //!< The channel index to check
+    );
+
   private:
     // ----------------------------------------------------------------------
     // Buffer management helpers
