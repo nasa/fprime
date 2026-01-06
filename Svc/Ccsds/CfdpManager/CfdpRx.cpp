@@ -758,7 +758,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
             if (success)
             {
                 /* close and rename file */
-                CF_WrappedClose(txn->fd);
+                txn->fd.close();
 
                 /* Note OS_mv attempts a rename, then copy/delete if that fails so it works across file systems */
                 fileStatus = OS_mv(fname, txn->history->fnames.dst_filename);

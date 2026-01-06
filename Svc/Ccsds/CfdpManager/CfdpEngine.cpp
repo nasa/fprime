@@ -1675,14 +1675,12 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
 
     if (OS_ObjectIdDefined(txn->fd))
     {
-        CF_WrappedClose(txn->fd);
+        txn->fd.close();
 
         if (!txn->keep)
         {
             CF_CFDP_HandleNotKeepFile(txn);
         }
-
-        // txn->fd = OS_OBJECT_ID_UNDEFINED;
     }
 
     if (txn->history != NULL)
@@ -1730,8 +1728,7 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
     if (OS_ObjectIdDefined(txn->fd))
     {
         // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
-        OS_close(txn->fd);
-        // txn->fd = OS_OBJECT_ID_UNDEFINED;
+        txn->fd.close();
     }
 
     CF_DequeueTransaction(txn); /* this makes it "float" (not in any queue) */
@@ -1855,7 +1852,7 @@ CF_CListTraverse_Status_t CF_CFDP_CloseFiles(CF_CListNode_t *node, void *context
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
     if (OS_ObjectIdDefined(txn->fd))
     {
-        CF_WrappedClose(txn->fd);
+        txn->fd.close();
     }
     return CF_CLIST_CONT;
 }

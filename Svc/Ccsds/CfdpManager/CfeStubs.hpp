@@ -38,8 +38,8 @@ namespace Ccsds {
 
 //  void close(void);
 // int32 OS_close(osal_id_t filedes);
-I32 OS_close(Os::FileHandle filedes)
-{return 0; }
+// I32 OS_close(Os::FileHandle filedes)
+// {return 0; }
 
 // CfdpStatus::T CF_WrappedRead(osal_id_t fd, void *buf, size_t read_size)
 
@@ -58,8 +58,8 @@ I32 OS_FileOpenCheck(const char *Filename)
 
 // void close()
 // void CF_WrappedClose(osal_id_t fd)
-void CF_WrappedClose(Os::FileHandle fd)
-{}
+// void CF_WrappedClose(Os::FileHandle fd)
+// {}
 
 // #define OS_SEEK_SET 0 /**< Seek offset set */ BPC: The file offset is set to offset bytes.
 // #define OS_SEEK_CUR 1 /**< Seek offset current */ BPC: The file offset is set to its current location plus offset bytes.
