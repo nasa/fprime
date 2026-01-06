@@ -189,6 +189,11 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
 
             *bytes_processed = static_cast<U32>(actual_bytes);
         }
+        else
+        {
+            // PDU was not sent, so return the buffer allocated by CF_CFDP_ConstructPduHeader()
+            txn->cfdpManager->returnPduBuffer(txn->chan_num, ph);
+        }
     }
 
     return ret;

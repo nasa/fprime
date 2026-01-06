@@ -320,7 +320,7 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_METADATA, txn->cfdpManager->getLocalEidParam(),
                                    txn->history->peer_eid, 0, txn->history->seq_num, 0);
     CF_Logical_PduMd_t *md;
-    CfdpStatus::T        sret = CfdpStatus::SUCCESS;
+    CfdpStatus::T sret = CfdpStatus::SUCCESS;
 
     if (!ph)
     {

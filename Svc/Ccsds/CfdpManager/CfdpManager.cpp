@@ -223,8 +223,6 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
     return status;
 }
 
-// TODO call this from reset
-// Check for other escape routes
 void CfdpManager ::returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu)
 {
     // FwIndexType portNum;
