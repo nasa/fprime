@@ -89,19 +89,19 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
-                                       Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
-                                       Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
+void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpEntityId destId,
+                                       CfdpClass cfdpClass, CfdpKeep keep, U8 priority,
+                                       const Fw::CmdStringArg& sourceFileName,
                                        const Fw::CmdStringArg& destFileName)
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    // Check channel number is in range
-    rspStatus = checkCommandChannelIndex(channelNum);
+    // Check channel index is in range
+    rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
         (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
-                                               channelNum, priority, destId)))
+                                               channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
         rspStatus = Fw::CmdResponse::OK;
@@ -110,50 +110,102 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccs
     {
         // BPC TODO Was failure reason already emitted?
         // Do we need this EVR?
-        this->log_WARNING_LO_SendFileFailInitiate(sourceFileName);
+        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
 }
 
-void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
-                                                Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
-                                                Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
-                                                const Fw::CmdStringArg& destFileName)
+void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpEntityId destId,
+                                                CfdpClass cfdpClass, CfdpKeep keep, U8 priority,
+                                                const Fw::CmdStringArg& sourceDirectory,
+                                                const Fw::CmdStringArg& destDirectory)
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    // Check channel number is in range
-    rspStatus = checkCommandChannelIndex(channelNum);
+    // Check channel index is in range
+    rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == CF_CFDP_PlaybackDir(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
-                                                    channelNum, priority, destId)))
+        (CfdpStatus::SUCCESS == CF_CFDP_PlaybackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
+                                                    keep.e, channelId, priority, destId)))
     {
-        this->log_ACTIVITY_LO_PlaybackInitiatied(sourceFileName);
+        this->log_ACTIVITY_LO_PlaybackInitiatied(sourceDirectory);
     }
     else
     {
         // BPC TODO Was failure reason already emitted?
         // Do we need this EVR?
-        this->log_WARNING_LO_PlaybackInitiate(sourceFileName);
+        this->log_WARNING_LO_PlaybackInitiateFail(sourceDirectory);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
 }
 
-void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelNum, CfdpFlow flowState)
+void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, U8 pollId,
+                                            CfdpEntityId destId, CfdpClass cfdpClass, U8 priority,
+                                            U32 interval, const Fw::CmdStringArg& sourceDirectory,
+                                            const Fw::CmdStringArg& destDirectory)
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    // Check channel number is in range
-    rspStatus = checkCommandChannelIndex(channelNum);
+    // Check channel index and poll index are in range
+    rspStatus = this->checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
     {
-        cfdpEngineSetChannelFlowState(channelNum, flowState);
-        this->log_ACTIVITY_LO_SetFlowState(channelNum, flowState);
+      rspStatus = this->checkCommandChannelPollIndex(pollId);
+    }
+
+    if ((rspStatus == Fw::CmdResponse::OK) &&
+        (CfdpStatus::SUCCESS == cfdpEngineStartPollDir(channelId, pollId, sourceDirectory, destDirectory,
+                                                       cfdpClass.e, priority, destId, interval)))
+    {
+        this->log_ACTIVITY_LO_PollDirInitiatied(sourceDirectory);
+    }
+    else
+    { 
+        // Failure EVR was already emitted
+        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, U8 pollId)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    // Check channel index and poll index are in range
+    rspStatus = this->checkCommandChannelIndex(channelId);
+    if (rspStatus == Fw::CmdResponse::OK)
+    {
+      rspStatus = this->checkCommandChannelPollIndex(pollId);
+    }
+
+    if ((rspStatus == Fw::CmdResponse::OK) &&
+        (CfdpStatus::SUCCESS == cfdpEngineStopPollDir(channelId, pollId)))
+    {
+        this->log_ACTIVITY_LO_PollDirStopped(channelId, pollId);
+    }
+    // Failure EVR was already emitted
+    // Not failing the command if the stop request failed
+    // This allows operators to reinforce state prior to calling PollDirectory
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpFlow flowState)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    // Check channel index is in range
+    rspStatus = checkCommandChannelIndex(channelId);
+    if (rspStatus == Fw::CmdResponse::OK)
+    {
+        cfdpEngineSetChannelFlowState(channelId, flowState);
+        this->log_ACTIVITY_LO_SetFlowState(channelId, flowState);
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
@@ -163,11 +215,25 @@ void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8
 // ----------------------------------------------------------------------
 // Private command helper functions
 // ----------------------------------------------------------------------
+
 Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex)
 {
     if(channelIndex >= CfdpManagerNumChannels)
     {
         this->log_WARNING_LO_InvalidChannel(channelIndex, CfdpManagerNumChannels);
+        return Fw::CmdResponse::VALIDATION_ERROR;
+    }
+    else
+    {
+      return Fw::CmdResponse::OK;
+    }
+}
+
+Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
+{
+    if(pollIndex >= CF_MAX_POLLING_DIR_PER_CHAN)
+    {
+        this->log_WARNING_LO_InvalidChannelPoll(pollIndex, CF_MAX_POLLING_DIR_PER_CHAN);
         return Fw::CmdResponse::VALIDATION_ERROR;
     }
     else
@@ -183,13 +249,13 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size)
+CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelId, FwSizeType size)
 {
     // FwIndexType portNum;
     
-    // // There is a direct mapping between channel number and port number
-    // FW_ASSERT(channelNum < CF_NUM_CHANNELS, channelNum, CF_NUM_CHANNELS);
-    // portNum = static_cast<FwIndexType>(channelNum);
+    // // There is a direct mapping between channel index and port number
+    // FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
+    // portNum = static_cast<FwIndexType>(channelId);
 
     // return this->bufferAllocate_out(portNum, size);
 
@@ -223,14 +289,14 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
     return status;
 }
 
-void CfdpManager ::returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu)
+void CfdpManager ::returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu)
 {
     // FwIndexType portNum;
     
     FW_ASSERT(pdu != NULL);
-    // // There is a direct mapping between channel number and port number
-    // FW_ASSERT(channelNum < CF_NUM_CHANNELS, channelNum, CF_NUM_CHANNELS);
-    // portNum = static_cast<FwIndexType>(channelNum);
+    // // There is a direct mapping between channel index and port number
+    // FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
+    // portNum = static_cast<FwIndexType>(channelId);
 
     // // Was unable to succesfully populate the PDU buffer, return it
     // this->bufferDeallocate_out(portNum, buffer);
@@ -239,7 +305,7 @@ void CfdpManager ::returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu)
     this->returnBufferHelper(pdu);
 }
 
-void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr)
+void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr)
 {
     FwIndexType portNum;
     FwSizeType msgSize;
@@ -247,9 +313,9 @@ void CfdpManager ::sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, co
     
     FW_ASSERT(pdu != NULL);
     FW_ASSERT(msgPtr != NULL);
-    // There is a direct mapping between channel number and port number
-    FW_ASSERT(channelNum < CF_NUM_CHANNELS, channelNum, CF_NUM_CHANNELS);
-    portNum = static_cast<FwIndexType>(channelNum);
+    // There is a direct mapping between channel index and port number
+    FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
+    portNum = static_cast<FwIndexType>(channelId);
     
     // TODO it would be more efficient to allocate a buffer in CF_CFDP_ConstructPduHeader()
     // However for the proof of concept I am just going to copy the data here

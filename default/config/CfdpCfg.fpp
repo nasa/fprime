@@ -5,13 +5,13 @@
 
 module Svc {
     module Ccsds {
-        @ File path size used for CFDP file system operations
-        constant CfdpManagerMaxFileSize = 200
-
         @ Number of buffer ports used to send PDUs
         @ This must match the CF_NUM_CHANNELS macro defined in CfdpCfg.hpp
         @ BPC TODO: Remove CF_NUM_CHANNELS in favor of this type
         constant CfdpManagerNumChannels = 2
+
+        @ File path size used for CFDP file system operations
+        constant CfdpManagerMaxFileSize = 200
 
         @ @brief Entity id size
         @

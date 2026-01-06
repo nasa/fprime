@@ -54,11 +54,11 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelNum, FwSizeType size);
+  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelId, FwSizeType size);
   // Not sure there is an equivelent
-  void returnPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t *);
+  void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);
   // Equivelent of CF_CFDP_Send
-  void sendPduBuffer(U8 channelNum, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
+  void sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
 
   public:
   // ----------------------------------------------------------------------
@@ -111,11 +111,11 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void SendFile_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
-        Svc::Ccsds::CfdpClass cfdpClass, //!< CFDP class for the file transfer
-        Svc::Ccsds::CfdpKeep keep, //!< Whether or not to keep or delete the file upon completion
-        U8 channelNum, //!< Channel number for the file transaction
+        U8 channelId, //!< Channel ID for the file transaction
+        CfdpEntityId destId, //!< Destination entity id
+        CfdpClass cfdpClass, //!< CFDP class for the file transfer
+        CfdpKeep keep, //!< Whether or not to keep or delete the file upon completion
         U8 priority, //!< Priority: 0=highest priority
-        Svc::Ccsds::CfdpEntityId destId, //!< Destination entity id
         const Fw::CmdStringArg& sourceFileName, //!< The name of the on-board file to send
         const Fw::CmdStringArg& destFileName //!< The name of the destination file on the ground
     ) override;
@@ -126,13 +126,39 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void PlaybackDirectory_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
-        Svc::Ccsds::CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
-        Svc::Ccsds::CfdpKeep keep, //!< Whether or not to keep or delete the file(s) upon completion
-        U8 channelNum, //!< Channel number for the file transaction(s)
+        U8 channelId, //!< Channel ID for the file transaction(s)
+        CfdpEntityId destId, //!< Destination entity id
+        CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
+        CfdpKeep keep, //!< Whether or not to keep or delete the file(s) upon completion
         U8 priority, //!< Priority: 0=highest priority
-        Svc::Ccsds::CfdpEntityId destId, //!< Destination entity id
         const Fw::CmdStringArg& sourceDirectory, //!< The name of the on-board directory to send
         const Fw::CmdStringArg& destDirectory //!< The name of the destination directory on the ground
+    ) override;
+
+    //! Handler for command PollDirectory
+    //!
+    //! Command to start a directory poll
+    void PollDirectory_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId, //!< Channel ID for the file transaction(s)
+        U8 pollId, //!< Channel poll ID for the file transaction(s)
+        CfdpEntityId destId, //!< Destination entity id
+        CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
+        U8 priority, //!< Priority: 0=highest priority
+        U32 interval, //!< Interval to poll the directory in seconds
+        const Fw::CmdStringArg& sourceDirectory, //!< The name of the on-board directory to send
+        const Fw::CmdStringArg& destDirectory //!< The name of the destination directory on the ground
+    ) override;
+
+    //! Handler for command StopPollDirectory
+    //!
+    //! Command to stop a directory poll
+    void StopPollDirectory_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId, //!< Channel ID to stop
+        U8 pollId //!< Channel poll ID to stop
     ) override;
 
     //! Handler for command SetChannelFlow
@@ -141,8 +167,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void SetChannelFlow_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
-        U8 channelNum, //!< Channel number to set
-        Svc::Ccsds::CfdpFlow flowState //!< Flow state to set
+        U8 channelId, //!< Channel ID to set
+        CfdpFlow freeze //!< Flow state to set
     ) override;
 
   private:
@@ -152,6 +178,10 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     //! Checks if the requested channel index is valid, and emits an EVR if not
     Fw::CmdResponse::T checkCommandChannelIndex(U8 channelIndex //!< The channel index to check
+    );
+
+    //! Checks if the requested channel poll index is valid, and emits an EVR if not
+    Fw::CmdResponse::T checkCommandChannelPollIndex(U8 pollIndex //!< The poll index to check
     );
 
   private:

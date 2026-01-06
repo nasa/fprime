@@ -86,11 +86,6 @@ void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
     txn->flags.com.ack_timer_armed = true;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 inline CfdpClass::T CF_CFDP_GetClass(const CF_Transaction_t *txn)
 {
     FW_ASSERT(txn->flags.com.q_index != CfdpQueueId::FREE, txn->flags.com.q_index);
@@ -104,11 +99,6 @@ inline CfdpClass::T CF_CFDP_GetClass(const CF_Transaction_t *txn)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
 {
     FW_ASSERT(txn->history);
@@ -116,11 +106,6 @@ inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
     return (txn->history->dir == CF_Direction_TX);
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_ArmInactTimer(CF_Transaction_t *txn)
 {
     U32 timerDuration = 0;
@@ -165,11 +150,6 @@ void CF_CFDP_DispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     CF_CFDP_ArmInactTimer(txn); /* whenever a packet was received by the other size, always arm its inactivity timer */
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_DispatchTx(CF_Transaction_t *txn)
 {
     static const CF_CFDP_TxnSendDispatchTable_t state_fns = {
@@ -188,11 +168,6 @@ void CF_CFDP_DispatchTx(CF_Transaction_t *txn)
     CF_CFDP_TxStateDispatch(txn, &state_fns);
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direction_t dir)
 {
     CF_ChunkWrapper_t *ret = NULL;
@@ -216,11 +191,6 @@ CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direction_t d
     return ret;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_SetPduLength(CF_Logical_PduBuffer_t *ph)
 {
     U16 final_pos;
@@ -1219,11 +1189,6 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpK
     txn->state    = cfdp_class ? CF_TxnState_S2 : CF_TxnState_S1;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
                              U8 priority, CfdpEntityId dest_id)
 {
@@ -1315,12 +1280,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
     return txn;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
-CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_filename, const char *dst_filename,
+CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
                                            CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority,
                                            CfdpEntityId dest_id)
 {
@@ -1328,7 +1288,7 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
     I32 ret;
 
     /* make sure the directory can be open */
-    ret = OS_DirectoryOpen(&pb->dir_id, src_filename);
+    ret = OS_DirectoryOpen(&pb->dir_id, src_filename.toChar());
     // BPC TODO make this a status check
     // if (ret != OS_SUCCESS)
     if (ret < 0)
@@ -1348,9 +1308,10 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
         pb->cfdp_class = cfdp_class;
 
         /* NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated */
-        strncpy(pb->fnames.src_filename, src_filename, sizeof(pb->fnames.src_filename) - 1);
+        // BPC TODO Make these strings 
+        strncpy(pb->fnames.src_filename, src_filename.toChar(), sizeof(pb->fnames.src_filename) - 1);
         pb->fnames.src_filename[sizeof(pb->fnames.src_filename) - 1] = 0;
-        strncpy(pb->fnames.dst_filename, dst_filename, sizeof(pb->fnames.dst_filename) - 1);
+        strncpy(pb->fnames.dst_filename, dst_filename.toChar(), sizeof(pb->fnames.dst_filename) - 1);
         pb->fnames.dst_filename[sizeof(pb->fnames.dst_filename) - 1] = 0;
     }
 
@@ -1358,7 +1319,7 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const char *src_fi
     return status;
 }
 
-CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
+CfdpStatus::T CF_CFDP_PlaybackDir(const Fw::String& src_filename, const Fw::String& dst_filename, CfdpClass::T cfdp_class,
                                   CfdpKeep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id)
 {
     int i;
@@ -1498,11 +1459,6 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
 {
     if (pb->counted != up)
@@ -1522,11 +1478,6 @@ void CF_CFDP_UpdatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
     }
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
 {
     int       i;
@@ -1538,6 +1489,74 @@ void CF_CFDP_ProcessPlaybackDirectories(CF_Channel_t *chan)
         // CF_CFDP_UpdatePollPbCounted(&chan->playback[i], chan->playback[i].busy,
         //                             &CF_AppData.hk.Payload.channel_hk[chan_index].playback_counter);
     }
+}
+
+CfdpStatus::T cfdpEngineStartPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, const Fw::String& dstDir,
+                                     CfdpClass::T cfdp_class, U8 priority, CfdpEntityId destEid,
+                                     U32 intervalSec)
+{
+    CfdpStatus::T status = CfdpStatus::SUCCESS;
+    CF_PollDir_t* pd = NULL;
+
+    FW_ASSERT(chanId < CF_NUM_CHANNELS, chanId, CF_NUM_CHANNELS);
+    FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
+
+    // First check if the poll directory is already in use
+    pd = &cfdpEngine.channels[chanId].polldir[pollId];
+    if(pd->enabled == Fw::Enabled::DISABLED)
+    {
+        // Populate arguments
+        pd->intervalSec = intervalSec;
+        pd->priority = priority;
+        pd->cfdpClass = cfdp_class;
+        pd->destEid = destEid;
+        pd->srcDir = srcDir;
+        pd->dstDir = dstDir;
+        
+        // Set timer and enable polling
+        pd->intervalTimer.setTimer(pd->intervalSec);
+        pd->enabled = Fw::Enabled::ENABLED;
+    }
+    else
+    {
+        // TODO BPC emit EVR here
+        status = CfdpStatus::ERROR;
+    }
+
+    return status;
+}
+
+CfdpStatus::T cfdpEngineStopPollDir(U8 chanId, U8 pollId)
+{
+    CfdpStatus::T status = CfdpStatus::SUCCESS;
+    CF_PollDir_t* pd = NULL;
+
+    FW_ASSERT(chanId < CF_NUM_CHANNELS, chanId, CF_NUM_CHANNELS);
+    FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
+
+    // Check if the poll directory is in use
+    pd = &cfdpEngine.channels[chanId].polldir[pollId];
+    if(pd->enabled == Fw::Enabled::DISABLED)
+    {
+        // Clear poll directory arguments
+        pd->intervalSec = 0;
+        pd->priority = 0;
+        pd->cfdpClass = static_cast<CfdpClass::T>(0);
+        pd->destEid = static_cast<CfdpEntityId>(0);
+        pd->srcDir = "";
+        pd->dstDir = "";
+        
+        // Disable timer and polling
+        pd->intervalTimer.disableTimer();
+        pd->enabled = Fw::Enabled::DISABLED;
+    }
+    else
+    {
+        // TODO BPC emit EVR here
+        status = CfdpStatus::ERROR;
+    }
+
+    return status;
 }
 
 void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
@@ -1557,28 +1576,28 @@ void CF_CFDP_ProcessPollingDirectories(CF_Channel_t *chan)
         {
             if ((pd->pb.busy == false) && (pd->pb.num_ts == 0))
             {
-                if ((pd->interval_timer.getStatus() != CfdpTimer::Status::RUNNING) && (pd->interval_sec > 0))
+                if ((pd->intervalTimer.getStatus() != CfdpTimer::Status::RUNNING) && (pd->intervalSec > 0))
                 {
                     /* timer was not set, so set it now */
-                    pd->interval_timer.setTimer(pd->interval_sec);
+                    pd->intervalTimer.setTimer(pd->intervalSec);
                 }
-                else if (pd->interval_timer.getStatus() == CfdpTimer::Status::EXPIRED)
+                else if (pd->intervalTimer.getStatus() == CfdpTimer::Status::EXPIRED)
                 {
                     /* the timer has expired */
-                    status = CF_CFDP_PlaybackDir_Initiate(&pd->pb, pd->src_dir, pd->dst_dir, pd->cfdp_class,
+                    status = CF_CFDP_PlaybackDir_Initiate(&pd->pb, pd->srcDir, pd->dstDir, pd->cfdpClass,
                                                           CfdpKeep::DELETE, chan->channel_id, pd->priority,
-                                                          pd->dest_eid);
+                                                          pd->destEid);
                     if (status != CfdpStatus::SUCCESS)
                     {
                         /* error occurred in playback directory, so reset the timer */
                         /* an event is sent in CF_CFDP_PlaybackDir_Initiate so there is no reason to
                          * to have another here */
-                        pd->interval_timer.setTimer(pd->interval_sec);
+                        pd->intervalTimer.setTimer(pd->intervalSec);
                     }
                 }
                 else
                 {
-                    pd->interval_timer.run();
+                    pd->intervalTimer.run();
                 }
             }
             else
@@ -1841,6 +1860,7 @@ CF_CListTraverse_Status_t CF_CFDP_CloseFiles(CF_CListNode_t *node, void *context
     return CF_CLIST_CONT;
 }
 
+// BPC: This should be removed if we don't need enable/disable support
 void CF_CFDP_DisableEngine(void)
 {
     U32 i;
@@ -1901,7 +1921,7 @@ bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
     for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = &cfdpEngine.channels[chan_num].polldir[i];
-        if (strcmp(src_dir, pd->src_dir) == 0)
+        if (strcmp(src_dir, pd->srcDir.toChar()) == 0)
         {
             return_code = true;
             break;

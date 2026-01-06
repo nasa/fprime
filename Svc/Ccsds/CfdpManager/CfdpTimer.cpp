@@ -25,10 +25,14 @@ CfdpTimer ::~CfdpTimer() {}
 
 void CfdpTimer ::setTimer(U32 timerDuration)
 {
-    // TODO Do we care about the current timer status at this point
-    // Assuming no for now
     this->timerStatus = RUNNING;
     this->secondsRemaining = timerDuration;
+}
+
+void CfdpTimer ::disableTimer(void)
+{
+    this->timerStatus = EXPIRED;
+    this->secondsRemaining = 0;
 }
 
 CfdpTimer::Status CfdpTimer ::getStatus(void)

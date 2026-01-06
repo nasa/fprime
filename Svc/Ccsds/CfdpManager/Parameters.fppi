@@ -7,8 +7,7 @@ param LocalEid: CfdpEntityId \
 param OutgoingFileChunkSize: U32 \
     default 480
 
-@ The maximum number of received bytes to calculate a CRC for in a single wakup period
-@ TODO - I am not sure if this should exist as I do not believe we are porting the concept of wakeup
+@ The maximum number of received bytes to calculate a CRC for in a single wakep period
 param RxCrcCalcBytesPerWakeup: U32 \
     default 16384
 

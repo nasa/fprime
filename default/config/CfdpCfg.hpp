@@ -17,6 +17,8 @@ namespace Ccsds {
  *
  *  @par Limits:
  *       Must be less <= 200. Obviously it will be smaller than that.
+ * 
+ * BPC TODO: replace with CfdpManagerNumChannels
  */
 #define CF_NUM_CHANNELS (2)
 

@@ -243,16 +243,16 @@ typedef struct CF_Playback
 typedef struct CF_PollDir
 {
     CF_Playback_t pb; /**< \brief State of the currrent playback requests */
-    CfdpTimer interval_timer; /**< \brief Timer object used to poll the directory */
+    CfdpTimer intervalTimer; /**< \brief Timer object used to poll the directory */
 
-    U32 interval_sec; /**< \brief number of seconds to wait before trying a new directory */
+    U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */
 
     U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
-    CfdpClass::T cfdp_class; /**< \brief the CFDP class to send */
-    CfdpEntityId dest_eid;   /**< \brief destination entity id */
+    CfdpClass::T cfdpClass; /**< \brief the CFDP class to send */
+    CfdpEntityId destEid;   /**< \brief destination entity id */
 
-    char src_dir[CfdpManagerMaxFileSize]; /**< \brief path to source dir */
-    char dst_dir[CfdpManagerMaxFileSize]; /**< \brief path to destination dir */
+    Fw::String srcDir; /**< \brief path to source dir */
+    Fw::String dstDir; /**< \brief path to destination dir */
 
     Fw::Enabled enabled; /**< \brief Enabled flag */
 } CF_PollDir_t;
@@ -375,13 +375,13 @@ typedef struct CF_Transaction
 {
     CF_TxnState_t state; /**< \brief each engine is commanded to do something, which is the overall state */
 
-    CF_History_t *     history;          /**< \brief weird, holds active filenames and possibly other info */
-    CF_ChunkWrapper_t *chunks;           /**< \brief for gap tracking, only used on class 2 */
-    CfdpTimer          inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
-    CfdpTimer          ack_timer;        /**< \brief called ack_timer, but is also nak_timer */
+    CF_History_t * history; /**< \brief weird, holds active filenames and possibly other info */
+    CF_ChunkWrapper_t *chunks; /**< \brief for gap tracking, only used on class 2 */
+    CfdpTimer inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
+    CfdpTimer ack_timer; /**< \brief called ack_timer, but is also nak_timer */
 
-    U32    fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
-    U32    foffs; /**< \brief offset into file for next read */
+    U32 fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
+    U32 foffs; /**< \brief offset into file for next read */
     Os::FileHandle fd;
 
     CFDP::Checksum crc;

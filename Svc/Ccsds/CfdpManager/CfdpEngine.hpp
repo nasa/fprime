@@ -768,9 +768,49 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan);
  *       chan must not be NULL, pb must not be NULL.
  *
  * @param chan  The channel associated with the playback
- * @param pb  The playback state
+ * @param pb    The playback state
  */
 void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb);
+
+/************************************************************************/
+/** @brief Initiates a directory poll
+ *
+ * @par Description
+ *       This function checks if the requested channel poll directory is
+ *       available and if so enables the directory poll based on input
+ *       arguments
+ *
+ * @par Assumptions, External Events, and Notes:
+ *       chanId and pollId should be within bounds
+ *
+ * @param chanId        CFDP channel number to use
+ * @param pollId        Channel poll directory index to use
+ * @param srcDir        Local filename
+ * @param dstDir        Remote filename
+ * @param cfdp_class    Whether to perform a class 1 or class 2 transfer
+ * @param keep          Whether to keep or delete the local file after completion
+ * @param priority      CF priority level
+ * @param destEid       Entity ID of remote receiver
+ * @param intervalSec   Time between directory playbacks in seconds
+ *
+ * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
+ */
+CfdpStatus::T cfdpEngineStartPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, const Fw::String& dstDir,
+                                     CfdpClass::T cfdp_class, U8 priority, CfdpEntityId destEid,
+                                     U32 intervalSec);
+
+/************************************************************************/
+/** @brief Disables a directory poll
+ *
+ * @par Assumptions, External Events, and Notes:
+ *       chanId and pollId should be within bounds
+ *
+ * @param chanId        CFDP channel number to use
+ * @param pollId        Channel poll directory index to use
+ *
+ * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
+ */
+CfdpStatus::T cfdpEngineStopPollDir(U8 chanId, U8 pollId);
 
 /************************************************************************/
 /** @brief Kick the dir playback if timer elapsed.

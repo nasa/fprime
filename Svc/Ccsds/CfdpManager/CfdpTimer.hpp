@@ -43,6 +43,9 @@ class CfdpTimer  {
     void setTimer(U32 timerDuration //!< The duration of the timer in seconds
     );
 
+    //! Disables a CFDP timer
+    void disableTimer(void);
+
     //! Get the status of a CFDP timer
     Status getStatus(void);
 

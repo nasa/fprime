@@ -140,21 +140,11 @@ static const CF_Codec_BitField_t CF_CFDP_PduFileData_SEGMENT_METADATA_LENGTH   =
  * the load/get functions operate by reference
  */
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U8(CF_CFDP_U8_t *pdst, U8 val)
 {
     pdst->octets[0] = val;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U16(CF_CFDP_U16_t *pdst, U16 val)
 {
     pdst->octets[1] = static_cast<U8>(val & 0xFF);
@@ -162,11 +152,6 @@ static inline void CF_Codec_Store_U16(CF_CFDP_U16_t *pdst, U16 val)
     pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U32(CF_CFDP_U32_t *pdst, U32 val)
 {
     pdst->octets[3] = static_cast<U8>(val & 0xFF);
@@ -178,11 +163,6 @@ static inline void CF_Codec_Store_U32(CF_CFDP_U32_t *pdst, U32 val)
     pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Store_U64(CF_CFDP_U64_t *pdst, U64 val)
 {
     pdst->octets[7] = static_cast<U8>(val & 0xFF);
@@ -202,21 +182,11 @@ static inline void CF_Codec_Store_U64(CF_CFDP_U64_t *pdst, U64 val)
     pdst->octets[0] = static_cast<U8>(val & 0xFF);
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Load_U8(U8 *pdst, const CF_CFDP_U8_t *psrc)
 {
     *pdst = psrc->octets[0];
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Load_U16(U16 *pdst, const CF_CFDP_U16_t *psrc)
 {
     U16 val = 0;
@@ -228,11 +198,6 @@ static inline void CF_Codec_Load_U16(U16 *pdst, const CF_CFDP_U16_t *psrc)
     *pdst = val;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Load_U32(U32 *pdst, const CF_CFDP_U32_t *psrc)
 {
     U32 val = 0;
@@ -248,11 +213,6 @@ static inline void CF_Codec_Load_U32(U32 *pdst, const CF_CFDP_U32_t *psrc)
     *pdst = val;
 }
 
-/*----------------------------------------------------------------
- *
- * Internal helper routine only, not part of API.
- *
- *-----------------------------------------------------------------*/
 static inline void CF_Codec_Load_U64(U64 *pdst, const CF_CFDP_U64_t *psrc)
 {
     U64 val = 0;
