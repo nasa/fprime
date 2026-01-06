@@ -310,7 +310,7 @@ typedef struct CF_Logical_PduFileDataHeader
     CF_FileSize_t offset; /**< \brief Offset of data in file */
 
     const void *data_ptr; /**< \brief pointer to read-only data blob within encoded PDU */
-    size_t      data_len; /**< \brief Length of data blob within encoded PDU (derived field) */
+    FwSizeType data_len; /**< \brief Length of data blob within encoded PDU (derived field) */
 } CF_Logical_PduFileDataHeader_t;
 
 /**

@@ -169,7 +169,7 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, bool ok_to_send_nak)
 CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_PduFileDataHeader_t *fd;
-    I32 status;
+    Os::File::Status status;
     CfdpStatus::T ret;
 
     /* this function is only entered for data PDUs */
@@ -200,9 +200,8 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
 
     if (ret != CfdpStatus::ERROR)
     {
-        status = CF_WrappedWrite(txn->fd, fd->data_ptr, fd->data_len);
-        // TODO refactor to an Os status check
-        if (status != static_cast<I32>(fd->data_len))
+        status = txn->fd.write(fd->data_ptr, fd->data_len, Os::File::WaitType::WAIT);
+        if (status != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_WRITE_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF R%d(%lu:%lu): OS_write expected %ld, got %ld", (txn->state == CF_TxnState_R2),

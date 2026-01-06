@@ -28,8 +28,8 @@ namespace Ccsds {
 
 // Status write(const U8* buffer, FwSizeType& size, WaitType wait)
 // CfdpStatus::T CF_WrappedWrite(osal_id_t fd, const void *buf, size_t write_size)
-I32 CF_WrappedWrite(Os::FileHandle fd, const void *buf, size_t write_size)
-{ return 0; }
+// I32 CF_WrappedWrite(Os::FileHandle fd, const void *buf, size_t write_size)
+// { return 0; }
 
 // Status read(U8* buffer, FwSizeType& size);
 // CfdpStatus::T CF_WrappedRead(osal_id_t fd, void *buf, size_t read_size)
