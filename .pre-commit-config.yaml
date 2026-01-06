@@ -1,11 +1,21 @@
 repos:
-    -   repo: https://github.com/psf/black
-        rev: 19.3b0
-        hooks:
-        -   id: black
-            name: Format Python Code (black) in Fw/Python/
-            files: '^Fw/Python/'
-        -   id: black
-            name: Format Python Code (black) in Gds/
-            files: '^Gds/'
-            exclude: '^Gds/src/fprime_gds/wxgui/'
+  - repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+      - id: black
+        name: Format Python Code (black) in Fw/Python/
+        files: '^Fw/Python/'
+      - id: black
+        name: Format Python Code (black) in Gds/
+        files: '^Gds/'
+        exclude: '^Gds/src/fprime_gds/wxgui/'
+
+  - repo: local
+    hooks:
+      - id: fprime-util-format
+        name: Format Changed C++ Code (clang-format)
+        entry: fprime-util
+        language: system
+        files: \.(c|h|cpp|hpp)$
+        pass_filenames: true
+        args: ["format", "-f"]
