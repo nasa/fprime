@@ -96,6 +96,7 @@ cmdseq
 cmdsequencer
 cntx
 CODEFILE
+CODESONAR
 COLORSTYLE
 colorwheel
 COMBUFFER
@@ -398,6 +399,7 @@ lvar
 LVL
 lxml
 MACROFILE
+MACROSTART
 makefiles
 MAKEFLAGS
 makeindex
@@ -515,6 +517,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+PREPROC
 prescaler
 prioritization
 PRIORITYQUEUE

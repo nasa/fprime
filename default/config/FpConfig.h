@@ -30,9 +30,9 @@ extern "C" {
 // To reduce binary size, FW_OPTIONAL_NAME(<string>) can be used to substitute strings with an empty string
 // when running with FW_OBJECT_NAMES disabled
 #if FW_OBJECT_NAMES == 1
-#define FW_OPTIONAL_NAME(name) (name)
+#define FW_OPTIONAL_NAME(name) name  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #else
-#define FW_OPTIONAL_NAME(name) ("")
+#define FW_OPTIONAL_NAME(name) ""  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 // Add methods to query an object about its name. Can be overridden by derived classes

@@ -22,14 +22,19 @@ class TmFramer final : public TmFramerComponentBase {
 
     static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
                   "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
+
+    static constexpr FwSizeType TmPayloadCapacity =
+        ComCfg::TmFrameFixedSize - (TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE);
+    static constexpr FwSizeType SppOverhead = (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1;
+
     // These are to ensure the frame can hold the packet buffer, its SP header and an idle packet of 1 byte
     // This is because TM specifies a frame to be padded with an idle packet of at least 1 byte of idle data
-    static_assert(
-        ComCfg::TmFrameFixedSize >= FW_COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1,
-        "TM Frame Fixed Size must be at least large enough to hold a full com buffer, 2 SP headers and 1 byte");
-    static_assert(
-        ComCfg::TmFrameFixedSize >= FW_FILE_BUFFER_MAX_SIZE + (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1,
-        "TM Frame Fixed Size must be at least large enough to hold a full com buffer, 2 SP headers and 1 byte");
+    static_assert(TmPayloadCapacity >= FW_COM_BUFFER_MAX_SIZE + SppOverhead,
+                  "TM Frame Fixed Size must be at least large enough to hold Tm Header + Footer, a full com buffer, 2 "
+                  "SP headers, and 1 idle byte");
+    static_assert(TmPayloadCapacity >= FW_FILE_BUFFER_MAX_SIZE + SppOverhead,
+                  "TM Frame Fixed Size must be at least large enough to hold Tm Header + Footer, a full file buffer, 2 "
+                  "SP headers, and 1 idle byte");
 
     static constexpr U8 IDLE_DATA_PATTERN = 0x44;
 
