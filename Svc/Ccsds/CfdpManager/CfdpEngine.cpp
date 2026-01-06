@@ -943,7 +943,7 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         // BPC: Add pointer to component in order to send output buffers
         cfdpEngine.channels[i].cfdpManager = &cfdpManager;
         cfdpEngine.channels[i].channel_id = i;
-        cfdpEngine.channels[i].frozen = CfdpFrozen::NOT_FROZEN;
+        cfdpEngine.channels[i].flowState = CfdpFlow::NOT_FROZEN;
 
         // TODO remove pipe references
         // snprintf(nbuf, sizeof(nbuf) - 1, "%s%d", CF_CHANNEL_PIPE_PREFIX, i);
@@ -1036,6 +1036,13 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
     }
 
     return ret;
+}
+
+void cfdpEngineSetChannelFlowState(U8 channelId, CfdpFlow::T flowState)
+{
+    FW_ASSERT(channelId <= CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
+
+    cfdpEngine.channels[channelId].flowState = flowState;
 }
 
 CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t *node, void *context)
@@ -1599,11 +1606,7 @@ void CF_CFDP_CycleEngine(void)
             chan = &cfdpEngine.channels[i];
             cfdpEngine.outgoing_counter = 0;
 
-            /* consume all received messages, even if channel is frozen */
-            // BPC: Receive messages are consumed by the CfdpManager thread
-            // CF_CFDP_ReceiveMessage(chan);
-
-            if (chan->frozen == CfdpFrozen::NOT_FROZEN)
+            if (chan->flowState == CfdpFlow::NOT_FROZEN)
             {
                 /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
                  * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata

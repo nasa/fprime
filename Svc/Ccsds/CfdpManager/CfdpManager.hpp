@@ -135,6 +135,16 @@ class CfdpManager final : public CfdpManagerComponentBase {
         const Fw::CmdStringArg& destDirectory //!< The name of the destination directory on the ground
     ) override;
 
+    //! Handler for command SetChannelFlow
+    //!
+    //! Command to set channel's flow status
+    void SetChannelFlow_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelNum, //!< Channel number to set
+        Svc::Ccsds::CfdpFlow flowState //!< Flow state to set
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Private command helper functions

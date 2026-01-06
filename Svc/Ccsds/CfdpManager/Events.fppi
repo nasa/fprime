@@ -1,40 +1,47 @@
-event CfdpBuffersExuasted severity warning low \
+event BuffersExuasted severity warning low \
     format "Unable to alocate a PDU buffer"
 
-event CfdpInvalidChannel(
+event InvalidChannel(
     channelNum: U8 @< Requested channel number
     maxChannelNum: U8 @< Maximum channel number
 ) \
     severity warning low \
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
-event CfdpSendFileInitiatied(
+event SendFileInitiatied(
     sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
 ) \
     severity activity low \
     format "Succesfully initiated file send transfer for {}" 
 
-event CfdpSendFileFailInitiate(
+event SendFileFailInitiate(
     sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
 
-event CfdpPlaybackInvalidChannel(
+event PlaybackInvalidChannel(
     channelNum: U8 @< Requested channel number
     maxChannelNum: U8 @< Maximum channel number
 ) \
     severity warning low \
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
-event CfdpPlaybackInitiatied(
+event PlaybackInitiatied(
     sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
 ) \
     severity activity low \
     format "Succesfully initiated file send transfer for {}" 
 
-event CfdpPlaybackInitiate(
+event PlaybackInitiate(
     sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
+
+event SetFlowState(
+    channelId: U8 @< Channel being set
+    flowState: CfdpFlow @< Flow state set
+) \
+    severity activity low \
+    format "Set channel {} to {}" 

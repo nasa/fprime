@@ -103,14 +103,14 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccs
         (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
                                                channelNum, priority, destId)))
     {
-        this->log_ACTIVITY_LO_CfdpSendFileInitiatied(sourceFileName);
+        this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
         rspStatus = Fw::CmdResponse::OK;
     }
     else
     {
         // BPC TODO Was failure reason already emitted?
         // Do we need this EVR?
-        this->log_WARNING_LO_CfdpSendFileFailInitiate(sourceFileName);
+        this->log_WARNING_LO_SendFileFailInitiate(sourceFileName);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 
@@ -131,17 +131,33 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
         (CfdpStatus::SUCCESS == CF_CFDP_PlaybackDir(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
                                                     channelNum, priority, destId)))
     {
-        this->log_ACTIVITY_LO_CfdpPlaybackInitiatied(sourceFileName);
+        this->log_ACTIVITY_LO_PlaybackInitiatied(sourceFileName);
     }
     else
     {
         // BPC TODO Was failure reason already emitted?
         // Do we need this EVR?
-        this->log_WARNING_LO_CfdpPlaybackInitiate(sourceFileName);
+        this->log_WARNING_LO_PlaybackInitiate(sourceFileName);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelNum, CfdpFlow flowState)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    // Check channel number is in range
+    rspStatus = checkCommandChannelIndex(channelNum);
+    if (rspStatus == Fw::CmdResponse::OK)
+    {
+        cfdpEngineSetChannelFlowState(channelNum, flowState);
+        this->log_ACTIVITY_LO_SetFlowState(channelNum, flowState);
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+
 }
 
 // ----------------------------------------------------------------------
@@ -151,7 +167,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex)
 {
     if(channelIndex >= CfdpManagerNumChannels)
     {
-        this->log_WARNING_LO_CfdpInvalidChannel(channelIndex, CfdpManagerNumChannels);
+        this->log_WARNING_LO_InvalidChannel(channelIndex, CfdpManagerNumChannels);
         return Fw::CmdResponse::VALIDATION_ERROR;
     }
     else
@@ -202,7 +218,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
     // Check if we were unable to allocate a buffer
     if(status != CfdpStatus::SUCCESS)
     {
-        this->log_WARNING_LO_CfdpBuffersExuasted();
+        this->log_WARNING_LO_BuffersExuasted();
     }
     return status;
 }

@@ -226,7 +226,7 @@ module Ccsds {
         SEND_PDU_ERROR @< Send PDU: Send failed
     }
 
-    enum CfdpFrozen {
+    enum CfdpFlow {
         NOT_FROZEN @< CFDP channel operations are executing nominally
         FROZEN @< CFDP channel operations are frozen
     }

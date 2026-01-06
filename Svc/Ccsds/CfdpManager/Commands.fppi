@@ -19,3 +19,9 @@ async command PlaybackDirectory(
     sourceDirectory: string size CfdpManagerMaxFileSize @< The name of the on-board directory to send
     destDirectory: string size CfdpManagerMaxFileSize @< The name of the destination directory on the ground
 )
+
+@ Command to set channel's flow status
+async command SetChannelFlow(
+    channelNum: U8 @< Channel number to set
+    freeze: CfdpFlow @< Flow state to set
+)

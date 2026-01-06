@@ -175,6 +175,15 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn);
 CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager);
 
 /************************************************************************/
+/** @brief Sets the flow stazte for 
+ *
+ * @par Assumptions, External Events, and Notes:
+ *       Channel ID must be valid
+ *
+ */
+void cfdpEngineSetChannelFlowState(U8 channelId, CfdpFlow::T flowState);
+
+/************************************************************************/
 /** @brief Cycle the engine. Called once per wakeup.
  *
  * @par Assumptions, External Events, and Notes:

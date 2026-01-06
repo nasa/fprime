@@ -45,7 +45,7 @@
 #include "CfdpCodec.hpp"
 #include "CfdpTimer.hpp"
 #include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
-#include "Svc/Ccsds/Types/CfdpFrozenEnumAc.hpp"
+#include "Svc/Ccsds/Types/CfdpFlowEnumAc.hpp"
 #include "Svc/Ccsds/Types/CfdpClassEnumAc.hpp"
 #include "Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp"
 
@@ -460,7 +460,7 @@ typedef struct CF_Channel
     U8 channel_id;
     
     /**< \brief State of the channel */
-    CfdpFrozen::T frozen;
+    CfdpFlow::T flowState;
 
 } CF_Channel_t;
 
