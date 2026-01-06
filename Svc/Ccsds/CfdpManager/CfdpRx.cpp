@@ -575,8 +575,8 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
     U8 buf[CF_R2_CRC_CHUNK_SIZE];
     size_t count_bytes;
     size_t want_offs_size;
-    U32 read_size;
-    I32 fret;
+    FwSizeType read_size;
+    Os::File::Status fileStatus;
     CfdpStatus::T ret;
     bool success = true;
     U32 rx_crc_calc_bytes_per_wakeup = 0;
@@ -608,9 +608,9 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 
         if (txn->state_data.receive.cached_pos != txn->state_data.receive.r2.rx_crc_calc_bytes)
         {
-            fret = CF_WrappedLseek(txn->fd, txn->state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
+            fileStatus = CF_WrappedLseek(txn->fd, txn->state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
             // TODO turn this into an OS status check
-            if (fret != static_cast<I32>(txn->state_data.receive.r2.rx_crc_calc_bytes))
+            if (fileStatus != static_cast<I32>(txn->state_data.receive.r2.rx_crc_calc_bytes))
             {
                 // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_CRC_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF R%d(%lu:%lu): failed to seek offset %lu, got %ld", (txn->state == CF_TxnState_R2),
@@ -623,9 +623,8 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
             }
         }
         
-        fret = CF_WrappedRead(txn->fd, buf, read_size);
-        // TODO turn this into an OS status check
-        if (fret != static_cast<I32>(read_size))
+        fileStatus = txn->fd.read(buf, read_size, Os::File::WaitType::WAIT);
+        if (fileStatus != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_READ_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF R%d(%lu:%lu): failed to read file expected %lu, got %ld",

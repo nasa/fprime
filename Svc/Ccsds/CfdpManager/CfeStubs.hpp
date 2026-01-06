@@ -33,8 +33,8 @@ namespace Ccsds {
 
 // Status read(U8* buffer, FwSizeType& size);
 // CfdpStatus::T CF_WrappedRead(osal_id_t fd, void *buf, size_t read_size)
-I32 CF_WrappedRead(Os::FileHandle fd, void *buf, size_t read_size)
-{return 0; }
+// I32 CF_WrappedRead(Os::FileHandle fd, void *buf, size_t read_size)
+// {return 0; }
 
 //  void close(void);
 // int32 OS_close(osal_id_t filedes);

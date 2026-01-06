@@ -162,9 +162,8 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
 
         if (ret == CfdpStatus::SUCCESS)
         {
-            status = CF_WrappedRead(txn->fd, data_ptr, actual_bytes);
-            // TODO refactor to an Os status check
-            if (status != static_cast<I32>(actual_bytes))
+            status = txn->fd.read(data_ptr, actual_bytes, Os::File::WaitType::WAIT);
+            if (status != Os::File::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_READ_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): error reading bytes: expected %ld, got %ld",
