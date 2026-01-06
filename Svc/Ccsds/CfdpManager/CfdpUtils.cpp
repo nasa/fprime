@@ -113,23 +113,23 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
 
     FW_ASSERT(chan);
 
-    if (chan->qs[CfdpQueueId::T::FREE])
+    if (chan->qs[CfdpQueueId::FREE])
     {
-        node = chan->qs[CfdpQueueId::T::FREE];
+        node = chan->qs[CfdpQueueId::FREE];
         txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
 
-        CF_CList_Remove_Ex(chan, CfdpQueueId::T::FREE, &txn->cl_node);
+        CF_CList_Remove_Ex(chan, CfdpQueueId::FREE, &txn->cl_node);
 
         /* now that a transaction is acquired, must also acquire a history slot to go along with it */
-        if (chan->qs[CfdpQueueId::T::HIST_FREE])
+        if (chan->qs[CfdpQueueId::HIST_FREE])
         {
-            q_index = CfdpQueueId::T::HIST_FREE;
+            q_index = CfdpQueueId::HIST_FREE;
         }
         else
         {
             /* no free history, so take the oldest one from the channel's history queue */
-            FW_ASSERT(chan->qs[CfdpQueueId::T::HIST]);
-            q_index = CfdpQueueId::T::HIST;
+            FW_ASSERT(chan->qs[CfdpQueueId::HIST]);
+            q_index = CfdpQueueId::HIST;
         }
 
         txn->history = container_of_cpp(chan->qs[q_index], &CF_History_t::cl_node);
@@ -151,8 +151,8 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
 
 void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
 {
-    CF_CList_Remove_Ex(chan, CfdpQueueId::T::HIST, &history->cl_node);
-    CF_CList_InsertBack_Ex(chan, CfdpQueueId::T::HIST_FREE, &history->cl_node);
+    CF_CList_Remove_Ex(chan, CfdpQueueId::HIST, &history->cl_node);
+    CF_CList_InsertBack_Ex(chan, CfdpQueueId::HIST_FREE, &history->cl_node);
 }
 
 void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
@@ -161,7 +161,7 @@ void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
     *txn = CF_Transaction_t{};
     txn->chan_num = chan;
     CF_CList_InitNode(&txn->cl_node);
-    CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CfdpQueueId::T::FREE, &txn->cl_node);
+    CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CfdpQueueId::FREE, &txn->cl_node);
 }
 
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
@@ -186,9 +186,9 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
     /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
      * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
      *
-     * Let's put CfdpQueueId::T::RX up front, because most RX packets will be file data PDUs */
+     * Let's put CfdpQueueId::RX up front, because most RX packets will be file data PDUs */
     CF_Traverse_TransSeqArg_t ctx    = {transaction_sequence_number, src_eid, NULL};
-    CF_CListNode_t *          ptrs[] = {chan->qs[CfdpQueueId::T::RX], chan->qs[CfdpQueueId::T::PEND], chan->qs[CfdpQueueId::TXA],
+    CF_CListNode_t *          ptrs[] = {chan->qs[CfdpQueueId::RX], chan->qs[CfdpQueueId::PEND], chan->qs[CfdpQueueId::TXA],
                               chan->qs[CfdpQueueId::TXW]};
     CF_Transaction_t *        ret = NULL;
 
@@ -271,7 +271,7 @@ CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, 
 I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
 {
     CF_TraverseAll_Arg_t args = {fn, context, 0};
-    for (I32 queueidx = CfdpQueueId::T::PEND; queueidx <= CfdpQueueId::T::RX; ++queueidx)
+    for (I32 queueidx = CfdpQueueId::PEND; queueidx <= CfdpQueueId::RX; ++queueidx)
         CF_CList_Traverse(chan->qs[queueidx], CF_TraverseAllTransactions_Impl, &args);
 
     return args.counter;

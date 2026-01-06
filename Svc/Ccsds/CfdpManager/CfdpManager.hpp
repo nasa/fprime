@@ -105,11 +105,19 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for command TODO
+    //! Handler for command SendFile
     //!
-    //! TODO
-    void TODO_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                         U32 cmdSeq            //!< The command sequence number
+    //! Command to start a CFDP file transaction
+    void SendFile_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        Svc::Ccsds::CfdpClass cfdpClass, //!< CFDP class for the file transfer
+        Svc::Ccsds::CfdpKeep keep, //!< Whether or not to keep or delete the file upon completion
+        U8 channelNum, //!< Channel number for the file transaction
+        U8 priority, //!< Priority: 0=highest priority
+        Svc::Ccsds::CfdpEntityId destId, //!< Destination entity id
+        const Fw::CmdStringArg& sourceFileName, //!< The name of the on-board file to send
+        const Fw::CmdStringArg& destFileName //!< The name of the destination file on the ground
     ) override;
 
   private:

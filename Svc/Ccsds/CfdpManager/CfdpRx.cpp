@@ -72,7 +72,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn)
 
 CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
 {
-    CfdpStatus::T ret = CfdpStatus::T::SUCCESS;
+    CfdpStatus::T ret = CfdpStatus::SUCCESS;
     U32 crc_result;
 
     // The F' version does not have an equivelent finalize call as it
@@ -89,7 +89,7 @@ CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc)
         //                   (unsigned long)txn->history->seq_num, (unsigned long)crc_result,
         //                   (unsigned long)expected_crc);
         // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.crc_mismatch;
-        ret = CfdpStatus::T::ERROR;
+        ret = CfdpStatus::ERROR;
     }
 
     return ret;
@@ -174,7 +174,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
 
     /* this function is only entered for data PDUs */
     fd  = &ph->int_header.fd;
-    ret = CfdpStatus::T::SUCCESS;
+    ret = CfdpStatus::SUCCESS;
 
     /*
      * NOTE: The decode routine should have left a direct pointer to the data and actual data length
@@ -194,11 +194,11 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
             //                   (long)fd->offset, (long)fret);
             CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILE_SIZE_ERROR);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
-            ret = CfdpStatus::T::ERROR; /* connection will reset in caller */
+            ret = CfdpStatus::ERROR; /* connection will reset in caller */
         }
     }
 
-    if (ret != CfdpStatus::T::ERROR)
+    if (ret != CfdpStatus::ERROR)
     {
         status = CF_WrappedWrite(txn->fd, fd->data_ptr, fd->data_len);
         // TODO refactor to an Os status check
@@ -210,7 +210,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
             //                   (long)fd->data_len, (long)fret);
             CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILESTORE_REJECTION);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_write;
-            ret = CfdpStatus::T::ERROR; /* connection will reset in caller */
+            ret = CfdpStatus::ERROR; /* connection will reset in caller */
         }
         else
         {
@@ -224,7 +224,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
 
 CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CfdpStatus::T               ret = CfdpStatus::T::SUCCESS;
+    CfdpStatus::T               ret = CfdpStatus::SUCCESS;
     const CF_Logical_PduEof_t *eof;
 
     if (!CF_CFDP_RecvEof(txn, ph))
@@ -241,7 +241,7 @@ CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuf
             //                   (unsigned long)txn->history->seq_num, (unsigned long)eof->size,
             //                   (unsigned long)txn->fsize);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_size_mismatch;
-            ret = CfdpStatus::T::REC_PDU_FSIZE_MISMATCH_ERROR;
+            ret = CfdpStatus::REC_PDU_FSIZE_MISMATCH_ERROR;
         }
     }
     else
@@ -250,7 +250,7 @@ CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuf
         //                   (txn->state == CF_TxnState_R2), (unsigned long)txn->history->src_eid,
         //                   (unsigned long)txn->history->seq_num);
         // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.error;
-        ret = CfdpStatus::T::REC_PDU_BAD_EOF_ERROR;
+        ret = CfdpStatus::REC_PDU_BAD_EOF_ERROR;
     }
 
     return ret;
@@ -266,13 +266,13 @@ void CF_CFDP_R1_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
     eof = &ph->int_header.eof;
     crc = eof->crc;
 
-    if (ret == CfdpStatus::T::SUCCESS)
+    if (ret == CfdpStatus::SUCCESS)
     {
         /* Verify CRC */
-        if (CF_CFDP_R_CheckCrc(txn, crc) == CfdpStatus::T::SUCCESS)
+        if (CF_CFDP_R_CheckCrc(txn, crc) == CfdpStatus::SUCCESS)
         {
             /* successfully processed the file */
-            txn->keep = 1; /* save the file */
+            txn->keep = CfdpKeep::KEEP; /* save the file */
         }
         /* if file failed to process, there's nothing to do. CF_CFDP_R_CheckCrc() generates an event on failure */
     }
@@ -292,7 +292,7 @@ void CF_CFDP_R2_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
         ret = CF_CFDP_R_SubstateRecvEof(txn, ph);
 
         /* did receiving EOF succeed? */
-        if (ret == CfdpStatus::T::SUCCESS)
+        if (ret == CfdpStatus::SUCCESS)
         {
             eof = &ph->int_header.eof;
 
@@ -321,7 +321,7 @@ void CF_CFDP_R2_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
         else
         {
             /* bad EOF sent? */
-            if (ret == CfdpStatus::T::REC_PDU_FSIZE_MISMATCH_ERROR)
+            if (ret == CfdpStatus::REC_PDU_FSIZE_MISMATCH_ERROR)
             {
                 CF_CFDP_R2_SetFinTxnStatus(txn, CF_TxnStatus_FILE_SIZE_ERROR);
             }
@@ -340,12 +340,12 @@ void CF_CFDP_R1_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
 
     /* got file data PDU? */
     ret = CF_CFDP_RecvFd(txn, ph);
-    if (ret == CfdpStatus::T::SUCCESS)
+    if (ret == CfdpStatus::SUCCESS)
     {
         ret = CF_CFDP_R_ProcessFd(txn, ph);
     }
 
-    if (ret == CfdpStatus::T::SUCCESS)
+    if (ret == CfdpStatus::SUCCESS)
     {
         /* class 1 digests CRC */
         txn->crc.update(static_cast<const U8*>(ph->int_header.fd.data_ptr), ph->int_header.fd.offset,
@@ -368,12 +368,12 @@ void CF_CFDP_R2_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
 
     /* got file data PDU? */
     ret = CF_CFDP_RecvFd(txn, ph);
-    if (ret == CfdpStatus::T::SUCCESS)
+    if (ret == CfdpStatus::SUCCESS)
     {
         ret = CF_CFDP_R_ProcessFd(txn, ph);
     }
 
-    if (ret == CfdpStatus::T::SUCCESS)
+    if (ret == CfdpStatus::SUCCESS)
     {
         /* class 2 does CRC at FIN, but track gaps */
         CF_ChunkListAdd(&txn->chunks->chunks, fd->offset, static_cast<CF_ChunkSize_t>(fd->data_len));
@@ -431,7 +431,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
     CF_Logical_PduNak_t *nak;
     CfdpStatus::T sret;
     U32 cret;
-    CfdpStatus::T ret = CfdpStatus::T::ERROR;
+    CfdpStatus::T ret = CfdpStatus::ERROR;
 
     if (ph)
     {
@@ -453,7 +453,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
             {
                 /* no gaps left, so go ahead and check for completion */
                 txn->flags.rx.complete = true; /* we know md was received, and there's no gaps -- it's complete */
-                ret                    = CfdpStatus::T::SUCCESS;
+                ret                    = CfdpStatus::SUCCESS;
             }
             else
             {
@@ -463,11 +463,11 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
                 txn->flags.rx.fd_nak_sent = true; /* latch that at least one NAK has been sent requesting filedata */
                 /* NOTE: this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR,
                    so if it's ever added to that function we need to test handling it here */
-                FW_ASSERT(sret != CfdpStatus::T::SEND_PDU_ERROR); 
-                if (sret == CfdpStatus::T::SUCCESS)
+                FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR); 
+                if (sret == CfdpStatus::SUCCESS)
                 {
                     // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.sent.nak_segment_requests += cret;
-                    ret = CfdpStatus::T::SUCCESS;
+                    ret = CfdpStatus::SUCCESS;
                 }
             }
         }
@@ -487,10 +487,10 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
 
             sret = CF_CFDP_SendNak(txn, ph);
             // this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR */
-            FW_ASSERT(sret != CfdpStatus::T::SEND_PDU_ERROR);
-            if (sret == CfdpStatus::T::SUCCESS)
+            FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR);
+            if (sret == CfdpStatus::SUCCESS)
             {
-                ret = CfdpStatus::T::SUCCESS;
+                ret = CfdpStatus::SUCCESS;
             }
         }
     }
@@ -586,7 +586,7 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
     memset(buf, 0, sizeof(buf));
 
     count_bytes = 0;
-    ret         = CfdpStatus::T::ERROR;
+    ret         = CfdpStatus::ERROR;
 
     if (txn->state_data.receive.r2.rx_crc_calc_bytes == 0)
     {
@@ -648,10 +648,10 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
     if (success && txn->state_data.receive.r2.rx_crc_calc_bytes == txn->fsize)
     {
         /* all bytes calculated, so now check */
-        if (CF_CFDP_R_CheckCrc(txn, txn->state_data.receive.r2.eof_crc) == CfdpStatus::T::SUCCESS)
+        if (CF_CFDP_R_CheckCrc(txn, txn->state_data.receive.r2.eof_crc) == CfdpStatus::SUCCESS)
         {
             /* CRC matched! We are happy */
-            txn->keep = 1; /* save the file */
+            txn->keep = CfdpKeep::KEEP; /* save the file */
 
             /* set FIN PDU status */
             txn->state_data.receive.r2.dc = CF_CFDP_FinDeliveryCode_COMPLETE;
@@ -664,7 +664,7 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 
         txn->flags.com.crc_calc = true;
 
-        ret = CfdpStatus::T::SUCCESS;
+        ret = CfdpStatus::SUCCESS;
     }
 
     return ret;
@@ -673,28 +673,28 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn)
 {
     CfdpStatus::T sret;
-    CfdpStatus::T ret = CfdpStatus::T::SUCCESS;
+    CfdpStatus::T ret = CfdpStatus::SUCCESS;
 
     if (!CF_TxnStatus_IsError(txn->history->txn_stat) && !txn->flags.com.crc_calc)
     {
         /* no error, and haven't checked CRC -- so start checking it */
         if (CF_CFDP_R2_CalcCrcChunk(txn))
         {
-            ret = CfdpStatus::T::ERROR; /* signal to caller to re-enter next tick */
+            ret = CfdpStatus::ERROR; /* signal to caller to re-enter next tick */
         }
     }
 
-    if (ret != CfdpStatus::T::ERROR)
+    if (ret != CfdpStatus::ERROR)
     {
         sret = CF_CFDP_SendFin(txn, txn->state_data.receive.r2.dc, txn->state_data.receive.r2.fs,
                                CF_TxnStatus_To_ConditionCode(txn->history->txn_stat));
         /* CF_CFDP_SendFin does not return SEND_PDU_ERROR */
-        FW_ASSERT(sret != CfdpStatus::T::SEND_PDU_ERROR); 
+        FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR); 
         txn->state_data.receive.sub_state =
             CF_RxSubState_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
-        if (sret != CfdpStatus::T::SUCCESS)
+        if (sret != CfdpStatus::SUCCESS)
         {
-            ret = CfdpStatus::T::ERROR;
+            ret = CfdpStatus::ERROR;
         }
     }
 
@@ -1011,11 +1011,11 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
         sret = CF_CFDP_SendAck(txn, CF_CFDP_AckTxnStatus_ACTIVE, CF_CFDP_FileDirective_EOF,
                                static_cast<CF_CFDP_ConditionCode_t>(txn->state_data.receive.r2.eof_cc),
                                txn->history->peer_eid, txn->history->seq_num);
-        FW_ASSERT(sret != CfdpStatus::T::SEND_PDU_ERROR);
+        FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR);
 
-        /* if CfdpStatus::T::SUCCESS, then move on in the state machine. CF_CFDP_SendAck does not return
+        /* if CfdpStatus::SUCCESS, then move on in the state machine. CF_CFDP_SendAck does not return
          * SEND_PDU_ERROR */
-        if (sret != CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR)
+        if (sret != CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR)
         {
             txn->flags.rx.send_eof_ack = false;
         }

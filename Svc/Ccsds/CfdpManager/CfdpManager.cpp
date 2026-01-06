@@ -89,9 +89,34 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void CfdpManager ::TODO_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // TODO
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+  void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Ccsds::CfdpClass cfdpClass,
+                                         Svc::Ccsds::CfdpKeep keep, U8 channelNum, U8 priority,
+                                         Svc::Ccsds::CfdpEntityId destId, const Fw::CmdStringArg& sourceFileName,
+                                         const Fw::CmdStringArg& destFileName)
+{
+    Fw::CmdResponse::T rspStatus;
+
+    // Check channel number is in range
+    if(channelNum >= CfdpManagerNumChannels)
+    {
+        this->log_WARNING_LO_CfdpSendFileInvalidChannel(channelNum, CfdpManagerNumChannels);
+        rspStatus = Fw::CmdResponse::VALIDATION_ERROR;
+    }
+    else if (CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e, channelNum,
+                            priority, destId) == CfdpStatus::SUCCESS)
+    {
+        this->log_ACTIVITY_LO_CfdpSendFileInitiatied(sourceFileName);
+        rspStatus = Fw::CmdResponse::OK;
+    }
+    else
+    {
+        // BPC TODO Was failure reason already emitted?
+        // Do we need this EVR?
+        this->log_WARNING_LO_CfdpSendFileFailInitiate(sourceFileName);
+        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
 }
 
 // ----------------------------------------------------------------------

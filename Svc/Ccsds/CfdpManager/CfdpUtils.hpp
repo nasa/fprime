@@ -151,7 +151,7 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
  *
  * @par Description
  *       There's nothing to do currently other than remove the history
- *       from its current queue and put it back on CfdpQueueId::T::HIST_FREE.
+ *       from its current queue and put it back on CfdpQueueId::HIST_FREE.
  *
  * @par Assumptions, External Events, and Notes:
  *       chan must not be NULL. history must not be NULL.

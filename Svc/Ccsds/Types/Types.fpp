@@ -238,13 +238,18 @@ module Ccsds {
     @ acknowledged/reliable.
     @
     @ Defined per section 7.1 of CCSDS 727.0-B-5
-    enum CfdpClass {
+    enum CfdpClass: U8 {
         CLASS_1 = 0 @< CFDP class 1 - Unreliable transfer
         CLASS_2 = 1 @< CFDP class 2 - Reliable transfer
     }
+    @ Enum used to determine if a file should be kept or deleted after a CFDP transaction
+    enum CfdpKeep: U8 {
+        DELETE = 0 @< File will be deleted after the CFDP transaction
+        KEEP = 1 @< File will be kept after the CFDP transaction
+    }
 
     @ CFDP queue identifiers
-    enum CfdpQueueId {
+    enum CfdpQueueId: U8 {
         PEND = 0, @< first one on this list is active
         TXA = 1
         TXW = 2

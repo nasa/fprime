@@ -231,7 +231,7 @@ typedef struct CF_Playback
 
     bool busy;
     bool diropen;
-    bool keep;
+    CfdpKeep::T keep;
     bool counted;
 } CF_Playback_t;
 
@@ -386,7 +386,7 @@ typedef struct CF_Transaction
 
     CFDP::Checksum crc;
 
-    U8 keep;
+    CfdpKeep::T keep;
     U8 chan_num; /**< \brief if ever more than one engine, this may need to change to pointer */
     U8 priority;
 
@@ -433,7 +433,7 @@ typedef enum
  */
 typedef struct CF_Channel
 {
-    CF_CListNode_t *qs[CfdpQueueId::T::NUM];
+    CF_CListNode_t *qs[CfdpQueueId::NUM];
     CF_CListNode_t *cs[CF_Direction_NUM];
 
     // TODO remove all pipe references

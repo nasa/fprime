@@ -8,25 +8,10 @@ module Ccsds {
         # Includes
         ##############################################################################
 
+        include "Commands.fppi"
+        include "Events.fppi"
         include "Parameters.fppi"
 
-        ##############################################################################
-        # Commands
-        ##############################################################################
-
-        # One async command/port is required for active components
-        # This should be overridden by the developers with a useful command/port
-        @ TODO
-        async command TODO
-
-        ##############################################################################
-        # Events
-        ##############################################################################
-
-        event CfdpBuffersExuasted severity warning low \
-            format "Unable to alocate a PDU buffer"
-
-            
         ##############################################################################
         # Custom ports
         ##############################################################################

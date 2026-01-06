@@ -168,7 +168,7 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn);
  * @par Assumptions, External Events, and Notes:
  *       Only called once.
  *
- * @retval #CfdpStatus::T::SUCCESS \copydoc CfdpStatus::T::SUCCESS
+ * @retval #CfdpStatus::SUCCESS \copydoc CfdpStatus::SUCCESS
  * @returns anything else on error.
  *
  */
@@ -210,8 +210,8 @@ void CF_CFDP_DisableEngine(void);
  * @param priority      CF priority level
  * @param dest_id       Entity ID of remote receiver
  *
- * @retval #CfdpStatus::T::SUCCESS \copydoc CfdpStatus::T::SUCCESS
- * @returns CfdpStatus::T::SUCCESS on success. CfdpStatus::T::ERROR on error.
+ * @retval #CfdpStatus::SUCCESS \copydoc CfdpStatus::SUCCESS
+ * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
  */
 CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class, U8 keep,
                             U8 chan, U8 priority, CfdpEntityId dest_id);
@@ -234,8 +234,8 @@ CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename,
  * @param priority      CF priority level
  * @param dest_id       Entity ID of remote receiver
  *
- * @retval #CfdpStatus::T::SUCCESS \copydoc CfdpStatus::T::SUCCESS
- * @returns CfdpStatus::T::SUCCESS on success. CfdpStatus::T::ERROR on error.
+ * @retval #CfdpStatus::SUCCESS \copydoc CfdpStatus::SUCCESS
+ * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
  */
 CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
                                  U8 keep, U8 chan, U8 priority, U16 dest_id);
@@ -270,8 +270,8 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
  * @param txn              Pointer to the transaction object
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success.
- * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval CfdpStatus::SUCCESS on success.
+ * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn);
 
@@ -290,7 +290,7 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn);
  * typical failure possibilities do not apply to this call.
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success. (error checks not yet implemented)
+ * @retval CfdpStatus::SUCCESS on success. (error checks not yet implemented)
  */
 CfdpStatus::T CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -303,8 +303,8 @@ CfdpStatus::T CF_CFDP_SendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn   Pointer to the transaction object
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success.
- * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval CfdpStatus::SUCCESS on success.
+ * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
 
@@ -326,8 +326,8 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn);
  * @param tsn      Transaction sequence number
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success.
- * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval CfdpStatus::SUCCESS on success.
+ * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                               CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
@@ -344,8 +344,8 @@ CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, 
  * @param cc    Final CFDP condition code
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success.
- * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval CfdpStatus::SUCCESS on success.
+ * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                              CF_CFDP_ConditionCode_t cc);
@@ -365,8 +365,8 @@ CfdpStatus::T CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t d
  * typical failure possibilities do not apply to this call.
  *
  * @returns CfdpStatus::T status code
- * @retval CfdpStatus::T::SUCCESS on success.
- * @retval CfdpStatus::T::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+ * @retval CfdpStatus::SUCCESS on success.
+ * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
  */
 CfdpStatus::T CF_CFDP_SendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -400,9 +400,9 @@ void CF_CFDP_AppendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_ty
  * @param ph       The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::ERROR for general errors
- * @retval CfdpStatus::T::SHORT_PDU_ERROR if PDU too short
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::ERROR for general errors
+ * @retval CfdpStatus::SHORT_PDU_ERROR if PDU too short
  */
 CfdpStatus::T CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
 
@@ -419,8 +419,8 @@ CfdpStatus::T CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::PDU_METADATA_ERROR on error
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::PDU_METADATA_ERROR on error
  */
 CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -437,9 +437,9 @@ CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::ERROR for general errors
- * @retval CfdpStatus::T::SHORT_PDU_ERROR PDU too short
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::ERROR for general errors
+ * @retval CfdpStatus::SHORT_PDU_ERROR PDU too short
  */
 CfdpStatus::T CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -456,8 +456,8 @@ CfdpStatus::T CF_CFDP_RecvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::SHORT_PDU_ERROR on error
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::SHORT_PDU_ERROR on error
  */
 CfdpStatus::T CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -474,8 +474,8 @@ CfdpStatus::T CF_CFDP_RecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::SHORT_PDU_ERROR on error
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::SHORT_PDU_ERROR on error
  */
 CfdpStatus::T CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -492,8 +492,8 @@ CfdpStatus::T CF_CFDP_RecvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::SHORT_PDU_ERROR on error
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::SHORT_PDU_ERROR on error
  */
 CfdpStatus::T CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -510,8 +510,8 @@ CfdpStatus::T CF_CFDP_RecvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
  * @param ph   The logical PDU buffer being received
  *
  * @returns integer status code
- * @retval CfdpStatus::T::SUCCESS on success
- * @retval CfdpStatus::T::SHORT_PDU_ERROR on error
+ * @retval CfdpStatus::SUCCESS on success
+ * @retval CfdpStatus::SHORT_PDU_ERROR on error
  */
 CfdpStatus::T CF_CFDP_RecvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
@@ -597,7 +597,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num);
  * @param src_lv     Pointer to LV pair from logical PDU buffer
  *
  * @returns The resulting string length, NOT including termination character
- * @retval CfdpStatus::T::ERROR on error
+ * @retval CfdpStatus::ERROR on error
  */
 int CF_CFDP_CopyStringFromLV(char *buf, size_t buf_maxsz, const CF_Logical_Lv_t *src_lv);
 
