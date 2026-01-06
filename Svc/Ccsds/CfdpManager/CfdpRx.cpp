@@ -500,7 +500,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
 
 void CF_CFDP_R_Init(CF_Transaction_t *txn)
 {
-    I32 ret;
+    Os::File::Status status;
     Fw::String tmpDir;
     char* dst = txn->history->fnames.dst_filename;
     const size_t dstSize = sizeof(txn->history->fnames.dst_filename);
@@ -547,9 +547,8 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
         CF_CFDP_ArmAckTimer(txn);
     }
  
-    // TODO BPC flags = OS_FILE_FLAG_CREATE | OS_FILE_FLAG_TRUNCATE, access = OS_READ_WRITE
-    ret = CF_WrappedOpenCreate(&txn->fd, txn->history->fnames.dst_filename, 0, 0);
-    if (ret < 0)
+    status = txn->fd.open(txn->history->fnames.dst_filename, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    if (status != Os::File::OP_OK)
     {
         // CFE_EVS_SendEvent(CF_CFDP_R_CREAT_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF R%d(%lu:%lu): failed to create file %s for writing, error=%ld",
@@ -721,7 +720,8 @@ void CF_CFDP_R2_Recv_fin_ack(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     char fname[CF_FILENAME_MAX_LEN];
-    I32 status;
+    CfdpStatus::T status;
+    Os::File::Status fileStatus;
     I32 ret;
     bool success = true;
 
@@ -733,11 +733,12 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
          * save the filename in a local buffer so it can be used with OS_mv upon successful parsing of
          * the md PDU */
 
+        // BPC TODO - Convert to Fw::String
         strcpy(
             fname,
             txn->history->fnames.dst_filename); /* strcpy is ok, since fname is CF_FILENAME_MAX_LEN like dst_filename */
         status = CF_CFDP_RecvMd(txn, ph);
-        if (!status)
+        if (status == CfdpStatus::SUCCESS)
         {
             /* successfully obtained md PDU */
             if (txn->flags.rx.eof_recv)
@@ -762,9 +763,8 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                 CF_WrappedClose(txn->fd);
 
                 /* Note OS_mv attempts a rename, then copy/delete if that fails so it works across file systems */
-                status = OS_mv(fname, txn->history->fnames.dst_filename);
-                // if (status != OS_SUCCESS)
-                if (status < 0)
+                fileStatus = OS_mv(fname, txn->history->fnames.dst_filename);
+                if (fileStatus != Os::File::OP_OK)
                 {
                     // CFE_EVS_SendEvent(CF_CFDP_R_RENAME_ERR_EID, CFE_EVS_EventType_ERROR,
                     //                   "CF R%d(%lu:%lu): failed to rename file in R2, error=%ld",
@@ -778,8 +778,9 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                 else
                 {
                      // TODO BPC flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
-                    ret = CF_WrappedOpenCreate(&txn->fd, txn->history->fnames.dst_filename, 0, 0);
-                    if (ret < 0)
+                     // File was succesfully renamed, open for writing
+                    ret = txn->fd.open(txn->history->fnames.dst_filename, Os::File::OPEN_WRITE);
+                    if (fileStatus != Os::File::OP_OK)
                     {
                         // CFE_EVS_SendEvent(CF_CFDP_R_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
                         //                   "CF R%d(%lu:%lu): failed to open renamed file in R2, error=%ld",

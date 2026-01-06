@@ -23,8 +23,8 @@ namespace Ccsds {
 // From <Os/File.hpp>
 // Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite);
 // CfdpStatus::T CF_WrappedOpenCreate(osal_id_t *fd, const char *fname, int32 flags, int32 access)
-I32 CF_WrappedOpenCreate(Os::FileHandle *fd, const char *fname, I32 flags, I32 access)
-{ return 0; }
+// I32 CF_WrappedOpenCreate(Os::FileHandle *fd, const char *fname, I32 flags, I32 access)
+// { return 0; }
 
 // Status write(const U8* buffer, FwSizeType& size, WaitType wait)
 // CfdpStatus::T CF_WrappedWrite(osal_id_t fd, const void *buf, size_t write_size)

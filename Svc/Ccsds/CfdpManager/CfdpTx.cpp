@@ -306,10 +306,9 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn)
 
 void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 {
-    CfdpStatus::T sret;
-    I32          ret;
-    int          status  = 0;
-    bool         success = true;
+    CfdpStatus::T status;
+    Os::File::Status fileStatus;
+    bool success = true;
 
     if (!OS_ObjectIdDefined(txn->fd))
     {
@@ -326,9 +325,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
         if (success)
         {
-            // TODO BPC flags = OS_FILE_FLAG_NONE, access = OS_READ_ONLY
-            ret = CF_WrappedOpenCreate(&txn->fd, txn->history->fnames.src_filename, 0, 0);
-            if (ret < 0)
+            fileStatus = txn->fd.open(txn->history->fnames.src_filename, Os::File::OPEN_READ);
+            if (fileStatus != 0)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): failed to open file %s, error=%ld", (txn->state == CF_TxnState_S2),
@@ -343,8 +341,9 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
         if (success)
         {
             // TODO BPC mode = OS_SEEK_END
-            status = CF_WrappedLseek(txn->fd, 0, 2);
-            if (status < 0)
+            // TODO this is just getting the file size
+            fileStatus = CF_WrappedLseek(txn->fd, 0, 2);
+            if (fileStatus < 0)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_END_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): failed to seek end file %s, error=%ld",
@@ -360,8 +359,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
         {
             txn->fsize = status;
 
-            status = CF_WrappedLseek(txn->fd, 0, Os::File::SeekType::ABSOLUTE);
-            if (status != 0)
+            fileStatus = CF_WrappedLseek(txn->fd, 0, Os::File::SeekType::ABSOLUTE);
+            if (fileStatus != 0)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_BEG_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): failed to seek begin file %s, got %ld",
@@ -376,8 +375,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
     if (success)
     {
-        sret = CF_CFDP_SendMd(txn);
-        if (sret == CfdpStatus::SEND_PDU_ERROR)
+        status = CF_CFDP_SendMd(txn);
+        if (status == CfdpStatus::SEND_PDU_ERROR)
         {
             /* failed to send md */
             // CFE_EVS_SendEvent(CF_CFDP_S_SEND_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF S%d(%lu:%lu): failed to send md",
@@ -385,12 +384,12 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
             //                   (unsigned long)txn->history->seq_num);
             success = false;
         }
-        else if (sret == CfdpStatus::SUCCESS)
+        else if (status == CfdpStatus::SUCCESS)
         {
             /* once metadata is sent, switch to filedata mode */
             txn->state_data.send.sub_state = CF_TxSubState_FILEDATA;
         }
-        /* if sret==CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
+        /* if status==CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
     }
 
     if (!success)
