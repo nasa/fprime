@@ -1673,7 +1673,7 @@ void CF_CFDP_FinishTransaction(CF_Transaction_t *txn, bool keep_history)
         CF_InsertSortPrio(txn, CfdpQueueId::TXW);
     }
 
-    if (OS_ObjectIdDefined(txn->fd))
+    if (true == txn->fd.isOpen())
     {
         txn->fd.close();
 
@@ -1725,7 +1725,7 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
     /* File should have been closed by the state machine, but if
      * it still hanging open at this point, close it now so its not leaked.
      * This is not normal/expected so log it if this happens. */
-    if (OS_ObjectIdDefined(txn->fd))
+    if (true == txn->fd.isOpen())
     {
         // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
         txn->fd.close();
@@ -1850,7 +1850,7 @@ void CF_CFDP_CancelTransaction(CF_Transaction_t *txn)
 CF_CListTraverse_Status_t CF_CFDP_CloseFiles(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    if (OS_ObjectIdDefined(txn->fd))
+    if (true == txn->fd.isOpen())
     {
         txn->fd.close();
     }

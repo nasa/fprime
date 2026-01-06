@@ -48,13 +48,13 @@ namespace Ccsds {
 //      `getHandle()` function to match the intent of how the function is used
 // bool isOpen() const;
 // static inline bool OS_ObjectIdDefined(osal_id_t object_id)
-inline bool OS_ObjectIdDefined(Os::FileHandle object_id)
-{ return true; }
+// inline bool OS_ObjectIdDefined(Os::FileHandle object_id)
+// { return true; }
 
 // bool isOpen() const;
 // int32 OS_FileOpenCheck(const char *Filename);
-I32 OS_FileOpenCheck(const char *Filename)
-{return 0; }
+// I32 OS_FileOpenCheck(const char *Filename)
+// {return 0; }
 
 // void close()
 // void CF_WrappedClose(osal_id_t fd)

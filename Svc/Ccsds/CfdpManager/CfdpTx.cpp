@@ -309,32 +309,18 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
     Os::File::Status fileStatus;
     bool success = true;
 
-    if (!OS_ObjectIdDefined(txn->fd))
+    if (false == txn->fd.isOpen())
     {
-        // TODO BPC this should be a true check
-        if (OS_FileOpenCheck(txn->history->fnames.src_filename) == 1)
+        fileStatus = txn->fd.open(txn->history->fnames.src_filename, Os::File::OPEN_READ);
+        if (fileStatus != Os::File::OP_OK)
         {
-            // CFE_EVS_SendEvent(CF_CFDP_S_ALREADY_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF S%d(%lu:%lu): file %s already open", (txn->state == CF_TxnState_S2),
+            // CFE_EVS_SendEvent(CF_CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF S%d(%lu:%lu): failed to open file %s, error=%ld", (txn->state == CF_TxnState_S2),
             //                   (unsigned long)txn->history->src_eid, (unsigned long)txn->history->seq_num,
-            //                   txn->history->fnames.src_filename);
+            //                   txn->history->fnames.src_filename, (long)ret);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_open;
+            // txn->fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
             success = false;
-        }
-
-        if (success)
-        {
-            fileStatus = txn->fd.open(txn->history->fnames.src_filename, Os::File::OPEN_READ);
-            if (fileStatus != 0)
-            {
-                // CFE_EVS_SendEvent(CF_CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S%d(%lu:%lu): failed to open file %s, error=%ld", (txn->state == CF_TxnState_S2),
-                //                   (unsigned long)txn->history->src_eid, (unsigned long)txn->history->seq_num,
-                //                   txn->history->fnames.src_filename, (long)ret);
-                // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_open;
-                // txn->fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
-                success = false;
-            }
         }
 
         if (success)
