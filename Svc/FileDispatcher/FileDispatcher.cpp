@@ -78,7 +78,7 @@ void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                  Fw::Enabled enable) {
     for (FwSizeType i = 0; i < this->m_dispatchTable.numEntries; i++) {
         if (this->m_dispatchTable.entries[i].port == file_type) {
-            this->m_dispatchTable.entries[i].enabled = enable;
+            this->m_dispatchTable.entries[i].enabled = (enable == Fw::Enabled::ENABLED);
         }
     }
     this->log_ACTIVITY_HI_FileDispatchState(file_type, enable);
