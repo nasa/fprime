@@ -563,8 +563,8 @@ CfdpStatus::T CF_CFDP_RecvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
 CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
     const CF_Logical_PduMd_t *md = &ph->int_header.md;
-    int                       lv_ret;
-    CfdpStatus::T              ret = CfdpStatus::SUCCESS;
+    CfdpStatus::T lvRet;
+    CfdpStatus::T ret = CfdpStatus::SUCCESS;
 
     CF_CFDP_DecodeMd(ph->pdec, &ph->int_header.md);
     if (!CF_CODEC_IS_OK(ph->pdec))
@@ -587,9 +587,8 @@ CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
          * and ensures that the output content is properly terminated, so this only needs to check that
          * it worked.
          */
-        lv_ret = CF_CFDP_CopyStringFromLV(txn->history->fnames.src_filename.toChar(), txn->history->fnames.src_filename.length(),
-                                          &md->source_filename);
-        if (lv_ret < 0)
+        lvRet = CF_CFDP_CopyStringFromLV(txn->history->fnames.src_filename, &md->source_filename);
+        if (lvRet != CfdpStatus::SUCCESS)
         {
             // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF: metadata PDU rejected due to invalid length in source filename of 0x%02x",
@@ -599,9 +598,8 @@ CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
         }
         else
         {
-            lv_ret = CF_CFDP_CopyStringFromLV(txn->history->fnames.dst_filename,
-                                              sizeof(txn->history->fnames.dst_filename), &md->dest_filename);
-            if (lv_ret < 0)
+            lvRet = CF_CFDP_CopyStringFromLV(txn->history->fnames.dst_filename, &md->dest_filename);
+            if (lvRet != CfdpStatus::SUCCESS)
             {
                 // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF: metadata PDU rejected due to invalid length in dest filename of 0x%02x",
@@ -1349,7 +1347,6 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
     CF_Transaction_t *txn;
     char path[CfdpManagerMaxFileSize];
     I32 status;
-    I32 n = 0;
 
     /* either there's no transaction (first one) or the last one was finished, so check for a new one */
 
@@ -1771,18 +1768,25 @@ void CF_CFDP_SendEotPkt(CF_Transaction_t *txn)
     // }
 }
 
-int CF_CFDP_CopyStringFromLV(char *buf, size_t buf_maxsz, const CF_Logical_Lv_t *src_lv)
+CfdpStatus::T CF_CFDP_CopyStringFromLV(Fw::String& out, const CF_Logical_Lv_t* src_lv)
 {
-    if (src_lv->length < buf_maxsz)
+    if (src_lv->length > 0)
     {
-        memcpy(buf, src_lv->data_ptr, src_lv->length);
-        buf[src_lv->length] = 0;
-        return src_lv->length;
+        // Determine max copy length based on string capacity
+        const FwSizeType maxCopy =
+            (src_lv->length < out.getCapacity() - 1) ? src_lv->length : out.getCapacity() - 1;
+
+        char tmp[FileNameStringSize]; // Max size for CFDP file names
+        std::memcpy(tmp, src_lv->data_ptr, maxCopy);
+        tmp[maxCopy] = '\0';
+
+        out = tmp;
+        return CfdpStatus::SUCCESS;
     }
 
-    /* ensure output is empty */
-    buf[0] = 0;
-    return CfdpStatus::ERROR; /* invalid len in lv? */
+    // LV length is zero or invalid: clear the output
+    out = "";
+    return CfdpStatus::ERROR;
 }
 
 void CF_CFDP_CancelTransaction(CF_Transaction_t *txn)
@@ -1904,15 +1908,16 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
                 fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), moveDir.toChar());
                 if(fileStatus != Os::FileSystem::OP_OK)
                 {
-                    txn->cfdpManager->log_WARNING_LO_FailKeepFileMove(txn->history->fnames.src_filename,
-                                                                      moveDir, fileStatus);
+                    // BPC TODO event interfaces are protected
+                    // txn->cfdpManager->log_WARNING_LO_FailKeepFileMove(txn->history->fnames.src_filename,
+                    //                                                   moveDir, fileStatus);
                 }
             }
         }
         else
         {
             /* file inside an polling directory */
-            if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename, txn->chan_num))
+            if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename.toChar(), txn->chan_num))
             {
                 /* If fail directory is defined attempt move */
                 failDir = txn->cfdpManager->getFailDirParam();
@@ -1921,8 +1926,9 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
                     fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), failDir.toChar());
                     if(fileStatus != Os::FileSystem::OP_OK)
                     {
-                        txn->cfdpManager->log_WARNING_LO_FailPollFileMove(txn->history->fnames.src_filename,
-                                                                          failDir, fileStatus);
+                        // BPC TODO event interfaces are protected
+                        // txn->cfdpManager->log_WARNING_LO_FailPollFileMove(txn->history->fnames.src_filename,
+                        //                                                   failDir, fileStatus);
                     }
                 }
             }
@@ -1932,7 +1938,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
     else
     {
         fileStatus = Os::FileSystem::removeFile(txn->history->fnames.dst_filename.toChar());
-        // TODO emit failure EVR
+        // BPC TODO emit failure EVR
         (void) fileStatus;
     }
 }

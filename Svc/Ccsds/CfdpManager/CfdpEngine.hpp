@@ -602,14 +602,12 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num);
  * @par Assumptions, External Events, and Notes:
  *       src_lv must not be NULL. buf must not be NULL.
  *
- * @param buf        Pointer to buffer to store string
- * @param buf_maxsz  Total size of buffer pointer to by buf (usable size is 1 byte less, for termination)
+ * @param out        Reference to output string
  * @param src_lv     Pointer to LV pair from logical PDU buffer
  *
- * @returns The resulting string length, NOT including termination character
- * @retval CfdpStatus::ERROR on error
+ * @retval CfdpStatus::ERROR on error or CfdpStatus::SUCCESS
  */
-int CF_CFDP_CopyStringFromLV(char *buf, size_t buf_maxsz, const CF_Logical_Lv_t *src_lv);
+CfdpStatus::T CF_CFDP_CopyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
 
 /************************************************************************/
 /** @brief Arm the ACK timer

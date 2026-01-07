@@ -83,8 +83,8 @@ namespace Ccsds {
 
 // static Status moveFile(const char* sourcePath, const char* destPath);
 // int32 OS_mv(const char *src, const char *dest);
-I32 OS_mv(const char *src, const char *dest)
-{ return 0; }
+// I32 OS_mv(const char *src, const char *dest)
+// { return 0; }
 
 // From <Os/Directory.hpp>
 // Status Directory::open(const char* path, OpenMode mode);
