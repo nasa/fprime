@@ -100,8 +100,8 @@ namespace Ccsds {
 
 // void close(void)
 // int32 OS_DirectoryClose(osal_id_t dir_id);
-I32 OS_DirectoryClose(Os::DirectoryHandle dir_id)
-{return 0; }
+// I32 OS_DirectoryClose(Os::DirectoryHandle dir_id)
+// {return 0; }
 
 }  // namespace Ccsds
 }  // namespace Svc

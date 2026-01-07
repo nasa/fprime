@@ -1358,14 +1358,14 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
             if (status == Os::Directory::NO_MORE_FILES)
             {
                 // TODO BPC Emit playback success EVR
-                OS_DirectoryClose(pb->dir_id);
+                pb->dir.close();
                 pb->diropen = false;
                 break;
             }
             if (status != Os::Directory::OP_OK)
             {
                 // TODO BPC: emit playback error EVR
-                OS_DirectoryClose(pb->dir_id);
+                pb->dir.close();
                 pb->diropen = false;
                 break;
             }
@@ -1841,7 +1841,7 @@ void CF_CFDP_DisableEngine(void)
         {
             if (chan->playback[j].busy)
             {
-                OS_DirectoryClose(chan->playback[j].dir_id);
+                chan->playback[j].dir.close();
             }
         }
 
@@ -1849,7 +1849,7 @@ void CF_CFDP_DisableEngine(void)
         {
             if (chan->polldir[j].pb.busy)
             {
-                OS_DirectoryClose(chan->polldir[j].pb.dir_id);
+                chan->polldir[j].pb.dir.close();
             }
         }
 
