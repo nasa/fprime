@@ -497,7 +497,6 @@ void CmdSequencerTester ::runSequenceByFileDispatcherPortCall(const char* const 
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName);
 }
 
-
 void CmdSequencerTester ::runLoadedSequence() {
     // Invoke the port
     Fw::String fArg("");
@@ -596,9 +595,9 @@ void CmdSequencerTester ::stepSequence(const U32 cmdSeq) {
 }
 
 void CmdSequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
-    const Fw::Time& timeTag,         //!< The time
-    const Fw::LogSeverity severity,  //!< The severity
-    const Fw::TextLogString& text    //!< The event string
+                                   const Fw::Time& timeTag,         //!< The time
+                                   const Fw::LogSeverity severity,  //!< The severity
+                                   const Fw::TextLogString& text    //!< The event string
 ) {
     TextLogEntry e = {id, timeTag, severity, text};
 
@@ -635,6 +634,5 @@ DirectoryInterface* DirectoryInterface::getDelegate(DirectoryHandleStorage& alig
     return Os::Delegate::makeDelegate<DirectoryInterface, Os::Posix::Directory::PosixDirectory>(
         aligned_placement_new_memory);
 }
-
 
 }  // namespace Os

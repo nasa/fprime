@@ -72,7 +72,9 @@ void CmdSequencerTester ::parameterizedAutoByPort(SequenceFiles::File& file, con
     ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
 }
 
-void CmdSequencerTester ::parameterizedAutoByFileDispatchPort(SequenceFiles::File& file, const U32 numCommands, const U32 bound) {
+void CmdSequencerTester ::parameterizedAutoByFileDispatchPort(SequenceFiles::File& file,
+                                                              const U32 numCommands,
+                                                              const U32 bound) {
     // Set the time
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
@@ -89,7 +91,6 @@ void CmdSequencerTester ::parameterizedAutoByFileDispatchPort(SequenceFiles::Fil
     ASSERT_from_seqDone_SIZE(1);
     ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
 }
-
 
 void CmdSequencerTester ::parameterizedInvalidManualCommands(SequenceFiles::File& file) {
     // Set the time
