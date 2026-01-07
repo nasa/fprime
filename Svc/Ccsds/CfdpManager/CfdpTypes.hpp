@@ -183,8 +183,8 @@ typedef enum
  */
 typedef struct CF_TxnFilenames
 {
-    char src_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
-    char dst_filename[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
+    Fw::String src_filename;
+    Fw::String dst_filename;
 } CfdpTxnFilenames;
 
 /**

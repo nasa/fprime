@@ -70,13 +70,12 @@ namespace Ccsds {
 // I32 CF_WrappedLseek(Os::FileHandle fd, I32 offset, int mode)
 // { return 0; }
 
+
+// From <Os/FileSystem.hpp>
 // BPC: One CF function was already replaced with an OS call:
 // void CF_CFDP_MoveFile(const char *src, const char *dest_dir)
 // static Status moveFile(const char* sourcePath, const char* destPath);
-// BPC: Added TODO's to report the return Status via EVR
 
-
-// From <Os/FileSystem.hpp>
 // static Status FileSystem::removeFile(const char* path);
 // int32 OS_remove(const char *path)
 I32 OS_remove(const char *path)

@@ -307,10 +307,10 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
         /* at this point, need to append filenames into md packet */
         /* this does not actually copy here - that is done during encode */
         // TODO Convert these to Fw::String
-        md->source_filename.length = static_cast<U8>(strnlen(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename)));
-        md->source_filename.data_ptr = txn->history->fnames.src_filename;
-        md->dest_filename.length = static_cast<U8>(strnlen(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename)));
-        md->dest_filename.data_ptr = txn->history->fnames.dst_filename;
+        md->source_filename.length = txn->history->fnames.src_filename.length();
+        md->source_filename.data_ptr = txn->history->fnames.src_filename.toChar();
+        md->dest_filename.length = txn->history->fnames.dst_filename.length();
+        md->dest_filename.data_ptr = txn->history->fnames.dst_filename.toChar();
 
         CF_CFDP_EncodeMd(ph->penc, md);
         CF_CFDP_SetPduLength(ph);
@@ -587,7 +587,7 @@ CfdpStatus::T CF_CFDP_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
          * and ensures that the output content is properly terminated, so this only needs to check that
          * it worked.
          */
-        lv_ret = CF_CFDP_CopyStringFromLV(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename),
+        lv_ret = CF_CFDP_CopyStringFromLV(txn->history->fnames.src_filename.toChar(), txn->history->fnames.src_filename.length(),
                                           &md->source_filename);
         if (lv_ret < 0)
         {
@@ -1211,8 +1211,8 @@ void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, Cfd
     CF_InsertSortPrio(txn, CfdpQueueId::PEND);
 }
 
-CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
-                            CfdpKeep::T keep, U8 chan_num, U8 priority, CfdpEntityId dest_id)
+CfdpStatus::T CF_CFDP_TxFile(const Fw::String& src_filename, const Fw::String& dst_filename, CfdpClass::T cfdp_class,
+                             CfdpKeep::T keep, U8 chan_num, U8 priority, CfdpEntityId dest_id)
 {
     CF_Transaction_t *txn;
     CF_Channel_t * chan = &cfdpEngine.channels[chan_num];
@@ -1238,10 +1238,9 @@ CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename,
     else
     {
         /* NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated */
-        strncpy(txn->history->fnames.src_filename, src_filename, sizeof(txn->history->fnames.src_filename) - 1);
-        txn->history->fnames.src_filename[sizeof(txn->history->fnames.src_filename) - 1] = 0;
-        strncpy(txn->history->fnames.dst_filename, dst_filename, sizeof(txn->history->fnames.dst_filename) - 1);
-        txn->history->fnames.dst_filename[sizeof(txn->history->fnames.dst_filename) - 1] = 0;
+
+        txn->history->fnames.src_filename = src_filename;
+        txn->history->fnames.dst_filename = dst_filename;
         CF_CFDP_TxFile_Initiate(txn, cfdp_class, keep, chan_num, priority, dest_id);
 
         ++chan->num_cmd_tx;
@@ -1308,11 +1307,8 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const Fw::String& 
         pb->cfdp_class = cfdp_class;
 
         /* NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated */
-        // BPC TODO Make these strings 
-        strncpy(pb->fnames.src_filename, src_filename.toChar(), sizeof(pb->fnames.src_filename) - 1);
-        pb->fnames.src_filename[sizeof(pb->fnames.src_filename) - 1] = 0;
-        strncpy(pb->fnames.dst_filename, dst_filename.toChar(), sizeof(pb->fnames.dst_filename) - 1);
-        pb->fnames.dst_filename[sizeof(pb->fnames.dst_filename) - 1] = 0;
+        pb->fnames.src_filename = src_filename;
+        pb->fnames.dst_filename = dst_filename;
     }
 
     /* the executor will start the transfer next cycle */
@@ -1393,53 +1389,14 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
                 break;
             }
 
-            // TODO BPC: Refactor snprintf to use Fw::String
-            // snprintf(txn->history->fnames.src_filename, sizeof(txn->history->fnames.src_filename), "%.*s/%.*s",
-            //          CfdpManagerMaxFileSize - 1, pb->fnames.src_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
-            const size_t src_size = sizeof(txn->history->fnames.src_filename);
+            // Append file name to source/destination folders
+            txn->history->fnames.src_filename = pb->fnames.src_filename;
+            txn->history->fnames.src_filename += "/";
+            txn->history->fnames.src_filename += pb->pending_file;
             
-            n = snprintf(
-                txn->history->fnames.src_filename,
-                src_size,
-                "%.*s/",
-                static_cast<int>(src_size - 2),
-                pb->fnames.src_filename
-            );
-            
-            if (n > 0 && static_cast<size_t>(n) < src_size)
-            {
-                snprintf(
-                    txn->history->fnames.src_filename + n,
-                    src_size - static_cast<size_t>(n),
-                    "%.*s",
-                    static_cast<int>(src_size - static_cast<size_t>(n) - 1),
-                    pb->pending_file
-                );
-            }
-            
-            // TODO BPC: Refactor snprintf to use Fw::String
-            // snprintf(txn->history->fnames.dst_filename, sizeof(txn->history->fnames.dst_filename), "%.*s/%.*s",
-            //          CfdpManagerMaxFileSize - 1, pb->fnames.dst_filename, CF_FILENAME_MAX_NAME - 1, pb->pending_file);
-            const size_t dst_size = sizeof(txn->history->fnames.dst_filename);
-
-            n = snprintf(
-                txn->history->fnames.dst_filename,
-                dst_size,
-                "%.*s/",
-                static_cast<int>(dst_size - 2),
-                pb->fnames.dst_filename
-            );
-
-            if (n > 0 && static_cast<size_t>(n) < dst_size)
-            {
-                snprintf(
-                    txn->history->fnames.dst_filename + n,
-                    dst_size - static_cast<size_t>(n),
-                    "%.*s",
-                    static_cast<int>(dst_size - static_cast<size_t>(n) - 1),
-                    pb->pending_file
-                );
-            }
+            txn->history->fnames.dst_filename = pb->fnames.dst_filename;
+            txn->history->fnames.dst_filename += "/";
+            txn->history->fnames.dst_filename += pb->pending_file;
 
             CF_CFDP_TxFile_Initiate(txn, pb->cfdp_class, pb->keep, chan->channel_id, pb->priority,
                                     pb->dest_id);
@@ -1930,9 +1887,9 @@ bool CF_CFDP_IsPollingDir(const char *src_file, U8 chan_num)
 
 void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
 {
-    Os::FileSystem::Status os_status;
-    Fw::String fail_dir;
-    Fw::String move_dir;
+    Os::FileSystem::Status fileStatus;
+    Fw::String failDir;
+    Fw::String moveDir;
 
     /* Sender */
     if (CF_CFDP_IsSender(txn))
@@ -1940,12 +1897,15 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
         if (!CF_TxnStatus_IsError(txn->history->txn_stat))
         {
             /* If move directory is defined attempt move */
-            move_dir = txn->cfdpManager->getMoveDirParam(txn->chan_num);
-            if(move_dir.length() > 0)
+            moveDir = txn->cfdpManager->getMoveDirParam(txn->chan_num);
+            if(moveDir.length() > 0)
             {
-                os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, move_dir.toChar());
-                // TODO Add failure EVR
-                (void) os_status;
+                fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), moveDir.toChar());
+                if(fileStatus != Os::FileSystem::OP_OK)
+                {
+                    txn->cfdpManager->log_WARNING_LO_FailKeepFileMove(txn->history->fnames.src_filename,
+                                                                      moveDir, fileStatus);
+                }
             }
         }
         else
@@ -1954,12 +1914,15 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
             if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename, txn->chan_num))
             {
                 /* If fail directory is defined attempt move */
-                fail_dir = txn->cfdpManager->getFailDirParam();
-                if(fail_dir.length() > 0)
+                failDir = txn->cfdpManager->getFailDirParam();
+                if(failDir.length() > 0)
                 {
-                    os_status = Os::FileSystem::moveFile(txn->history->fnames.src_filename, fail_dir.toChar());
-                    // TODO Add failure EVR
-                    (void) os_status;
+                    fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), failDir.toChar());
+                    if(fileStatus != Os::FileSystem::OP_OK)
+                    {
+                        txn->cfdpManager->log_WARNING_LO_FailPollFileMove(txn->history->fnames.src_filename,
+                                                                          failDir, fileStatus);
+                    }
                 }
             }
         }

@@ -65,3 +65,19 @@ event InvalidChannelPoll(
 ) \
     severity warning low \
     format "Invalid poll ID {}, maximum poll ID is {}" 
+
+event FailKeepFileMove(
+    srcFile: string size CfdpManagerMaxFileSize @< Source file being moved
+    moveDir: string size CfdpManagerMaxFileSize @< Directory file was moved to
+    status: I32 @< Status of the move operation
+) \
+    severity warning low \
+    format "Failed to move {} to {} error {}" 
+
+event FailPollFileMove(
+    srcFile: string size CfdpManagerMaxFileSize @< Source file being moved
+    failDir: string size CfdpManagerMaxFileSize @< Directory file was moved to
+    status: I32 @< Status of the move operation
+) \
+    severity warning low \
+    format "Failed to move {} to {} error {}" 

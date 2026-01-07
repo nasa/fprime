@@ -310,7 +310,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
     if (false == txn->fd.isOpen())
     {
-        fileStatus = txn->fd.open(txn->history->fnames.src_filename, Os::File::OPEN_READ);
+        fileStatus = txn->fd.open(txn->history->fnames.src_filename.toChar(), Os::File::OPEN_READ);
         if (fileStatus != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
