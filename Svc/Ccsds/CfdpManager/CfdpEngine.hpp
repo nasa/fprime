@@ -222,8 +222,9 @@ void CF_CFDP_DisableEngine(void);
  * @retval #CfdpStatus::SUCCESS \copydoc CfdpStatus::SUCCESS
  * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
  */
-CfdpStatus::T CF_CFDP_TxFile(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class, U8 keep,
-                            U8 chan, U8 priority, CfdpEntityId dest_id);
+CfdpStatus::T CF_CFDP_TxFile(const Fw::String& src_filename, const Fw::String& dst_filename,
+                             CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan_num,
+                             U8 priority, CfdpEntityId dest_id);
 
 /************************************************************************/
 /** @brief Begin transmit of a directory.

@@ -1211,8 +1211,9 @@ void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, Cfd
     CF_InsertSortPrio(txn, CfdpQueueId::PEND);
 }
 
-CfdpStatus::T CF_CFDP_TxFile(const Fw::String& src_filename, const Fw::String& dst_filename, CfdpClass::T cfdp_class,
-                             CfdpKeep::T keep, U8 chan_num, U8 priority, CfdpEntityId dest_id)
+CfdpStatus::T CF_CFDP_TxFile(const Fw::String& src_filename, const Fw::String& dst_filename,
+                             CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan_num,
+                             U8 priority, CfdpEntityId dest_id)
 {
     CF_Transaction_t *txn;
     CF_Channel_t * chan = &cfdpEngine.channels[chan_num];
@@ -1930,7 +1931,9 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
     /* Not Sender */
     else
     {
-        OS_remove(txn->history->fnames.dst_filename);
+        fileStatus = Os::FileSystem::removeFile(txn->history->fnames.dst_filename.toChar());
+        // TODO emit failure EVR
+        (void) fileStatus;
     }
 }
 

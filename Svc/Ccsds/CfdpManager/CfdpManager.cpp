@@ -100,7 +100,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName.toChar(), destFileName.toChar(), cfdpClass.e, keep.e,
+        (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
                                                channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);

@@ -78,8 +78,8 @@ namespace Ccsds {
 
 // static Status FileSystem::removeFile(const char* path);
 // int32 OS_remove(const char *path)
-I32 OS_remove(const char *path)
-{ return 0; }
+// I32 OS_remove(const char *path)
+// { return 0; }
 
 // static Status moveFile(const char* sourcePath, const char* destPath);
 // int32 OS_mv(const char *src, const char *dest);
