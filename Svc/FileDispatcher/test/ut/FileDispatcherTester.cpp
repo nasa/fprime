@@ -158,48 +158,6 @@ void FileDispatcherTester::dispatchPingTest() {
     ASSERT_from_pingOut(0, 0x1234);
 }
 
-void FileDispatcherTester ::dispatchNotFullConfigTest(FwSizeType skipEntries) {
-    // Svc::FileDispatcherTable table;
-    // Svc::FileDispatcherEntry entries[Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS];
-
-    // for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {
-    //     entries[i].enabled = true;
-    //     entries[i].fileExt.format(".file%d", i);
-    //     entries[1].port = static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i);
-    // }
-
-    // this->component.configure(entries, Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS -
-    // skipEntries);
-
-    // // dispatch files
-
-    // for (FwSizeType i = 0; i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS - skipEntries; i++)
-    // {
-    //     this->clearHistory();
-    //     Fw::String testFileName;
-    //     testFileName.format("afile.file%d", i);
-    //     this->invoke_to_fileAnnounceRecv(0, testFileName);
-    //     this->component.doDispatch();
-    //     ASSERT_EVENTS_FileDispatched_SIZE(1);
-    //     ASSERT_EVENTS_FileDispatched(0, testFileName.toChar(),
-    //                                  static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
-    //     ASSERT_from_fileDispatch_SIZE(1);
-    //     ASSERT_from_fileDispatch(0, testFileName);
-    // }
-
-    // // now test skipped entries
-    // for (FwSizeType i = Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS - skipEntries;
-    //      i < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS; i++) {
-    //     this->clearHistory();
-    //     Fw::String testFileName;
-    //     testFileName.format("afile.file%d", i);
-    //     this->invoke_to_fileAnnounceRecv(0, testFileName);
-    //     this->component.doDispatch();
-    //     ASSERT_EVENTS_FileDispatched_SIZE(0);
-    //     ASSERT_from_fileDispatch_SIZE(0);
-    // }
-}
-
 //! Handle a text event
 void FileDispatcherTester::textLogIn(FwEventIdType id,                //!< The event ID
                                      const Fw::Time& timeTag,         //!< The time

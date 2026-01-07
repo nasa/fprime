@@ -16,7 +16,7 @@ Add requirements in the chart below
 
 ### Typical Usage
 
-The `Ref` example connects `Svc::FIleUplink` to `FileDispatcher` to process uplinked files. The `Ref` example configuration table has compiled sequences with a certain extension that `FileDispatcher` dispatches to `Svc::CmdSequencer` for automatic running when those files are uplinked.
+`Svc::FileUplink` is typically connected to `FileDispatcher` to process files that have been uplinked to the system. The user should create a configuration table that maps file extensions to output ports and supply it to the `FileDispatcher` component during initialization.
 
 #### Configuration Table Structure
 

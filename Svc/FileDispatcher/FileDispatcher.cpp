@@ -31,10 +31,13 @@ void FileDispatcher ::configure(const FileDispatcherTable& table) {
                   table.entries[entry].port.e);  // valid output port
         FW_ASSERT(table.entries[entry].fileExt.length() > 0,
                   static_cast<FwAssertArgType>(table.entries[entry].fileExt.length()));  // non-zero length
+        // Copy over table entry
+        this->m_dispatchTable.entries[entry].port = table.entries[entry].port;
+        this->m_dispatchTable.entries[entry].fileExt = table.entries[entry].fileExt;
+        this->m_dispatchTable.entries[entry].enabled = table.entries[entry].enabled;
     }
-
-    // copy to local table
-    this->m_dispatchTable = table;
+    // Set number of entries
+    this->m_dispatchTable.numEntries = table.numEntries;
 }
 
 // ----------------------------------------------------------------------
@@ -59,9 +62,8 @@ void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBa
              static_cast<FwSizeType>(loc))  // match at end of string
         ) {
             // dispatch on this port
-            this->fileDispatch_out(this->m_dispatchTable.entries[i].port, file_name);
-            this->log_ACTIVITY_HI_FileDispatched(file_name,
-                                                 static_cast<Svc::FileDispatcherCfg::FileDispatchPort::T>(i));
+            this->fileDispatch_out(this->m_dispatchTable.entries[i].port.e, file_name);
+            this->log_ACTIVITY_HI_FileDispatched(file_name, this->m_dispatchTable.entries[i].port);
         }
     }
 }
@@ -74,7 +76,12 @@ void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                  U32 cmdSeq,
                                                  Svc::FileDispatcherCfg::FileDispatchPort file_type,
                                                  Fw::Enabled enable) {
-    this->m_dispatchTable.entries[file_type].enabled = enable;
+
+    for (FwSizeType i = 0; i < this->m_dispatchTable.numEntries; i++) {
+        if (this->m_dispatchTable.entries[i].port == file_type) {
+            this->m_dispatchTable.entries[i].enabled = enable;
+        }
+    }
     this->log_ACTIVITY_HI_FileDispatchState(file_type, enable);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

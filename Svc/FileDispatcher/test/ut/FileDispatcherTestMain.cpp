@@ -26,11 +26,6 @@ TEST(Nominal, DispatchAllCmdEnabledTest) {
     tester.dispatchAllCmdEnabledTest();
 }
 
-TEST(Nominal, DispatchNotFullConfigTest) {
-    Svc::FileDispatcherTester tester;
-    tester.dispatchNotFullConfigTest(1);
-}
-
 TEST(Nominal, DispatchPingTest) {
     Svc::FileDispatcherTester tester;
     tester.dispatchPingTest();

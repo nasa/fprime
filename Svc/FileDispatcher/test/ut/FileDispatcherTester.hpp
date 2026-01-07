@@ -55,9 +55,6 @@ class FileDispatcherTester final : public FileDispatcherGTestBase {
     //! Dispatch command enabled test
     void dispatchAllCmdEnabledTest();
 
-    //! Dispatch not full config test
-    void dispatchNotFullConfigTest(FwSizeType skipEntries);
-
     //! Dispatch ping test
     void dispatchPingTest();
 
