@@ -147,9 +147,8 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
 
         if (txn->state_data.send.cached_pos != foffs)
         {
-            status = CF_WrappedLseek(txn->fd, foffs, Os::File::SeekType::ABSOLUTE);
-            // TODO refactor to an Os status check
-            if (status != static_cast<I32>(foffs))
+            status = txn->fd.seek(foffs, Os::File::SeekType::ABSOLUTE);
+            if (status != Os::File::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): error seeking to offset %ld, got %ld",
@@ -325,27 +324,8 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
         if (success)
         {
-            // TODO BPC mode = OS_SEEK_END
-            // TODO this is just getting the file size
-            fileStatus = CF_WrappedLseek(txn->fd, 0, 2);
-            if (fileStatus < 0)
-            {
-                // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_END_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S%d(%lu:%lu): failed to seek end file %s, error=%ld",
-                //                   (txn->state == CF_TxnState_S2), (unsigned long)txn->history->src_eid,
-                //                   (unsigned long)txn->history->seq_num, txn->history->fnames.src_filename,
-                //                   (long)status);
-                // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
-                success = false;
-            }
-        }
-
-        if (success)
-        {
-            txn->fsize = status;
-
-            fileStatus = CF_WrappedLseek(txn->fd, 0, Os::File::SeekType::ABSOLUTE);
-            if (fileStatus != 0)
+            fileStatus = txn->fd.size(txn->fsize);
+            if (fileStatus != Os::File::Status::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_BEG_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF S%d(%lu:%lu): failed to seek begin file %s, got %ld",
@@ -354,6 +334,11 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
                 //                   (long)status);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
                 success = false;
+            }
+            else
+            {
+                // Check that file size is well formed
+                FW_ASSERT(txn->fsize > 0, txn->fsize);
             }
         }
     }

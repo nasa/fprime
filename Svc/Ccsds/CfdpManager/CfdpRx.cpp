@@ -168,12 +168,12 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, bool ok_to_send_nak)
 
 CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    const CF_Logical_PduFileDataHeader_t *fd;
+    const CF_Logical_PduFileDataHeader_t *pdu;
     Os::File::Status status;
     CfdpStatus::T ret;
 
     /* this function is only entered for data PDUs */
-    fd  = &ph->int_header.fd;
+    pdu = &ph->int_header.fd;
     ret = CfdpStatus::SUCCESS;
 
     /*
@@ -182,16 +182,16 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
      * adjustments here, just write it.
      */
 
-    if (txn->state_data.receive.cached_pos != fd->offset)
+    // BPC TODO get rid of pdu->offset in favor of Os::File::position()
+    if (txn->state_data.receive.cached_pos != pdu->offset)
     {
-        status = CF_WrappedLseek(txn->fd, fd->offset, Os::File::SeekType::ABSOLUTE);
-        // TODO refactor to an Os status check
-        if (status != static_cast<I32>(fd->offset))
+        status = txn->fd.seek(pdu->offset, Os::File::SeekType::ABSOLUTE);
+        if (status != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF R%d(%lu:%lu): failed to seek offset %ld, got %ld", (txn->state == CF_TxnState_R2),
             //                   (unsigned long)txn->history->src_eid, (unsigned long)txn->history->seq_num,
-            //                   (long)fd->offset, (long)fret);
+            //                   (long)pdu->offset, (long)fret);
             CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILE_SIZE_ERROR);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_seek;
             ret = CfdpStatus::ERROR; /* connection will reset in caller */
@@ -200,21 +200,21 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
 
     if (ret != CfdpStatus::ERROR)
     {
-        status = txn->fd.write(fd->data_ptr, fd->data_len, Os::File::WaitType::WAIT);
+        status = txn->fd.write(pdu->data_ptr, pdu->data_len, Os::File::WaitType::WAIT);
         if (status != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_WRITE_ERR_EID, CFE_EVS_EventType_ERROR,
             //                   "CF R%d(%lu:%lu): OS_write expected %ld, got %ld", (txn->state == CF_TxnState_R2),
             //                   (unsigned long)txn->history->src_eid, (unsigned long)txn->history->seq_num,
-            //                   (long)fd->data_len, (long)fret);
+            //                   (long)pdu->data_len, (long)fret);
             CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILESTORE_REJECTION);
             // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.fault.file_write;
             ret = CfdpStatus::ERROR; /* connection will reset in caller */
         }
         else
         {
-            txn->state_data.receive.cached_pos = static_cast<U32>(fd->data_len) + fd->offset;
-            // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.file_data_bytes += fd->data_len;
+            txn->state_data.receive.cached_pos = static_cast<U32>(pdu->data_len) + pdu->offset;
+            // CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.file_data_bytes += pdu->data_len;
         }
     }
 
@@ -608,9 +608,8 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
 
         if (txn->state_data.receive.cached_pos != txn->state_data.receive.r2.rx_crc_calc_bytes)
         {
-            fileStatus = CF_WrappedLseek(txn->fd, txn->state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
-            // TODO turn this into an OS status check
-            if (fileStatus != static_cast<I32>(txn->state_data.receive.r2.rx_crc_calc_bytes))
+            fileStatus = txn->fd.seek(txn->state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
+            if (fileStatus != Os::File::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_CRC_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF R%d(%lu:%lu): failed to seek offset %lu, got %ld", (txn->state == CF_TxnState_R2),

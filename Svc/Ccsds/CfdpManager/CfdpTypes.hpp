@@ -380,8 +380,8 @@ typedef struct CF_Transaction
     CfdpTimer inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
     CfdpTimer ack_timer; /**< \brief called ack_timer, but is also nak_timer */
 
-    U32 fsize; /**< \brief lseek() should be 64-bit on 64-bit system, but osal limits to 32-bit */
-    U32 foffs; /**< \brief offset into file for next read */
+    FwSizeType fsize; /**< \brief File size */
+    FwSizeType foffs; /**< \brief offset into file for next read */
     Os::File fd;
 
     CFDP::Checksum crc;
