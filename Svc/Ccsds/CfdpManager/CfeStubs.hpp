@@ -95,8 +95,8 @@ namespace Ccsds {
 // Status read(char* fileNameBuffer, FwSizeType buffSize) override;
 //  * @param[out] dirent    Buffer to store directory entry information @nonnull
 // int32 OS_DirectoryRead(osal_id_t dir_id, os_dirent_t *dirent);
-I32 OS_DirectoryRead(Os::DirectoryHandle dir_id, char* dirent)
-{return 0; }
+// I32 OS_DirectoryRead(Os::DirectoryHandle dir_id, char* dirent)
+// {return 0; }
 
 // void close(void)
 // int32 OS_DirectoryClose(osal_id_t dir_id);

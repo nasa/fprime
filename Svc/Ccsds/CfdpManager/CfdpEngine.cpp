@@ -1344,7 +1344,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
 {
     CF_Transaction_t *txn;
     char path[CfdpManagerMaxFileSize];
-    I32 status;
+    Os::Directory::Status status;
 
     /* either there's no transaction (first one) or the last one was finished, so check for a new one */
 
@@ -1354,21 +1354,20 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
     {
         if (pb->pending_file[0] == 0)
         {
-            status = OS_DirectoryRead(pb->dir_id, path);
-            // TODO BPC: Refactor this into an Os::status check
-            // if (status != OS_SUCCESS)
-            // TODO BPC: F' Directory.read handles current directory and parent directory in a different fashion
-            if (status < 0)
+            status = pb->dir.read(path, CfdpManagerMaxFileSize);
+            if (status == Os::Directory::NO_MORE_FILES)
             {
-                /* PFTO: can we figure out the difference between "end of dir" and an error? */
+                // TODO BPC Emit playback success EVR
                 OS_DirectoryClose(pb->dir_id);
                 pb->diropen = false;
                 break;
             }
-
-            if (!strcmp(path, ".") || !strcmp(path, ".."))
+            if (status != Os::Directory::OP_OK)
             {
-                continue;
+                // TODO BPC: emit playback error EVR
+                OS_DirectoryClose(pb->dir_id);
+                pb->diropen = false;
+                break;
             }
 
             strncpy(pb->pending_file, path, sizeof(pb->pending_file) - 1);
