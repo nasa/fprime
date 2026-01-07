@@ -1283,13 +1283,11 @@ CfdpStatus::T CF_CFDP_PlaybackDir_Initiate(CF_Playback_t *pb, const Fw::String& 
                                            CfdpEntityId dest_id)
 {
     CfdpStatus::T status = CfdpStatus::SUCCESS;
-    I32 ret;
+    Os::Directory::Status dirStatus;
 
     /* make sure the directory can be open */
-    ret = OS_DirectoryOpen(&pb->dir_id, src_filename.toChar());
-    // BPC TODO make this a status check
-    // if (ret != OS_SUCCESS)
-    if (ret < 0)
+    dirStatus = pb->dir.open(src_filename.toChar(), Os::Directory::READ);
+    if (dirStatus != Os::Directory::OP_OK)
     {
         // CFE_EVS_SendEvent(CF_CFDP_OPENDIR_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: failed to open playback directory %s, error=%ld", src_filename, (long)ret);

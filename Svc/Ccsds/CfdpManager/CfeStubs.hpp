@@ -89,8 +89,8 @@ namespace Ccsds {
 // From <Os/Directory.hpp>
 // Status Directory::open(const char* path, OpenMode mode);
 // int32 OS_DirectoryOpen(osal_id_t *dir_id, const char *path)
-I32 OS_DirectoryOpen(Os::DirectoryHandle *dir_id, const char *path)
-{ return 0; }
+// I32 OS_DirectoryOpen(Os::DirectoryHandle *dir_id, const char *path)
+// { return 0; }
 
 // Status read(char* fileNameBuffer, FwSizeType buffSize) override;
 //  * @param[out] dirent    Buffer to store directory entry information @nonnull

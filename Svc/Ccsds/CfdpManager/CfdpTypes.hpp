@@ -221,7 +221,7 @@ typedef struct CF_ChunkWrapper
  */
 typedef struct CF_Playback
 {
-    Os::DirectoryHandle dir_id;
+    Os::Directory dir;
     CfdpClass::T cfdp_class;
     CfdpTxnFilenames fnames;
     U16 num_ts; /**< \brief number of transactions */
