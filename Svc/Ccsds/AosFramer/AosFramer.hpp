@@ -9,10 +9,12 @@
 #define Svc_Ccsds_AosFramer_HPP
 
 #include "Svc/Ccsds/AosFramer/AosFramerComponentAc.hpp"
+#include "Svc/Ccsds/Types/AOSHeaderSerializableAc.hpp"
+#include "Svc/Ccsds/Types/AOSTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/M_PDUHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
-#include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
-#include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Types/TfvnEnumAc.hpp"
 
 namespace Svc {
 
@@ -23,6 +25,9 @@ class AosFramer final : public AosFramerComponentBase {
 
     static constexpr U8 SPP_IDLE_DATA_PATTERN = 0x44;
     static constexpr U8 MIN_SPP_LENGTH = 7;
+
+    // Offset to start of payload
+    static constexpr U16 START_OF_PAYLOAD = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE;
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the AosFramer
@@ -36,7 +41,7 @@ class AosFramer final : public AosFramerComponentBase {
     };
 
     struct AosVc {
-        U8 virtualChannelId;  // VCID for this particular virtual channel
+        U8 virtualChannelId = 0;  // VCID for this particular virtual channel
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
@@ -64,8 +69,8 @@ class AosFramer final : public AosFramerComponentBase {
         } spp_idle;
 
         // Multi PDU per frame and
-        FwSizeType current_payload_offset = 0;  //!< How far into the current PDU we are
-        bool past_first_fresh_packet = false;   //!< Past the first fresh packet in an M_PDU
+        U16 current_payload_offset = 0;        //!< How far into the current PDU we are
+        bool past_first_fresh_packet = false;  //!< Past the first fresh packet in an M_PDU
     };
 
   public:
@@ -82,11 +87,11 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Configure Managed Parameters for this AOS Framer
     //!
-    void configure(U32 fixedFixedSize,                              //!< Number of bytes in each AOS SDL Frame
-                   bool frameErrorControlField,                     //!< Whether to enable the frame error control field
-                   U8 idlePvns = (1 << Pvn::SPACE_PACKET_PROTOCOL)  //!< Bitfield of which Packet Version Numbers to use
-                                                                    //!< for idle packets
-                                                                    //!< Default to SPP
+    void configure(U32 fixedFixedSize,                  //!< Number of bytes in each AOS SDL Frame
+                   bool frameErrorControlField,         //!< Whether to enable the frame error control field
+                   U8 idlePvns = PvnBitfield::SPP_MASK  //!< Bitfield of which Packet Version Numbers to use
+                                                        //!< for idle packets
+                                                        //!< Default to SPP
     );
 
   private:
@@ -122,29 +127,35 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------------------
+
+    FwSizeType get_min_size();
+
   private:
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
     //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet(AosVc vc&);
+    void fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context);
 
     void serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length);
 
     //! Fill out the Transfer Frame Primary Header (4.1.2)
-    void setup_header(ComCfg::FrameContext& context);
+    void setup_header(const ComCfg::FrameContext& context);
 
     // TODO: Desc & Section marking
-    void setup_m_pdu_header(ComCfg::FrameContext& context);
+    void setup_m_pdu_header(const ComCfg::FrameContext& context);
 
-    void pack_packet(Fw::Buffer& data, ComCfg::FrameContext& context, FwSizeType offset = 0);
+    void pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType offset = 0);
 
     // TODO: Desc & Section marking
-    void compute_fecf();
+    void compute_fecf(AosVc& currentVc);
 
     //! Map frame context onto index into array of Virtual Channel structs
-    //! currently returns 0 regardless
+    //! currently returns 0th regardless
+    AosVc& get_vc_struct_unsafe(U8 vc_index);
+
     //! TODO: Implement multiple VCs
-    void get_vc_index(ComCfg::FrameContext& context);
+    //! Calls the above function and verifies the vcId matches
+    AosVc& get_vc_struct(const ComCfg::FrameContext& context);
 
     // ----------------------------------------------------------------------
     // Members
@@ -154,6 +165,8 @@ class AosFramer final : public AosFramerComponentBase {
     bool m_fecf;  //!< AOS Frame Error Control Field presence
 
     AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
+
+    AosVc* m_sent_vc = nullptr;
 };
 
 }  // namespace Ccsds
