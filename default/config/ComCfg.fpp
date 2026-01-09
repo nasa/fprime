@@ -20,6 +20,13 @@ module ComCfg {
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
 
+    @ Packet Version Numbers are 3 bits with only 2 currently valid values
+    dictionary enum Pvn : U8 {
+        SPACE_PACKET_PROTOCOL         = 0x0   @< Command packet type - incoming
+        ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Telemetry packet type - outgoing
+        INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
+    } default INVALID_UNINITIALIZED
+
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
     dictionary enum Apid : FwPacketDescriptorType {
         # APIDs prefixed with FW are reserved for F Prime and need to be present
@@ -40,7 +47,7 @@ module ComCfg {
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
-        pvn: Svc.Ccsds.Pvn                    @< Packet Version Number (CCSDS SPP vs EPP)
+        pvn: Pvn                    @< Packet Version Number (CCSDS SPP vs EPP)
         apid: Apid                  @< 11 bits APID in CCSDS
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for TC, TM, and AOS
@@ -49,11 +56,11 @@ module ComCfg {
 
     } default {
         comQueueIndex = 0
+        pvn = Pvn.SPACE_PACKET_PROTOCOL
         apid = Apid.FW_PACKET_UNKNOWN
-        pvn = Svc.Ccsds.Pvn.SPACE_PACKET_PROTOCOL
         sequenceCount = 0
         vcId = 1
-        replayFlag = 0
+        replayFlag = false
     }
 
 }

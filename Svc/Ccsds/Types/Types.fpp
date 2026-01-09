@@ -122,13 +122,6 @@ module Ccsds {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
 
-    @ Packet Version Numbers are 3 bits with only 2 currently valid values
-    dictionary enum Pvn : U8 {
-        SPACE_PACKET_PROTOCOL         = 0x0   @< Command packet type - incoming
-        ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Telemetry packet type - outgoing
-        INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
-    } default INVALID_UNINITIALIZED
-
     module PvnBitfield {
         constant SPP_MASK = 0x1 @< 1 << 0x0
         constant EPP_MASK = 0x8 @< 1 << 0x3
