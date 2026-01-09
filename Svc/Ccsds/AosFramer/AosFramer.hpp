@@ -41,7 +41,8 @@ class AosFramer final : public AosFramerComponentBase {
     };
 
     struct AosVc {
-        U8 virtualChannelId = 0;  // VCID for this particular virtual channel
+        U8 vc_struct_index = 0;   //!< Index into VC Array for this vc struct
+        U8 virtualChannelId = 0;  //!< VCID for this particular virtual channel
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
@@ -132,8 +133,8 @@ class AosFramer final : public AosFramerComponentBase {
 
   private:
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
-    //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at the
-    //! start_index index of the frame buffer, and fills it up to the end minus CRC
+    //! as per CCSDS AOS Protocol paragraph 4.2.2.5. Idle packet is inserted at current_payload_offset and fills to end
+    //! (minus optional CRC)
     void fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context);
 
     void serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length);
@@ -141,20 +142,21 @@ class AosFramer final : public AosFramerComponentBase {
     //! Fill out the Transfer Frame Primary Header (4.1.2)
     void setup_header(const ComCfg::FrameContext& context);
 
-    // TODO: Desc & Section marking
-    void setup_m_pdu_header(const ComCfg::FrameContext& context);
+    //! Write the pointer to the first packet header (4.1.4.2.2)
+    void setup_m_pdu_header(const ComCfg::FrameContext& context, bool noFresh = false);
 
+    //! Write a buffer into vc & prep to wrap onto next if needed
     void pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType offset = 0);
 
-    // TODO: Desc & Section marking
+    //! Send the vc frame if we have filled it
+    void check_and_send_vc(AosFramer::AosVc& currentVc);
+
+    //! Computing Trailing Frame Error Control Field (4.1.6)
     void compute_fecf(AosVc& currentVc);
 
+    //! TODO: Implement multiple VCs
     //! Map frame context onto index into array of Virtual Channel structs
     //! currently returns 0th regardless
-    AosVc& get_vc_struct_unsafe(U8 vc_index);
-
-    //! TODO: Implement multiple VCs
-    //! Calls the above function and verifies the vcId matches
     AosVc& get_vc_struct(const ComCfg::FrameContext& context);
 
     // ----------------------------------------------------------------------

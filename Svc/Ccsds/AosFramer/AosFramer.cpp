@@ -32,11 +32,15 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
     // AOS Framer must be provided with a protocol to use for Idle Packets
     FW_ASSERT(idlePvns & PvnBitfield::VALID_MASK, static_cast<FwAssertArgType>(idlePvns));
 
-    // TODO: is FECF supposed to be VC or Physical channel level config
+    // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
 
     // For each vc, init the buffer objects
-    for (AosVc& currentVc : this->m_vcs) {
+    for (U8 ind = 0; ind < sizeof(this->m_vcs) / sizeof(AosVc); ind++) {
+        AosVc& currentVc = this->m_vcs[ind];
+
+        // Write the index for mapping a vc struct onto an output port
+        currentVc.vc_struct_index = ind;
         currentVc.frame.buffer = {currentVc.frame.backer, fixedFrameSize};
         // Set the bitmask of PVNs to use for idle packets
         currentVc.idle_packet_types = idlePvns;
@@ -60,7 +64,6 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
 
     // AOS Header & M_PDU Header
     // If this is the first fresh packet, set the M_PDU firstHeaderPointer
-    // dataOffset is non-zero for packets that are continuing
     if (!currentVc.past_first_fresh_packet) {
         // setup our headers if we have a packet + context ready to go
         setup_header(context);
@@ -72,31 +75,6 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
 
     // Pack this packet
     pack_packet(data, context);
-
-    if (context.get_sendNow()) {
-        // TODO: Decide when to pack w/ idle
-        // Potentially add a configurable time/remaining bytes threshold
-        // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
-        fill_with_idle_packet(currentVc, context);
-    }
-
-    const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - get_min_size();
-    if (currentVc.current_payload_offset == maxPayload) {
-        // Compute Trailer
-        if (this->m_fecf) {
-            compute_fecf(currentVc);
-        }
-
-        // Push data out
-        this->m_sent_vc = &currentVc;
-        currentVc.frame.state = BufferOwnershipState::NOT_OWNED;
-
-        this->dataOut_out(0, currentVc.frame.buffer, context);
-    } else if (this->isConnected_comStatusOut_OutputPort(portNum)) {
-        // We got more room, so ask for more bytes
-        Fw::Success condition = Fw::Success::SUCCESS;
-        this->comStatusOut_out(portNum, condition);
-    }
 }
 
 void AosFramer::compute_fecf(AosVc& currentVc) {
@@ -131,6 +109,8 @@ void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition
     FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
               static_cast<FwAssertArgType>(currentVc.frame.state));
 
+    // We just ask upstream for more packets
+    // comQueue decides to which VCs to allocate comStatus success
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         // Forward the comStatus upstream
         this->comStatusOut_out(portNum, condition);
@@ -148,25 +128,15 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
     FW_ASSERT(currentVc.frame.buffer.getData() < &currentVc.frame.backer[0] + sizeof(currentVc.frame.backer));
     currentVc.frame.state = BufferOwnershipState::OWNED;
 
-    // Clean up our per frame vc values
-    currentVc.current_payload_offset = 0;
-    currentVc.past_first_fresh_packet = false;
-
     // If we have an outstanding packet from the prior frame, pack it
-    // TODO: Is this enough
+    // TODO: Is this enough to determine outstanding packet validity
     if (currentVc.outstanding.packet.isValid()) {
         this->pack_packet(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
     }
 }
 
-AosFramer::AosVc& AosFramer ::get_vc_struct_unsafe(U8 vc_index) {
-    // For now, always returns 0th VC Struct
-    // Eventually setup a table per AOS Framer and map context VC IDs into indicies in the Array of Structs
-    return this->m_vcs[0];
-}
-
 AosFramer::AosVc& AosFramer ::get_vc_struct(const ComCfg::FrameContext& context) {
-    AosVc& currentVc = get_vc_struct_unsafe(0);
+    AosVc& currentVc = this->m_vcs[0];
     FW_ASSERT(currentVc.virtualChannelId == context.get_vcId());
     return currentVc;
 }
@@ -219,12 +189,19 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 
-void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context) {
+void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no_fresh) {
     // Get the VC Struct for this vc
     AosVc& currentVc = this->get_vc_struct(context);
 
     M_PDUHeader muxedPdu;
-    muxedPdu.set_firstHeaderPointer(currentVc.current_payload_offset);
+    if (no_fresh) {
+        // All Ones since no packets start in this frame (no fresh packets)
+        muxedPdu.set_firstHeaderPointer(0xFFFF);
+    } else {
+        // Called at first fresh packet (not a packet tail)
+        // So current payload offset is the pointer to first packet header
+        muxedPdu.set_firstHeaderPointer(currentVc.current_payload_offset);
+    }
 
     auto frameSerializer = currentVc.frame.buffer.getSerializer();
     Fw::SerializeStatus status =
@@ -244,6 +221,49 @@ bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
+void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
+    const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - get_min_size();
+
+    // Check if we've filled up the M_PDU payload
+    if (currentVc.current_payload_offset == maxPayload) {
+        // Write the headers if we haven't already (continuing packet only)
+        if (!currentVc.past_first_fresh_packet) {
+            // Setup the AOS header right before we send with the context cached in outstanding
+            setup_header(currentVc.outstanding.context);
+
+            // Setup the M_PDU header w/ all zero (only continuing packets)
+            setup_m_pdu_header(currentVc.outstanding.context, true);
+        }
+
+        // Compute Trailer
+        if (this->m_fecf) {
+            compute_fecf(currentVc);
+        }
+
+        // Ensure we aren't double sending
+        FW_ASSERT(this->m_sent_vc == nullptr);
+        this->m_sent_vc = &currentVc;
+        FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED);
+        currentVc.frame.state = BufferOwnershipState::NOT_OWNED;
+
+        // Clean up our per frame vc values
+        // Protects against pack_packet reentrancy:
+        // pack_packet w/ sendNow & < 7 bytes left                   ->                           (skip) check_and_send
+        //                   \                                                                  /
+        //                    fill_with_idle_packet (spp only) -> pack_packet -> check_and_send
+        // This ensures the outer loop check_and_send doesn't try to send
+        currentVc.current_payload_offset = 0;
+        currentVc.past_first_fresh_packet = false;
+
+        // Write the completed frame
+        this->dataOut_out(0, currentVc.frame.buffer, currentVc.outstanding.context);
+    } else if (this->isConnected_comStatusOut_OutputPort(currentVc.vc_struct_index)) {
+        // We got more room, so ask for more bytes
+        Fw::Success condition = Fw::Success::SUCCESS;
+        this->comStatusOut_out(currentVc.vc_struct_index, condition);
+    }
+}
+
 // TODO: Use PDU Struct?
 void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType dataOffset) {
     // Ensure the packet is starting within the frame
@@ -252,7 +272,8 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     // Get the VC Struct for this buffer
     AosVc& currentVc = this->get_vc_struct(context);
 
-    const FwSizeType bytesAvailable = currentVc.frame.buffer.getSize() - (min_size + currentVc.current_payload_offset);
+    const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - min_size;
+    const FwSizeType bytesAvailable = maxPayload - currentVc.current_payload_offset;
     FW_ASSERT(bytesAvailable < currentVc.frame.buffer.getSize(),
               static_cast<FwAssertArgType>(min_size + currentVc.current_payload_offset));
 
@@ -266,24 +287,30 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
                                              currentVc.current_payload_offset);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    const U8* dataStart = data.getData() + currentVc.outstanding.offset;
+    const U8* dataStart = data.getData() + dataOffset;
     // min of (remaining bytes in buffer and available bytes in frame)
-    FwSizeType dataSize = data.getSize() - currentVc.outstanding.offset;
+    FwSizeType dataSize = data.getSize() - dataOffset;
 
     // Determine if we can write the whole packet or not
     if (dataSize <= bytesAvailable) {
-        dataSize = bytesAvailable;
-        currentVc.outstanding.offset += dataSize;
-
-    } else {
-        // Clear out the outstanding; we're done w/ this packet after we serialize
+        // Whole packet fits, no need to store to outstanding
         currentVc.outstanding.offset = 0;
+    } else {
+        // We'll only write a subset (clamp our write to the available size)
+        dataSize = bytesAvailable;
+
+        // We'll pick up serialization from here later
+        currentVc.outstanding.offset = dataOffset + dataSize;
     }
 
     status = frameSerializer.serializeFrom(dataStart, dataSize, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    // Shift our offset into the M_PDU payload region by how many bytes we wrote
     currentVc.current_payload_offset += dataSize;
+
+    // Context must always be present once any packet payload bytes are written
+    currentVc.outstanding.context = context;
 
     // Return the buffer if no bytes are outstanding
     if (currentVc.outstanding.offset == 0) {
@@ -294,8 +321,18 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
         }
 
         currentVc.outstanding.packet = {};
-        currentVc.outstanding.context = {};
+        currentVc.outstanding.offset = 0;
     }
+
+    // Pack with idle packets if sendNow and not full already
+    // TODO: Add configurable time elapsed & buffer remaining based idle packing
+    if (currentVc.current_payload_offset < maxPayload && context.get_sendNow()) {
+        // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
+        fill_with_idle_packet(currentVc, context);
+    }
+
+    // Send the frame if we've filled it
+    check_and_send_vc(currentVc);
 }
 
 void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length) {
@@ -355,9 +392,14 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         auto pduSerializer = vc.outstanding.packet.getSerializer();
         serialize_idle_spp_packet(pduSerializer, MIN_SPP_LENGTH);
 
+        // Remove the sendNow param
+        // The idle fragment that spills onto the next doesn't need to be sentNow
+        ComCfg::FrameContext filtered_context = context;
+        filtered_context.set_sendNow(false);
+
         // Use the normal pack command since we will have leftovers
         // There won't be an outstanding packet since we'd use those bytes instead
-        pack_packet(vc.outstanding.packet, context);
+        pack_packet(vc.outstanding.packet, filtered_context);
     } else {
         // Serialize an idle packet right into the frame
         serialize_idle_spp_packet(frameSerializer, idlePacketSize);
