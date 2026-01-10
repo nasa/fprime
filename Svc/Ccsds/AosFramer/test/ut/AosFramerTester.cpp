@@ -21,6 +21,9 @@ AosFramerTester ::AosFramerTester()
     : AosFramerGTestBase("AosFramerTester", AosFramerTester::MAX_HISTORY_SIZE), component("AosFramer") {
     this->initComponents();
     this->connectPorts();
+
+    // Configure our Framer
+    this->component.configure(ComCfg::AosMaxFrameFixedSize, true);
 }
 
 AosFramerTester ::~AosFramerTester() {}
@@ -72,15 +75,14 @@ void AosFramerTester ::testNominalFraming() {
     ASSERT_EQ(outVcId, defaultContext.get_vcId());
     ASSERT_EQ(outMcCount, 0);
     ASSERT_EQ(outVcCount, 0);
-    ASSERT_EQ(this->component.m_masterFrameCount, outMcCount + 1);
-    ASSERT_EQ(this->component.m_virtualFrameCount, outVcCount + 1);
+    ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
 
     // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
     FwSizeType expectedIdleDataOffset =
         TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-    const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
+    const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
     const FwSizeType ideDataEndOffset = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], idlePattern)
@@ -100,11 +102,10 @@ void AosFramerTester ::testSeqCountWrapAround() {
 
     // Intentionally set the sequence count to 250 and iterate 10 times
     // to test the wrap around of the sequence counts
-    this->component.m_masterFrameCount = 250;
-    this->component.m_virtualFrameCount = 250;
+    this->component.m_vcs[0].virtualFrameCount = 250;
     U8 countWrapAround = 250;  // will wrap around to 0 after 255
     for (U32 iter = 0; iter < 10; iter++) {
-        this->component.m_bufferState = AosFramer::BufferOwnershipState::OWNED;  // reset state to OWNED
+        this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::OWNED;  // reset state to OWNED
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
@@ -134,10 +135,10 @@ void AosFramerTester ::testDataReturn() {
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "AosFramer.cpp");
 
     // Now send the expected buffer and expect state to go back to OWNED
-    this->component.m_bufferState = AosFramer::BufferOwnershipState::NOT_OWNED;
-    Fw::Buffer internalBuffer(this->component.m_frameBuffer, sizeof(this->component.m_frameBuffer));
+    this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::NOT_OWNED;
+    Fw::Buffer internalBuffer(this->component.m_vcs[0].frame.backer, sizeof(this->component.m_vcs[0].frame.backer));
     this->invoke_to_dataReturnIn(0, internalBuffer, defaultContext);
-    ASSERT_EQ(this->component.m_bufferState, AosFramer::BufferOwnershipState::OWNED);
+    ASSERT_EQ(this->component.m_vcs[0].frame.state, AosFramer::BufferOwnershipState::OWNED);
 }
 
 void AosFramerTester ::testBufferOwnershipState() {
@@ -145,11 +146,11 @@ void AosFramerTester ::testBufferOwnershipState() {
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext context;
     // force state to be NOT_OWNED and test that assertion is triggered
-    this->component.m_bufferState = AosFramer::BufferOwnershipState::NOT_OWNED;
+    this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::NOT_OWNED;
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "AosFramer.cpp");
-    this->component.m_bufferState = AosFramer::BufferOwnershipState::OWNED;
+    this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::OWNED;
     this->invoke_to_dataIn(0, buffer, context);  // this should work now
-    ASSERT_EQ(this->component.m_bufferState, AosFramer::BufferOwnershipState::NOT_OWNED);
+    ASSERT_EQ(this->component.m_vcs[0].frame.state, AosFramer::BufferOwnershipState::NOT_OWNED);
 }
 
 // ----------------------------------------------------------------------

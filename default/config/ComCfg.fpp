@@ -59,8 +59,9 @@ module ComCfg {
         pvn = Pvn.SPACE_PACKET_PROTOCOL
         apid = Apid.FW_PACKET_UNKNOWN
         sequenceCount = 0
-        vcId = 1
+        vcId = 0
         replayFlag = false
+        sendNow = false
     }
 
 }

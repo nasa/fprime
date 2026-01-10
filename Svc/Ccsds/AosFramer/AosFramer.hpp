@@ -41,8 +41,8 @@ class AosFramer final : public AosFramerComponentBase {
     };
 
     struct AosVc {
-        U8 vc_struct_index = 0;   //!< Index into VC Array for this vc struct
-        U8 virtualChannelId = 0;  //!< VCID for this particular virtual channel
+        U8 vc_struct_index = 0xFF;  //!< Index into VC Array for this vc struct
+        U8 virtualChannelId = 0;    //!< VCID for this particular virtual channel
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
@@ -153,6 +153,9 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Computing Trailing Frame Error Control Field (4.1.6)
     void compute_fecf(AosVc& currentVc);
+
+    //! Determine if the Fw::Buffer is within the backing character buffer
+    static bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size);
 
     //! TODO: Implement multiple VCs
     //! Map frame context onto index into array of Virtual Channel structs

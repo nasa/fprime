@@ -21,8 +21,8 @@ AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compN
 AosFramer ::~AosFramer() {}
 
 void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControlField, const U8 idlePvns) {
-    // fixedFrameSize must be less than the maximum defined in ComCfg.fpp
-    FW_ASSERT(fixedFrameSize < ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
+    // fixedFrameSize must be less than or equal to the maximum defined in ComCfg.fpp
+    FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
 
     // AOS Frame Fixed Size must be at least large enough to hold header, trailer and data
     FW_ASSERT(fixedFrameSize > AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
@@ -100,14 +100,15 @@ void AosFramer::compute_fecf(AosVc& currentVc) {
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
     // Since we only can have out sent frame at a time, grab from member var
-    FW_ASSERT(this->m_sent_vc != nullptr);
-    AosVc& currentVc = *this->m_sent_vc;
+    if (this->m_sent_vc != nullptr) {
+        AosVc& currentVc = *this->m_sent_vc;
 
-    // Ensure rest of the com stack is complying with the [communications adapter
-    // interface](docs/reference/communication-adapter-interface.md)
-    // ComStatus must come in after the dataReturnIn
-    FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
-              static_cast<FwAssertArgType>(currentVc.frame.state));
+        // Ensure rest of the com stack is complying with the [communications adapter
+        // interface](docs/reference/communication-adapter-interface.md)
+        // ComStatus must come in after the dataReturnIn
+        FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
+                  static_cast<FwAssertArgType>(currentVc.frame.state));
+    }
 
     // We just ask upstream for more packets
     // comQueue decides to which VCs to allocate comStatus success
@@ -124,8 +125,7 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
     AosVc& currentVc = this->get_vc_struct(context);
 
     // Assert that the returned buffer is the member, and set ownership state
-    FW_ASSERT(currentVc.frame.buffer.getData() >= &currentVc.frame.backer[0]);
-    FW_ASSERT(currentVc.frame.buffer.getData() < &currentVc.frame.backer[0] + sizeof(currentVc.frame.backer));
+    FW_ASSERT(buffer_belongs(frameBuffer, currentVc.frame.backer, sizeof(currentVc.frame.backer)));
     currentVc.frame.state = BufferOwnershipState::OWNED;
 
     // If we have an outstanding packet from the prior frame, pack it
@@ -136,7 +136,13 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
 }
 
 AosFramer::AosVc& AosFramer ::get_vc_struct(const ComCfg::FrameContext& context) {
-    AosVc& currentVc = this->m_vcs[0];
+    // MultiVc support would require looking up a vc struct ind given the vcIndex
+    // (unless you force them to be continuous and start at zero)
+    const U8 ind = 0;
+    AosVc& currentVc = this->m_vcs[ind];
+
+    // Ensure configure was called
+    FW_ASSERT(currentVc.vc_struct_index == ind);
     FW_ASSERT(currentVc.virtualChannelId == context.get_vcId());
     return currentVc;
 }
@@ -185,6 +191,10 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     Fw::SerializeStatus status;
     // Use our member Fw::Buffer
     auto frameSerializer = currentVc.frame.buffer.getSerializer();
+
+    status = frameSerializer.moveSerToOffset(0);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
     status = frameSerializer.serializeFrom(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
@@ -216,8 +226,7 @@ FwSizeType AosFramer::get_min_size() {
     return AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (this->m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
 }
 
-// Determine is the Fw::Buffer is within the backing character buffer
-bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
+bool AosFramer::buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
