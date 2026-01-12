@@ -108,6 +108,9 @@ void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition
         // ComStatus must come in after the dataReturnIn
         FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
                   static_cast<FwAssertArgType>(currentVc.frame.state));
+
+        // Reset to nullptr since we got the status back
+        this->m_sent_vc = nullptr;
     }
 
     // We just ask upstream for more packets
@@ -176,14 +179,13 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
         static_cast<U32>((ComCfg::SpacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     // Virtual Channel Frame Cycle Count (4.1.2.5.5)
-    frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >>
-                                               (24 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+    frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >> 24);
 
     header.set_globalVcId(globalVcId);
     header.set_frameCountAndSignaling(frameCountAndSignaling);
 
-    // Perform the modulo at serialization time we we can add vc cycle count
-    currentVc.virtualFrameCount++;  // U24 intended to wrap around (modulo 16,777,216)
+    // Perform the modulo at serialization time makes vc cycle count easier to make optional
+    currentVc.virtualFrameCount++;  // U28 intended to wrap around (modulo 268,435,456)
 
     // -----------------------------------------------
     // Write Header
@@ -249,9 +251,10 @@ void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
             compute_fecf(currentVc);
         }
 
-        // Ensure we aren't double sending
-        FW_ASSERT(this->m_sent_vc == nullptr);
+        // Set this member var so ComStatus can perform appropriate checks
         this->m_sent_vc = &currentVc;
+
+        // Ensure we aren't double sending
         FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED);
         currentVc.frame.state = BufferOwnershipState::NOT_OWNED;
 
