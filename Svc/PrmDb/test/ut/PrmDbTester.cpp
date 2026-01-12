@@ -356,24 +356,29 @@ void PrmDbTester::runFileReadError() {
     for (FwSizeType i = 0; i < 5; i++) {
         clearEvents();
         this->m_waits = i + za;
+        printf("DEBUG: FILE_SIZE_ERROR case %d: m_waits=%d\n", static_cast<I32>(i), static_cast<I32>(i + za));
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
             case 0:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::CRC_SIZE, sizeof(U32) + 1, 0);
+                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::CRC_SIZE, 0, sizeof(U32) + 1);
                 za++;
                 break;
             case 1:
+                printf("CINDY FIXME 1\n");
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_SIZE, 0, sizeof(U8) + 1);
-                za++;
                 break;
             case 2:
+                printf("CINDY FIXME 2\n");
+
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(U32) + 1);
                 break;
             case 3:
+                printf("CINDY FIXME 3\n");
+
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::PARAMETER_ID_SIZE, 0, sizeof(FwPrmIdType) + 1);
                 break;
@@ -416,17 +421,24 @@ void PrmDbTester::runFileReadError() {
                 case 1:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::CRC_BUFFER, 0, this->m_status);
-                    ya++;
+                    // CINDY FIXMEya++;
                     break;
                 case 2:
+                    printf("CINDY FIXME 4\n");
+
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER, 0, this->m_status);
+                    // CINDY FIXMEya++;
                     break;
                 case 3:
+                    printf("CINDY FIXME 5\n");
+
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE, 0, this->m_status);
                     break;
                 case 4:
+                    printf("CINDY FIXME 6\n");
+
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::PARAMETER_ID, 0, this->m_status);
                     break;
@@ -445,20 +457,28 @@ void PrmDbTester::runFileReadError() {
     for (FwSizeType i = 0; i < 3; i++) {
         clearEvents();
         this->m_waits = i + xa;
+        // CINDY FIXME
+        printf("DEBUG: FILE_DATA_ERROR case %d: m_waits=%d\n", static_cast<I32>(i), static_cast<I32>(i + xa + 1));
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
             case 0:
+                printf("CINDY FIXME 7\n");
+
                 ASSERT_EVENTS_PrmFileBadCrc_SIZE(1);
                 // Parameter read error caused by adding one to the expected read
                 ASSERT_EVENTS_PrmFileBadCrc(0, 0x33d79cd4, 0xc180712b);
+                printf("CINDY FIXME 8\n");
+
                 xa++;
                 break;
             case 1:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 // Parameter read error caused by adding one to the expected read
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_VALUE, 0, PRMDB_ENTRY_DELIMITER + 1);
-                xa++;
+                // CINDY FIXMExa++;
+                printf("CINDY FIXME 9\n");
+
                 break;
             case 2: {
                 // Data in this test is corrupted by adding 1 to the first data byte read. Since data is stored in
@@ -1334,6 +1354,9 @@ Os::File::Status PrmDbTester::PrmDbTestFile::read(U8* buffer, FwSizeType& size, 
     EXPECT_NE(s_tester, nullptr);
     Os::File::Status status = this->Os::Stub::File::Test::TestFile::read(buffer, size, wait);
     if (s_tester->m_waits == 0) {
+        // CINDY FIXME
+        printf("DEBUG READ: m_waits=%d, size=%d, errorType=%d\n", static_cast<I32>(s_tester->m_waits),
+               static_cast<I32>(size), static_cast<I32>(s_tester->m_errorType));
         switch (s_tester->m_errorType) {
             case FILE_STATUS_ERROR:
                 status = s_tester->m_status;

@@ -122,7 +122,23 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
+
 U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
+    // Note: The crc parameter accepts any U32 value as valid input.
+    // This is correct behavior for CRC32 accumulation functions where:
+    // - Initial CRC values are typically 0x00000000 or 0xFFFFFFFF
+    // - Intermediate CRC values (from prior computeCrc calls) can be any U32 value
+
+    // Check for null pointer before dereferencing
+    if (buff == nullptr) {
+        // Return the input CRC unchanged if buffer is null
+        return crc;
+    }
+
+    // Check for zero size to avoid unnecessary processing
+    if (size == 0) {
+        return crc;
+    }
     for (FwSizeType byte = 0; byte < size; byte++) {
         crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
     }
@@ -277,6 +293,8 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     this->unLock();
 
+    printf("CINDY FIXME CRC FINAL = %u\n", crc);
+
     // save current location of pointer in paramFile
     FwSizeType currPosInParamFile;
 
@@ -288,7 +306,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 
     // seek to beginning and write CRC value
-    paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
+    stat = paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_ZERO, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -303,7 +321,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 
     // Restore pointer to end of paramFile
-    paramFile.seek(static_cast<FwSignedSizeType>(currPosInParamFile), Os::File::SeekType::ABSOLUTE);
+    stat = paramFile.seek(static_cast<FwSignedSizeType>(currPosInParamFile), Os::File::SeekType::ABSOLUTE);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_POSITION, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -409,26 +427,18 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     }
 
     if (readSize != sizeof(fileCrc)) {
-        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_SIZE, static_cast<I32>(readSize), stat);
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_SIZE, static_cast<I32>(0), static_cast<I32>(readSize));
         return PrmLoadStatus::ERROR;
     }
 
     readSize = PRMDB_CRC_BUFFER_SIZE;
-    FwSizeType crcChunk = 0;
     U32 crc = 0xFFFFFFFF;
     // read into CRC buffer for checking
 
-    while (readSize != 0) {
-        readSize = PRMDB_CRC_BUFFER_SIZE;
-        Os::File::Status fStat = paramFile.read(this->m_crcBuffer, readSize, Os::File::NO_WAIT);
-        if (fStat != Os::File::OP_OK) {
-            this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_BUFFER, static_cast<I32>(crcChunk), fStat);
-            return PrmLoadStatus::ERROR;
-        }
-
-        crc = this->computeCrc(crc, this->m_crcBuffer, readSize);
-
-        crcChunk++;
+    Os::File::Status status = paramFile.calculateCrc(crc);
+    if (status != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_BUFFER, static_cast<I32>(0), status);
+        return PrmLoadStatus::ERROR;
     }
 
     if (fileCrc != crc) {
@@ -567,6 +577,9 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
             this->log_WARNING_HI_PrmDbFull(parameterId);
         }
         recordNumTotal++;
+        // CINDY FIXME
+        //printf("DEBUG: Completed record %u\n", recordNumTotal-1);
+
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);
