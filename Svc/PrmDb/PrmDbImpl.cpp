@@ -428,7 +428,6 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         return PrmLoadStatus::ERROR;
     }
 
-    readSize = PRMDB_CRC_BUFFER_SIZE;
     U32 crc = 0xFFFFFFFF;
     // read into CRC buffer for checking
 
