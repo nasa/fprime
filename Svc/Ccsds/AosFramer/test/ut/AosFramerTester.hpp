@@ -60,10 +60,10 @@ class AosFramerTester final : public AosFramerGTestBase {
     //! Initialize components
     void initComponents();
 
-    U16 getFrameScId(U8* frameData);    //!< Get the Spacecraft ID from the frame - no boundary check
-    U8 getFrameVcId(U8* frameData);     //!< Get the Virtual Channel ID from the frame - no boundary check
-    U8 getFrameMcCount(U8* frameData);  //!< Get the Master Frame Count from the frame - no boundary check
-    U8 getFrameVcCount(U8* frameData);  //!< Get the Virtual Frame Count from the frame - no boundary check
+    U8 getFrameTfVn(U8* frameData);      //!< Get the transfer frame version number from the frame - no boundary check
+    U16 getFrameScId(U8* frameData);     //!< Get the Spacecraft ID from the frame - no boundary check
+    U8 getFrameVcId(U8* frameData);      //!< Get the Virtual Channel ID from the frame - no boundary check
+    U32 getFrameVcCount(U8* frameData);  //!< Get the Virtual Frame Count from the frame - no boundary check
 
   private:
     // ----------------------------------------------------------------------

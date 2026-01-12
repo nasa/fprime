@@ -158,12 +158,12 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
     U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId & 0x00FF << AOSHeaderSubfields::spacecraftIdLsbOffset);
-    globalVcId |= static_cast<U16>(Tfvn::AOS & 0x3 << AOSHeaderSubfields::frameVersionOffset);
+    globalVcId |= static_cast<U16>((ComCfg::SpacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset);
+    globalVcId |= static_cast<U16>((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset);
 
     // Virtual Channel Frame Count (4.1.2.4)
-    U32 frameCountAndSignaling = static_cast<U32>(
-        currentVc.virtualFrameCount & 0x00FFFFFFU << static_cast<FwSizeType>(AOSHeaderSubfields::vcFrameCountOffset));
+    U32 frameCountAndSignaling = static_cast<U32>((currentVc.virtualFrameCount & 0x00FFFFFFU)
+                                                  << static_cast<FwSizeType>(AOSHeaderSubfields::vcFrameCountOffset));
 
     // Replay Flag (4.1.2.5.2)
     frameCountAndSignaling |= static_cast<U32>(context.get_replayFlag() << AOSHeaderSubfields::replayFlagOffset);
@@ -173,11 +173,11 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
 
     // Spacecraft ID MSB (4.1.2.5.4)
     frameCountAndSignaling |=
-        static_cast<U32>(ComCfg::SpacecraftId & 0x0300 >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+        static_cast<U32>((ComCfg::SpacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     // Virtual Channel Frame Cycle Count (4.1.2.5.5)
-    frameCountAndSignaling |=
-        static_cast<U32>(currentVc.virtualFrameCount & 0x0F000000 >> (24 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+    frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >>
+                                               (24 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     header.set_globalVcId(globalVcId);
     header.set_frameCountAndSignaling(frameCountAndSignaling);

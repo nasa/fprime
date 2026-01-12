@@ -47,8 +47,8 @@ void AosFramerTester ::testComStatusPassthrough() {
 void AosFramerTester ::testNominalFraming() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
-    ComCfg::FrameContext defaultContext;
 
+    ComCfg::FrameContext defaultContext;
     defaultContext.set_sendNow(true);
 
     // Fill the buffer with some data
@@ -63,29 +63,30 @@ void AosFramerTester ::testNominalFraming() {
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
-    const FwSizeType expectedFrameSize = ComCfg::TmFrameFixedSize;
+    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), defaultContext.get_vcId());
 
     U16 outScId = this->getFrameScId(outBuffer.getData());
     U8 outVcId = this->getFrameVcId(outBuffer.getData());
-    U8 outMcCount = this->getFrameMcCount(outBuffer.getData());
-    U8 outVcCount = this->getFrameVcCount(outBuffer.getData());
+    U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
+    U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
 
+    const U8 expectedTfVn = 0b01;
+    ASSERT_EQ(outTfVn, expectedTfVn);
     const U16 expectedScId = ComCfg::SpacecraftId;
     ASSERT_EQ(outScId, expectedScId);
     ASSERT_EQ(outVcId, defaultContext.get_vcId());
-    ASSERT_EQ(outMcCount, 0);
     ASSERT_EQ(outVcCount, 0);
     ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
 
     // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-    FwSizeType expectedIdleDataOffset =
-        TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
+    FwSizeType expectedIdleDataOffset = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + sizeof(bufferData) +
+                                        SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
     const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
-    const FwSizeType ideDataEndOffset = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
+    const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
     for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], idlePattern)
             << "Idle data at index " << i << " does not match expected idle pattern";
@@ -95,7 +96,9 @@ void AosFramerTester ::testNominalFraming() {
 void AosFramerTester ::testSeqCountWrapAround() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
+
     ComCfg::FrameContext defaultContext;
+    defaultContext.set_sendNow(true);
 
     // Fill the buffer with some data
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
@@ -111,9 +114,7 @@ void AosFramerTester ::testSeqCountWrapAround() {
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
-        U8 outMcCount = this->getFrameMcCount(outBuffer.getData());
-        U8 outVcCount = this->getFrameVcCount(outBuffer.getData());
-        ASSERT_EQ(outMcCount, countWrapAround);
+        U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
         ASSERT_EQ(outVcCount, countWrapAround);
         countWrapAround++;
     }
@@ -124,7 +125,10 @@ void AosFramerTester ::testInputBufferTooLarge() {
         ComCfg::TmFrameFixedSize;  // This is too large since we need room for header+trailer as well
     U8 bufferData[tooLargeSize];
     Fw::Buffer buffer(bufferData, tooLargeSize);
+
     ComCfg::FrameContext defaultContext;
+    defaultContext.set_sendNow(true);
+
     // Send a buffer larger than the
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "AosFramer.cpp");
 }
@@ -132,7 +136,10 @@ void AosFramerTester ::testInputBufferTooLarge() {
 void AosFramerTester ::testDataReturn() {
     U8 bufferData[10];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
+
     ComCfg::FrameContext defaultContext;
+    defaultContext.set_sendNow(true);
+
     // Send a buffer that is not the internal buffer of the component, and expect an assertion
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "AosFramer.cpp");
 
@@ -159,17 +166,35 @@ void AosFramerTester ::testBufferOwnershipState() {
 // Helper functions
 // ----------------------------------------------------------------------
 
+U8 AosFramerTester::getFrameTfVn(U8* frameData) {
+    // Most 2 bits of 1st octet
+    return static_cast<U8>(frameData[0] & 0xC0) >> 6;
+}
+
 U16 AosFramerTester::getFrameScId(U8* frameData) {
-    return static_cast<U16>((frameData[0] & 0x3F) << 4 | (frameData[1] >> 4));
+    U16 scid = 0;
+
+    scid |= static_cast<U16>(frameData[1]) >> 6;
+    scid |= static_cast<U16>(frameData[0] & 0x3F) << 2;
+    scid |= static_cast<U16>(frameData[5] & 0x30) << (8 - 4);
+
+    return scid;
 }
+
 U8 AosFramerTester::getFrameVcId(U8* frameData) {
-    return static_cast<U8>((frameData[1] & 0x0E) >> 1);
+    // Least 6 bits of 2nd octet
+    return static_cast<U8>(frameData[1] & 0x3F);
 }
-U8 AosFramerTester::getFrameMcCount(U8* frameData) {
-    return frameData[2];
-}
-U8 AosFramerTester::getFrameVcCount(U8* frameData) {
-    return frameData[3];
+
+U32 AosFramerTester::getFrameVcCount(U8* frameData) {
+    // 3 octects at 3rd octect
+    U32 vc_count = 0;
+
+    vc_count |= static_cast<U32>(frameData[2]) << 16;
+    vc_count |= static_cast<U32>(frameData[3]) << 8;
+    vc_count |= static_cast<U32>(frameData[4]) << 0;
+
+    return vc_count;
 }
 
 }  // namespace Ccsds
