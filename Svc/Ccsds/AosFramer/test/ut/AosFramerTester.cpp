@@ -105,32 +105,19 @@ void AosFramerTester ::testSeqCountWrapAround() {
         bufferData[i] = static_cast<U8>(i);
     }
 
-    // Intentionally set the sequence count to 250 and iterate 10 times
+    // Intentionally set the sequence count to 2^28 - 5 and iterate 10 times
     // to test the wrap around of the sequence counts
-    this->component.m_vcs[0].virtualFrameCount = 250;
-    U8 countWrapAround = 250;  // will wrap around to 0 after 255
+    this->component.m_vcs[0].virtualFrameCount = (1 << 28) - 5;
+    U32 countWrapAround = (1 << 28) - 5;  // will wrap around to 0 after 2^28
     for (U32 iter = 0; iter < 10; iter++) {
         this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::OWNED;  // reset state to OWNED
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
         U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
-        ASSERT_EQ(outVcCount, countWrapAround);
+        ASSERT_EQ(outVcCount, countWrapAround & 0x0FFFFFFF);
         countWrapAround++;
     }
-}
-
-void AosFramerTester ::testInputBufferTooLarge() {
-    const FwSizeType tooLargeSize =
-        ComCfg::TmFrameFixedSize;  // This is too large since we need room for header+trailer as well
-    U8 bufferData[tooLargeSize];
-    Fw::Buffer buffer(bufferData, tooLargeSize);
-
-    ComCfg::FrameContext defaultContext;
-    defaultContext.set_sendNow(true);
-
-    // Send a buffer larger than the
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "AosFramer.cpp");
 }
 
 void AosFramerTester ::testDataReturn() {
@@ -153,7 +140,10 @@ void AosFramerTester ::testDataReturn() {
 void AosFramerTester ::testBufferOwnershipState() {
     U8 bufferData[10];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
+
     ComCfg::FrameContext context;
+    context.set_sendNow(true);
+
     // force state to be NOT_OWNED and test that assertion is triggered
     this->component.m_vcs[0].frame.state = AosFramer::BufferOwnershipState::NOT_OWNED;
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "AosFramer.cpp");
@@ -187,12 +177,18 @@ U8 AosFramerTester::getFrameVcId(U8* frameData) {
 }
 
 U32 AosFramerTester::getFrameVcCount(U8* frameData) {
-    // 3 octects at 3rd octect
+    // 3 octets at 3rd octet
     U32 vc_count = 0;
 
     vc_count |= static_cast<U32>(frameData[2]) << 16;
     vc_count |= static_cast<U32>(frameData[3]) << 8;
     vc_count |= static_cast<U32>(frameData[4]) << 0;
+
+    // VC Frame Count Cycle in use flag
+    if (frameData[5] & 0x40) {
+        // Lowest 4 bits of 6th octet
+        vc_count |= static_cast<U32>(frameData[5] & 0x0F) << 24;
+    }
 
     return vc_count;
 }

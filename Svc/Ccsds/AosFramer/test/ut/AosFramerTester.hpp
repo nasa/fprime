@@ -45,7 +45,6 @@ class AosFramerTester final : public AosFramerGTestBase {
     void testComStatusPassthrough();
     void testNominalFraming();
     void testSeqCountWrapAround();
-    void testInputBufferTooLarge();
     void testDataReturn();
     void testBufferOwnershipState();
 

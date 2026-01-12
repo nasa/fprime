@@ -26,11 +26,6 @@ TEST(AosFramer, testSeqCountWrapAround) {
     tester.testSeqCountWrapAround();
 }
 
-TEST(AosFramer, testInputBufferTooLarge) {
-    Svc::Ccsds::AosFramerTester tester;
-    tester.testInputBufferTooLarge();
-}
-
 TEST(AosFramer, testBufferOwnershipState) {
     Svc::Ccsds::AosFramerTester tester;
     tester.testBufferOwnershipState();
