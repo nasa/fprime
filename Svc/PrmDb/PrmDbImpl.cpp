@@ -122,7 +122,6 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-
 U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
     // Note: The crc parameter accepts any U32 value as valid input.
     // This is correct behavior for CRC32 accumulation functions where:
