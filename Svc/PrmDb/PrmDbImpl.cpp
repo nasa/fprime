@@ -293,8 +293,6 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     this->unLock();
 
-    printf("CINDY FIXME CRC FINAL = %u\n", crc);
-
     // save current location of pointer in paramFile
     FwSizeType currPosInParamFile;
 
@@ -577,9 +575,6 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
             this->log_WARNING_HI_PrmDbFull(parameterId);
         }
         recordNumTotal++;
-        // CINDY FIXME
-        //printf("DEBUG: Completed record %u\n", recordNumTotal-1);
-
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);
