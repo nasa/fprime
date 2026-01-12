@@ -49,6 +49,8 @@ void AosFramerTester ::testNominalFraming() {
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
 
+    defaultContext.set_sendNow(true);
+
     // Fill the buffer with some data
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         bufferData[i] = static_cast<U8>(i);

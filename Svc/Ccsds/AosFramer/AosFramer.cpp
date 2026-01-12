@@ -381,7 +381,7 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     Fw::SerializeStatus status = frameSerializer.moveSerToOffset(START_OF_PAYLOAD + vc.current_payload_offset);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Use EPP if we can (solves for everything)
+    // Use EPP if we can (solves for all sizes)
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
         // TODO: Serialize an EPP of the right size
         FW_ASSERT(1);
@@ -412,6 +412,9 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     } else {
         // Serialize an idle packet right into the frame
         serialize_idle_spp_packet(frameSerializer, idlePacketSize);
+
+        // Increment the offset since we serialized directly into the frame
+        vc.current_payload_offset += idlePacketSize;
     }
 }
 
