@@ -320,6 +320,9 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
         currentVc.outstanding.offset = 0;
     }
 
+    // TODO: Consider moving fill_with_idle_packet outside of pack_packet to prevent re-entrancy
+    // dataIn & dataReturn should call these after packing (potentially via a shared helper)
+
     // Pack with idle packets if sendNow and not full already
     // TODO: Add configurable time elapsed & buffer remaining based idle packing
     if (currentVc.current_payload_offset < maxPayload && context.get_sendNow()) {
@@ -402,6 +405,8 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
 
         // Increment the offset since we serialized directly into the frame
         vc.current_payload_offset += idlePacketSize;
+
+        // TODO: point m_pdu header at the right payload offset if it hasn't been written already
     }
 }
 
