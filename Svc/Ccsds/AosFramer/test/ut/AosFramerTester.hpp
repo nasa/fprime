@@ -47,6 +47,8 @@ class AosFramerTester final : public AosFramerGTestBase {
     void testSeqCountWrapAround();
     void testDataReturn();
     void testBufferOwnershipState();
+    void testLongPacket();
+    void testShortPackets();
 
   private:
     // ----------------------------------------------------------------------
@@ -63,6 +65,7 @@ class AosFramerTester final : public AosFramerGTestBase {
     U16 getFrameScId(U8* frameData);     //!< Get the Spacecraft ID from the frame - no boundary check
     U8 getFrameVcId(U8* frameData);      //!< Get the Virtual Channel ID from the frame - no boundary check
     U32 getFrameVcCount(U8* frameData);  //!< Get the Virtual Frame Count from the frame - no boundary check
+    U16 getFramePacketPointer(U8* frameData);  //!< Get the M_PDU First Header Pointer - no boundary check
 
   private:
     // ----------------------------------------------------------------------

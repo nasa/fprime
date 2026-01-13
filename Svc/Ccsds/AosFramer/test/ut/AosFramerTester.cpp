@@ -29,7 +29,7 @@ AosFramerTester ::AosFramerTester()
 AosFramerTester ::~AosFramerTester() {}
 
 // ----------------------------------------------------------------------
-// Tests
+// Base Operational Tests (Same as TM)
 // ----------------------------------------------------------------------
 
 void AosFramerTester ::testComStatusPassthrough() {
@@ -153,6 +153,130 @@ void AosFramerTester ::testBufferOwnershipState() {
 }
 
 // ----------------------------------------------------------------------
+// Extended Operation Tests
+// ----------------------------------------------------------------------
+
+void AosFramerTester ::testLongPacket() {
+    // This will need 2 full & 1 partial AOS Frames to send
+    U8 bufferData[2048];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+
+    ComCfg::FrameContext context;
+    // Use sendNow to get that final frame ASAP
+    context.set_sendNow(true);
+
+    // Fill the buffer with some data
+    // This isn't actually a space packet so this test can't decode it for a length
+    for (U32 i = 0; i < sizeof(bufferData); ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+
+    // Invoke the dataIn handler
+    this->invoke_to_dataIn(0, buffer, context);
+
+    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
+
+    for (U8 frame = 0; frame < 3; frame++) {
+        ASSERT_from_dataOut_SIZE(frame + 1);
+        Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(frame).data;
+        ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(frame).context;
+        ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(frame).context.get_vcId(), context.get_vcId());
+
+        U16 outScId = this->getFrameScId(outBuffer.getData());
+        U8 outVcId = this->getFrameVcId(outBuffer.getData());
+        U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
+        U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
+        U16 outFramePointer = this->getFramePacketPointer(outBuffer.getData());
+
+        const U8 expectedTfVn = 0b01;
+        ASSERT_EQ(outTfVn, expectedTfVn);
+        const U16 expectedScId = ComCfg::SpacecraftId;
+        ASSERT_EQ(outScId, expectedScId);
+        ASSERT_EQ(outVcId, context.get_vcId());
+        ASSERT_EQ(outVcCount, frame);
+        ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
+
+        // Check in on the M_PDU
+        if (frame == 0) {
+            // First Frame is the start of our big buffer (no idle padding)
+            ASSERT_EQ(outFramePointer, 0);
+        } else if (frame == 1) {
+            // Second Frame is an exclusively continuing packet (M_PDU pointer is all ones)
+            ASSERT_EQ(outFramePointer, 0xFFFF);
+        } else {
+            // Third Frame is the final (w/ a ton of idle padding)
+
+            const U32 payloadPerFrame = expectedFrameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE -
+                                        AOSTrailer::SERIALIZED_SIZE;
+            U16 expectedFramePointer = sizeof(bufferData) % payloadPerFrame;
+
+            ASSERT_EQ(outFramePointer, expectedFramePointer);
+
+            // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
+            const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
+            const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
+            for (FwSizeType i = expectedFramePointer; i < ideDataEndOffset; ++i) {
+                ASSERT_EQ(outBuffer.getData()[i], idlePattern)
+                    << "Idle data at index " << i << " does not match expected idle pattern";
+            }
+        }
+
+        // Return this buffer so the framer can reset
+        this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+    }
+}
+
+void AosFramerTester ::testShortPackets() {
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+
+    ComCfg::FrameContext defaultContext;
+    defaultContext.set_sendNow(true);
+
+    // Fill the buffer with some data
+    for (U32 i = 0; i < sizeof(bufferData); ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+
+    // Invoke the dataIn handler
+    this->invoke_to_dataIn(0, buffer, defaultContext);
+
+    // Check that the dataOut handler was called with the correct data
+    ASSERT_from_dataOut_SIZE(1);
+    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
+    ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
+    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
+    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), defaultContext.get_vcId());
+
+    U16 outScId = this->getFrameScId(outBuffer.getData());
+    U8 outVcId = this->getFrameVcId(outBuffer.getData());
+    U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
+    U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
+
+    const U8 expectedTfVn = 0b01;
+    ASSERT_EQ(outTfVn, expectedTfVn);
+    const U16 expectedScId = ComCfg::SpacecraftId;
+    ASSERT_EQ(outScId, expectedScId);
+    ASSERT_EQ(outVcId, defaultContext.get_vcId());
+    ASSERT_EQ(outVcCount, 0);
+    ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
+
+    // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
+    FwSizeType expectedIdleDataOffset = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + sizeof(bufferData) +
+                                        SpacePacketHeader::SERIALIZED_SIZE;
+
+    // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
+    const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
+    const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
+    for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
+        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
+            << "Idle data at index " << i << " does not match expected idle pattern";
+    }
+}
+
+// ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
 
@@ -191,6 +315,16 @@ U32 AosFramerTester::getFrameVcCount(U8* frameData) {
     }
 
     return vc_count;
+}
+
+U16 AosFramerTester::getFramePacketPointer(U8* frameData) {
+    // 2 octets at 7th octet
+    U16 offset = 0;
+
+    offset |= static_cast<U16>(frameData[6]) << 8;
+    offset |= static_cast<U16>(frameData[7]) << 0;
+
+    return offset;
 }
 
 }  // namespace Ccsds

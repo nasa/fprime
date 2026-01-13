@@ -170,8 +170,6 @@ class AosFramer final : public AosFramerComponentBase {
     bool m_fecf;  //!< AOS Frame Error Control Field presence
 
     AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
-
-    AosVc* m_sent_vc = nullptr;
 };
 
 }  // namespace Ccsds

@@ -31,6 +31,16 @@ TEST(AosFramer, testBufferOwnershipState) {
     tester.testBufferOwnershipState();
 }
 
+TEST(AosFramer, testLongPacket) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testLongPacket();
+}
+
+TEST(AosFramer, testShortPackets) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testShortPackets();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

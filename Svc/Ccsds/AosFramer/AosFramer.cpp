@@ -11,7 +11,6 @@
 namespace Svc {
 
 namespace Ccsds {
-
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -30,7 +29,9 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
               static_cast<FwAssertArgType>(fixedFrameSize));
 
     // AOS Framer must be provided with a protocol to use for Idle Packets
-    FW_ASSERT(idlePvns & PvnBitfield::VALID_MASK, static_cast<FwAssertArgType>(idlePvns));
+    // Currently, only SPP idle packing is supported
+    // EPP is more optimal, however
+    FW_ASSERT(idlePvns & PvnBitfield::SPP_MASK, static_cast<FwAssertArgType>(idlePvns));
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
@@ -99,20 +100,6 @@ void AosFramer::compute_fecf(AosVc& currentVc) {
 }
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    // Since we only can have out sent frame at a time, grab from member var
-    if (this->m_sent_vc != nullptr) {
-        AosVc& currentVc = *this->m_sent_vc;
-
-        // Ensure rest of the com stack is complying with the [communications adapter
-        // interface](docs/reference/communication-adapter-interface.md)
-        // ComStatus must come in after the dataReturnIn
-        FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
-                  static_cast<FwAssertArgType>(currentVc.frame.state));
-
-        // Reset to nullptr since we got the status back
-        this->m_sent_vc = nullptr;
-    }
-
     // We just ask upstream for more packets
     // comQueue decides to which VCs to allocate comStatus success
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
@@ -250,9 +237,6 @@ void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
         if (this->m_fecf) {
             compute_fecf(currentVc);
         }
-
-        // Set this member var so ComStatus can perform appropriate checks
-        this->m_sent_vc = &currentVc;
 
         // Ensure we aren't double sending
         FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED);
