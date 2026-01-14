@@ -25,6 +25,7 @@ ARGN
 ARINC
 arpa
 ASize
+ASTRI
 ATL
 AUTOBRIEF
 autocode
