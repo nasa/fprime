@@ -1401,6 +1401,10 @@ TEST(TypesTest, StringTest) {
     ASSERT_EQ(copyStr2, "ASTRING");
     Fw::String copyStr3(copyStr2);
     ASSERT_EQ(copyStr3, "ASTRING");
+    Fw::String copyStr4("ASTRING", 10);
+    ASSERT_EQ(copyStr4, "ASTRING");
+    Fw::String copyStr5("ASTRING", 5);
+    ASSERT_EQ(copyStr5, "ASTRI");
 
     Fw::InternalInterfaceString ifstr("IfString");
     Fw::String if2(ifstr);

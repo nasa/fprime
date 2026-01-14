@@ -8,6 +8,8 @@
 #define FW_STRING_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 #include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
@@ -30,6 +32,10 @@ class String final : public StringBase {
 
     String(const char* src) : StringBase() { *this = src; }
 
+    String(const char* src, FwSizeType length) : StringBase() {
+        setString(src, length);
+    }
+
     ~String() {}
 
     String& operator=(const String& src) {
@@ -50,6 +56,12 @@ class String final : public StringBase {
     const char* toChar() const { return this->m_buf; }
 
     StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
+
+    void setString(const char* src, FwSizeType length) {
+        // "length" non-null bytes should be followed by a null byte
+        FW_ASSERT(length < this->getCapacity());
+        (void)Fw::StringUtils::string_copy(const_cast<char*>(this->toChar()), src, length + 1);
+    }
 
   private:
     char m_buf[BUFFER_SIZE(STRING_SIZE)];
