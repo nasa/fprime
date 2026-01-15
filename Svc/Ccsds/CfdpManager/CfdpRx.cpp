@@ -37,7 +37,6 @@
 #include "CfdpRx.hpp"
 #include "CfdpDispatch.hpp"
 #include "CfdpUtils.hpp"
-#include "CfeStubs.hpp"
 
 #include <Fw/Types/SuccessEnumAc.hpp>
 #include <Os/FileSystem.hpp>

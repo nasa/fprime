@@ -53,7 +53,6 @@ void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
     CF_CFDP_CycleEngine();
 }
 
-
 void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
 {
     // dataReturnIn is the allocated buffer coming back from the dataOut call

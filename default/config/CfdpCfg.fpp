@@ -52,5 +52,27 @@ module Svc {
         @
         @ BPC TODO: Refactor use of CfdpTransactionSeq to use this type
         type CfdpTransactionSeq = U32
+
+        @ @brief Maximum PDU size in bytes
+        @
+        @ @par Description:
+        @      Limits the maximum possible Tx PDU size. This value must match
+        @      CF_MAX_PDU_SIZE in CfdpCfg.hpp. The resulting CCSDS packet also
+        @      includes a CCSDS header and additional bytes.
+        @
+        @ @par Limits:
+        @      Must respect any CCSDS packet size limits on the system.
+        constant CfdpMaxPduSize = 512
+
+        @ @brief Maximum file data payload size in a File Data PDU
+        @
+        @ @par Description:
+        @      This is the maximum data bytes that can be carried in a File Data PDU
+        @      after accounting for CFDP headers (PDU header + File Data header).
+        @      This value should be CfdpMaxPduSize minus typical header overhead.
+        @
+        @ @par Limits:
+        @      Must be less than CfdpMaxPduSize.
+        constant CfdpMaxFileDataSize = 450
     }
 }

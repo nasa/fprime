@@ -40,7 +40,6 @@
 #include "CfdpUtils.hpp"
 #include "CfdpDispatch.hpp"
 #include "CfdpLogicalPdu.hpp"
-#include "CfeStubs.hpp"
 
 #include <Os/FileSystem.hpp>
 

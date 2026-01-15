@@ -34,7 +34,6 @@
 #include "CfdpTx.hpp"
 #include "CfdpDispatch.hpp"
 #include "CfdpUtils.hpp"
-#include "CfeStubs.hpp"
 #include "CfdpTimer.hpp"
 
 #include <stdio.h>
