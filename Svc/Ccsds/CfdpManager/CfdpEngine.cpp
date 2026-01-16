@@ -306,9 +306,9 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
         /* at this point, need to append filenames into md packet */
         /* this does not actually copy here - that is done during encode */
         // TODO Convert these to Fw::String
-        md->source_filename.length = txn->history->fnames.src_filename.length();
+        md->source_filename.length = static_cast<U8>(txn->history->fnames.src_filename.length());
         md->source_filename.data_ptr = txn->history->fnames.src_filename.toChar();
-        md->dest_filename.length = txn->history->fnames.dst_filename.length();
+        md->dest_filename.length = static_cast<U8>(txn->history->fnames.dst_filename.length());
         md->dest_filename.data_ptr = txn->history->fnames.dst_filename.toChar();
 
         CF_CFDP_EncodeMd(ph->penc, md);

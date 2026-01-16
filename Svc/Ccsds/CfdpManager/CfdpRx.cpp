@@ -347,7 +347,7 @@ void CF_CFDP_R1_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
     if (ret == CfdpStatus::SUCCESS)
     {
         /* class 1 digests CRC */
-        txn->crc.update(static_cast<const U8*>(ph->int_header.fd.data_ptr), ph->int_header.fd.offset,
+        txn->crc.update(ph->int_header.fd.data_ptr, ph->int_header.fd.offset,
                         static_cast<U32>(ph->int_header.fd.data_len));
     }
     else

@@ -93,7 +93,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
     CF_Logical_PduBuffer_t * ph = NULL;
     CF_Logical_PduFileDataHeader_t *fd;
     size_t actual_bytes;
-    void * data_ptr;
+    U8* data_ptr;
     U32 outgoing_file_chunk_size;
 
     FW_ASSERT(bytes_processed != NULL);
@@ -181,7 +181,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
             FW_ASSERT((foffs + actual_bytes) <= txn->fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), txn->fsize); /* sanity check */
             if (calc_crc)
             {
-                txn->crc.update(static_cast<const U8*>(fd->data_ptr), fd->offset, static_cast<U32>(fd->data_len));
+                txn->crc.update(fd->data_ptr, fd->offset, static_cast<U32>(fd->data_len));
             }
 
             *bytes_processed = static_cast<U32>(actual_bytes);

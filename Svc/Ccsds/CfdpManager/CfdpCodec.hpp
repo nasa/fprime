@@ -197,7 +197,7 @@ bool CF_CFDP_CodecCheckSize(CF_CodecState_t *state, size_t chunksize);
  * @return Pointer to block, if successful
  * @retval NULL if not successful (no space or other error).
  */
-void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize);
+U8* CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize);
 
 /************************************************************************/
 /**
@@ -210,7 +210,7 @@ void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize);
  * @return Pointer to block, if successful
  * @retval NULL if not successful (no space or other error).
  */
-const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize);
+const U8* CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize);
 
 /************************************************************************/
 /**
@@ -227,7 +227,7 @@ const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize);
  * @return Pointer to block, if successful
  * @retval NULL if not successful (no space or other error).
  */
-#define CF_ENCODE_FIXED_CHUNK(state, type) (static_cast<type*>(CF_CFDP_DoEncodeChunk(state, sizeof(type))))
+#define CF_ENCODE_FIXED_CHUNK(state, type) (reinterpret_cast<type*>(CF_CFDP_DoEncodeChunk(state, sizeof(type))))
 
 /************************************************************************/
 /**
@@ -244,7 +244,7 @@ const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize);
  * @return Pointer to block, if successful
  * @retval NULL if not successful (no space or other error).
  */
-#define CF_DECODE_FIXED_CHUNK(state, type) (static_cast<const type *>(CF_CFDP_DoDecodeChunk(state, sizeof(type))))
+#define CF_DECODE_FIXED_CHUNK(state, type) (reinterpret_cast<const type *>(CF_CFDP_DoDecodeChunk(state, sizeof(type))))
 
 /************************************************************************/
 /**

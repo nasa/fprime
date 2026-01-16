@@ -49,8 +49,6 @@ module Svc {
         @
         @ @par Limits
         @         Must be one of U8, U16, U32, U64.
-        @
-        @ BPC TODO: Refactor use of CfdpTransactionSeq to use this type
         type CfdpTransactionSeq = U32
 
         @ @brief Maximum PDU size in bytes

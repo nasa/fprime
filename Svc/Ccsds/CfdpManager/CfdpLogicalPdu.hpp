@@ -73,6 +73,15 @@ namespace Ccsds {
  * segment structures in a single PDU.
  */
 #define CF_PDU_MAX_SEGMENTS (CF_NAK_MAX_SEGMENTS)
+/**
+ * @brief Type for logical file size/offset value
+ *
+ * The CFDP protocol permits use of 64-bit values for file size/offsets
+ * Although the CF application only supports 32-bit legacy file size
+ * type at this point, the logical structures should use this type in
+ * case future support for large files is added.
+ */
+typedef U32 CF_FileSize_t;
 
 /*
  * Note that by exploding the bit-fields into separate members, this will make the
@@ -186,8 +195,8 @@ typedef struct CF_Logical_Tlv
  */
 typedef struct CF_Logical_SegmentRequest
 {
-    FwSizeType offset_start;
-    FwSizeType offset_end;
+    CF_FileSize_t offset_start;
+    CF_FileSize_t offset_end;
 } CF_Logical_SegmentRequest_t;
 
 typedef struct CF_Logical_SegmentList
@@ -218,8 +227,8 @@ typedef struct CF_Logical_TlvList
 typedef struct CF_Logical_PduEof
 {
     CF_CFDP_ConditionCode_t cc;
-    U32                  crc;
-    FwSizeType           size;
+    U32 crc;
+    CF_FileSize_t size;
 
     /**
      * \brief Set of all TLV blobs in this PDU.
@@ -267,7 +276,7 @@ typedef struct CF_Logical_PduMd
     U8 close_req;     /**< \brief transaction closure not requested (0) or requested (1) */
     U8 checksum_type; /**< \brief 0 indicates legacy modular checksum */
 
-    FwSizeType size;
+    CF_FileSize_t size;
 
     CF_Logical_Lv_t source_filename;
     CF_Logical_Lv_t dest_filename;
@@ -278,8 +287,8 @@ typedef struct CF_Logical_PduMd
  */
 typedef struct CF_Logical_PduNak
 {
-    FwSizeType scope_start;
-    FwSizeType scope_end;
+    CF_FileSize_t scope_start;
+    CF_FileSize_t scope_end;
 
     /**
      * \brief Set of all segments in this PDU.
@@ -297,9 +306,9 @@ typedef struct CF_Logical_PduFileDataHeader
      */
     CF_Logical_SegmentList_t segment_list;
 
-    FwSizeType offset; /**< \brief Offset of data in file */
+    CF_FileSize_t offset; /**< \brief Offset of data in file */
 
-    const void *data_ptr; /**< \brief pointer to read-only data blob within encoded PDU */
+    const U8* data_ptr; /**< \brief pointer to read-only data blob within encoded PDU */
     FwSizeType data_len; /**< \brief Length of data blob within encoded PDU (derived field) */
 } CF_Logical_PduFileDataHeader_t;
 

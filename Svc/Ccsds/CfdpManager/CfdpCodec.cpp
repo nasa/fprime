@@ -252,7 +252,7 @@ bool CF_CFDP_CodecCheckSize(CF_CodecState_t *state, size_t chunksize)
     return CF_CFDP_CodecIsOK(state);
 }
 
-void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize)
+U8* CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize)
 {
     U8 *buf = state->base + CF_CFDP_CodecGetPosition(&state->codec_state);
 
@@ -264,7 +264,7 @@ void *CF_CFDP_DoEncodeChunk(CF_EncoderState_t *state, size_t chunksize)
     return buf;
 }
 
-const void *CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize)
+const U8* CF_CFDP_DoDecodeChunk(CF_DecoderState_t *state, size_t chunksize)
 {
     const U8 *buf = state->base + CF_CFDP_CodecGetPosition(&state->codec_state);
 
@@ -379,7 +379,7 @@ void CF_CFDP_EncodeFileDirectiveHeader(CF_EncoderState_t *state, CF_Logical_PduF
 void CF_CFDP_EncodeLV(CF_EncoderState_t *state, CF_Logical_Lv_t *pllv)
 {
     CF_CFDP_lv_t *lv; /* for encoding fixed sized fields */
-    void *        data_ptr;
+    U8*           data_ptr;
 
     lv = CF_ENCODE_FIXED_CHUNK(state, CF_CFDP_lv_t);
     if (lv != NULL)
@@ -403,7 +403,7 @@ void CF_CFDP_EncodeLV(CF_EncoderState_t *state, CF_Logical_Lv_t *pllv)
 void CF_CFDP_EncodeTLV(CF_EncoderState_t *state, CF_Logical_Tlv_t *pltlv)
 {
     CF_CFDP_tlv_t *tlv; /* for encoding fixed sized fields */
-    void *         data_ptr;
+    U8*            data_ptr;
 
     tlv = CF_ENCODE_FIXED_CHUNK(state, CF_CFDP_tlv_t);
     if (tlv != NULL)
