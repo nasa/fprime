@@ -323,7 +323,9 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
         if (success)
         {
-            fileStatus = txn->fd.size(txn->fsize);
+            FwSizeType file_size;
+            fileStatus = txn->fd.size(file_size);
+            txn->fsize = static_cast<CF_FileSize_t>(file_size);
             if (fileStatus != Os::File::Status::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_BEG_ERR_EID, CFE_EVS_EventType_ERROR,

@@ -200,7 +200,8 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
 
     if (ret != CfdpStatus::ERROR)
     {
-        status = txn->fd.write(pdu->data_ptr, pdu->data_len, Os::File::WaitType::WAIT);
+        FwSizeType write_size = pdu->data_len;
+        status = txn->fd.write(pdu->data_ptr, write_size, Os::File::WaitType::WAIT);
         if (status != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_WRITE_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -618,8 +619,8 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
             break;
         }
 
-        txn->crc.update(buf, txn->state_data.receive.r2.rx_crc_calc_bytes, read_size);
-        txn->state_data.receive.r2.rx_crc_calc_bytes += read_size;
+        txn->crc.update(buf, txn->state_data.receive.r2.rx_crc_calc_bytes, static_cast<U32>(read_size));
+        txn->state_data.receive.r2.rx_crc_calc_bytes += static_cast<U32>(read_size);
         txn->state_data.receive.cached_pos = txn->state_data.receive.r2.rx_crc_calc_bytes;
         count_bytes += read_size;
     }
@@ -703,7 +704,6 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     CfdpStatus::T status;
     Os::File::Status fileStatus;
     Os::FileSystem::Status fileSysStatus;
-    I32 ret;
     bool success = true;
 
     /* it isn't an error to get another MD PDU, right? */
@@ -757,7 +757,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                 {
                      // TODO BPC flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
                      // File was succesfully renamed, open for writing
-                    ret = txn->fd.open(txn->history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
+                    fileStatus = txn->fd.open(txn->history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
                     if (fileStatus != Os::File::OP_OK)
                     {
                         // CFE_EVS_SendEvent(CF_CFDP_R_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
