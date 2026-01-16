@@ -501,9 +501,7 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
 {
     Os::File::Status status;
     Fw::String tmpDir;
-    char* dst = txn->history->fnames.dst_filename;
-    const size_t dstSize = sizeof(txn->history->fnames.dst_filename);
-    int written;
+    Fw::String dst;
 
     if (txn->state == CF_TxnState_R2)
     {
@@ -513,29 +511,14 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
             /* we need to make a temp file and then do a NAK for md PDU */
             /* the transaction already has a history, and that has a buffer that we can use to
              * hold the temp filename which is defined by the sequence number and the source entity ID */
-            /* the -1 below is to make room for the slash */
 
-            // Create destinastion filepath two steps to ensure snprintf as independently provable bounds
-            // Step 1: directory + slash 
-            written = snprintf(
-                dst,
-                dstSize,
-                "%.*s/",
-                static_cast<int>(dstSize - 1),
-                tmpDir.toChar()
-            );
+            // Create destination filepath with format: <tmpDir>/<src_eid>:<seq_num>.tmp
+            dst.format("%s/%" CF_PRI_ENTITY_ID ":%" CF_PRI_TRANSACTION_SEQ ".tmp",
+                       tmpDir.toChar(),
+                       txn->history->src_eid,
+                       txn->history->seq_num);
 
-            if (written > 0 && static_cast<size_t>(written) < dstSize)
-            {
-                // Step 2: numeric suffix
-                snprintf(
-                    dst + written,
-                    dstSize - written,
-                    "%" CF_PRI_ENTITY_ID ":%" CF_PRI_TRANSACTION_SEQ ".tmp",
-                    txn->history->src_eid,
-                    txn->history->seq_num
-                );
-            }
+            txn->history->fnames.dst_filename = dst;
 
             // CFE_EVS_SendEvent(CF_CFDP_R_TEMP_FILE_INF_EID, CFE_EVS_EventType_INFORMATION,
             //                   "CF R%d(%lu:%lu): making temp file %s for transaction without MD",
@@ -545,8 +528,8 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn)
 
         CF_CFDP_ArmAckTimer(txn);
     }
- 
-    status = txn->fd.open(txn->history->fnames.dst_filename, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+
+    status = txn->fd.open(txn->history->fnames.dst_filename.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
     if (status != Os::File::OP_OK)
     {
         // CFE_EVS_SendEvent(CF_CFDP_R_CREAT_ERR_EID, CFE_EVS_EventType_ERROR,
