@@ -14,7 +14,6 @@ ampcs
 ANamespace
 AOS
 Aos
-aos
 apid
 APIDOCS
 APPENDFILE
@@ -43,7 +42,6 @@ Bies
 binaryfile
 BINDIR
 Bitfield
-bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -216,6 +214,7 @@ endfunction
 endmacro
 endraw
 enduml
+EPP
 ERRORCHECK
 errornum
 ert
@@ -404,6 +403,7 @@ llu
 LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
+Lsb
 lseek
 LTK
 lvar
@@ -436,6 +436,7 @@ MML
 modbus
 MOVEFILE
 Mpu
+Msb
 msc
 mscfile
 mseconds
@@ -446,6 +447,7 @@ multiarch
 multitool
 mutexattr
 Mutexed
+muxed
 mycompany
 nasafprime
 nbits
@@ -607,6 +609,7 @@ scid
 scm
 sdd
 sdiv
+sdls
 searchdata
 SENDPARTIAL
 seqgen
@@ -700,6 +703,7 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
@@ -744,13 +748,15 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+USLP
 valdaarhun
 valgrind
 vbai
-VCA
 vc
+VCA
 vcid
 VCP
+vcs
 VFILE
 VID
 vla
