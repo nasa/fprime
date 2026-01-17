@@ -157,6 +157,7 @@ void AosFramerTester ::testBufferOwnershipState() {
 // Extended Operation Tests
 // ----------------------------------------------------------------------
 
+// Many Frames for one packet
 void AosFramerTester ::testLongPacket() {
     // This will need 2 full & 1 partial AOS Frames to send
     U8 bufferData[2048];
@@ -279,53 +280,127 @@ void AosFramerTester ::testLongPacket() {
     ASSERT_from_dataOut_SIZE(3);
 }
 
+// Many Packets for one frame
+// Also end w/ less than 7 bytes to test that path
 void AosFramerTester ::testShortPackets() {
-    U8 bufferData[100];
-    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    // Slice this buffer into many packets that all fit into one frame
+    U8 bufferData[1008];
 
-    ComCfg::FrameContext defaultContext;
-    defaultContext.set_sendNow(true);
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true);
+
+    ComCfg::FrameContext context;
+    // Hold off on sendNow until the final packet
+    context.set_sendNow(false);
 
     // Fill the buffer with some data
+    // This isn't actually a space packet so this test can't decode it for a length
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         bufferData[i] = static_cast<U8>(i);
     }
 
-    // Invoke the dataIn handler
-    this->invoke_to_dataIn(0, buffer, defaultContext);
+    // Ensure we start w/ no sent frames
+    ASSERT_from_dataOut_SIZE(0);
 
-    // Check that the dataOut handler was called with the correct data
+    // Invoke the dataIn handler
+    const U8 packets = 10;
+    const FwSizeType packetSize = sizeof(bufferData) / packets;
+    for (U8 packet = 0; packet < packets; packet++) {
+        // Shouldn't send until we are done with packet #10
+        ASSERT_from_dataOut_SIZE(0);
+
+        FwSizeType currentPacketSize = packetSize;
+
+        if (packet + 1 == packets) {
+            // sendNow the final packet
+            context.set_sendNow(true);
+
+            // make sure we use up the whole buffer
+            // even if it is not a multiple of packets
+            currentPacketSize = sizeof(bufferData) - packet * packetSize;
+        }
+
+        Fw::Buffer buffer(bufferData + packet * packetSize, currentPacketSize);
+
+        this->invoke_to_dataIn(0, buffer, context);
+    }
     ASSERT_from_dataOut_SIZE(1);
+
+    // How far into the payload (and what byte we should see there)
+    U32 payloadInd = 0;
+
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
-    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
-    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), defaultContext.get_vcId());
+    ASSERT_EQ(outBuffer.getSize(), frameSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), context.get_vcId());
 
     U16 outScId = this->getFrameScId(outBuffer.getData());
     U8 outVcId = this->getFrameVcId(outBuffer.getData());
     U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
     U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
+    U16 outFramePointer = this->getFramePacketPointer(outBuffer.getData());
 
     const U8 expectedTfVn = 0b01;
     ASSERT_EQ(outTfVn, expectedTfVn);
     const U16 expectedScId = ComCfg::SpacecraftId;
     ASSERT_EQ(outScId, expectedScId);
-    ASSERT_EQ(outVcId, defaultContext.get_vcId());
+    ASSERT_EQ(outVcId, context.get_vcId());
     ASSERT_EQ(outVcCount, 0);
     ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
 
-    // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-    FwSizeType expectedIdleDataOffset = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + sizeof(bufferData) +
-                                        SpacePacketHeader::SERIALIZED_SIZE;
+    // Check in on the M_PDU
+    ASSERT_EQ(outFramePointer, 0);
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
     const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
-    const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
-    for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
-        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
-            << "Idle data at index " << i << " does not match expected idle pattern";
+    const U16 ideDataEndOffset = frameSize - AOSTrailer::SERIALIZED_SIZE;
+    // Cheat and grab the length of the payload (real deframer would decoded each SPP one at a time)
+    const U16 startOfIdleSPP = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + sizeof(bufferData);
+    const U16 startOfIdleData = startOfIdleSPP + SpacePacketHeader::SERIALIZED_SIZE;
+
+    // Check the SPP header
+    SpacePacketHeader spp;
+    auto payloadDeserializer = outBuffer.getDeserializer();
+    Fw::SerializeStatus status = payloadDeserializer.moveDeserToOffset(startOfIdleSPP);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = payloadDeserializer.deserializeTo(spp);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(spp.get_packetIdentification(), ComCfg::Apid::SPP_IDLE_PACKET);
+    ASSERT_EQ(spp.get_packetSequenceControl(), 0x3 << SpacePacketSubfields::SeqFlagsOffset);
+
+    // Token == SPP's payload length - 1
+    I32 expectedLengthToken = ideDataEndOffset - startOfIdleData - 1;
+    if (expectedLengthToken < 0) {
+        expectedLengthToken = 0;
     }
+
+    ASSERT_EQ(spp.get_packetDataLength(), expectedLengthToken);
+
+    // Check the Idle SPP payload
+    for (FwSizeType i = startOfIdleData; i < ideDataEndOffset; ++i) {
+        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
+            << "Idle data at index " << i << " in range (" << startOfIdleData << ", " << ideDataEndOffset << ")"
+            << " does not match expected idle pattern";
+    }
+
+    // Using U32 so I can unwind the addition of U16 max
+    U32 payloadStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
+    U32 payloadStop = payloadStart + sizeof(bufferData);
+
+    for (U32 offset = payloadStart; offset < payloadStop; offset++) {
+        ASSERT_EQ(outBuffer.getData()[offset], static_cast<U8>(payloadInd++))
+            << "Payload data in frame " << static_cast<U16>(0) << " at " << offset << " in range (" << payloadStart
+            << ", " << payloadStop << ")"
+            << " does not match expected idle pattern";
+    }
+
+    // Return this buffer so the framer can reset
+    this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+
+    // Make sure we don't send any extra frames (continue into null)
+    ASSERT_from_dataOut_SIZE(1);
 }
 
 // ----------------------------------------------------------------------
