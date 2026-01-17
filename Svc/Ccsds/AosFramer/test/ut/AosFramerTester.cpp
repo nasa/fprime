@@ -228,6 +228,23 @@ void AosFramerTester ::testLongPacket() {
             const U16 startOfIdleSPP = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
             const U16 startOfIdleData = startOfIdleSPP + SpacePacketHeader::SERIALIZED_SIZE;
 
+            // Check the SPP header
+            SpacePacketHeader spp;
+            auto payloadDeserializer = outBuffer.getDeserializer();
+            Fw::SerializeStatus status = payloadDeserializer.moveDeserToOffset(startOfIdleSPP);
+            ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+            status = payloadDeserializer.deserializeTo(spp);
+            ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+            ASSERT_EQ(spp.get_packetIdentification(), ComCfg::Apid::SPP_IDLE_PACKET);
+            ASSERT_EQ(spp.get_packetSequenceControl(), 0x3 << SpacePacketSubfields::SeqFlagsOffset);
+
+            // Token == SPP's payload length - 1
+            const U16 expectedLengthToken = ideDataEndOffset - startOfIdleData - 1;
+            ASSERT_EQ(spp.get_packetDataLength(), expectedLengthToken);
+
+            // Check the Idle SPP payload
             for (FwSizeType i = startOfIdleData; i < ideDataEndOffset; ++i) {
                 ASSERT_EQ(outBuffer.getData()[i], idlePattern)
                     << "Idle data at index " << i << " in range (" << startOfIdleData << ", " << ideDataEndOffset << ")"
