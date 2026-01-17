@@ -22,7 +22,7 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 
 ## Internals
 
-The AOS protocol specifies a fixed frame size. The maximum for all AOS framers can be configured in the `config/ComCfg.fpp` file. Individual AOS Framer instances can have their frame size overriden via the `configure` function.
+The AOS protocol specifies a fixed frame size. The maximum for all AOS framers can be configured in the `config/ComCfg.fpp` file. Individual AOS Framer instances can have their frame size overridden via the `configure` function.
 
 The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the AosFramer via the `dataReturnIn` port once it has been used or consumed. When the buffer returns to the AosFramer it will reuse the buffer for the next frame. Should a component want to use the frame data past the time it is returned to the AosFramer, data should be copied before the original buffer is returned to the AosFramer via the `dataReturnIn` port. 
 
