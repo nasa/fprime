@@ -12,6 +12,8 @@ ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
+AOS
+Aos
 aos
 apid
 APIDOCS
@@ -40,6 +42,7 @@ bibtex
 Bies
 binaryfile
 BINDIR
+Bitfield
 bitfield
 bitmaps
 bitshifts
@@ -554,7 +557,9 @@ ptbool
 ptf
 pthread
 ptrt
+PVN
 Pvn
+pvn
 qch
 qhelpgenerator
 QHG
@@ -743,6 +748,7 @@ valdaarhun
 valgrind
 vbai
 VCA
+vc
 vcid
 VCP
 VFILE
