@@ -303,7 +303,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Shift our offset into the M_PDU payload region by how many bytes we wrote
-    currentVc.current_payload_offset += dataSize;
+    currentVc.current_payload_offset += static_cast<U16>(dataSize);
 
     // Context must always be present once any packet payload bytes are written
     currentVc.outstanding.context = context;
