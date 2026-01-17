@@ -1,7 +1,8 @@
 // ======================================================================
 // \title  AosFramer.cpp
-// \author thomas-bc
+// \author Will MacCormack (Aos Modifications)
 // \brief  cpp file for AosFramer component implementation class
+// \details modified from thomas-bc's TmFramer
 // ======================================================================
 
 #include "Svc/Ccsds/AosFramer/AosFramer.hpp"

@@ -1,7 +1,8 @@
 // ======================================================================
 // \title  AosFramerTestMain.cpp
-// \author thomas-bc
+// \author Will MacCormack (Aos Modifications)
 // \brief  cpp file for AosFramer component test main function
+// \details modified from thomas-bc's TmFramer
 // ======================================================================
 
 #include "AosFramerTester.hpp"

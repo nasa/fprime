@@ -1,7 +1,8 @@
 // ======================================================================
 // \title  AosFramerTester.hpp
-// \author thomas-bc
+// \author Will MacCormack (Aos Modifications)
 // \brief  hpp file for AosFramer component test harness implementation class
+// \details modified from thomas-bc's TmFramer
 // ======================================================================
 
 #ifndef Svc_Ccsds_AosFramerTester_HPP

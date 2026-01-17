@@ -1,7 +1,8 @@
 // ======================================================================
 // \title  AosFramerTester.cpp
-// \author thomas-bc
+// \author Will MacCormack (Aos Modifications)
 // \brief  cpp file for AosFramer component test harness implementation class
+// \details modified from thomas-bc's TmFramer
 // ======================================================================
 
 #include "AosFramerTester.hpp"
@@ -224,12 +225,12 @@ void AosFramerTester ::testLongPacket() {
             // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
             const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
             const U16 ideDataEndOffset = frameSize - AOSTrailer::SERIALIZED_SIZE;
-            const U16 startOfIdle = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + expectedFramePointer +
-                                    SpacePacketHeader::SERIALIZED_SIZE;
+            const U16 startOfIdleSPP = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
+            const U16 startOfIdleData = startOfIdleSPP + SpacePacketHeader::SERIALIZED_SIZE;
 
-            for (FwSizeType i = startOfIdle; i < ideDataEndOffset; ++i) {
+            for (FwSizeType i = startOfIdleData; i < ideDataEndOffset; ++i) {
                 ASSERT_EQ(outBuffer.getData()[i], idlePattern)
-                    << "Idle data at index " << i << " in range (" << startOfIdle << ", " << ideDataEndOffset << ")"
+                    << "Idle data at index " << i << " in range (" << startOfIdleData << ", " << ideDataEndOffset << ")"
                     << " does not match expected idle pattern";
             }
         }
