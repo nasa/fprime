@@ -12,7 +12,7 @@ ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
-[Aa][Oo][Ss]
+aos
 apid
 APIDOCS
 APPENDFILE
