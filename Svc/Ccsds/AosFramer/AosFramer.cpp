@@ -319,7 +319,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
         currentVc.outstanding.offset = 0;
     }
 
-    // TODO: Consider moving fill_with_idle_packet outside of pack_packet to prevent re-entrancy
+    // TODO: Consider moving fill_with_idle_packet outside of pack_packet to prevent reentrancy
     // dataIn & dataReturn should call these after packing (potentially via a shared helper)
 
     // Pack with idle packets if sendNow and not full already

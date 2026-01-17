@@ -12,8 +12,7 @@ ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
-AOS
-Aos
+[Aa][Oo][Ss]
 apid
 APIDOCS
 APPENDFILE
@@ -559,8 +558,6 @@ ptbool
 ptf
 pthread
 ptrt
-PVN
-Pvn
 pvn
 qch
 qhelpgenerator
