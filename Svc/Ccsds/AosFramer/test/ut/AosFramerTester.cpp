@@ -161,6 +161,9 @@ void AosFramerTester ::testLongPacket() {
     U8 bufferData[2048];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
 
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true);
+
     ComCfg::FrameContext context;
     // Use sendNow to get that final frame ASAP
     context.set_sendNow(true);
@@ -171,16 +174,20 @@ void AosFramerTester ::testLongPacket() {
         bufferData[i] = static_cast<U8>(i);
     }
 
+    // Ensure we start w/ no sent frames
+    ASSERT_from_dataOut_SIZE(0);
+
     // Invoke the dataIn handler
     this->invoke_to_dataIn(0, buffer, context);
 
-    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
+    // How far into the payload (and what byte we should see there)
+    U32 payloadInd = 0;
 
     for (U8 frame = 0; frame < 3; frame++) {
         ASSERT_from_dataOut_SIZE(frame + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(frame).data;
         ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(frame).context;
-        ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+        ASSERT_EQ(outBuffer.getSize(), frameSize);
         ASSERT_EQ(this->fromPortHistory_dataOut->at(frame).context.get_vcId(), context.get_vcId());
 
         U16 outScId = this->getFrameScId(outBuffer.getData());
@@ -207,24 +214,51 @@ void AosFramerTester ::testLongPacket() {
         } else {
             // Third Frame is the final (w/ a ton of idle padding)
 
-            const U32 payloadPerFrame = expectedFrameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE -
-                                        AOSTrailer::SERIALIZED_SIZE;
+            const U32 payloadPerFrame =
+                frameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
             U16 expectedFramePointer = sizeof(bufferData) % payloadPerFrame;
 
             ASSERT_EQ(outFramePointer, expectedFramePointer);
+            ASSERT_NE(expectedFramePointer, 0xFFFF);
 
             // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
             const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
-            const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
-            for (FwSizeType i = expectedFramePointer; i < ideDataEndOffset; ++i) {
+            const U16 ideDataEndOffset = frameSize - AOSTrailer::SERIALIZED_SIZE;
+            const U16 startOfIdle = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + expectedFramePointer +
+                                    SpacePacketHeader::SERIALIZED_SIZE;
+
+            for (FwSizeType i = startOfIdle; i < ideDataEndOffset; ++i) {
                 ASSERT_EQ(outBuffer.getData()[i], idlePattern)
-                    << "Idle data at index " << i << " does not match expected idle pattern";
+                    << "Idle data at index " << i << " in range (" << startOfIdle << ", " << ideDataEndOffset << ")"
+                    << " does not match expected idle pattern";
             }
+        }
+
+        // Using U32 so I can unwind the addition of U16 max
+        U32 payloadStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
+        U32 payloadStop = frameSize - AOSTrailer::SERIALIZED_SIZE;
+        if (frame == 1) {
+            // Payload spans whole Frame Payload
+            payloadStart -= outFramePointer;
+        } else if (frame == 2) {
+            // Payload stops at pointer
+            payloadStop = payloadStart;
+            payloadStart -= outFramePointer;
+        }
+
+        for (U32 offset = payloadStart; offset < payloadStop; offset++) {
+            ASSERT_EQ(outBuffer.getData()[offset], static_cast<U8>(payloadInd++))
+                << "Payload data in frame " << static_cast<U16>(frame) << " at " << offset << " in range ("
+                << payloadStart << ", " << payloadStop << ")"
+                << " does not match expected idle pattern";
         }
 
         // Return this buffer so the framer can reset
         this->invoke_to_dataReturnIn(0, outBuffer, outContext);
     }
+
+    // Make sure we don't send any extra frames (continue into null)
+    ASSERT_from_dataOut_SIZE(3);
 }
 
 void AosFramerTester ::testShortPackets() {

@@ -15,7 +15,7 @@ module ComCfg {
     dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ Upper Bound on Fixed size of CCSDS AOS frames
-    constant AosMaxFrameFixedSize = 1024  # If used for downlink needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    constant AosMaxFrameFixedSize = 1536
 
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes

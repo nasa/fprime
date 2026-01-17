@@ -119,7 +119,6 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
     currentVc.frame.state = BufferOwnershipState::OWNED;
 
     // If we have an outstanding packet from the prior frame, pack it
-    // TODO: Is this enough to determine outstanding packet validity
     if (currentVc.outstanding.packet.isValid()) {
         this->pack_packet(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
     }
@@ -203,8 +202,7 @@ void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no
     }
 
     auto frameSerializer = currentVc.frame.buffer.getSerializer();
-    Fw::SerializeStatus status =
-        frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE);
+    Fw::SerializeStatus status = frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     frameSerializer.serializeFrom(muxedPdu);
@@ -279,8 +277,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     Fw::SerializeStatus status;
     // Use our member Fw::Buffer
     auto frameSerializer = currentVc.frame.buffer.getSerializer();
-    status = frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
-                                             currentVc.current_payload_offset);
+    status = frameSerializer.moveSerToOffset(START_OF_PAYLOAD + currentVc.current_payload_offset);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     const U8* dataStart = data.getData() + dataOffset;
@@ -297,6 +294,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
 
         // We'll pick up serialization from here later
         currentVc.outstanding.offset = dataOffset + dataSize;
+        currentVc.outstanding.packet = data;
     }
 
     status = frameSerializer.serializeFrom(dataStart, dataSize, Fw::Serialization::OMIT_LENGTH);
@@ -371,6 +369,17 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     Fw::SerializeStatus status = frameSerializer.moveSerToOffset(START_OF_PAYLOAD + vc.current_payload_offset);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    // If there wasn't a fresh packet before this
+    // set the M_PDU firstHeaderPointer
+    if (!vc.past_first_fresh_packet) {
+        // setup our headers if we have a packet + context ready to go
+        setup_header(context);
+        setup_m_pdu_header(context);
+
+        // This idle packet is the fresh packet
+        vc.past_first_fresh_packet = true;
+    }
+
     // Use EPP if we can (solves for all sizes)
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
         // TODO: Serialize an EPP of the right size
@@ -405,8 +414,6 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
 
         // Increment the offset since we serialized directly into the frame
         vc.current_payload_offset += idlePacketSize;
-
-        // TODO: point m_pdu header at the right payload offset if it hasn't been written already
     }
 }
 
