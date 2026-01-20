@@ -247,6 +247,10 @@ SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
+    if (length > 0) {
+        FW_ASSERT(buff);
+    }
+    FW_ASSERT(this->getBuffAddr());
     // copy buffer to our buffer
     (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
@@ -537,7 +541,10 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         if ((storedLength > this->getDeserializeSizeLeft()) or (storedLength > length)) {
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
-
+        
+        if (storedLength > 0) {
+            FW_ASSERT(buff);
+        }
         (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
 
         length = static_cast<FwSizeType>(storedLength);
@@ -548,6 +555,9 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
+        if (length > 0) {
+            FW_ASSERT(buff);
+        }
         (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(length));
     }
 
@@ -725,11 +735,13 @@ SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest, Serializ
 // return address of buffer not yet deserialized. This is used
 // to copy the remainder of a buffer.
 const U8* LinearBufferBase::getBuffAddrLeft() const {
+    FW_ASSERT(this->getBuffAddr());
     return &this->getBuffAddr()[this->m_deserLoc];
 }
 
 //!< gets address of end of serialization. Used to manually place data at the end
 U8* LinearBufferBase::getBuffAddrSer() {
+    FW_ASSERT(this->getBuffAddr());
     return &this->getBuffAddr()[this->m_serLoc];
 }
 
