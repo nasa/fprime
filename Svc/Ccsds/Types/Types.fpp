@@ -264,7 +264,7 @@ module Ccsds {
     @ Blue Book section 5.2, table 5-4
     enum CfdpFileDirective: U8 {
         INVALID_MIN = 0  @< Minimum used to limit range
-        EOF = 4          @< End of File
+        END_OF_FILE = 4          @< End of File
         FIN = 5          @< Finished
         ACK = 6          @< Acknowledge
         METADATA = 7     @< Metadata

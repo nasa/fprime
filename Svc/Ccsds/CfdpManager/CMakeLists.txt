@@ -10,6 +10,9 @@
 #
 ####
 
+### Subdirectories ###
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Pdu/")
+
 register_fprime_library(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.fpp"
@@ -24,6 +27,9 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpUtils.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpDispatch.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
+    DEPENDS
+        CFDP_Checksum
+        Svc_Ccsds_CfdpManager_Pdu
 )
 
 ### Unit Tests ###
