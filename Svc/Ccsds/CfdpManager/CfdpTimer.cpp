@@ -4,9 +4,9 @@
 // \brief  cpp file for the CfdpTimer class implementation
 // ======================================================================
 
-#include "Svc/Ccsds/CfdpManager/CfdpTimer.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
 
-#include "Fw/Types/Assert.hpp"
+#include <Fw/Types/Assert.hpp>
 
 namespace Svc {
 namespace Ccsds {

@@ -4,11 +4,13 @@
 // \brief  cpp file for CfdpManager component test main function
 // ======================================================================
 
-#include "CfdpManagerTester.hpp"
+#include "CfdpManagerTester.hpp>
 
 TEST(Nominal, MetaDataPdu) {
-    Svc::Ccsds::CfdpManagerTester tester;
-    tester.testMetaDataPdu();
+    // Allocate tester on heap to avoid stack overflow (CfdpManager is very large)
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testMetaDataPdu();
+    delete tester;
 }
 
 int main(int argc, char** argv) {

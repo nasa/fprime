@@ -33,13 +33,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "CfdpEngine.hpp"
-#include "CfdpRx.hpp"
-#include "CfdpDispatch.hpp"
-#include "CfdpUtils.hpp"
-
 #include <Fw/Types/SuccessEnumAc.hpp>
 #include <Os/FileSystem.hpp>
+
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 
 namespace Svc {
 namespace Ccsds {

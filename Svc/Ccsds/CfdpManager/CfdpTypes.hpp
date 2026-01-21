@@ -39,15 +39,15 @@
 #include <Os/Directory.hpp>
 
 #include <CFDP/Checksum/Checksum.hpp>
-#include "CfdpPdu.hpp"
-#include "CfdpClist.hpp"
-#include "CfdpChunk.hpp"
-#include "CfdpCodec.hpp"
-#include "CfdpTimer.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
-#include "Svc/Ccsds/Types/CfdpFlowEnumAc.hpp"
-#include "Svc/Ccsds/Types/CfdpClassEnumAc.hpp"
-#include "Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
+#include <Svc/Ccsds/Types/CfdpFlowEnumAc.hpp>
+#include <Svc/Ccsds/Types/CfdpClassEnumAc.hpp>
+#include <Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -380,8 +380,8 @@ typedef struct CF_Transaction
     CfdpTimer inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
     CfdpTimer ack_timer; /**< \brief called ack_timer, but is also nak_timer */
 
-    CF_FileSize_t fsize; /**< \brief File size */
-    CF_FileSize_t foffs; /**< \brief offset into file for next read */
+    CfdpFileSize fsize; /**< \brief File size */
+    CfdpFileSize foffs; /**< \brief offset into file for next read */
     Os::File fd;
 
     CFDP::Checksum crc;

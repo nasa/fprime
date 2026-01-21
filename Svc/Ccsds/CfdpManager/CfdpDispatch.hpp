@@ -32,7 +32,7 @@
 #ifndef CFDP_DISPATCH_HPP
 #define CFDP_DISPATCH_HPP
 
-#include "CfdpTypes.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 
 namespace Svc {
 namespace Ccsds {

@@ -30,14 +30,14 @@
 //
 // ======================================================================
 
-#include "CfdpEngine.hpp"
-#include "CfdpTx.hpp"
-#include "CfdpDispatch.hpp"
-#include "CfdpUtils.hpp"
-#include "CfdpTimer.hpp"
-
 #include <stdio.h>
 #include <string.h>
+
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -325,7 +325,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
         {
             FwSizeType file_size;
             fileStatus = txn->fd.size(file_size);
-            txn->fsize = static_cast<CF_FileSize_t>(file_size);
+            txn->fsize = static_cast<CfdpFileSize>(file_size);
             if (fileStatus != Os::File::Status::OP_OK)
             {
                 // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_BEG_ERR_EID, CFE_EVS_EventType_ERROR,

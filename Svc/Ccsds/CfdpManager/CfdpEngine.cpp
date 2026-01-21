@@ -35,15 +35,15 @@
 //
 // ======================================================================
 
-#include "CfdpRx.hpp"
-#include "CfdpTx.hpp"
-#include "CfdpUtils.hpp"
-#include "CfdpDispatch.hpp"
-#include "CfdpLogicalPdu.hpp"
+#include <string.h>
 
 #include <Os/FileSystem.hpp>
 
-#include <string.h>
+#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -65,8 +65,7 @@ void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuff
     CF_CFDP_CodecReset(&penc->codec_state, total_size);
 }
 
-void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t encap_hdr_size,
-                         size_t total_size)
+void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size)
 {
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
@@ -216,20 +215,21 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     U8* msgPtr = NULL;
     U8 eid_len;
     CfdpStatus::T status;
-    CF_EncoderState encorder;
+    CF_EncoderState *encoder = NULL;
 
     // This is where a message buffer is requested
     // TODO get instance of CfdpManager
-    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
-    
-    if (status)
+    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
+
+    if (status == CfdpStatus::SUCCESS)
     {
         FW_ASSERT(ph != NULL);
         FW_ASSERT(msgPtr != NULL);
+        FW_ASSERT(encoder != NULL);
 
         // BPC: This was previously called as part of CF_CFDP_MsgOutGet()
         // Call it here to attach the storage returned by cfdpGetMessageBuffer() to the encoder
-        ph->penc = &encorder;
+        ph->penc = encoder;
         CF_CFDP_EncodeStart(ph->penc, msgPtr, ph, CF_MAX_PDU_SIZE);
 
         hdr = &ph->pdu_header;

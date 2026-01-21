@@ -34,7 +34,7 @@
 #ifndef CFDP_RX_HPP
 #define CFDP_RX_HPP
 
-#include "CfdpEngine.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 
 namespace Svc {
 namespace Ccsds {

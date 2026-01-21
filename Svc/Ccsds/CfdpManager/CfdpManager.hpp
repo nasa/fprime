@@ -7,9 +7,10 @@
 #ifndef CCSDS_CFDPMANAGER_HPP
 #define CCSDS_CFDPMANAGER_HPP
 
-#include "Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp"
-#include "Svc/Ccsds/Types/CfdpStatusEnumAc.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
+#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -23,6 +24,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
     {
       //!< This is the logical structure that is used to build a PDU
       CF_Logical_PduBuffer_t pdu;
+      //!< Encoder state for building the PDU
+      CF_EncoderState encoder;
       //!< This is where the PDU is encoded
       U8 data[CF_MAX_PDU_SIZE];
       //!< Flag if the buffer has already been sent
@@ -54,7 +57,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelId, FwSizeType size);
+  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, U8 channelId, FwSizeType size);
   // Not sure there is an equivelent
   void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);
   // Equivelent of CF_CFDP_Send

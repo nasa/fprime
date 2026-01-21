@@ -29,12 +29,12 @@
 //
 // ======================================================================
 
-#include "CfdpEngine.hpp"
-#include "CfdpUtils.hpp"
-#include "CfdpDispatch.hpp"
-
 #include <stdio.h>
 #include <string.h>
+
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 
 namespace Svc {
 namespace Ccsds {

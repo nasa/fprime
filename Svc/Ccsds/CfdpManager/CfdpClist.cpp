@@ -31,7 +31,7 @@
 //
 // ======================================================================
 
-#include "CfdpClist.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 
 #include <Fw/Types/Assert.hpp>
 

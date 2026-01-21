@@ -33,9 +33,9 @@
 #ifndef CFDP_UTILS_HPP
 #define CFDP_UTILS_HPP
 
-#include "CfdpEngine.hpp"
-
 #include <Fw/Types/Assert.hpp>
+
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 
 namespace Svc {
 namespace Ccsds {

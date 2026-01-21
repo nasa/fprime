@@ -48,7 +48,7 @@
 #include <config/CfdpEntityIdAliasAc.hpp>
 #include <config/CfdpTransactionSeqAliasAc.hpp>
 
-#include "CfdpPdu.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -81,7 +81,7 @@ namespace Ccsds {
  * type at this point, the logical structures should use this type in
  * case future support for large files is added.
  */
-typedef U32 CF_FileSize_t;
+typedef U32 CfdpFileSize;
 
 /*
  * Note that by exploding the bit-fields into separate members, this will make the
@@ -195,8 +195,8 @@ typedef struct CF_Logical_Tlv
  */
 typedef struct CF_Logical_SegmentRequest
 {
-    CF_FileSize_t offset_start;
-    CF_FileSize_t offset_end;
+    CfdpFileSize offset_start;
+    CfdpFileSize offset_end;
 } CF_Logical_SegmentRequest_t;
 
 typedef struct CF_Logical_SegmentList
@@ -228,7 +228,7 @@ typedef struct CF_Logical_PduEof
 {
     CF_CFDP_ConditionCode_t cc;
     U32 crc;
-    CF_FileSize_t size;
+    CfdpFileSize size;
 
     /**
      * \brief Set of all TLV blobs in this PDU.
@@ -276,7 +276,7 @@ typedef struct CF_Logical_PduMd
     U8 close_req;     /**< \brief transaction closure not requested (0) or requested (1) */
     U8 checksum_type; /**< \brief 0 indicates legacy modular checksum */
 
-    CF_FileSize_t size;
+    CfdpFileSize size;
 
     CF_Logical_Lv_t source_filename;
     CF_Logical_Lv_t dest_filename;
@@ -287,8 +287,8 @@ typedef struct CF_Logical_PduMd
  */
 typedef struct CF_Logical_PduNak
 {
-    CF_FileSize_t scope_start;
-    CF_FileSize_t scope_end;
+    CfdpFileSize scope_start;
+    CfdpFileSize scope_end;
 
     /**
      * \brief Set of all segments in this PDU.
@@ -306,7 +306,7 @@ typedef struct CF_Logical_PduFileDataHeader
      */
     CF_Logical_SegmentList_t segment_list;
 
-    CF_FileSize_t offset; /**< \brief Offset of data in file */
+    CfdpFileSize offset; /**< \brief Offset of data in file */
 
     const U8* data_ptr; /**< \brief pointer to read-only data blob within encoded PDU */
     FwSizeType data_len; /**< \brief Length of data blob within encoded PDU (derived field) */

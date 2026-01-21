@@ -30,11 +30,10 @@
 //
 // ======================================================================
 
-#include "CfdpPdu.hpp"
-#include "CfdpCodec.hpp"
-
 #include <stdint.h>
 #include <string.h>
+
+#include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
 
 namespace Svc {
 namespace Ccsds {

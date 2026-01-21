@@ -38,9 +38,9 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Buffer/Buffer.hpp>
 
-#include "CfdpPdu.hpp"
-#include "CfdpLogicalPdu.hpp"
-#include "Svc/Ccsds/Types/CfdpStatusEnumAc.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
+#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {

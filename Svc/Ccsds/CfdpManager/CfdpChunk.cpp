@@ -38,7 +38,7 @@
 
 #include <Fw/Types/Assert.hpp>
 
-#include "CfdpChunk.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
 
 namespace Svc {
 namespace Ccsds {

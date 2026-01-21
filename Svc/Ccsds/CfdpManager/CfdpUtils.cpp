@@ -32,9 +32,9 @@
 //
 // ======================================================================
 
-#include "CfdpEngine.hpp"
-#include "CfdpUtils.hpp"
-#include "CfdpClist.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 
 namespace Svc {
 namespace Ccsds {

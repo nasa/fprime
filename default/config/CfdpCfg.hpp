@@ -6,6 +6,8 @@
 
 namespace Svc {
 namespace Ccsds {
+    
+#include <Fw/FPrimeBasicTypes.hpp>
 
 /**
  *  @brief Number of channels
@@ -21,6 +23,26 @@ namespace Ccsds {
  * BPC TODO: replace with CfdpManagerNumChannels
  */
 #define CF_NUM_CHANNELS (2)
+
+/**
+ *  @brief Type for logical file size / file offset values used by CFDP
+ *
+ *  @par Limits:
+ *       Must be a U32 or U64.
+ *
+ *       Per CCSDS 727.0-B-5 (CFDP Blue Book), all File Size Sensitive (FSS)
+ *       fields, including file size and file offset, are encoded as either
+ *       32-bit or 64-bit unsigned integers depending on the value of the
+ *       CFDP Large File flag.
+ *
+ *       When the Large File flag is 0, FSS fields are 32 bits.
+ *       When the Large File flag is 1, FSS fields are 64 bits.
+ *
+ *  @reference
+ *       CCSDS 727.0-B-5, CCSDS File Delivery Protocol (CFDP),
+ *       https://public.ccsds.org/Pubs/727x0b5e1.pdf
+ */
+typedef U32 CfdpFileSize;
 
 /**
  *  @brief RX chunks per transaction (per channel)

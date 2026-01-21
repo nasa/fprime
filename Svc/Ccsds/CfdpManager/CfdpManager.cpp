@@ -4,10 +4,9 @@
 // \brief  cpp file for CfdpManager component implementation class
 // ======================================================================
 
-#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
-
-#include "CfdpEngine.hpp"
-#include "CfdpEngine.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -28,7 +27,7 @@ CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase
         memset(&this->pduBuffers[i], 0, sizeof(CfdpPduBuffer));
         this->pduBuffers[i].inUse = false;
 
-        pduPtr = reinterpret_cast<CF_Logical_PduBuffer_t*>(this->pduBuffers[i].data);
+        pduPtr = &this->pduBuffers[i].pdu;
         FW_ASSERT(pduPtr != NULL);
         pduPtr->index = CFDP_MANAGER_NUM_BUFFERS;
         pduPtr = NULL;
@@ -248,10 +247,10 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msgPtr, U8 channelId, FwSizeType size)
+CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, U8 channelId, FwSizeType size)
 {
     // FwIndexType portNum;
-    
+
     // // There is a direct mapping between channel index and port number
     // FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
     // portNum = static_cast<FwIndexType>(channelId);
@@ -263,6 +262,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
 
     FW_ASSERT(pduPtr == NULL);
     FW_ASSERT(msgPtr == NULL);
+    FW_ASSERT(encoder == NULL);
 
     // TODO Add output throtteling and guards here
     // CF implemented this in CF_CFDP_MsgOutGet()
@@ -275,6 +275,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t* pduPtr, U8* msg
             pduPtr = &this->pduBuffers[i].pdu;
             pduPtr->index = i;
             msgPtr = this->pduBuffers[i].data;
+            encoder = &this->pduBuffers[i].encoder;
             status = CfdpStatus::SUCCESS;
             break;
         }
@@ -323,7 +324,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     Fw::Buffer buffer = this->bufferAllocate_out(portNum, msgSize);
 
     auto serializer = buffer.getSerializer();
-    status = serializer.serializeFrom(msgPtr, msgSize, Fw::Serialization::OMIT_LENGTH);
+    status = serializer.serializeFrom(msgPtr, msgSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Full send

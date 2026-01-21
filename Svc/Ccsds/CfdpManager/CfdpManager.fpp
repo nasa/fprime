@@ -37,7 +37,6 @@ module Ccsds {
         @ Port for deallocating buffers allocated for PDU data
         output port bufferDeallocate: [CfdpManagerNumChannels] Fw.BufferSend
         
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

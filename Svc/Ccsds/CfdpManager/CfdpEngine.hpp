@@ -35,8 +35,8 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include "CfdpTypes.hpp"
-#include "Svc/Ccsds/CfdpManager/CfdpManager.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -247,8 +247,8 @@ CfdpStatus::T CF_CFDP_TxFile(const Fw::String& src_filename, const Fw::String& d
  * @retval #CfdpStatus::SUCCESS \copydoc CfdpStatus::SUCCESS
  * @returns CfdpStatus::SUCCESS on success. CfdpStatus::ERROR on error.
  */
-CfdpStatus::T CF_CFDP_PlaybackDir(const char *src_filename, const char *dst_filename, CfdpClass::T cfdp_class,
-                                 U8 keep, U8 chan, U8 priority, CfdpEntityId dest_id);
+CfdpStatus::T CF_CFDP_PlaybackDir(const Fw::String& src_filename, const Fw::String& dst_filename, CfdpClass::T cfdp_class,
+                                 CfdpKeep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
 
 /************************************************************************/
 /** @brief Build the PDU header in the output buffer to prepare to send a packet.
