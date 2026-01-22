@@ -548,6 +548,12 @@ union Pdu {
         Fw::SerializeStatus toSerialBuffer(Fw::SerialBuffer& serialBuffer) const;
     };
 
+    //! Segment request structure for NAK PDU
+    struct SegmentRequest {
+        CfdpFileSize offsetStart;  //!< Start offset of missing data
+        CfdpFileSize offsetEnd;    //!< End offset of missing data
+    };
+
     //! The type of a NAK PDU
     class NakPdu {
         friend union Pdu;
@@ -557,10 +563,16 @@ union Pdu {
         Header m_header;
 
         //! Scope start offset
-        U32 m_scopeStart;
+        CfdpFileSize m_scopeStart;
 
         //! Scope end offset
-        U32 m_scopeEnd;
+        CfdpFileSize m_scopeEnd;
+
+        //! Number of segment requests
+        U8 m_numSegments;
+
+        //! Segment requests array (max CF_NAK_MAX_SEGMENTS = 58)
+        SegmentRequest m_segments[58];
 
       public:
         //! Initialize a NAK PDU
@@ -569,8 +581,8 @@ union Pdu {
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       U32 scopeStart,
-                       U32 scopeEnd);
+                       CfdpFileSize scopeStart,
+                       CfdpFileSize scopeEnd);
 
         //! Compute the buffer size needed
         U32 bufferSize() const;
@@ -585,10 +597,23 @@ union Pdu {
         const Header& asHeader() const { return this->m_header; }
 
         //! Get scope start
-        U32 getScopeStart() const { return this->m_scopeStart; }
+        CfdpFileSize getScopeStart() const { return this->m_scopeStart; }
 
         //! Get scope end
-        U32 getScopeEnd() const { return this->m_scopeEnd; }
+        CfdpFileSize getScopeEnd() const { return this->m_scopeEnd; }
+
+        //! Get number of segments
+        U8 getNumSegments() const { return this->m_numSegments; }
+
+        //! Get segment at index (no bounds checking - caller must verify index < getNumSegments())
+        const SegmentRequest& getSegment(U8 index) const { return this->m_segments[index]; }
+
+        //! Add a segment request
+        //! @return True if segment was added, false if segment array is full
+        bool addSegment(CfdpFileSize offsetStart, CfdpFileSize offsetEnd);
+
+        //! Clear all segment requests
+        void clearSegments();
 
       private:
         //! Initialize this NakPdu from a SerialBuffer

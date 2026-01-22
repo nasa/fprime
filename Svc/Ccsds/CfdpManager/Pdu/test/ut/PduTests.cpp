@@ -788,8 +788,8 @@ TEST_F(PduTest, NakRoundTrip) {
     const CfdpEntityId sourceEid = 50;
     const CfdpTransactionSeq transactionSeq = 100;
     const CfdpEntityId destEid = 75;
-    const U32 scopeStart = 1024;
-    const U32 scopeEnd = 8192;
+    const CfdpFileSize scopeStart = 1024;
+    const CfdpFileSize scopeEnd = 8192;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
                     scopeStart, scopeEnd);
@@ -842,8 +842,8 @@ TEST_F(PduTest, NakZeroScope) {
 TEST_F(PduTest, NakLargeScope) {
     // Test NAK with large file offsets
     Pdu::NakPdu txPdu;
-    const U32 largeStart = 0xFFFF0000;
-    const U32 largeEnd = 0xFFFFFFFF;
+    const CfdpFileSize largeStart = 0xFFFF0000;
+    const CfdpFileSize largeEnd = 0xFFFFFFFF;
     txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
                    1, 2, 3, largeStart, largeEnd);
 
@@ -882,7 +882,7 @@ TEST_F(PduTest, NakSingleByte) {
 
 TEST_F(PduTest, NakMultipleCombinations) {
     // Test various scope combinations
-    const U32 testScopes[][2] = {
+    const CfdpFileSize testScopes[][2] = {
         {0, 100},
         {512, 1024},
         {4096, 8192},
@@ -908,6 +908,161 @@ TEST_F(PduTest, NakMultipleCombinations) {
         EXPECT_EQ(scope[1], rxPdu.getScopeEnd())
             << "Scope end mismatch for range: " << scope[0] << "-" << scope[1];
     }
+}
+
+TEST_F(PduTest, NakWithSingleSegment) {
+    // Test NAK PDU with one segment request
+    Pdu::NakPdu txPdu;
+    const CfdpFileSize scopeStart = 0;
+    const CfdpFileSize scopeEnd = 4096;
+    const CfdpFileSize segStart = 1024;
+    const CfdpFileSize segEnd = 2048;
+
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, scopeStart, scopeEnd);
+
+    ASSERT_TRUE(txPdu.addSegment(segStart, segEnd));
+    EXPECT_EQ(1, txPdu.getNumSegments());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
+    EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
+    EXPECT_EQ(1, rxPdu.getNumSegments());
+    EXPECT_EQ(segStart, rxPdu.getSegment(0).offsetStart);
+    EXPECT_EQ(segEnd, rxPdu.getSegment(0).offsetEnd);
+}
+
+TEST_F(PduTest, NakWithMultipleSegments) {
+    // Test NAK PDU with multiple segment requests
+    Pdu::NakPdu txPdu;
+    const CfdpFileSize scopeStart = 0;
+    const CfdpFileSize scopeEnd = 10000;
+
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, scopeStart, scopeEnd);
+
+    // Add 5 segments representing gaps in received data
+    ASSERT_TRUE(txPdu.addSegment(100, 200));
+    ASSERT_TRUE(txPdu.addSegment(500, 750));
+    ASSERT_TRUE(txPdu.addSegment(1000, 1500));
+    ASSERT_TRUE(txPdu.addSegment(3000, 4000));
+    ASSERT_TRUE(txPdu.addSegment(8000, 9000));
+    EXPECT_EQ(5, txPdu.getNumSegments());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
+    EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
+    EXPECT_EQ(5, rxPdu.getNumSegments());
+
+    // Verify each segment
+    EXPECT_EQ(100, rxPdu.getSegment(0).offsetStart);
+    EXPECT_EQ(200, rxPdu.getSegment(0).offsetEnd);
+    EXPECT_EQ(500, rxPdu.getSegment(1).offsetStart);
+    EXPECT_EQ(750, rxPdu.getSegment(1).offsetEnd);
+    EXPECT_EQ(1000, rxPdu.getSegment(2).offsetStart);
+    EXPECT_EQ(1500, rxPdu.getSegment(2).offsetEnd);
+    EXPECT_EQ(3000, rxPdu.getSegment(3).offsetStart);
+    EXPECT_EQ(4000, rxPdu.getSegment(3).offsetEnd);
+    EXPECT_EQ(8000, rxPdu.getSegment(4).offsetStart);
+    EXPECT_EQ(9000, rxPdu.getSegment(4).offsetEnd);
+}
+
+TEST_F(PduTest, NakWithMaxSegments) {
+    // Test NAK PDU with maximum number of segments (58)
+    Pdu::NakPdu txPdu;
+    const CfdpFileSize scopeStart = 0;
+    const CfdpFileSize scopeEnd = 100000;
+
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, scopeStart, scopeEnd);
+
+    // Add 58 segments (CF_NAK_MAX_SEGMENTS)
+    for (U8 i = 0; i < 58; i++) {
+        CfdpFileSize start = i * 1000;
+        CfdpFileSize end = start + 500;
+        ASSERT_TRUE(txPdu.addSegment(start, end)) << "Failed to add segment " << static_cast<int>(i);
+    }
+    EXPECT_EQ(58, txPdu.getNumSegments());
+
+    // Try to add one more - should fail
+    EXPECT_FALSE(txPdu.addSegment(60000, 61000));
+    EXPECT_EQ(58, txPdu.getNumSegments());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
+    EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
+    EXPECT_EQ(58, rxPdu.getNumSegments());
+
+    // Spot check a few segments
+    EXPECT_EQ(0, rxPdu.getSegment(0).offsetStart);
+    EXPECT_EQ(500, rxPdu.getSegment(0).offsetEnd);
+    EXPECT_EQ(10000, rxPdu.getSegment(10).offsetStart);
+    EXPECT_EQ(10500, rxPdu.getSegment(10).offsetEnd);
+    EXPECT_EQ(57000, rxPdu.getSegment(57).offsetStart);
+    EXPECT_EQ(57500, rxPdu.getSegment(57).offsetEnd);
+}
+
+TEST_F(PduTest, NakClearSegments) {
+    // Test clearSegments() functionality
+    Pdu::NakPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                 1, 2, 3, 0, 4096);
+
+    // Add segments
+    ASSERT_TRUE(pdu.addSegment(100, 200));
+    ASSERT_TRUE(pdu.addSegment(300, 400));
+    EXPECT_EQ(2, pdu.getNumSegments());
+
+    // Clear and verify
+    pdu.clearSegments();
+    EXPECT_EQ(0, pdu.getNumSegments());
+
+    // Should be able to add new segments
+    ASSERT_TRUE(pdu.addSegment(500, 600));
+    EXPECT_EQ(1, pdu.getNumSegments());
+}
+
+TEST_F(PduTest, NakBufferSizeWithSegments) {
+    // Test that bufferSize() correctly accounts for segments
+    Pdu::NakPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                 1, 2, 3, 0, 4096);
+
+    U32 baseSizeNoSegments = pdu.bufferSize();
+
+    // Add one segment
+    ASSERT_TRUE(pdu.addSegment(100, 200));
+    U32 sizeWithOneSegment = pdu.bufferSize();
+    EXPECT_EQ(baseSizeNoSegments + 8, sizeWithOneSegment);  // 2 * sizeof(CfdpFileSize) = 8
+
+    // Add another segment
+    ASSERT_TRUE(pdu.addSegment(300, 400));
+    U32 sizeWithTwoSegments = pdu.bufferSize();
+    EXPECT_EQ(baseSizeNoSegments + 16, sizeWithTwoSegments);  // 4 * sizeof(CfdpFileSize) = 16
 }
 
 int main(int argc, char** argv) {

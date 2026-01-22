@@ -36,6 +36,12 @@ TEST(Pdu, AckPdu) {
     delete tester;
 }
 
+TEST(Pdu, NakPdu) {
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testNakPdu();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -190,6 +190,20 @@ bool CfdpManagerTester::deserializeAckPdu(
     return true;
 }
 
+bool CfdpManagerTester::deserializeNakPdu(
+    const Fw::Buffer& pduBuffer,
+    Cfdp::Pdu::NakPdu& nakPdu
+) {
+    // Use the NakPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = nakPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        std::cout << "deserializeNakPdu failed with status: " << status << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 void CfdpManagerTester::validateMetadataPdu(
     const Cfdp::Pdu::MetadataPdu& metadataPdu,
     U32 expectedSourceEid,
@@ -373,6 +387,45 @@ void CfdpManagerTester::validateAckPdu(
     EXPECT_EQ(expectedDirectiveSubtypeCode, ackPdu.getDirectiveSubtypeCode()) << "Directive subtype code mismatch";
     EXPECT_EQ(expectedConditionCode, ackPdu.getConditionCode()) << "Condition code mismatch";
     EXPECT_EQ(expectedTransactionStatus, ackPdu.getTransactionStatus()) << "Transaction status mismatch";
+}
+
+void CfdpManagerTester::validateNakPdu(
+    const Cfdp::Pdu::NakPdu& nakPdu,
+    U32 expectedSourceEid,
+    U32 expectedDestEid,
+    U32 expectedTransactionSeq,
+    CfdpFileSize expectedScopeStart,
+    CfdpFileSize expectedScopeEnd,
+    U8 expectedNumSegments,
+    const Cfdp::Pdu::SegmentRequest* expectedSegments
+) {
+    // Validate header fields
+    const Cfdp::Pdu::Header& header = nakPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_NAK, header.getType()) << "Expected T_NAK type";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
+
+    // Validate NAK-specific fields
+    EXPECT_EQ(expectedScopeStart, nakPdu.getScopeStart()) << "Scope start mismatch";
+    EXPECT_EQ(expectedScopeEnd, nakPdu.getScopeEnd()) << "Scope end mismatch";
+
+    // Validate segment requests if expectedNumSegments > 0
+    if (expectedNumSegments > 0) {
+        EXPECT_EQ(expectedNumSegments, nakPdu.getNumSegments())
+            << "Expected " << static_cast<int>(expectedNumSegments) << " segment requests";
+
+        // Validate each segment if expectedSegments array is provided
+        if (expectedSegments != nullptr) {
+            for (U8 i = 0; i < expectedNumSegments; i++) {
+                EXPECT_EQ(expectedSegments[i].offsetStart, nakPdu.getSegment(i).offsetStart)
+                    << "Segment " << static_cast<int>(i) << " start offset mismatch";
+                EXPECT_EQ(expectedSegments[i].offsetEnd, nakPdu.getSegment(i).offsetEnd)
+                    << "Segment " << static_cast<int>(i) << " end offset mismatch";
+            }
+        }
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -723,6 +776,105 @@ void CfdpManagerTester::testAckPdu() {
                   expectedSubtypeCode,
                   static_cast<Cfdp::ConditionCode>(testConditionCode),
                   static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
+}
+
+void CfdpManagerTester::testNakPdu() {
+    // Test pattern:
+    // 1. Setup transaction
+    // 2. Construct NAK PDU with scope_start and scope_end
+    // 3. Invoke CF_CFDP_SendNak()
+    // 4. Capture PDU from dataOut and validate
+
+    // Step 1: Configure transaction for NAK PDU emission
+    const char* srcFile = "/tmp/test_nak.bin";
+    const char* dstFile = "/tmp/dest_nak.bin";
+    const CfdpFileSize fileSize = 4096;
+    const U8 channelId = 0;
+    const U32 testSequenceId = 99;
+    const U32 testPeerId = 200;
+
+    CF_Transaction_t* txn = setupTestTransaction(
+        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        channelId,
+        srcFile,
+        dstFile,
+        fileSize,
+        testSequenceId,
+        testPeerId
+    );
+    ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
+
+    // Clear port history before test
+    this->clearHistory();
+
+    // Step 2: Construct PDU buffer with NAK header
+    CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
+        txn,
+        CF_CFDP_FileDirective_NAK,
+        component.getLocalEidParam(),  // NAK sent from receiver (local)
+        testPeerId,                     // to sender (peer)
+        1,  // towards sender
+        testSequenceId,
+        0   // directive PDU (not file data)
+    );
+    ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
+
+    // Step 3: Setup NAK-specific fields
+    CF_Logical_PduNak_t* nak = &ph->int_header.nak;
+    const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
+    const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
+    nak->scope_start = testScopeStart;
+    nak->scope_end = testScopeEnd;
+
+    // Add segment requests indicating specific missing data ranges
+    // Simulates receiver requesting retransmission of 3 gaps
+    nak->segment_list.num_segments = 3;
+
+    // Gap 1: Missing data from 512-1024
+    nak->segment_list.segments[0].offset_start = 512;
+    nak->segment_list.segments[0].offset_end = 1024;
+
+    // Gap 2: Missing data from 2048-2560
+    nak->segment_list.segments[1].offset_start = 2048;
+    nak->segment_list.segments[1].offset_end = 2560;
+
+    // Gap 3: Missing data from 3584-4096
+    nak->segment_list.segments[2].offset_start = 3584;
+    nak->segment_list.segments[2].offset_end = 4096;
+
+    // Step 4: Invoke CF_CFDP_SendNak to emit NAK PDU
+    CfdpStatus::T status = CF_CFDP_SendNak(txn, ph);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendNak failed";
+
+    // Step 5: Verify PDU was sent through dataOut port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+
+    // Get encoded PDU buffer
+    const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
+    ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
+
+    // Step 6: Deserialize complete NAK PDU (header + body)
+    Cfdp::Pdu::NakPdu nakPdu;
+    bool nakOk = deserializeNakPdu(pduBuffer, nakPdu);
+    ASSERT_TRUE(nakOk) << "Failed to deserialize NAK PDU";
+
+    // Step 7: Validate all PDU fields including segment requests
+    // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
+    // requesting retransmission of missing data
+
+    // Define expected segment requests
+    Cfdp::Pdu::SegmentRequest expectedSegments[3];
+    expectedSegments[0].offsetStart = 512;
+    expectedSegments[0].offsetEnd = 1024;
+    expectedSegments[1].offsetStart = 2048;
+    expectedSegments[1].offsetEnd = 2560;
+    expectedSegments[2].offsetStart = 3584;
+    expectedSegments[2].offsetEnd = 4096;
+
+    // Validate all fields including segments
+    validateNakPdu(nakPdu, component.getLocalEidParam(), testPeerId,
+                  testSequenceId, testScopeStart, testScopeEnd,
+                  3, expectedSegments);
 }
 
 }  // namespace Ccsds

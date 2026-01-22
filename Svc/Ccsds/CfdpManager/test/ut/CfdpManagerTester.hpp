@@ -62,6 +62,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating an ACK PDU
     void testAckPdu();
 
+    //! Test generating a NAK PDU
+    void testNakPdu();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -155,6 +158,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::Pdu::AckPdu& ackPdu
     );
 
+    //! Helper to deserialize NAK PDU
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
+    //! @param nakPdu Output: deserialized NAK PDU
+    //! @return True if deserialization successful
+    bool deserializeNakPdu(
+        const Fw::Buffer& pduBuffer,
+        Cfdp::Pdu::NakPdu& nakPdu
+    );
+
     //! Helper to validate Metadata PDU fields
     //! @param metadataPdu Deserialized metadata PDU to validate
     //! @param expectedSourceEid Expected source entity ID
@@ -245,6 +257,26 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U8 expectedDirectiveSubtypeCode,
         Cfdp::ConditionCode expectedConditionCode,
         Cfdp::AckTxnStatus expectedTransactionStatus
+    );
+
+    //! Helper to validate NAK PDU fields
+    //! @param nakPdu Deserialized NAK PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedScopeStart Expected scope start offset
+    //! @param expectedScopeEnd Expected scope end offset
+    //! @param expectedNumSegments Expected number of segment requests (0 = skip segment validation)
+    //! @param expectedSegments Optional array of expected segment requests (only used if expectedNumSegments > 0)
+    void validateNakPdu(
+        const Cfdp::Pdu::NakPdu& nakPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        CfdpFileSize expectedScopeStart,
+        CfdpFileSize expectedScopeEnd,
+        U8 expectedNumSegments = 0,
+        const Cfdp::Pdu::SegmentRequest* expectedSegments = nullptr
     );
 
   private:

@@ -16,23 +16,39 @@ void Pdu::NakPdu::initialize(Direction direction,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid,
-                              U32 scopeStart,
-                              U32 scopeEnd) {
+                              CfdpFileSize scopeStart,
+                              CfdpFileSize scopeEnd) {
     // Initialize header with T_NAK type
     this->m_header.initialize(T_NAK, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_scopeStart = scopeStart;
     this->m_scopeEnd = scopeEnd;
+    this->m_numSegments = 0;
+}
+
+bool Pdu::NakPdu::addSegment(CfdpFileSize offsetStart, CfdpFileSize offsetEnd) {
+    if (this->m_numSegments >= CF_NAK_MAX_SEGMENTS) {
+        return false;
+    }
+    this->m_segments[this->m_numSegments].offsetStart = offsetStart;
+    this->m_segments[this->m_numSegments].offsetEnd = offsetEnd;
+    this->m_numSegments++;
+    return true;
+}
+
+void Pdu::NakPdu::clearSegments() {
+    this->m_numSegments = 0;
 }
 
 U32 Pdu::NakPdu::bufferSize() const {
     U32 size = this->m_header.bufferSize();
 
     // Directive code: 1 byte (FILE_DIRECTIVE_NAK)
-    // Scope start: 4 bytes
-    // Scope end: 4 bytes
-    // Note: This implementation uses simplified NAK with only scope, no segment requests
-    size += sizeof(U8) + sizeof(U32) + sizeof(U32);
+    // Scope start: sizeof(CfdpFileSize) bytes
+    // Scope end: sizeof(CfdpFileSize) bytes
+    // Segment requests: m_numSegments * (2 * sizeof(CfdpFileSize)) bytes
+    size += static_cast<U32>(sizeof(U8) + sizeof(CfdpFileSize) + sizeof(CfdpFileSize));
+    size += static_cast<U32>(this->m_numSegments * (sizeof(CfdpFileSize) + sizeof(CfdpFileSize)));
 
     return size;
 }
@@ -103,20 +119,33 @@ Fw::SerializeStatus Pdu::NakPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
-    // Scope start (32-bit offset)
+    // Scope start (file offset)
     status = serialBuffer.serializeFrom(this->m_scopeStart);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    // Scope end (32-bit offset)
+    // Scope end (file offset)
     status = serialBuffer.serializeFrom(this->m_scopeEnd);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    // Note: This implementation uses simplified NAK with only scope
-    // No segment request pairs are included
+    // Serialize segment requests
+    for (U8 i = 0; i < this->m_numSegments; i++) {
+        // Segment start offset
+        status = serialBuffer.serializeFrom(this->m_segments[i].offsetStart);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+
+        // Segment end offset
+        status = serialBuffer.serializeFrom(this->m_segments[i].offsetEnd);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+    }
+
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -125,20 +154,45 @@ Fw::SerializeStatus Pdu::NakPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
 
     // Directive code already read by fromBuffer()
 
-    // Scope start (32-bit offset)
+    // Scope start (file offset)
     Fw::SerializeStatus status = serialBuffer.deserializeTo(this->m_scopeStart);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    // Scope end (32-bit offset)
+    // Scope end (file offset)
     status = serialBuffer.deserializeTo(this->m_scopeEnd);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    // Note: This implementation uses simplified NAK with only scope
-    // No segment request pairs are parsed
+    // Calculate number of segment requests from remaining buffer size
+    // Each segment is 2 * sizeof(CfdpFileSize) bytes
+    Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
+    U32 segmentSize = sizeof(CfdpFileSize) + sizeof(CfdpFileSize);
+    U32 numSegsCalculated = static_cast<U32>(remainingBytes / segmentSize);
+    this->m_numSegments = static_cast<U8>(numSegsCalculated);
+
+    // Limit to max segments
+    if (this->m_numSegments > CF_NAK_MAX_SEGMENTS) {
+        this->m_numSegments = CF_NAK_MAX_SEGMENTS;
+    }
+
+    // Deserialize segment requests
+    for (U8 i = 0; i < this->m_numSegments; i++) {
+        // Segment start offset
+        status = serialBuffer.deserializeTo(this->m_segments[i].offsetStart);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+
+        // Segment end offset
+        status = serialBuffer.deserializeTo(this->m_segments[i].offsetEnd);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+    }
+
     return Fw::FW_SERIALIZE_OK;
 }
 
