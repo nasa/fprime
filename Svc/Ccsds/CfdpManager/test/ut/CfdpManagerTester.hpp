@@ -131,6 +131,58 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::Pdu::EofPdu& eofPdu
     );
 
+    //! Helper to validate Metadata PDU fields
+    //! @param metadataPdu Deserialized metadata PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedFileSize Expected file size
+    //! @param expectedSourceFilename Expected source filename
+    //! @param expectedDestFilename Expected destination filename
+    void validateMetadataPdu(
+        const Cfdp::Pdu::MetadataPdu& metadataPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        CfdpFileSize expectedFileSize,
+        const char* expectedSourceFilename,
+        const char* expectedDestFilename
+    );
+
+    //! Helper to validate File Data PDU fields
+    //! @param fileDataPdu Deserialized file data PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedOffset Expected file offset
+    //! @param expectedDataSize Expected data size
+    //! @param filename Source file to read expected data from
+    void validateFileDataPdu(
+        const Cfdp::Pdu::FileDataPdu& fileDataPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        U32 expectedOffset,
+        U16 expectedDataSize,
+        const char* filename
+    );
+
+    //! Helper to validate EOF PDU fields
+    //! @param eofPdu Deserialized EOF PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedConditionCode Expected condition code
+    //! @param expectedFileSize Expected file size
+    void validateEofPdu(
+        const Cfdp::Pdu::EofPdu& eofPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        Cfdp::ConditionCode expectedConditionCode,
+        CfdpFileSize expectedFileSize
+    );
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
