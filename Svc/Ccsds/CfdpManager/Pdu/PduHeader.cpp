@@ -1,35 +1,30 @@
 // ======================================================================
-// \title  CfdpPduHeader.cpp
+// \title  PduHeader.cpp
 // \author campuzan
 // \brief  cpp file for CFDP PDU Header
-//
-// \copyright
-// Copyright 2025, California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-void CfdpPdu::Header::initialize(Type type,
-                                 CfdpDirection direction,
-                                 CfdpTransmissionMode txmMode,
-                                 CfdpEntityId sourceEid,
-                                 CfdpTransactionSeq transactionSeq,
-                                 CfdpEntityId destEid) {
+void Pdu::Header::initialize(Type type,
+                              Direction direction,
+                              TransmissionMode txmMode,
+                              CfdpEntityId sourceEid,
+                              CfdpTransactionSeq transactionSeq,
+                              CfdpEntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
-    this->m_pduType = (type == T_FILE_DATA) ? CFDP_PDU_TYPE_FILE_DATA : CFDP_PDU_TYPE_DIRECTIVE;
+    this->m_pduType = (type == T_FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_txmMode = txmMode;
-    this->m_crcFlag = CFDP_CRC_NOT_PRESENT;  // CRC not currently supported
-    this->m_largeFileFlag = CFDP_LARGE_FILE_32_BIT;  // 32-bit file sizes
+    this->m_crcFlag = CRC_NOT_PRESENT;  // CRC not currently supported
+    this->m_largeFileFlag = LARGE_FILE_32_BIT;  // 32-bit file sizes
     this->m_segmentationControl = 0;
     this->m_segmentMetadataFlag = 0;
     this->m_pduDataLength = 0;  // To be set later
@@ -81,7 +76,7 @@ static U64 decodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U8 decodeSize, Fw
     return value;
 }
 
-U32 CfdpPdu::Header::bufferSize() const {
+U32 Pdu::Header::bufferSize() const {
     // Fixed portion: flags(1) + length(2) + eidTsnLengths(1) = 4 bytes
     U32 size = 4;
 
@@ -97,7 +92,7 @@ U32 CfdpPdu::Header::bufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus CfdpPdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus Pdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     Fw::SerializeStatus status;
 
     // Variable-size entity IDs and transaction sequence number based on actual values
@@ -166,7 +161,7 @@ Fw::SerializeStatus CfdpPdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuff
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
     Fw::SerializeStatus status;
 
     // Byte 0: flags
@@ -177,11 +172,11 @@ Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBu
     }
 
     this->m_version = (flags >> 5) & 0x07;
-    this->m_pduType = static_cast<CfdpPduType>((flags >> 4) & 0x01);
-    this->m_direction = static_cast<CfdpDirection>((flags >> 3) & 0x01);
-    this->m_txmMode = static_cast<CfdpTransmissionMode>((flags >> 2) & 0x01);
-    this->m_crcFlag = static_cast<CfdpCrcFlag>((flags >> 1) & 0x01);
-    this->m_largeFileFlag = static_cast<CfdpLargeFileFlag>(flags & 0x01);
+    this->m_pduType = static_cast<PduType>((flags >> 4) & 0x01);
+    this->m_direction = static_cast<Direction>((flags >> 3) & 0x01);
+    this->m_txmMode = static_cast<TransmissionMode>((flags >> 2) & 0x01);
+    this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
+    this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
 
     // Bytes 1-2: PDU data length
     status = serialBuffer.deserializeTo(this->m_pduDataLength);
@@ -223,7 +218,7 @@ Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBu
 
     // Don't set m_type yet - it will be determined by the directive code for directive PDUs
     // or set to T_FILE_DATA for file data PDUs
-    if (this->m_pduType == CFDP_PDU_TYPE_FILE_DATA) {
+    if (this->m_pduType == PDU_TYPE_FILE_DATA) {
         this->m_type = T_FILE_DATA;
     } else {
         // For directive PDUs, type will be set when directive code is read
@@ -233,5 +228,6 @@ Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBu
     return Fw::FW_SERIALIZE_OK;
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

@@ -6,7 +6,7 @@
 
 #include "CfdpManagerTester.hpp"
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <cstring>
 
@@ -100,7 +100,7 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
 
 bool CfdpManagerTester::deserializePduHeader(
     const Fw::Buffer& pduBuffer,
-    CfdpPdu::Header& header
+    Cfdp::Pdu::Header& header
 ) {
     // Copy buffer data for deserialization
     U8 buffer[CF_MAX_PDU_SIZE];
@@ -119,7 +119,7 @@ bool CfdpManagerTester::deserializePduHeader(
 
 bool CfdpManagerTester::deserializeMetadataPdu(
     const Fw::Buffer& pduBuffer,
-    CfdpPdu::MetadataPdu& metadataPdu
+    Cfdp::Pdu::MetadataPdu& metadataPdu
 ) {
     // Use the MetadataPdu's fromBuffer() method to deserialize everything
     Fw::SerializeStatus status = metadataPdu.fromBuffer(pduBuffer);
@@ -176,22 +176,22 @@ void CfdpManagerTester::testMetaDataPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Step 4: Deserialize complete Metadata PDU (header + body)
-    CfdpPdu::MetadataPdu metadataPdu;
+    Cfdp::Pdu::MetadataPdu metadataPdu;
     bool metadataOk = deserializeMetadataPdu(pduBuffer, metadataPdu);
     ASSERT_TRUE(metadataOk) << "Failed to deserialize Metadata PDU";
 
     // Validate header fields using getters (no manual bit extraction needed)
-    const CfdpPdu::Header& header = metadataPdu.asHeader();
-    EXPECT_EQ(CfdpPdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
-    EXPECT_EQ(CFDP_DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(CFDP_TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    const Cfdp::Pdu::Header& header = metadataPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
+    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
     EXPECT_EQ(component.getLocalEidParam(), header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(testPeerId, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(testSequenceId, header.getTransactionSeq()) << "Transaction sequence mismatch";
 
     // Step 5: Validate metadata fields using getters
     EXPECT_EQ(fileSize, metadataPdu.getFileSize()) << "File size mismatch";
-    EXPECT_EQ(CFDP_CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
+    EXPECT_EQ(Cfdp::CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
     EXPECT_EQ(0, metadataPdu.getClosureRequested()) << "Class 1 should not request closure";
 
     // Validate source filename (use memcmp with length, not STREQ, since CFDP uses LV not null-terminated)

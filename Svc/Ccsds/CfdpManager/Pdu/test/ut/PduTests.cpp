@@ -1,23 +1,18 @@
 // ======================================================================
-// \title  CfdpPduTests.cpp
+// \title  PduTests.cpp
 // \author campuzan
 // \brief  Unit tests for CFDP PDU classes
-//
-// \copyright
-// Copyright 2025, California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <gtest/gtest.h>
 #include <cstring>
 
 using namespace Svc::Ccsds;
+using namespace Svc::Ccsds::Cfdp;
 
 // Test fixture for CFDP PDU tests
-class CfdpPduTest : public ::testing::Test {
+class PduTest : public ::testing::Test {
   protected:
     void SetUp() override {
         // Common setup
@@ -32,27 +27,27 @@ class CfdpPduTest : public ::testing::Test {
 // Header Tests
 // ======================================================================
 
-TEST_F(CfdpPduTest, HeaderBufferSize) {
-    CfdpPdu::Header header;
-    header.initialize(CfdpPdu::T_METADATA, CFDP_DIRECTION_TOWARD_RECEIVER,
-                     CFDP_TRANSMISSION_MODE_ACKNOWLEDGED, 123, 456, 789);
+TEST_F(PduTest, HeaderBufferSize) {
+    Pdu::Header header;
+    header.initialize(Pdu::T_METADATA, DIRECTION_TOWARD_RECEIVER,
+                     TRANSMISSION_MODE_ACKNOWLEDGED, 123, 456, 789);
 
     // Minimum header size with 1-byte EIDs and TSN
     // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(2) + tsn(2) + destEid(2) = 10
     ASSERT_GE(header.bufferSize(), 7U);
 }
 
-TEST_F(CfdpPduTest, HeaderRoundTrip) {
+TEST_F(PduTest, HeaderRoundTrip) {
     // Arrange
-    CfdpPdu::Header txHeader;
-    const CfdpDirection direction = CFDP_DIRECTION_TOWARD_SENDER;
-    const CfdpTransmissionMode txmMode = CFDP_TRANSMISSION_MODE_ACKNOWLEDGED;
+    Pdu::Header txHeader;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_ACKNOWLEDGED;
     const CfdpEntityId sourceEid = 10;
     const CfdpTransactionSeq transactionSeq = 20;
     const CfdpEntityId destEid = 30;
     const U16 pduDataLength = 100;
 
-    txHeader.initialize(CfdpPdu::T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
+    txHeader.initialize(Pdu::T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
     txHeader.setPduDataLength(pduDataLength);
 
     U8 buffer[256];
@@ -64,7 +59,7 @@ TEST_F(CfdpPduTest, HeaderRoundTrip) {
     // Act - Decode
     serialBuffer.resetSer();
     serialBuffer.fill();
-    CfdpPdu::Header rxHeader;
+    Pdu::Header rxHeader;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxHeader.fromSerialBuffer(serialBuffer));
 
     // Assert - Verify all fields
@@ -80,29 +75,29 @@ TEST_F(CfdpPduTest, HeaderRoundTrip) {
 // Metadata PDU Tests
 // ======================================================================
 
-TEST_F(CfdpPduTest, MetadataBufferSize) {
-    CfdpPdu::MetadataPdu pdu;
-    pdu.initialize(CFDP_DIRECTION_TOWARD_RECEIVER, CFDP_TRANSMISSION_MODE_ACKNOWLEDGED,
+TEST_F(PduTest, MetadataBufferSize) {
+    Pdu::MetadataPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
                    1, 2, 3, 1024, "src.txt", "dst.txt",
-                   CFDP_CHECKSUM_TYPE_MODULAR, 1);
+                   CHECKSUM_TYPE_MODULAR, 1);
 
     U32 size = pdu.bufferSize();
     // Should include header + directive + segmentation + filesize + 2 LVs
     ASSERT_GT(size, 0U);
 }
 
-TEST_F(CfdpPduTest, MetadataRoundTrip) {
+TEST_F(PduTest, MetadataRoundTrip) {
     // Arrange - Create and initialize transmit PDU
-    CfdpPdu::MetadataPdu txPdu;
-    const CfdpDirection direction = CFDP_DIRECTION_TOWARD_SENDER;
-    const CfdpTransmissionMode txmMode = CFDP_TRANSMISSION_MODE_ACKNOWLEDGED;
+    Pdu::MetadataPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_ACKNOWLEDGED;
     const CfdpEntityId sourceEid = 100;
     const CfdpTransactionSeq transactionSeq = 200;
     const CfdpEntityId destEid = 300;
     const U32 fileSize = 2048;
     const char* sourceFilename = "source_file.bin";
     const char* destFilename = "dest_file.bin";
-    const CfdpChecksumType checksumType = CFDP_CHECKSUM_TYPE_MODULAR;
+    const ChecksumType checksumType = CHECKSUM_TYPE_MODULAR;
     const U8 closureRequested = 1;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
@@ -123,7 +118,7 @@ TEST_F(CfdpPduTest, MetadataRoundTrip) {
     serialBuffer.fill();
 
     // Read header
-    CfdpPdu::Header rxHeader;
+    Pdu::Header rxHeader;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxHeader.fromSerialBuffer(serialBuffer));
 
     // Verify header fields
@@ -136,7 +131,7 @@ TEST_F(CfdpPduTest, MetadataRoundTrip) {
     // Read and verify directive code
     U8 directiveCode;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, serialBuffer.deserializeTo(directiveCode));
-    ASSERT_EQ(static_cast<U8>(CFDP_FILE_DIRECTIVE_METADATA), directiveCode);
+    ASSERT_EQ(static_cast<U8>(FILE_DIRECTIVE_METADATA), directiveCode);
 
     // Read segmentation control byte
     U8 segmentationControl;
@@ -168,11 +163,11 @@ TEST_F(CfdpPduTest, MetadataRoundTrip) {
     ASSERT_EQ(0, memcmp(destFilename, dstFilenameBuf, dstFilenameLen));
 }
 
-TEST_F(CfdpPduTest, MetadataEmptyFilenames) {
-    CfdpPdu::MetadataPdu pdu;
-    pdu.initialize(CFDP_DIRECTION_TOWARD_RECEIVER, CFDP_TRANSMISSION_MODE_ACKNOWLEDGED,
+TEST_F(PduTest, MetadataEmptyFilenames) {
+    Pdu::MetadataPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
                    1, 2, 3, 0, "", "",
-                   CFDP_CHECKSUM_TYPE_NULL_CHECKSUM, 0);
+                   CHECKSUM_TYPE_NULL_CHECKSUM, 0);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -181,15 +176,15 @@ TEST_F(CfdpPduTest, MetadataEmptyFilenames) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.toBuffer(txBuffer));
 }
 
-TEST_F(CfdpPduTest, MetadataLongFilenames) {
-    CfdpPdu::MetadataPdu pdu;
+TEST_F(PduTest, MetadataLongFilenames) {
+    Pdu::MetadataPdu pdu;
     // Test with maximum allowed filename length (CF_FILENAME_MAX_LEN = 200)
     const char* longSrc = "/very/long/path/to/source/file/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bin";
     const char* longDst = "/another/very/long/path/to/destination/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.dat";
 
-    pdu.initialize(CFDP_DIRECTION_TOWARD_RECEIVER, CFDP_TRANSMISSION_MODE_ACKNOWLEDGED,
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
                    1, 2, 3, 4096, longSrc, longDst,
-                   CFDP_CHECKSUM_TYPE_MODULAR, 1);
+                   CHECKSUM_TYPE_MODULAR, 1);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));

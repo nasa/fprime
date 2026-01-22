@@ -10,7 +10,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 
 namespace Svc {
 
@@ -95,7 +95,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return True if deserialization successful
     bool deserializePduHeader(
         const Fw::Buffer& pduBuffer,
-        CfdpPdu::Header& header
+        Cfdp::Pdu::Header& header
     );
 
     //! Helper to deserialize Metadata PDU
@@ -104,7 +104,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return True if deserialization successful
     bool deserializeMetadataPdu(
         const Fw::Buffer& pduBuffer,
-        CfdpPdu::MetadataPdu& metadataPdu
+        Cfdp::Pdu::MetadataPdu& metadataPdu
     );
 
   private:

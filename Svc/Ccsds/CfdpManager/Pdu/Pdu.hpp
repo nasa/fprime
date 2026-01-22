@@ -1,17 +1,11 @@
 // ======================================================================
-// \title  CfdpPdu.hpp
+// \title  Pdu.hpp
 // \author campuzan
 // \brief  hpp file for CFDP PDU classes
-//
-// \copyright
-// Copyright 2025, California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
-#ifndef Svc_Ccsds_CfdpPdu_HPP
-#define Svc_Ccsds_CfdpPdu_HPP
+#ifndef Svc_Ccsds_Cfdp_Pdu_HPP
+#define Svc_Ccsds_Cfdp_Pdu_HPP
 
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
@@ -23,107 +17,107 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 // CFDP File Directive Codes
 // Blue Book section 5.2, table 5-4
-enum CfdpFileDirective : U8 {
-    CFDP_FILE_DIRECTIVE_INVALID_MIN = 0,  // Minimum used to limit range
-    CFDP_FILE_DIRECTIVE_END_OF_FILE = 4,  // End of File
-    CFDP_FILE_DIRECTIVE_FIN = 5,          // Finished
-    CFDP_FILE_DIRECTIVE_ACK = 6,          // Acknowledge
-    CFDP_FILE_DIRECTIVE_METADATA = 7,     // Metadata
-    CFDP_FILE_DIRECTIVE_NAK = 8,          // Negative Acknowledge
-    CFDP_FILE_DIRECTIVE_PROMPT = 9,       // Prompt
-    CFDP_FILE_DIRECTIVE_KEEP_ALIVE = 12,  // Keep Alive
-    CFDP_FILE_DIRECTIVE_INVALID_MAX = 13  // Maximum used to limit range
+enum FileDirective : U8 {
+    FILE_DIRECTIVE_INVALID_MIN = 0,  // Minimum used to limit range
+    FILE_DIRECTIVE_END_OF_FILE = 4,  // End of File
+    FILE_DIRECTIVE_FIN = 5,          // Finished
+    FILE_DIRECTIVE_ACK = 6,          // Acknowledge
+    FILE_DIRECTIVE_METADATA = 7,     // Metadata
+    FILE_DIRECTIVE_NAK = 8,          // Negative Acknowledge
+    FILE_DIRECTIVE_PROMPT = 9,       // Prompt
+    FILE_DIRECTIVE_KEEP_ALIVE = 12,  // Keep Alive
+    FILE_DIRECTIVE_INVALID_MAX = 13  // Maximum used to limit range
 };
 
 // CFDP Condition Codes
 // Blue Book section 5.2.2, table 5-5
-enum CfdpConditionCode : U8 {
-    CFDP_CONDITION_CODE_NO_ERROR = 0,
-    CFDP_CONDITION_CODE_POS_ACK_LIMIT_REACHED = 1,
-    CFDP_CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED = 2,
-    CFDP_CONDITION_CODE_INVALID_TRANSMISSION_MODE = 3,
-    CFDP_CONDITION_CODE_FILESTORE_REJECTION = 4,
-    CFDP_CONDITION_CODE_FILE_CHECKSUM_FAILURE = 5,
-    CFDP_CONDITION_CODE_FILE_SIZE_ERROR = 6,
-    CFDP_CONDITION_CODE_NAK_LIMIT_REACHED = 7,
-    CFDP_CONDITION_CODE_INACTIVITY_DETECTED = 8,
-    CFDP_CONDITION_CODE_INVALID_FILE_STRUCTURE = 9,
-    CFDP_CONDITION_CODE_CHECK_LIMIT_REACHED = 10,
-    CFDP_CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE = 11,
-    CFDP_CONDITION_CODE_SUSPEND_REQUEST_RECEIVED = 14,
-    CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED = 15
+enum ConditionCode : U8 {
+    CONDITION_CODE_NO_ERROR = 0,
+    CONDITION_CODE_POS_ACK_LIMIT_REACHED = 1,
+    CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED = 2,
+    CONDITION_CODE_INVALID_TRANSMISSION_MODE = 3,
+    CONDITION_CODE_FILESTORE_REJECTION = 4,
+    CONDITION_CODE_FILE_CHECKSUM_FAILURE = 5,
+    CONDITION_CODE_FILE_SIZE_ERROR = 6,
+    CONDITION_CODE_NAK_LIMIT_REACHED = 7,
+    CONDITION_CODE_INACTIVITY_DETECTED = 8,
+    CONDITION_CODE_INVALID_FILE_STRUCTURE = 9,
+    CONDITION_CODE_CHECK_LIMIT_REACHED = 10,
+    CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE = 11,
+    CONDITION_CODE_SUSPEND_REQUEST_RECEIVED = 14,
+    CONDITION_CODE_CANCEL_REQUEST_RECEIVED = 15
 };
 
 // CFDP ACK Transaction Status
 // Blue Book section 5.2.4, table 5-8
-enum CfdpAckTxnStatus : U8 {
-    CFDP_ACK_TXN_STATUS_UNDEFINED = 0,
-    CFDP_ACK_TXN_STATUS_ACTIVE = 1,
-    CFDP_ACK_TXN_STATUS_TERMINATED = 2,
-    CFDP_ACK_TXN_STATUS_UNRECOGNIZED = 3
+enum AckTxnStatus : U8 {
+    ACK_TXN_STATUS_UNDEFINED = 0,
+    ACK_TXN_STATUS_ACTIVE = 1,
+    ACK_TXN_STATUS_TERMINATED = 2,
+    ACK_TXN_STATUS_UNRECOGNIZED = 3
 };
 
 // CFDP FIN Delivery Code
 // Blue Book section 5.2.3, table 5-7
-enum CfdpFinDeliveryCode : U8 {
-    CFDP_FIN_DELIVERY_CODE_COMPLETE = 0,    // Data complete
-    CFDP_FIN_DELIVERY_CODE_INCOMPLETE = 1   // Data incomplete
+enum FinDeliveryCode : U8 {
+    FIN_DELIVERY_CODE_COMPLETE = 0,    // Data complete
+    FIN_DELIVERY_CODE_INCOMPLETE = 1   // Data incomplete
 };
 
 // CFDP FIN File Status
 // Blue Book section 5.2.3, table 5-7
-enum CfdpFinFileStatus : U8 {
-    CFDP_FIN_FILE_STATUS_DISCARDED = 0,            // File discarded deliberately
-    CFDP_FIN_FILE_STATUS_DISCARDED_FILESTORE = 1,  // File discarded due to filestore rejection
-    CFDP_FIN_FILE_STATUS_RETAINED = 2,             // File retained successfully
-    CFDP_FIN_FILE_STATUS_UNREPORTED = 3            // File status unreported
+enum FinFileStatus : U8 {
+    FIN_FILE_STATUS_DISCARDED = 0,            // File discarded deliberately
+    FIN_FILE_STATUS_DISCARDED_FILESTORE = 1,  // File discarded due to filestore rejection
+    FIN_FILE_STATUS_RETAINED = 2,             // File retained successfully
+    FIN_FILE_STATUS_UNREPORTED = 3            // File status unreported
 };
 
 // CFDP Checksum Type
 // Blue Book section 5.2.5, table 5-9
-enum CfdpChecksumType : U8 {
-    CFDP_CHECKSUM_TYPE_MODULAR = 0,        // Modular checksum
-    CFDP_CHECKSUM_TYPE_CRC_32 = 1,         // CRC-32 (not currently supported)
-    CFDP_CHECKSUM_TYPE_NULL_CHECKSUM = 15  // Null checksum
+enum ChecksumType : U8 {
+    CHECKSUM_TYPE_MODULAR = 0,        // Modular checksum
+    CHECKSUM_TYPE_CRC_32 = 1,         // CRC-32 (not currently supported)
+    CHECKSUM_TYPE_NULL_CHECKSUM = 15  // Null checksum
 };
 
 // CFDP PDU Type
-enum CfdpPduType : U8 {
-    CFDP_PDU_TYPE_DIRECTIVE = 0,  // File directive PDU
-    CFDP_PDU_TYPE_FILE_DATA = 1   // File data PDU
+enum PduType : U8 {
+    PDU_TYPE_DIRECTIVE = 0,  // File directive PDU
+    PDU_TYPE_FILE_DATA = 1   // File data PDU
 };
 
 // CFDP Direction
-enum CfdpDirection : U8 {
-    CFDP_DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
-    CFDP_DIRECTION_TOWARD_SENDER = 1     // Toward file sender
+enum Direction : U8 {
+    DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
+    DIRECTION_TOWARD_SENDER = 1     // Toward file sender
 };
 
 // CFDP Transmission Mode
-enum CfdpTransmissionMode : U8 {
-    CFDP_TRANSMISSION_MODE_ACKNOWLEDGED = 0,    // Acknowledged (Class 2)
-    CFDP_TRANSMISSION_MODE_UNACKNOWLEDGED = 1   // Unacknowledged (Class 1)
+enum TransmissionMode : U8 {
+    TRANSMISSION_MODE_ACKNOWLEDGED = 0,    // Acknowledged (Class 2)
+    TRANSMISSION_MODE_UNACKNOWLEDGED = 1   // Unacknowledged (Class 1)
 };
 
 // CFDP CRC Flag
-enum CfdpCrcFlag : U8 {
-    CFDP_CRC_NOT_PRESENT = 0,  // CRC not present
-    CFDP_CRC_PRESENT = 1       // CRC present
+enum CrcFlag : U8 {
+    CRC_NOT_PRESENT = 0,  // CRC not present
+    CRC_PRESENT = 1       // CRC present
 };
 
 // CFDP Large File Flag
-enum CfdpLargeFileFlag : U8 {
-    CFDP_LARGE_FILE_32_BIT = 0,  // 32-bit file size
-    CFDP_LARGE_FILE_64_BIT = 1   // 64-bit file size
+enum LargeFileFlag : U8 {
+    LARGE_FILE_32_BIT = 0,  // 32-bit file size
+    LARGE_FILE_64_BIT = 1   // 64-bit file size
 };
 
-//! \class CfdpPdu
-//! \brief A CFDP PDU following the FilePacket pattern
+//! \class Pdu
 //!
-union CfdpPdu {
+union Pdu {
   public:
     // ----------------------------------------------------------------------
     // Types
@@ -142,7 +136,7 @@ union CfdpPdu {
 
     //! The type of a PDU header (common to all PDUs)
     class Header {
-        friend union CfdpPdu;
+        friend union Pdu;
         friend class MetadataPdu;
         friend class FileDataPdu;
         friend class EofPdu;
@@ -158,19 +152,19 @@ union CfdpPdu {
         U8 m_version;
 
         //! PDU type
-        CfdpPduType m_pduType;
+        PduType m_pduType;
 
         //! Direction
-        CfdpDirection m_direction;
+        Direction m_direction;
 
         //! Transmission mode
-        CfdpTransmissionMode m_txmMode;
+        TransmissionMode m_txmMode;
 
         //! CRC flag
-        CfdpCrcFlag m_crcFlag;
+        CrcFlag m_crcFlag;
 
         //! Large file flag
-        CfdpLargeFileFlag m_largeFileFlag;
+        LargeFileFlag m_largeFileFlag;
 
         //! Segmentation control
         U8 m_segmentationControl;
@@ -196,8 +190,8 @@ union CfdpPdu {
 
         //! Initialize a PDU header
         void initialize(Type type,
-                       CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+                       Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid);
@@ -215,10 +209,10 @@ union CfdpPdu {
         Type getType() const { return this->m_type; }
 
         //! Get the direction
-        CfdpDirection getDirection() const { return this->m_direction; }
+        Direction getDirection() const { return this->m_direction; }
 
         //! Get the transmission mode
-        CfdpTransmissionMode getTxmMode() const { return this->m_txmMode; }
+        TransmissionMode getTxmMode() const { return this->m_txmMode; }
 
         //! Get the source entity ID
         CfdpEntityId getSourceEid() const { return this->m_sourceEid; }
@@ -238,7 +232,7 @@ union CfdpPdu {
 
     //! The type of a Metadata PDU
     class MetadataPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
@@ -248,7 +242,7 @@ union CfdpPdu {
         U8 m_closureRequested;
 
         //! Checksum type
-        CfdpChecksumType m_checksumType;
+        ChecksumType m_checksumType;
 
         //! File size
         CfdpFileSize m_fileSize;
@@ -267,15 +261,15 @@ union CfdpPdu {
 
       public:
         //! Initialize a Metadata PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
                        U32 fileSize,
                        const char* sourceFilename,
                        const char* destFilename,
-                       CfdpChecksumType checksumType,
+                       ChecksumType checksumType,
                        U8 closureRequested);
 
         //! Compute the buffer size needed
@@ -300,7 +294,7 @@ union CfdpPdu {
         const char* getDestFilename() const { return this->m_destFilename; }
 
         //! Get checksum type
-        CfdpChecksumType getChecksumType() const { return this->m_checksumType; }
+        ChecksumType getChecksumType() const { return this->m_checksumType; }
 
         //! Get closure requested flag
         U8 getClosureRequested() const { return this->m_closureRequested; }
@@ -315,7 +309,7 @@ union CfdpPdu {
 
     //! The type of a File Data PDU
     class FileDataPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
@@ -332,8 +326,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a File Data PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -369,14 +363,14 @@ union CfdpPdu {
 
     //! The type of an EOF PDU
     class EofPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
         Header m_header;
 
         //! Condition code
-        CfdpConditionCode m_conditionCode;
+        ConditionCode m_conditionCode;
 
         //! File checksum
         U32 m_checksum;
@@ -386,12 +380,12 @@ union CfdpPdu {
 
       public:
         //! Initialize an EOF PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       CfdpConditionCode conditionCode,
+                       ConditionCode conditionCode,
                        U32 checksum,
                        U32 fileSize);
 
@@ -405,7 +399,7 @@ union CfdpPdu {
         const Header& asHeader() const { return this->m_header; }
 
         //! Get condition code
-        CfdpConditionCode getConditionCode() const { return this->m_conditionCode; }
+        ConditionCode getConditionCode() const { return this->m_conditionCode; }
 
         //! Get checksum
         U32 getChecksum() const { return this->m_checksum; }
@@ -423,31 +417,31 @@ union CfdpPdu {
 
     //! The type of a Finished PDU
     class FinPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
         Header m_header;
 
         //! Condition code
-        CfdpConditionCode m_conditionCode;
+        ConditionCode m_conditionCode;
 
         //! Delivery code
-        CfdpFinDeliveryCode m_deliveryCode;
+        FinDeliveryCode m_deliveryCode;
 
         //! File status
-        CfdpFinFileStatus m_fileStatus;
+        FinFileStatus m_fileStatus;
 
       public:
         //! Initialize a Finished PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       CfdpConditionCode conditionCode,
-                       CfdpFinDeliveryCode deliveryCode,
-                       CfdpFinFileStatus fileStatus);
+                       ConditionCode conditionCode,
+                       FinDeliveryCode deliveryCode,
+                       FinFileStatus fileStatus);
 
         //! Compute the buffer size needed
         U32 bufferSize() const;
@@ -459,13 +453,13 @@ union CfdpPdu {
         const Header& asHeader() const { return this->m_header; }
 
         //! Get condition code
-        CfdpConditionCode getConditionCode() const { return this->m_conditionCode; }
+        ConditionCode getConditionCode() const { return this->m_conditionCode; }
 
         //! Get delivery code
-        CfdpFinDeliveryCode getDeliveryCode() const { return this->m_deliveryCode; }
+        FinDeliveryCode getDeliveryCode() const { return this->m_deliveryCode; }
 
         //! Get file status
-        CfdpFinFileStatus getFileStatus() const { return this->m_fileStatus; }
+        FinFileStatus getFileStatus() const { return this->m_fileStatus; }
 
       private:
         //! Initialize this FinPdu from a SerialBuffer
@@ -477,35 +471,35 @@ union CfdpPdu {
 
     //! The type of an ACK PDU
     class AckPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
         Header m_header;
 
         //! Directive being acknowledged
-        CfdpFileDirective m_directiveCode;
+        FileDirective m_directiveCode;
 
         //! Directive subtype code
         U8 m_directiveSubtypeCode;
 
         //! Condition code
-        CfdpConditionCode m_conditionCode;
+        ConditionCode m_conditionCode;
 
         //! Transaction status
-        CfdpAckTxnStatus m_transactionStatus;
+        AckTxnStatus m_transactionStatus;
 
       public:
         //! Initialize an ACK PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       CfdpFileDirective directiveCode,
+                       FileDirective directiveCode,
                        U8 directiveSubtypeCode,
-                       CfdpConditionCode conditionCode,
-                       CfdpAckTxnStatus transactionStatus);
+                       ConditionCode conditionCode,
+                       AckTxnStatus transactionStatus);
 
         //! Compute the buffer size needed
         U32 bufferSize() const;
@@ -517,16 +511,16 @@ union CfdpPdu {
         const Header& asHeader() const { return this->m_header; }
 
         //! Get directive code
-        CfdpFileDirective getDirectiveCode() const { return this->m_directiveCode; }
+        FileDirective getDirectiveCode() const { return this->m_directiveCode; }
 
         //! Get directive subtype code
         U8 getDirectiveSubtypeCode() const { return this->m_directiveSubtypeCode; }
 
         //! Get condition code
-        CfdpConditionCode getConditionCode() const { return this->m_conditionCode; }
+        ConditionCode getConditionCode() const { return this->m_conditionCode; }
 
         //! Get transaction status
-        CfdpAckTxnStatus getTransactionStatus() const { return this->m_transactionStatus; }
+        AckTxnStatus getTransactionStatus() const { return this->m_transactionStatus; }
 
       private:
         //! Initialize this AckPdu from a SerialBuffer
@@ -538,7 +532,7 @@ union CfdpPdu {
 
     //! The type of a NAK PDU
     class NakPdu {
-        friend union CfdpPdu;
+        friend union Pdu;
 
       private:
         //! The PDU header
@@ -552,8 +546,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a NAK PDU
-        void initialize(CfdpDirection direction,
-                       CfdpTransmissionMode txmMode,
+        void initialize(Direction direction,
+                       TransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -588,7 +582,7 @@ union CfdpPdu {
     // Constructor
     // ----------------------------------------------------------------------
 
-    CfdpPdu() { this->m_header.m_type = T_NONE; }
+    Pdu() { this->m_header.m_type = T_NONE; }
 
   public:
     // ----------------------------------------------------------------------
@@ -651,11 +645,11 @@ union CfdpPdu {
     //!
     void fromNakPdu(const NakPdu& nakPdu);
 
-    //! Get the buffer size needed to hold this CfdpPdu
+    //! Get the buffer size needed to hold this Pdu
     //!
     U32 bufferSize() const;
 
-    //! Convert this CfdpPdu to a Buffer
+    //! Convert this Pdu to a Buffer
     //!
     Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
 
@@ -702,7 +696,8 @@ union CfdpPdu {
     NakPdu m_nakPdu;
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif  // Svc_Ccsds_CfdpPdu_HPP
+#endif  // Svc_Ccsds_Cfdp_Pdu_HPP

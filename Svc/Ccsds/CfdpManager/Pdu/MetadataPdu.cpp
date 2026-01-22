@@ -1,33 +1,28 @@
 // ======================================================================
-// \title  CfdpMetadataPdu.cpp
+// \title  MetadataPdu.cpp
 // \author campuzan
 // \brief  cpp file for CFDP Metadata PDU
-//
-// \copyright
-// Copyright 2025, California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <config/CfdpCfg.hpp>
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-void CfdpPdu::MetadataPdu::initialize(CfdpDirection direction,
-                                      CfdpTransmissionMode txmMode,
-                                      CfdpEntityId sourceEid,
-                                      CfdpTransactionSeq transactionSeq,
-                                      CfdpEntityId destEid,
-                                      U32 fileSize,
-                                      const char* sourceFilename,
-                                      const char* destFilename,
-                                      CfdpChecksumType checksumType,
-                                      U8 closureRequested) {
+void Pdu::MetadataPdu::initialize(Direction direction,
+                                   TransmissionMode txmMode,
+                                   CfdpEntityId sourceEid,
+                                   CfdpTransactionSeq transactionSeq,
+                                   CfdpEntityId destEid,
+                                   U32 fileSize,
+                                   const char* sourceFilename,
+                                   const char* destFilename,
+                                   ChecksumType checksumType,
+                                   U8 closureRequested) {
     this->m_header.initialize(T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_fileSize = fileSize;
@@ -49,12 +44,12 @@ void CfdpPdu::MetadataPdu::initialize(CfdpDirection direction,
     this->m_closureRequested = closureRequested;
 }
 
-U32 CfdpPdu::MetadataPdu::bufferSize() const {
+U32 Pdu::MetadataPdu::bufferSize() const {
     U32 size = this->m_header.bufferSize();
 
     // Directive code: 1 byte
     // Segmentation control byte (includes closure requested and checksum type): 1 byte
-    // File size: 4 bytes (U32)
+    // File size: variable
     size += sizeof(U8) + sizeof(U8) + sizeof(CfdpFileSize);
 
     // Source filename LV: length(1) + value(n)
@@ -66,7 +61,7 @@ U32 CfdpPdu::MetadataPdu::bufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus CfdpPdu::MetadataPdu::toBuffer(Fw::Buffer& buffer) const {
+Fw::SerializeStatus Pdu::MetadataPdu::toBuffer(Fw::Buffer& buffer) const {
     Fw::SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
     Fw::SerializeStatus status = this->toSerialBuffer(serialBuffer);
     if (status == Fw::FW_SERIALIZE_OK) {
@@ -75,7 +70,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toBuffer(Fw::Buffer& buffer) const {
     return status;
 }
 
-Fw::SerializeStatus CfdpPdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
+Fw::SerializeStatus Pdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
     // Create SerialBuffer from Buffer
     Fw::SerialBuffer serialBuffer(const_cast<Fw::Buffer&>(buffer).getData(),
                                   const_cast<Fw::Buffer&>(buffer).getSize());
@@ -88,7 +83,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
     }
 
     // Validate this is a directive PDU (not file data)
-    if (this->m_header.m_pduType != CFDP_PDU_TYPE_DIRECTIVE) {
+    if (this->m_header.m_pduType != PDU_TYPE_DIRECTIVE) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -98,7 +93,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (directiveCode != CFDP_FILE_DIRECTIVE_METADATA) {
+    if (directiveCode != FILE_DIRECTIVE_METADATA) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -109,7 +104,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
     return this->fromSerialBuffer(serialBuffer);
 }
 
-Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
     // Calculate PDU data length (everything after header)
@@ -126,7 +121,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& seria
     }
 
     // Directive code (METADATA = 7)
-    U8 directiveCode = static_cast<U8>(CFDP_FILE_DIRECTIVE_METADATA);
+    U8 directiveCode = static_cast<U8>(FILE_DIRECTIVE_METADATA);
     status = serialBuffer.serializeFrom(directiveCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
@@ -180,7 +175,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& seria
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus CfdpPdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus Pdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
     // Directive code already read by union wrapper
@@ -194,7 +189,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& ser
 
     this->m_closureRequested = (segmentationControl >> 7) & 0x01;
     U8 checksumTypeVal = segmentationControl & 0x0F;
-    this->m_checksumType = static_cast<CfdpChecksumType>(checksumTypeVal);
+    this->m_checksumType = static_cast<ChecksumType>(checksumTypeVal);
 
     // File size
     status = serialBuffer.deserializeTo(this->m_fileSize);
@@ -241,5 +236,6 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& ser
     return Fw::FW_SERIALIZE_OK;
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

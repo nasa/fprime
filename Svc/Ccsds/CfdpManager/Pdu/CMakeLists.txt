@@ -12,8 +12,8 @@
 
 register_fprime_library(
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpPduHeader.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpMetadataPdu.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/PduHeader.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/MetadataPdu.cpp"
     DEPENDS
         Svc_Ccsds_Types
 )
@@ -21,5 +21,5 @@ register_fprime_library(
 ### Unit Tests ###
 register_fprime_ut(
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpPduTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PduTests.cpp"
 )
