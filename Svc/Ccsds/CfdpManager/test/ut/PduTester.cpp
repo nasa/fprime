@@ -73,110 +73,12 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
     return entry.fwBuffer;
 }
 
-bool CfdpManagerTester::deserializePduHeader(
+// ----------------------------------------------------------------------
+// PDU Verify Functions
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::verifyMetadataPdu(
     const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::Header& header
-) {
-    // Copy buffer data for deserialization
-    U8 buffer[CF_MAX_PDU_SIZE];
-    FwSizeType copySize = (pduBuffer.getSize() < CF_MAX_PDU_SIZE) ? pduBuffer.getSize() : CF_MAX_PDU_SIZE;
-    memcpy(buffer, pduBuffer.getData(), copySize);
-
-    Fw::SerialBuffer serialBuffer(buffer, copySize);
-    serialBuffer.fill();
-
-    Fw::SerializeStatus status = header.fromSerialBuffer(serialBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializePduHeader failed with status: " << status << std::endl;
-    }
-    return (status == Fw::FW_SERIALIZE_OK);
-}
-
-bool CfdpManagerTester::deserializeMetadataPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::MetadataPdu& metadataPdu
-) {
-    // Use the MetadataPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = metadataPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializeMetadataPdu failed with status: " << status << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool CfdpManagerTester::deserializeFileDataPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::FileDataPdu& fileDataPdu
-) {
-    // Use the FileDataPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = fileDataPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializeFileDataPdu failed with status: " << status << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool CfdpManagerTester::deserializeEofPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::EofPdu& eofPdu
-) {
-    // Use the EofPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = eofPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializeEofPdu failed with status: " << status << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool CfdpManagerTester::deserializeFinPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::FinPdu& finPdu
-) {
-    // Use the FinPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = finPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return false;
-    }
-
-    return true;
-}
-
-bool CfdpManagerTester::deserializeAckPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::AckPdu& ackPdu
-) {
-    // Use the AckPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = ackPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializeAckPdu failed with status: " << status << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool CfdpManagerTester::deserializeNakPdu(
-    const Fw::Buffer& pduBuffer,
-    Cfdp::Pdu::NakPdu& nakPdu
-) {
-    // Use the NakPdu's fromBuffer() method to deserialize everything
-    Fw::SerializeStatus status = nakPdu.fromBuffer(pduBuffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        std::cout << "deserializeNakPdu failed with status: " << status << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-void CfdpManagerTester::validateMetadataPdu(
-    const Cfdp::Pdu::MetadataPdu& metadataPdu,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -184,6 +86,11 @@ void CfdpManagerTester::validateMetadataPdu(
     const char* expectedSourceFilename,
     const char* expectedDestFilename
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::MetadataPdu metadataPdu;
+    Fw::SerializeStatus status = metadataPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize Metadata PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = metadataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
@@ -211,8 +118,8 @@ void CfdpManagerTester::validateMetadataPdu(
     EXPECT_EQ(0, memcmp(rxDstFilename, expectedDestFilename, dstLen)) << "Destination filename mismatch";
 }
 
-void CfdpManagerTester::validateFileDataPdu(
-    const Cfdp::Pdu::FileDataPdu& fileDataPdu,
+void CfdpManagerTester::verifyFileDataPdu(
+    const Fw::Buffer& pduBuffer,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -220,6 +127,11 @@ void CfdpManagerTester::validateFileDataPdu(
     U16 expectedDataSize,
     const char* filename
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::FileDataPdu fileDataPdu;
+    Fw::SerializeStatus status = fileDataPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize File Data PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = fileDataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
@@ -262,8 +174,8 @@ void CfdpManagerTester::validateFileDataPdu(
     delete[] expectedData;
 }
 
-void CfdpManagerTester::validateEofPdu(
-    const Cfdp::Pdu::EofPdu& eofPdu,
+void CfdpManagerTester::verifyEofPdu(
+    const Fw::Buffer& pduBuffer,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -271,6 +183,11 @@ void CfdpManagerTester::validateEofPdu(
     CfdpFileSize expectedFileSize,
     const char* sourceFilename
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::EofPdu eofPdu;
+    Fw::SerializeStatus status = eofPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize EOF PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = eofPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_EOF, header.getType()) << "Expected T_EOF type";
@@ -311,8 +228,8 @@ void CfdpManagerTester::validateEofPdu(
     EXPECT_EQ(expectedCrc, rxChecksum) << "File CRC mismatch";
 }
 
-void CfdpManagerTester::validateFinPdu(
-    const Cfdp::Pdu::FinPdu& finPdu,
+void CfdpManagerTester::verifyFinPdu(
+    const Fw::Buffer& pduBuffer,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -320,6 +237,11 @@ void CfdpManagerTester::validateFinPdu(
     Cfdp::FinDeliveryCode expectedDeliveryCode,
     Cfdp::FinFileStatus expectedFileStatus
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::FinPdu finPdu;
+    Fw::SerializeStatus status = finPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize FIN PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = finPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FIN, header.getType()) << "Expected T_FIN type";
@@ -335,8 +257,8 @@ void CfdpManagerTester::validateFinPdu(
     EXPECT_EQ(expectedFileStatus, finPdu.getFileStatus()) << "File status mismatch";
 }
 
-void CfdpManagerTester::validateAckPdu(
-    const Cfdp::Pdu::AckPdu& ackPdu,
+void CfdpManagerTester::verifyAckPdu(
+    const Fw::Buffer& pduBuffer,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -345,6 +267,11 @@ void CfdpManagerTester::validateAckPdu(
     Cfdp::ConditionCode expectedConditionCode,
     Cfdp::AckTxnStatus expectedTransactionStatus
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::AckPdu ackPdu;
+    Fw::SerializeStatus status = ackPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize ACK PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = ackPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_ACK, header.getType()) << "Expected T_ACK type";
@@ -360,8 +287,8 @@ void CfdpManagerTester::validateAckPdu(
     EXPECT_EQ(expectedTransactionStatus, ackPdu.getTransactionStatus()) << "Transaction status mismatch";
 }
 
-void CfdpManagerTester::validateNakPdu(
-    const Cfdp::Pdu::NakPdu& nakPdu,
+void CfdpManagerTester::verifyNakPdu(
+    const Fw::Buffer& pduBuffer,
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
@@ -370,6 +297,11 @@ void CfdpManagerTester::validateNakPdu(
     U8 expectedNumSegments,
     const Cfdp::Pdu::SegmentRequest* expectedSegments
 ) {
+    // Deserialize PDU
+    Cfdp::Pdu::NakPdu nakPdu;
+    Fw::SerializeStatus status = nakPdu.fromBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize NAK PDU";
+
     // Validate header fields
     const Cfdp::Pdu::Header& header = nakPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_NAK, header.getType()) << "Expected T_NAK type";
@@ -443,14 +375,9 @@ void CfdpManagerTester::testMetaDataPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Deserialize complete Metadata PDU (header + body)
-    Cfdp::Pdu::MetadataPdu metadataPdu;
-    bool metadataOk = deserializeMetadataPdu(pduBuffer, metadataPdu);
-    ASSERT_TRUE(metadataOk) << "Failed to deserialize Metadata PDU";
-
-    // Step 5: Validate all PDU fields
-    validateMetadataPdu(metadataPdu, component.getLocalEidParam(), testPeerId,
-                       testSequenceId, fileSize, srcFile, dstFile);
+    // Step 4: Verify Metadata PDU
+    verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
+                      testSequenceId, fileSize, srcFile, dstFile);
 }
 
 void CfdpManagerTester::testFileDataPdu() {
@@ -545,14 +472,9 @@ void CfdpManagerTester::testFileDataPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Deserialize complete File Data PDU (header + body)
-    Cfdp::Pdu::FileDataPdu fileDataPdu;
-    bool fileDataOk = deserializeFileDataPdu(pduBuffer, fileDataPdu);
-    ASSERT_TRUE(fileDataOk) << "Failed to deserialize File Data PDU";
-
-    // Step 6: Validate all PDU fields (validateFileDataPdu reads file to verify content)
-    validateFileDataPdu(fileDataPdu, component.getLocalEidParam(), testPeerId,
-                       testSequenceId, fileOffset, readSize, testFilePath);
+    // Step 6: Verify File Data PDU
+    verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
+                      testSequenceId, fileOffset, readSize, testFilePath);
 }
 
 void CfdpManagerTester::testEofPdu() {
@@ -615,14 +537,9 @@ void CfdpManagerTester::testEofPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Deserialize complete EOF PDU (header + body)
-    Cfdp::Pdu::EofPdu eofPdu;
-    bool eofOk = deserializeEofPdu(pduBuffer, eofPdu);
-    ASSERT_TRUE(eofOk) << "Failed to deserialize EOF PDU";
-
-    // Step 5: Validate all PDU fields including CRC
-    validateEofPdu(eofPdu, component.getLocalEidParam(), testPeerId,
-                  testSequenceId, testConditionCode, fileSize, srcFile);
+    // Step 4: Verify EOF PDU
+    verifyEofPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
+                 testSequenceId, testConditionCode, fileSize, srcFile);
 }
 
 void CfdpManagerTester::testFinPdu() {
@@ -670,19 +587,14 @@ void CfdpManagerTester::testFinPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Deserialize complete FIN PDU (header + body)
-    Cfdp::Pdu::FinPdu finPdu;
-    bool finOk = deserializeFinPdu(pduBuffer, finPdu);
-    ASSERT_TRUE(finOk) << "Failed to deserialize FIN PDU";
-
-    // Step 5: Validate all PDU fields
+    // Step 4: Verify FIN PDU
     // FIN PDU is sent from receiver (testPeerId) to sender (component.getLocalEidParam())
     // So source=testPeerId, dest=component.getLocalEidParam()
-    validateFinPdu(finPdu, testPeerId, component.getLocalEidParam(),
-                  testSequenceId,
-                  static_cast<Cfdp::ConditionCode>(testConditionCode),
-                  static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
-                  static_cast<Cfdp::FinFileStatus>(testFileStatus));
+    verifyFinPdu(pduBuffer, testPeerId, component.getLocalEidParam(),
+                 testSequenceId,
+                 static_cast<Cfdp::ConditionCode>(testConditionCode),
+                 static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
+                 static_cast<Cfdp::FinFileStatus>(testFileStatus));
 }
 
 void CfdpManagerTester::testAckPdu() {
@@ -731,22 +643,16 @@ void CfdpManagerTester::testAckPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Deserialize complete ACK PDU (header + body)
-    Cfdp::Pdu::AckPdu ackPdu;
-    bool ackOk = deserializeAckPdu(pduBuffer, ackPdu);
-    ASSERT_TRUE(ackOk) << "Failed to deserialize ACK PDU";
-
-    // Step 5: Validate all PDU fields
+    // Step 4: Verify ACK PDU
     // ACK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // acknowledging the EOF directive
-    // Note: Legacy engine sets subtype code to 1 for non-extended features (see CfdpEngine.cpp:433)
     const U8 expectedSubtypeCode = 1;
-    validateAckPdu(ackPdu, component.getLocalEidParam(), testPeerId,
-                  testSequenceId,
-                  static_cast<Cfdp::FileDirective>(testDirectiveCode),
-                  expectedSubtypeCode,
-                  static_cast<Cfdp::ConditionCode>(testConditionCode),
-                  static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
+    verifyAckPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
+                 testSequenceId,
+                 static_cast<Cfdp::FileDirective>(testDirectiveCode),
+                 expectedSubtypeCode,
+                 static_cast<Cfdp::ConditionCode>(testConditionCode),
+                 static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
 }
 
 void CfdpManagerTester::testNakPdu() {
@@ -824,12 +730,7 @@ void CfdpManagerTester::testNakPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 6: Deserialize complete NAK PDU (header + body)
-    Cfdp::Pdu::NakPdu nakPdu;
-    bool nakOk = deserializeNakPdu(pduBuffer, nakPdu);
-    ASSERT_TRUE(nakOk) << "Failed to deserialize NAK PDU";
-
-    // Step 7: Validate all PDU fields including segment requests
+    // Step 6: Verify NAK PDU
     // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // requesting retransmission of missing data
 
@@ -842,10 +743,10 @@ void CfdpManagerTester::testNakPdu() {
     expectedSegments[2].offsetStart = 3584;
     expectedSegments[2].offsetEnd = 4096;
 
-    // Validate all fields including segments
-    validateNakPdu(nakPdu, component.getLocalEidParam(), testPeerId,
-                  testSequenceId, testScopeStart, testScopeEnd,
-                  3, expectedSegments);
+    // Verify all fields including segments
+    verifyNakPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
+                 testSequenceId, testScopeStart, testScopeEnd,
+                 3, expectedSegments);
 }
 
 }  // namespace Ccsds

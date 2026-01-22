@@ -104,79 +104,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return Reference to the buffer
     const Fw::Buffer& getSentPduBuffer(FwIndexType index);
 
-    //! Helper to deserialize and validate PDU header
-    //! @param pduBuffer Buffer containing PDU bytes
-    //! @param header Output: deserialized header
-    //! @return True if deserialization successful
-    bool deserializePduHeader(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::Header& header
-    );
-
-    //! Helper to deserialize Metadata PDU
+    //! Helper to verify Metadata PDU (deserialize + validate)
     //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param metadataPdu Output: deserialized metadata PDU
-    //! @return True if deserialization successful
-    bool deserializeMetadataPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::MetadataPdu& metadataPdu
-    );
-
-    //! Helper to deserialize File Data PDU
-    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param fileDataPdu Output: deserialized file data PDU
-    //! @return True if deserialization successful
-    bool deserializeFileDataPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::FileDataPdu& fileDataPdu
-    );
-
-    //! Helper to deserialize EOF PDU
-    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param eofPdu Output: deserialized EOF PDU
-    //! @return True if deserialization successful
-    bool deserializeEofPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::EofPdu& eofPdu
-    );
-
-    //! Helper to deserialize FIN PDU
-    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param finPdu Output: deserialized FIN PDU
-    //! @return True if deserialization successful
-    bool deserializeFinPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::FinPdu& finPdu
-    );
-
-    //! Helper to deserialize ACK PDU
-    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param ackPdu Output: deserialized ACK PDU
-    //! @return True if deserialization successful
-    bool deserializeAckPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::AckPdu& ackPdu
-    );
-
-    //! Helper to deserialize NAK PDU
-    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
-    //! @param nakPdu Output: deserialized NAK PDU
-    //! @return True if deserialization successful
-    bool deserializeNakPdu(
-        const Fw::Buffer& pduBuffer,
-        Cfdp::Pdu::NakPdu& nakPdu
-    );
-
-    //! Helper to validate Metadata PDU fields
-    //! @param metadataPdu Deserialized metadata PDU to validate
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
     //! @param expectedFileSize Expected file size
     //! @param expectedSourceFilename Expected source filename
     //! @param expectedDestFilename Expected destination filename
-    void validateMetadataPdu(
-        const Cfdp::Pdu::MetadataPdu& metadataPdu,
+    void verifyMetadataPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
@@ -185,16 +122,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* expectedDestFilename
     );
 
-    //! Helper to validate File Data PDU fields
-    //! @param fileDataPdu Deserialized file data PDU to validate
+    //! Helper to verify File Data PDU (deserialize + validate)
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
     //! @param expectedOffset Expected file offset
     //! @param expectedDataSize Expected data size
     //! @param filename Source file to read expected data from
-    void validateFileDataPdu(
-        const Cfdp::Pdu::FileDataPdu& fileDataPdu,
+    void verifyFileDataPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
@@ -203,16 +140,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* filename
     );
 
-    //! Helper to validate EOF PDU fields
-    //! @param eofPdu Deserialized EOF PDU to validate
+    //! Helper to verify EOF PDU (deserialize + validate)
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
     //! @param expectedConditionCode Expected condition code
     //! @param expectedFileSize Expected file size
     //! @param sourceFilename Source file path to compute CRC for validation
-    void validateEofPdu(
-        const Cfdp::Pdu::EofPdu& eofPdu,
+    void verifyEofPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
@@ -221,16 +158,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* sourceFilename
     );
 
-    //! Helper to validate FIN PDU fields
-    //! @param finPdu Deserialized FIN PDU to validate
+    //! Helper to verify FIN PDU (deserialize + validate)
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
     //! @param expectedConditionCode Expected condition code
     //! @param expectedDeliveryCode Expected delivery code
     //! @param expectedFileStatus Expected file status
-    void validateFinPdu(
-        const Cfdp::Pdu::FinPdu& finPdu,
+    void verifyFinPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
@@ -239,8 +176,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::FinFileStatus expectedFileStatus
     );
 
-    //! Helper to validate ACK PDU fields
-    //! @param ackPdu Deserialized ACK PDU to validate
+    //! Helper to verify ACK PDU (deserialize + validate)
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
@@ -248,8 +185,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param expectedDirectiveSubtypeCode Expected directive subtype code
     //! @param expectedConditionCode Expected condition code
     //! @param expectedTransactionStatus Expected transaction status
-    void validateAckPdu(
-        const Cfdp::Pdu::AckPdu& ackPdu,
+    void verifyAckPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
@@ -259,8 +196,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::AckTxnStatus expectedTransactionStatus
     );
 
-    //! Helper to validate NAK PDU fields
-    //! @param nakPdu Deserialized NAK PDU to validate
+    //! Helper to verify NAK PDU (deserialize + validate)
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
     //! @param expectedSourceEid Expected source entity ID
     //! @param expectedDestEid Expected destination entity ID
     //! @param expectedTransactionSeq Expected transaction sequence number
@@ -268,8 +205,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param expectedScopeEnd Expected scope end offset
     //! @param expectedNumSegments Expected number of segment requests (0 = skip segment validation)
     //! @param expectedSegments Optional array of expected segment requests (only used if expectedNumSegments > 0)
-    void validateNakPdu(
-        const Cfdp::Pdu::NakPdu& nakPdu,
+    void verifyNakPdu(
+        const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
