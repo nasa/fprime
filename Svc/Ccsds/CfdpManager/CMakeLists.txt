@@ -39,5 +39,6 @@ register_fprime_ut(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerTestMain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerTester.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PduTester.cpp"
     UT_AUTO_HELPERS
 )
