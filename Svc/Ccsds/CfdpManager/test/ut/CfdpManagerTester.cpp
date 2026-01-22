@@ -131,6 +131,20 @@ bool CfdpManagerTester::deserializeMetadataPdu(
     return true;
 }
 
+bool CfdpManagerTester::deserializeFileDataPdu(
+    const Fw::Buffer& pduBuffer,
+    Cfdp::Pdu::FileDataPdu& fileDataPdu
+) {
+    // Use the FileDataPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = fileDataPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        std::cout << "deserializeFileDataPdu failed with status: " << status << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -205,6 +219,106 @@ void CfdpManagerTester::testMetaDataPdu() {
     ASSERT_NE(nullptr, rxDstFilename) << "Destination filename is null";
     FwSizeType dstLen = strlen(dstFile);
     EXPECT_EQ(0, memcmp(rxDstFilename, dstFile, dstLen)) << "Destination filename mismatch";
+}
+
+void CfdpManagerTester::testFileDataPdu() {
+    // Test pattern:
+    // 1. Setup transaction
+    // 2. Manually construct CF_Logical_PduBuffer_t with File Data header (mimicking CF_CFDP_S_SendFileData)
+    // 3. Invoke CF_CFDP_SendFd()
+    // 4. Capture PDU from dataOut and validate
+
+    // Step 1: Configure transaction for File Data PDU emission
+    const char* srcFile = "/tmp/test_file.bin";
+    const char* dstFile = "/tmp/dest_file.bin";
+    const U32 fileSize = 2048;
+    const U8 channelId = 0;
+    const U32 testSequenceId = 42;
+    const U32 testPeerId = 200;
+    const U32 fileOffset = 512;
+
+    CF_Transaction_t* txn = setupTestTransaction(
+        CF_TxnState_S1,  // Sender, class 1
+        channelId,
+        srcFile,
+        dstFile,
+        fileSize,
+        testSequenceId,
+        testPeerId
+    );
+    ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
+
+    // Clear port history before test
+    this->clearHistory();
+
+    // Step 2: Construct PDU buffer with File Data header (mimicking CF_CFDP_S_SendFileData)
+    CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
+        txn,
+        CF_CFDP_FileDirective_INVALID_MIN,  // File data PDU has invalid directive
+        component.getLocalEidParam(),
+        testPeerId,
+        0,  // towards receiver
+        testSequenceId,
+        1   // file data flag
+    );
+    ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
+
+    // Setup file data header
+    CF_Logical_PduFileDataHeader_t* fd = &ph->int_header.fd;
+    fd->offset = fileOffset;
+
+    // Encode file data header
+    CF_CFDP_EncodeFileDataHeader(ph->penc, ph->pdu_header.segment_meta_flag, fd);
+
+    // Get pointer to data area and write test data
+    size_t actual_bytes = CF_CODEC_GET_REMAIN(ph->penc);
+    const U16 testDataSize = (actual_bytes > 256) ? 256 : static_cast<U16>(actual_bytes);
+    U8* data_ptr = CF_CFDP_DoEncodeChunk(ph->penc, testDataSize);
+    ASSERT_NE(data_ptr, nullptr) << "Failed to get data pointer";
+
+    // Fill with test pattern
+    for (U16 i = 0; i < testDataSize; ++i) {
+        data_ptr[i] = static_cast<U8>(i & 0xFF);
+    }
+
+    fd->data_len = testDataSize;
+    fd->data_ptr = data_ptr;
+
+    // Step 3: Invoke CF_CFDP_SendFd to emit File Data PDU
+    CfdpStatus::T status = CF_CFDP_SendFd(txn, ph);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFd failed";
+
+    // Step 4: Verify PDU was sent through dataOut port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+
+    // Get encoded PDU buffer
+    const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
+    ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
+
+    // Deserialize complete File Data PDU (header + body)
+    Cfdp::Pdu::FileDataPdu fileDataPdu;
+    bool fileDataOk = deserializeFileDataPdu(pduBuffer, fileDataPdu);
+    ASSERT_TRUE(fileDataOk) << "Failed to deserialize File Data PDU";
+
+    // Validate header fields using getters
+    const Cfdp::Pdu::Header& header = fileDataPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
+    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(component.getLocalEidParam(), header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(testPeerId, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(testSequenceId, header.getTransactionSeq()) << "Transaction sequence mismatch";
+
+    // Validate file data fields using getters
+    EXPECT_EQ(fileOffset, fileDataPdu.getOffset()) << "File offset mismatch";
+    EXPECT_EQ(testDataSize, fileDataPdu.getDataSize()) << "Data size mismatch";
+    ASSERT_NE(nullptr, fileDataPdu.getData()) << "Data pointer is null";
+
+    // Validate data content
+    for (U16 i = 0; i < testDataSize; ++i) {
+        EXPECT_EQ(static_cast<U8>(i & 0xFF), fileDataPdu.getData()[i])
+            << "Data mismatch at byte " << i;
+    }
 }
 
 }  // namespace Ccsds

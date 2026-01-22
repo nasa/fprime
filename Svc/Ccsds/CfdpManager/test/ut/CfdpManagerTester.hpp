@@ -50,6 +50,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating a Metadata PDU
     void testMetaDataPdu();
 
+    //! Test generating a File Data PDU
+    void testFileDataPdu();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -105,6 +108,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     bool deserializeMetadataPdu(
         const Fw::Buffer& pduBuffer,
         Cfdp::Pdu::MetadataPdu& metadataPdu
+    );
+
+    //! Helper to deserialize File Data PDU
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
+    //! @param fileDataPdu Output: deserialized file data PDU
+    //! @return True if deserialization successful
+    bool deserializeFileDataPdu(
+        const Fw::Buffer& pduBuffer,
+        Cfdp::Pdu::FileDataPdu& fileDataPdu
     );
 
   private:
