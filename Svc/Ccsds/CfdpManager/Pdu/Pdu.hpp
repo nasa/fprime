@@ -522,6 +522,9 @@ union Pdu {
         //! Convert this AckPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
 
+        //! Initialize this AckPdu from a Buffer
+        Fw::SerializeStatus fromBuffer(const Fw::Buffer& buffer);
+
         //! Get this as a Header
         const Header& asHeader() const { return this->m_header; }
 

@@ -581,6 +581,189 @@ TEST_F(PduTest, FinBitPackingValidation) {
     }
 }
 
+// ======================================================================
+// ACK PDU Tests
+// ======================================================================
+
+TEST_F(PduTest, AckBufferSize) {
+    Pdu::AckPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
+
+    U32 size = pdu.bufferSize();
+    // Should include header + directive(1) + directive_and_subtype(1) + cc_and_status(1) = header + 3
+    ASSERT_GT(size, 0U);
+    U32 expectedSize = pdu.asHeader().bufferSize() + 3;
+    ASSERT_EQ(expectedSize, size);
+}
+
+TEST_F(PduTest, AckRoundTrip) {
+    // Arrange - Create transmit PDU
+    Pdu::AckPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_ACKNOWLEDGED;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const FileDirective directiveCode = FILE_DIRECTIVE_END_OF_FILE;
+    const U8 directiveSubtypeCode = 0;
+    const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
+    const AckTxnStatus transactionStatus = ACK_TXN_STATUS_ACTIVE;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    directiveCode, directiveSubtypeCode, conditionCode, transactionStatus);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer
+    Pdu::AckPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header fields
+    const Pdu::Header& header = rxPdu.asHeader();
+    EXPECT_EQ(Pdu::T_ACK, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify ACK-specific fields
+    EXPECT_EQ(directiveCode, rxPdu.getDirectiveCode());
+    EXPECT_EQ(directiveSubtypeCode, rxPdu.getDirectiveSubtypeCode());
+    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(transactionStatus, rxPdu.getTransactionStatus());
+}
+
+TEST_F(PduTest, AckForEof) {
+    // Test ACK for EOF directive
+    Pdu::AckPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::AckPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(FILE_DIRECTIVE_END_OF_FILE, rxPdu.getDirectiveCode());
+    EXPECT_EQ(CONDITION_CODE_NO_ERROR, rxPdu.getConditionCode());
+    EXPECT_EQ(ACK_TXN_STATUS_ACTIVE, rxPdu.getTransactionStatus());
+}
+
+TEST_F(PduTest, AckForFin) {
+    // Test ACK for FIN directive
+    Pdu::AckPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, FILE_DIRECTIVE_FIN, 0,
+                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_TERMINATED);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::AckPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(FILE_DIRECTIVE_FIN, rxPdu.getDirectiveCode());
+    EXPECT_EQ(ACK_TXN_STATUS_TERMINATED, rxPdu.getTransactionStatus());
+}
+
+TEST_F(PduTest, AckWithError) {
+    // Test ACK with error condition code
+    Pdu::AckPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+                   CONDITION_CODE_FILE_CHECKSUM_FAILURE, ACK_TXN_STATUS_TERMINATED);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::AckPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
+    EXPECT_EQ(ACK_TXN_STATUS_TERMINATED, rxPdu.getTransactionStatus());
+}
+
+TEST_F(PduTest, AckWithSubtype) {
+    // Test ACK with non-zero subtype code
+    Pdu::AckPdu txPdu;
+    const U8 subtypeCode = 5;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, FILE_DIRECTIVE_FIN, subtypeCode,
+                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::AckPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(subtypeCode, rxPdu.getDirectiveSubtypeCode());
+}
+
+TEST_F(PduTest, AckBitPackingValidation) {
+    // Test various combinations to verify bit packing is correct
+    const FileDirective directives[] = {FILE_DIRECTIVE_END_OF_FILE, FILE_DIRECTIVE_FIN};
+    const AckTxnStatus statuses[] = {ACK_TXN_STATUS_UNDEFINED, ACK_TXN_STATUS_ACTIVE,
+                                     ACK_TXN_STATUS_TERMINATED, ACK_TXN_STATUS_UNRECOGNIZED};
+    const ConditionCode conditions[] = {CONDITION_CODE_NO_ERROR, CONDITION_CODE_FILE_CHECKSUM_FAILURE};
+
+    for (const auto& directive : directives) {
+        for (const auto& status : statuses) {
+            for (const auto& condition : conditions) {
+                Pdu::AckPdu txPdu;
+                txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                               1, 2, 3, directive, 0, condition, status);
+
+                U8 buffer[512];
+                Fw::Buffer txBuffer(buffer, sizeof(buffer));
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+                Pdu::AckPdu rxPdu;
+                const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+                EXPECT_EQ(directive, rxPdu.getDirectiveCode())
+                    << "Directive mismatch for combination: dir="
+                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
+                    << " condition=" << static_cast<int>(condition);
+                EXPECT_EQ(status, rxPdu.getTransactionStatus())
+                    << "Status mismatch for combination: dir="
+                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
+                    << " condition=" << static_cast<int>(condition);
+                EXPECT_EQ(condition, rxPdu.getConditionCode())
+                    << "Condition mismatch for combination: dir="
+                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
+                    << " condition=" << static_cast<int>(condition);
+            }
+        }
+    }
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
