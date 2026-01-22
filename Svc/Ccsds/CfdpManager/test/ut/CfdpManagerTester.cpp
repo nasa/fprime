@@ -10,6 +10,9 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
 #include <cstring>
+#include <iostream>
+#include <algorithm>
+#include <cstdio>
 
 namespace Svc {
 
@@ -160,6 +163,19 @@ bool CfdpManagerTester::deserializeEofPdu(
     return true;
 }
 
+bool CfdpManagerTester::deserializeFinPdu(
+    const Fw::Buffer& pduBuffer,
+    Cfdp::Pdu::FinPdu& finPdu
+) {
+    // Use the FinPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = finPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return false;
+    }
+
+    return true;
+}
+
 void CfdpManagerTester::validateMetadataPdu(
     const Cfdp::Pdu::MetadataPdu& metadataPdu,
     U32 expectedSourceEid,
@@ -271,6 +287,30 @@ void CfdpManagerTester::validateEofPdu(
     // Verify checksum field exists and is accessible
     U32 rxChecksum = eofPdu.getChecksum();
     (void)rxChecksum;  // Checksum value depends on internal calculation
+}
+
+void CfdpManagerTester::validateFinPdu(
+    const Cfdp::Pdu::FinPdu& finPdu,
+    U32 expectedSourceEid,
+    U32 expectedDestEid,
+    U32 expectedTransactionSeq,
+    Cfdp::ConditionCode expectedConditionCode,
+    Cfdp::FinDeliveryCode expectedDeliveryCode,
+    Cfdp::FinFileStatus expectedFileStatus
+) {
+    // Validate header fields
+    const Cfdp::Pdu::Header& header = finPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_FIN, header.getType()) << "Expected T_FIN type";
+    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
+
+    // Validate FIN-specific fields
+    EXPECT_EQ(expectedConditionCode, finPdu.getConditionCode()) << "Condition code mismatch";
+    EXPECT_EQ(expectedDeliveryCode, finPdu.getDeliveryCode()) << "Delivery code mismatch";
+    EXPECT_EQ(expectedFileStatus, finPdu.getFileStatus()) << "File status mismatch";
 }
 
 // ----------------------------------------------------------------------
@@ -481,6 +521,66 @@ void CfdpManagerTester::testEofPdu() {
     // Step 5: Validate all PDU fields
     validateEofPdu(eofPdu, component.getLocalEidParam(), testPeerId,
                   testSequenceId, testConditionCode, fileSize);
+}
+
+void CfdpManagerTester::testFinPdu() {
+    // Test pattern:
+    // 1. Setup transaction
+    // 2. Invoke CF_CFDP_SendFin()
+    // 3. Capture PDU from dataOut
+    // 4. Deserialize and validate
+
+    // Step 1: Configure transaction for FIN PDU emission
+    const char* srcFile = "/tmp/test_fin.bin";
+    const char* dstFile = "/tmp/dest_fin.bin";
+    const CfdpFileSize fileSize = 8192;
+    const U8 channelId = 0;
+    const U32 testSequenceId = 77;
+    const U32 testPeerId = 200;
+
+    CF_Transaction_t* txn = setupTestTransaction(
+        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        channelId,
+        srcFile,
+        dstFile,
+        fileSize,
+        testSequenceId,
+        testPeerId
+    );
+    ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
+
+    // Setup transaction to simulate file reception complete
+    const CF_CFDP_ConditionCode_t testConditionCode = CF_CFDP_ConditionCode_NO_ERROR;
+    const CF_CFDP_FinDeliveryCode_t testDeliveryCode = CF_CFDP_FinDeliveryCode_COMPLETE;
+    const CF_CFDP_FinFileStatus_t testFileStatus = CF_CFDP_FinFileStatus_RETAINED;
+
+    // Clear port history before test
+    this->clearHistory();
+
+    // Step 2: Invoke receiver to emit FIN PDU
+    CfdpStatus::T status = CF_CFDP_SendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFin failed";
+
+    // Step 3: Verify PDU was sent through dataOut port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+
+    // Get encoded PDU buffer
+    const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
+    ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
+
+    // Step 4: Deserialize complete FIN PDU (header + body)
+    Cfdp::Pdu::FinPdu finPdu;
+    bool finOk = deserializeFinPdu(pduBuffer, finPdu);
+    ASSERT_TRUE(finOk) << "Failed to deserialize FIN PDU";
+
+    // Step 5: Validate all PDU fields
+    // FIN PDU is sent from receiver (testPeerId) to sender (component.getLocalEidParam())
+    // So source=testPeerId, dest=component.getLocalEidParam()
+    validateFinPdu(finPdu, testPeerId, component.getLocalEidParam(),
+                  testSequenceId,
+                  static_cast<Cfdp::ConditionCode>(testConditionCode),
+                  static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
+                  static_cast<Cfdp::FinFileStatus>(testFileStatus));
 }
 
 }  // namespace Ccsds

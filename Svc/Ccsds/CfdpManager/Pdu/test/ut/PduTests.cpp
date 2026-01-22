@@ -419,9 +419,9 @@ TEST_F(PduTest, FinBufferSize) {
                    FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
     U32 size = pdu.bufferSize();
-    // Should include header + directive(1) + condition(1) + delivery_and_status(1) = header + 3
+    // Should include header + directive(1) + flags(1) = header + 2
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().bufferSize() + 3;
+    U32 expectedSize = pdu.asHeader().bufferSize() + 2;
     ASSERT_EQ(expectedSize, size);
 }
 

@@ -56,6 +56,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating an EOF PDU
     void testEofPdu();
 
+    //! Test generating a FIN PDU
+    void testFinPdu();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -131,6 +134,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::Pdu::EofPdu& eofPdu
     );
 
+    //! Helper to deserialize FIN PDU
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
+    //! @param finPdu Output: deserialized FIN PDU
+    //! @return True if deserialization successful
+    bool deserializeFinPdu(
+        const Fw::Buffer& pduBuffer,
+        Cfdp::Pdu::FinPdu& finPdu
+    );
+
     //! Helper to validate Metadata PDU fields
     //! @param metadataPdu Deserialized metadata PDU to validate
     //! @param expectedSourceEid Expected source entity ID
@@ -181,6 +193,24 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedTransactionSeq,
         Cfdp::ConditionCode expectedConditionCode,
         CfdpFileSize expectedFileSize
+    );
+
+    //! Helper to validate FIN PDU fields
+    //! @param finPdu Deserialized FIN PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedConditionCode Expected condition code
+    //! @param expectedDeliveryCode Expected delivery code
+    //! @param expectedFileStatus Expected file status
+    void validateFinPdu(
+        const Cfdp::Pdu::FinPdu& finPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        Cfdp::ConditionCode expectedConditionCode,
+        Cfdp::FinDeliveryCode expectedDeliveryCode,
+        Cfdp::FinFileStatus expectedFileStatus
     );
 
   private:

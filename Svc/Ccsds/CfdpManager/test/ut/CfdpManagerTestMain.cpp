@@ -24,6 +24,12 @@ TEST(Pdu, EofPdu) {
     delete tester;
 }
 
+TEST(Pdu, FinPdu) {
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testFinPdu();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

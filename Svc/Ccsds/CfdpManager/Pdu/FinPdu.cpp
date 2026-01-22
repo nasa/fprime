@@ -31,9 +31,8 @@ U32 Pdu::FinPdu::bufferSize() const {
     U32 size = this->m_header.bufferSize();
 
     // Directive code: 1 byte
-    // Condition code: 1 byte
-    // Delivery code (1 bit) + File status (2 bits) + spare (5 bits) packed in 1 byte
-    size += sizeof(U8) + sizeof(U8) + sizeof(U8);
+    // Flags: 1 byte (condition code, delivery code, file status all packed)
+    size += sizeof(U8) + sizeof(U8);
 
     return size;
 }
@@ -104,22 +103,17 @@ Fw::SerializeStatus Pdu::FinPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
-    // Condition code
-    U8 conditionCode = static_cast<U8>(this->m_conditionCode);
-    status = serialBuffer.serializeFrom(conditionCode);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
-    }
+    // Flags byte: condition code, delivery code, and file status packed together
+    // Bits 7-4: Condition code (4 bits)
+    // Bit 3: Spare (0)
+    // Bit 2: Delivery code (1 bit)
+    // Bits 1-0: File status (2 bits)
+    U8 flags = 0;
+    flags |= (static_cast<U8>(this->m_conditionCode) & 0x0F) << 4;  // Bits 7-4
+    flags |= (static_cast<U8>(this->m_deliveryCode) & 0x01) << 2;   // Bit 2
+    flags |= (static_cast<U8>(this->m_fileStatus) & 0x03);          // Bits 1-0
 
-    // Delivery code and file status packed into 1 byte
-    // Bit 7: delivery code (0=complete, 1=incomplete)
-    // Bits 6-5: file status (00=discarded, 01=discarded-filestore, 10=retained, 11=unreported)
-    // Bits 4-0: spare (set to 0)
-    U8 deliveryAndStatus = 0;
-    deliveryAndStatus |= (static_cast<U8>(this->m_deliveryCode) & 0x01) << 7;
-    deliveryAndStatus |= (static_cast<U8>(this->m_fileStatus) & 0x03) << 5;
-
-    status = serialBuffer.serializeFrom(deliveryAndStatus);
+    status = serialBuffer.serializeFrom(flags);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -130,29 +124,26 @@ Fw::SerializeStatus Pdu::FinPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
 Fw::SerializeStatus Pdu::FinPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_FIN);
 
-    // Directive code already read by union wrapper
+    // Directive code already read by fromBuffer()
 
-    // Condition code
-    U8 conditionCodeVal;
-    Fw::SerializeStatus status = serialBuffer.deserializeTo(conditionCodeVal);
+    // Flags byte contains: condition code, delivery code, and file status
+    U8 flags;
+    Fw::SerializeStatus status = serialBuffer.deserializeTo(flags);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
+
+    // Extract fields from flags byte:
+    // Bits 7-4: Condition code (4 bits)
+    // Bit 3: Spare
+    // Bit 2: Delivery code (1 bit)
+    // Bits 1-0: File status (2 bits)
+    U8 conditionCodeVal = (flags >> 4) & 0x0F;
+    U8 deliveryCodeVal = (flags >> 2) & 0x01;
+    U8 fileStatusVal = flags & 0x03;
+
     this->m_conditionCode = static_cast<ConditionCode>(conditionCodeVal);
-
-    // Delivery code and file status (packed byte)
-    U8 deliveryAndStatus;
-    status = serialBuffer.deserializeTo(deliveryAndStatus);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
-    }
-
-    // Extract delivery code from bit 7
-    U8 deliveryCodeVal = (deliveryAndStatus >> 7) & 0x01;
     this->m_deliveryCode = static_cast<FinDeliveryCode>(deliveryCodeVal);
-
-    // Extract file status from bits 6-5
-    U8 fileStatusVal = (deliveryAndStatus >> 5) & 0x03;
     this->m_fileStatus = static_cast<FinFileStatus>(fileStatusVal);
 
     return Fw::FW_SERIALIZE_OK;
