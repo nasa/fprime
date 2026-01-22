@@ -283,7 +283,8 @@ void CfdpManagerTester::validateEofPdu(
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
     Cfdp::ConditionCode expectedConditionCode,
-    CfdpFileSize expectedFileSize
+    CfdpFileSize expectedFileSize,
+    const char* sourceFilename
 ) {
     // Validate header fields
     const Cfdp::Pdu::Header& header = eofPdu.asHeader();
@@ -298,9 +299,31 @@ void CfdpManagerTester::validateEofPdu(
     EXPECT_EQ(expectedConditionCode, eofPdu.getConditionCode()) << "Condition code mismatch";
     EXPECT_EQ(expectedFileSize, eofPdu.getFileSize()) << "File size mismatch";
 
-    // Verify checksum field exists and is accessible
+    // Compute file CRC and validate against EOF PDU checksum
     U32 rxChecksum = eofPdu.getChecksum();
-    (void)rxChecksum;  // Checksum value depends on internal calculation
+
+    // Open and read the source file to compute CRC
+    Os::File file;
+    Os::File::Status fileStatus = file.open(sourceFilename, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file: " << sourceFilename;
+
+    // Allocate buffer for file content
+    U8* fileData = new U8[expectedFileSize];
+    FwSizeType bytesRead = expectedFileSize;
+    fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
+    file.close();
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
+    ASSERT_EQ(expectedFileSize, bytesRead) << "Failed to read complete file";
+
+    // Compute CRC using CFDP Checksum
+    CFDP::Checksum computedChecksum;
+    computedChecksum.update(fileData, 0, expectedFileSize);
+    U32 expectedCrc = computedChecksum.getValue();
+
+    delete[] fileData;
+
+    // Validate checksum matches
+    EXPECT_EQ(expectedCrc, rxChecksum) << "File CRC mismatch";
 }
 
 void CfdpManagerTester::validateFinPdu(
@@ -516,9 +539,9 @@ void CfdpManagerTester::testEofPdu() {
     // 4. Deserialize and validate
 
     // Step 1: Configure transaction for EOF PDU emission
-    const char* srcFile = "/tmp/test_eof.bin";
+    const char* srcFile = "test/ut/data/test_file.bin";
     const char* dstFile = "/tmp/dest_eof.bin";
-    const CfdpFileSize fileSize = 4096;
+    const CfdpFileSize fileSize = 242;  // Actual size of test_file.bin
     const U8 channelId = 0;
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
@@ -537,6 +560,22 @@ void CfdpManagerTester::testEofPdu() {
     // Setup transaction to simulate file transfer complete
     const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
     txn->state_data.send.cached_pos = fileSize;  // Simulate file transfer complete
+
+    // Read test file and compute CRC
+    Os::File file;
+    Os::File::Status fileStatus = file.open(srcFile, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open test file: " << srcFile;
+
+    U8* fileData = new U8[fileSize];
+    FwSizeType bytesRead = fileSize;
+    fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
+    file.close();
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read test file";
+    ASSERT_EQ(fileSize, bytesRead) << "Failed to read complete test file";
+
+    // Compute and set CRC in transaction (matches what CF_CFDP_SendEof expects)
+    txn->crc.update(fileData, 0, fileSize);
+    delete[] fileData;
 
     // Clear port history before test
     this->clearHistory();
@@ -557,9 +596,9 @@ void CfdpManagerTester::testEofPdu() {
     bool eofOk = deserializeEofPdu(pduBuffer, eofPdu);
     ASSERT_TRUE(eofOk) << "Failed to deserialize EOF PDU";
 
-    // Step 5: Validate all PDU fields
+    // Step 5: Validate all PDU fields including CRC
     validateEofPdu(eofPdu, component.getLocalEidParam(), testPeerId,
-                  testSequenceId, testConditionCode, fileSize);
+                  testSequenceId, testConditionCode, fileSize, srcFile);
 }
 
 void CfdpManagerTester::testFinPdu() {

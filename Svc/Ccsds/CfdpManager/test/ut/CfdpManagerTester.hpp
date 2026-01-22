@@ -198,13 +198,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param expectedTransactionSeq Expected transaction sequence number
     //! @param expectedConditionCode Expected condition code
     //! @param expectedFileSize Expected file size
+    //! @param sourceFilename Source file path to compute CRC for validation
     void validateEofPdu(
         const Cfdp::Pdu::EofPdu& eofPdu,
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
         Cfdp::ConditionCode expectedConditionCode,
-        CfdpFileSize expectedFileSize
+        CfdpFileSize expectedFileSize,
+        const char* sourceFilename
     );
 
     //! Helper to validate FIN PDU fields
