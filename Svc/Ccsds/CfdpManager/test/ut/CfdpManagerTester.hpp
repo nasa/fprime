@@ -98,6 +98,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpPdu::Header& header
     );
 
+    //! Helper to deserialize Metadata PDU
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
+    //! @param metadataPdu Output: deserialized metadata PDU
+    //! @return True if deserialization successful
+    bool deserializeMetadataPdu(
+        const Fw::Buffer& pduBuffer,
+        CfdpPdu::MetadataPdu& metadataPdu
+    );
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides

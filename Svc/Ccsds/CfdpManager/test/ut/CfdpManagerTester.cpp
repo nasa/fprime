@@ -117,6 +117,20 @@ bool CfdpManagerTester::deserializePduHeader(
     return (status == Fw::FW_SERIALIZE_OK);
 }
 
+bool CfdpManagerTester::deserializeMetadataPdu(
+    const Fw::Buffer& pduBuffer,
+    CfdpPdu::MetadataPdu& metadataPdu
+) {
+    // Use the MetadataPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = metadataPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        std::cout << "deserializeMetadataPdu failed with status: " << status << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -161,69 +175,36 @@ void CfdpManagerTester::testMetaDataPdu() {
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Deserialize and validate PDU header
-    CfdpPdu::Header header;
-    bool headerOk = deserializePduHeader(pduBuffer, header);
-    ASSERT_TRUE(headerOk) << "Failed to deserialize PDU header";
+    // Step 4: Deserialize complete Metadata PDU (header + body)
+    CfdpPdu::MetadataPdu metadataPdu;
+    bool metadataOk = deserializeMetadataPdu(pduBuffer, metadataPdu);
+    ASSERT_TRUE(metadataOk) << "Failed to deserialize Metadata PDU";
 
     // Validate header fields using getters (no manual bit extraction needed)
-    EXPECT_EQ(0, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    const CfdpPdu::Header& header = metadataPdu.asHeader();
+    EXPECT_EQ(CfdpPdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
+    EXPECT_EQ(CFDP_DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(CFDP_TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
     EXPECT_EQ(component.getLocalEidParam(), header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(testPeerId, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(testSequenceId, header.getTransactionSeq()) << "Transaction sequence mismatch";
 
-    // // Step 5: Deserialize file directive header
-    // FwSizeType offset = header.SERIALIZED_SIZE;
+    // Step 5: Validate metadata fields using getters
+    EXPECT_EQ(fileSize, metadataPdu.getFileSize()) << "File size mismatch";
+    EXPECT_EQ(CFDP_CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
+    EXPECT_EQ(0, metadataPdu.getClosureRequested()) << "Class 1 should not request closure";
 
-    // Svc::Ccsds::CfdpFileDirectiveHeader directiveHdr;
-    // Fw::SerialBuffer directiveBuffer(
-    //     const_cast<U8*>(pduBytes + offset),
-    //     directiveHdr.SERIALIZED_SIZE
-    // );
+    // Validate source filename (use memcmp with length, not STREQ, since CFDP uses LV not null-terminated)
+    const char* rxSrcFilename = metadataPdu.getSourceFilename();
+    ASSERT_NE(nullptr, rxSrcFilename) << "Source filename is null";
+    FwSizeType srcLen = strlen(srcFile);
+    EXPECT_EQ(0, memcmp(rxSrcFilename, srcFile, srcLen)) << "Source filename mismatch";
 
-    // Fw::SerializeStatus serStatus = directiveHdr.deserializeFrom(directiveBuffer);
-    // ASSERT_EQ(serStatus, Fw::FW_SERIALIZE_OK)
-    //     << "Failed to deserialize directive header";
-
-    // ASSERT_EQ(directiveHdr.get_directiveCode(),
-    //           Svc::Ccsds::CfdpFileDirective::METADATA)
-    //     << "Expected METADATA directive code (7)";
-
-    // // Step 6: Deserialize and validate Metadata PDU body
-    // offset += directiveHdr.SERIALIZED_SIZE;
-
-    // Svc::Ccsds::CfdpMetadataPdu mdPdu;
-    // Fw::SerialBuffer mdBuffer(
-    //     const_cast<U8*>(pduBytes + offset),
-    //     mdPdu.SERIALIZED_SIZE
-    // );
-
-    // serStatus = mdPdu.deserializeFrom(mdBuffer);
-    // ASSERT_EQ(serStatus, Fw::FW_SERIALIZE_OK)
-    //     << "Failed to deserialize metadata PDU body";
-
-    // // Validate metadata fields using getters
-    // EXPECT_EQ(mdPdu.get_fileSize(), fileSize) << "File size mismatch";
-
-    // // Validate segmentation control byte using getter
-    // U8 segCtrl = mdPdu.get_segmentationControl();
-    // U8 checksumType = segCtrl & 0x0F;
-    // U8 closureRequested = (segCtrl >> 7) & 0x01;
-    // EXPECT_EQ(checksumType, 0) << "Expected modular checksum";
-    // EXPECT_EQ(closureRequested, 0) << "Class 1 should not request closure";
-
-    // // Validate source filename LV pair using getters
-    // EXPECT_EQ(mdPdu.get_sourceFilenameLength(), strlen(srcFile))
-    //     << "Source filename length mismatch";
-    // EXPECT_EQ(memcmp(mdPdu.get_sourceFilename(), srcFile, strlen(srcFile)), 0)
-    //     << "Source filename mismatch";
-
-    // // Validate destination filename LV pair using getters
-    // EXPECT_EQ(mdPdu.get_destFilenameLength(), strlen(dstFile))
-    //     << "Destination filename length mismatch";
-    // EXPECT_EQ(memcmp(mdPdu.get_destFilename(), dstFile, strlen(dstFile)), 0)
-    //     << "Destination filename mismatch";
+    // Validate destination filename (use memcmp with length, not STREQ, since CFDP uses LV not null-terminated)
+    const char* rxDstFilename = metadataPdu.getDestFilename();
+    ASSERT_NE(nullptr, rxDstFilename) << "Destination filename is null";
+    FwSizeType dstLen = strlen(dstFile);
+    EXPECT_EQ(0, memcmp(rxDstFilename, dstFile, dstLen)) << "Destination filename mismatch";
 }
 
 }  // namespace Ccsds

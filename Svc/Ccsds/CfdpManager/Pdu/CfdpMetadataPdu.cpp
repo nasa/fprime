@@ -75,6 +75,40 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toBuffer(Fw::Buffer& buffer) const {
     return status;
 }
 
+Fw::SerializeStatus CfdpPdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
+    // Create SerialBuffer from Buffer
+    Fw::SerialBuffer serialBuffer(const_cast<Fw::Buffer&>(buffer).getData(),
+                                  const_cast<Fw::Buffer&>(buffer).getSize());
+    serialBuffer.fill();
+
+    // Deserialize header first
+    Fw::SerializeStatus status = this->m_header.fromSerialBuffer(serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Validate this is a directive PDU (not file data)
+    if (this->m_header.m_pduType != CFDP_PDU_TYPE_DIRECTIVE) {
+        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+    }
+
+    // Validate directive code
+    U8 directiveCode;
+    status = serialBuffer.deserializeTo(directiveCode);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    if (directiveCode != CFDP_FILE_DIRECTIVE_METADATA) {
+        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+    }
+
+    // Now set the type to T_METADATA since we've validated it
+    this->m_header.m_type = T_METADATA;
+
+    // Deserialize the metadata body
+    return this->fromSerialBuffer(serialBuffer);
+}
+
 Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
