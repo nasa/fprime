@@ -59,6 +59,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating a FIN PDU
     void testFinPdu();
 
+    //! Test generating an ACK PDU
+    void testAckPdu();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -143,6 +146,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::Pdu::FinPdu& finPdu
     );
 
+    //! Helper to deserialize ACK PDU
+    //! @param pduBuffer Buffer containing complete PDU bytes (header + body)
+    //! @param ackPdu Output: deserialized ACK PDU
+    //! @return True if deserialization successful
+    bool deserializeAckPdu(
+        const Fw::Buffer& pduBuffer,
+        Cfdp::Pdu::AckPdu& ackPdu
+    );
+
     //! Helper to validate Metadata PDU fields
     //! @param metadataPdu Deserialized metadata PDU to validate
     //! @param expectedSourceEid Expected source entity ID
@@ -211,6 +223,26 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::ConditionCode expectedConditionCode,
         Cfdp::FinDeliveryCode expectedDeliveryCode,
         Cfdp::FinFileStatus expectedFileStatus
+    );
+
+    //! Helper to validate ACK PDU fields
+    //! @param ackPdu Deserialized ACK PDU to validate
+    //! @param expectedSourceEid Expected source entity ID
+    //! @param expectedDestEid Expected destination entity ID
+    //! @param expectedTransactionSeq Expected transaction sequence number
+    //! @param expectedDirectiveCode Expected directive code being acknowledged
+    //! @param expectedDirectiveSubtypeCode Expected directive subtype code
+    //! @param expectedConditionCode Expected condition code
+    //! @param expectedTransactionStatus Expected transaction status
+    void validateAckPdu(
+        const Cfdp::Pdu::AckPdu& ackPdu,
+        U32 expectedSourceEid,
+        U32 expectedDestEid,
+        U32 expectedTransactionSeq,
+        Cfdp::FileDirective expectedDirectiveCode,
+        U8 expectedDirectiveSubtypeCode,
+        Cfdp::ConditionCode expectedConditionCode,
+        Cfdp::AckTxnStatus expectedTransactionStatus
     );
 
   private:

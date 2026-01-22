@@ -176,6 +176,20 @@ bool CfdpManagerTester::deserializeFinPdu(
     return true;
 }
 
+bool CfdpManagerTester::deserializeAckPdu(
+    const Fw::Buffer& pduBuffer,
+    Cfdp::Pdu::AckPdu& ackPdu
+) {
+    // Use the AckPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = ackPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        std::cout << "deserializeAckPdu failed with status: " << status << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 void CfdpManagerTester::validateMetadataPdu(
     const Cfdp::Pdu::MetadataPdu& metadataPdu,
     U32 expectedSourceEid,
@@ -311,6 +325,31 @@ void CfdpManagerTester::validateFinPdu(
     EXPECT_EQ(expectedConditionCode, finPdu.getConditionCode()) << "Condition code mismatch";
     EXPECT_EQ(expectedDeliveryCode, finPdu.getDeliveryCode()) << "Delivery code mismatch";
     EXPECT_EQ(expectedFileStatus, finPdu.getFileStatus()) << "File status mismatch";
+}
+
+void CfdpManagerTester::validateAckPdu(
+    const Cfdp::Pdu::AckPdu& ackPdu,
+    U32 expectedSourceEid,
+    U32 expectedDestEid,
+    U32 expectedTransactionSeq,
+    Cfdp::FileDirective expectedDirectiveCode,
+    U8 expectedDirectiveSubtypeCode,
+    Cfdp::ConditionCode expectedConditionCode,
+    Cfdp::AckTxnStatus expectedTransactionStatus
+) {
+    // Validate header fields
+    const Cfdp::Pdu::Header& header = ackPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_ACK, header.getType()) << "Expected T_ACK type";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
+
+    // Validate ACK-specific fields
+    EXPECT_EQ(expectedDirectiveCode, ackPdu.getDirectiveCode()) << "Directive code mismatch";
+    EXPECT_EQ(expectedDirectiveSubtypeCode, ackPdu.getDirectiveSubtypeCode()) << "Directive subtype code mismatch";
+    EXPECT_EQ(expectedConditionCode, ackPdu.getConditionCode()) << "Condition code mismatch";
+    EXPECT_EQ(expectedTransactionStatus, ackPdu.getTransactionStatus()) << "Transaction status mismatch";
 }
 
 // ----------------------------------------------------------------------
@@ -581,6 +620,70 @@ void CfdpManagerTester::testFinPdu() {
                   static_cast<Cfdp::ConditionCode>(testConditionCode),
                   static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
                   static_cast<Cfdp::FinFileStatus>(testFileStatus));
+}
+
+void CfdpManagerTester::testAckPdu() {
+    // Test pattern:
+    // 1. Setup transaction
+    // 2. Invoke CF_CFDP_SendAck()
+    // 3. Capture PDU from dataOut
+    // 4. Deserialize and validate
+
+    // Step 1: Configure transaction for ACK PDU emission
+    const char* srcFile = "/tmp/test_ack.bin";
+    const char* dstFile = "/tmp/dest_ack.bin";
+    const CfdpFileSize fileSize = 2048;
+    const U8 channelId = 0;
+    const U32 testSequenceId = 88;
+    const U32 testPeerId = 175;
+
+    CF_Transaction_t* txn = setupTestTransaction(
+        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        channelId,
+        srcFile,
+        dstFile,
+        fileSize,
+        testSequenceId,
+        testPeerId
+    );
+    ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
+
+    // Setup test parameters for ACK PDU
+    const CF_CFDP_AckTxnStatus_t testTransactionStatus = CF_CFDP_AckTxnStatus_ACTIVE;
+    const CF_CFDP_FileDirective_t testDirectiveCode = CF_CFDP_FileDirective_EOF;
+    const CF_CFDP_ConditionCode_t testConditionCode = CF_CFDP_ConditionCode_NO_ERROR;
+
+    // Clear port history before test
+    this->clearHistory();
+
+    // Step 2: Invoke CF_CFDP_SendAck to emit ACK PDU
+    CfdpStatus::T status = CF_CFDP_SendAck(txn, testTransactionStatus, testDirectiveCode,
+                                           testConditionCode, testPeerId, testSequenceId);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendAck failed";
+
+    // Step 3: Verify PDU was sent through dataOut port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+
+    // Get encoded PDU buffer
+    const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
+    ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
+
+    // Step 4: Deserialize complete ACK PDU (header + body)
+    Cfdp::Pdu::AckPdu ackPdu;
+    bool ackOk = deserializeAckPdu(pduBuffer, ackPdu);
+    ASSERT_TRUE(ackOk) << "Failed to deserialize ACK PDU";
+
+    // Step 5: Validate all PDU fields
+    // ACK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
+    // acknowledging the EOF directive
+    // Note: Legacy engine sets subtype code to 1 for non-extended features (see CfdpEngine.cpp:433)
+    const U8 expectedSubtypeCode = 1;
+    validateAckPdu(ackPdu, component.getLocalEidParam(), testPeerId,
+                  testSequenceId,
+                  static_cast<Cfdp::FileDirective>(testDirectiveCode),
+                  expectedSubtypeCode,
+                  static_cast<Cfdp::ConditionCode>(testConditionCode),
+                  static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
 }
 
 }  // namespace Ccsds
