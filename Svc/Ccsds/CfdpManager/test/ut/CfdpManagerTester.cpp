@@ -145,6 +145,20 @@ bool CfdpManagerTester::deserializeFileDataPdu(
     return true;
 }
 
+bool CfdpManagerTester::deserializeEofPdu(
+    const Fw::Buffer& pduBuffer,
+    Cfdp::Pdu::EofPdu& eofPdu
+) {
+    // Use the EofPdu's fromBuffer() method to deserialize everything
+    Fw::SerializeStatus status = eofPdu.fromBuffer(pduBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        std::cout << "deserializeEofPdu failed with status: " << status << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -319,6 +333,73 @@ void CfdpManagerTester::testFileDataPdu() {
         EXPECT_EQ(static_cast<U8>(i & 0xFF), fileDataPdu.getData()[i])
             << "Data mismatch at byte " << i;
     }
+}
+
+void CfdpManagerTester::testEofPdu() {
+    // Test pattern:
+    // 1. Setup transaction
+    // 2. Invoke CF_CFDP_SendEof()
+    // 3. Capture PDU from dataOut
+    // 4. Deserialize and validate
+
+    // Step 1: Configure transaction for EOF PDU emission
+    const char* srcFile = "/tmp/test_eof.bin";
+    const char* dstFile = "/tmp/dest_eof.bin";
+    const CfdpFileSize fileSize = 4096;
+    const U8 channelId = 0;
+    const U32 testSequenceId = 55;
+    const U32 testPeerId = 150;
+
+    CF_Transaction_t* txn = setupTestTransaction(
+        CF_TxnState_S2,  // Sender, class 2 (acknowledged mode)
+        channelId,
+        srcFile,
+        dstFile,
+        fileSize,
+        testSequenceId,
+        testPeerId
+    );
+    ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
+
+    // Setup transaction to simulate file transfer complete
+    const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
+    txn->state_data.send.cached_pos = fileSize;  // Simulate file transfer complete
+
+    // Clear port history before test
+    this->clearHistory();
+
+    // Step 2: Invoke sender to emit EOF PDU
+    CfdpStatus::T status = CF_CFDP_SendEof(txn);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendEof failed";
+
+    // Step 3: Verify PDU was sent through dataOut port
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+
+    // Get encoded PDU buffer
+    const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
+    ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
+
+    // Step 4: Deserialize complete EOF PDU (header + body)
+    Cfdp::Pdu::EofPdu eofPdu;
+    bool eofOk = deserializeEofPdu(pduBuffer, eofPdu);
+    ASSERT_TRUE(eofOk) << "Failed to deserialize EOF PDU";
+
+    // Validate header fields using getters
+    const Cfdp::Pdu::Header& header = eofPdu.asHeader();
+    EXPECT_EQ(Cfdp::Pdu::T_EOF, header.getType()) << "Expected T_EOF type";
+    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(component.getLocalEidParam(), header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(testPeerId, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(testSequenceId, header.getTransactionSeq()) << "Transaction sequence mismatch";
+
+    // Validate EOF-specific fields using getters
+    EXPECT_EQ(testConditionCode, eofPdu.getConditionCode()) << "Condition code mismatch";
+    EXPECT_EQ(fileSize, eofPdu.getFileSize()) << "File size mismatch";
+    // Note: Checksum validation depends on CF_CFDP_SendEof implementation
+    // We validate that checksum field exists and is accessible
+    U32 rxChecksum = eofPdu.getChecksum();
+    (void)rxChecksum;  // Checksum value depends on internal calculation
 }
 
 }  // namespace Ccsds

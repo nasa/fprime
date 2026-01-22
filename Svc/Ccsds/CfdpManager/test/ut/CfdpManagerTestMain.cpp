@@ -7,16 +7,20 @@
 #include "CfdpManagerTester.hpp"
 
 TEST(Pdu, MetaDataPdu) {
-    // Allocate tester on heap to avoid stack overflow (CfdpManager is very large)
     Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
     tester->testMetaDataPdu();
     delete tester;
 }
 
 TEST(Pdu, FileDataPdu) {
-    // Allocate tester on heap to avoid stack overflow (CfdpManager is very large)
     Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
     tester->testFileDataPdu();
+    delete tester;
+}
+
+TEST(Pdu, EofPdu) {
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testEofPdu();
     delete tester;
 }
 
