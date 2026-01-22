@@ -16,6 +16,7 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/MetadataPdu.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileDataPdu.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/EofPdu.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/FinPdu.cpp"
     DEPENDS
         Svc_Ccsds_Types
 )

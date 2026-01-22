@@ -140,7 +140,7 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
         return status;
     }
 
-    // File size (32-bit, big-endian)
+    // File size (CfdpFileSize)
     status = serialBuffer.serializeFrom(this->m_fileSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;

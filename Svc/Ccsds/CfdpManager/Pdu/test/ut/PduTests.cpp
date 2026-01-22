@@ -408,6 +408,179 @@ TEST_F(PduTest, EofLargeValues) {
     EXPECT_EQ(0xFFFFFFFFU, rxPdu.getFileSize());
 }
 
+// ======================================================================
+// FIN PDU Tests
+// ======================================================================
+
+TEST_F(PduTest, FinBufferSize) {
+    Pdu::FinPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+
+    U32 size = pdu.bufferSize();
+    // Should include header + directive(1) + condition(1) + delivery_and_status(1) = header + 3
+    ASSERT_GT(size, 0U);
+    U32 expectedSize = pdu.asHeader().bufferSize() + 3;
+    ASSERT_EQ(expectedSize, size);
+}
+
+TEST_F(PduTest, FinRoundTrip) {
+    // Arrange - Create transmit PDU
+    Pdu::FinPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_ACKNOWLEDGED;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
+    const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_COMPLETE;
+    const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    conditionCode, deliveryCode, fileStatus);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header fields
+    const Pdu::Header& header = rxPdu.asHeader();
+    EXPECT_EQ(Pdu::T_FIN, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify FIN-specific fields
+    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode());
+    EXPECT_EQ(fileStatus, rxPdu.getFileStatus());
+}
+
+TEST_F(PduTest, FinWithError) {
+    // Test with error condition code
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    // Should encode successfully even with error condition
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
+    EXPECT_EQ(FIN_DELIVERY_CODE_INCOMPLETE, rxPdu.getDeliveryCode());
+    EXPECT_EQ(FIN_FILE_STATUS_DISCARDED, rxPdu.getFileStatus());
+}
+
+TEST_F(PduTest, FinDeliveryIncomplete) {
+    // Test with incomplete delivery
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_RETAINED);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(FIN_DELIVERY_CODE_INCOMPLETE, rxPdu.getDeliveryCode());
+    EXPECT_EQ(FIN_FILE_STATUS_RETAINED, rxPdu.getFileStatus());
+}
+
+TEST_F(PduTest, FinFileStatusDiscarded) {
+    // Test with file discarded
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(FIN_DELIVERY_CODE_COMPLETE, rxPdu.getDeliveryCode());
+    EXPECT_EQ(FIN_FILE_STATUS_DISCARDED, rxPdu.getFileStatus());
+}
+
+TEST_F(PduTest, FinFileStatusDiscardedFilestore) {
+    // Test with file discarded by filestore
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(CONDITION_CODE_FILESTORE_REJECTION, rxPdu.getConditionCode());
+    EXPECT_EQ(FIN_DELIVERY_CODE_COMPLETE, rxPdu.getDeliveryCode());
+    EXPECT_EQ(FIN_FILE_STATUS_DISCARDED_FILESTORE, rxPdu.getFileStatus());
+}
+
+TEST_F(PduTest, FinBitPackingValidation) {
+    // Test all combinations to verify bit packing is correct
+    const FinDeliveryCode deliveryCodes[] = {FIN_DELIVERY_CODE_COMPLETE, FIN_DELIVERY_CODE_INCOMPLETE};
+    const FinFileStatus fileStatuses[] = {FIN_FILE_STATUS_DISCARDED, FIN_FILE_STATUS_DISCARDED_FILESTORE,
+                                          FIN_FILE_STATUS_RETAINED, FIN_FILE_STATUS_UNREPORTED};
+
+    for (const auto& deliveryCode : deliveryCodes) {
+        for (const auto& fileStatus : fileStatuses) {
+            Pdu::FinPdu txPdu;
+            txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                           1, 2, 3, CONDITION_CODE_NO_ERROR, deliveryCode, fileStatus);
+
+            U8 buffer[512];
+            Fw::Buffer txBuffer(buffer, sizeof(buffer));
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+            Pdu::FinPdu rxPdu;
+            const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+            EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode())
+                << "Delivery code mismatch for combination: delivery="
+                << static_cast<int>(deliveryCode) << " fileStatus=" << static_cast<int>(fileStatus);
+            EXPECT_EQ(fileStatus, rxPdu.getFileStatus())
+                << "File status mismatch for combination: delivery="
+                << static_cast<int>(deliveryCode) << " fileStatus=" << static_cast<int>(fileStatus);
+        }
+    }
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

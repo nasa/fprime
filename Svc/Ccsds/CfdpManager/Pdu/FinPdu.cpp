@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  EofPdu.cpp
+// \title  FinPdu.cpp
 // \author campuzan
-// \brief  cpp file for CFDP EOF PDU
+// \brief  cpp file for CFDP FIN (Finished) PDU
 // ======================================================================
 
 #include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
@@ -11,34 +11,34 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void Pdu::EofPdu::initialize(Direction direction,
+void Pdu::FinPdu::initialize(Direction direction,
                               TransmissionMode txmMode,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid,
                               ConditionCode conditionCode,
-                              U32 checksum,
-                              CfdpFileSize fileSize) {
-    // Initialize header with T_EOF type
-    this->m_header.initialize(T_EOF, direction, txmMode, sourceEid, transactionSeq, destEid);
+                              FinDeliveryCode deliveryCode,
+                              FinFileStatus fileStatus) {
+    // Initialize header with T_FIN type
+    this->m_header.initialize(T_FIN, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_conditionCode = conditionCode;
-    this->m_checksum = checksum;
-    this->m_fileSize = fileSize;
+    this->m_deliveryCode = deliveryCode;
+    this->m_fileStatus = fileStatus;
 }
 
-U32 Pdu::EofPdu::bufferSize() const {
+U32 Pdu::FinPdu::bufferSize() const {
     U32 size = this->m_header.bufferSize();
 
     // Directive code: 1 byte
     // Condition code: 1 byte
-    // Checksum: 4 bytes (U32)
-    // File size: sizeof(CfdpFileSize) bytes
-    size += sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+    // Delivery code (1 bit) + File status (2 bits) + spare (5 bits) packed in 1 byte
+    size += sizeof(U8) + sizeof(U8) + sizeof(U8);
+
     return size;
 }
 
-Fw::SerializeStatus Pdu::EofPdu::toBuffer(Fw::Buffer& buffer) const {
+Fw::SerializeStatus Pdu::FinPdu::toBuffer(Fw::Buffer& buffer) const {
     Fw::SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
     Fw::SerializeStatus status = this->toSerialBuffer(serialBuffer);
     if (status == Fw::FW_SERIALIZE_OK) {
@@ -47,7 +47,7 @@ Fw::SerializeStatus Pdu::EofPdu::toBuffer(Fw::Buffer& buffer) const {
     return status;
 }
 
-Fw::SerializeStatus Pdu::EofPdu::fromBuffer(const Fw::Buffer& buffer) {
+Fw::SerializeStatus Pdu::FinPdu::fromBuffer(const Fw::Buffer& buffer) {
     // Create SerialBuffer from Buffer
     Fw::SerialBuffer serialBuffer(const_cast<Fw::Buffer&>(buffer).getData(),
                                   const_cast<Fw::Buffer&>(buffer).getSize());
@@ -70,19 +70,19 @@ Fw::SerializeStatus Pdu::EofPdu::fromBuffer(const Fw::Buffer& buffer) {
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (directiveCode != FILE_DIRECTIVE_END_OF_FILE) {
+    if (directiveCode != FILE_DIRECTIVE_FIN) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Now set the type to T_EOF since we've validated it
-    this->m_header.m_type = T_EOF;
+    // Now set the type to T_FIN since we've validated it
+    this->m_header.m_type = T_FIN;
 
-    // Deserialize the EOF body
+    // Deserialize the FIN body
     return this->fromSerialBuffer(serialBuffer);
 }
 
-Fw::SerializeStatus Pdu::EofPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_EOF);
+Fw::SerializeStatus Pdu::FinPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+    FW_ASSERT(this->m_header.m_type == T_FIN);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->bufferSize() - this->m_header.bufferSize();
@@ -97,8 +97,8 @@ Fw::SerializeStatus Pdu::EofPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
-    // Directive code
-    U8 directiveCode = static_cast<U8>(FILE_DIRECTIVE_END_OF_FILE);
+    // Directive code (FIN = 5)
+    U8 directiveCode = static_cast<U8>(FILE_DIRECTIVE_FIN);
     status = serialBuffer.serializeFrom(directiveCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
@@ -111,14 +111,15 @@ Fw::SerializeStatus Pdu::EofPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
-    // Checksum (U32)
-    status = serialBuffer.serializeFrom(this->m_checksum);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
-    }
+    // Delivery code and file status packed into 1 byte
+    // Bit 7: delivery code (0=complete, 1=incomplete)
+    // Bits 6-5: file status (00=discarded, 01=discarded-filestore, 10=retained, 11=unreported)
+    // Bits 4-0: spare (set to 0)
+    U8 deliveryAndStatus = 0;
+    deliveryAndStatus |= (static_cast<U8>(this->m_deliveryCode) & 0x01) << 7;
+    deliveryAndStatus |= (static_cast<U8>(this->m_fileStatus) & 0x03) << 5;
 
-    // File size (CfdpFileSize)
-    status = serialBuffer.serializeFrom(this->m_fileSize);
+    status = serialBuffer.serializeFrom(deliveryAndStatus);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -126,8 +127,8 @@ Fw::SerializeStatus Pdu::EofPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus Pdu::EofPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_EOF);
+Fw::SerializeStatus Pdu::FinPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+    FW_ASSERT(this->m_header.m_type == T_FIN);
 
     // Directive code already read by union wrapper
 
@@ -139,17 +140,20 @@ Fw::SerializeStatus Pdu::EofPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     }
     this->m_conditionCode = static_cast<ConditionCode>(conditionCodeVal);
 
-    // Checksum
-    status = serialBuffer.deserializeTo(this->m_checksum);
+    // Delivery code and file status (packed byte)
+    U8 deliveryAndStatus;
+    status = serialBuffer.deserializeTo(deliveryAndStatus);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    // File size
-    status = serialBuffer.deserializeTo(this->m_fileSize);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
-    }
+    // Extract delivery code from bit 7
+    U8 deliveryCodeVal = (deliveryAndStatus >> 7) & 0x01;
+    this->m_deliveryCode = static_cast<FinDeliveryCode>(deliveryCodeVal);
+
+    // Extract file status from bits 6-5
+    U8 fileStatusVal = (deliveryAndStatus >> 5) & 0x03;
+    this->m_fileStatus = static_cast<FinFileStatus>(fileStatusVal);
 
     return Fw::FW_SERIALIZE_OK;
 }
