@@ -192,6 +192,106 @@ TEST_F(PduTest, MetadataLongFilenames) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.toBuffer(txBuffer));
 }
 
+// ======================================================================
+// File Data PDU Tests
+// ======================================================================
+
+TEST_F(PduTest, FileDataBufferSize) {
+    Pdu::FileDataPdu pdu;
+    const U8 testData[] = {0x01, 0x02, 0x03, 0x04, 0x05};
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 100, sizeof(testData), testData);
+
+    U32 size = pdu.bufferSize();
+    // Should include header + offset(4) + data(5)
+    ASSERT_GT(size, 0U);
+    // Verify expected size
+    U32 expectedSize = pdu.asHeader().bufferSize() + 4 + sizeof(testData);
+    ASSERT_EQ(expectedSize, size);
+}
+
+TEST_F(PduTest, FileDataRoundTrip) {
+    // Arrange - Create transmit PDU with test data
+    Pdu::FileDataPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_UNACKNOWLEDGED;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const U32 fileOffset = 1024;
+    const U8 testData[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xBE};
+    const U16 dataSize = sizeof(testData);
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    fileOffset, dataSize, testData);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer
+    Pdu::FileDataPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header fields
+    const Pdu::Header& header = rxPdu.asHeader();
+    EXPECT_EQ(Pdu::T_FILE_DATA, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify file data fields
+    EXPECT_EQ(fileOffset, rxPdu.getOffset());
+    EXPECT_EQ(dataSize, rxPdu.getDataSize());
+    ASSERT_NE(nullptr, rxPdu.getData());
+    EXPECT_EQ(0, memcmp(testData, rxPdu.getData(), dataSize));
+}
+
+TEST_F(PduTest, FileDataEmptyPayload) {
+    // Test with zero-length data
+    Pdu::FileDataPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 0, 0, nullptr);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    // Should encode successfully even with no data
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+}
+
+TEST_F(PduTest, FileDataLargePayload) {
+    // Test with maximum reasonable payload
+    const U16 largeSize = 1024;
+    U8 largeData[largeSize];
+    for (U16 i = 0; i < largeSize; ++i) {
+        largeData[i] = static_cast<U8>(i & 0xFF);
+    }
+
+    Pdu::FileDataPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 999999, largeSize, largeData);
+
+    U8 buffer[2048];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::FileDataPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(largeSize, rxPdu.getDataSize());
+    EXPECT_EQ(0, memcmp(largeData, rxPdu.getData(), largeSize));
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

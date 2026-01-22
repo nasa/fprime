@@ -14,6 +14,7 @@ register_fprime_library(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/PduHeader.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/MetadataPdu.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/FileDataPdu.cpp"
     DEPENDS
         Svc_Ccsds_Types
 )

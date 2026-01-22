@@ -228,6 +228,12 @@ union Pdu {
 
         //! Set PDU data length (used during encoding)
         void setPduDataLength(U16 length) { this->m_pduDataLength = length; }
+
+        //! Get the large file flag
+        LargeFileFlag getLargeFileFlag() const { return this->m_largeFileFlag; }
+
+        //! Set the large file flag (used for testing and configuration)
+        void setLargeFileFlag(LargeFileFlag flag) { this->m_largeFileFlag = flag; }
     };
 
     //! The type of a Metadata PDU
@@ -316,7 +322,7 @@ union Pdu {
         Header m_header;
 
         //! File offset
-        U32 m_offset;
+        CfdpFileSize m_offset;
 
         //! Data size
         U16 m_dataSize;
@@ -331,7 +337,7 @@ union Pdu {
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       U32 offset,
+                       CfdpFileSize offset,
                        U16 dataSize,
                        const U8* data);
 
@@ -341,11 +347,14 @@ union Pdu {
         //! Convert this FileDataPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
 
+        //! Initialize this FileDataPdu from a Buffer
+        Fw::SerializeStatus fromBuffer(const Fw::Buffer& buffer);
+
         //! Get this as a Header
         const Header& asHeader() const { return this->m_header; }
 
         //! Get the file offset
-        U32 getOffset() const { return this->m_offset; }
+        CfdpFileSize getOffset() const { return this->m_offset; }
 
         //! Get the data size
         U16 getDataSize() const { return this->m_dataSize; }
