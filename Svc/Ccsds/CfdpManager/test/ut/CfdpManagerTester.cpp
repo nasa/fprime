@@ -4,9 +4,10 @@
 // \brief  cpp file for CfdpManager component test harness implementation class
 // ======================================================================
 
-#include "CfdpManagerTester.hpp>
+#include "CfdpManagerTester.hpp"
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include "Fw/Types/SerialBuffer.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
+#include <Fw/Types/SerialBuffer.hpp>
 #include <cstring>
 
 namespace Svc {
@@ -99,49 +100,21 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
 
 bool CfdpManagerTester::deserializePduHeader(
     const Fw::Buffer& pduBuffer,
-    Svc::Ccsds::CfdpPduHeader& header
+    CfdpPdu::Header& header
 ) {
-    // Create a mutable copy for deserialization since getDeserializer() is non-const
-    Fw::Buffer mutableBuffer = pduBuffer;
-    Fw::ExternalSerializeBufferWithMemberCopy deserialiser = mutableBuffer.getDeserializer();
-    Fw::SerializeStatus status = header.deserializeFrom(deserialiser);
+    // Copy buffer data for deserialization
+    U8 buffer[CF_MAX_PDU_SIZE];
+    FwSizeType copySize = (pduBuffer.getSize() < CF_MAX_PDU_SIZE) ? pduBuffer.getSize() : CF_MAX_PDU_SIZE;
+    memcpy(buffer, pduBuffer.getData(), copySize);
+
+    Fw::SerialBuffer serialBuffer(buffer, copySize);
+    serialBuffer.fill();
+
+    Fw::SerializeStatus status = header.fromSerialBuffer(serialBuffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         std::cout << "deserializePduHeader failed with status: " << status << std::endl;
     }
     return (status == Fw::FW_SERIALIZE_OK);
-}
-
-bool CfdpManagerTester::validateHeaderFlags(
-    U8 flags,
-    U8 expectedVersion,
-    U8 expectedPduType,
-    U8 expectedDirection,
-    U8 expectedTxMode
-) {
-    // Extract bit fields from flags byte
-    // CFDP Blue Book 5.1: flags byte layout
-    // bit 0: large_file_flag
-    // bit 1: crc_flag
-    // bit 2: txm_mode (0=ack, 1=unack)
-    // bit 3: direction (0=toward receiver, 1=toward sender)
-    // bit 4: pdu_type (0=directive, 1=file data)
-    // bits 5-7: version (should be 001b = 1)
-
-    U8 version = (flags >> 5) & 0x07;
-    U8 pduType = (flags >> 4) & 0x01;
-    U8 direction = (flags >> 3) & 0x01;
-    U8 txMode = (flags >> 2) & 0x01;
-
-    std::cout << "version: " << version << ", pduType: " << pduType << std::endl;
-    std::cout << "direction: " << direction << ", txMode: " << txMode << std::endl;
-
-    bool match = true;
-    match &= (version == expectedVersion);
-    match &= (pduType == expectedPduType);
-    match &= (direction == expectedDirection);
-    match &= (txMode == expectedTxMode);
-
-    return match;
 }
 
 // ----------------------------------------------------------------------
@@ -189,24 +162,16 @@ void CfdpManagerTester::testMetaDataPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Step 4: Deserialize and validate PDU header
-    Svc::Ccsds::CfdpPduHeader header;
+    CfdpPdu::Header header;
     bool headerOk = deserializePduHeader(pduBuffer, header);
     ASSERT_TRUE(headerOk) << "Failed to deserialize PDU header";
 
-    // Validate header flags using getter
-    bool flagsOk = validateHeaderFlags(
-        header.get_flags(),
-        1,  // version
-        0,  // pdu_type (directive)
-        0,  // direction (toward receiver)
-        1   // txm_mode (unacknowledged for class 1)
-    );
-    ASSERT_TRUE(flagsOk) << "PDU header flags validation failed";
-
-    // Validate header entity IDs and transaction sequence using getters
-    EXPECT_EQ(header.get_sourceEid(), component.getLocalEidParam());
-    EXPECT_EQ(header.get_destinationEid(), testPeerId);
-    EXPECT_EQ(header.get_transactionSeq(), testSequenceId);
+    // Validate header fields using getters (no manual bit extraction needed)
+    EXPECT_EQ(0, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(component.getLocalEidParam(), header.getSourceEid()) << "Source EID mismatch";
+    EXPECT_EQ(testPeerId, header.getDestEid()) << "Destination EID mismatch";
+    EXPECT_EQ(testSequenceId, header.getTransactionSeq()) << "Transaction sequence mismatch";
 
     // // Step 5: Deserialize file directive header
     // FwSizeType offset = header.SERIALIZED_SIZE;

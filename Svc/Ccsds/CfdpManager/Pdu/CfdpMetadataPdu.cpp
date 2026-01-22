@@ -18,8 +18,8 @@
 namespace Svc {
 namespace Ccsds {
 
-void CfdpPdu::MetadataPdu::initialize(U8 direction,
-                                      U8 txmMode,
+void CfdpPdu::MetadataPdu::initialize(CfdpDirection direction,
+                                      CfdpTransmissionMode txmMode,
                                       CfdpEntityId sourceEid,
                                       CfdpTransactionSeq transactionSeq,
                                       CfdpEntityId destEid,
@@ -92,7 +92,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& seria
     }
 
     // Directive code (METADATA = 7)
-    U8 directiveCode = static_cast<U8>(CfdpFileDirective::METADATA);
+    U8 directiveCode = static_cast<U8>(CFDP_FILE_DIRECTIVE_METADATA);
     status = serialBuffer.serializeFrom(directiveCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
@@ -104,7 +104,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& seria
     // bits 3-0: checksum_type
     U8 segmentationControl = 0;
     segmentationControl |= (this->m_closureRequested & 0x01) << 7;
-    segmentationControl |= (static_cast<U8>(this->m_checksumType.e) & 0x0F);
+    segmentationControl |= (static_cast<U8>(this->m_checksumType) & 0x0F);
 
     status = serialBuffer.serializeFrom(segmentationControl);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -160,7 +160,7 @@ Fw::SerializeStatus CfdpPdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& ser
 
     this->m_closureRequested = (segmentationControl >> 7) & 0x01;
     U8 checksumTypeVal = segmentationControl & 0x0F;
-    this->m_checksumType = static_cast<CfdpChecksumType::T>(checksumTypeVal);
+    this->m_checksumType = static_cast<CfdpChecksumType>(checksumTypeVal);
 
     // File size
     status = serialBuffer.deserializeTo(this->m_fileSize);

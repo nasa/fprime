@@ -21,15 +21,104 @@
 #include <config/CfdpEntityIdAliasAc.hpp>
 #include <config/CfdpTransactionSeqAliasAc.hpp>
 
-#include <Svc/Ccsds/Types/CfdpFileDirectiveEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpChecksumTypeEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpConditionCodeEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpFinDeliveryCodeEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpFinFileStatusEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpAckTxnStatusEnumAc.hpp>
-
 namespace Svc {
 namespace Ccsds {
+
+// CFDP File Directive Codes
+// Blue Book section 5.2, table 5-4
+enum CfdpFileDirective : U8 {
+    CFDP_FILE_DIRECTIVE_INVALID_MIN = 0,  // Minimum used to limit range
+    CFDP_FILE_DIRECTIVE_END_OF_FILE = 4,  // End of File
+    CFDP_FILE_DIRECTIVE_FIN = 5,          // Finished
+    CFDP_FILE_DIRECTIVE_ACK = 6,          // Acknowledge
+    CFDP_FILE_DIRECTIVE_METADATA = 7,     // Metadata
+    CFDP_FILE_DIRECTIVE_NAK = 8,          // Negative Acknowledge
+    CFDP_FILE_DIRECTIVE_PROMPT = 9,       // Prompt
+    CFDP_FILE_DIRECTIVE_KEEP_ALIVE = 12,  // Keep Alive
+    CFDP_FILE_DIRECTIVE_INVALID_MAX = 13  // Maximum used to limit range
+};
+
+// CFDP Condition Codes
+// Blue Book section 5.2.2, table 5-5
+enum CfdpConditionCode : U8 {
+    CFDP_CONDITION_CODE_NO_ERROR = 0,
+    CFDP_CONDITION_CODE_POS_ACK_LIMIT_REACHED = 1,
+    CFDP_CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED = 2,
+    CFDP_CONDITION_CODE_INVALID_TRANSMISSION_MODE = 3,
+    CFDP_CONDITION_CODE_FILESTORE_REJECTION = 4,
+    CFDP_CONDITION_CODE_FILE_CHECKSUM_FAILURE = 5,
+    CFDP_CONDITION_CODE_FILE_SIZE_ERROR = 6,
+    CFDP_CONDITION_CODE_NAK_LIMIT_REACHED = 7,
+    CFDP_CONDITION_CODE_INACTIVITY_DETECTED = 8,
+    CFDP_CONDITION_CODE_INVALID_FILE_STRUCTURE = 9,
+    CFDP_CONDITION_CODE_CHECK_LIMIT_REACHED = 10,
+    CFDP_CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE = 11,
+    CFDP_CONDITION_CODE_SUSPEND_REQUEST_RECEIVED = 14,
+    CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED = 15
+};
+
+// CFDP ACK Transaction Status
+// Blue Book section 5.2.4, table 5-8
+enum CfdpAckTxnStatus : U8 {
+    CFDP_ACK_TXN_STATUS_UNDEFINED = 0,
+    CFDP_ACK_TXN_STATUS_ACTIVE = 1,
+    CFDP_ACK_TXN_STATUS_TERMINATED = 2,
+    CFDP_ACK_TXN_STATUS_UNRECOGNIZED = 3
+};
+
+// CFDP FIN Delivery Code
+// Blue Book section 5.2.3, table 5-7
+enum CfdpFinDeliveryCode : U8 {
+    CFDP_FIN_DELIVERY_CODE_COMPLETE = 0,    // Data complete
+    CFDP_FIN_DELIVERY_CODE_INCOMPLETE = 1   // Data incomplete
+};
+
+// CFDP FIN File Status
+// Blue Book section 5.2.3, table 5-7
+enum CfdpFinFileStatus : U8 {
+    CFDP_FIN_FILE_STATUS_DISCARDED = 0,            // File discarded deliberately
+    CFDP_FIN_FILE_STATUS_DISCARDED_FILESTORE = 1,  // File discarded due to filestore rejection
+    CFDP_FIN_FILE_STATUS_RETAINED = 2,             // File retained successfully
+    CFDP_FIN_FILE_STATUS_UNREPORTED = 3            // File status unreported
+};
+
+// CFDP Checksum Type
+// Blue Book section 5.2.5, table 5-9
+enum CfdpChecksumType : U8 {
+    CFDP_CHECKSUM_TYPE_MODULAR = 0,        // Modular checksum
+    CFDP_CHECKSUM_TYPE_CRC_32 = 1,         // CRC-32 (not currently supported)
+    CFDP_CHECKSUM_TYPE_NULL_CHECKSUM = 15  // Null checksum
+};
+
+// CFDP PDU Type
+enum CfdpPduType : U8 {
+    CFDP_PDU_TYPE_DIRECTIVE = 0,  // File directive PDU
+    CFDP_PDU_TYPE_FILE_DATA = 1   // File data PDU
+};
+
+// CFDP Direction
+enum CfdpDirection : U8 {
+    CFDP_DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
+    CFDP_DIRECTION_TOWARD_SENDER = 1     // Toward file sender
+};
+
+// CFDP Transmission Mode
+enum CfdpTransmissionMode : U8 {
+    CFDP_TRANSMISSION_MODE_ACKNOWLEDGED = 0,    // Acknowledged (Class 2)
+    CFDP_TRANSMISSION_MODE_UNACKNOWLEDGED = 1   // Unacknowledged (Class 1)
+};
+
+// CFDP CRC Flag
+enum CfdpCrcFlag : U8 {
+    CFDP_CRC_NOT_PRESENT = 0,  // CRC not present
+    CFDP_CRC_PRESENT = 1       // CRC present
+};
+
+// CFDP Large File Flag
+enum CfdpLargeFileFlag : U8 {
+    CFDP_LARGE_FILE_32_BIT = 0,  // 32-bit file size
+    CFDP_LARGE_FILE_64_BIT = 1   // 64-bit file size
+};
 
 //! \class CfdpPdu
 //! \brief A CFDP PDU following the FilePacket pattern
@@ -68,20 +157,20 @@ union CfdpPdu {
         //! CFDP version (should be 1)
         U8 m_version;
 
-        //! PDU type: 0=directive, 1=file data
-        U8 m_pduType;
+        //! PDU type
+        CfdpPduType m_pduType;
 
-        //! Direction: 0=toward receiver, 1=toward sender
-        U8 m_direction;
+        //! Direction
+        CfdpDirection m_direction;
 
-        //! Transmission mode: 0=acknowledged, 1=unacknowledged
-        U8 m_txmMode;
+        //! Transmission mode
+        CfdpTransmissionMode m_txmMode;
 
-        //! CRC flag: 0=not present, 1=present
-        U8 m_crcFlag;
+        //! CRC flag
+        CfdpCrcFlag m_crcFlag;
 
-        //! Large file flag: 0=32-bit, 1=64-bit
-        U8 m_largeFileFlag;
+        //! Large file flag
+        CfdpLargeFileFlag m_largeFileFlag;
 
         //! Segmentation control
         U8 m_segmentationControl;
@@ -107,8 +196,8 @@ union CfdpPdu {
 
         //! Initialize a PDU header
         void initialize(Type type,
-                       U8 direction,
-                       U8 txmMode,
+                       CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid);
@@ -126,10 +215,10 @@ union CfdpPdu {
         Type getType() const { return this->m_type; }
 
         //! Get the direction
-        U8 getDirection() const { return this->m_direction; }
+        CfdpDirection getDirection() const { return this->m_direction; }
 
         //! Get the transmission mode
-        U8 getTxmMode() const { return this->m_txmMode; }
+        CfdpTransmissionMode getTxmMode() const { return this->m_txmMode; }
 
         //! Get the source entity ID
         CfdpEntityId getSourceEid() const { return this->m_sourceEid; }
@@ -178,8 +267,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a Metadata PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -240,8 +329,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a File Data PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -294,8 +383,8 @@ union CfdpPdu {
 
       public:
         //! Initialize an EOF PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -348,8 +437,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a Finished PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -405,8 +494,8 @@ union CfdpPdu {
 
       public:
         //! Initialize an ACK PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -460,8 +549,8 @@ union CfdpPdu {
 
       public:
         //! Initialize a NAK PDU
-        void initialize(U8 direction,
-                       U8 txmMode,
+        void initialize(CfdpDirection direction,
+                       CfdpTransmissionMode txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,

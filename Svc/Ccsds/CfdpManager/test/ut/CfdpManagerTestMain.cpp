@@ -4,7 +4,7 @@
 // \brief  cpp file for CfdpManager component test main function
 // ======================================================================
 
-#include "CfdpManagerTester.hpp>
+#include "CfdpManagerTester.hpp"
 
 TEST(Nominal, MetaDataPdu) {
     // Allocate tester on heap to avoid stack overflow (CfdpManager is very large)

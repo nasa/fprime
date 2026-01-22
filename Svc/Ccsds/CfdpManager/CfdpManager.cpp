@@ -34,7 +34,10 @@ CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase
     }
 }
 
-CfdpManager ::~CfdpManager() {}
+CfdpManager ::~CfdpManager() {
+    // Clean up the queue resources allocated during initialization
+    this->deinit();
+}
 
 void CfdpManager ::configure(void)
 {
@@ -324,7 +327,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     Fw::Buffer buffer = this->bufferAllocate_out(portNum, msgSize);
 
     auto serializer = buffer.getSerializer();
-    status = serializer.serializeFrom(msgPtr, msgSize);
+    status = serializer.serializeFrom(msgPtr, msgSize, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Full send

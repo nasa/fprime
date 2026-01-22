@@ -10,9 +10,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/Types/CfdpPduHeaderSerializableAc.hpp>
-#include <Svc/Ccsds/Types/CfdpFileDirectiveHeaderSerializableAc.hpp>
-#include <Svc/Ccsds/Types/CfdpMetadataPduSerializableAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu/CfdpPduClasses.hpp>
 
 namespace Svc {
 
@@ -97,22 +95,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return True if deserialization successful
     bool deserializePduHeader(
         const Fw::Buffer& pduBuffer,
-        Svc::Ccsds::CfdpPduHeader& header
-    );
-
-    //! Helper to validate PDU header flags
-    //! @param flags Bit-packed flags byte from header
-    //! @param expectedVersion Expected CFDP version (should be 1)
-    //! @param expectedPduType Expected PDU type (0=directive, 1=file data)
-    //! @param expectedDirection Expected direction (0=toward receiver, 1=toward sender)
-    //! @param expectedTxMode Expected transmission mode (0=ack, 1=unack)
-    //! @return True if all flags match expected values
-    bool validateHeaderFlags(
-        U8 flags,
-        U8 expectedVersion,
-        U8 expectedPduType,
-        U8 expectedDirection,
-        U8 expectedTxMode
+        CfdpPdu::Header& header
     );
 
   private:

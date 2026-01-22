@@ -18,18 +18,18 @@ namespace Svc {
 namespace Ccsds {
 
 void CfdpPdu::Header::initialize(Type type,
-                                 U8 direction,
-                                 U8 txmMode,
+                                 CfdpDirection direction,
+                                 CfdpTransmissionMode txmMode,
                                  CfdpEntityId sourceEid,
                                  CfdpTransactionSeq transactionSeq,
                                  CfdpEntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
-    this->m_pduType = (type == T_FILE_DATA) ? 1 : 0;
+    this->m_pduType = (type == T_FILE_DATA) ? CFDP_PDU_TYPE_FILE_DATA : CFDP_PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_txmMode = txmMode;
-    this->m_crcFlag = 0;  // CRC not currently supported
-    this->m_largeFileFlag = 0;  // 32-bit file sizes
+    this->m_crcFlag = CFDP_CRC_NOT_PRESENT;  // CRC not currently supported
+    this->m_largeFileFlag = CFDP_LARGE_FILE_32_BIT;  // 32-bit file sizes
     this->m_segmentationControl = 0;
     this->m_segmentMetadataFlag = 0;
     this->m_pduDataLength = 0;  // To be set later
@@ -38,13 +38,57 @@ void CfdpPdu::Header::initialize(Type type,
     this->m_destEid = destEid;
 }
 
+// Helper function to calculate minimum bytes needed to encode a value
+static U8 getValueEncodedSize(U64 value) {
+    U8  minSize;
+    U64 limit = 0x100;
+
+    for (minSize = 1; minSize < 8 && value >= limit; ++minSize) {
+        limit <<= 8;
+    }
+
+    return minSize;
+}
+
+// Helper function to encode an integer in variable-length format
+static Fw::SerializeStatus encodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U64 value, U8 encodeSize) {
+    // Encode from MSB to LSB (big-endian)
+    for (U8 i = 0; i < encodeSize; ++i) {
+        U8 shift = static_cast<U8>((encodeSize - 1 - i) * 8);
+        U8 byte = static_cast<U8>((value >> shift) & 0xFF);
+        Fw::SerializeStatus status = serialBuffer.serializeFrom(byte);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+    }
+    return Fw::FW_SERIALIZE_OK;
+}
+
+// Helper function to decode an integer from variable-length format
+static U64 decodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U8 decodeSize, Fw::SerializeStatus& status) {
+    U64 value = 0;
+
+    // Decode from MSB to LSB (big-endian)
+    for (U8 i = 0; i < decodeSize; ++i) {
+        U8 byte;
+        status = serialBuffer.deserializeTo(byte);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return 0;
+        }
+        value = (value << 8) | byte;
+    }
+
+    return value;
+}
+
 U32 CfdpPdu::Header::bufferSize() const {
     // Fixed portion: flags(1) + length(2) + eidTsnLengths(1) = 4 bytes
     U32 size = 4;
 
-    // Fixed-size entity IDs and transaction sequence number based on type definitions
-    U8 eidSize = sizeof(CfdpEntityId);
-    U8 tsnSize = sizeof(CfdpTransactionSeq);
+    // Variable-size entity IDs and transaction sequence number based on actual values
+    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ?
+                                      this->m_sourceEid : this->m_destEid);
+    U8 tsnSize = getValueEncodedSize(this->m_transactionSeq);
 
     size += eidSize;      // source EID
     size += tsnSize;      // transaction sequence number
@@ -56,9 +100,10 @@ U32 CfdpPdu::Header::bufferSize() const {
 Fw::SerializeStatus CfdpPdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     Fw::SerializeStatus status;
 
-    // Fixed-size entity IDs and transaction sequence number based on type definitions
-    U8 eidSize = sizeof(CfdpEntityId);
-    U8 tsnSize = sizeof(CfdpTransactionSeq);
+    // Variable-size entity IDs and transaction sequence number based on actual values
+    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ?
+                                      this->m_sourceEid : this->m_destEid);
+    U8 tsnSize = getValueEncodedSize(this->m_transactionSeq);
 
     // Byte 0: flags
     // bits 7-5: version (001b = 1)
@@ -102,18 +147,18 @@ Fw::SerializeStatus CfdpPdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuff
         return status;
     }
 
-    // Fixed-width fields (size determined by typedef)
-    status = serialBuffer.serializeFrom(this->m_sourceEid);
+    // Variable-width fields (size based on actual values)
+    status = encodeIntegerInSize(serialBuffer, this->m_sourceEid, eidSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.serializeFrom(this->m_transactionSeq);
+    status = encodeIntegerInSize(serialBuffer, this->m_transactionSeq, tsnSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.serializeFrom(this->m_destEid);
+    status = encodeIntegerInSize(serialBuffer, this->m_destEid, eidSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -132,11 +177,11 @@ Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBu
     }
 
     this->m_version = (flags >> 5) & 0x07;
-    this->m_pduType = (flags >> 4) & 0x01;
-    this->m_direction = (flags >> 3) & 0x01;
-    this->m_txmMode = (flags >> 2) & 0x01;
-    this->m_crcFlag = (flags >> 1) & 0x01;
-    this->m_largeFileFlag = flags & 0x01;
+    this->m_pduType = static_cast<CfdpPduType>((flags >> 4) & 0x01);
+    this->m_direction = static_cast<CfdpDirection>((flags >> 3) & 0x01);
+    this->m_txmMode = static_cast<CfdpTransmissionMode>((flags >> 2) & 0x01);
+    this->m_crcFlag = static_cast<CfdpCrcFlag>((flags >> 1) & 0x01);
+    this->m_largeFileFlag = static_cast<CfdpLargeFileFlag>(flags & 0x01);
 
     // Bytes 1-2: PDU data length
     status = serialBuffer.deserializeTo(this->m_pduDataLength);
@@ -156,29 +201,29 @@ Fw::SerializeStatus CfdpPdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBu
     this->m_segmentMetadataFlag = (eidTsnLengths >> 3) & 0x01;
     U8 tsnSize = (eidTsnLengths & 0x07) + 1;
 
-    // Validate that the encoded sizes match the typedef sizes
-    FW_ASSERT(eidSize == sizeof(CfdpEntityId), static_cast<FwAssertArgType>(eidSize));
-    FW_ASSERT(tsnSize == sizeof(CfdpTransactionSeq), static_cast<FwAssertArgType>(tsnSize));
+    // Validate that the sizes are within bounds (1-8 bytes)
+    FW_ASSERT(eidSize >= 1 && eidSize <= 8, static_cast<FwAssertArgType>(eidSize));
+    FW_ASSERT(tsnSize >= 1 && tsnSize <= 8, static_cast<FwAssertArgType>(tsnSize));
 
-    // Fixed-width fields (size determined by typedef)
-    status = serialBuffer.deserializeTo(this->m_sourceEid);
+    // Variable-width fields (size determined by encoded length)
+    this->m_sourceEid = static_cast<CfdpEntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.deserializeTo(this->m_transactionSeq);
+    this->m_transactionSeq = static_cast<CfdpTransactionSeq>(decodeIntegerInSize(serialBuffer, tsnSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    status = serialBuffer.deserializeTo(this->m_destEid);
+    this->m_destEid = static_cast<CfdpEntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     // Don't set m_type yet - it will be determined by the directive code for directive PDUs
     // or set to T_FILE_DATA for file data PDUs
-    if (this->m_pduType == 1) {
+    if (this->m_pduType == CFDP_PDU_TYPE_FILE_DATA) {
         this->m_type = T_FILE_DATA;
     } else {
         // For directive PDUs, type will be set when directive code is read
