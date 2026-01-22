@@ -272,7 +272,7 @@ union Pdu {
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
-                       U32 fileSize,
+                       CfdpFileSize fileSize,
                        const char* sourceFilename,
                        const char* destFilename,
                        ChecksumType checksumType,
@@ -291,7 +291,7 @@ union Pdu {
         const Header& asHeader() const { return this->m_header; }
 
         //! Get the file size
-        U32 getFileSize() const { return this->m_fileSize; }
+        CfdpFileSize getFileSize() const { return this->m_fileSize; }
 
         //! Get the source filename
         const char* getSourceFilename() const { return this->m_sourceFilename; }
@@ -385,7 +385,7 @@ union Pdu {
         U32 m_checksum;
 
         //! File size
-        U32 m_fileSize;
+        CfdpFileSize m_fileSize;
 
       public:
         //! Initialize an EOF PDU
@@ -396,13 +396,16 @@ union Pdu {
                        CfdpEntityId destEid,
                        ConditionCode conditionCode,
                        U32 checksum,
-                       U32 fileSize);
+                       CfdpFileSize fileSize);
 
         //! Compute the buffer size needed
         U32 bufferSize() const;
 
         //! Convert this EofPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
+
+        //! Initialize this EofPdu from a Buffer
+        Fw::SerializeStatus fromBuffer(const Fw::Buffer& buffer);
 
         //! Get this as a Header
         const Header& asHeader() const { return this->m_header; }
@@ -414,7 +417,7 @@ union Pdu {
         U32 getChecksum() const { return this->m_checksum; }
 
         //! Get file size
-        U32 getFileSize() const { return this->m_fileSize; }
+        CfdpFileSize getFileSize() const { return this->m_fileSize; }
 
       private:
         //! Initialize this EofPdu from a SerialBuffer

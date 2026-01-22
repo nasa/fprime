@@ -94,7 +94,7 @@ TEST_F(PduTest, MetadataRoundTrip) {
     const CfdpEntityId sourceEid = 100;
     const CfdpTransactionSeq transactionSeq = 200;
     const CfdpEntityId destEid = 300;
-    const U32 fileSize = 2048;
+    const CfdpFileSize fileSize = 2048;
     const char* sourceFilename = "source_file.bin";
     const char* destFilename = "dest_file.bin";
     const ChecksumType checksumType = CHECKSUM_TYPE_MODULAR;
@@ -290,6 +290,122 @@ TEST_F(PduTest, FileDataLargePayload) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
     EXPECT_EQ(largeSize, rxPdu.getDataSize());
     EXPECT_EQ(0, memcmp(largeData, rxPdu.getData(), largeSize));
+}
+
+// ======================================================================
+// EOF PDU Tests
+// ======================================================================
+
+TEST_F(PduTest, EofBufferSize) {
+    Pdu::EofPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
+
+    U32 size = pdu.bufferSize();
+    // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(CfdpFileSize))
+    ASSERT_GT(size, 0U);
+    U32 expectedSize = pdu.asHeader().bufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+    ASSERT_EQ(expectedSize, size);
+}
+
+TEST_F(PduTest, EofRoundTrip) {
+    // Arrange - Create transmit PDU
+    Pdu::EofPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_UNACKNOWLEDGED;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
+    const U32 checksum = 0xDEADBEEF;
+    const CfdpFileSize fileSize = 65536;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    conditionCode, checksum, fileSize);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header fields
+    const Pdu::Header& header = rxPdu.asHeader();
+    EXPECT_EQ(Pdu::T_EOF, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify EOF-specific fields
+    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(checksum, rxPdu.getChecksum());
+    EXPECT_EQ(fileSize, rxPdu.getFileSize());
+}
+
+TEST_F(PduTest, EofWithError) {
+    // Test with error condition code
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0, 0);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    // Should encode successfully even with error condition
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
+}
+
+TEST_F(PduTest, EofZeroValues) {
+    // Test with all zero values
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(0U, rxPdu.getChecksum());
+    EXPECT_EQ(0U, rxPdu.getFileSize());
+}
+
+TEST_F(PduTest, EofLargeValues) {
+    // Test with maximum U32 values
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0xFFFFFFFF, 0xFFFFFFFF);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(0xFFFFFFFFU, rxPdu.getChecksum());
+    EXPECT_EQ(0xFFFFFFFFU, rxPdu.getFileSize());
 }
 
 int main(int argc, char** argv) {
