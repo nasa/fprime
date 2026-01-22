@@ -764,6 +764,152 @@ TEST_F(PduTest, AckBitPackingValidation) {
     }
 }
 
+// ======================================================================
+// NAK PDU Tests
+// ======================================================================
+
+TEST_F(PduTest, NakBufferSize) {
+    Pdu::NakPdu pdu;
+    pdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 100, 500);
+
+    U32 size = pdu.bufferSize();
+    // Should include header + directive(1) + scope_start(4) + scope_end(4) = header + 9
+    ASSERT_GT(size, 0U);
+    U32 expectedSize = pdu.asHeader().bufferSize() + 9;
+    ASSERT_EQ(expectedSize, size);
+}
+
+TEST_F(PduTest, NakRoundTrip) {
+    // Arrange - Create transmit PDU
+    Pdu::NakPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const TransmissionMode txmMode = TRANSMISSION_MODE_ACKNOWLEDGED;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const U32 scopeStart = 1024;
+    const U32 scopeEnd = 8192;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    scopeStart, scopeEnd);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header fields
+    const Pdu::Header& header = rxPdu.asHeader();
+    EXPECT_EQ(Pdu::T_NAK, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify NAK-specific fields
+    EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
+    EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
+}
+
+TEST_F(PduTest, NakZeroScope) {
+    // Test NAK with zero scope (start of file)
+    Pdu::NakPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 0, 1024);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(0U, rxPdu.getScopeStart());
+    EXPECT_EQ(1024U, rxPdu.getScopeEnd());
+}
+
+TEST_F(PduTest, NakLargeScope) {
+    // Test NAK with large file offsets
+    Pdu::NakPdu txPdu;
+    const U32 largeStart = 0xFFFF0000;
+    const U32 largeEnd = 0xFFFFFFFF;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, largeStart, largeEnd);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(largeStart, rxPdu.getScopeStart());
+    EXPECT_EQ(largeEnd, rxPdu.getScopeEnd());
+}
+
+TEST_F(PduTest, NakSingleByte) {
+    // Test NAK for single byte gap
+    Pdu::NakPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                   1, 2, 3, 1000, 1001);
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::NakPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(1000U, rxPdu.getScopeStart());
+    EXPECT_EQ(1001U, rxPdu.getScopeEnd());
+}
+
+TEST_F(PduTest, NakMultipleCombinations) {
+    // Test various scope combinations
+    const U32 testScopes[][2] = {
+        {0, 100},
+        {512, 1024},
+        {4096, 8192},
+        {0x10000, 0x20000},
+        {0x80000000, 0x90000000}
+    };
+
+    for (const auto& scope : testScopes) {
+        Pdu::NakPdu txPdu;
+        txPdu.initialize(DIRECTION_TOWARD_SENDER, TRANSMISSION_MODE_ACKNOWLEDGED,
+                       10, 20, 30, scope[0], scope[1]);
+
+        U8 buffer[512];
+        Fw::Buffer txBuffer(buffer, sizeof(buffer));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+        Pdu::NakPdu rxPdu;
+        const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+        EXPECT_EQ(scope[0], rxPdu.getScopeStart())
+            << "Scope start mismatch for range: " << scope[0] << "-" << scope[1];
+        EXPECT_EQ(scope[1], rxPdu.getScopeEnd())
+            << "Scope end mismatch for range: " << scope[0] << "-" << scope[1];
+    }
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

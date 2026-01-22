@@ -578,6 +578,9 @@ union Pdu {
         //! Convert this NakPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
 
+        //! Initialize this NakPdu from a Buffer
+        Fw::SerializeStatus fromBuffer(const Fw::Buffer& buffer);
+
         //! Get this as a Header
         const Header& asHeader() const { return this->m_header; }
 
