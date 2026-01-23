@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  main.cpp
-// \author T. Chieu
+// \author T. Chieu, R. Bocchino
 // \brief  main cpp file for FPP enum tests
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #include "FppTest/enum/C_EEnumAc.hpp"
@@ -23,9 +17,13 @@
 #include "STest/Random/Random.hpp"
 #include "gtest/gtest.h"
 
+namespace FppTest {
+
+namespace Enum {
+
 // Instantiate enum tests
 using EnumTestImplementations =
-    ::testing::Types<FppTest::Enum::C_E, Default, Explicit, Implicit, Interval, SerializeTypeU8, SerializeTypeU64>;
+    ::testing::Types<C_E, Default, Explicit, Implicit, Interval, SerializeTypeU8, SerializeTypeU64>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, EnumTest, EnumTestImplementations);
 
 // ----------------------------------------------------------------------
@@ -33,7 +31,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, EnumTest, EnumTestImplementations);
 // ----------------------------------------------------------------------
 
 template <>
-Default::T FppTest::Enum::getDefaultValue<Default>() {
+Default::T getDefaultValue<Default>() {
     return Default::C;
 }
 
@@ -42,12 +40,12 @@ Default::T FppTest::Enum::getDefaultValue<Default>() {
 // ----------------------------------------------------------------------
 
 template <>
-Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
+Explicit::T getDefaultValue<Explicit>() {
     return Explicit::A;
 }
 
 template <>
-Explicit::T FppTest::Enum::getValidValue<Explicit>() {
+Explicit::T getValidValue<Explicit>() {
     U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS);
 
     switch (val) {
@@ -61,7 +59,7 @@ Explicit::T FppTest::Enum::getValidValue<Explicit>() {
 }
 
 template <>
-Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
+Explicit::T getInvalidValue<Explicit>() {
     U32 sign = STest::Pick::lowerUpper(0, 1);
 
     switch (sign) {
@@ -77,7 +75,7 @@ Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
 }
 
 template <>
-Interval::T FppTest::Enum::getValidValue<Interval>() {
+Interval::T getValidValue<Interval>() {
     U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS);
 
     switch (val) {
@@ -103,10 +101,14 @@ Interval::T FppTest::Enum::getValidValue<Interval>() {
 // ----------------------------------------------------------------------
 
 template <>
-Interval::T FppTest::Enum::getInvalidValue<Interval>() {
+Interval::T getInvalidValue<Interval>() {
     return static_cast<Interval::T>(
         STest::Pick::lowerUpper(Interval::G + 1, std::numeric_limits<Interval::SerialType>::max()));
 }
+
+}  // namespace Enum
+
+}  // namespace FppTest
 
 // ----------------------------------------------------------------------
 // Main program
