@@ -81,22 +81,22 @@ static char aliasStringDefaultValsBuffer[AliasString::SIZE][AliasString::ELEMENT
 static char aliasStringTestValsBuffer[AliasString::SIZE][AliasString::ELEMENT_BUFFER_SIZE];
 
 template <>
-void setDefaultVals<AliasString>(Fw::ExternalString (&a)[::AliasString::SIZE]) {
-    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
-        a[i].setBuffer(aliasStringDefaultValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
+void setDefaultVals<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
+    for (U32 i = 0; i < AliasString::SIZE; i++) {
+        a[i].setBuffer(aliasStringDefaultValsBuffer[i], AliasString::ELEMENT_BUFFER_SIZE);
     }
 }
 
 template <>
 void setTestVals<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
-    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
-        a[i].setBuffer(aliasStringTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
-        FppTest::Utils::setString(aliasStringTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE, 1);
+    for (U32 i = 0; i < AliasString::SIZE; i++) {
+        a[i].setBuffer(aliasStringTestValsBuffer[i], AliasString::ELEMENT_BUFFER_SIZE);
+        FppTest::Utils::setString(aliasStringTestValsBuffer[i], AliasString::ELEMENT_BUFFER_SIZE, 1);
     }
 }
 
 template <>
-AliasString getMultiElementConstructedArray<AliasString>(Fw::ExternalString (&a)[::String::SIZE]) {
+AliasString getMultiElementConstructedArray<AliasString>(Fw::ExternalString (&a)[String::SIZE]) {
     return AliasString({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
 }
 
@@ -175,34 +175,34 @@ SM_A getMultiElementConstructedArray<SM_A>(U32 (&a)[SM_A::SIZE]) {
 // Template specializations for String type
 // ----------------------------------------------------------------------
 
-static char stringDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
-static char stringTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+static char stringDefaultValsBuffer[String::SIZE][String::ELEMENT_BUFFER_SIZE];
+static char stringTestValsBuffer[String::SIZE][String::ELEMENT_BUFFER_SIZE];
 
 template <>
-void setDefaultVals<String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    for (U32 i = 0; i < ::String::SIZE; i++) {
-        a[i].setBuffer(stringDefaultValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE);
+void setDefaultVals<String>(Fw::ExternalString (&a)[String::SIZE]) {
+    for (U32 i = 0; i < String::SIZE; i++) {
+        a[i].setBuffer(stringDefaultValsBuffer[i], String::ELEMENT_BUFFER_SIZE);
     }
 }
 
 template <>
-void setTestVals<String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    for (U32 i = 0; i < ::String::SIZE; i++) {
-        a[i].setBuffer(stringTestValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE);
-        FppTest::Utils::setString(stringTestValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE, 1);
+void setTestVals<String>(Fw::ExternalString (&a)[String::SIZE]) {
+    for (U32 i = 0; i < String::SIZE; i++) {
+        a[i].setBuffer(stringTestValsBuffer[i], String::ELEMENT_BUFFER_SIZE);
+        FppTest::Utils::setString(stringTestValsBuffer[i], String::ELEMENT_BUFFER_SIZE, 1);
     }
 }
 
 template <>
-::String getMultiElementConstructedArray<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    return ::String({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
+String getMultiElementConstructedArray<String>(Fw::ExternalString (&a)[String::SIZE]) {
+    return String({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
 }
 
 template <>
-U32 getSerializedSize<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
+U32 getSerializedSize<String>(Fw::ExternalString (&a)[String::SIZE]) {
     U32 serializedSize = 0;
 
-    for (U32 i = 0; i < ::String::SIZE; i++) {
+    for (U32 i = 0; i < String::SIZE; i++) {
         serializedSize += static_cast<U32>(a[i].serializedSize());
     }
 
