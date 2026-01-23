@@ -6,12 +6,7 @@ module FppTest {
     array StructArray = [3] U32
     type StructArrAlias = StructArray
 
-    struct Primitive {
-      mBool: bool
-      mU32: U32
-      mI16: I16
-      mF64: F64
-    }
+    include "primitive.fppi"
 
     type StructSAlias = Primitive
 
@@ -41,6 +36,16 @@ module FppTest {
       mStrArr_2: [3] string size 60
       mStrAlias: StructAliasString
       mStrAlias_2: [3] StructAliasString
+    }
+
+    passive component C {
+      include "primitive.fppi"
+    }
+
+    state machine SM {
+      state S
+      initial enter S
+      type SMPrimitive = Primitive
     }
 
   }

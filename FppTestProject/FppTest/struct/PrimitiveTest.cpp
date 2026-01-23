@@ -6,7 +6,9 @@
 
 #include <sstream>
 
+#include "FppTest/struct/C_PrimitiveSerializableAc.hpp"
 #include "FppTest/struct/PrimitiveSerializableAc.hpp"
+#include "FppTest/struct/SM_SMPrimitiveAliasAc.hpp"
 #include "FppTest/utils/Utils.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/StringUtils.hpp"
@@ -216,7 +218,7 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
                             SerializedSize,
                             ToString);
 
-using PrimitiveTestImplementations = ::testing::Types<Primitive>;
+using PrimitiveTestImplementations = ::testing::Types<Primitive, C_Primitive, SM_SMPrimitive>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
 
 }  // namespace Struct
