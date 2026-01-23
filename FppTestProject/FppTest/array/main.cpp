@@ -245,6 +245,10 @@ Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>(Uint32 
     return Uint32Array({a[0], a[1], a[2]});
 }
 
+// ----------------------------------------------------------------------
+// Main program
+// ----------------------------------------------------------------------
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
