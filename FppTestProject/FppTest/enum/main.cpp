@@ -24,21 +24,27 @@
 
 // Instantiate enum tests
 using EnumTestImplementations =
-    ::testing::Types<Implicit, Explicit, Default, Interval, SerializeTypeU8, SerializeTypeU64>;
+    ::testing::Types<Default, Explicit, Implicit, Interval, SerializeTypeU8, SerializeTypeU64>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, EnumTest, EnumTestImplementations);
 
-// Specializations for default value
-template <>
-Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
-    return Explicit::A;
-}
+// ----------------------------------------------------------------------
+// Template specializations for Default type
+// ----------------------------------------------------------------------
 
 template <>
 Default::T FppTest::Enum::getDefaultValue<Default>() {
     return Default::C;
 }
 
-// Specializations for valid value
+// ----------------------------------------------------------------------
+// Template specializations for Explicit type
+// ----------------------------------------------------------------------
+
+template <>
+Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
+    return Explicit::A;
+}
+
 template <>
 Explicit::T FppTest::Enum::getValidValue<Explicit>() {
     U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS);
@@ -50,6 +56,22 @@ Explicit::T FppTest::Enum::getValidValue<Explicit>() {
             return Explicit::B;
         default:
             return Explicit::C;
+    }
+}
+
+template <>
+Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
+    U32 sign = STest::Pick::lowerUpper(0, 1);
+
+    switch (sign) {
+        case 0:
+            return static_cast<Explicit::T>(
+                STest::Pick::lowerUpper(Explicit::C + 1, std::numeric_limits<Explicit::SerialType>::max()));
+        default:
+            return static_cast<Explicit::T>(
+                static_cast<I32>(STest::Pick::lowerUpper((Explicit::A - 1) * (-1),
+                                                         std::numeric_limits<Explicit::SerialType>::max())) *
+                (-1));
     }
 }
 
@@ -75,28 +97,19 @@ Interval::T FppTest::Enum::getValidValue<Interval>() {
     }
 }
 
-// Specializations for invalid value
-template <>
-Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
-    U32 sign = STest::Pick::lowerUpper(0, 1);
-
-    switch (sign) {
-        case 0:
-            return static_cast<Explicit::T>(
-                STest::Pick::lowerUpper(Explicit::C + 1, std::numeric_limits<Explicit::SerialType>::max()));
-        default:
-            return static_cast<Explicit::T>(
-                static_cast<I32>(STest::Pick::lowerUpper((Explicit::A - 1) * (-1),
-                                                         std::numeric_limits<Explicit::SerialType>::max())) *
-                (-1));
-    }
-}
+// ----------------------------------------------------------------------
+// Template specializations for Interval type
+// ----------------------------------------------------------------------
 
 template <>
 Interval::T FppTest::Enum::getInvalidValue<Interval>() {
     return static_cast<Interval::T>(
         STest::Pick::lowerUpper(Interval::G + 1, std::numeric_limits<Interval::SerialType>::max()));
 }
+
+// ----------------------------------------------------------------------
+// Main program
+// ----------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
