@@ -24,7 +24,7 @@ module ComCfg {
     dictionary enum Pvn : U8 {
         SPACE_PACKET_PROTOCOL         = 0x0   @< Fully Featured CCSDS Space Packet Protocol
         ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Bare-bones CCSDS Encapsulation Packet Protocol
-        INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
+        INVALID_UNINITIALIZED         = 0x4   @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
