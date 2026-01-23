@@ -76,7 +76,7 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     }
 
     // Pack this packet
-    pack_packet(data, context);
+    pack_pad_send(data, context);
 }
 
 void AosFramer::compute_and_inject_fecf(AosVc& currentVc) {
@@ -121,7 +121,7 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
 
     // If we have an outstanding packet from the prior frame, pack it
     if (currentVc.outstanding.packet.isValid()) {
-        this->pack_packet(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
+        this->pack_pad_send(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
     }
 }
 
@@ -242,11 +242,6 @@ void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
         currentVc.frame.state = BufferOwnershipState::NOT_OWNED;
 
         // Clean up our per frame vc values
-        // Protects against pack_packet reentrancy:
-        // pack_packet w/ sendNow & < 7 bytes left                   ->                           (skip) check_and_send
-        //                   \                                                                  /
-        //                    fill_with_idle_packet (spp only) -> pack_packet -> check_and_send
-        // This ensures the outer loop check_and_send doesn't try to send
         currentVc.current_payload_offset = 0;
         currentVc.past_first_fresh_packet = false;
 
@@ -259,7 +254,30 @@ void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
     }
 }
 
-// TODO: Use PDU Struct?
+void AosFramer ::pack_pad_send(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType dataOffset) {
+    // Pack this packet into the M_PDU
+    pack_packet(data, context, dataOffset);
+
+    // Get the VC Struct for this buffer
+    AosVc& currentVc = this->get_vc_struct(context);
+
+    // Pack with idle packets if sendNow and not full already
+    // TODO: Add configurable time elapsed & buffer remaining based idle packing
+    if (context.get_sendNow()) {
+        // Compute some sizes to check if we've got space left to pad
+        const FwSizeType min_size = get_min_size();
+        const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - min_size;
+
+        if (currentVc.current_payload_offset < maxPayload) {
+            // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
+            fill_with_idle_packet(currentVc, context);
+        }
+    }
+
+    // Send the frame if we've filled it
+    check_and_send_vc(currentVc);
+}
+
 void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType dataOffset) {
     // Ensure the packet is starting within the frame
     const FwSizeType min_size = get_min_size();
@@ -318,19 +336,6 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
         currentVc.outstanding.packet = {};
         currentVc.outstanding.offset = 0;
     }
-
-    // TODO: Consider moving fill_with_idle_packet outside of pack_packet to prevent reentrancy
-    // dataIn & dataReturn should call these after packing (potentially via a shared helper)
-
-    // Pack with idle packets if sendNow and not full already
-    // TODO: Add configurable time elapsed & buffer remaining based idle packing
-    if (currentVc.current_payload_offset < maxPayload && context.get_sendNow()) {
-        // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
-        fill_with_idle_packet(currentVc, context);
-    }
-
-    // Send the frame if we've filled it
-    check_and_send_vc(currentVc);
 }
 
 void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length) {

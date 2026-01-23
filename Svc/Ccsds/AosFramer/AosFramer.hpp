@@ -151,6 +151,9 @@ class AosFramer final : public AosFramerComponentBase {
     //! Send the vc frame if we have filled it
     void check_and_send_vc(AosFramer::AosVc& currentVc);
 
+    //! Pack, Idle pad (if requested), and Send (if full) this packet
+    void pack_pad_send(Fw::Buffer& data, const ComCfg::FrameContext& context, FwSizeType offset = 0);
+
     //! Computing Trailing Frame Error Control Field (4.1.6)
     void compute_and_inject_fecf(AosVc& currentVc);
 
