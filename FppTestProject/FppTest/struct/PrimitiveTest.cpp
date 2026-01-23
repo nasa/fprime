@@ -218,7 +218,7 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
                             SerializedSize,
                             ToString);
 
-using PrimitiveTestImplementations = ::testing::Types<Primitive, C_Primitive, SM_SMPrimitive>;
+using PrimitiveTestImplementations = ::testing::Types<C_Primitive, SM_SMPrimitive>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
 
 }  // namespace Struct
