@@ -60,7 +60,9 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, CF_Channel& chan, FwSizeType size);
+  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
+                             CF_EncoderState*& encoderPtr, CF_Channel& chan,
+                             FwSizeType size);
   // Not sure there is an equivelent
   void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);
   // Equivelent of CF_CFDP_Send

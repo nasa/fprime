@@ -215,14 +215,13 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     U8* msgPtr = NULL;
     U8 eid_len;
     CfdpStatus::T status;
-    CF_EncoderState *encoder = NULL;
+    CF_EncoderState *encoder = NULL;;
 
     CF_Channel_t* chan = CF_GetChannelFromTxn(const_cast<CF_Transaction_t*>(txn));
     FW_ASSERT(chan != NULL);
 
     // This is where a message buffer is requested
     status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, *chan, sizeof(CF_Logical_PduBuffer_t));
-
     if (status == CfdpStatus::SUCCESS)
     {
         FW_ASSERT(ph != NULL);

@@ -77,7 +77,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void initComponents();
 
     // ----------------------------------------------------------------------
-    // PDU Test Helper Functions
+    // PDU Downlink Test Helper Functions
     // ----------------------------------------------------------------------
 
     //! Helper to create a minimal transaction for testing
@@ -222,6 +222,130 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return Pointer to transaction or nullptr if not found
     CF_Transaction_t* findTransaction(U8 chanNum, CfdpTransactionSeq seqNum);
 
+    // ----------------------------------------------------------------------
+    // PDU Uplink Helper Functions
+    // ----------------------------------------------------------------------
+
+    //! Helper to send a Metadata PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground)
+    //! @param destEid Destination entity ID (FSW)
+    //! @param transactionSeq Transaction sequence number
+    //! @param fileSize File size in octets
+    //! @param sourceFilename Source filename
+    //! @param destFilename Destination filename
+    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    //! @param closureRequested Closure requested flag (typically 0 for Class 1, 1 for Class 2)
+    void sendMetadataPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        CfdpFileSize fileSize,
+        const char* sourceFilename,
+        const char* destFilename,
+        Cfdp::Class txmMode,
+        U8 closureRequested
+    );
+
+    //! Helper to send a File Data PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground)
+    //! @param destEid Destination entity ID (FSW)
+    //! @param transactionSeq Transaction sequence number
+    //! @param offset File offset
+    //! @param dataSize Data size in octets
+    //! @param data Pointer to file data
+    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    void sendFileDataPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        CfdpFileSize offset,
+        U16 dataSize,
+        const U8* data,
+        Cfdp::Class txmMode
+    );
+
+    //! Helper to send an EOF PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground)
+    //! @param destEid Destination entity ID (FSW)
+    //! @param transactionSeq Transaction sequence number
+    //! @param conditionCode Condition code
+    //! @param checksum File checksum
+    //! @param fileSize File size in octets
+    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    void sendEofPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        Cfdp::ConditionCode conditionCode,
+        U32 checksum,
+        CfdpFileSize fileSize,
+        Cfdp::Class txmMode
+    );
+
+    //! Helper to send a FIN PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground as receiver)
+    //! @param destEid Destination entity ID (FSW as sender)
+    //! @param transactionSeq Transaction sequence number
+    //! @param conditionCode Condition code
+    //! @param deliveryCode Delivery code
+    //! @param fileStatus File status
+    void sendFinPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        Cfdp::ConditionCode conditionCode,
+        Cfdp::FinDeliveryCode deliveryCode,
+        Cfdp::FinFileStatus fileStatus
+    );
+
+    //! Helper to send an ACK PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground as receiver)
+    //! @param destEid Destination entity ID (FSW as sender)
+    //! @param transactionSeq Transaction sequence number
+    //! @param directiveCode Directive being acknowledged
+    //! @param directiveSubtypeCode Directive subtype code
+    //! @param conditionCode Condition code
+    //! @param transactionStatus Transaction status
+    void sendAckPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        Cfdp::FileDirective directiveCode,
+        U8 directiveSubtypeCode,
+        Cfdp::ConditionCode conditionCode,
+        Cfdp::AckTxnStatus transactionStatus
+    );
+
+    //! Helper to send a NAK PDU to CfdpManager via dataIn
+    //! @param channelId CFDP channel number
+    //! @param sourceEid Source entity ID (ground as receiver)
+    //! @param destEid Destination entity ID (FSW as sender)
+    //! @param transactionSeq Transaction sequence number
+    //! @param scopeStart Scope start offset
+    //! @param scopeEnd Scope end offset
+    //! @param numSegments Number of segment requests (0 to 58)
+    //! @param segments Array of segment requests (can be nullptr if numSegments is 0)
+    void sendNakPdu(
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        CfdpTransactionSeq transactionSeq,
+        CfdpFileSize scopeStart,
+        CfdpFileSize scopeEnd,
+        U8 numSegments,
+        const Cfdp::Pdu::SegmentRequest* segments
+    );
+
   public:
     // ----------------------------------------------------------------------
     // Transaction Tests
@@ -229,6 +353,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Test nominal Class 1 TX file transfer
     void testClass1TxNominal();
+
+    //! Test nominal Class 2 TX file transfer
+    void testClass2TxNominal();
 
   private:
     // ----------------------------------------------------------------------

@@ -250,7 +250,9 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, U8 channelId, FwSizeType size)
+CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
+                                         CF_EncoderState*& encoderPtr, CF_Channel& chan,
+                                         FwSizeType size)
 {
     // FwIndexType portNum;
 
@@ -265,7 +267,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
 
     FW_ASSERT(pduPtr == NULL);
     FW_ASSERT(msgPtr == NULL);
-    FW_ASSERT(encoder == NULL);
+    FW_ASSERT(encoderPtr == NULL);
 
     // Check throttling limit first
     U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.channel_id);
@@ -284,10 +286,9 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
                 pduPtr = &this->pduBuffers[i].pdu;
                 pduPtr->index = i;
                 msgPtr = this->pduBuffers[i].data;
-                encoder = &this->pduBuffers[i].encoder;
+                encoderPtr = &this->pduBuffers[i].encoder;
 
                 chan.outgoing_counter++;
-
                 status = CfdpStatus::SUCCESS;
                 break;
             }

@@ -203,6 +203,172 @@ void CfdpManagerTester::testClass1TxNominal() {
                  expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(fileSize), srcFile);
 }
 
+void CfdpManagerTester::testClass2TxNominal() {
+    // Clear any port history from previous operations
+    this->clearHistory();
+    this->m_pduCopyCount = 0;
+
+    // Test configuration
+    const U8 channelId = 0;
+    const CfdpEntityId destEid = 10;
+    const U8 priority = 0;
+
+    // Step 1: Calculate FileDataPdu header size (without data)
+    // Create a FileDataPdu with 0 data to determine header overhead
+    Cfdp::Pdu::FileDataPdu fileDataPdu;
+    fileDataPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_RECEIVER,
+        Cfdp::CLASS_2,  // Class 2
+        component.getLocalEidParam(),
+        1,  // Transaction seq (dummy value for calculation)
+        destEid,
+        0,  // Offset
+        0,  // Data size = 0 to get just the header
+        nullptr  // No data
+    );
+    const U32 fileDataPduHeaderSize = fileDataPdu.bufferSize();
+
+    // Calculate how many bytes of data fit in each PDU
+    const U16 dataPerPdu = static_cast<U16>(CF_MAX_PDU_SIZE - fileDataPduHeaderSize);
+
+    // Calculate total file size for exactly 5 PDUs
+    const FwSizeType expectedFileSize = 5 * dataPerPdu;
+
+    // Step 2: Generate test file with calculated size
+    const char* srcFile = "test/ut/data/test_class2_tx_5pdu.bin";
+    const char* dstFile = "test/ut/output/test_class2_tx_dst.dat";
+
+    Os::File::Status fileStatus;
+    Os::File testFile;
+
+    // Create and write test file
+    fileStatus = testFile.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should create test file";
+
+    // Fill file with test data (repeating pattern for easy verification)
+    U8 writeBuffer[256];
+    for (U16 i = 0; i < 256; i++) {
+        writeBuffer[i] = static_cast<U8>(i);
+    }
+
+    FwSizeType bytesWritten = 0;
+    while (bytesWritten < expectedFileSize) {
+        FwSizeType chunkSize = (expectedFileSize - bytesWritten > 256) ? 256 : (expectedFileSize - bytesWritten);
+        FwSizeType writeSize = chunkSize;
+        fileStatus = testFile.write(writeBuffer, writeSize, Os::File::WAIT);
+        ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should write to test file";
+        ASSERT_EQ(chunkSize, writeSize) << "Should write requested bytes";
+        bytesWritten += writeSize;
+    }
+    testFile.close();
+
+    // Step 3: Verify test file was created with correct size
+    fileStatus = testFile.open(srcFile, Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Test file should exist";
+    FwSizeType fileSize = 0;
+    fileStatus = testFile.size(fileSize);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should get file size";
+    EXPECT_EQ(expectedFileSize, fileSize) << "File should be exactly " << expectedFileSize << " bytes (5 PDUs)";
+    testFile.close();
+
+    // Step 4: Record initial engine state
+    const U32 initialSeqNum = cfdpEngine.seq_num;
+
+    // Step 5: Send SendFile command with CLASS_2
+    this->sendCmd_SendFile(0, 0, channelId, destEid, CfdpClass::CLASS_2,
+                           CfdpKeep::KEEP, priority,
+                           Fw::CmdStringArg(srcFile), Fw::CmdStringArg(dstFile));
+    this->component.doDispatch();
+
+    // Step 6: Verify command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManager::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
+
+    // Step 7: Verify engine state after command
+    const U32 expectedSeqNum = initialSeqNum + 1;
+    EXPECT_EQ(expectedSeqNum, cfdpEngine.seq_num) << "Sequence number should increment";
+
+    // Step 8: Find the transaction
+    CF_Transaction_t* txn = findTransaction(channelId, expectedSeqNum);
+    ASSERT_NE(nullptr, txn) << "Transaction should exist";
+
+    // Step 9: Verify initial transaction state for Class 2
+    EXPECT_EQ(CF_TxnState_S2, txn->state) << "Should be in S2 state for Class 2 TX";
+    EXPECT_EQ(0, txn->foffs) << "File offset should be 0 initially";
+    EXPECT_EQ(CF_TxSubState_METADATA, txn->state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(channelId, txn->chan_num) << "Channel number should match";
+    EXPECT_EQ(priority, txn->priority) << "Priority should match";
+
+    // Verify history fields
+    EXPECT_EQ(expectedSeqNum, txn->history->seq_num) << "History seq_num should match";
+    EXPECT_EQ(component.getLocalEidParam(), txn->history->src_eid) << "Source EID should match local EID";
+    EXPECT_EQ(destEid, txn->history->peer_eid) << "Peer EID should match dest EID";
+    EXPECT_STREQ(srcFile, txn->history->fnames.src_filename.toChar()) << "Source filename should match";
+    EXPECT_STREQ(dstFile, txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
+
+    // Step 10: Run first engine cycle - should send Metadata PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 11: Verify Metadata PDU was sent
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    Fw::Buffer metadataPduBuffer = this->getSentPduBuffer(0);
+    ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
+
+    // Verify file was opened and fsize was set
+    EXPECT_EQ(expectedFileSize, txn->fsize) << "File size should be set after file is opened";
+
+    verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
+                      expectedSeqNum, static_cast<CfdpFileSize>(expectedFileSize), srcFile, dstFile);
+
+    // Verify transaction progressed to FILEDATA sub-state
+    EXPECT_EQ(CF_TxSubState_FILEDATA, txn->state_data.send.sub_state) << "Should progress to FILEDATA sub-state";
+
+    // Step 12: Run a cycle to send all 5 FileData PDUs
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    
+    for (U8 pduIdx = 0; pduIdx < 5; pduIdx++) {
+        // Verify FileData PDU was sent
+        FwIndexType expectedHistorySize = 1 + pduIdx + 1;  // Metadata + pduIdx FileData PDUs
+        ASSERT_FROM_PORT_HISTORY_SIZE(expectedHistorySize);
+
+        Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1 + pduIdx);
+        ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU " << static_cast<int>(pduIdx) << " should be sent";
+
+        U32 expectedOffset = pduIdx * dataPerPdu;
+        U16 expectedDataSize = dataPerPdu;  // All 5 PDUs should be exactly full
+
+        verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), destEid,
+                          expectedSeqNum, expectedOffset, expectedDataSize, srcFile);
+    }
+
+    // Verify file was completely read
+    EXPECT_EQ(expectedFileSize, txn->foffs) << "Should have read entire file";
+
+    // Verify transaction progressed to EOF sub-state after sending all file data
+    EXPECT_EQ(CF_TxSubState_EOF, txn->state_data.send.sub_state) << "Should progress to EOF sub-state";
+
+    // Step 13: Run cycle to send EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 14: Verify EOF PDU was sent (total: 1 Metadata + 5 FileData + 1 EOF = 7)
+    ASSERT_FROM_PORT_HISTORY_SIZE(7);
+
+    Fw::Buffer eofPduBuffer = this->getSentPduBuffer(6);
+    ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
+
+    verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), destEid,
+                 expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
+
+    // Step 15: Verify transaction is in CLOSEOUT_SYNC sub-state waiting for EOF-ACK
+    EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should be waiting for EOF-ACK";
+
+    // For a complete test, we would simulate receiving an EOF-ACK here
+    // and verify the transaction completes. This is left as a future enhancement.
+}
+
 }  // namespace Ccsds
 
 }  // namespace Svc

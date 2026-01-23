@@ -14,7 +14,7 @@ namespace Cfdp {
 
 void Pdu::Header::initialize(Type type,
                               Direction direction,
-                              TransmissionMode txmMode,
+                              Class txmMode,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid) {
@@ -174,7 +174,7 @@ Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     this->m_version = (flags >> 5) & 0x07;
     this->m_pduType = static_cast<PduType>((flags >> 4) & 0x01);
     this->m_direction = static_cast<Direction>((flags >> 3) & 0x01);
-    this->m_txmMode = static_cast<TransmissionMode>((flags >> 2) & 0x01);
+    this->m_txmMode = static_cast<Class>((flags >> 2) & 0x01);
     this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
     this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
 

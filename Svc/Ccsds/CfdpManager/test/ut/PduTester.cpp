@@ -97,7 +97,7 @@ void CfdpManagerTester::verifyMetadataPdu(
     const Cfdp::Pdu::Header& header = metadataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(Cfdp::CLASS_1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -138,7 +138,7 @@ void CfdpManagerTester::verifyFileDataPdu(
     const Cfdp::Pdu::Header& header = fileDataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_UNACKNOWLEDGED, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(Cfdp::CLASS_1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -251,7 +251,7 @@ void CfdpManagerTester::verifyFinPdu(
     const Cfdp::Pdu::Header& header = finPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FIN, header.getType()) << "Expected T_FIN type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -280,7 +280,7 @@ void CfdpManagerTester::verifyAckPdu(
     // Validate header fields
     const Cfdp::Pdu::Header& header = ackPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_ACK, header.getType()) << "Expected T_ACK type";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -310,7 +310,7 @@ void CfdpManagerTester::verifyNakPdu(
     // Validate header fields
     const Cfdp::Pdu::Header& header = nakPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_NAK, header.getType()) << "Expected T_NAK type";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -752,6 +752,228 @@ void CfdpManagerTester::testNakPdu() {
     verifyNakPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                  testSequenceId, testScopeStart, testScopeEnd,
                  3, expectedSegments);
+}
+
+// ----------------------------------------------------------------------
+// PDU Uplink Helper Functions
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::sendMetadataPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    CfdpFileSize fileSize,
+    const char* sourceFilename,
+    const char* destFilename,
+    Cfdp::Class txmMode,
+    U8 closureRequested
+) {
+    // Create and initialize Metadata PDU
+    Cfdp::Pdu::MetadataPdu metadataPdu;
+    metadataPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_RECEIVER,
+        txmMode,
+        sourceEid,
+        transactionSeq,
+        destEid,
+        fileSize,
+        sourceFilename,
+        destFilename,
+        Cfdp::CHECKSUM_TYPE_MODULAR,
+        closureRequested
+    );
+
+    // Allocate buffer for PDU
+    U32 pduSize = metadataPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = metadataPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize Metadata PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
+}
+
+void CfdpManagerTester::sendFileDataPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    CfdpFileSize offset,
+    U16 dataSize,
+    const U8* data,
+    Cfdp::Class txmMode
+) {
+    // Create and initialize File Data PDU
+    Cfdp::Pdu::FileDataPdu fileDataPdu;
+    fileDataPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_RECEIVER,
+        txmMode,
+        sourceEid,
+        transactionSeq,
+        destEid,
+        offset,
+        dataSize,
+        data
+    );
+
+    // Allocate buffer for PDU
+    U32 pduSize = fileDataPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = fileDataPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize File Data PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
+}
+
+void CfdpManagerTester::sendEofPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    Cfdp::ConditionCode conditionCode,
+    U32 checksum,
+    CfdpFileSize fileSize,
+    Cfdp::Class txmMode
+) {
+    // Create and initialize EOF PDU
+    Cfdp::Pdu::EofPdu eofPdu;
+    eofPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_RECEIVER,
+        txmMode,
+        sourceEid,
+        transactionSeq,
+        destEid,
+        conditionCode,
+        checksum,
+        fileSize
+    );
+
+    // Allocate buffer for PDU
+    U32 pduSize = eofPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = eofPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize EOF PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
+}
+
+void CfdpManagerTester::sendFinPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    Cfdp::ConditionCode conditionCode,
+    Cfdp::FinDeliveryCode deliveryCode,
+    Cfdp::FinFileStatus fileStatus
+) {
+    // Create and initialize FIN PDU
+    Cfdp::Pdu::FinPdu finPdu;
+    finPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
+        Cfdp::CLASS_2,  // FIN is only used in Class 2
+        sourceEid,
+        transactionSeq,
+        destEid,
+        conditionCode,
+        deliveryCode,
+        fileStatus
+    );
+
+    // Allocate buffer for PDU
+    U32 pduSize = finPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = finPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize FIN PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
+}
+
+void CfdpManagerTester::sendAckPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    Cfdp::FileDirective directiveCode,
+    U8 directiveSubtypeCode,
+    Cfdp::ConditionCode conditionCode,
+    Cfdp::AckTxnStatus transactionStatus
+) {
+    // Create and initialize ACK PDU
+    Cfdp::Pdu::AckPdu ackPdu;
+    ackPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
+        Cfdp::CLASS_2,  // ACK is only used in Class 2
+        sourceEid,
+        transactionSeq,
+        destEid,
+        directiveCode,
+        directiveSubtypeCode,
+        conditionCode,
+        transactionStatus
+    );
+
+    // Allocate buffer for PDU
+    U32 pduSize = ackPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = ackPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize ACK PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
+}
+
+void CfdpManagerTester::sendNakPdu(
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    CfdpEntityId destEid,
+    CfdpTransactionSeq transactionSeq,
+    CfdpFileSize scopeStart,
+    CfdpFileSize scopeEnd,
+    U8 numSegments,
+    const Cfdp::Pdu::SegmentRequest* segments
+) {
+    // Create and initialize NAK PDU
+    Cfdp::Pdu::NakPdu nakPdu;
+    nakPdu.initialize(
+        Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
+        Cfdp::CLASS_2,  // NAK is only used in Class 2
+        sourceEid,
+        transactionSeq,
+        destEid,
+        scopeStart,
+        scopeEnd
+    );
+
+    // Add segment requests if provided
+    for (U8 i = 0; i < numSegments; i++) {
+        bool success = nakPdu.addSegment(segments[i].offsetStart, segments[i].offsetEnd);
+        ASSERT_TRUE(success) << "Failed to add segment " << static_cast<int>(i) << " to NAK PDU";
+    }
+
+    // Allocate buffer for PDU
+    U32 pduSize = nakPdu.bufferSize();
+    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+
+    // Serialize PDU to buffer
+    Fw::SerializeStatus status = nakPdu.toBuffer(pduBuffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize NAK PDU";
+
+    // Send PDU to CfdpManager via dataIn port
+    invoke_to_dataIn(channelId, pduBuffer);
 }
 
 }  // namespace Ccsds

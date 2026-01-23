@@ -12,7 +12,7 @@ namespace Ccsds {
 namespace Cfdp {
 
 void Pdu::NakPdu::initialize(Direction direction,
-                              TransmissionMode txmMode,
+                              Class txmMode,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid,
