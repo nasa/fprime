@@ -217,9 +217,11 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     CfdpStatus::T status;
     CF_EncoderState *encoder = NULL;
 
+    CF_Channel_t* chan = CF_GetChannelFromTxn(const_cast<CF_Transaction_t*>(txn));
+    FW_ASSERT(chan != NULL);
+
     // This is where a message buffer is requested
-    // TODO get instance of CfdpManager
-    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, txn->chan_num, sizeof(CF_Logical_PduBuffer_t));
+    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, *chan, sizeof(CF_Logical_PduBuffer_t));
 
     if (status == CfdpStatus::SUCCESS)
     {
@@ -279,6 +281,13 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
             CF_CFDP_EncodeFileDirectiveHeader(ph->penc, &ph->fdirective);
         }
     }
+    else if (status == CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR)
+    {
+        if (!silent)
+        {
+            // BPC TODO send event here
+        }
+    }
 
     return ph;
 }
@@ -287,7 +296,7 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_METADATA, txn->cfdpManager->getLocalEidParam(),
-                                   txn->history->peer_eid, 0, txn->history->seq_num, 0);
+                                   txn->history->peer_eid, 0, txn->history->seq_num, false);
     CF_Logical_PduMd_t *md;
     CfdpStatus::T sret = CfdpStatus::SUCCESS;
 
@@ -368,7 +377,7 @@ CfdpStatus::T CF_CFDP_SendEof(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_EOF, txn->cfdpManager->getLocalEidParam(),
-                                   txn->history->peer_eid, 0, txn->history->seq_num, 0);
+                                   txn->history->peer_eid, 0, txn->history->seq_num, false);
     CF_Logical_PduEof_t *eof;
     CfdpStatus::T         ret = CfdpStatus::SUCCESS;
 
@@ -420,7 +429,7 @@ CfdpStatus::T CF_CFDP_SendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, 
     }
 
     ph = CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_ACK, src_eid, dst_eid,
-                                    (dir_code == CF_CFDP_FileDirective_EOF), tsn, 0);
+                                    (dir_code == CF_CFDP_FileDirective_EOF), tsn, false);
     if (!ph)
     {
         ret = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
@@ -447,7 +456,7 @@ CfdpStatus::T CF_CFDP_SendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t d
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_FIN, txn->history->peer_eid,
-                                   txn->cfdpManager->getLocalEidParam(), 1, txn->history->seq_num, 0);
+                                   txn->cfdpManager->getLocalEidParam(), 1, txn->history->seq_num, false);
     CF_Logical_PduFin_t *fin;
     CfdpStatus::T         ret = CfdpStatus::SUCCESS;
 
@@ -1511,7 +1520,7 @@ void CF_CFDP_CycleEngine(void)
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
         chan = &cfdpEngine.channels[i];
-        cfdpEngine.outgoing_counter = 0;
+        chan->outgoing_counter = 0;
 
         if (chan->flowState == CfdpFlow::NOT_FROZEN)
         {

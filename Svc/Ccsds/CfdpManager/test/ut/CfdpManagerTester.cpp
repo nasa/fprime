@@ -106,8 +106,8 @@ void CfdpManagerTester::testClass1TxNominal() {
     this->m_pduCopyCount = 0;
 
     // Test configuration
-    const char* srcFile = "test/ut/data/test_file.bin"; // Use existing test file
-    const char* dstFile = "test_class1_tx_dst.dat";
+    const char* srcFile = "test/ut/data/test_file.bin"; 
+    const char* dstFile = "test/ut/output/test_class1_tx_dst.dat";
     const U8 channelId = 0;
     const CfdpEntityId destEid = 10;
     const U8 priority = 0;
@@ -154,6 +154,8 @@ void CfdpManagerTester::testClass1TxNominal() {
     EXPECT_EQ(expectedSeqNum, txn->history->seq_num) << "History seq_num should match";
     EXPECT_EQ(component.getLocalEidParam(), txn->history->src_eid) << "Source EID should match local EID";
     EXPECT_EQ(destEid, txn->history->peer_eid) << "Peer EID should match dest EID";
+    EXPECT_STREQ(srcFile, txn->history->fnames.src_filename.toChar()) << "Source filename should match";
+    EXPECT_STREQ(dstFile, txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
 
     // Note: fsize is not set until the file is opened in CF_CFDP_S_SubstateSendMetadata during first cycle
 

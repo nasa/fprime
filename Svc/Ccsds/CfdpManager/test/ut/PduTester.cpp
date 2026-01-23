@@ -443,7 +443,7 @@ void CfdpManagerTester::testFileDataPdu() {
         testPeerId,
         0,  // towards receiver
         testSequenceId,
-        1   // file data flag
+        false
     );
     ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
 
@@ -697,7 +697,7 @@ void CfdpManagerTester::testNakPdu() {
         testPeerId,                     // to sender (peer)
         1,  // towards sender
         testSequenceId,
-        0   // directive PDU (not file data)
+        false
     );
     ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
 

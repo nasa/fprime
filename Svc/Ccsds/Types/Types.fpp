@@ -268,6 +268,7 @@ module Ccsds {
         inactivity_timer: U32 @< Inactivity timer in seconds
         dequeue_enabled: Fw.Enabled @< if enabled, then the channel will make pending transactions active
         move_dir: string size CfdpManagerMaxFileSize @< Move directory if not empty
+        max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
     }
 
     @< Struture for the configured array of CFDP channels

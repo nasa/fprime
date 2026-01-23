@@ -458,9 +458,12 @@ typedef struct CF_Channel
     
     /**< \brief ID used to index into the engine channel array */
     U8 channel_id;
-    
+
     /**< \brief State of the channel */
     CfdpFlow::T flowState;
+
+    /**< \brief Tracks number of PDUs sent this cycle for throttling */
+    U32 outgoing_counter;
 
 } CF_Channel_t;
 
@@ -474,8 +477,7 @@ typedef struct CF_Channel
 typedef struct CfdpEngineDataT
 {
     CfdpEngineDataT()
-        : seq_num(0),
-        outgoing_counter(0)
+        : seq_num(0)
     {
 
     }
@@ -488,8 +490,6 @@ typedef struct CfdpEngineDataT
 
     CF_ChunkWrapper_t chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];
     CF_Chunk_t        chunk_mem[CF_NUM_CHUNKS_ALL_CHANNELS];
-
-    U32 outgoing_counter;
 } CfdpEngineData;
 
 }  // namespace Ccsds

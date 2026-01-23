@@ -267,28 +267,40 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
     FW_ASSERT(msgPtr == NULL);
     FW_ASSERT(encoder == NULL);
 
-    // TODO Add output throtteling and guards here
-    // CF implemented this in CF_CFDP_MsgOutGet()
-
-    for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
+    // Check throttling limit first
+    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.channel_id);
+    if (chan.outgoing_counter >= max_pdus)
     {
-        if(this->pduBuffers[i].inUse == false)
+        status = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
+    }
+    else
+    {
+        // Try to allocate from buffer pool
+        for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
         {
-            this->pduBuffers[i].inUse = true;
-            pduPtr = &this->pduBuffers[i].pdu;
-            pduPtr->index = i;
-            msgPtr = this->pduBuffers[i].data;
-            encoder = &this->pduBuffers[i].encoder;
-            status = CfdpStatus::SUCCESS;
-            break;
+            if(this->pduBuffers[i].inUse == false)
+            {
+                this->pduBuffers[i].inUse = true;
+                pduPtr = &this->pduBuffers[i].pdu;
+                pduPtr->index = i;
+                msgPtr = this->pduBuffers[i].data;
+                encoder = &this->pduBuffers[i].encoder;
+
+                chan.outgoing_counter++;
+
+                status = CfdpStatus::SUCCESS;
+                break;
+            }
+        }
+
+        // Check if we were unable to allocate a buffer (pool exhausted)
+        if(status != CfdpStatus::SUCCESS)
+        {
+            this->log_WARNING_LO_BuffersExuasted();
+            status = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
         }
     }
 
-    // Check if we were unable to allocate a buffer
-    if(status != CfdpStatus::SUCCESS)
-    {
-        this->log_WARNING_LO_BuffersExuasted();
-    }
     return status;
 }
 
@@ -494,6 +506,22 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
 
     // Now get individual parameter
     return paramArray[channelIndex].get_move_dir();
+  }
+
+  U32 CfdpManager ::getMaxOutgoingPdusPerCycleParam(U8 channelIndex)
+  {
+    Fw::ParamValid valid;
+
+    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+
+    // Check for coding errors as all CFDP parameters must have a default
+    // Get the array first
+    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Now get individual parameter
+    return paramArray[channelIndex].get_max_outgoing_pdus_per_cycle();
   }
 
 // ----------------------------------------------------------------------

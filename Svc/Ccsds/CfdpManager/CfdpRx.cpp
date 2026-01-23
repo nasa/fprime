@@ -427,7 +427,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn)
 {
     CF_Logical_PduBuffer_t *ph =
         CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_NAK, txn->history->peer_eid,
-                                   txn->cfdpManager->getLocalEidParam(), 1, txn->history->seq_num, 1);
+                                   txn->cfdpManager->getLocalEidParam(), 1, txn->history->seq_num, true);
     CF_Logical_PduNak_t *nak;
     CfdpStatus::T sret;
     U32 cret;

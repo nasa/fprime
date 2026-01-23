@@ -28,7 +28,8 @@ param ChannelConfig: CfdpChannelArrayParams \
             ack_timer = 3, \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
-            move_dir = "" \
+            move_dir = "", \
+            max_outgoing_pdus_per_cycle = 32 \
         }, \
         {
             ack_limit = 4, \
@@ -36,6 +37,7 @@ param ChannelConfig: CfdpChannelArrayParams \
             ack_timer = 3, \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
-            move_dir = "" \
+            move_dir = "", \
+            max_outgoing_pdus_per_cycle = 32 \
         } \
     ]

@@ -15,6 +15,9 @@
 namespace Svc {
 namespace Ccsds {
 
+// Forward declaration
+struct CF_Channel;
+
 class CfdpManager final : public CfdpManagerComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -57,7 +60,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, U8 channelId, FwSizeType size);
+  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr, CF_EncoderState*& encoder, CF_Channel& chan, FwSizeType size);
   // Not sure there is an equivelent
   void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);
   // Equivelent of CF_CFDP_Send
@@ -78,6 +81,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   U32 getInactivityTimerParam(U8 channelIndex);
   Fw::Enabled getDequeueEnabledParam(U8 channelIndex);
   Fw::String getMoveDirParam(U8 channelIndex);
+  U32 getMaxOutgoingPdusPerCycleParam(U8 channelIndex);
 
   private:
     // ----------------------------------------------------------------------

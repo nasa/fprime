@@ -100,7 +100,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
     *bytes_processed = 0;
 
     ph = CF_CFDP_ConstructPduHeader(txn, CF_CFDP_FileDirective_INVALID_MIN, txn->cfdpManager->getLocalEidParam(),
-                                    txn->history->peer_eid, 0, txn->history->seq_num, 1);
+                                    txn->history->peer_eid, 0, txn->history->seq_num, true);
     if (!ph)
     {
         ret = CfdpStatus::SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
