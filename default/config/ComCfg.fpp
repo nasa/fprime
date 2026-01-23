@@ -22,8 +22,8 @@ module ComCfg {
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
-        SPACE_PACKET_PROTOCOL         = 0x0   @< Command packet type - incoming
-        ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Telemetry packet type - outgoing
+        SPACE_PACKET_PROTOCOL         = 0x0   @< Fully Featured CCSDS Space Packet Protocol
+        ENCAPSULATION_PACKET_PROTOCOL = 0x3   @< Bare-bones CCSDS Encapsulation Packet Protocol
         INVALID_UNINITIALIZED         = 0x4  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
