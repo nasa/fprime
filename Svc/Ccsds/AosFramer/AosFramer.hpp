@@ -152,7 +152,7 @@ class AosFramer final : public AosFramerComponentBase {
     void check_and_send_vc(AosFramer::AosVc& currentVc);
 
     //! Computing Trailing Frame Error Control Field (4.1.6)
-    void compute_fecf(AosVc& currentVc);
+    void compute_and_inject_fecf(AosVc& currentVc);
 
     //! Determine if the Fw::Buffer is within the backing character buffer
     static bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size);

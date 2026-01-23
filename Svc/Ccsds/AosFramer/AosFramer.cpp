@@ -79,7 +79,7 @@ void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     pack_packet(data, context);
 }
 
-void AosFramer::compute_fecf(AosVc& currentVc) {
+void AosFramer::compute_and_inject_fecf(AosVc& currentVc) {
     // -------------------------------------------------
     // Trailer (CRC)
     // -------------------------------------------------
@@ -234,7 +234,7 @@ void AosFramer::check_and_send_vc(AosFramer::AosVc& currentVc) {
 
         // Compute Trailer
         if (this->m_fecf) {
-            compute_fecf(currentVc);
+            compute_and_inject_fecf(currentVc);
         }
 
         // Ensure we aren't double sending
