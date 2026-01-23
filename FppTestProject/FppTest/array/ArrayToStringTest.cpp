@@ -12,6 +12,7 @@
 
 #include "FppTest/array/AliasOfArrayAliasAc.hpp"
 #include "FppTest/array/AliasStringArrayAc.hpp"
+#include "FppTest/array/C_AArrayAc.hpp"
 #include "FppTest/array/EnumArrayAc.hpp"
 #include "FppTest/array/SM_AArrayAc.hpp"
 #include "FppTest/array/StringArrayAc.hpp"
@@ -33,7 +34,7 @@ class ArrayToStringTest : public ::testing::Test {
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
-using ArrayTypes = ::testing::Types<Enum, SM_A, String, Struct, Uint32Array, AliasString, AliasOfArray>;
+using ArrayTypes = ::testing::Types<AliasOfArray, AliasString, Enum, C_A, SM_A, String, Struct, Uint32Array>;
 TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 
 // Test array toString() and ostream operator functions

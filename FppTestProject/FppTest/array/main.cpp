@@ -6,6 +6,7 @@
 
 #include "FppTest/array/AliasOfArrayAliasAc.hpp"
 #include "FppTest/array/AliasStringArrayAc.hpp"
+#include "FppTest/array/C_AArrayAc.hpp"
 #include "FppTest/array/EnumArrayAc.hpp"
 #include "FppTest/array/SM_AArrayAc.hpp"
 #include "FppTest/array/StringArrayAc.hpp"
@@ -24,7 +25,8 @@
 // ----------------------------------------------------------------------
 
 // Array tests
-using ArrayTestImplementations = ::testing::Types<AliasOfArray, AliasString, Enum, SM_A, String, Struct, Uint32Array>;
+using ArrayTestImplementations =
+    ::testing::Types<AliasOfArray, AliasString, C_A, Enum, SM_A, String, Struct, Uint32Array>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ArrayTest, ArrayTestImplementations);
 
 // String tests
@@ -92,6 +94,29 @@ void FppTest::Array::setTestVals<AliasString>(Fw::ExternalString (&a)[AliasStrin
 template <>
 AliasString FppTest::Array::getMultiElementConstructedArray<AliasString>(Fw::ExternalString (&a)[::String::SIZE]) {
     return AliasString({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for C_A type
+// ----------------------------------------------------------------------
+
+template <>
+void FppTest::Array::setDefaultVals<C_A>(U32 (&a)[C_A::SIZE]) {
+    for (U32 i = 0; i < C_A::SIZE; i++) {
+        a[i] = 0;
+    }
+}
+
+template <>
+void FppTest::Array::setTestVals<C_A>(U32 (&a)[C_A::SIZE]) {
+    for (U32 i = 1; i < C_A::SIZE; i++) {
+        a[i] = STest::Pick::any();
+    }
+}
+
+template <>
+C_A FppTest::Array::getMultiElementConstructedArray<C_A>(U32 (&a)[C_A::SIZE]) {
+    return C_A({a[0], a[1], a[2]});
 }
 
 // ----------------------------------------------------------------------

@@ -7,6 +7,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/alias.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/array.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/component.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/enum.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/state_machine.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/string.fpp"
