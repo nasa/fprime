@@ -15,7 +15,7 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 * Frame Header Error Control Field is disabled
 * Transfer Frame Insert Zone is disabled
 * Transfer Frame Data Field is driven by the per-instance, compile time `fixed_frame_size` setting
-* This component only supports the Multiplexing Protocol Data Unit (M_PDU) service
+* This component only supports the Virtual Channel Packet (VCP) service, using Multiplexing Protocol Data Units (M_PDU)
 * Operational Control Field is disabled
 * Frame Error Control Field is compile-time configurable
 * This component supports packing multiple CCSDS Recognized packets (i.e. Space Packet Protocol or Encapsulation Packet Protocol) into one AOS SDL Frame. It also supports striping a single packet across multiple frames. Extra space is padded with idle packets.
