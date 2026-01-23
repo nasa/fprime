@@ -1,3 +1,7 @@
-passive component C {
-  array A =[3] U32;
+module FppTest {
+  module Array {
+    passive component C {
+      array A =[3] U32;
+    }
+  }
 }

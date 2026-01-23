@@ -25,16 +25,21 @@
 
 #include <sstream>
 
+namespace FppTest {
+
+namespace Array {
+
 // Test array string functions
 template <typename ArrayType>
 class ArrayToStringTest : public ::testing::Test {
   protected:
-    void SetUp() override { FppTest::Array::setTestVals<ArrayType>(testVals); }
+    void SetUp() override { setTestVals<ArrayType>(testVals); }
 
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
-using ArrayTypes = ::testing::Types<AliasOfArray, AliasString, Enum, C_A, SM_A, String, Struct, Uint32Array>;
+using ArrayTypes =
+    ::testing::Types<AliasOfArray, AliasString, Enum, C_A, SM_A, String, Struct, Uint32Array>;
 TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 
 // Test array toString() and ostream operator functions
@@ -55,3 +60,7 @@ TYPED_TEST(ArrayToStringTest, ToString) {
 
     ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
+
+}  // namespace Array
+
+}  // namespace FppTest
