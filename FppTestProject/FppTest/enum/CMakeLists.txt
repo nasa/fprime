@@ -3,9 +3,10 @@
 # ====================================================================== 
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/implicit.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/explicit.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/component.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/default.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/explicit.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/implicit.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/interval.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/serialize_type.fpp"
 )

@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include "FppTest/enum/C_EEnumAc.hpp"
 #include "FppTest/enum/DefaultEnumAc.hpp"
 #include "FppTest/enum/ExplicitEnumAc.hpp"
 #include "FppTest/enum/ImplicitEnumAc.hpp"
@@ -24,7 +25,7 @@
 
 // Instantiate enum tests
 using EnumTestImplementations =
-    ::testing::Types<Default, Explicit, Implicit, Interval, SerializeTypeU8, SerializeTypeU64>;
+    ::testing::Types<FppTest::Enum::C_E, Default, Explicit, Implicit, Interval, SerializeTypeU8, SerializeTypeU64>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, EnumTest, EnumTestImplementations);
 
 // ----------------------------------------------------------------------
