@@ -2,7 +2,7 @@
 // \title  CfdpRx.hpp
 // \brief  CFDP header file for receive file transactions
 //
-// This file is a port of the cf_cfdp_r.hpp file from the 
+// This file is a port of the cf_cfdp_r.h file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //

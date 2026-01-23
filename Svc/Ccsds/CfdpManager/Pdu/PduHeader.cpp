@@ -22,7 +22,7 @@ void Pdu::Header::initialize(Type type,
     this->m_version = 1;  // CFDP version is always 1
     this->m_pduType = (type == T_FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
-    this->m_txmMode = txmMode;
+    this->m_class = txmMode;
     this->m_crcFlag = CRC_NOT_PRESENT;  // CRC not currently supported
     this->m_largeFileFlag = LARGE_FILE_32_BIT;  // 32-bit file sizes
     this->m_segmentationControl = 0;
@@ -111,7 +111,7 @@ Fw::SerializeStatus Pdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
     flags |= (this->m_version & 0x07) << 5;
     flags |= (this->m_pduType & 0x01) << 4;
     flags |= (this->m_direction & 0x01) << 3;
-    flags |= (this->m_txmMode & 0x01) << 2;
+    flags |= (this->m_class & 0x01) << 2;
     flags |= (this->m_crcFlag & 0x01) << 1;
     flags |= (this->m_largeFileFlag & 0x01);
 
@@ -174,7 +174,7 @@ Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     this->m_version = (flags >> 5) & 0x07;
     this->m_pduType = static_cast<PduType>((flags >> 4) & 0x01);
     this->m_direction = static_cast<Direction>((flags >> 3) & 0x01);
-    this->m_txmMode = static_cast<Class>((flags >> 2) & 0x01);
+    this->m_class = static_cast<Class>((flags >> 2) & 0x01);
     this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
     this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
 

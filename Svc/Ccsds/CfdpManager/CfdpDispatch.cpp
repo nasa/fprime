@@ -3,7 +3,7 @@
 // \brief  Common routines to dispatch operations based on a transaction state
 //         and/or received PDU type.
 //
-// This file is a port of the cf_cfdp_dispatch.cpp file from the 
+// This file is a port of the cf_cfdp_dispatch.c file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //

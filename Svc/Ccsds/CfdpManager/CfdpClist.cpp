@@ -2,7 +2,7 @@
 // \title  CfdpClist.cpp
 // \brief  CFDP circular list definition source file
 //
-// This file is a port of the cf_clist.cpp file from the 
+// This file is a port of the cf_clist.c file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //

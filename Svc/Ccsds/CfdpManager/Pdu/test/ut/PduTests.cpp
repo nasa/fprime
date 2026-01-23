@@ -64,7 +64,7 @@ TEST_F(PduTest, HeaderRoundTrip) {
 
     // Assert - Verify all fields
     ASSERT_EQ(direction, rxHeader.getDirection());
-    ASSERT_EQ(txmMode, rxHeader.getTxmMode());
+    ASSERT_EQ(class, rxHeader.getclass());
     ASSERT_EQ(sourceEid, rxHeader.getSourceEid());
     ASSERT_EQ(transactionSeq, rxHeader.getTransactionSeq());
     ASSERT_EQ(destEid, rxHeader.getDestEid());
@@ -123,7 +123,7 @@ TEST_F(PduTest, MetadataRoundTrip) {
 
     // Verify header fields
     ASSERT_EQ(direction, rxHeader.getDirection());
-    ASSERT_EQ(txmMode, rxHeader.getTxmMode());
+    ASSERT_EQ(class, rxHeader.getclass());
     ASSERT_EQ(sourceEid, rxHeader.getSourceEid());
     ASSERT_EQ(transactionSeq, rxHeader.getTransactionSeq());
     ASSERT_EQ(destEid, rxHeader.getDestEid());
@@ -240,7 +240,7 @@ TEST_F(PduTest, FileDataRoundTrip) {
     const Pdu::Header& header = rxPdu.asHeader();
     EXPECT_EQ(Pdu::T_FILE_DATA, header.getType());
     EXPECT_EQ(direction, header.getDirection());
-    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(class, header.getclass());
     EXPECT_EQ(sourceEid, header.getSourceEid());
     EXPECT_EQ(transactionSeq, header.getTransactionSeq());
     EXPECT_EQ(destEid, header.getDestEid());
@@ -338,7 +338,7 @@ TEST_F(PduTest, EofRoundTrip) {
     const Pdu::Header& header = rxPdu.asHeader();
     EXPECT_EQ(Pdu::T_EOF, header.getType());
     EXPECT_EQ(direction, header.getDirection());
-    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(class, header.getclass());
     EXPECT_EQ(sourceEid, header.getSourceEid());
     EXPECT_EQ(transactionSeq, header.getTransactionSeq());
     EXPECT_EQ(destEid, header.getDestEid());
@@ -455,7 +455,7 @@ TEST_F(PduTest, FinRoundTrip) {
     const Pdu::Header& header = rxPdu.asHeader();
     EXPECT_EQ(Pdu::T_FIN, header.getType());
     EXPECT_EQ(direction, header.getDirection());
-    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(class, header.getclass());
     EXPECT_EQ(sourceEid, header.getSourceEid());
     EXPECT_EQ(transactionSeq, header.getTransactionSeq());
     EXPECT_EQ(destEid, header.getDestEid());
@@ -629,7 +629,7 @@ TEST_F(PduTest, AckRoundTrip) {
     const Pdu::Header& header = rxPdu.asHeader();
     EXPECT_EQ(Pdu::T_ACK, header.getType());
     EXPECT_EQ(direction, header.getDirection());
-    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(class, header.getclass());
     EXPECT_EQ(sourceEid, header.getSourceEid());
     EXPECT_EQ(transactionSeq, header.getTransactionSeq());
     EXPECT_EQ(destEid, header.getDestEid());
@@ -809,7 +809,7 @@ TEST_F(PduTest, NakRoundTrip) {
     const Pdu::Header& header = rxPdu.asHeader();
     EXPECT_EQ(Pdu::T_NAK, header.getType());
     EXPECT_EQ(direction, header.getDirection());
-    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(class, header.getclass());
     EXPECT_EQ(sourceEid, header.getSourceEid());
     EXPECT_EQ(transactionSeq, header.getTransactionSeq());
     EXPECT_EQ(destEid, header.getDestEid());

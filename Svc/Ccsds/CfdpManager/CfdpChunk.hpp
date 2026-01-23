@@ -2,7 +2,7 @@
 // \title  CfdpChunks.hpp
 // \brief  CFDP chunks (spare gap tracking) header file
 //
-// This file is a port of the cf_chunks.hpp file from the 
+// This file is a port of the cf_chunks.h file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //

@@ -2,7 +2,7 @@
 // \title  CfdpCodec.hpp
 // \brief  CFDP protocol API header
 //
-// This file is a port of the cf_codec.hpp file from the 
+// This file is a port of the cf_codec.h file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //

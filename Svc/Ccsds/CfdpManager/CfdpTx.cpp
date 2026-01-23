@@ -2,7 +2,7 @@
 // \title  CfdpTx.cpp
 // \brief  CFDP send logic source file
 //
-// This file is a port of the cf_cfdp_s.cpp file from the 
+// This file is a port of the cf_cfdp_s.c file from the 
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //
@@ -231,6 +231,14 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
 
     FW_ASSERT(nakProcessed != NULL);
     *nakProcessed = false;
+
+    // If chunks is NULL, this transaction doesn't have NAK tracking allocated.
+    // This can happen if chunk allocation failed or for Class 1 transactions.
+    // Just return success without processing NAKs.
+    if (txn->chunks == NULL)
+    {
+        return CfdpStatus::SUCCESS;
+    }
 
     if (txn->flags.tx.md_need_send)
     {

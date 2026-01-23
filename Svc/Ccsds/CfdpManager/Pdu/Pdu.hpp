@@ -158,7 +158,7 @@ union Pdu {
         Direction m_direction;
 
         //! Transmission mode
-        Class m_txmMode;
+        Class m_class;
 
         //! CRC flag
         CrcFlag m_crcFlag;
@@ -212,7 +212,7 @@ union Pdu {
         Direction getDirection() const { return this->m_direction; }
 
         //! Get the transmission mode
-        Class getTxmMode() const { return this->m_txmMode; }
+        Class getTxmMode() const { return this->m_class; }
 
         //! Get the source entity ID
         CfdpEntityId getSourceEid() const { return this->m_sourceEid; }

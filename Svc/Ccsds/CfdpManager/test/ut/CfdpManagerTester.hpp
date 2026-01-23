@@ -234,7 +234,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param fileSize File size in octets
     //! @param sourceFilename Source filename
     //! @param destFilename Destination filename
-    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    //! @param class Transmission mode (Class 1 or Class 2)
     //! @param closureRequested Closure requested flag (typically 0 for Class 1, 1 for Class 2)
     void sendMetadataPdu(
         U8 channelId,
@@ -256,7 +256,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param offset File offset
     //! @param dataSize Data size in octets
     //! @param data Pointer to file data
-    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    //! @param class Transmission mode (Class 1 or Class 2)
     void sendFileDataPdu(
         U8 channelId,
         CfdpEntityId sourceEid,
@@ -276,7 +276,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param conditionCode Condition code
     //! @param checksum File checksum
     //! @param fileSize File size in octets
-    //! @param txmMode Transmission mode (Class 1 or Class 2)
+    //! @param class Transmission mode (Class 1 or Class 2)
     void sendEofPdu(
         U8 channelId,
         CfdpEntityId sourceEid,
@@ -333,7 +333,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param transactionSeq Transaction sequence number
     //! @param scopeStart Scope start offset
     //! @param scopeEnd Scope end offset
-    //! @param numSegments Number of segment requests (0 to 58)
+    //! @param numSegments Number of segment requests (0 to CF_NAK_MAX_SEGMENTS)
     //! @param segments Array of segment requests (can be nullptr if numSegments is 0)
     void sendNakPdu(
         U8 channelId,
