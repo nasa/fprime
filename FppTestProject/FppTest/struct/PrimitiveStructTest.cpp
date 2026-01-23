@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  PrimitiveStructTest.cpp
-// \author T. Chieu
+// \author T. Chieu, R. Bocchino
 // \brief  cpp file for PrimitiveStructTest class
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #include "FppTest/struct/PrimitiveSerializableAc.hpp"
@@ -20,6 +14,10 @@
 #include "gtest/gtest.h"
 
 #include <sstream>
+
+namespace FppTest {
+
+namespace Struct {
 
 // Test Primitive struct class
 class PrimitiveStructTest : public ::testing::Test {
@@ -201,3 +199,7 @@ TEST_F(PrimitiveStructTest, ToString) {
 
     ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
+
+}  // namespace Struct
+
+}  // namespace FppTest

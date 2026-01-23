@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  NonPrimitiveStructTest.cpp
-// \author T. Chieu
+// \author T. Chieu, R. Bocchino
 // \brief  cpp file for NonPrimitiveStructTest class
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #include "FppTest/struct/NonPrimitiveSerializableAc.hpp"
@@ -21,6 +15,10 @@
 #include "gtest/gtest.h"
 
 #include <sstream>
+
+namespace FppTest {
+
+namespace Struct {
 
 // Test NonPrimitive struct class
 class NonPrimitiveStructTest : public ::testing::Test {
@@ -303,3 +301,7 @@ TEST_F(NonPrimitiveStructTest, ToString) {
 
     ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
 }
+
+}  // namespace Struct
+
+}  // namespace FppTest
