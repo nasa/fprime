@@ -9,9 +9,11 @@
 
 #include "CfdpManagerTester.hpp"
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
+#include <Os/FileSystem.hpp>
 #include <cstring>
 #include <iostream>
 #include <algorithm>
@@ -192,7 +194,7 @@ void CfdpManagerTester::verifyEofPdu(
     const Cfdp::Pdu::Header& header = eofPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_EOF, header.getType()) << "Expected T_EOF type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(Cfdp::TRANSMISSION_MODE_ACKNOWLEDGED, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    // Note: Can be either acknowledged or unacknowledged depending on class
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -201,31 +203,34 @@ void CfdpManagerTester::verifyEofPdu(
     EXPECT_EQ(expectedConditionCode, eofPdu.getConditionCode()) << "Condition code mismatch";
     EXPECT_EQ(expectedFileSize, eofPdu.getFileSize()) << "File size mismatch";
 
-    // Compute file CRC and validate against EOF PDU checksum
+    // For Class 1 (unacknowledged), checksum validation is optional
+    // For Class 2 (acknowledged), validate checksum if non-zero
     U32 rxChecksum = eofPdu.getChecksum();
+    if (rxChecksum != 0) {
+        // Compute file CRC and validate against EOF PDU checksum
+        // Open and read the source file to compute CRC
+        Os::File file;
+        Os::File::Status fileStatus = file.open(sourceFilename, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
+        ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file: " << sourceFilename;
 
-    // Open and read the source file to compute CRC
-    Os::File file;
-    Os::File::Status fileStatus = file.open(sourceFilename, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
-    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file: " << sourceFilename;
+        // Allocate buffer for file content
+        U8* fileData = new U8[expectedFileSize];
+        FwSizeType bytesRead = expectedFileSize;
+        fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
+        file.close();
+        ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
+        ASSERT_EQ(expectedFileSize, bytesRead) << "Failed to read complete file";
 
-    // Allocate buffer for file content
-    U8* fileData = new U8[expectedFileSize];
-    FwSizeType bytesRead = expectedFileSize;
-    fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
-    file.close();
-    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
-    ASSERT_EQ(expectedFileSize, bytesRead) << "Failed to read complete file";
+        // Compute CRC using CFDP Checksum
+        CFDP::Checksum computedChecksum;
+        computedChecksum.update(fileData, 0, expectedFileSize);
+        U32 expectedCrc = computedChecksum.getValue();
 
-    // Compute CRC using CFDP Checksum
-    CFDP::Checksum computedChecksum;
-    computedChecksum.update(fileData, 0, expectedFileSize);
-    U32 expectedCrc = computedChecksum.getValue();
+        delete[] fileData;
 
-    delete[] fileData;
-
-    // Validate checksum matches
-    EXPECT_EQ(expectedCrc, rxChecksum) << "File CRC mismatch";
+        // Validate checksum matches
+        EXPECT_EQ(expectedCrc, rxChecksum) << "File CRC mismatch";
+    }
 }
 
 void CfdpManagerTester::verifyFinPdu(

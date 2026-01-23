@@ -5,10 +5,19 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Os/File.hpp>
 
 namespace Svc {
 
 namespace Ccsds {
+
+// ----------------------------------------------------------------------
+// Static member definitions
+// ----------------------------------------------------------------------
+
+constexpr FwSizeType CfdpManagerTester::MAX_PDU_COPIES;
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -16,7 +25,8 @@ namespace Ccsds {
 
 CfdpManagerTester ::CfdpManagerTester()
     : CfdpManagerGTestBase("CfdpManagerTester", CfdpManagerTester::MAX_HISTORY_SIZE),
-      component("CfdpManager") {
+      component("CfdpManager"),
+      m_pduCopyCount(0) {
     this->initComponents();
     this->connectPorts();
     this->component.loadParameters();
@@ -42,9 +52,154 @@ Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(
     return Fw::Buffer(this->m_internalDataBuffer, size);
 }
 
+void CfdpManagerTester::from_dataOut_handler(
+    FwIndexType portNum,
+    Fw::Buffer& fwBuffer
+) {
+    // Make a copy of the PDU data to avoid buffer reuse issues
+    EXPECT_LT(m_pduCopyCount, MAX_PDU_COPIES) << "Too many PDUs sent";
+    if (m_pduCopyCount < MAX_PDU_COPIES) {
+        FwSizeType copySize = fwBuffer.getSize();
+        if (copySize > CF_MAX_PDU_SIZE) {
+            copySize = CF_MAX_PDU_SIZE;
+        }
+        memcpy(m_pduCopyStorage[m_pduCopyCount], fwBuffer.getData(), copySize);
+
+        // Create a new buffer pointing to our copy
+        Fw::Buffer copyBuffer(m_pduCopyStorage[m_pduCopyCount], copySize);
+        m_pduCopyCount++;
+
+        // Call base class handler with the copy
+        CfdpManagerTesterBase::from_dataOut_handler(portNum, copyBuffer);
+    }
+}
+
+// ----------------------------------------------------------------------
+// Transaction Test Helper Implementations
+// ----------------------------------------------------------------------
+
+CF_Transaction_t* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransactionSeq seqNum) {
+    // Access global cfdpEngine to search for transaction
+    CF_Channel_t* chan = &cfdpEngine.channels[chanNum];
+
+    // Search through all transaction queues (PEND, TXA, TXW, RX)
+    for (U8 qIdx = 0; qIdx < CfdpQueueId::NUM; qIdx++) {
+        CF_CListNode_t* node = chan->qs[qIdx];
+        while (node != nullptr) {
+            CF_Transaction_t* txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
+            if (txn->history && txn->history->seq_num == seqNum) {
+                return txn;
+            }
+            node = node->next;
+        }
+    }
+    return nullptr;
+}
+
 // ----------------------------------------------------------------------
 // Transaction Test Implementations
 // ----------------------------------------------------------------------
+
+void CfdpManagerTester::testClass1TxNominal() {
+    // Clear any port history from previous operations
+    this->clearHistory();
+    this->m_pduCopyCount = 0;
+
+    // Test configuration
+    const char* srcFile = "test/ut/data/test_file.bin"; // Use existing test file
+    const char* dstFile = "test_class1_tx_dst.dat";
+    const U8 channelId = 0;
+    const CfdpEntityId destEid = 10;
+    const U8 priority = 0;
+
+    // Step 1: Get test file size
+    Os::File::Status fileStatus;
+    Os::File testFile;
+    FwSizeType fileSize = 0;
+    fileStatus = testFile.open(srcFile, Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Test file should exist";
+    fileStatus = testFile.size(fileSize);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should get file size";
+    testFile.close();
+
+    // Step 2: Record initial engine state
+    const U32 initialSeqNum = cfdpEngine.seq_num;
+
+    // Step 3: Send SendFile command
+    this->sendCmd_SendFile(0, 0, channelId, destEid, CfdpClass::CLASS_1,
+                           CfdpKeep::KEEP, priority,
+                           Fw::CmdStringArg(srcFile), Fw::CmdStringArg(dstFile));
+    this->component.doDispatch();
+
+    // Step 4: Verify command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManager::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
+
+    // Step 5: Verify engine state after command
+    const U32 expectedSeqNum = initialSeqNum + 1;
+    EXPECT_EQ(expectedSeqNum, cfdpEngine.seq_num) << "Sequence number should increment";
+
+    // Step 6: Find the transaction
+    CF_Transaction_t* txn = findTransaction(channelId, expectedSeqNum);
+    ASSERT_NE(nullptr, txn) << "Transaction should exist";
+
+    // Step 7: Verify initial transaction state (in PEND queue, not yet active)
+    EXPECT_EQ(CF_TxnState_S1, txn->state) << "Should be in S1 state for Class 1 TX";
+    EXPECT_EQ(0, txn->foffs) << "File offset should be 0 initially";
+    EXPECT_EQ(CF_TxSubState_METADATA, txn->state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(channelId, txn->chan_num) << "Channel number should match";
+    EXPECT_EQ(priority, txn->priority) << "Priority should match";
+
+    // Verify history fields
+    EXPECT_EQ(expectedSeqNum, txn->history->seq_num) << "History seq_num should match";
+    EXPECT_EQ(component.getLocalEidParam(), txn->history->src_eid) << "Source EID should match local EID";
+    EXPECT_EQ(destEid, txn->history->peer_eid) << "Peer EID should match dest EID";
+
+    // Note: fsize is not set until the file is opened in CF_CFDP_S_SubstateSendMetadata during first cycle
+
+    // Step 8: Run first engine cycle - should send Metadata + FileData PDUs
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 9: Verify exactly 2 PDUs were sent in first cycle (Metadata + FileData)
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+
+    // Step 10: Verify Metadata PDU (index 0)
+    Fw::Buffer metadataPduBuffer = this->getSentPduBuffer(0);
+    ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
+
+    // Verify file was opened and fsize was set
+    EXPECT_EQ(fileSize, txn->fsize) << "File size should be set after file is opened";
+
+    verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
+                      expectedSeqNum, static_cast<CfdpFileSize>(fileSize), srcFile, dstFile);
+
+    // Step 11: Verify FileData PDU (index 1)
+    Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1);
+    ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU should be sent";
+    verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), destEid,
+                     expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile);
+
+    // Verify file was completely read
+    EXPECT_EQ(fileSize, txn->foffs) << "Should have read entire file";
+
+    // Verify transaction progressed to EOF sub-state after sending all file data
+    EXPECT_EQ(CF_TxSubState_EOF, txn->state_data.send.sub_state) << "Should progress to EOF sub-state";
+
+    // Step 12: Run second engine cycle - should send EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 13: Verify exactly 1 more PDU was sent (EOF)
+    ASSERT_FROM_PORT_HISTORY_SIZE(3);
+
+    // Step 14: Verify EOF PDU (index 2)
+    Fw::Buffer eofPduBuffer = this->getSentPduBuffer(2);
+    ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
+
+    verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), destEid,
+                 expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(fileSize), srcFile);
+}
 
 }  // namespace Ccsds
 

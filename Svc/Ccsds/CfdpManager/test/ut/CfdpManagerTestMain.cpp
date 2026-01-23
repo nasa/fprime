@@ -42,6 +42,12 @@ TEST(Pdu, NakPdu) {
     delete tester;
 }
 
+TEST(Transaction, Class1TxNominal) {
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testClass1TxNominal();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

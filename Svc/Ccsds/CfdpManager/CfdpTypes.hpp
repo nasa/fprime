@@ -475,15 +475,11 @@ typedef struct CfdpEngineDataT
 {
     CfdpEngineDataT()
         : seq_num(0),
-        outgoing_counter(0),
-        enabled(false)
+        outgoing_counter(0)
     {
 
     }
     CfdpTransactionSeq seq_num; /* \brief keep track of the next sequence number to use for sends */
-
-    // CF_Output_t out;
-    // CF_Input_t  in;
 
     /* NOTE: could have separate array of transactions as part of channel? */
     CF_Transaction_t transactions[CF_NUM_TRANSACTIONS];
@@ -494,7 +490,6 @@ typedef struct CfdpEngineDataT
     CF_Chunk_t        chunk_mem[CF_NUM_CHUNKS_ALL_CHANNELS];
 
     U32 outgoing_counter;
-    bool   enabled;
 } CfdpEngineData;
 
 }  // namespace Ccsds

@@ -216,6 +216,20 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const Cfdp::Pdu::SegmentRequest* expectedSegments = nullptr
     );
 
+    //! Helper to find transaction by sequence number
+    //! @param chanNum Channel number to search
+    //! @param seqNum Transaction sequence number
+    //! @return Pointer to transaction or nullptr if not found
+    CF_Transaction_t* findTransaction(U8 chanNum, CfdpTransactionSeq seqNum);
+
+  public:
+    // ----------------------------------------------------------------------
+    // Transaction Tests
+    // ----------------------------------------------------------------------
+
+    //! Test nominal Class 1 TX file transfer
+    void testClass1TxNominal();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
@@ -225,6 +239,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     Fw::Buffer from_bufferAllocate_handler(
         FwIndexType portNum,
         FwSizeType size
+    ) override;
+
+    //! Handler for from_dataOut - copies PDU data to avoid buffer reuse issues
+    void from_dataOut_handler(
+        FwIndexType portNum,
+        Fw::Buffer& fwBuffer
     ) override;
 
   private:
@@ -237,6 +257,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Reusable buffer for allocation handler
     U8 m_internalDataBuffer[CF_MAX_PDU_SIZE];
+
+    //! Storage for PDU copies (to avoid buffer reuse issues)
+    static constexpr FwSizeType MAX_PDU_COPIES = 100;
+    U8 m_pduCopyStorage[MAX_PDU_COPIES][CF_MAX_PDU_SIZE];
+    FwSizeType m_pduCopyCount;
 };
 
 }  // namespace Ccsds

@@ -912,61 +912,6 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         cfdpEngine.channels[i].channel_id = i;
         cfdpEngine.channels[i].flowState = CfdpFlow::NOT_FROZEN;
 
-        // TODO remove pipe references
-        // snprintf(nbuf, sizeof(nbuf) - 1, "%s%d", CF_CHANNEL_PIPE_PREFIX, i);
-        // ret = CFE_SB_CreatePipe(&cfdpEngine.channels[i].pipe, CF_AppData.config_table->chan[i].pipe_depth_input,
-        //                         nbuf);
-        // if (ret != CfdpStatus::SUCCESS)
-        // {
-        //     CFE_EVS_SendEvent(CF_CR_CHANNEL_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                       "CF: failed to create pipe %s, returned 0x%08lx", nbuf, (unsigned long)ret);
-        //     break;
-        // }
-
-        // ret = CFE_SB_SubscribeLocal(CFE_SB_ValueToMsgId(CF_AppData.config_table->chan[i].mid_input),
-        //                             cfdpEngine.channels[i].pipe,
-        //                             CF_AppData.config_table->chan[i].pipe_depth_input);
-        // if (ret != CfdpStatus::SUCCESS)
-        // {
-        //     CFE_EVS_SendEvent(CF_INIT_SUB_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                       "CF: failed to subscribe to MID 0x%lx, returned 0x%08lx",
-        //                       (unsigned long)CF_AppData.config_table->chan[i].mid_input, (unsigned long)ret);
-        //     break;
-        // }
-
-        // TODO remove all semaphore references
-        // if (CF_AppData.config_table->chan[i].sem_name[0])
-        // {
-        //     /*
-        //      * There is a start up race condition because CFE starts all apps at the same time,
-        //      * and if this sem is instantiated by another app, it may not be created yet.
-        //      *
-        //      * Therefore if OSAL returns OS_ERR_NAME_NOT_FOUND, assume this is what is going
-        //      * on, delay a bit and try again.
-        //      */
-        //     ret = OS_ERR_NAME_NOT_FOUND;
-        //     for (j = 0; j < CF_STARTUP_SEM_MAX_RETRIES; ++j)
-        //     {
-        //         ret = OS_CountSemGetIdByName(&cfdpEngine.channels[i].sem_id,
-        //                                      CF_AppData.config_table->chan[i].sem_name);
-
-        //         if (ret != OS_ERR_NAME_NOT_FOUND)
-        //         {
-        //             break;
-        //         }
-
-        //         OS_TaskDelay(CF_STARTUP_SEM_TASK_DELAY);
-        //     }
-
-        //     if (ret != OS_SUCCESS)
-        //     {
-        //         CFE_EVS_SendEvent(CF_INIT_SEM_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                           "CF: failed to get sem id for name %s, error=%ld",
-        //                           CF_AppData.config_table->chan[i].sem_name, (long)ret);
-        //         break;
-        //     }
-        // }
-
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
             // BPC: Add pointer to component in order to send output buffers
@@ -988,18 +933,12 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
             }
         }
 
-        // TODO remove histories
         for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
         {
             history = &cfdpEngine.histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
             CF_CList_InitNode(&history->cl_node);
             CF_CList_InsertBack_Ex(&cfdpEngine.channels[i], CfdpQueueId::HIST_FREE, &history->cl_node);
         }
-    }
-
-    if (ret == CfdpStatus::SUCCESS)
-    {
-        cfdpEngine.enabled = true;
     }
 
     return ret;
@@ -1569,28 +1508,25 @@ void CF_CFDP_CycleEngine(void)
     CF_Channel_t *chan;
     int           i;
 
-    if (cfdpEngine.enabled)
+    for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        for (i = 0; i < CF_NUM_CHANNELS; ++i)
+        chan = &cfdpEngine.channels[i];
+        cfdpEngine.outgoing_counter = 0;
+
+        if (chan->flowState == CfdpFlow::NOT_FROZEN)
         {
-            chan = &cfdpEngine.channels[i];
-            cfdpEngine.outgoing_counter = 0;
+            /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
+             * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
+             * PDUs. */
 
-            if (chan->flowState == CfdpFlow::NOT_FROZEN)
-            {
-                /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
-                 * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
-                 * PDUs. */
+            /* cycle all transactions (tick) */
+            CF_CFDP_TickTransactions(chan);
 
-                /* cycle all transactions (tick) */
-                CF_CFDP_TickTransactions(chan);
+            /* cycle the current tx transaction */
+            CF_CFDP_CycleTx(chan);
 
-                /* cycle the current tx transaction */
-                CF_CFDP_CycleTx(chan);
-
-                CF_CFDP_ProcessPlaybackDirectories(chan);
-                CF_CFDP_ProcessPollingDirectories(chan);
-            }
+            CF_CFDP_ProcessPlaybackDirectories(chan);
+            CF_CFDP_ProcessPollingDirectories(chan);
         }
     }
 }
@@ -1822,8 +1758,6 @@ void CF_CFDP_DisableEngine(void)
     U32 j;
     static const CfdpQueueId::T CLOSE_QUEUES[] = {CfdpQueueId::RX, CfdpQueueId::TXA, CfdpQueueId::TXW};
     CF_Channel_t * chan;
-
-    cfdpEngine.enabled = false;
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
