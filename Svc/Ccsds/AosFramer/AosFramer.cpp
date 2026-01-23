@@ -360,6 +360,9 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     // Bytes that aren't actual PDUs
     const U16 overhead = START_OF_PAYLOAD + (m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
     // Bytes for all the PDUs in this VC Frame
+    FW_ASSERT(vc.frame.buffer.getSize() > 0, static_cast<FwAssertArgType>(vc.frame.buffer.getSize()));
+    FW_ASSERT(vc.frame.buffer.getSize() < std::numeric_limits<U16>::max(),
+              static_cast<FwAssertArgType>(vc.frame.buffer.getSize()));
     const U16 pduSize = static_cast<U16>(vc.frame.buffer.getSize()) - overhead;
 
     // How many bytes are left over
