@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  main.cpp
-// \author T. Chieu
+// \author T. Chieu, A. Tumbar, R. Bocchino
 // \brief  main cpp file for FPP array tests
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #include "FppTest/array/AliasOfArrayAliasAc.hpp"
@@ -25,12 +19,83 @@
 #include "STest/Random/Random.hpp"
 #include "gtest/gtest.h"
 
-// Instantiate array tests
-using ArrayTestImplementations = ::testing::Types<Enum, String, Struct, Uint32Array, SM_A>;
+// ----------------------------------------------------------------------
+// Test instatiations
+// ----------------------------------------------------------------------
+
+// Array tests
+using ArrayTestImplementations = ::testing::Types<AliasOfArray, AliasString, Enum, SM_A, String, Struct, Uint32Array>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ArrayTest, ArrayTestImplementations);
 
+// String tests
+using StringTestImplementations = ::testing::Types<Fw::StringTemplate<80>, Fw::StringTemplate<100>>;
+INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
+
 // ----------------------------------------------------------------------
-// Specializations for default values
+// Template specializations for AliasOfArray type
+// ----------------------------------------------------------------------
+
+template <>
+void FppTest::Array::setDefaultVals<AliasOfArray>(E (&a)[Enum::SIZE]) {
+    a[0] = E::A;
+    a[1] = E::B;
+    a[2] = E::C;
+}
+
+template <>
+void FppTest::Array::setTestVals<AliasOfArray>(EA (&a)[AliasOfArray::SIZE]) {
+    a[0] = static_cast<EA::T>(STest::Pick::startLength(EA::B, EA::NUM_CONSTANTS - 1));
+
+    for (U32 i = 1; i < Enum::SIZE; i++) {
+        a[i] = static_cast<EA::T>(STest::Pick::startLength(EA::A, EA::NUM_CONSTANTS - 1));
+    }
+}
+
+template <>
+AliasOfArray FppTest::Array::getMultiElementConstructedArray<AliasOfArray>(EA (&a)[AliasOfArray::SIZE]) {
+    return AliasOfArray({a[0], a[1], a[2]});
+}
+
+template <>
+U32 FppTest::Array::getSerializedSize<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
+    U32 serializedSize = 0;
+
+    for (U32 i = 0; i < AliasString::SIZE; i++) {
+        serializedSize += static_cast<U32>(a[i].serializedSize());
+    }
+
+    return serializedSize;
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for AliasString type
+// ----------------------------------------------------------------------
+
+static char aliasStringDefaultValsBuffer[AliasString::SIZE][AliasString::ELEMENT_BUFFER_SIZE];
+static char aliasStringTestValsBuffer[AliasString::SIZE][AliasString::ELEMENT_BUFFER_SIZE];
+
+template <>
+void FppTest::Array::setDefaultVals<AliasString>(Fw::ExternalString (&a)[::AliasString::SIZE]) {
+    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
+        a[i].setBuffer(aliasStringDefaultValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
+    }
+}
+
+template <>
+void FppTest::Array::setTestVals<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
+    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
+        a[i].setBuffer(aliasStringTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
+        FppTest::Utils::setString(aliasStringTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE, 1);
+    }
+}
+
+template <>
+AliasString FppTest::Array::getMultiElementConstructedArray<AliasString>(Fw::ExternalString (&a)[::String::SIZE]) {
+    return AliasString({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for Enum type
 // ----------------------------------------------------------------------
 
 template <>
@@ -39,35 +104,6 @@ void FppTest::Array::setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
     a[1] = E::B;
     a[2] = E::C;
 }
-
-static char stringDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
-
-template <>
-void FppTest::Array::setDefaultVals<String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    for (U32 i = 0; i < ::String::SIZE; i++) {
-        a[i].setBuffer(stringDefaultValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE);
-    }
-}
-
-static char stringAliasDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
-
-template <>
-void FppTest::Array::setDefaultVals<AliasString>(Fw::ExternalString (&a)[::AliasString::SIZE]) {
-    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
-        a[i].setBuffer(stringAliasDefaultValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
-    }
-}
-
-template <>
-void FppTest::Array::setDefaultVals<SM_A>(U32 (&a)[SM_A::SIZE]) {
-    for (U32 i = 0; i < SM_A::SIZE; i++) {
-        a[i] = 0;
-    }
-}
-
-// ----------------------------------------------------------------------
-// Specializations for test values
-// ----------------------------------------------------------------------
 
 template <>
 void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
@@ -78,7 +114,47 @@ void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
     }
 }
 
+template <>
+Enum FppTest::Array::getMultiElementConstructedArray<Enum>(E (&a)[Enum::SIZE]) {
+    return Enum({a[0], a[1], a[2]});
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for SM_A type
+// ----------------------------------------------------------------------
+
+template <>
+void FppTest::Array::setDefaultVals<SM_A>(U32 (&a)[SM_A::SIZE]) {
+    for (U32 i = 0; i < SM_A::SIZE; i++) {
+        a[i] = 0;
+    }
+}
+
+template <>
+void FppTest::Array::setTestVals<SM_A>(U32 (&a)[SM_A::SIZE]) {
+    for (U32 i = 1; i < SM_A::SIZE; i++) {
+        a[i] = STest::Pick::any();
+    }
+}
+
+template <>
+SM_A FppTest::Array::getMultiElementConstructedArray<SM_A>(U32 (&a)[SM_A::SIZE]) {
+    return SM_A({a[0], a[1], a[2]});
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for String type
+// ----------------------------------------------------------------------
+
+static char stringDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
 static char stringTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
+template <>
+void FppTest::Array::setDefaultVals<String>(Fw::ExternalString (&a)[::String::SIZE]) {
+    for (U32 i = 0; i < ::String::SIZE; i++) {
+        a[i].setBuffer(stringDefaultValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE);
+    }
+}
 
 template <>
 void FppTest::Array::setTestVals<String>(Fw::ExternalString (&a)[::String::SIZE]) {
@@ -87,6 +163,26 @@ void FppTest::Array::setTestVals<String>(Fw::ExternalString (&a)[::String::SIZE]
         FppTest::Utils::setString(stringTestValsBuffer[i], ::String::ELEMENT_BUFFER_SIZE, 1);
     }
 }
+
+template <>
+::String FppTest::Array::getMultiElementConstructedArray<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
+    return ::String({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
+}
+
+template <>
+U32 FppTest::Array::getSerializedSize<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
+    U32 serializedSize = 0;
+
+    for (U32 i = 0; i < ::String::SIZE; i++) {
+        serializedSize += static_cast<U32>(a[i].serializedSize());
+    }
+
+    return serializedSize;
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for Struct type
+// ----------------------------------------------------------------------
 
 template <>
 void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
@@ -100,6 +196,15 @@ void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
 }
 
 template <>
+Struct FppTest::Array::getMultiElementConstructedArray<Struct>(S (&a)[Struct::SIZE]) {
+    return Struct({a[0], a[1], a[2]});
+}
+
+// ----------------------------------------------------------------------
+// Template specializations for Uint32Array type
+// ----------------------------------------------------------------------
+
+template <>
 void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     Uint32 b;
     for (U32 i = 0; i < Uint32Array::SIZE; i++) {
@@ -110,79 +215,10 @@ void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     }
 }
 
-static char stringAliasTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
-
-template <>
-void FppTest::Array::setTestVals<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
-    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
-        a[i].setBuffer(stringAliasTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE);
-        FppTest::Utils::setString(stringAliasTestValsBuffer[i], ::AliasString::ELEMENT_BUFFER_SIZE, 1);
-    }
-}
-
-template <>
-void FppTest::Array::setTestVals<AliasOfArray>(EA (&a)[AliasOfArray::SIZE]) {
-    a[0] = static_cast<EA::T>(STest::Pick::startLength(EA::B, EA::NUM_CONSTANTS - 1));
-
-    for (U32 i = 1; i < Enum::SIZE; i++) {
-        a[i] = static_cast<EA::T>(STest::Pick::startLength(EA::A, EA::NUM_CONSTANTS - 1));
-    }
-}
-
-template <>
-void FppTest::Array::setTestVals<SM_A>(U32 (&a)[SM_A::SIZE]) {
-    for (U32 i = 1; i < SM_A::SIZE; i++) {
-        a[i] = STest::Pick::any();
-    }
-}
-
-// ----------------------------------------------------------------------
-// Specializations for multi element constructor
-// ----------------------------------------------------------------------
-
-template <>
-Enum FppTest::Array::getMultiElementConstructedArray<Enum>(E (&a)[Enum::SIZE]) {
-    return Enum({a[0], a[1], a[2]});
-}
-
-template <>
-::String FppTest::Array::getMultiElementConstructedArray<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    return ::String({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
-}
-
-template <>
-Struct FppTest::Array::getMultiElementConstructedArray<Struct>(S (&a)[Struct::SIZE]) {
-    return Struct({a[0], a[1], a[2]});
-}
-
 template <>
 Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     return Uint32Array({a[0], a[1], a[2]});
 }
-
-template <>
-SM_A FppTest::Array::getMultiElementConstructedArray<SM_A>(U32 (&a)[SM_A::SIZE]) {
-    return SM_A({a[0], a[1], a[2]});
-}
-
-// ----------------------------------------------------------------------
-// Specializations for serialized size
-// ----------------------------------------------------------------------
-
-template <>
-U32 FppTest::Array::getSerializedSize<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    U32 serializedSize = 0;
-
-    for (U32 i = 0; i < ::String::SIZE; i++) {
-        serializedSize += static_cast<U32>(a[i].serializedSize());
-    }
-
-    return serializedSize;
-}
-
-// Instantiate string tests for arrays
-using StringTestImplementations = ::testing::Types<Fw::StringTemplate<80>, Fw::StringTemplate<100>>;
-INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
