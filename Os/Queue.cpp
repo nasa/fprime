@@ -146,4 +146,11 @@ Os::Mutex& Queue::getStaticMutex() {
     return s_mutex;
 }
 
+#if FW_QUEUE_REGISTRATION
+void Queue::setRegistry(QueueRegistry* registry) {
+    ScopeLock lock(Queue::getStaticMutex());
+    Queue::s_queueRegistry = registry;
+}
+#endif
+
 }  // namespace Os
