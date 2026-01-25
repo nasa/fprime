@@ -646,7 +646,7 @@ void PolyType::toString(StringBase& dest, bool append) const {
     if (append) {
         dest += external;
     } else {
-        dest = external;
+        dest = static_cast<const StringBase&>(external);
     }
 }
 
