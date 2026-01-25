@@ -340,7 +340,7 @@ PolyType::PolyType(const PolyType& original) : Fw::Serializable() {
     this->m_val = original.m_val;
 }
 
-PolyType::~PolyType() {}
+PolyType::~PolyType() = default
 
 PolyType& PolyType::operator=(const PolyType& src) {
     this->m_dataType = src.m_dataType;
