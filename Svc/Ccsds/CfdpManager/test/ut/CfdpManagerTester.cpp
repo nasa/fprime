@@ -141,7 +141,7 @@ void CfdpManagerTester::createAndVerifyTestFile(const char* filePath, FwSizeType
     EXPECT_EQ(expectedFileSize, actualFileSize) << "File size should match expected size";
 }
 
-void CfdpManagerTester::setupAndVerifyTransaction(
+void CfdpManagerTester::setupTxTransaction(
     const char* srcFile,
     const char* dstFile,
     U8 channelId,
@@ -177,6 +177,52 @@ void CfdpManagerTester::setupAndVerifyTransaction(
     EXPECT_EQ(setup.expectedSeqNum, setup.txn->history->seq_num) << "History seq_num should match";
     EXPECT_EQ(component.getLocalEidParam(), setup.txn->history->src_eid) << "Source EID should match local EID";
     EXPECT_EQ(destEid, setup.txn->history->peer_eid) << "Peer EID should match dest EID";
+    EXPECT_STREQ(srcFile, setup.txn->history->fnames.src_filename.toChar()) << "Source filename should match";
+    EXPECT_STREQ(dstFile, setup.txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
+}
+
+void CfdpManagerTester::setupRxTransaction(
+    const char* srcFile,
+    const char* dstFile,
+    U8 channelId,
+    CfdpEntityId sourceEid,
+    Cfdp::Class cfdpClass,
+    U32 fileSize,
+    U32 transactionSeq,
+    CF_TxnState_t expectedState,
+    TransactionSetup& setup)
+{
+    // Send Metadata PDU to initiate RX transaction
+    U8 closureRequested = (cfdpClass == Cfdp::CLASS_1) ? 0 : 1;
+
+    this->sendMetadataPdu(
+        channelId,
+        sourceEid,                         // Ground is sender
+        component.getLocalEidParam(),      // FSW is receiver
+        transactionSeq,
+        fileSize,
+        srcFile,
+        dstFile,
+        cfdpClass,
+        closureRequested
+    );
+    this->component.doDispatch();
+
+    // Find the created transaction
+    setup.expectedSeqNum = transactionSeq;
+    setup.txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, setup.txn) << "RX transaction should be created after Metadata PDU";
+
+    // Verify transaction state
+    EXPECT_EQ(expectedState, setup.txn->state) << "Should be in expected RX state";
+    EXPECT_EQ(CF_RxSubState_FILEDATA, setup.txn->state_data.receive.sub_state) << "Should start in FILEDATA sub-state";
+    EXPECT_EQ(channelId, setup.txn->chan_num) << "Channel number should match";
+    EXPECT_TRUE(setup.txn->flags.rx.md_recv) << "md_recv flag should be set after Metadata PDU";
+
+    // Verify transaction history
+    EXPECT_EQ(transactionSeq, setup.txn->history->seq_num) << "History seq_num should match";
+    EXPECT_EQ(sourceEid, setup.txn->history->src_eid) << "Source EID should match ground EID (sender)";
+    EXPECT_EQ(sourceEid, setup.txn->history->peer_eid) << "Peer EID should match ground EID (the remote peer)";
     EXPECT_STREQ(srcFile, setup.txn->history->fnames.src_filename.toChar()) << "Source filename should match";
     EXPECT_STREQ(dstFile, setup.txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
 }
@@ -297,6 +343,32 @@ void CfdpManagerTester::cleanupTestFile(const char* filePath) {
     EXPECT_EQ(Os::FileSystem::OP_OK, fsStatus) << "Should remove test file";
 }
 
+void CfdpManagerTester::verifyReceivedFile(
+    const char* filePath,
+    const U8* expectedData,
+    FwSizeType expectedSize)
+{
+    // Read destination file
+    U8* receivedData = new U8[expectedSize];
+    Os::File file;
+    Os::File::Status fileStatus = file.open(filePath, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Received file should exist";
+
+    FwSizeType bytesRead = expectedSize;
+    fileStatus = file.read(receivedData, bytesRead, Os::File::WAIT);
+    file.close();
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should read received file successfully";
+    ASSERT_EQ(expectedSize, bytesRead) << "Received file size should match expected size";
+
+    // Compare content byte-by-byte
+    for (FwSizeType i = 0; i < expectedSize; ++i) {
+        EXPECT_EQ(expectedData[i], receivedData[i]) << "File content mismatch at byte " << i;
+    }
+
+    // Clean up buffer
+    delete[] receivedData;
+}
+
 // ----------------------------------------------------------------------
 // Transaction Test Implementations
 // ----------------------------------------------------------------------
@@ -314,7 +386,7 @@ void CfdpManagerTester::testClass1TxNominal() {
 
     // Setup transaction and verify initial state
     TransactionSetup setup;
-    setupAndVerifyTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_DEST_EID,
+    setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_DEST_EID,
                              CfdpClass::CLASS_1, TEST_PRIORITY, CF_TxnState_S1, setup);
 
     // Run first engine cycle - should send Metadata + FileData PDUs
@@ -362,7 +434,7 @@ void CfdpManagerTester::testClass2TxNominal() {
 
     // Setup transaction and verify initial state
     TransactionSetup setup;
-    setupAndVerifyTransaction(srcFile, dstFile, TEST_CHANNEL_ID_1, TEST_DEST_EID,
+    setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_1, TEST_DEST_EID,
                              CfdpClass::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
@@ -418,7 +490,7 @@ void CfdpManagerTester::testClass2TxNack() {
 
     // Setup transaction and verify initial state
     TransactionSetup setup;
-    setupAndVerifyTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_DEST_EID,
+    setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_DEST_EID,
                              CfdpClass::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
@@ -505,6 +577,89 @@ void CfdpManagerTester::testClass2TxNack() {
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
 
     // Clean up test file
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testClass1RxNominal() {
+    // Test configuration - use CF_MAX_FILE_DATA_SIZE for single PDU
+    const U16 fileDataSize = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const FwSizeType expectedFileSize = fileDataSize;
+    const char* srcFile = "test/ut/output/test_rx_source.bin";
+    const char* dstFile = "test/ut/output/test_rx_received.bin";
+    const char* groundSideSrcFile = "/ground/test_rx_source.bin";
+    const U32 transactionSeq = 100;
+
+    // Create test data file dynamically
+    FwSizeType actualFileSize;
+    createAndVerifyTestFile(srcFile, expectedFileSize, actualFileSize);
+
+    // Uplink Metadata PDU and setup RX transaction
+    TransactionSetup setup;
+    setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_DEST_EID,
+                       Cfdp::CLASS_1, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R1, setup);
+
+    // Uplink FileData PDU
+    // Read test data from source file
+    U8* testData = new U8[actualFileSize];
+    Os::File file;
+    Os::File::Status fileStatus = file.open(srcFile, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file for reading";
+
+    FwSizeType bytesRead = actualFileSize;
+    fileStatus = file.read(testData, bytesRead, Os::File::WAIT);
+    file.close();
+    ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
+    ASSERT_EQ(actualFileSize, bytesRead) << "Should read entire file";
+
+    // Send FileData PDU
+    sendFileDataPdu(
+        TEST_CHANNEL_ID_0,
+        TEST_DEST_EID,                    // Ground is sender
+        component.getLocalEidParam(),      // FSW is receiver
+        transactionSeq,
+        0,                                 // offset
+        static_cast<U16>(actualFileSize),  // size
+        testData,
+        Cfdp::CLASS_1
+    );
+    component.doDispatch();
+
+    // Verify FileData processed
+    EXPECT_EQ(CF_TxnState_R1, setup.txn->state) << "Should remain in R1 state after FileData";
+    EXPECT_EQ(CF_RxSubState_FILEDATA, setup.txn->state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
+
+    // Compute CRC for EOF PDU
+    CFDP::Checksum crc;
+    crc.update(testData, 0, static_cast<U32>(actualFileSize));
+    U32 expectedCrc = crc.getValue();
+
+    // Uplink EOF PDU
+    sendEofPdu(
+        TEST_CHANNEL_ID_0,
+        TEST_DEST_EID,                    // Ground is sender
+        component.getLocalEidParam(),      // FSW is receiver
+        transactionSeq,
+        Cfdp::CONDITION_CODE_NO_ERROR,
+        expectedCrc,
+        static_cast<CfdpFileSize>(actualFileSize),
+        Cfdp::CLASS_1
+    );
+    component.doDispatch();
+
+    // Verify transaction completed (moved to HOLD state)
+    EXPECT_EQ(CF_TxnState_HOLD, setup.txn->state) << "Should be in HOLD state after EOF processing";
+
+    // Verify file written to disk
+    verifyReceivedFile(dstFile, testData, actualFileSize);
+
+    // Clean up dynamically allocated buffer
+    delete[] testData;
+
+    // Wait for transaction recycle
+    waitForTransactionRecycle(TEST_CHANNEL_ID_0, transactionSeq);
+
+    // Cleanup test files
+    cleanupTestFile(dstFile);
     cleanupTestFile(srcFile);
 }
 

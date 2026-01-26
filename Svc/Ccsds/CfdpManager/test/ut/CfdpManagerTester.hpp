@@ -216,8 +216,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedTransactionSeq,
         CfdpFileSize expectedScopeStart,
         CfdpFileSize expectedScopeEnd,
-        U8 expectedNumSegments = 0,
-        const Cfdp::Pdu::SegmentRequest* expectedSegments = nullptr
+        U8 expectedNumSegments,
+        const Cfdp::Pdu::SegmentRequest* expectedSegments
     );
 
     //! Helper to find transaction by sequence number
@@ -364,6 +364,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 TX file transfer with NAK handling
     void testClass2TxNack();
 
+    //! Test nominal Class 1 RX file transfer
+    void testClass1RxNominal();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
@@ -405,14 +408,27 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         FwSizeType& actualFileSize
     );
 
-    //! Setup transaction and verify initial state 
-    void setupAndVerifyTransaction(
+    //! Setup TX transaction and verify initial state
+    void setupTxTransaction(
         const char* srcFile,
         const char* dstFile,
         U8 channelId,
         CfdpEntityId destEid,
         CfdpClass cfdpClass,
         U8 priority,
+        CF_TxnState_t expectedState,
+        TransactionSetup& setup
+    );
+
+    //! Setup RX transaction via Metadata PDU and verify initial state
+    void setupRxTransaction(
+        const char* srcFile,
+        const char* dstFile,
+        U8 channelId,
+        CfdpEntityId sourceEid,
+        Cfdp::Class cfdpClass,
+        U32 fileSize,
+        U32 transactionSeq,
         CF_TxnState_t expectedState,
         TransactionSetup& setup
     );
@@ -458,6 +474,13 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Clean up test file (remove and verify)
     void cleanupTestFile(const char* filePath);
+
+    //! Verify received file matches expected data
+    void verifyReceivedFile(
+        const char* filePath,
+        const U8* expectedData,
+        FwSizeType expectedSize
+    );
 
   private:
     // ----------------------------------------------------------------------
