@@ -808,6 +808,7 @@ void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
         {
             /* R2 can handle missing metadata, so go ahead and create a temp file */
             txn->state = CF_TxnState_R2;
+            txn->txn_class = CfdpClass::CLASS_2;
             CF_CFDP_R_Init(txn);
             CF_CFDP_DispatchRecv(txn, ph); /* re-dispatch to enter r2 */
         }
@@ -825,6 +826,7 @@ void CF_CFDP_RecvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                 {
                     /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
                     txn->state            = ph->pdu_header.txm_mode ? CF_TxnState_R1 : CF_TxnState_R2;
+                    txn->txn_class        = ph->pdu_header.txm_mode ? CfdpClass::CLASS_1 : CfdpClass::CLASS_2;
                     txn->flags.rx.md_recv = true;
                     CF_CFDP_R_Init(txn); /* initialize R */
                 }
@@ -919,6 +921,12 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
         cfdpEngine.channels[i].cfdpManager = &cfdpManager;
         cfdpEngine.channels[i].channel_id = i;
         cfdpEngine.channels[i].flowState = CfdpFlow::NOT_FROZEN;
+
+        /* Clear all queue heads to start fresh */
+        for (k = 0; k < CfdpQueueId::NUM; ++k)
+        {
+            cfdpEngine.channels[i].qs[k] = NULL;
+        }
 
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
@@ -1020,7 +1028,7 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
 
                 /* Class 2 transactions need a chunklist for NAK processing, get one now.
                  * Class 1 transactions don't need chunks since they don't support NAKs. */
-                if (txn->state == CF_TxnState_S2)
+                if (txn->txn_class == CfdpClass::CLASS_2)
                 {
                     if (txn->chunks == NULL)
                     {
@@ -1089,6 +1097,7 @@ void CF_CFDP_TickTransactions(CF_Channel_t *chan)
         {
             args.cont = 0;
             CF_CList_Traverse(chan->qs[qs[chan->tick_type]], CF_CFDP_DoTick, &args);
+
             if (args.early_exit)
             {
                 /* early exit means we ran out of available outgoing messages this wakeup.
@@ -1133,8 +1142,10 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpK
 {
     txn->chan_num = chan;
     txn->priority = priority;
-    txn->keep     = keep;
-    txn->state    = cfdp_class ? CF_TxnState_S2 : CF_TxnState_S1;
+    txn->keep = keep;
+    txn->txn_class = cfdp_class;
+    txn->state = cfdp_class ? CF_TxnState_S2 : CF_TxnState_S1;
+    txn->state_data.send.sub_state = CF_TxSubState_METADATA;
 }
 
 void CF_CFDP_TxFile_Initiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
@@ -1620,6 +1631,8 @@ void CF_CFDP_RecycleTransaction(CF_Transaction_t *txn)
     CF_Channel_t *   chan;
     CF_CListNode_t **chunklist_head;
     CfdpQueueId::T    hist_destq;
+
+    chan = CF_GetChannelFromTxn(txn);
 
     /* File should have been closed by the state machine, but if
      * it still hanging open at this point, close it now so its not leaked.

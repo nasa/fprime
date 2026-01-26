@@ -374,6 +374,7 @@ typedef union CF_StateData
 typedef struct CF_Transaction
 {
     CF_TxnState_t state; /**< \brief each engine is commanded to do something, which is the overall state */
+    CfdpClass::T txn_class; /**< \brief transaction class (CLASS_1 or CLASS_2), set at initialization and never changes */
 
     CF_History_t * history; /**< \brief weird, holds active filenames and possibly other info */
     CF_ChunkWrapper_t *chunks; /**< \brief for gap tracking, only used on class 2 */

@@ -127,7 +127,8 @@ void CfdpManagerTester::verifyFileDataPdu(
     U32 expectedTransactionSeq,
     U32 expectedOffset,
     U16 expectedDataSize,
-    const char* filename
+    const char* filename,
+    Svc::Ccsds::Cfdp::Class expectedClass
 ) {
     // Deserialize PDU
     Cfdp::Pdu::FileDataPdu fileDataPdu;
@@ -138,7 +139,7 @@ void CfdpManagerTester::verifyFileDataPdu(
     const Cfdp::Pdu::Header& header = fileDataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(Cfdp::CLASS_1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -704,7 +705,7 @@ void CfdpManagerTester::testFileDataPdu() {
 
     // Step 6: Verify File Data PDU
     verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileOffset, readSize, testFilePath);
+                      testSequenceId, fileOffset, readSize, testFilePath, Cfdp::CLASS_1);
 }
 
 void CfdpManagerTester::testEofPdu() {

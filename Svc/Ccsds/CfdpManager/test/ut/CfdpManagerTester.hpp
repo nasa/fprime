@@ -137,7 +137,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedTransactionSeq,
         U32 expectedOffset,
         U16 expectedDataSize,
-        const char* filename
+        const char* filename,
+        Svc::Ccsds::Cfdp::Class expectedClass
     );
 
     //! Helper to verify EOF PDU (deserialize + validate)

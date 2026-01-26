@@ -140,6 +140,9 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
         /* notably this state is distinguishable from items still on the free list */
         txn->state        = CF_TxnState_INIT;
         txn->history->dir = direction;
+
+        /* Re-initialize the linked list node to clear stale pointers from FREE list */
+        CF_CList_InitNode(&txn->cl_node);
     }
     else
     {

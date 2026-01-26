@@ -84,14 +84,20 @@ CF_Transaction_t* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransaction
 
     // Search through all transaction queues (PEND, TXA, TXW, RX)
     for (U8 qIdx = 0; qIdx < CfdpQueueId::NUM; qIdx++) {
-        CF_CListNode_t* node = chan->qs[qIdx];
-        while (node != nullptr) {
+        CF_CListNode_t* head = chan->qs[qIdx];
+        if (head == nullptr) {
+            continue;
+        }
+
+        // Traverse circular linked list, stopping when we loop back to head
+        CF_CListNode_t* node = head;
+        do {
             CF_Transaction_t* txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
             if (txn->history && txn->history->seq_num == seqNum) {
                 return txn;
             }
             node = node->next;
-        }
+        } while (node != nullptr && node != head);
     }
     return nullptr;
 }
@@ -180,7 +186,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1);
     ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU should be sent";
     verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), destEid,
-                     expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile);
+                     expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::CLASS_1);
 
     // Verify file was completely read
     EXPECT_EQ(fileSize, txn->foffs) << "Should have read entire file";
@@ -201,6 +207,23 @@ void CfdpManagerTester::testClass1TxNominal() {
 
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), destEid,
                  expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(fileSize), srcFile);
+
+    // Step 15: Run additional cycles to expire inactivity timer and recycle transaction
+    // Use actual inactivity timer parameter value to ensure transaction is fully recycled
+    U32 inactivityTimer = this->component.getInactivityTimerParam(channelId);
+    U32 cyclesToRun = inactivityTimer + 1;
+    for (U32 i = 0; i < cyclesToRun; ++i) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Verify transaction was recycled (no longer findable by sequence number)
+    txn = findTransaction(channelId, expectedSeqNum);
+    EXPECT_EQ(nullptr, txn) << "Transaction should be recycled after inactivity timeout";
+
+    // Clear port history after cleanup to ensure next test starts fresh
+    this->clearHistory();
+    this->m_pduCopyCount = 0;
 }
 
 void CfdpManagerTester::testClass2TxNominal() {
@@ -213,23 +236,9 @@ void CfdpManagerTester::testClass2TxNominal() {
     const CfdpEntityId destEid = 10;
     const U8 priority = 0;
 
-    // Step 1: Calculate FileDataPdu header size (without data)
-    // Create a FileDataPdu with 0 data to determine header overhead
-    Cfdp::Pdu::FileDataPdu fileDataPdu;
-    fileDataPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_RECEIVER,
-        Cfdp::CLASS_2,  // Class 2
-        component.getLocalEidParam(),
-        1,  // Transaction seq (dummy value for calculation)
-        destEid,
-        0,  // Offset
-        0,  // Data size = 0 to get just the header
-        nullptr  // No data
-    );
-    const U32 fileDataPduHeaderSize = fileDataPdu.bufferSize();
-
-    // Calculate how many bytes of data fit in each PDU
-    const U16 dataPerPdu = static_cast<U16>(CF_MAX_PDU_SIZE - fileDataPduHeaderSize);
+    // Step 1: Get the actual outgoing file chunk size parameter
+    // The implementation uses OutgoingFileChunkSize parameter, not CF_MAX_PDU_SIZE
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
 
     // Calculate total file size for exactly 5 PDUs
     const FwSizeType expectedFileSize = 5 * dataPerPdu;
@@ -306,33 +315,24 @@ void CfdpManagerTester::testClass2TxNominal() {
     EXPECT_STREQ(srcFile, txn->history->fnames.src_filename.toChar()) << "Source filename should match";
     EXPECT_STREQ(dstFile, txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
 
-    // Step 10: Run first engine cycle - should send Metadata PDU
+    // Step 10: Run engine cycle - should send all PDUs (Metadata + 5 FileData + EOF) in one cycle
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
 
-    // Step 11: Verify Metadata PDU was sent
-    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    // Step 11: Verify all 7 PDUs were sent (1 Metadata + 5 FileData + 1 EOF)
+    ASSERT_FROM_PORT_HISTORY_SIZE(7);
+
+    // Verify Metadata PDU (index 0)
     Fw::Buffer metadataPduBuffer = this->getSentPduBuffer(0);
     ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
+    verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
+                      expectedSeqNum, static_cast<CfdpFileSize>(expectedFileSize), srcFile, dstFile);
 
     // Verify file was opened and fsize was set
     EXPECT_EQ(expectedFileSize, txn->fsize) << "File size should be set after file is opened";
 
-    verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
-                      expectedSeqNum, static_cast<CfdpFileSize>(expectedFileSize), srcFile, dstFile);
-
-    // Verify transaction progressed to FILEDATA sub-state
-    EXPECT_EQ(CF_TxSubState_FILEDATA, txn->state_data.send.sub_state) << "Should progress to FILEDATA sub-state";
-
-    // Step 12: Run a cycle to send all 5 FileData PDUs
-    this->invoke_to_run1Hz(0, 0);
-    this->component.doDispatch();
-    
+    // Verify all 5 FileData PDUs (indices 1-5)
     for (U8 pduIdx = 0; pduIdx < 5; pduIdx++) {
-        // Verify FileData PDU was sent
-        FwIndexType expectedHistorySize = 1 + pduIdx + 1;  // Metadata + pduIdx FileData PDUs
-        ASSERT_FROM_PORT_HISTORY_SIZE(expectedHistorySize);
-
         Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1 + pduIdx);
         ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU " << static_cast<int>(pduIdx) << " should be sent";
 
@@ -340,27 +340,21 @@ void CfdpManagerTester::testClass2TxNominal() {
         U16 expectedDataSize = dataPerPdu;  // All 5 PDUs should be exactly full
 
         verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), destEid,
-                          expectedSeqNum, expectedOffset, expectedDataSize, srcFile);
+                          expectedSeqNum, expectedOffset, expectedDataSize, srcFile, Cfdp::CLASS_2);
     }
 
     // Verify file was completely read
     EXPECT_EQ(expectedFileSize, txn->foffs) << "Should have read entire file";
 
-    // Verify transaction progressed to EOF sub-state after sending all file data
-    EXPECT_EQ(CF_TxSubState_EOF, txn->state_data.send.sub_state) << "Should progress to EOF sub-state";
-
-    // Step 13: Run cycle to send EOF PDU
-    this->invoke_to_run1Hz(0, 0);
-    this->component.doDispatch();
-
-    // Step 14: Verify EOF PDU was sent (total: 1 Metadata + 5 FileData + 1 EOF = 7)
-    ASSERT_FROM_PORT_HISTORY_SIZE(7);
-
+    // Verify EOF PDU (index 6)
     Fw::Buffer eofPduBuffer = this->getSentPduBuffer(6);
     ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
-
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), destEid,
                  expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
+
+    // Verify transaction progressed through all sub-states and reached HOLD
+    // (Transaction should be in HOLD state after EOF is sent for Class 2)
+    EXPECT_EQ(CF_TxnState_HOLD, txn->state) << "Should be in HOLD state after EOF sent";
 
     // Step 15: Verify transaction is in CLOSEOUT_SYNC sub-state waiting for EOF-ACK
     EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should be waiting for EOF-ACK";

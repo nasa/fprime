@@ -233,7 +233,6 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
     *nakProcessed = false;
 
     // Class 2 transactions must have had chunks allocated
-    // Class 1 transactions should not have gotten here
     FW_ASSERT(txn->chunks != NULL);
 
     if (txn->flags.tx.md_need_send)
@@ -749,16 +748,14 @@ void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
     bool nakProcessed = false;
     CfdpStatus::T status;
 
-    // Class 1 transactions should not process NAKs at all
-    if (txn->state == CF_TxnState_S1)
+    // Only Class 2 transactions should process NAKs
+    if (txn->txn_class == CfdpClass::CLASS_2)
     {
-        return;
-    }
-
-    status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
-    if ((status == CfdpStatus::SUCCESS) && nakProcessed)
-    {
-        *cont = 1; /* cause dispatcher to re-enter this wakeup */
+        status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
+        if ((status == CfdpStatus::SUCCESS) && nakProcessed)
+        {
+            *cont = 1; /* cause dispatcher to re-enter this wakeup */
+        }
     }
 }
 
