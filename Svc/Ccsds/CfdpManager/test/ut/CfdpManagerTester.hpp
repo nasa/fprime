@@ -11,6 +11,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 #include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 
 namespace Svc {
 
@@ -379,6 +380,84 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         FwIndexType portNum,
         Fw::Buffer& fwBuffer
     ) override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Test helper functions
+    // ----------------------------------------------------------------------
+
+    //! Test configuration constants
+    static constexpr U8 TEST_CHANNEL_ID_0 = 0;
+    static constexpr U8 TEST_CHANNEL_ID_1 = 1;
+    static constexpr CfdpEntityId TEST_DEST_EID = 10;
+    static constexpr U8 TEST_PRIORITY = 0;
+
+    //! Helper struct for transaction setup results
+    struct TransactionSetup {
+        U32 expectedSeqNum;
+        CF_Transaction_t* txn;
+    };
+
+    //! Create test file and verify size matches expected
+    void createAndVerifyTestFile(
+        const char* filePath,
+        FwSizeType expectedFileSize,
+        FwSizeType& actualFileSize
+    );
+
+    //! Setup transaction and verify initial state 
+    void setupAndVerifyTransaction(
+        const char* srcFile,
+        const char* dstFile,
+        U8 channelId,
+        CfdpEntityId destEid,
+        CfdpClass cfdpClass,
+        U8 priority,
+        CF_TxnState_t expectedState,
+        TransactionSetup& setup
+    );
+
+    //! Wait for transaction to be recycled by inactivity timer
+    void waitForTransactionRecycle(U8 channelId, U32 expectedSeqNum);
+
+    //! Complete Class 2 transaction handshake (EOF-ACK, FIN, FIN-ACK)
+    void completeClass2Handshake(
+        U8 channelId,
+        CfdpEntityId destEid,
+        U32 expectedSeqNum,
+        CF_Transaction_t* txn
+    );
+
+    //! Verify FIN-ACK PDU at given index
+    void verifyFinAckPdu(
+        FwIndexType pduIndex,
+        CfdpEntityId sourceEid,
+        CfdpEntityId destEid,
+        U32 expectedSeqNum
+    );
+
+    //! Verify Metadata PDU at specific index in port history
+    void verifyMetadataPduAtIndex(
+        FwIndexType pduIndex,
+        const TransactionSetup& setup,
+        FwSizeType fileSize,
+        const char* srcFile,
+        const char* dstFile,
+        Cfdp::Class cfdpClass
+    );
+
+    //! Verify multiple FileData PDUs in sequence
+    void verifyMultipleFileDataPdus(
+        FwIndexType startIndex,
+        U8 numPdus,
+        const TransactionSetup& setup,
+        U16 dataPerPdu,
+        const char* srcFile,
+        Cfdp::Class cfdpClass
+    );
+
+    //! Clean up test file (remove and verify)
+    void cleanupTestFile(const char* filePath);
 
   private:
     // ----------------------------------------------------------------------

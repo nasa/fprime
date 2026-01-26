@@ -589,7 +589,7 @@ void CfdpManagerTester::testMetaDataPdu() {
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
-    // Step 1: Configure transaction for Metadata PDU emission
+    // Configure transaction for Metadata PDU emission
     const char* srcFile = "/tmp/test_source.bin";
     const char* dstFile = "/tmp/test_dest.bin";
     const CfdpFileSize fileSize = 1024;
@@ -611,18 +611,18 @@ void CfdpManagerTester::testMetaDataPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Invoke sender to emit Metadata PDU
+    // Invoke sender to emit Metadata PDU
     CfdpStatus::T status = CF_CFDP_SendMd(txn);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendMd failed";
 
-    // Step 3: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Verify Metadata PDU
+    // Verify Metadata PDU
     verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                       testSequenceId, fileSize, srcFile, dstFile, Cfdp::CLASS_1);
 }
@@ -635,11 +635,11 @@ void CfdpManagerTester::testFileDataPdu() {
     // 4. Capture PDU from dataOut and validate
 
     // Test file configuration
-    const char* testFilePath = "test/ut/data/test_file.bin";
+    const char* testFilePath = "Pdu/test/ut/data/test_file.bin";
     const U32 fileOffset = 50;   // Read from offset 50
     const U16 readSize = 64;     // Read 64 bytes
 
-    // Step 1: Configure transaction for File Data PDU emission
+    // Configure transaction for File Data PDU emission
     const char* srcFile = testFilePath;
     const char* dstFile = "/tmp/dest_file.bin";
     const U32 fileSize = 256;  // Approximate file size
@@ -661,7 +661,7 @@ void CfdpManagerTester::testFileDataPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Read test data from file
+    // Read test data from file
     U8 testData[readSize];
     Os::File file;
 
@@ -677,7 +677,7 @@ void CfdpManagerTester::testFileDataPdu() {
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read from test file";
     ASSERT_EQ(readSize, bytesRead) << "Failed to read test data from file";
 
-    // Step 3: Construct PDU buffer with File Data header
+    // Construct PDU buffer with File Data header
     CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
         txn,
         CF_CFDP_FileDirective_INVALID_MIN,  // File data PDU has invalid directive
@@ -708,18 +708,18 @@ void CfdpManagerTester::testFileDataPdu() {
     fd->data_len = readSize;
     fd->data_ptr = data_ptr;
 
-    // Step 4: Invoke CF_CFDP_SendFd to emit File Data PDU
+    // Invoke CF_CFDP_SendFd to emit File Data PDU
     CfdpStatus::T status = CF_CFDP_SendFd(txn, ph);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFd failed";
 
-    // Step 5: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 6: Verify File Data PDU
+    // Verify File Data PDU
     verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                       testSequenceId, fileOffset, readSize, testFilePath, Cfdp::CLASS_1);
 }
@@ -731,8 +731,8 @@ void CfdpManagerTester::testEofPdu() {
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
-    // Step 1: Configure transaction for EOF PDU emission
-    const char* srcFile = "test/ut/data/test_file.bin";
+    // Configure transaction for EOF PDU emission
+    const char* srcFile = "Pdu/test/ut/data/test_file.bin";
     const char* dstFile = "/tmp/dest_eof.bin";
     const CfdpFileSize fileSize = 242;  // Actual size of test_file.bin
     const U8 channelId = 0;
@@ -773,18 +773,18 @@ void CfdpManagerTester::testEofPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Invoke sender to emit EOF PDU
+    // Invoke sender to emit EOF PDU
     CfdpStatus::T status = CF_CFDP_SendEof(txn);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendEof failed";
 
-    // Step 3: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Verify EOF PDU
+    // Verify EOF PDU
     verifyEofPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                  testSequenceId, testConditionCode, fileSize, srcFile);
 }
@@ -796,7 +796,7 @@ void CfdpManagerTester::testFinPdu() {
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
-    // Step 1: Configure transaction for FIN PDU emission
+    // Configure transaction for FIN PDU emission
     const char* srcFile = "/tmp/test_fin.bin";
     const char* dstFile = "/tmp/dest_fin.bin";
     const CfdpFileSize fileSize = 8192;
@@ -823,18 +823,18 @@ void CfdpManagerTester::testFinPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Invoke receiver to emit FIN PDU
+    // Invoke receiver to emit FIN PDU
     CfdpStatus::T status = CF_CFDP_SendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFin failed";
 
-    // Step 3: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Verify FIN PDU
+    // Verify FIN PDU
     // FIN PDU is sent from receiver (testPeerId) to sender (component.getLocalEidParam())
     // So source=testPeerId, dest=component.getLocalEidParam()
     verifyFinPdu(pduBuffer, testPeerId, component.getLocalEidParam(),
@@ -851,7 +851,7 @@ void CfdpManagerTester::testAckPdu() {
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
-    // Step 1: Configure transaction for ACK PDU emission
+    // Configure transaction for ACK PDU emission
     const char* srcFile = "/tmp/test_ack.bin";
     const char* dstFile = "/tmp/dest_ack.bin";
     const CfdpFileSize fileSize = 2048;
@@ -878,19 +878,19 @@ void CfdpManagerTester::testAckPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Invoke CF_CFDP_SendAck to emit ACK PDU
+    // Invoke CF_CFDP_SendAck to emit ACK PDU
     CfdpStatus::T status = CF_CFDP_SendAck(txn, testTransactionStatus, testDirectiveCode,
                                            testConditionCode, testPeerId, testSequenceId);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendAck failed";
 
-    // Step 3: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 4: Verify ACK PDU
+    // Verify ACK PDU
     // ACK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // acknowledging the EOF directive
     const U8 expectedSubtypeCode = 1;
@@ -909,7 +909,7 @@ void CfdpManagerTester::testNakPdu() {
     // 3. Invoke CF_CFDP_SendNak()
     // 4. Capture PDU from dataOut and validate
 
-    // Step 1: Configure transaction for NAK PDU emission
+    // Configure transaction for NAK PDU emission
     const char* srcFile = "/tmp/test_nak.bin";
     const char* dstFile = "/tmp/dest_nak.bin";
     const CfdpFileSize fileSize = 4096;
@@ -931,7 +931,7 @@ void CfdpManagerTester::testNakPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Step 2: Construct PDU buffer with NAK header
+    // Construct PDU buffer with NAK header
     CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
         txn,
         CF_CFDP_FileDirective_NAK,
@@ -943,7 +943,7 @@ void CfdpManagerTester::testNakPdu() {
     );
     ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
 
-    // Step 3: Setup NAK-specific fields
+    // Setup NAK-specific fields
     CF_Logical_PduNak_t* nak = &ph->int_header.nak;
     const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
     const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
@@ -966,18 +966,18 @@ void CfdpManagerTester::testNakPdu() {
     nak->segment_list.segments[2].offset_start = 3584;
     nak->segment_list.segments[2].offset_end = 4096;
 
-    // Step 4: Invoke CF_CFDP_SendNak to emit NAK PDU
+    // Invoke CF_CFDP_SendNak to emit NAK PDU
     CfdpStatus::T status = CF_CFDP_SendNak(txn, ph);
     ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendNak failed";
 
-    // Step 5: Verify PDU was sent through dataOut port
+    // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
     // Get encoded PDU buffer
     const Fw::Buffer& pduBuffer = getSentPduBuffer(0);
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
-    // Step 6: Verify NAK PDU
+    // Verify NAK PDU
     // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // requesting retransmission of missing data
 
