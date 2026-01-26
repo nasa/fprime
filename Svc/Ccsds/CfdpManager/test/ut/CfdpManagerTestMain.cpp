@@ -54,6 +54,12 @@ TEST(Transaction, Class2TxNominal) {
     delete tester;
 }
 
+TEST(Transaction, Class2TxNack) {
+    Svc::Ccsds::CfdpManagerTester* tester = new Svc::Ccsds::CfdpManagerTester();
+    tester->testClass2TxNack();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

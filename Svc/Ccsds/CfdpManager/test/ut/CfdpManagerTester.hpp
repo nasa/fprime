@@ -23,7 +23,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const FwSizeType MAX_HISTORY_SIZE = 10;
+    static const FwSizeType MAX_HISTORY_SIZE = 100;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
@@ -359,6 +359,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Test nominal Class 2 TX file transfer
     void testClass2TxNominal();
+
+    //! Test Class 2 TX file transfer with NAK handling
+    void testClass2TxNack();
 
   private:
     // ----------------------------------------------------------------------

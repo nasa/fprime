@@ -250,7 +250,7 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
             }
             /* unless SEND_PDU_ERROR, return 1 to keep caller from sending file data */
             *nakProcessed = true; /* nak processed, so don't send filedata */
-            
+
         }
     }
     else
@@ -267,12 +267,8 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
             }
             else if (bytes_processed > 0)
             {
-                CF_ChunkList_RemoveFromFirst(&txn->chunks->chunks, ret);
+                CF_ChunkList_RemoveFromFirst(&txn->chunks->chunks, bytes_processed);
                 *nakProcessed = true; /* nak processed, so caller doesn't send file data */
-            }
-            else
-            {
-                /* nothing to do if bytes_processed==0, since nothing was sent */
             }
         }
     }
