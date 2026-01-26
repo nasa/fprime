@@ -144,7 +144,7 @@ void PolyType::get(U32& val) const {
     val = this->m_val.u32Val;
 }
 
-bool PolyType::isU32() {
+bool PolyType::isU32() const {
     return (TYPE_U32 == this->m_dataType);
 }
 
@@ -353,7 +353,7 @@ PolyType::PolyType(const PolyType& original)
       m_val(original.m_val)
 {}
 
-PolyType::~PolyType() = default
+PolyType::~PolyType() = default;
 
 PolyType& PolyType::operator=(const PolyType& src) {
     this->m_dataType = src.m_dataType;
