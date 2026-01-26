@@ -287,7 +287,7 @@ SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val, End
 
 SerializeStatus LinearBufferBase::serializeSize(const FwSizeType size, Endianness mode) {
     SerializeStatus status = FW_SERIALIZE_OK;
-    if (size > std::numeric_limits<FwSizeStoreType>::max()) {
+    if ((size < std::numeric_limits<FwSizeStoreType>::min()) || (size > std::numeric_limits<FwSizeStoreType>::max())) {
         status = FW_SERIALIZE_FORMAT_ERROR;
     }
     if (status == FW_SERIALIZE_OK) {
