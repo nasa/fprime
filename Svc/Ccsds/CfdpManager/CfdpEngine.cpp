@@ -1018,16 +1018,20 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
 
                 txn = container_of_cpp(chan->qs[CfdpQueueId::PEND], &CF_Transaction_t::cl_node);
 
-                /* to be processed this needs a chunklist, get one now */
-                if (txn->chunks == NULL)
+                /* Class 2 transactions need a chunklist for NAK processing, get one now.
+                 * Class 1 transactions don't need chunks since they don't support NAKs. */
+                if (txn->state == CF_TxnState_S2)
                 {
-                    txn->chunks = CF_CFDP_FindUnusedChunks(chan, CF_Direction_TX);
-                }
-                if (txn->chunks == NULL)
-                {
-                    /* leave it pending, come back later */
-                    /* it needs to wait until a chunklist is freed */
-                    break;
+                    if (txn->chunks == NULL)
+                    {
+                        txn->chunks = CF_CFDP_FindUnusedChunks(chan, CF_Direction_TX);
+                    }
+                    if (txn->chunks == NULL)
+                    {
+                        // TODO BPC: Emit EVR
+                        // Leave transaction pending until a chunklist is available.
+                        break;
+                    }
                 }
 
                 CF_CFDP_ArmInactTimer(txn);

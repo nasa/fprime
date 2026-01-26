@@ -232,13 +232,9 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
     FW_ASSERT(nakProcessed != NULL);
     *nakProcessed = false;
 
-    // If chunks is NULL, this transaction doesn't have NAK tracking allocated.
-    // This can happen if chunk allocation failed or for Class 1 transactions.
-    // Just return success without processing NAKs.
-    if (txn->chunks == NULL)
-    {
-        return CfdpStatus::SUCCESS;
-    }
+    // Class 2 transactions must have had chunks allocated
+    // Class 1 transactions should not have gotten here
+    FW_ASSERT(txn->chunks != NULL);
 
     if (txn->flags.tx.md_need_send)
     {
@@ -752,7 +748,13 @@ void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont)
 {
     bool nakProcessed = false;
     CfdpStatus::T status;
-    
+
+    // Class 1 transactions should not process NAKs at all
+    if (txn->state == CF_TxnState_S1)
+    {
+        return;
+    }
+
     status = CF_CFDP_S_CheckAndRespondNak(txn, &nakProcessed);
     if ((status == CfdpStatus::SUCCESS) && nakProcessed)
     {
