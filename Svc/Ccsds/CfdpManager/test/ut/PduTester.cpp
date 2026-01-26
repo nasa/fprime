@@ -86,7 +86,8 @@ void CfdpManagerTester::verifyMetadataPdu(
     U32 expectedTransactionSeq,
     CfdpFileSize expectedFileSize,
     const char* expectedSourceFilename,
-    const char* expectedDestFilename
+    const char* expectedDestFilename,
+    Svc::Ccsds::Cfdp::Class expectedClass
 ) {
     // Deserialize PDU
     Cfdp::Pdu::MetadataPdu metadataPdu;
@@ -97,7 +98,7 @@ void CfdpManagerTester::verifyMetadataPdu(
     const Cfdp::Pdu::Header& header = metadataPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
-    EXPECT_EQ(Cfdp::CLASS_1, header.getTxmMode()) << "Expected unacknowledged mode for class 1";
+    EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -105,7 +106,11 @@ void CfdpManagerTester::verifyMetadataPdu(
     // Validate metadata-specific fields
     EXPECT_EQ(expectedFileSize, metadataPdu.getFileSize()) << "File size mismatch";
     EXPECT_EQ(Cfdp::CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
-    EXPECT_EQ(0, metadataPdu.getClosureRequested()) << "Class 1 should not request closure";
+
+    // Closure requested should be 0 for Class 1, 1 for Class 2
+    U8 expectedClosureRequested = (expectedClass == Cfdp::CLASS_2) ? 1 : 0;
+    EXPECT_EQ(expectedClosureRequested, metadataPdu.getClosureRequested())
+        << "Closure requested mismatch for class " << static_cast<int>(expectedClass);
 
     // Validate source filename
     const char* rxSrcFilename = metadataPdu.getSourceFilename();
@@ -608,7 +613,7 @@ void CfdpManagerTester::testMetaDataPdu() {
 
     // Step 4: Verify Metadata PDU
     verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileSize, srcFile, dstFile);
+                      testSequenceId, fileSize, srcFile, dstFile, Cfdp::CLASS_1);
 }
 
 void CfdpManagerTester::testFileDataPdu() {

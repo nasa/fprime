@@ -180,7 +180,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     EXPECT_EQ(fileSize, txn->fsize) << "File size should be set after file is opened";
 
     verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
-                      expectedSeqNum, static_cast<CfdpFileSize>(fileSize), srcFile, dstFile);
+                      expectedSeqNum, static_cast<CfdpFileSize>(fileSize), srcFile, dstFile, Cfdp::CLASS_1);
 
     // Step 11: Verify FileData PDU (index 1)
     Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1);
@@ -315,23 +315,23 @@ void CfdpManagerTester::testClass2TxNominal() {
     EXPECT_STREQ(srcFile, txn->history->fnames.src_filename.toChar()) << "Source filename should match";
     EXPECT_STREQ(dstFile, txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
 
-    // Step 10: Run engine cycle - should send all PDUs (Metadata + 5 FileData + EOF) in one cycle
+    // Step 10: Run first engine cycle - should send Metadata + 5 FileData PDUs
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
 
-    // Step 11: Verify all 7 PDUs were sent (1 Metadata + 5 FileData + 1 EOF)
-    ASSERT_FROM_PORT_HISTORY_SIZE(7);
+    // Step 11: Verify 6 PDUs were sent (1 Metadata + 5 FileData)
+    ASSERT_FROM_PORT_HISTORY_SIZE(6);
 
-    // Verify Metadata PDU (index 0)
+    // Step 12: Verify Metadata PDU (index 0)
     Fw::Buffer metadataPduBuffer = this->getSentPduBuffer(0);
     ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
     verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), destEid,
-                      expectedSeqNum, static_cast<CfdpFileSize>(expectedFileSize), srcFile, dstFile);
+                      expectedSeqNum, static_cast<CfdpFileSize>(expectedFileSize), srcFile, dstFile, Cfdp::CLASS_2);
 
     // Verify file was opened and fsize was set
     EXPECT_EQ(expectedFileSize, txn->fsize) << "File size should be set after file is opened";
 
-    // Verify all 5 FileData PDUs (indices 1-5)
+    // Step 13: Verify all 5 FileData PDUs (indices 1-5)
     for (U8 pduIdx = 0; pduIdx < 5; pduIdx++) {
         Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1 + pduIdx);
         ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU " << static_cast<int>(pduIdx) << " should be sent";
@@ -346,18 +346,29 @@ void CfdpManagerTester::testClass2TxNominal() {
     // Verify file was completely read
     EXPECT_EQ(expectedFileSize, txn->foffs) << "Should have read entire file";
 
-    // Verify EOF PDU (index 6)
+    // Verify transaction moved to CLOSEOUT_SYNC sub-state after completing file data
+    // For Class 2, CF_CFDP_S2_SubstateSendEof() immediately sets sub_state to CLOSEOUT_SYNC
+    EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
+    EXPECT_TRUE(txn->flags.tx.send_eof) << "send_eof flag should be set";
+    EXPECT_EQ(CF_TxnState_S2, txn->state) << "Should remain in S2 state";
+
+    // Step 14: Run second engine cycle - should send EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 15: Verify 1 more PDU was sent (total 7 PDUs)
+    ASSERT_FROM_PORT_HISTORY_SIZE(7);
+
+    // Step 16: Verify EOF PDU (index 6)
     Fw::Buffer eofPduBuffer = this->getSentPduBuffer(6);
     ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), destEid,
                  expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
 
-    // Verify transaction progressed through all sub-states and reached HOLD
-    // (Transaction should be in HOLD state after EOF is sent for Class 2)
-    EXPECT_EQ(CF_TxnState_HOLD, txn->state) << "Should be in HOLD state after EOF sent";
-
-    // Step 15: Verify transaction is in CLOSEOUT_SYNC sub-state waiting for EOF-ACK
-    EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should be waiting for EOF-ACK";
+    // Verify transaction remains in S2/CLOSEOUT_SYNC waiting for EOF-ACK
+    EXPECT_EQ(CF_TxnState_S2, txn->state) << "Should remain in S2 state until EOF-ACK received";
+    EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for EOF-ACK";
+    EXPECT_FALSE(txn->flags.tx.send_eof) << "send_eof flag should be cleared after EOF sent";
 
     // For a complete test, we would simulate receiving an EOF-ACK here
     // and verify the transaction completes. This is left as a future enhancement.

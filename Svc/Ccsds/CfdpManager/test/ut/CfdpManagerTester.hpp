@@ -112,6 +112,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param expectedFileSize Expected file size
     //! @param expectedSourceFilename Expected source filename
     //! @param expectedDestFilename Expected destination filename
+    //! @param expectedClass Expected CFDP class (CLASS_1 or CLASS_2)
     void verifyMetadataPdu(
         const Fw::Buffer& pduBuffer,
         U32 expectedSourceEid,
@@ -119,7 +120,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedTransactionSeq,
         CfdpFileSize expectedFileSize,
         const char* expectedSourceFilename,
-        const char* expectedDestFilename
+        const char* expectedDestFilename,
+        Svc::Ccsds::Cfdp::Class expectedClass
     );
 
     //! Helper to verify File Data PDU (deserialize + validate)

@@ -311,6 +311,14 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
 
         md->size = txn->fsize;
 
+        /* Set closure requested flag based on transaction class */
+        /* Class 1: closure not requested (0), Class 2: closure requested (1) */
+        md->close_req = (txn->state == CF_TxnState_S2) ? 1 : 0;
+
+        // Set checksum type
+        // TODO BPC: Probably need to set this based on a config
+        md->checksum_type = 0;
+
         /* at this point, need to append filenames into md packet */
         /* this does not actually copy here - that is done during encode */
         // TODO Convert these to Fw::String
