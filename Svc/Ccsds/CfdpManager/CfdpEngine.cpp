@@ -87,14 +87,7 @@ void CF_CFDP_ArmAckTimer(CF_Transaction_t *txn)
 inline CfdpClass::T CF_CFDP_GetClass(const CF_Transaction_t *txn)
 {
     FW_ASSERT(txn->flags.com.q_index != CfdpQueueId::FREE, txn->flags.com.q_index);
-    if ((txn->state == CF_TxnState_S2) || (txn->state == CF_TxnState_R2))
-    {
-        return CfdpClass::CLASS_2;
-    }
-    else
-    {
-        return CfdpClass::CLASS_1;
-    }
+    return txn->txn_class;
 }
 
 inline bool CF_CFDP_IsSender(CF_Transaction_t *txn)
@@ -868,15 +861,17 @@ void CF_CFDP_ReceivePdu(CF_Channel_t *chan, CF_Logical_PduBuffer_t *ph)
     FW_ASSERT(chan != NULL);
     FW_ASSERT(ph != NULL);
 
-    if (CF_CFDP_RecvPh(chan->channel_id, ph) == CfdpStatus::SUCCESS)
+    CfdpStatus::T recv_status = CF_CFDP_RecvPh(chan->channel_id, ph);
+    if (recv_status == CfdpStatus::SUCCESS)
     {
         /* got a valid PDU -- look it up by sequence number */
         txn = CF_FindTransactionBySequenceNumber(chan, ph->pdu_header.sequence_num, ph->pdu_header.source_eid);
+
         if (txn == NULL)
         {
             /* if no match found, then it must be the case that we would be the destination entity id, so verify it
                 */
-            if (ph->pdu_header.destination_eid == txn->cfdpManager->getLocalEidParam())
+            if (ph->pdu_header.destination_eid == chan->cfdpManager->getLocalEidParam())
             {
                 /* we didn't find a match, so assign it to a transaction */
                 /* assume this is initiating an RX transaction, as TX transactions are only commanded */
@@ -900,8 +895,11 @@ void CF_CFDP_ReceivePdu(CF_Channel_t *chan, CF_Logical_PduBuffer_t *ph)
         if (txn != NULL)
         {
             /* found one! Send it to the transaction state processor */
-            FW_ASSERT(txn->state > CF_TxnState_UNDEF, txn->state, CF_TxnState_UNDEF);
             CF_CFDP_DispatchRecv(txn, ph);
+        }
+        else
+        {
+            // TODO BPC: Add throttled EVR
         }
     }
 }
@@ -918,7 +916,6 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
     U8 i;
     U32 j;
     U8 k;
-    // char               nbuf[64];
 
     static const int CF_DIR_MAX_CHUNKS[CF_Direction_NUM][CF_NUM_CHANNELS] = {CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
                                                                              CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION};
@@ -1152,7 +1149,7 @@ void CF_CFDP_InitTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpK
     txn->priority = priority;
     txn->keep = keep;
     txn->txn_class = cfdp_class;
-    txn->state = cfdp_class ? CF_TxnState_S2 : CF_TxnState_S1;
+    txn->state = (cfdp_class == CfdpClass::CLASS_2) ? CF_TxnState_S2 : CF_TxnState_S1;
     txn->state_data.send.sub_state = CF_TxSubState_METADATA;
 }
 

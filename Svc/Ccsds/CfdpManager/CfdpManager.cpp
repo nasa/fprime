@@ -81,7 +81,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 
   // Identify and dispatch this PDU
   CF_CFDP_ReceivePdu(channel, &pdu);
-  
+
   // Return buffer
   this->dataInReturn_out(portNum, fwBuffer);
 }

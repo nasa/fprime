@@ -8,6 +8,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Os/File.hpp>
+#include <Os/FileSystem.hpp>
 
 namespace Svc {
 
@@ -162,8 +163,6 @@ void CfdpManagerTester::testClass1TxNominal() {
     EXPECT_EQ(destEid, txn->history->peer_eid) << "Peer EID should match dest EID";
     EXPECT_STREQ(srcFile, txn->history->fnames.src_filename.toChar()) << "Source filename should match";
     EXPECT_STREQ(dstFile, txn->history->fnames.dst_filename.toChar()) << "Destination filename should match";
-
-    // Note: fsize is not set until the file is opened in CF_CFDP_S_SubstateSendMetadata during first cycle
 
     // Step 8: Run first engine cycle - should send Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -370,8 +369,87 @@ void CfdpManagerTester::testClass2TxNominal() {
     EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for EOF-ACK";
     EXPECT_FALSE(txn->flags.tx.send_eof) << "send_eof flag should be cleared after EOF sent";
 
-    // For a complete test, we would simulate receiving an EOF-ACK here
-    // and verify the transaction completes. This is left as a future enhancement.
+    // Verify flags before EOF-ACK
+    EXPECT_FALSE(txn->flags.tx.eof_ack_recv) << "eof_ack_recv should be false before ACK received";
+
+    // Step 17: Send EOF-ACK from receiver (ground) to sender (FSW)
+    this->sendAckPdu(
+        channelId,
+        component.getLocalEidParam(),  // Source ID is the S/C for Tx ACKs
+        destEid,  // Destination ID is the ground for Tx ACKs
+        expectedSeqNum,
+        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_EOF),  // Acknowledging EOF
+        0,  // directive subtype code (0 for standard ACK)
+        Cfdp::CONDITION_CODE_NO_ERROR,
+        Cfdp::ACK_TXN_STATUS_ACTIVE
+    );
+
+    this->component.doDispatch();
+
+    // Step 18: Verify EOF-ACK was processed correctly
+    EXPECT_TRUE(txn->flags.tx.eof_ack_recv) << "eof_ack_recv flag should be set after EOF-ACK received";
+    EXPECT_FALSE(txn->flags.com.ack_timer_armed) << "ack_timer_armed should be cleared after EOF-ACK";
+    EXPECT_EQ(CF_TxnState_S2, txn->state) << "Should remain in S2 state waiting for FIN";
+    EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, txn->state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for FIN";
+
+    // Step 19: Send FIN from receiver (ground) to sender (FSW)
+    this->sendFinPdu(
+        channelId,
+        component.getLocalEidParam(),  // Source ID is the S/C for Tx ACKs
+        destEid,  // Destination ID is the ground for Tx ACKs
+        expectedSeqNum,
+        Cfdp::CONDITION_CODE_NO_ERROR,
+        Cfdp::FIN_DELIVERY_CODE_COMPLETE,  // Data delivery complete
+        Cfdp::FIN_FILE_STATUS_RETAINED  // File retained successfully
+    );
+
+    this->component.doDispatch();
+
+    // Step 20: Verify FIN was processed correctly
+    EXPECT_TRUE(txn->flags.tx.fin_recv) << "fin_recv flag should be set after FIN received";
+    EXPECT_EQ(CF_TxnState_HOLD, txn->state) << "Should move to HOLD state after FIN received";
+    EXPECT_TRUE(txn->flags.tx.send_fin_ack) << "send_fin_ack flag should be set";
+
+    // Step 21: Run one more cycle to send FIN-ACK
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Step 22: Verify FIN-ACK PDU was sent (total 8 dataOut PDUs now)
+    ASSERT_EQ(8, this->fromPortHistory_dataOut->size()) << "Should have exactly 8 PDUs sent";
+
+    // Step 23: Verify FIN-ACK PDU (index 7)
+    Fw::Buffer finAckPduBuffer = this->getSentPduBuffer(7);
+    ASSERT_GT(finAckPduBuffer.getSize(), 0) << "FIN-ACK PDU should be sent";
+
+    verifyAckPdu(finAckPduBuffer,
+                 component.getLocalEidParam(),  // source_eid (sender/FSW)
+                 destEid,  // dest_eid (receiver/ground)
+                 expectedSeqNum,
+                 static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_FIN),  // Acknowledging FIN
+                 1,  // directive subtype code (1 as per implementation)
+                 Cfdp::CONDITION_CODE_NO_ERROR,
+                 Cfdp::ACK_TXN_STATUS_TERMINATED  // Transaction is now in HOLD state
+    );
+
+    // Step 24: Run additional cycles to expire inactivity timer and recycle transaction
+    // Clear history first since we're done verifying PDUs
+    this->clearHistory();
+    this->m_pduCopyCount = 0;
+
+    U32 inactivityTimer = this->component.getInactivityTimerParam(channelId);
+    U32 cyclesToRun = inactivityTimer + 1;
+    for (U32 i = 0; i < cyclesToRun; ++i) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Step 25: Verify transaction was recycled (no longer findable by sequence number)
+    txn = findTransaction(channelId, expectedSeqNum);
+    EXPECT_EQ(nullptr, txn) << "Transaction should be recycled after inactivity timeout";
+
+    // Step 26: Clean up test file
+    Os::FileSystem::Status fsStatus = Os::FileSystem::removeFile(srcFile);
+    EXPECT_EQ(Os::FileSystem::OP_OK, fsStatus) << "Should remove test file";
 }
 
 }  // namespace Ccsds

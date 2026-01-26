@@ -10,6 +10,7 @@
 #include "CfdpManagerTester.hpp"
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 #include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
@@ -50,6 +51,14 @@ CF_Transaction_t* CfdpManagerTester::setupTestTransaction(
     txn->chan_num = channelId;
     txn->cfdpManager = &this->component;
     txn->history = history;
+
+    // Set transaction class based on state
+    // S2/R2 are Class 2, S1/R1 are Class 1
+    if ((state == CF_TxnState_S2) || (state == CF_TxnState_R2)) {
+        txn->txn_class = CfdpClass::CLASS_2;
+    } else {
+        txn->txn_class = CfdpClass::CLASS_1;
+    }
 
     // Initialize history
     history->peer_eid = peerId;
@@ -479,6 +488,7 @@ void CfdpManagerTester::sendFinPdu(
     // Allocate buffer for PDU
     U32 pduSize = finPdu.bufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    pduBuffer.setSize(pduSize);
 
     // Serialize PDU to buffer
     Fw::SerializeStatus status = finPdu.toBuffer(pduBuffer);
@@ -515,6 +525,7 @@ void CfdpManagerTester::sendAckPdu(
     // Allocate buffer for PDU
     U32 pduSize = ackPdu.bufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    pduBuffer.setSize(pduSize);
 
     // Serialize PDU to buffer
     Fw::SerializeStatus status = ackPdu.toBuffer(pduBuffer);

@@ -634,9 +634,10 @@ void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, U32 *plcrc);
  *
  * @param state  Decoder state object
  * @param plh    Pointer to logical PDU base header data
- * @retval true if decode was successful, otherwise false
+ * @retval CfdpStatus::SUCCESS if decode was successful
+ * @retval CfdpStatus::ERROR if EID or sequence number field size exceeds configured limits
  */
-bool CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
+CfdpStatus::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
 
 /************************************************************************/
 /**

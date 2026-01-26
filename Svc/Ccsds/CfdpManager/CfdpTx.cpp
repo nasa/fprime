@@ -377,9 +377,10 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn)
 
 CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn)
 {
-    return CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN, 
+    CfdpStatus::T ret = CF_CFDP_SendAck(txn, CF_CFDP_GetTxnStatus(txn), CF_CFDP_FileDirective_FIN,
                            static_cast<CF_CFDP_ConditionCode_t>(txn->state_data.send.s2.fin_cc),
                            txn->history->peer_eid, txn->history->seq_num);
+    return ret;
 }
 
 void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
