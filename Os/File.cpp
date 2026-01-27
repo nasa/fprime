@@ -265,7 +265,7 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
         size = 0;
         return File::Status::INVALID_MODE;
     }
-    FwSizeType original_location;
+    FwSizeType original_location = 0;
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
