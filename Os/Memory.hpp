@@ -24,7 +24,7 @@ class MemoryInterface {
     virtual ~MemoryInterface() = default;
 
     //! \brief copy constructor is forbidden
-    MemoryInterface(const MemoryInterface& other) = delete;
+    MemoryInterface(const MemoryInterface& other) = delete; // NOSONAR (cpp:S3657)
 
     //! \brief assignment operator is forbidden
     virtual MemoryInterface& operator=(const MemoryInterface& other) = delete;
