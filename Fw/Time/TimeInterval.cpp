@@ -53,6 +53,10 @@ bool TimeInterval::operator<=(const TimeInterval& other) const {
     return ((LT == c) or (EQ == c));
 }
 
+TimeIntervalValue TimeInterval::asTimeIntervalValue() const {
+    return this->m_val;
+}
+
 SerializeStatus TimeInterval::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // Use TimeIntervalValue's built-in serialization
     return this->m_val.serializeTo(buffer, mode);
