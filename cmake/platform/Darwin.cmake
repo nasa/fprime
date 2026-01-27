@@ -24,3 +24,4 @@ register_fprime_config(
    BASE_CONFIG
 )
 target_compile_definitions(PlatformDarwin INTERFACE -DTGT_OS_TYPE_DARWIN)
+target_link_options(PlatformDarwin INTERFACE -Wl,-no_warn_duplicate_libraries)
