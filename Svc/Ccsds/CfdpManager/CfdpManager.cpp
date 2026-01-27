@@ -6,7 +6,6 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -15,10 +14,11 @@ namespace Ccsds {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName)
+CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName), m_engine(nullptr)
 {
-    // TODO BPC: Call engine init here or another init function?
-    // May need a mem allocator
+    // Create the CFDP engine
+    this->m_engine = new CfdpEngine(this);
+    FW_ASSERT(this->m_engine != nullptr);
 
     // Temporary buffer pool for prototyping
     CF_Logical_PduBuffer_t* pduPtr = NULL;
@@ -37,22 +37,25 @@ CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase
 CfdpManager ::~CfdpManager() {
     // Clean up the queue resources allocated during initialization
     this->deinit();
+
+    delete this->m_engine;
+    this->m_engine = nullptr;
 }
 
 void CfdpManager ::configure(void)
 {
-    // May need a mem allocator
-    CF_CFDP_InitEngine(*this);
+    // TODO BPC: Do we need a mem allocator here?
+    this->m_engine->init();
 }
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context) 
+void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
 {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
-    CF_CFDP_CycleEngine();
+    this->m_engine->cycle();
 }
 
 void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
@@ -65,22 +68,19 @@ void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 
 void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 {
-  CF_Channel_t* channel = NULL;
   CF_Logical_PduBuffer_t pdu;
   CF_DecoderState_t decoder;
 
   // There is a direct mapping between port number and channel index
-  // Get the channel based on the port number
   FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
   FW_ASSERT(portNum >= 0, portNum);
-  channel = &cfdpEngine.channels[portNum];
 
   // This input port handler replicates the receive behavior in CF_CFDP_ReceiveMessage in cf_cfdp_sbintf.c
   pdu.pdec = &decoder;
   CF_CFDP_DecodeStart(pdu.pdec, fwBuffer.getData(), &pdu, fwBuffer.getSize());
 
   // Identify and dispatch this PDU
-  CF_CFDP_ReceivePdu(channel, &pdu);
+  this->m_engine->receivePdu(portNum, &pdu);
 
   // Return buffer
   this->dataInReturn_out(portNum, fwBuffer);
@@ -101,8 +101,8 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == CF_CFDP_TxFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
-                                               channelId, priority, destId)))
+        (CfdpStatus::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
+                                                        channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
         rspStatus = Fw::CmdResponse::OK;
@@ -129,8 +129,8 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == CF_CFDP_PlaybackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
-                                                    keep.e, channelId, priority, destId)))
+        (CfdpStatus::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
+                                                             keep.e, channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_PlaybackInitiatied(sourceDirectory);
     }
@@ -160,8 +160,8 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
     }
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == cfdpEngineStartPollDir(channelId, pollId, sourceDirectory, destDirectory,
-                                                       cfdpClass.e, priority, destId, interval)))
+        (CfdpStatus::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
+                                                              cfdpClass.e, priority, destId, interval)))
     {
         this->log_ACTIVITY_LO_PollDirInitiatied(sourceDirectory);
     }
@@ -186,7 +186,7 @@ void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     }
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == cfdpEngineStopPollDir(channelId, pollId)))
+        (CfdpStatus::SUCCESS == this->m_engine->stopPollDir(channelId, pollId)))
     {
         this->log_ACTIVITY_LO_PollDirStopped(channelId, pollId);
     }
@@ -205,7 +205,7 @@ void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8
     rspStatus = checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
     {
-        cfdpEngineSetChannelFlowState(channelId, flowState);
+        this->m_engine->setChannelFlowState(channelId, flowState);
         this->log_ACTIVITY_LO_SetFlowState(channelId, flowState);
     }
 

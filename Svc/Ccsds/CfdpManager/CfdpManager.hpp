@@ -18,6 +18,9 @@ namespace Ccsds {
 // Forward declaration
 struct CF_Channel;
 
+// Forward declaration for CFDP engine class
+class CfdpEngine;
+
 class CfdpManager final : public CfdpManagerComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -205,6 +208,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
     CfdpPduBuffer pduBuffers[CFDP_MANAGER_NUM_BUFFERS];
+
+    // CFDP Engine - owns all protocol state and operations
+    CfdpEngine* m_engine;
+
+    // Friend declaration allows engine to access protected logging methods
+    friend class CfdpEngine;
 
 };
 
