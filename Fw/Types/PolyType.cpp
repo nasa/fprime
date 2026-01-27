@@ -336,10 +336,7 @@ PolyType& PolyType::operator=(void* other) {
 }
 
 PolyType::PolyType(const PolyType& original)
-    : Fw::Serializable(),
-      m_dataType(original.m_dataType),
-      m_val(original.m_val)
-{}
+    : Fw::Serializable(), m_dataType(original.m_dataType), m_val(original.m_val) {}
 
 PolyType::~PolyType() = default;
 
