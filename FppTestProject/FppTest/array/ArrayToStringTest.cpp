@@ -38,8 +38,7 @@ class ArrayToStringTest : public ::testing::Test {
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
-using ArrayTypes =
-    ::testing::Types<AliasOfArray, AliasString, Enum, C_A, SM_A, String, Struct, Uint32Array>;
+using ArrayTypes = ::testing::Types<AliasOfArray, AliasString, Enum, C_A, SM_A, String, Struct, Uint32Array>;
 TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 
 // Test array toString() and ostream operator functions
