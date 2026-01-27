@@ -17,7 +17,7 @@ namespace Ccsds {
 
 CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName)
 {
-    // TODO Call engine init here or another init function?
+    // TODO BPC: Call engine init here or another init function?
     // May need a mem allocator
 
     // Temporary buffer pool for prototyping
@@ -109,7 +109,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
     }
     else
     {
-        // BPC TODO Was failure reason already emitted?
+        // TODO BPC: Was failure reason already emitted?
         // Do we need this EVR?
         this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
@@ -136,7 +136,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     }
     else
     {
-        // BPC TODO Was failure reason already emitted?
+        // TODO BPC: Was failure reason already emitted?
         // Do we need this EVR?
         this->log_WARNING_LO_PlaybackInitiateFail(sourceDirectory);
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
@@ -333,7 +333,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
     portNum = static_cast<FwIndexType>(channelId);
     
-    // TODO it would be more efficient to allocate a buffer in CF_CFDP_ConstructPduHeader()
+    // TODO BPC: it would be more efficient to allocate a buffer in CF_CFDP_ConstructPduHeader()
     // However for the proof of concept I am just going to copy the data here
     // Just want the PDU header and data
     msgSize = pdu->pdu_header.header_encoded_length + pdu->pdu_header.data_encoded_length;

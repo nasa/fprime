@@ -373,7 +373,7 @@ typedef struct CF_Logical_PduBuffer
      */
     U32 content_crc;
 
-    // TODO this is a temprorary workaround for buffer allocation
+    // TODO BPC: this is a temprorary workaround for buffer allocation
     // Remove this
     U32 index;
 

@@ -182,7 +182,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
      * adjustments here, just write it.
      */
 
-    // BPC TODO get rid of pdu->offset in favor of Os::File::position()
+    // TODO BPC: get rid of pdu->offset in favor of Os::File::position()
     if (txn->state_data.receive.cached_pos != pdu->offset)
     {
         status = txn->fd.seek(pdu->offset, Os::File::SeekType::ABSOLUTE);
@@ -365,6 +365,15 @@ void CF_CFDP_R2_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
 
     /* this function is only entered for data PDUs */
     fd = &ph->int_header.fd;
+
+    // If CRC calculation has started (file reopened in READ mode), ignore late FileData PDUs.
+    // This can happen if retransmitted FileData arrives after EOF was received and CRC began.
+    if (txn->state_data.receive.r2.rx_crc_calc_bytes > 0)
+    {
+        // Silently ignore - file is complete and we're calculating CRC
+        // TODO BPC: do we want a throttled EVR here?
+        return;
+    }
 
     /* got file data PDU? */
     ret = CF_CFDP_RecvFd(txn, ph);
@@ -573,9 +582,27 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
     if (txn->state_data.receive.r2.rx_crc_calc_bytes == 0)
     {
         txn->crc = CFDP::Checksum(0);
+
+        // For Class 2 RX, the file was opened in WRITE mode for receiving FileData PDUs.
+        // Now we need to READ it for CRC calculation. Close and reopen in READ mode.
+        if (txn->fd.isOpen())
+        {
+            txn->fd.close();
+        }
+
+        fileStatus = txn->fd.open(txn->history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
+        if (fileStatus != Os::File::OP_OK)
+        {
+            CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_FILE_SIZE_ERROR);
+            return CfdpStatus::ERROR;
+        }
+
+        // Reset cached position since we just reopened the file
+        txn->state_data.receive.cached_pos = 0;
     }
 
     rx_crc_calc_bytes_per_wakeup = txn->cfdpManager->getRxCrcCalcBytesPerWakeupParam();
+
     while ((count_bytes < rx_crc_calc_bytes_per_wakeup) &&
            (txn->state_data.receive.r2.rx_crc_calc_bytes < txn->fsize))
     {
@@ -605,7 +632,7 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn)
                 break;
             }
         }
-        
+
         fileStatus = txn->fd.read(buf, read_size, Os::File::WaitType::WAIT);
         if (fileStatus != Os::File::OP_OK)
         {
@@ -755,7 +782,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
                 }
                 else
                 {
-                     // TODO BPC flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
+                     // TODO BPC: flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
                      // File was succesfully renamed, open for writing
                     fileStatus = txn->fd.open(txn->history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
                     if (fileStatus != Os::File::OP_OK)

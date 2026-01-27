@@ -3,7 +3,6 @@ param LocalEid: CfdpEntityId \
     default 42
 
 @ Maximum number of bytes to put into a file PDU
-@ TODO - Should this exist or should this always be CF_MAX_PDU_SIZE - header?
 param OutgoingFileChunkSize: U32 \
     default 480
 

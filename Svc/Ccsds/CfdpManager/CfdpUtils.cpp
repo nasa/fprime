@@ -163,7 +163,7 @@ void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
     // Preserve the cfdpManager pointer across transaction reuse
     CfdpManager* savedCfdpManager = txn->cfdpManager;
 
-    // TODO make sure transaction default constructor is sane
+    // TODO BPC: make sure transaction default constructor is sane
     *txn = CF_Transaction_t{};
     txn->chan_num = chan;
     txn->cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer

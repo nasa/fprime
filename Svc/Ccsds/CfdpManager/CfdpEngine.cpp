@@ -48,12 +48,12 @@
 namespace Svc {
 namespace Ccsds {
 
-// TODO Refactor global data into class member variables
+// TODO BPC: Refactor global data into class member variables
 CfdpEngineData cfdpEngine;
 
 void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size)
 {
-    // TODO Current thought is to rework the encore to include a buffer reference
+    // TODO BPC: Current thought is to rework the encore to include a buffer reference
     /* Clear the PDU buffer structure to start */
     memset(ph, 0, sizeof(*ph));
 
@@ -221,7 +221,7 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
         FW_ASSERT(msgPtr != NULL);
         FW_ASSERT(encoder != NULL);
 
-        // BPC: This was previously called as part of CF_CFDP_MsgOutGet()
+        // TODO BPC: This was previously called as part of CF_CFDP_MsgOutGet()
         // Call it here to attach the storage returned by cfdpGetMessageBuffer() to the encoder
         ph->penc = encoder;
         CF_CFDP_EncodeStart(ph->penc, msgPtr, ph, CF_MAX_PDU_SIZE);
@@ -277,7 +277,7 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     {
         if (!silent)
         {
-            // BPC TODO send event here
+            // TODO BPC: send event here
         }
     }
 
@@ -314,7 +314,7 @@ CfdpStatus::T CF_CFDP_SendMd(CF_Transaction_t *txn)
 
         /* at this point, need to append filenames into md packet */
         /* this does not actually copy here - that is done during encode */
-        // TODO Convert these to Fw::String
+        // TODO BPC: Convert these to Fw::String
         md->source_filename.length = static_cast<U8>(txn->history->fnames.src_filename.length());
         md->source_filename.data_ptr = txn->history->fnames.src_filename.toChar();
         md->dest_filename.length = static_cast<U8>(txn->history->fnames.dst_filename.length());
@@ -922,7 +922,7 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        // BPC: Add pointer to component in order to send output buffers
+        // TODO BPC: Add pointer to component in order to send output buffers
         cfdpEngine.channels[i].cfdpManager = &cfdpManager;
         cfdpEngine.channels[i].channel_id = i;
         cfdpEngine.channels[i].flowState = CfdpFlow::NOT_FROZEN;
@@ -935,7 +935,7 @@ CfdpStatus::T CF_CFDP_InitEngine(CfdpManager& cfdpManager)
 
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
-            // BPC: Add pointer to component in order to send output buffers
+            // TODO BPC: Add pointer to component in order to send output buffers
             txn->cfdpManager = &cfdpManager;
 
             /* Initially put this on the free list for this channel */
@@ -1017,7 +1017,7 @@ void CF_CFDP_CycleTx(CF_Channel_t *chan)
         if (!chan->cur)
         { /* don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup */
 
-            // BPC TODO refactor all while loops
+            // TODO BPC: refactor all while loops
             while (true)
             {
                 /* Attempt to run something on TXA */
@@ -1228,7 +1228,7 @@ CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
     // {
     //     txn = NULL;
     // }
-    // BPC TODO Do I need to limit receive transactions?
+    // TODO BPC: Do I need to limit receive transactions?
     txn = CF_FindUnusedTransaction(chan, CF_Direction_RX);
 
     if (txn != NULL)
@@ -1323,7 +1323,7 @@ void CF_CFDP_ProcessPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
             status = pb->dir.read(path, CfdpManagerMaxFileSize);
             if (status == Os::Directory::NO_MORE_FILES)
             {
-                // TODO BPC Emit playback success EVR
+                // TODO BPC: Emit playback success EVR
                 pb->dir.close();
                 pb->diropen = false;
                 break;
@@ -1437,7 +1437,7 @@ CfdpStatus::T cfdpEngineStartPollDir(U8 chanId, U8 pollId, const Fw::String& src
     }
     else
     {
-        // TODO BPC emit EVR here
+        // TODO BPC: emit EVR here
         status = CfdpStatus::ERROR;
     }
 
@@ -1470,7 +1470,7 @@ CfdpStatus::T cfdpEngineStopPollDir(U8 chanId, U8 pollId)
     }
     else
     {
-        // TODO BPC emit EVR here
+        // TODO BPC: emit EVR here
         status = CfdpStatus::ERROR;
     }
 
@@ -1694,7 +1694,7 @@ void CF_CFDP_SetTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat)
 
 void CF_CFDP_SendEotPkt(CF_Transaction_t *txn)
 {
-    // BPC: TODO This is sending a telemetry packet at the end of a completed transaction
+    // TODO BPC: This is sending a telemetry packet at the end of a completed transaction
     // How do we want to handle this in F' telemetry?
 
     // CF_EotPacket_t * EotPktPtr;
@@ -1781,7 +1781,7 @@ CF_CListTraverse_Status_t CF_CFDP_CloseFiles(CF_CListNode_t *node, void *context
     return CF_CLIST_CONT;
 }
 
-// BPC: This should be removed if we don't need enable/disable support
+// TODO BPC: This should be removed if we don't need enable/disable support
 void CF_CFDP_DisableEngine(void)
 {
     U32 i;
@@ -1819,7 +1819,7 @@ void CF_CFDP_DisableEngine(void)
         /* finally all queue counters must be reset */
         // memset(&CF_AppData.hk.Payload.channel_hk[i].q_size, 0, sizeof(CF_AppData.hk.Payload.channel_hk[i].q_size));
 
-        // TODO remove pipe references
+        // TODO BPC: remove pipe references
         // CFE_SB_DeletePipe(chan->pipe);
     }
 }
@@ -1868,7 +1868,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
                 fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), moveDir.toChar());
                 if(fileStatus != Os::FileSystem::OP_OK)
                 {
-                    // BPC TODO event interfaces are protected
+                    // TODO BPC: event interfaces are protected
                     // txn->cfdpManager->log_WARNING_LO_FailKeepFileMove(txn->history->fnames.src_filename,
                     //                                                   moveDir, fileStatus);
                 }
@@ -1886,7 +1886,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
                     fileStatus = Os::FileSystem::moveFile(txn->history->fnames.src_filename.toChar(), failDir.toChar());
                     if(fileStatus != Os::FileSystem::OP_OK)
                     {
-                        // BPC TODO event interfaces are protected
+                        // TODO BPC: event interfaces are protected
                         // txn->cfdpManager->log_WARNING_LO_FailPollFileMove(txn->history->fnames.src_filename,
                         //                                                   failDir, fileStatus);
                     }
@@ -1898,7 +1898,7 @@ void CF_CFDP_HandleNotKeepFile(CF_Transaction_t *txn)
     else
     {
         fileStatus = Os::FileSystem::removeFile(txn->history->fnames.dst_filename.toChar());
-        // BPC TODO emit failure EVR
+        // TODO BPC: emit failure EVR
         (void) fileStatus;
     }
 }

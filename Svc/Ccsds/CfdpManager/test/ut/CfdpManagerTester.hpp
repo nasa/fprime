@@ -367,6 +367,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test nominal Class 1 RX file transfer
     void testClass1RxNominal();
 
+    //! Test nominal Class 2 RX file transfer
+    void testClass2RxNominal();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
@@ -392,7 +395,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test configuration constants
     static constexpr U8 TEST_CHANNEL_ID_0 = 0;
     static constexpr U8 TEST_CHANNEL_ID_1 = 1;
-    static constexpr CfdpEntityId TEST_DEST_EID = 10;
+    static constexpr CfdpEntityId TEST_GROUND_EID = 10;
     static constexpr U8 TEST_PRIORITY = 0;
 
     //! Helper struct for transaction setup results

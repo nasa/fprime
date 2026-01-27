@@ -437,7 +437,7 @@ typedef struct CF_Channel
     CF_CListNode_t *qs[CfdpQueueId::NUM];
     CF_CListNode_t *cs[CF_Direction_NUM];
 
-    // TODO remove all pipe references
+    // TODO BPC: remove all pipe references
     // CFE_SB_PipeId_t pipe;
 
     U32 num_cmd_tx;
@@ -447,7 +447,7 @@ typedef struct CF_Channel
     /* Polling directory state */
     CF_PollDir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
 
-    // TODO remove all semaphore references
+    // TODO BPC: remove all semaphore references
     // osal_id_t sem_id; /**< \brief semaphore id for output pipe */
 
     const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */

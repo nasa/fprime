@@ -41,7 +41,7 @@
 namespace Svc {
 namespace Ccsds {
 
-// TODO Refactor global data into class member variables
+// TODO BPC: Refactor global data into class member variables
 extern CfdpEngineData cfdpEngine;
 
 /**
@@ -71,7 +71,7 @@ typedef struct CF_CFDP_Tick_args
  * This resets the encoder and PDU buffer to initial values, and prepares for encoding a new PDU
  * for sending to a remote entity.
  * 
- * BPC: I have removed the encap_hdr_size argument as the F' port of CFDP is NOT encapsulating PDUs
+ * TODO BPC: I have removed the encap_hdr_size argument as the F' port of CFDP is NOT encapsulating PDUs
  *
  * @param penc           Encoder state structure, will be reset/initialized by this call to point to msgbuf.
  * @param msgbuf         Pointer to encapsulation message, in this case a CFE software bus message
