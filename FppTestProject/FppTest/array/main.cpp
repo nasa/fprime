@@ -25,7 +25,7 @@ namespace FppTest {
 namespace Array {
 
 // ----------------------------------------------------------------------
-// Test instatiations
+// Test instantiations
 // ----------------------------------------------------------------------
 
 // Array tests
