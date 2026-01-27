@@ -370,6 +370,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test nominal Class 2 RX file transfer
     void testClass2RxNominal();
 
+    //! Test Class 2 RX file transfer with NAK retransmission
+    void testClass2RxNack();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
