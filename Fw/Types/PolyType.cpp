@@ -21,7 +21,6 @@ PolyType::operator U8() const {
 }
 
 void PolyType::get(U8& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_U8 == this->m_dataType);
     val = this->m_val.u8Val;
 }
@@ -49,7 +48,6 @@ PolyType::operator I8() const {
 }
 
 void PolyType::get(I8& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_I8 == this->m_dataType);
     val = this->m_val.i8Val;
 }
@@ -79,7 +77,6 @@ PolyType::operator U16() const {
 }
 
 void PolyType::get(U16& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_U16 == this->m_dataType);
     val = this->m_val.u16Val;
 }
@@ -107,7 +104,6 @@ PolyType::operator I16() const {
 }
 
 void PolyType::get(I16& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_I16 == this->m_dataType);
     val = this->m_val.i16Val;
 }
@@ -139,7 +135,6 @@ PolyType::operator U32() const {
 }
 
 void PolyType::get(U32& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_U32 == this->m_dataType);
     val = this->m_val.u32Val;
 }
@@ -167,7 +162,6 @@ PolyType::operator I32() const {
 }
 
 void PolyType::get(I32& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_I32 == this->m_dataType);
     val = this->m_val.i32Val;
 }
@@ -198,7 +192,6 @@ PolyType::operator U64() const {
 }
 
 void PolyType::get(U64& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_U64 == this->m_dataType);
     val = this->m_val.u64Val;
 }
@@ -226,7 +219,6 @@ PolyType::operator I64() const {
 }
 
 void PolyType::get(I64& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_I64 == this->m_dataType);
     val = this->m_val.i64Val;
 }
@@ -254,7 +246,6 @@ PolyType::operator F64() const {
 }
 
 void PolyType::get(F64& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_F64 == this->m_dataType);
     val = this->m_val.f64Val;
 }
@@ -280,7 +271,6 @@ PolyType::operator F32() const {
 }
 
 void PolyType::get(F32& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_F32 == this->m_dataType);
     val = this->m_val.f32Val;
 }
@@ -306,7 +296,6 @@ PolyType::operator bool() const {
 }
 
 void PolyType::get(bool& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_BOOL == this->m_dataType);
     val = this->m_val.boolVal;
 }
@@ -332,7 +321,6 @@ PolyType::operator void*() const {
 }
 
 void PolyType::get(void*& val) const {
-    FW_ASSERT(this != nullptr);
     FW_ASSERT(TYPE_PTR == this->m_dataType);
     val = this->m_val.ptrVal;
 }
@@ -602,7 +590,6 @@ SerializeStatus PolyType::deserializeFrom(SerialBufferBase& buffer, Fw::Endianne
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
 
 void PolyType::toString(StringBase& dest) const {
-    FW_ASSERT(this != nullptr);
     this->toString(dest, false);
 }
 
