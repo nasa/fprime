@@ -49,20 +49,20 @@ namespace Svc {
 namespace Ccsds {
 
 /**
- * @brief Structure for use with the CfdpEngine::cycleTx() function
+ * @brief Structure for use with the CfdpChannel::cycleTx() function
  */
 typedef struct CF_CFDP_CycleTx_args
 {
-    CF_Channel_t *chan;    /**< \brief channel structure */
-    int           ran_one; /**< \brief should be set to 1 if a transaction was cycled */
+    CfdpChannel *chan;    /**< \brief channel object */
+    int          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
 } CF_CFDP_CycleTx_args_t;
 
 /**
- * @brief Structure for use with the CfdpEngine::doTick() function
+ * @brief Structure for use with the CfdpChannel::doTick() function
  */
 typedef struct CF_CFDP_Tick_args
 {
-    CF_Channel_t *chan;                    /**< \brief channel structure */
+    CfdpChannel *chan;                     /**< \brief channel object */
     void (*fn)(CF_Transaction_t *, int *); /**< \brief function pointer */
     bool early_exit;                       /**< \brief early exit result */
     int  cont;                             /**< \brief if 1, then re-traverse the list */
@@ -227,16 +227,6 @@ class CfdpEngine {
      */
     void setChannelFlowState(U8 channelId, CfdpFlow::T flowState);
 
-    /**
-     * @brief Get channel by index
-     *
-     * Called by CfdpManager::dataIn_handler() to get channel for PDU processing
-     *
-     * @param index Channel index
-     * @returns Pointer to channel data
-     */
-    CF_Channel_t* getChannel(U8 index);
-
     // ----------------------------------------------------------------------
     // Internal interfaces (used by other CFDP classes and legacy code)
     // ----------------------------------------------------------------------
@@ -296,6 +286,16 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      */
     void armAckTimer(CF_Transaction_t *txn);
+
+    /**
+     * @brief Arm the inactivity timer for a transaction
+     *
+     * Sets the inactivity timer duration based on the transaction state and
+     * channel configuration.
+     *
+     * @param txn  Pointer to the transaction object
+     */
+    void armInactTimer(CF_Transaction_t *txn);
 
     /**
      * @brief Build the PDU header in the output buffer to prepare to send a packet
@@ -579,8 +579,11 @@ class CfdpEngine {
     // Private member variables
     // ----------------------------------------------------------------------
 
-    CfdpManager* m_manager;       //!< Parent component for event and telemetry methods
-    CfdpChannel* m_channels[CF_NUM_CHANNELS];  //!< Channel wrapper objects
+    //!< Parent component for event and telemetry methods
+    CfdpManager* m_manager;       
+
+    //! Channel data structures
+    CfdpChannel* m_channels[CF_NUM_CHANNELS];
 
     //! Sequence number tracker for outgoing transactions
     CfdpTransactionSeq m_seqNum;
@@ -590,9 +593,6 @@ class CfdpEngine {
 
     //! History entries for completed transactions
     CF_History_t m_histories[CF_NUM_HISTORIES];
-
-    //! Channel data structures (wrapped by m_channels objects)
-    CF_Channel_t m_channelData[CF_NUM_CHANNELS];
 
     //! Chunk wrappers for file data chunks
     CF_ChunkWrapper_t m_chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];
@@ -776,62 +776,6 @@ class CfdpEngine {
     // Channel Processing
 
     /**
-     * @brief Cycle the TX side of a channel
-     *
-     * Processes outgoing transactions and sends PDUs for the given channel.
-     *
-     * @param chan  The channel to cycle
-     */
-    void cycleTx(CF_Channel_t *chan);
-
-    /**
-     * @brief Traverse callback for cycling the first active transaction
-     *
-     * @param node     List node being traversed
-     * @param context  Callback context (CF_CFDP_CycleTx_args_t*)
-     * @returns Traversal status (CONT or EXIT)
-     */
-    CF_CListTraverse_Status_t cycleTxFirstActive(CF_CListNode_t *node, void *context);
-
-    /**
-     * @brief Tick all transactions on a channel
-     *
-     * Processes timer expirations and retransmissions for all active transactions.
-     *
-     * @param chan  The channel to tick
-     */
-    void tickTransactions(CF_Channel_t *chan);
-
-    /**
-     * @brief Traverse callback for ticking a transaction
-     *
-     * @param node     List node being traversed
-     * @param context  Callback context (CF_CFDP_Tick_args_t*)
-     * @returns Traversal status (CONT or EXIT)
-     */
-    CF_CListTraverse_Status_t doTick(CF_CListNode_t *node, void *context);
-
-    // Playback & Polling
-
-    /**
-     * @brief Step each active playback directory
-     *
-     * Check if a playback directory needs iterated, and if so does, and
-     * if a valid file is found initiates playback on it.
-     *
-     * @param chan  The channel associated with the playback
-     * @param pb    The playback state
-     */
-    void processPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb);
-
-    /**
-     * @brief Process all polling directories for a channel
-     *
-     * @param chan  The channel to process
-     */
-    void processPollingDirectories(CF_Channel_t *chan);
-
-    /**
      * @brief Check if source file came from polling directory
      *
      * @par Assumptions, External Events, and Notes:
@@ -864,16 +808,6 @@ class CfdpEngine {
      * @returns CfdpStatus::SUCCESS on success, ERROR if length is zero or invalid
      */
     CfdpStatus::T copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
-
-    /**
-     * @brief Arm the inactivity timer for a transaction
-     *
-     * Sets the inactivity timer duration based on the transaction state and
-     * channel configuration.
-     *
-     * @param txn  Pointer to the transaction object
-     */
-    void armInactTimer(CF_Transaction_t *txn);
 };
 
 }  // namespace Ccsds

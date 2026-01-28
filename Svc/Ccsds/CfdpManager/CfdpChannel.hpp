@@ -33,6 +33,8 @@
 #ifndef CFDP_CHANNEL_HPP
 #define CFDP_CHANNEL_HPP
 
+#include <Fw/Types/Assert.hpp>
+
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 
 namespace Svc {
@@ -57,10 +59,11 @@ class CfdpChannel {
     /**
      * @brief Construct a CfdpChannel
      *
-     * @param engine  Pointer to parent CFDP engine
-     * @param chan    Pointer to channel data structure
+     * @param engine      Pointer to parent CFDP engine
+     * @param channelId   Channel ID (index)
+     * @param cfdpManager Pointer to parent CfdpManager component
      */
-    CfdpChannel(CfdpEngine* engine, CF_Channel_t* chan);
+    CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpManager);
 
     // ----------------------------------------------------------------------
     // Channel Processing
@@ -162,19 +165,36 @@ class CfdpChannel {
      *
      * @returns Channel ID
      */
-    inline U8 getChannelId() const { return m_channel->channel_id; }
+    inline U8 getChannelId() const { return m_channelId; }
 
     /**
      * @brief Get the outgoing PDU counter for this cycle
      *
      * @returns Current outgoing PDU count
      */
-    inline U32 getOutgoingCounter() const { return m_channel->outgoing_counter; }
+    inline U32 getOutgoingCounter() const { return m_outgoingCounter; }
 
     /**
      * @brief Increment the outgoing PDU counter
      */
-    inline void incrementOutgoingCounter() { ++m_channel->outgoing_counter; }
+    inline void incrementOutgoingCounter() { ++m_outgoingCounter; }
+
+    /**
+     * @brief Reset the outgoing PDU counter to zero
+     */
+    inline void resetOutgoingCounter() { m_outgoingCounter = 0; }
+
+    /**
+     * @brief Get the number of commanded TX transactions
+     *
+     * @returns Number of commanded TX transactions
+     */
+    inline U32 getNumCmdTx() const { return m_numCmdTx; }
+
+    /**
+     * @brief Increment the command TX counter for this channel
+     */
+    inline void incrementCmdTxCounter() { ++m_numCmdTx; }
 
     /**
      * @brief Decrement the command TX counter for this channel
@@ -190,6 +210,42 @@ class CfdpChannel {
      * @param txn Transaction to check against current
      */
     void clearCurrentIfMatch(CF_Transaction_t* txn);
+
+    /**
+     * @brief Set the flow state for this channel
+     *
+     * @param flowState New flow state (NORMAL or FROZEN)
+     */
+    inline void setFlowState(CfdpFlow::T flowState) { m_flowState = flowState; }
+
+    /**
+     * @brief Get the flow state for this channel
+     *
+     * @returns Current flow state
+     */
+    inline CfdpFlow::T getFlowState() const { return m_flowState; }
+
+    /**
+     * @brief Get a playback directory entry
+     *
+     * @param index Index of playback directory
+     * @returns Pointer to playback directory
+     */
+    inline CF_Playback_t* getPlayback(U32 index) {
+        FW_ASSERT(index < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN);
+        return &m_playback[index];
+    }
+
+    /**
+     * @brief Get a polling directory entry
+     *
+     * @param index Index of polling directory
+     * @returns Pointer to polling directory
+     */
+    inline CF_PollDir_t* getPollDir(U32 index) {
+        FW_ASSERT(index < CF_MAX_POLLING_DIR_PER_CHAN);
+        return &m_polldir[index];
+    }
 
     // ----------------------------------------------------------------------
     // Resource Management
@@ -328,6 +384,28 @@ class CfdpChannel {
      */
     inline void insertBackInQueue(CfdpQueueId::T queueidx, CF_CListNode_t* node);
 
+    // ----------------------------------------------------------------------
+    // Callback methods (public so wrappers can call them)
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Traverse callback for cycling the first active transaction
+     *
+     * @param node     List node being traversed
+     * @param context  Callback context (CF_CFDP_CycleTx_args_t*)
+     * @returns Traversal status (CONT or EXIT)
+     */
+    CF_CListTraverse_Status_t cycleTxFirstActive(CF_CListNode_t* node, void* context);
+
+    /**
+     * @brief Traverse callback for ticking a transaction
+     *
+     * @param node     List node being traversed
+     * @param context  Callback context (CF_CFDP_Tick_args_t*)
+     * @returns Traversal status (CONT or EXIT)
+     */
+    CF_CListTraverse_Status_t doTick(CF_CListNode_t* node, void* context);
+
   private:
     // ----------------------------------------------------------------------
     // Private helper methods
@@ -352,32 +430,59 @@ class CfdpChannel {
      */
     void updatePollPbCounted(CF_Playback_t* pb, int up, U8* counter);
 
-    /**
-     * @brief Traverse callback for cycling the first active transaction
-     *
-     * @param node     List node being traversed
-     * @param context  Callback context (CF_CFDP_CycleTx_args_t*)
-     * @returns Traversal status (CONT or EXIT)
-     */
-    CF_CListTraverse_Status_t cycleTxFirstActive(CF_CListNode_t* node, void* context);
-
-    /**
-     * @brief Traverse callback for ticking a transaction
-     *
-     * @param node     List node being traversed
-     * @param context  Callback context (CF_CFDP_Tick_args_t*)
-     * @returns Traversal status (CONT or EXIT)
-     */
-    CF_CListTraverse_Status_t doTick(CF_CListNode_t* node, void* context);
-
   private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
 
     CfdpEngine* m_engine;    //!< Parent CFDP engine
-    CF_Channel_t* m_channel; //!< Channel data structure
+
+    // Channel state (formerly CF_Channel_t members)
+    CF_CListNode_t* m_qs[CfdpQueueId::NUM];    //!< Transaction queues
+    CF_CListNode_t* m_cs[CF_Direction_NUM];    //!< Command/history lists
+
+    U32 m_numCmdTx;                            //!< Number of commanded TX transactions
+
+    CF_Playback_t m_playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
+    CF_PollDir_t m_polldir[CF_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
+
+    const CF_Transaction_t* m_cur;             //!< Current transaction during channel cycle
+    CfdpManager* m_cfdpManager;                //!< Reference to F' component for parameters
+
+    U8 m_tickType;                             //!< Type of tick being processed
+    U8 m_channelId;                            //!< Channel ID (index into engine array)
+
+    CfdpFlow::T m_flowState;                   //!< Channel flow state (normal/frozen)
+    U32 m_outgoingCounter;                     //!< PDU throttling counter
 };
+
+// ----------------------------------------------------------------------
+// Inline function implementations
+// ----------------------------------------------------------------------
+
+inline void CfdpChannel::removeFromQueue(CfdpQueueId::T queueidx, CF_CListNode_t* node)
+{
+    CF_CList_Remove(&m_qs[queueidx], node);
+}
+
+inline void CfdpChannel::insertAfterInQueue(CfdpQueueId::T queueidx, CF_CListNode_t* start, CF_CListNode_t* after)
+{
+    CF_CList_InsertAfter(&m_qs[queueidx], start, after);
+}
+
+inline void CfdpChannel::insertBackInQueue(CfdpQueueId::T queueidx, CF_CListNode_t* node)
+{
+    CF_CList_InsertBack(&m_qs[queueidx], node);
+}
+
+// ----------------------------------------------------------------------
+// Free function wrappers (forward declarations)
+// ----------------------------------------------------------------------
+
+CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t* node, void* context);
+CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context);
+void CF_CFDP_ArmInactTimer(CF_Transaction_t *txn);
+void CF_MoveTransaction(CF_Transaction_t* txn, CfdpQueueId::T queue);
 
 }  // namespace Ccsds
 }  // namespace Svc

@@ -127,19 +127,8 @@ CfdpStatus::T CfdpEngine::init()
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        m_channels[i] = new CfdpChannel(this, &this->m_channelData[i]);
+        m_channels[i] = new CfdpChannel(this, i, this->m_manager);
         FW_ASSERT(m_channels[i] != nullptr);
-
-        // TODO BPC: Add pointer to component in order to send output buffers
-        this->m_channelData[i].cfdpManager = this->m_manager;
-        this->m_channelData[i].channel_id = i;
-        this->m_channelData[i].flowState = CfdpFlow::NOT_FROZEN;
-
-        /* Clear all queue heads to start fresh */
-        for (k = 0; k < CfdpQueueId::NUM; ++k)
-        {
-            this->m_channelData[i].qs[k] = NULL;
-        }
 
         for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
         {
@@ -151,7 +140,7 @@ CfdpStatus::T CfdpEngine::init()
 
             for (k = 0; k < CF_Direction_NUM; ++k, ++cw)
             {
-                list_head = CF_GetChunkListHead(&this->m_channelData[i], k);
+                list_head = m_channels[i]->getChunkListHead(k);
 
                 FW_ASSERT((chunk_mem_offset + CF_DIR_MAX_CHUNKS[k][i]) <= CF_NUM_CHUNKS_ALL_CHANNELS,
                           chunk_mem_offset, CF_DIR_MAX_CHUNKS[k][i], CF_NUM_CHUNKS_ALL_CHANNELS);
@@ -166,7 +155,7 @@ CfdpStatus::T CfdpEngine::init()
         {
             history = &this->m_histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
             CF_CList_InitNode(&history->cl_node);
-            CF_CList_InsertBack_Ex(&this->m_channelData[i], CfdpQueueId::HIST_FREE, &history->cl_node);
+            m_channels[i]->insertBackInQueue(CfdpQueueId::HIST_FREE, &history->cl_node);
         }
     }
 
@@ -968,29 +957,29 @@ void CfdpEngine::recvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 void CfdpEngine::receivePdu(U8 chan_id, CF_Logical_PduBuffer_t *ph)
 {
     CF_Transaction_t *txn = NULL;
-    CF_Channel_t *chan = NULL;
+    CfdpChannel *chan = NULL;
 
     FW_ASSERT(chan_id < CF_NUM_CHANNELS, chan_id, CF_NUM_CHANNELS);
     FW_ASSERT(ph != NULL);
 
-    chan = this->getChannel(chan_id);
+    chan = m_channels[chan_id];
     FW_ASSERT(chan != NULL);
 
     CfdpStatus::T recv_status = this->recvPh(chan_id, ph);
     if (recv_status == CfdpStatus::SUCCESS)
     {
         /* got a valid PDU -- look it up by sequence number */
-        txn = CF_FindTransactionBySequenceNumber(chan, ph->pdu_header.sequence_num, ph->pdu_header.source_eid);
+        txn = chan->findTransactionBySequenceNumber(ph->pdu_header.sequence_num, ph->pdu_header.source_eid);
 
         if (txn == NULL)
         {
             /* if no match found, then it must be the case that we would be the destination entity id, so verify it
                 */
-            if (ph->pdu_header.destination_eid == chan->cfdpManager->getLocalEidParam())
+            if (ph->pdu_header.destination_eid == this->m_manager->getLocalEidParam())
             {
                 /* we didn't find a match, so assign it to a transaction */
                 /* assume this is initiating an RX transaction, as TX transactions are only commanded */
-                txn = this->startRxTransaction(chan->channel_id);
+                txn = this->startRxTransaction(chan->getChannelId());
                 if (txn == NULL)
                 {
                     // CFE_EVS_SendEvent(
@@ -1023,8 +1012,7 @@ void CfdpEngine::receivePdu(U8 chan_id, CF_Logical_PduBuffer_t *ph)
 void CfdpEngine::setChannelFlowState(U8 channelId, CfdpFlow::T flowState)
 {
     FW_ASSERT(channelId <= CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
-
-    this->m_channelData[channelId].flowState = flowState;
+    m_channels[channelId]->setFlowState(flowState);
 }
 
 void CfdpEngine::initTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority)
@@ -1064,14 +1052,16 @@ CfdpStatus::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::Strin
                              U8 priority, CfdpEntityId dest_id)
 {
     CF_Transaction_t *txn;
-    CF_Channel_t * chan = &this->m_channelData[chan_num];
+    CfdpChannel* chan = nullptr;
+
     FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
+    chan = m_channels[chan_num];
 
     CfdpStatus::T ret = CfdpStatus::SUCCESS;
 
-    if (chan->num_cmd_tx < CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN)
+    if (chan->getNumCmdTx() < CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN)
     {
-        txn = CF_FindUnusedTransaction(&this->m_channelData[chan_num], CF_Direction_TX);
+        txn = chan->findUnusedTransaction(CF_Direction_TX);
     }
     else
     {
@@ -1092,7 +1082,7 @@ CfdpStatus::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::Strin
         txn->history->fnames.dst_filename = dst_filename;
         this->txFileInitiate(txn, cfdp_class, keep, chan_num, priority, dest_id);
 
-        ++chan->num_cmd_tx;
+        chan->incrementCmdTxCounter();
         txn->flags.tx.cmd_tx = true;
     }
 
@@ -1101,19 +1091,22 @@ CfdpStatus::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::Strin
 
 CF_Transaction_t *CfdpEngine::startRxTransaction(U8 chan_num)
 {
-    CF_Channel_t *    chan = &this->m_channelData[chan_num];
+    CfdpChannel *chan = nullptr;
     CF_Transaction_t *txn;
+    
+    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
+    chan = m_channels[chan_num];
 
     // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[CfdpQueueId::RX] < CF_MAX_SIMULTANEOUS_RX)
     // {
-    //     txn = CF_FindUnusedTransaction(chan, CF_Direction_RX);
+    //     txn = chan->findUnusedTransaction(CF_Direction_RX);
     // }
     // else
     // {
     //     txn = NULL;
     // }
     // TODO BPC: Do I need to limit receive transactions?
-    txn = CF_FindUnusedTransaction(chan, CF_Direction_RX);
+    txn = chan->findUnusedTransaction(CF_Direction_RX);
 
     if (txn != NULL)
     {
@@ -1122,7 +1115,7 @@ CF_Transaction_t *CfdpEngine::startRxTransaction(U8 chan_num)
         txn->state_data.receive.r2.fs = CF_CFDP_FinFileStatus_DISCARDED;
 
         txn->flags.com.q_index = CfdpQueueId::RX;
-        CF_CList_InsertBack_Ex(chan, static_cast<CfdpQueueId::T>(txn->flags.com.q_index), &txn->cl_node);
+        chan->insertBackInQueue(static_cast<CfdpQueueId::T>(txn->flags.com.q_index), &txn->cl_node);
     }
 
     return txn;
@@ -1171,7 +1164,7 @@ CfdpStatus::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw::
     // Loop through the channel's playback directories to find an open slot
     for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
-        pb = &this->m_channelData[chan].playback[i];
+        pb = m_channels[chan]->getPlayback(i);
         if (!pb->busy)
         {
             break;
@@ -1201,7 +1194,7 @@ CfdpStatus::T CfdpEngine::startPollDir(U8 chanId, U8 pollId, const Fw::String& s
     FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
 
     // First check if the poll directory is already in use
-    pd = &this->m_channelData[chanId].polldir[pollId];
+    pd = m_channels[chanId]->getPollDir(pollId);
     if(pd->enabled == Fw::Enabled::DISABLED)
     {
         // Populate arguments
@@ -1234,7 +1227,7 @@ CfdpStatus::T CfdpEngine::stopPollDir(U8 chanId, U8 pollId)
     FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
 
     // Check if the poll directory is in use
-    pd = &this->m_channelData[chanId].polldir[pollId];
+    pd = m_channels[chanId]->getPollDir(pollId);
     if(pd->enabled == Fw::Enabled::DISABLED)
     {
         // Clear poll directory arguments
@@ -1264,17 +1257,16 @@ void CfdpEngine::cycle(void)
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        CF_Channel_t *chanData = &this->m_channelData[i];
-        chanData->outgoing_counter = 0;
+        CfdpChannel* chan = m_channels[i];
+        FW_ASSERT(chan != nullptr);
 
-        if (chanData->flowState == CfdpFlow::NOT_FROZEN)
+        chan->resetOutgoingCounter();
+
+        if (chan->getFlowState() == CfdpFlow::NOT_FROZEN)
         {
             /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
              * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
              * PDUs. */
-
-            CfdpChannel* chan = m_channels[i];
-            FW_ASSERT(chan != nullptr);
 
             /* cycle all transactions (tick) */
             chan->tickTransactions();
@@ -1452,7 +1444,7 @@ bool CfdpEngine::isPollingDir(const char *src_file, U8 chan_num)
 
     for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
-        pd = &this->m_channelData[chan_num].polldir[i];
+        pd = m_channels[chan_num]->getPollDir(i);
         if (strcmp(src_dir, pd->srcDir.toChar()) == 0)
         {
             return_code = true;
