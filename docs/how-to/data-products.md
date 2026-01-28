@@ -204,7 +204,7 @@ Fw::Success::T ProducerTester ::productGet_handler(FwDpIdType id, FwSizeType dat
 
 ## Topology Integration
 
-Data product producers should be integrated with a `Svc.DpManager`, which is typically supplied byt the `DataProducts` subtopology. Users should import the topology, connect their producers, connect the catalog to file downlinke, and (optionally) configure the `DataProducts` subtopology parameters.
+Data product producers should be integrated with a `Svc.DpManager`, which is typically supplied by the `DataProducts` subtopology. Users should import the topology, connect their producers, connect the catalog to file downlinke, and (optionally) configure the `DataProducts` subtopology parameters.
 
 For example, in the project topology FPP file:
 
@@ -230,10 +230,10 @@ topology ... {
 
 ## Ground Decoding
 
-Once a data product has been downlinked, ground software can decode it into a more easily readable JSON format. This can then be run through any number of tools:
+Once a data product has been sent to the ground, ground software can decode it into a more easily readable JSON format. This can then be run through any number of tools:
 
 ```bash
-fprime-dp decode --bin-file <downlinked_file> --dictionary <path_to_dictionary> --output <output.json>
+fprime-dp decode --bin-file <data_product_file> --dictionary <path_to_dictionary> --output <output.json>
 ```
 
 ## Other Considerations
