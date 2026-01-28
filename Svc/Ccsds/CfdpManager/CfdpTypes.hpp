@@ -35,6 +35,7 @@
 #define CFDP_TYPES_HPP
 
 #include <config/CfdpCfg.hpp>
+#include <Fw/Types/EnabledEnumAc.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
 
@@ -44,16 +45,18 @@
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/Types/CfdpFlowEnumAc.hpp>
 #include <Svc/Ccsds/Types/CfdpClassEnumAc.hpp>
 #include <Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp>
+#include <Svc/Ccsds/Types/CfdpKeepEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
 
 // Forward declarations
 class CfdpChannel;
+class CfdpManager;
+class CfdpEngine;
 
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
@@ -416,6 +419,9 @@ typedef struct CF_Transaction
     /**< \brief Pointer to the channel wrapper this transaction belongs to */
     CfdpChannel* chan;
 
+    /**< \brief Pointer to the CFDP engine this transaction belongs to */
+    CfdpEngine* engine;
+
 } CF_Transaction_t;
 
 /**
@@ -475,31 +481,6 @@ typedef struct CF_Channel
     U32 outgoing_counter;
 
 } CF_Channel_t;
-
-/**
- * @brief An engine represents a pairing to a local EID
- *
- * Each engine can have at most CF_MAX_SIMULTANEOUS_TRANSACTIONS
- * 
- * @note This struct8ure was ported from CF_Engine_t
- */
-typedef struct CfdpEngineDataT
-{
-    CfdpEngineDataT()
-        : seq_num(0)
-    {
-
-    }
-    CfdpTransactionSeq seq_num; /* \brief keep track of the next sequence number to use for sends */
-
-    /* NOTE: could have separate array of transactions as part of channel? */
-    CF_Transaction_t transactions[CF_NUM_TRANSACTIONS];
-    CF_History_t     histories[CF_NUM_HISTORIES];
-    CF_Channel_t     channels[CF_NUM_CHANNELS];
-
-    CF_ChunkWrapper_t chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];
-    CF_Chunk_t        chunk_mem[CF_NUM_CHUNKS_ALL_CHANNELS];
-} CfdpEngineData;
 
 }  // namespace Ccsds
 }  // namespace Svc

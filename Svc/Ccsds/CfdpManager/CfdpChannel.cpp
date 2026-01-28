@@ -32,6 +32,8 @@
 
 #include <string.h>
 
+#include <Fw/FPrimeBasicTypes.hpp>
+
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
@@ -364,6 +366,7 @@ void CfdpChannel::freeTransaction(CF_Transaction_t* txn)
     *txn = CF_Transaction_t{};
     txn->chan_num = m_channel->channel_id;
     txn->chan = this;  // Set chan pointer to this channel
+    txn->engine = m_engine;  // Set engine pointer
     txn->cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer
     CF_CList_InitNode(&txn->cl_node);
     CF_CList_InsertBack_Ex(m_channel, CfdpQueueId::FREE, &txn->cl_node);
@@ -650,7 +653,7 @@ CF_CListTraverse_Status_t CfdpChannel::cycleTxFirstActive(CF_CListNode_t* node, 
          * off the active queue. Run until either of these occur. */
         while (!args->chan->cur && txn->flags.com.q_index == CfdpQueueId::TXA)
         {
-            CF_CFDP_DispatchTx(txn);
+            txn->engine->dispatchTx(txn);
         }
 
         args->ran_one = 1;
