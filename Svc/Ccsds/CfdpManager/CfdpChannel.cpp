@@ -71,7 +71,23 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
         m_cs[i] = nullptr;
     }
 
-    // Playback and polling arrays are default-initialized
+    // Initialize poll directory playback state
+    for (U32 i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; i++) {
+        m_polldir[i].pb.busy = false;
+        m_polldir[i].pb.diropen = false;
+        m_polldir[i].pb.counted = false;
+        m_polldir[i].pb.num_ts = 0;
+        m_polldir[i].pb.pending_file[0] = '\0';
+    }
+
+    // Initialize playback structures
+    for (U32 i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; i++) {
+        m_playback[i].busy = false;
+        m_playback[i].diropen = false;
+        m_playback[i].counted = false;
+        m_playback[i].num_ts = 0;
+        m_playback[i].pending_file[0] = '\0';
+    }
 }
 
 // ----------------------------------------------------------------------

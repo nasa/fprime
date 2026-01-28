@@ -104,10 +104,12 @@ Fw::SerializeStatus Pdu::FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
         return status;
     }
 
-    // Serialize file data
-    status = serialBuffer.pushBytes(this->m_data, this->m_dataSize);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
+    // Serialize file data (only if there is data to serialize)
+    if (this->m_dataSize > 0) {
+        status = serialBuffer.pushBytes(this->m_data, this->m_dataSize);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
     }
 
     return Fw::FW_SERIALIZE_OK;

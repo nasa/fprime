@@ -628,9 +628,6 @@ void CfdpManagerTester::testMetaDataPdu() {
 }
 
 void CfdpManagerTester::testFileDataPdu() {
-    // TODO: This test references old functions CF_CFDP_ConstructPduHeader and CF_CFDP_SendFd
-    // which no longer exist after refactoring. This test needs to be updated post-refactor.
-    /*
     // Test pattern:
     // 1. Setup transaction
     // 2. Read test file and construct File Data PDU
@@ -680,8 +677,8 @@ void CfdpManagerTester::testFileDataPdu() {
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read from test file";
     ASSERT_EQ(readSize, bytesRead) << "Failed to read test data from file";
 
-    // Construct PDU buffer with File Data header
-    CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
+    // Construct PDU buffer with File Data header using refactored API
+    CF_Logical_PduBuffer_t* ph = component.m_engine->constructPduHeader(
         txn,
         CF_CFDP_FileDirective_INVALID_MIN,  // File data PDU has invalid directive
         component.getLocalEidParam(),
@@ -711,9 +708,9 @@ void CfdpManagerTester::testFileDataPdu() {
     fd->data_len = readSize;
     fd->data_ptr = data_ptr;
 
-    // Invoke CfdpEngine->sendFd to emit File Data PDU
-    CfdpStatus::T status = CF_CFDP_SendFd(txn, ph);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFd failed";
+    // Invoke sendFd using refactored API
+    CfdpStatus::T status = component.m_engine->sendFd(txn, ph);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendFd failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -725,13 +722,9 @@ void CfdpManagerTester::testFileDataPdu() {
     // Verify File Data PDU
     verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                       testSequenceId, fileOffset, readSize, testFilePath, Cfdp::CLASS_1);
-    */
 }
 
 void CfdpManagerTester::testEofPdu() {
-    // TODO: This test references old function CF_CFDP_SendEof which no longer exists
-    // after refactoring. This test needs to be updated post-refactor.
-    /*
     // Test pattern:
     // 1. Setup transaction
     // 2. Invoke CfdpEngine->sendEof()
@@ -773,16 +766,16 @@ void CfdpManagerTester::testEofPdu() {
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read test file";
     ASSERT_EQ(fileSize, bytesRead) << "Failed to read complete test file";
 
-    // Compute and set CRC in transaction (matches what CfdpEngine->sendEof expects)
+    // Compute and set CRC in transaction (matches what sendEof expects)
     txn->crc.update(fileData, 0, fileSize);
     delete[] fileData;
 
     // Clear port history before test
     this->clearHistory();
 
-    // Invoke sender to emit EOF PDU
-    CfdpStatus::T status = CF_CFDP_SendEof(txn);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendEof failed";
+    // Invoke sender to emit EOF PDU using refactored API
+    CfdpStatus::T status = component.m_engine->sendEof(txn);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendEof failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -794,13 +787,9 @@ void CfdpManagerTester::testEofPdu() {
     // Verify EOF PDU
     verifyEofPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                  testSequenceId, testConditionCode, fileSize, srcFile);
-    */
 }
 
 void CfdpManagerTester::testFinPdu() {
-    // TODO: This test references old function CfdpEngine->sendFin which no longer exists
-    // after refactoring. This test needs to be updated post-refactor.
-    /*
     // Test pattern:
     // 1. Setup transaction
     // 2. Invoke CfdpEngine->sendFin()
@@ -834,9 +823,9 @@ void CfdpManagerTester::testFinPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Invoke receiver to emit FIN PDU
-    CfdpStatus::T status = CF_CFDP_SendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendFin failed";
+    // Invoke receiver to emit FIN PDU using refactored API
+    CfdpStatus::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendFin failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -853,13 +842,9 @@ void CfdpManagerTester::testFinPdu() {
                  static_cast<Cfdp::ConditionCode>(testConditionCode),
                  static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
                  static_cast<Cfdp::FinFileStatus>(testFileStatus));
-    */
 }
 
 void CfdpManagerTester::testAckPdu() {
-    // TODO: This test references old function CF_CFDP_SendAck which no longer exists
-    // after refactoring. This test needs to be updated post-refactor.
-    /*
     // Test pattern:
     // 1. Setup transaction
     // 2. Invoke CfdpEngine->sendAck()
@@ -893,10 +878,10 @@ void CfdpManagerTester::testAckPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Invoke CfdpEngine->sendAck to emit ACK PDU
-    CfdpStatus::T status = CF_CFDP_SendAck(txn, testTransactionStatus, testDirectiveCode,
-                                           testConditionCode, testPeerId, testSequenceId);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendAck failed";
+    // Invoke sendAck using refactored API
+    CfdpStatus::T status = component.m_engine->sendAck(txn, testTransactionStatus, testDirectiveCode,
+                                                       testConditionCode, testPeerId, testSequenceId);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendAck failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -915,17 +900,13 @@ void CfdpManagerTester::testAckPdu() {
                  expectedSubtypeCode,
                  static_cast<Cfdp::ConditionCode>(testConditionCode),
                  static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
-    */
 }
 
 void CfdpManagerTester::testNakPdu() {
-    // TODO: This test references old functions CF_CFDP_ConstructPduHeader and CF_CFDP_SendNak
-    // which no longer exist after refactoring. This test needs to be updated post-refactor.
-    /*
     // Test pattern:
     // 1. Setup transaction
     // 2. Construct NAK PDU with scope_start and scope_end
-    // 3. Invoke CF_CFDP_SendNak()
+    // 3. Invoke CfdpEngine->sendNak()
     // 4. Capture PDU from dataOut and validate
 
     // Configure transaction for NAK PDU emission
@@ -950,8 +931,8 @@ void CfdpManagerTester::testNakPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Construct PDU buffer with NAK header
-    CF_Logical_PduBuffer_t* ph = CF_CFDP_ConstructPduHeader(
+    // Construct PDU buffer with NAK header using refactored API
+    CF_Logical_PduBuffer_t* ph = component.m_engine->constructPduHeader(
         txn,
         CF_CFDP_FileDirective_NAK,
         component.getLocalEidParam(),  // NAK sent from receiver (local)
@@ -985,9 +966,9 @@ void CfdpManagerTester::testNakPdu() {
     nak->segment_list.segments[2].offset_start = 3584;
     nak->segment_list.segments[2].offset_end = 4096;
 
-    // Invoke CfdpEngine->sendNak to emit NAK PDU
-    CfdpStatus::T status = CF_CFDP_SendNak(txn, ph);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "CF_CFDP_SendNak failed";
+    // Invoke sendNak using refactored API
+    CfdpStatus::T status = component.m_engine->sendNak(txn, ph);
+    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendNak failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -1013,7 +994,6 @@ void CfdpManagerTester::testNakPdu() {
     verifyNakPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
                  testSequenceId, testScopeStart, testScopeEnd,
                  3, expectedSegments);
-    */
 }
 
 }  // namespace Ccsds
