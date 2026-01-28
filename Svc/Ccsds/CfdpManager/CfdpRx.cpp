@@ -37,6 +37,7 @@
 #include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
@@ -1057,7 +1058,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont /* unused */)
          * wakes up or if the network delivers severely delayed PDUs at
          * some future point, then they will be seen as spurious.  They
          * will no longer be associable with this transaction at all */
-        CF_CFDP_RecycleTransaction(txn);
+        txn->chan->recycleTransaction(txn);
 
         /* NOTE: this must be the last thing in here.  Do not use txn after this */
     }

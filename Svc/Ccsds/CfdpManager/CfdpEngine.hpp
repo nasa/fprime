@@ -37,10 +37,11 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 
-// Forward declaration - do NOT include CfdpManager.hpp to avoid circular dependency
+// Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
 namespace Svc {
 namespace Ccsds {
     class CfdpManager;
+    class CfdpChannel;
 }
 }
 
@@ -151,15 +152,6 @@ class CfdpEngine {
     void cycle();
 
     /**
-     * @brief Disable engine and reset all state
-     * 
-     * TODO BPC: This can be removed
-     *
-     * Shuts down all active transactions and resets the engine
-     */
-    void disable();
-
-    /**
      * @brief Receive and process a PDU
      *
      * @param chan_id Channel ID receiving the PDU
@@ -268,6 +260,7 @@ class CfdpEngine {
 
     CfdpManager* m_manager;       //!< Parent component for accessing protected methods
     CfdpEngineData m_engineData;  //!< Engine state
+    CfdpChannel* m_channels[CF_NUM_CHANNELS];  //!< Channel objects
 
     // ----------------------------------------------------------------------
     // Private helper methods
@@ -296,24 +289,6 @@ class CfdpEngine {
      * @param keep_history Whether the transaction info should be preserved in history
      */
     void finishTransaction(CF_Transaction_t *txn, bool keep_history);
-
-    /**
-     * @brief Recover resources associated with a transaction
-     *
-     * Wipes all data in the transaction struct and returns everything to its
-     * relevant FREE list so it can be used again.
-     *
-     * Notably, should any PDUs arrive after this that is related to this
-     * transaction, these PDUs will not be identifiable, and no longer associable
-     * to this transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *     It is imperative that nothing uses the txn struct after this call,
-     *     as it will now be invalid.  This is effectively like free().
-     *
-     * @param txn  Pointer to the transaction object
-     */
-    void recycleTransaction(CF_Transaction_t *txn);
 
     /**
      * @brief Helper function to store transaction status code only
@@ -364,7 +339,36 @@ class CfdpEngine {
      * @param chan         CF channel number
      * @param priority     Priority of transfer
      */
-    void initTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, U8 keep, U8 chan, U8 priority);
+    void initTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
+
+    /**
+     * @brief Initiate a file transfer transaction
+     *
+     * @param txn          Pointer to the transaction state
+     * @param cfdp_class   Set to class 1 or class 2
+     * @param keep         Whether to keep the local file
+     * @param chan         CF channel number
+     * @param priority     Priority of transfer
+     * @param dest_id      Destination entity ID
+     */
+    void txFileInitiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
+                        U8 priority, CfdpEntityId dest_id);
+
+    /**
+     * @brief Initiate playback of a directory
+     *
+     * @param pb           Playback state
+     * @param src_filename Source filename
+     * @param dst_filename Destination filename
+     * @param cfdp_class   Set to class 1 or class 2
+     * @param keep         Whether to keep the local file
+     * @param chan         CF channel number
+     * @param priority     Priority of transfer
+     * @param dest_id      Destination entity ID
+     * @returns SUCCESS if initiated, error otherwise
+     */
+    CfdpStatus::T playbackDirInitiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
+                                      CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
 
     /**
      * @brief Helper function to start a new RX transaction
@@ -528,6 +532,13 @@ class CfdpEngine {
      * @param local_eid Local entity ID to append
      */
     void appendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid);
+
+    /**
+     * @brief Set the PDU length field in the PDU header
+     *
+     * @param ph Pointer to logical PDU buffer
+     */
+    void setPduLength(CF_Logical_PduBuffer_t *ph);
 
     // PDU Operations - Receive
 
@@ -727,6 +738,13 @@ class CfdpEngine {
      */
     void dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
 
+    /**
+     * @brief Dispatch  TX state machine for a transaction
+     *
+     * @param txn  Pointer to the transaction state
+     */
+    void dispatchTx(CF_Transaction_t *txn);
+
     // Channel Processing
 
     /**
@@ -764,15 +782,6 @@ class CfdpEngine {
      * @returns Traversal status (CONT or EXIT)
      */
     CF_CListTraverse_Status_t doTick(CF_CListNode_t *node, void *context);
-
-    /**
-     * @brief Traverse callback for closing transaction files
-     *
-     * @param node     List node being traversed
-     * @param context  Callback context (unused)
-     * @returns Traversal status (always CONT)
-     */
-    CF_CListTraverse_Status_t closeFiles(CF_CListNode_t *node, void *context);
 
     // Playback & Polling
 

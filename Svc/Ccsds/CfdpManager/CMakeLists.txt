@@ -27,6 +27,7 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpUtils.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpDispatch.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CfdpChannel.cpp"
     DEPENDS
         CFDP_Checksum
         Svc_Ccsds_CfdpManager_Pdu

@@ -15,11 +15,10 @@
 namespace Svc {
 namespace Ccsds {
 
-// Forward declaration
+// Forward declarations
 struct CF_Channel;
-
-// Forward declaration for CFDP engine class
 class CfdpEngine;
+class CfdpChannel;
 
 class CfdpManager final : public CfdpManagerComponentBase {
   public:
@@ -64,7 +63,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   // Equivelent of CF_CFDP_MsgOutGet
   CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
-                             CF_EncoderState*& encoderPtr, CF_Channel& chan,
+                             CF_EncoderState*& encoderPtr, CfdpChannel& chan,
                              FwSizeType size);
   // Not sure there is an equivelent
   void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);

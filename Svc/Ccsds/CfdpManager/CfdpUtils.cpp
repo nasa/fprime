@@ -38,22 +38,6 @@
 
 namespace Svc {
 namespace Ccsds {
-    
-CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn)
-{
-    CF_Channel_t *chan;
-
-    if (txn->chan_num < CF_NUM_CHANNELS)
-    {
-        chan = &cfdpEngine.channels[txn->chan_num];
-    }
-    else
-    {
-        chan = NULL;
-    }
-
-    return chan;
-}
 
 CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction)
 {
@@ -158,19 +142,6 @@ void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
     CF_CList_InsertBack_Ex(chan, CfdpQueueId::HIST_FREE, &history->cl_node);
 }
 
-void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan)
-{
-    // Preserve the cfdpManager pointer across transaction reuse
-    CfdpManager* savedCfdpManager = txn->cfdpManager;
-
-    // TODO BPC: make sure transaction default constructor is sane
-    *txn = CF_Transaction_t{};
-    txn->chan_num = chan;
-    txn->cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer
-    CF_CList_InitNode(&txn->cl_node);
-    CF_CList_InsertBack_Ex(&cfdpEngine.channels[chan], CfdpQueueId::FREE, &txn->cl_node);
-}
-
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
@@ -230,42 +201,6 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
     return CF_CLIST_CONT;
 }
 
-void CF_InsertSortPrio(CF_Transaction_t *txn, CfdpQueueId::T queue)
-{
-    bool          insert_back = false;
-    CF_Channel_t *chan        = &cfdpEngine.channels[txn->chan_num];
-
-    FW_ASSERT(txn->chan_num < CF_NUM_CHANNELS, txn->chan_num, CF_NUM_CHANNELS);
-
-    /* look for proper position on PEND queue for this transaction.
-     * This is a simple priority sort. */
-
-    if (!chan->qs[queue])
-    {
-        /* list is empty, so just insert */
-        insert_back = true;
-    }
-    else
-    {
-        CF_Traverse_PriorityArg_t arg = {NULL, txn->priority};
-        CF_CList_Traverse_R(chan->qs[queue], CF_PrioSearch, &arg);
-        if (arg.txn)
-        {
-            CF_CList_InsertAfter_Ex(chan, queue, &arg.txn->cl_node, &txn->cl_node);
-        }
-        else
-        {
-            insert_back = true;
-        }
-    }
-
-    if (insert_back)
-    {
-        CF_CList_InsertBack_Ex(chan, queue, &txn->cl_node);
-    }
-    txn->flags.com.q_index = queue;
-}
-
 CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)
 {
     CF_TraverseAll_Arg_t *traverse_all = static_cast<CF_TraverseAll_Arg_t *>(arg);
@@ -282,15 +217,6 @@ I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn
         CF_CList_Traverse(chan->qs[queueidx], CF_TraverseAllTransactions_Impl, &args);
 
     return args.counter;
-}
-
-I32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, void *context)
-{
-    int   i;
-    I32 ret = 0;
-    for (i = 0; i < CF_NUM_CHANNELS; ++i)
-        ret += CF_TraverseAllTransactions(cfdpEngine.channels + i, fn, context);
-    return ret;
 }
 
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat)

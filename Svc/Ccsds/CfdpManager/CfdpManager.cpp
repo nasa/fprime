@@ -6,6 +6,7 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -80,7 +81,8 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
   CF_CFDP_DecodeStart(pdu.pdec, fwBuffer.getData(), &pdu, fwBuffer.getSize());
 
   // Identify and dispatch this PDU
-  this->m_engine->receivePdu(portNum, &pdu);
+  // There is a direct mapping from port number to channel ID
+  this->m_engine->receivePdu(static_cast<U8>(portNum), &pdu);
 
   // Return buffer
   this->dataInReturn_out(portNum, fwBuffer);
@@ -251,7 +253,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 // ----------------------------------------------------------------------
 
 CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
-                                         CF_EncoderState*& encoderPtr, CF_Channel& chan,
+                                         CF_EncoderState*& encoderPtr, CfdpChannel& chan,
                                          FwSizeType size)
 {
     // FwIndexType portNum;
@@ -270,8 +272,8 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
     FW_ASSERT(encoderPtr == NULL);
 
     // Check throttling limit first
-    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.channel_id);
-    if (chan.outgoing_counter >= max_pdus)
+    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.getChannelId());
+    if (chan.getOutgoingCounter() >= max_pdus)
     {
         status = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
     }
@@ -288,7 +290,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
                 msgPtr = this->pduBuffers[i].data;
                 encoderPtr = &this->pduBuffers[i].encoder;
 
-                chan.outgoing_counter++;
+                chan.incrementOutgoingCounter();
                 status = CfdpStatus::SUCCESS;
                 break;
             }

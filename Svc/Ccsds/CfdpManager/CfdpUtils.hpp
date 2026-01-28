@@ -54,14 +54,6 @@ typedef struct CF_Traverse_TransSeqArg
 } CF_Traverse_TransSeqArg_t;
 
 /**
- * @brief Callback function type for use with CF_TraverseAllTransactions()
- *
- * @param txn Pointer to current transaction being traversed
- * @param context Opaque object passed from initial call
- */
-typedef void (*CF_TraverseAllTransactions_fn_t)(CF_Transaction_t *txn, void *context);
-
-/**
  * @brief Argument structure for use with CF_TraverseAllTransactions()
  *
  * This basically allows for running a CF_Traverse on several lists at once
@@ -84,33 +76,6 @@ typedef struct CF_Traverse_PriorityArg
     U8             priority; /**< \brief seeking this priority */
 } CF_Traverse_PriorityArg_t;
 
-/* free a transaction from the queue it's on.
- * NOTE: this leaves the transaction in a bad state,
- * so it must be followed by placing the transaction on
- * another queue. Need this function because the path of
- * freeing a transaction (returning to default state)
- * means that it must be removed from the current queue
- * otherwise if the structure is zero'd out the queue
- * will become corrupted due to other nodes on the queue
- * pointing to an invalid node */
-static inline void CF_DequeueTransaction(CF_Transaction_t *txn)
-{
-    FW_ASSERT(txn && (txn->chan_num < CF_NUM_CHANNELS));
-    CF_CList_Remove(&cfdpEngine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
-    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-}
-
-static inline void CF_MoveTransaction(CF_Transaction_t *txn, CfdpQueueId::T queue)
-{
-    FW_ASSERT(txn && (txn->chan_num < CF_NUM_CHANNELS));
-    CF_CList_Remove(&cfdpEngine.channels[txn->chan_num].qs[txn->flags.com.q_index], &txn->cl_node);
-    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-    CF_CList_InsertBack(&cfdpEngine.channels[txn->chan_num].qs[queue], &txn->cl_node);
-    txn->flags.com.q_index = queue;
-    // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-}
 
 static inline void CF_CList_Remove_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *node)
 {
@@ -162,17 +127,6 @@ CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t di
 void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history);
 
 /************************************************************************/
-/** @brief Frees and resets a transaction and returns it for later use.
- *
- * @par Assumptions, External Events, and Notes:
- *       txn must not be NULL.
- *
- * @param txn Pointer to the transaction object
- * @param chan The channel number which this transaction is associated with
- */
-void CF_FreeTransaction(CF_Transaction_t *txn, U8 chan);
-
-/************************************************************************/
 /** @brief Finds an active transaction by sequence number.
  *
  * @par Description
@@ -209,23 +163,6 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
 
 /************************************************************************/
-/** @brief Insert a transaction into a priority sorted transaction queue.
- *
- * @par Description
- *       This function works by walking the queue in reverse to find a
- *       transaction with a higher priority than the given transaction.
- *       The given transaction is then inserted after that one, since it
- *       would be the next lower priority.
- *
- * @par Assumptions, External Events, and Notes:
- *       txn must not be NULL.
- *
- * @param txn  Pointer to the transaction object
- * @param queue  Index of queue to insert into
- */
-void CF_InsertSortPrio(CF_Transaction_t *txn, CfdpQueueId::T queue);
-
-/************************************************************************/
 /** @brief Traverses all transactions on all active queues and performs an operation on them.
  *
  * @par Assumptions, External Events, and Notes:
@@ -238,19 +175,6 @@ void CF_InsertSortPrio(CF_Transaction_t *txn, CfdpQueueId::T queue);
  * @returns Number of transactions traversed
  */
 I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context);
-
-/************************************************************************/
-/** @brief Traverses all transactions on all channels and performs an operation on them.
- *
- * @par Assumptions, External Events, and Notes:
- *       fn must be a valid function. context must not be NULL.
- *
- * @param fn      Callback to invoke for all traversed transactions
- * @param context Opaque object to pass to all callbacks
- *
- * @returns Number of transactions traversed
- */
-I32 CF_TraverseAllTransactions_All_Channels(CF_TraverseAllTransactions_fn_t fn, void *context);
 
 /************************************************************************/
 /** @brief List traversal function performs operation on every active transaction.
@@ -315,19 +239,6 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
  * @retval false if no error has occurred during the transaction yet
  */
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat);
-
-/************************************************************************/
-/** @brief Gets the associated channel struct from a transaction
- *
- * @par Assumptions, External Events, and Notes:
- *       txn must not be null, and the chan_num must be set
- *
- * @param txn   Transaction
- *
- * @returns Pointer to CF_Channel_t struct associated with the transaction
- * @retval NULL if checks failed
- */
-CF_Channel_t *CF_GetChannelFromTxn(CF_Transaction_t *txn);
 
 /************************************************************************/
 /** @brief Gets the head of the chunk list for the given channel + direction

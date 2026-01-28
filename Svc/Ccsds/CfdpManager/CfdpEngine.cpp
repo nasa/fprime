@@ -40,6 +40,7 @@
 #include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
@@ -85,12 +86,23 @@ CfdpEngine::CfdpEngine(CfdpManager* manager) :
     m_manager(manager),
     m_engineData()
 {
-    // Engine data will be initialized by init()
+    // TODO BPC: Should we intialize CfdpEngine here or wait for the init() function?
+    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
+    {
+        m_channels[i] = nullptr;
+    }
 }
 
 CfdpEngine::~CfdpEngine()
 {
-    // Cleanup handled by disable()
+    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
+    {
+        if (m_channels[i] != nullptr)
+        {
+            delete m_channels[i];
+            m_channels[i] = nullptr;
+        }
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -115,6 +127,9 @@ CfdpStatus::T CfdpEngine::init()
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
+        m_channels[i] = new CfdpChannel(this, &this->m_engineData.channels[i]);
+        FW_ASSERT(m_channels[i] != nullptr);
+
         // TODO BPC: Add pointer to component in order to send output buffers
         this->m_engineData.channels[i].cfdpManager = this->m_manager;
         this->m_engineData.channels[i].channel_id = i;
@@ -132,7 +147,7 @@ CfdpStatus::T CfdpEngine::init()
             txn->cfdpManager = this->m_manager;
 
             /* Initially put this on the free list for this channel */
-            CF_FreeTransaction(txn, i);
+            m_channels[i]->freeTransaction(txn);
 
             for (k = 0; k < CF_Direction_NUM; ++k, ++cw)
             {
@@ -205,20 +220,35 @@ void CfdpEngine::armInactTimer(CF_Transaction_t *txn)
 
 void CfdpEngine::dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
-    static const CF_CFDP_TxnRecvDispatchTable_t state_fns = {
-        {
-            nullptr, // CF_TxnState_UNDEF
-            CF_CFDP_RecvInit, // CF_TxnState_INIT
-            CF_CFDP_R1_Recv, // CF_TxnState_R1
-            CF_CFDP_S1_Recv, // CF_TxnState_S1
-            CF_CFDP_R2_Recv, // CF_TxnState_R2
-            CF_CFDP_S2_Recv, // CF_TxnState_S2
-            CF_CFDP_RecvDrop, // CF_TxnState_DROP
-            CF_CFDP_RecvHold // CF_TxnState_HOLD
-        }
-    };
+    // Dispatch based on transaction state
+    switch (txn->state)
+    {
+        case CF_TxnState_INIT:
+            this->recvInit(txn, ph);
+            break;
+        case CF_TxnState_R1:
+            CF_CFDP_R1_Recv(txn, ph);
+            break;
+        case CF_TxnState_S1:
+            CF_CFDP_S1_Recv(txn, ph);
+            break;
+        case CF_TxnState_R2:
+            CF_CFDP_R2_Recv(txn, ph);
+            break;
+        case CF_TxnState_S2:
+            CF_CFDP_S2_Recv(txn, ph);
+            break;
+        case CF_TxnState_DROP:
+            this->recvDrop(txn, ph);
+            break;
+        case CF_TxnState_HOLD:
+            this->recvHold(txn, ph);
+            break;
+        default:
+            // Invalid or undefined state
+            break;
+    }
 
-    CF_CFDP_RxStateDispatch(txn, ph, &state_fns);
     this->armInactTimer(txn); /* whenever a packet was received by the other size, always arm its inactivity timer */
 }
 
@@ -291,11 +321,11 @@ CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, 
     CfdpStatus::T status;
     CF_EncoderState *encoder = NULL;;
 
-    CF_Channel_t* chan = CF_GetChannelFromTxn(const_cast<CF_Transaction_t*>(txn));
-    FW_ASSERT(chan != NULL);
+    FW_ASSERT(txn != NULL);
+    FW_ASSERT(txn->chan != NULL);
 
     // This is where a message buffer is requested
-    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, *chan, sizeof(CF_Logical_PduBuffer_t));
+    status = txn->cfdpManager->getPduBuffer(ph, msgPtr, encoder, *txn->chan, sizeof(CF_Logical_PduBuffer_t));
     if (status == CfdpStatus::SUCCESS)
     {
         FW_ASSERT(ph != NULL);
@@ -672,11 +702,11 @@ CfdpStatus::T CfdpEngine::recvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
         /*
          * store the filenames in transaction.
          *
-         * NOTE: The "CF_CFDP_CopyStringFromLV()" now knows that the data is supposed to be a C string,
+         * NOTE: The "copyStringFromLV()" now knows that the data is supposed to be a C string,
          * and ensures that the output content is properly terminated, so this only needs to check that
          * it worked.
          */
-        lvRet = CF_CFDP_CopyStringFromLV(txn->history->fnames.src_filename, &md->source_filename);
+        lvRet = this->copyStringFromLV(txn->history->fnames.src_filename, &md->source_filename);
         if (lvRet != CfdpStatus::SUCCESS)
         {
             // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -687,7 +717,7 @@ CfdpStatus::T CfdpEngine::recvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
         }
         else
         {
-            lvRet = CF_CFDP_CopyStringFromLV(txn->history->fnames.dst_filename, &md->dest_filename);
+            lvRet = this->copyStringFromLV(txn->history->fnames.dst_filename, &md->dest_filename);
             if (lvRet != CfdpStatus::SUCCESS)
             {
                 // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -731,7 +761,7 @@ CfdpStatus::T CfdpEngine::recvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
     {
         // CFE_EVS_SendEvent(CF_PDU_FD_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: filedata PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
+        this->setTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
         // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.error;
         ret = CfdpStatus::SHORT_PDU_ERROR;
     }
@@ -740,7 +770,7 @@ CfdpStatus::T CfdpEngine::recvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
         // CFE_EVS_SendEvent(CF_PDU_FD_UNSUPPORTED_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: filedata PDU with segment metadata received");
-        CF_CFDP_SetTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
+        this->setTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
         // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].counters.recv.error;
         ret = CfdpStatus::ERROR;
     }
@@ -840,7 +870,7 @@ void CfdpEngine::recvHold(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     /* currently the only thing we will re-ack is the FIN. */
     if (ph->fdirective.directive_code == CF_CFDP_FileDirective_FIN)
     {
-        if (!CF_CFDP_RecvFin(txn, ph))
+        if (!this->recvFin(txn, ph))
         {
             this->sendAck(txn, CF_CFDP_AckTxnStatus_TERMINATED, CF_CFDP_FileDirective_FIN, ph->int_header.fin.cc,
                             ph->pdu_header.destination_eid, ph->pdu_header.sequence_num);
@@ -864,7 +894,7 @@ void CfdpEngine::recvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     /* all RX transactions will need a chunk list to track file segments */
     if (txn->chunks == NULL)
     {
-        txn->chunks = this->findUnusedChunks(CF_GetChannelFromTxn(txn), CF_Direction_RX);
+        txn->chunks = txn->chan->findUnusedChunks(CF_Direction_RX);
     }
     if (txn->chunks == NULL)
     {
@@ -931,7 +961,7 @@ void CfdpEngine::recvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
     if (txn->state == CF_TxnState_INIT)
     {
         /* state was not changed, so free the transaction */
-        CF_CFDP_FinishTransaction(txn, false);
+        this->finishTransaction(txn, false);
     }
 }
 
@@ -960,7 +990,7 @@ void CfdpEngine::receivePdu(U8 chan_id, CF_Logical_PduBuffer_t *ph)
             {
                 /* we didn't find a match, so assign it to a transaction */
                 /* assume this is initiating an RX transaction, as TX transactions are only commanded */
-                txn = CF_CFDP_StartRxTransaction(chan->channel_id);
+                txn = this->startRxTransaction(chan->channel_id);
                 if (txn == NULL)
                 {
                     // CFE_EVS_SendEvent(
@@ -997,177 +1027,6 @@ void CfdpEngine::setChannelFlowState(U8 channelId, CfdpFlow::T flowState)
     this->m_engineData.channels[channelId].flowState = flowState;
 }
 
-CF_CListTraverse_Status_t CfdpEngine::cycleTxFirstActive(CF_CListNode_t *node, void *context)
-{
-    CF_CFDP_CycleTx_args_t *  args = static_cast<CF_CFDP_CycleTx_args_t *>(context);
-    CF_Transaction_t *        txn  = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    CF_CListTraverse_Status_t ret  = CF_CLIST_EXIT; /* default option is exit traversal */
-
-    if (txn->flags.com.suspended)
-    {
-        ret = CF_CLIST_CONT; /* suspended, so move on to next */
-    }
-    else
-    {
-        FW_ASSERT(txn->flags.com.q_index == CfdpQueueId::TXA); /* huh? */
-
-        /* if no more messages, then chan->cur will be set.
-         * If the transaction sent the last filedata PDU and EOF, it will move itself
-         * off the active queue. Run until either of these occur. */
-        while (!args->chan->cur && txn->flags.com.q_index == CfdpQueueId::TXA)
-        {
-            CF_CFDP_DispatchTx(txn);
-        }
-
-        args->ran_one = 1;
-    }
-
-    return ret;
-}
-
-void CfdpEngine::cycleTx(CF_Channel_t *chan)
-{
-    CF_Transaction_t * txn;
-    CF_CFDP_CycleTx_args_t args;
-
-    if (chan->cfdpManager->getDequeueEnabledParam(chan->channel_id))
-    {
-        args.chan = chan;
-        args.ran_one = 0;
-
-        /* loop through as long as there are pending transactions, and a message buffer to send their PDUs on */
-
-        /* NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
-         * PDUs that can be sent once we get to here */
-        if (!chan->cur)
-        { /* don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup */
-
-            // TODO BPC: refactor all while loops
-            while (true)
-            {
-                /* Attempt to run something on TXA */
-                CF_CList_Traverse(chan->qs[CfdpQueueId::TXA], CF_CFDP_CycleTxFirstActive, &args);
-
-                /* Keep going until CfdpQueueId::PEND is empty or something is run */
-                if (args.ran_one || chan->qs[CfdpQueueId::PEND] == NULL)
-                {
-                    break;
-                }
-
-                txn = container_of_cpp(chan->qs[CfdpQueueId::PEND], &CF_Transaction_t::cl_node);
-
-                /* Class 2 transactions need a chunklist for NAK processing, get one now.
-                 * Class 1 transactions don't need chunks since they don't support NAKs. */
-                if (txn->txn_class == CfdpClass::CLASS_2)
-                {
-                    if (txn->chunks == NULL)
-                    {
-                        txn->chunks = CF_CFDP_FindUnusedChunks(chan, CF_Direction_TX);
-                    }
-                    if (txn->chunks == NULL)
-                    {
-                        // TODO BPC: Emit EVR
-                        // Leave transaction pending until a chunklist is available.
-                        break;
-                    }
-                }
-
-                CF_CFDP_ArmInactTimer(txn);
-                CF_MoveTransaction(txn, CfdpQueueId::TXA);
-            }
-        }
-
-        /* in case the loop exited due to no message buffers, clear it and start from the top next time */
-        chan->cur = NULL;
-    }
-}
-
-CF_CListTraverse_Status_t CfdpEngine::doTick(CF_CListNode_t *node, void *context)
-{
-    CF_CListTraverse_Status_t ret  = CF_CLIST_CONT; /* CF_CLIST_CONT means don't tick one, keep looking for cur */
-    CF_CFDP_Tick_args_t *     args = static_cast<CF_CFDP_Tick_args_t *>(context);
-    CF_Transaction_t *        txn  = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    if (!args->chan->cur || (args->chan->cur == txn))
-    {
-        /* found where we left off, so clear that and move on */
-        args->chan->cur = NULL;
-        if (!txn->flags.com.suspended)
-        {
-            args->fn(txn, &args->cont);
-        }
-
-        /* if args->chan->cur was set to not-NULL above, then exit early */
-        /* NOTE: if channel is frozen, then tick processing won't have been entered.
-         *     so there is no need to check it here */
-        if (args->chan->cur)
-        {
-            ret              = CF_CLIST_EXIT;
-            args->early_exit = true;
-        }
-    }
-
-    return ret; /* don't tick one, keep looking for cur */
-}
-
-void CfdpEngine::tickTransactions(CF_Channel_t *chan)
-{
-    bool reset = true;
-
-    void (*fns[CF_TickType_NUM_TYPES])(CF_Transaction_t *, int *) = {CF_CFDP_R_Tick, CF_CFDP_S_Tick,
-                                                                     CF_CFDP_S_Tick_Nak};
-    int qs[CF_TickType_NUM_TYPES]                                 = {CfdpQueueId::RX, CfdpQueueId::TXW, CfdpQueueId::TXW};
-
-    FW_ASSERT(chan->tick_type < CF_TickType_NUM_TYPES, chan->tick_type);
-
-    for (; chan->tick_type < CF_TickType_NUM_TYPES; ++chan->tick_type)
-    {
-        CF_CFDP_Tick_args_t args = {chan, fns[chan->tick_type], 0, 0};
-
-        do
-        {
-            args.cont = 0;
-            CF_CList_Traverse(chan->qs[qs[chan->tick_type]], CF_CFDP_DoTick, &args);
-
-            if (args.early_exit)
-            {
-                /* early exit means we ran out of available outgoing messages this wakeup.
-                 * If current tick type is NAK response, then reset tick type. It would be
-                 * bad to let NAK response starve out RX or TXW ticks on the next cycle.
-                 *
-                 * If RX ticks use up all available messages, then we pick up where we left
-                 * off on the next cycle. (This causes some RX tick counts to be missed,
-                 * but that's ok. Precise timing isn't required.)
-                 *
-                 * This scheme allows the following priority for use of outgoing messages:
-                 *
-                 * RX state messages
-                 * TXW state messages
-                 * NAK response (could be many)
-                 *
-                 * New file data on TXA
-                 */
-                if (chan->tick_type != CF_TickType_TXW_NAK)
-                {
-                    reset = false;
-                }
-
-                break;
-            }
-        }
-        while (args.cont);
-
-        if (!reset)
-        {
-            break;
-        }
-    }
-
-    if (reset)
-    {
-        chan->tick_type = CF_TickType_RX; /* reset tick type */
-    }
-}
-
 void CfdpEngine::initTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority)
 {
     txn->chan_num = chan;
@@ -1197,7 +1056,7 @@ void CfdpEngine::txFileInitiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, 
     txn->history->src_eid  = txn->cfdpManager->getLocalEidParam();
     txn->history->peer_eid = dest_id;
 
-    CF_InsertSortPrio(txn, CfdpQueueId::PEND);
+    txn->chan->insertSortPrio(txn, CfdpQueueId::PEND);
 }
 
 CfdpStatus::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::String& dst_filename,
@@ -1240,7 +1099,7 @@ CfdpStatus::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::Strin
     return ret;
 }
 
-CF_Transaction_t *CF_CFDP_StartRxTransaction(U8 chan_num)
+CF_Transaction_t *CfdpEngine::startRxTransaction(U8 chan_num)
 {
     CF_Channel_t *    chan = &this->m_engineData.channels[chan_num];
     CF_Transaction_t *txn;
@@ -1331,109 +1190,6 @@ CfdpStatus::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw::
 
 }
 
-void CfdpEngine::processPlaybackDirectory(CF_Channel_t *chan, CF_Playback_t *pb)
-{
-    CF_Transaction_t *txn;
-    char path[CfdpManagerMaxFileSize];
-    Os::Directory::Status status;
-
-    /* either there's no transaction (first one) or the last one was finished, so check for a new one */
-
-    memset(&path, 0, sizeof(path));
-
-    while (pb->diropen && (pb->num_ts < CF_NUM_TRANSACTIONS_PER_PLAYBACK))
-    {
-        if (pb->pending_file[0] == 0)
-        {
-            status = pb->dir.read(path, CfdpManagerMaxFileSize);
-            if (status == Os::Directory::NO_MORE_FILES)
-            {
-                // TODO BPC: Emit playback success EVR
-                pb->dir.close();
-                pb->diropen = false;
-                break;
-            }
-            if (status != Os::Directory::OP_OK)
-            {
-                // TODO BPC: emit playback error EVR
-                pb->dir.close();
-                pb->diropen = false;
-                break;
-            }
-
-            strncpy(pb->pending_file, path, sizeof(pb->pending_file) - 1);
-            pb->pending_file[sizeof(pb->pending_file) - 1] = 0;
-        }
-        else
-        {
-            txn = CF_FindUnusedTransaction(chan, CF_Direction_TX);
-            if (txn == NULL)
-            {
-                /* while not expected this can certainly happen, because
-                 * rx transactions consume in these as well. */
-                /* should not need to do anything special, will come back next tick */
-                break;
-            }
-
-            // Append file name to source/destination folders
-            txn->history->fnames.src_filename = pb->fnames.src_filename;
-            txn->history->fnames.src_filename += "/";
-            txn->history->fnames.src_filename += pb->pending_file;
-            
-            txn->history->fnames.dst_filename = pb->fnames.dst_filename;
-            txn->history->fnames.dst_filename += "/";
-            txn->history->fnames.dst_filename += pb->pending_file;
-
-            this->txFileInitiate(txn, pb->cfdp_class, pb->keep, chan->channel_id, pb->priority,
-                                    pb->dest_id);
-
-            txn->pb = pb;
-            ++pb->num_ts;
-
-            pb->pending_file[0] = 0; /* continue reading dir */
-        }
-    }
-
-    if (!pb->diropen && !pb->num_ts)
-    {
-        /* the directory has been exhausted, and there are no more active transactions
-         * for this playback -- so mark it as not busy */
-        pb->busy = false;
-    }
-}
-
-void CfdpEngine::updatePollPbCounted(CF_Playback_t *pb, int up, U8 *counter)
-{
-    if (pb->counted != up)
-    {
-        /* only handle on state change */
-        pb->counted = !!up; /* !! ensure 0 or 1, should be optimized out */
-
-        if (up)
-        {
-            ++*counter;
-        }
-        else
-        {
-            FW_ASSERT(*counter); /* sanity check it isn't zero */
-            --*counter;
-        }
-    }
-}
-
-void CfdpEngine::processPlaybackDirectories(CF_Channel_t *chan)
-{
-    int       i;
-    // const int chan_index = (chan - this->m_engineData.channels);
-
-    for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
-    {
-        this->processPlaybackDirectory(chan, &chan->playback[i]);
-        // this->updatePollPbCounted(&chan->playback[i], chan->playback[i].busy,
-        //                             &CF_AppData.hk.Payload.channel_hk[chan_index].playback_counter);
-    }
-}
-
 CfdpStatus::T CfdpEngine::startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, const Fw::String& dstDir,
                                      CfdpClass::T cfdp_class, U8 priority, CfdpEntityId destEid,
                                      U32 intervalSec)
@@ -1502,92 +1258,38 @@ CfdpStatus::T CfdpEngine::stopPollDir(U8 chanId, U8 pollId)
     return status;
 }
 
-void CfdpEngine::processPollingDirectories(CF_Channel_t *chan)
-{
-    CF_PollDir_t * pd;
-    U32 i;
-    // TODO BPC: count_check is only used for telemetry
-    // I32 count_check;
-    CfdpStatus::T status;
-
-    for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
-    {
-        pd = &chan->polldir[i];
-        // count_check = 0;
-
-        if (pd->enabled)
-        {
-            if ((pd->pb.busy == false) && (pd->pb.num_ts == 0))
-            {
-                if ((pd->intervalTimer.getStatus() != CfdpTimer::Status::RUNNING) && (pd->intervalSec > 0))
-                {
-                    /* timer was not set, so set it now */
-                    pd->intervalTimer.setTimer(pd->intervalSec);
-                }
-                else if (pd->intervalTimer.getStatus() == CfdpTimer::Status::EXPIRED)
-                {
-                    /* the timer has expired */
-                    status = this->playbackDirInitiate(&pd->pb, pd->srcDir, pd->dstDir, pd->cfdpClass,
-                                                          CfdpKeep::DELETE, chan->channel_id, pd->priority,
-                                                          pd->destEid);
-                    if (status != CfdpStatus::SUCCESS)
-                    {
-                        /* error occurred in playback directory, so reset the timer */
-                        /* an event is sent in CF_CFDP_PlaybackDir_Initiate so there is no reason to
-                         * to have another here */
-                        pd->intervalTimer.setTimer(pd->intervalSec);
-                    }
-                }
-                else
-                {
-                    pd->intervalTimer.run();
-                }
-            }
-            else
-            {
-                /* playback is active, so step it */
-                this->processPlaybackDirectory(chan, &pd->pb);
-            }
-
-            // count_check = 1;
-        }
-
-        // this->updatePollPbCounted(&poll->pb, count_check, &CF_AppData.hk.Payload.channel_hk[chan_index].poll_counter);
-    }
-}
-
 void CfdpEngine::cycle(void)
 {
-    CF_Channel_t *chan;
-    int           i;
+    int i;
 
     for (i = 0; i < CF_NUM_CHANNELS; ++i)
     {
-        chan = &this->m_engineData.channels[i];
-        chan->outgoing_counter = 0;
+        CF_Channel_t *chanData = &this->m_engineData.channels[i];
+        chanData->outgoing_counter = 0;
 
-        if (chan->flowState == CfdpFlow::NOT_FROZEN)
+        if (chanData->flowState == CfdpFlow::NOT_FROZEN)
         {
             /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
              * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
              * PDUs. */
 
+            CfdpChannel* chan = m_channels[i];
+            FW_ASSERT(chan != nullptr);
+
             /* cycle all transactions (tick) */
-            this->tickTransactions(chan);
+            chan->tickTransactions();
 
             /* cycle the current tx transaction */
-            this->cycleTx(chan);
+            chan->cycleTx();
 
-            this->processPlaybackDirectories(chan);
-            this->processPollingDirectories(chan);
+            chan->processPlaybackDirectories();
+            chan->processPollingDirectories();
         }
     }
 }
 
 void CfdpEngine::finishTransaction(CF_Transaction_t *txn, bool keep_history)
 {
-    CF_Channel_t *chan;
-
     if (txn->flags.com.q_index == CfdpQueueId::FREE)
     {
         // CFE_EVS_SendEvent(CF_RESET_FREED_XACT_DBG_EID, CFE_EVS_EventType_DEBUG,
@@ -1595,10 +1297,8 @@ void CfdpEngine::finishTransaction(CF_Transaction_t *txn, bool keep_history)
         return;
     }
 
-    chan = CF_GetChannelFromTxn(txn);
-
     /* this should always be */
-    FW_ASSERT(chan != NULL);
+    FW_ASSERT(txn->chan != NULL);
 
     /* If this was on the TXA queue (transmit side) then we need to move it out
      * so the tick processor will stop trying to actively transmit something -
@@ -1609,8 +1309,8 @@ void CfdpEngine::finishTransaction(CF_Transaction_t *txn, bool keep_history)
      * (RX queue is not separated into A/W parts) */
     if (txn->flags.com.q_index == CfdpQueueId::TXA)
     {
-        CF_DequeueTransaction(txn);
-        CF_InsertSortPrio(txn, CfdpQueueId::TXW);
+        txn->chan->dequeueTransaction(txn);
+        txn->chan->insertSortPrio(txn, CfdpQueueId::TXW);
     }
 
     if (true == txn->fd.isOpen())
@@ -1630,9 +1330,7 @@ void CfdpEngine::finishTransaction(CF_Transaction_t *txn, bool keep_history)
         /* extra bookkeeping for tx direction only */
         if (txn->history->dir == CF_Direction_TX && txn->flags.tx.cmd_tx)
         {
-            FW_ASSERT(chan->num_cmd_tx); /* sanity check */
-
-            --chan->num_cmd_tx;
+            txn->chan->decrementCmdTxCounter();
         }
 
         txn->flags.com.keep_history = keep_history;
@@ -1645,68 +1343,11 @@ void CfdpEngine::finishTransaction(CF_Transaction_t *txn, bool keep_history)
         --txn->pb->num_ts;
     }
 
-    /* no need to come back to this txn */
-    if (chan->cur == txn)
-    {
-        chan->cur = NULL;
-    }
+    txn->chan->clearCurrentIfMatch(txn);
 
     /* Put this transaction into the holdover state, inactivity timer will recycle it */
     txn->state = CF_TxnState_HOLD;
-    CF_CFDP_ArmInactTimer(txn);
-}
-
-void CfdpEngine::recycleTransaction(CF_Transaction_t *txn)
-{
-    CF_Channel_t *   chan;
-    CF_CListNode_t **chunklist_head;
-    CfdpQueueId::T    hist_destq;
-
-    chan = CF_GetChannelFromTxn(txn);
-
-    /* File should have been closed by the state machine, but if
-     * it still hanging open at this point, close it now so its not leaked.
-     * This is not normal/expected so log it if this happens. */
-    if (true == txn->fd.isOpen())
-    {
-        // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
-        txn->fd.close();
-    }
-
-    CF_DequeueTransaction(txn); /* this makes it "float" (not in any queue) */
-
-    chan = CF_GetChannelFromTxn(txn);
-
-    /* this should always be */
-    if (chan != NULL && txn->history != NULL)
-    {
-        if (txn->chunks != NULL)
-        {
-            chunklist_head = CF_GetChunkListHead(chan, txn->history->dir);
-            if (chunklist_head != NULL)
-            {
-                CF_CList_InsertBack(chunklist_head, &txn->chunks->cl_node);
-                txn->chunks = NULL;
-            }
-        }
-
-        if (txn->flags.com.keep_history)
-        {
-            /* move transaction history to history queue */
-            hist_destq = CfdpQueueId::HIST;
-        }
-        else
-        {
-            hist_destq = CfdpQueueId::HIST_FREE;
-        }
-        CF_CList_InsertBack_Ex(chan, hist_destq, &txn->history->cl_node);
-        txn->history = NULL;
-    }
-
-    /* this wipes it and puts it back onto the list to be found by
-     * CF_FindUnusedTransaction().  Need to preserve the chan_num
-     * and keep it associated with this channel, though. */
-    CF_FreeTransaction(txn, txn->chan_num);
+    this->armInactTimer(txn);
 }
 
 void CfdpEngine::setTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat)
@@ -1796,59 +1437,6 @@ void CfdpEngine::cancelTransaction(CF_Transaction_t *txn)
     }
 }
 
-CF_CListTraverse_Status_t CfdpEngine::closeFiles(CF_CListNode_t *node, void *context)
-{
-    CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    if (true == txn->fd.isOpen())
-    {
-        txn->fd.close();
-    }
-    return CF_CLIST_CONT;
-}
-
-// TODO BPC: This should be removed if we don't need enable/disable support
-void CfdpEngine::disable(void)
-{
-    U32 i;
-    U32 j;
-    static const CfdpQueueId::T CLOSE_QUEUES[] = {CfdpQueueId::RX, CfdpQueueId::TXA, CfdpQueueId::TXW};
-    CF_Channel_t * chan;
-
-    for (i = 0; i < CF_NUM_CHANNELS; ++i)
-    {
-        chan = &this->m_engineData.channels[i];
-
-        /* first, close all active files */
-        for (j = 0; j < (sizeof(CLOSE_QUEUES) / sizeof(CLOSE_QUEUES[0])); ++j)
-        {
-            CF_CList_Traverse(chan->qs[CLOSE_QUEUES[j]], CF_CFDP_CloseFiles, NULL);
-        }
-
-        /* any playback directories need to have their directory ids closed */
-        for (j = 0; j < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++j)
-        {
-            if (chan->playback[j].busy)
-            {
-                chan->playback[j].dir.close();
-            }
-        }
-
-        for (j = 0; j < CF_MAX_POLLING_DIR_PER_CHAN; ++j)
-        {
-            if (chan->polldir[j].pb.busy)
-            {
-                chan->polldir[j].pb.dir.close();
-            }
-        }
-
-        /* finally all queue counters must be reset */
-        // memset(&CF_AppData.hk.Payload.channel_hk[i].q_size, 0, sizeof(CF_AppData.hk.Payload.channel_hk[i].q_size));
-
-        // TODO BPC: remove pipe references
-        // CFE_SB_DeletePipe(chan->pipe);
-    }
-}
-
 bool CfdpEngine::isPollingDir(const char *src_file, U8 chan_num)
 {
     bool return_code = false;
@@ -1902,7 +1490,7 @@ void CfdpEngine::handleNotKeepFile(CF_Transaction_t *txn)
         else
         {
             /* file inside an polling directory */
-            if (CF_CFDP_IsPollingDir(txn->history->fnames.src_filename.toChar(), txn->chan_num))
+            if (this->isPollingDir(txn->history->fnames.src_filename.toChar(), txn->chan_num))
             {
                 /* If fail directory is defined attempt move */
                 failDir = txn->cfdpManager->getFailDirParam();

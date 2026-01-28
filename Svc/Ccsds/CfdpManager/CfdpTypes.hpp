@@ -52,6 +52,9 @@
 namespace Svc {
 namespace Ccsds {
 
+// Forward declarations
+class CfdpChannel;
+
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
  */
@@ -410,7 +413,18 @@ typedef struct CF_Transaction
     /**< \brief Reference to the wrapper F' component in order to send PDUs */
     CfdpManager* cfdpManager;
 
+    /**< \brief Pointer to the channel wrapper this transaction belongs to */
+    CfdpChannel* chan;
+
 } CF_Transaction_t;
+
+/**
+ * @brief Callback function type for use with CF_TraverseAllTransactions()
+ *
+ * @param txn Pointer to current transaction being traversed
+ * @param context Opaque object passed from initial call
+ */
+typedef void (*CF_TraverseAllTransactions_fn_t)(CF_Transaction_t *txn, void *context);
 
 /**
  * @brief Identifies the type of timer tick being processed
@@ -437,18 +451,12 @@ typedef struct CF_Channel
     CF_CListNode_t *qs[CfdpQueueId::NUM];
     CF_CListNode_t *cs[CF_Direction_NUM];
 
-    // TODO BPC: remove all pipe references
-    // CFE_SB_PipeId_t pipe;
-
     U32 num_cmd_tx;
 
     CF_Playback_t playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];
 
     /* Polling directory state */
     CF_PollDir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
-
-    // TODO BPC: remove all semaphore references
-    // osal_id_t sem_id; /**< \brief semaphore id for output pipe */
 
     const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */
 
