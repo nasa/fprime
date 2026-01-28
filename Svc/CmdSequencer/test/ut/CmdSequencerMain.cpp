@@ -53,6 +53,11 @@ TEST(Immediate, AutoByPort) {
     tester.AutoByPort();
 }
 
+TEST(Immediate, AutoByFileDispatcherPort) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.AutoByFileDispatcherPort();
+}
+
 TEST(Immediate, AutoByPortAMPCS) {
     Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.AutoByPort();

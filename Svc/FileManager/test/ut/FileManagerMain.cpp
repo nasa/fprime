@@ -79,6 +79,11 @@ TEST(Test, fileSizeFail) {
     tester.fileSizeFail();
 }
 
+TEST(Test, calculateCrcSucceed) {
+    Svc::FileManagerTester tester;
+    tester.calculateCrcSucceed();
+}
+
 TEST(Test, listDirectorySucceed) {
     Svc::FileManagerTester tester;
     tester.listDirectorySucceed();

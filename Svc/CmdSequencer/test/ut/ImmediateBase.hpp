@@ -46,6 +46,12 @@ class CmdSequencerTester : public Svc::CmdSequencerTester {
                                  const U32 bound             //!< The number of commands to execute
     );
 
+    //! Run an automatic sequence by file dispatch port call
+    void parameterizedAutoByFileDispatchPort(SequenceFiles::File& file,  //!< The file
+                                             const U32 numCommands,      //!< The number of commands in the sequence
+                                             const U32 bound             //!< The number of commands to execute
+    );
+
     //! Send invalid manual commands while a sequence is running
     void parameterizedInvalidManualCommands(SequenceFiles::File& file  //!< The file
     );

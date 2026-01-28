@@ -2,11 +2,12 @@
 // \title Os/Generic/PriorityQueue.cpp
 // \brief priority queue implementation for Os::Queue
 // ======================================================================
-
-#include "PriorityQueue.hpp"
-#include <Fw/Types/Assert.hpp>
+#include "Os/Generic/PriorityQueue.hpp"
 #include <cstring>
-#include <new>
+#include "Fw/LanguageHelpers.hpp"
+#include "Fw/Types/Assert.hpp"
+#include "Fw/Types/MemAllocator.hpp"
+#include "config/MemoryAllocatorTypeEnumAc.hpp"
 
 namespace Os {
 namespace Generic {
@@ -38,62 +39,137 @@ void PriorityQueueHandle ::load_data(FwSizeType index, U8* destination, FwSizeTy
     (void)::memcpy(destination, this->m_data + offset, static_cast<size_t>(size));
 }
 
-PriorityQueue::~PriorityQueue() {
-    delete[] this->m_handle.m_data;
-    delete[] this->m_handle.m_indices;
-    delete[] this->m_handle.m_sizes;
-}
+PriorityQueue::~PriorityQueue() {}
 
-QueueInterface::Status PriorityQueue::create(const Fw::ConstStringBase& name,
+QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
+                                             const Fw::ConstStringBase& name,
                                              FwSizeType depth,
                                              FwSizeType messageSize) {
+    const FwEnumStoreType identifier = id;
+    QueueInterface::Status status = Os::QueueInterface::Status::OP_OK;
     // Ensure we are created exactly once
     FW_ASSERT(this->m_handle.m_indices == nullptr);
     FW_ASSERT(this->m_handle.m_sizes == nullptr);
     FW_ASSERT(this->m_handle.m_data == nullptr);
 
-    // Allocate indices list
-    FwSizeType* indices = new (std::nothrow) FwSizeType[depth];
-    if (indices == nullptr) {
-        return QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    // Allocate sizes list or clean-up
-    FwSizeType* sizes = new (std::nothrow) FwSizeType[depth];
-    if (sizes == nullptr) {
-        delete[] indices;
-        return QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    // Allocate sizes list or clean-up
-    U8* data = new (std::nothrow) U8[depth * messageSize];
-    if (data == nullptr) {
-        delete[] indices;
-        delete[] sizes;
-        return QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    // Allocate max heap or clean-up
-    bool created = this->m_handle.m_heap.create(depth);
-    if (not created) {
-        delete[] indices;
-        delete[] sizes;
-        delete[] data;
-        return QueueInterface::Status::ALLOCATION_FAILED;
-    }
-    // Assign initial indices and sizes
-    for (FwSizeType i = 0; i < depth; i++) {
-        indices[i] = i;
-        sizes[i] = 0;
-    }
-    // Set local tracking variables
-    this->m_handle.m_maxSize = messageSize;
-    this->m_handle.m_indices = indices;
-    this->m_handle.m_data = data;
-    this->m_handle.m_sizes = sizes;
-    this->m_handle.m_startIndex = 0;
-    this->m_handle.m_stopIndex = 0;
-    this->m_handle.m_depth = depth;
-    this->m_handle.m_highMark = 0;
+    // Get the memory allocator configured for priority queues
+    Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
+        Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
-    return QueueInterface::Status::OP_OK;
+    // Allocate indices list
+    void* allocation = nullptr;
+    FwSizeType size = 0;
+    FwSizeType* indices = nullptr;
+    FwSizeType* sizes = nullptr;
+    U8* data = nullptr;
+    U8* heap_pointer = nullptr;
+
+    // Allocate indices list and construct it when valid
+    size = depth * sizeof(FwSizeType);
+    allocation = allocator.allocate(identifier, size, alignof(FwSizeType));
+    if (allocation == nullptr) {
+        status = QueueInterface::Status::ALLOCATION_FAILED;
+    } else if (size < (depth * sizeof(FwSizeType))) {
+        allocator.deallocate(identifier, allocation);
+        status = QueueInterface::Status::ALLOCATION_FAILED;
+    } else {
+        indices = Fw::arrayPlacementNew<FwSizeType>(Fw::ByteArray(static_cast<U8*>(allocation), size), depth);
+    }
+
+    // Allocate sizes list and construct it when valid
+    if (status == QueueInterface::Status::OP_OK) {
+        size = depth * sizeof(FwSizeType);
+        allocation = allocator.allocate(identifier, size, alignof(FwSizeType));
+        if (allocation == nullptr) {
+            allocator.deallocate(identifier, indices);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else if (size < (depth * sizeof(FwSizeType))) {
+            allocator.deallocate(identifier, indices);
+            allocator.deallocate(identifier, allocation);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else {
+            sizes = Fw::arrayPlacementNew<FwSizeType>(Fw::ByteArray(static_cast<U8*>(allocation), size), depth);
+        }
+    }
+    // Allocate data
+    if (status == QueueInterface::Status::OP_OK) {
+        size = depth * messageSize;
+        allocation = allocator.allocate(identifier, size, alignof(U8));
+        if (allocation == nullptr) {
+            allocator.deallocate(identifier, indices);
+            allocator.deallocate(identifier, sizes);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else if (size < (depth * messageSize)) {
+            allocator.deallocate(identifier, indices);
+            allocator.deallocate(identifier, sizes);
+            allocator.deallocate(identifier, allocation);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else {
+            data = static_cast<U8*>(allocation);
+        }
+    }
+    // Allocate data for max heap
+    if (status == QueueInterface::Status::OP_OK) {
+        size = Types::MaxHeap::ELEMENT_SIZE * depth;
+        allocation = allocator.allocate(identifier, size, Types::MaxHeap::ALIGNMENT);
+        if (allocation == nullptr) {
+            allocator.deallocate(identifier, indices);
+            allocator.deallocate(identifier, sizes);
+            allocator.deallocate(identifier, data);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else if (size < (Types::MaxHeap::ELEMENT_SIZE * depth)) {
+            allocator.deallocate(identifier, indices);
+            allocator.deallocate(identifier, sizes);
+            allocator.deallocate(identifier, data);
+            allocator.deallocate(identifier, allocation);
+            status = QueueInterface::Status::ALLOCATION_FAILED;
+        } else {
+            heap_pointer = static_cast<U8*>(allocation);
+            this->m_handle.m_heap.create(depth, Fw::ByteArray(static_cast<U8*>(allocation), size));
+        }
+    }
+    // Set up structures when all allocations succeeded
+    if (status == QueueInterface::Status::OP_OK) {
+        // Assign initial indices and sizes
+        for (FwSizeType i = 0; i < depth; i++) {
+            indices[i] = i;
+            sizes[i] = 0;
+        }
+        // Set local tracking variables
+        this->m_handle.m_id = id;
+        this->m_handle.m_maxSize = messageSize;
+        this->m_handle.m_indices = indices;
+        this->m_handle.m_data = data;
+        this->m_handle.m_sizes = sizes;
+        this->m_handle.m_heap_pointer = heap_pointer;
+        this->m_handle.m_startIndex = 0;
+        this->m_handle.m_stopIndex = 0;
+        this->m_handle.m_depth = depth;
+        this->m_handle.m_highMark = 0;
+    }
+    return status;
+}
+
+void PriorityQueue::teardown() {
+    this->teardownInternal();
+}
+
+void PriorityQueue::teardownInternal() {
+    if (this->m_handle.m_data != nullptr) {
+        const FwEnumStoreType identifier = this->m_handle.m_id;
+        Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
+            Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+        allocator.deallocate(identifier, this->m_handle.m_data);
+        allocator.deallocate(identifier, this->m_handle.m_indices);
+        allocator.deallocate(identifier, this->m_handle.m_sizes);
+        this->m_handle.m_heap.teardown();
+        allocator.deallocate(identifier, this->m_handle.m_heap_pointer);
+
+        // Set these pointers to nullptr
+        this->m_handle.m_data = nullptr;
+        this->m_handle.m_indices = nullptr;
+        this->m_handle.m_sizes = nullptr;
+    }
 }
 
 QueueInterface::Status PriorityQueue::send(const U8* buffer,

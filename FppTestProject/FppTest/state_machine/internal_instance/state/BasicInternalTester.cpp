@@ -19,7 +19,9 @@ namespace SmInstanceState {
 BasicInternalTester::BasicInternalTester(const char* const compName)
     : BasicInternalComponentBase(compName), m_smStateBasicInternal_action_a_history() {}
 
-BasicInternalTester::~BasicInternalTester() {}
+BasicInternalTester::~BasicInternalTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

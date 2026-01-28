@@ -22,7 +22,9 @@ InputPairU16U32Tester ::InputPairU16U32Tester(const char* const compName)
       m_smChoiceInputPairU16U32_action_a_history(),
       m_smChoiceInputPairU16U32_guard_g() {}
 
-InputPairU16U32Tester ::~InputPairU16U32Tester() {}
+InputPairU16U32Tester ::~InputPairU16U32Tester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

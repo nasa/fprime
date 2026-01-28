@@ -102,6 +102,10 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     void fileSizeFail();
 
+    //! Calculate CRC (succeed)
+    //!
+    void calculateCrcSucceed();
+
     //! List directory (succeed)
     //!
     void listDirectorySucceed();

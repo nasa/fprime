@@ -224,3 +224,26 @@ event DirectoryListingSubdir(
   severity activity high \
   id 0x19 \
   format "Directory {}: {}"
+
+@ CRC started
+event CalculateCrcStarted(fileName: string size FileNameStringSize @< The name of the file being read from
+                    ) \
+  severity activity high \
+  id 0x1a \
+  format "Started CRC calculation for file {}"
+
+@  CRC failed
+event CalculateCrcFailed(fileName: string size FileNameStringSize @< The name of the file being read from
+                    status: U32 @< The error status
+                    ) \
+  severity warning high \
+  id 0x1b \
+  format "Failed CRC calculation for file {}, returned status {}"
+
+@ CRC succeeded
+event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name of the file being read from
+                       crc: U32 @< The computed CRC value
+                      ) \
+  severity activity high \
+  id 0x1c \
+  format "{} has CRC value 0x{x}"

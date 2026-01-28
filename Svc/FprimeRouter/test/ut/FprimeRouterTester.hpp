@@ -56,6 +56,12 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     //! Route a packet of unknown type
     void testRouteUnknownPacketUnconnected();
 
+    //! Route a packet of unknown type
+    void testAllocationFailureFile();
+
+    //! Deallocate a returning buffer
+    void testAllocationFailureUnknown();
+
     //! Deallocate a returning buffer
     void testBufferReturn();
 
@@ -95,6 +101,7 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
 
     Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[64];
+    bool m_forceAllocationError = false;  // Flag to force allocation error
 };
 
 }  // namespace Svc

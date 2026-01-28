@@ -72,6 +72,26 @@ void CmdSequencerTester ::parameterizedAutoByPort(SequenceFiles::File& file, con
     ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
 }
 
+void CmdSequencerTester ::parameterizedAutoByFileDispatchPort(SequenceFiles::File& file,
+                                                              const U32 numCommands,
+                                                              const U32 bound) {
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // Validate the file
+    this->validateFile(0, fileName);
+    // Run the sequence by port call
+    this->runSequenceByFileDispatcherPortCall(fileName);
+    // Execute commands
+    this->executeCommandsAuto(fileName, numCommands, bound, CmdExecMode::NO_NEW_SEQUENCE);
+    // Check for command complete on seqDone
+    ASSERT_from_seqDone_SIZE(1);
+    ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
+}
+
 void CmdSequencerTester ::parameterizedInvalidManualCommands(SequenceFiles::File& file) {
     // Set the time
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);

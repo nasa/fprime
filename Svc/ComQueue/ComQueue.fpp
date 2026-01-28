@@ -8,7 +8,6 @@ module Svc {
     @ Array of queue depths for Fw::Buffer types
     array BuffQueueDepth = [ComQueueBufferPorts] U32
 
-
     @ Component used to queue buffer types
     active component ComQueue {
 
@@ -37,6 +36,14 @@ module Svc {
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop
 
+      @ Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
+      @ downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
+      async command FLUSH_QUEUE(queueType: QueueType @< The Queue data type
+                                indexType: FwIndexType @< The index of the queue (within the supplied type) to flush
+                               )
+      @ Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
+      @ ownership return will be returned via the bufferReturnOut port.
+      async command FLUSH_ALL_QUEUES()
       # ----------------------------------------------------------------------
       # Special ports
       # ----------------------------------------------------------------------
@@ -52,6 +59,15 @@ module Svc {
 
       @ Port for emitting telemetry
       telemetry port Tlm
+
+      @ Command receive port
+      command recv port CmdDisp
+
+      @ Command registration port
+      command reg port CmdReg
+
+      @ Command response port
+      command resp port CmdStatus
 
       # ----------------------------------------------------------------------
       # Events

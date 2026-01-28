@@ -65,6 +65,10 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testQueueSend();
 
+    void testQueueFlush();
+
+    void testQueueFlushAll();
+
     void testQueuePause();
 
     void testPrioritySend();

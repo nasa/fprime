@@ -13,6 +13,7 @@
 #define Svc_FileDownlink_HPP
 
 #include <Fw/FilePacket/FilePacket.hpp>
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/File.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Queue.hpp>
@@ -193,12 +194,10 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! Sources of send file requests
     enum CallerSource { COMMAND, PORT };
 
-#define FILE_ENTRY_FILENAME_LEN 101
-
     //! Used to track a single file downlink request
     struct FileEntry {
-        char srcFilename[FILE_ENTRY_FILENAME_LEN];   // Name of requested file
-        char destFilename[FILE_ENTRY_FILENAME_LEN];  // Name of requested file
+        char srcFilename[Fw::FileNameString::STRING_SIZE];   // Name of requested file
+        char destFilename[Fw::FileNameString::STRING_SIZE];  // Name of requested file
         U32 offset;
         U32 length;
         CallerSource source;  // Source of the downlink request
@@ -223,11 +222,13 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Configure FileDownlink component
     //!
-    void configure(U32 timeout,        //!< Timeout threshold (milliseconds) while in WAIT state
-                   U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
+    void configure(U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
                    U32 cycleTime,      //!< Rate at which we are running
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );
+
+    //! Cleans up file queue before dispatching to underlying component
+    void deinit();
 
     //! Start FileDownlink component
     //! The component must be configured with configure() before starting.

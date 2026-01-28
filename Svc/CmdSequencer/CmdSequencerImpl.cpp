@@ -133,7 +133,7 @@ void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
 }
 
 //! Handler for input port seqRunIn
-void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
+void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     if (!this->requireRunMode(STOPPED)) {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -168,6 +168,14 @@ void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::
     }
 
     this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
+}
+
+void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
+    this->doSequenceRun(filename);
+}
+
+void CmdSequencerComponentImpl::seqDispatchIn_handler(FwIndexType portNum, Fw::StringBase& file_name) {
+    this->doSequenceRun(file_name);
 }
 
 void CmdSequencerComponentImpl ::seqCancelIn_handler(const FwIndexType portNum) {

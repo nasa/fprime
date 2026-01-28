@@ -22,12 +22,16 @@ namespace Task {
 //! TaskHandle class definition for posix implementations.
 //!
 struct PosixTaskHandle : public TaskHandle {
+    static constexpr FwSizeType PTHREAD_NAME_LENGTH = 16;  //!< Length of pthread name
     static constexpr int SUCCESS = 0;
 
     //! Posix task descriptor
     pthread_t m_task_descriptor;
     //! Is the above descriptor valid
     bool m_is_valid = false;
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
+    char m_name[PosixTaskHandle::PTHREAD_NAME_LENGTH];
+#endif
 };
 
 //! Posix task implementation as driven by pthreads implementation

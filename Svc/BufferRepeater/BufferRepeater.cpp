@@ -12,6 +12,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/BufferRepeater/BufferRepeater.hpp>
+#include <cstring>
 
 namespace Svc {
 

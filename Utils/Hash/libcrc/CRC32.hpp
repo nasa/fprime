@@ -9,7 +9,7 @@ extern "C" {
 //! Define the hash handle type for this
 //! implementation. This is required.
 #ifndef HASH_HANDLE_TYPE
-#define HASH_HANDLE_TYPE U32
+#define HASH_HANDLE_TYPE U32  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 //! Define the size of a hash digest in bytes for this

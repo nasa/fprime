@@ -14,6 +14,7 @@
 #define UTILS_TYPES_MAX_HEAP_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/ByteArray.hpp>
 
 namespace Types {
 
@@ -39,12 +40,13 @@ class MaxHeap {
     ~MaxHeap();
     //! \brief MaxHeap creation
     //!
-    //! Create the max heap with a given maximum size
-    //! \warning allocates memory on the heap
-    //!
+    //! Create the max heap with a given capacity. Constructs heap elements in the provided memory.
     //! \param capacity the maximum number of elements to store in the heap
+    //! \param heap_allocation the memory to use for the heap
     //!
-    bool create(FwSizeType capacity);
+    void create(FwSizeType capacity, Fw::ByteArray heap_allocation);
+    //! \brief MaxHeap teardown
+    void teardown();
     //! \brief Push an item onto the heap.
     //!
     //! The item will be put into the heap according to its value. The
@@ -105,6 +107,11 @@ class MaxHeap {
     FwSizeType m_size;      // the current size of the heap
     FwSizeType m_order;     // the current count of heap pushes
     FwSizeType m_capacity;  // the maximum capacity of the heap
+  public:
+    //! Exposes the ELEMENT_SIZE for pre-allocation
+    static constexpr FwSizeType ELEMENT_SIZE = sizeof(Node);
+    //! Exposes the ALIGNMENT for pre-allocation
+    static constexpr FwSizeType ALIGNMENT = alignof(Node);
 };
 
 }  // namespace Types
