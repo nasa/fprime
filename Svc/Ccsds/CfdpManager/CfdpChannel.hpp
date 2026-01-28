@@ -437,7 +437,6 @@ class CfdpChannel {
 
     CfdpEngine* m_engine;    //!< Parent CFDP engine
 
-    // Channel state (formerly CF_Channel_t members)
     CF_CListNode_t* m_qs[CfdpQueueId::NUM];    //!< Transaction queues
     CF_CListNode_t* m_cs[CF_Direction_NUM];    //!< Command/history lists
 

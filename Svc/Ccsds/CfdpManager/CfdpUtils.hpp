@@ -76,77 +76,6 @@ typedef struct CF_Traverse_PriorityArg
     U8             priority; /**< \brief seeking this priority */
 } CF_Traverse_PriorityArg_t;
 
-
-static inline void CF_CList_Remove_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *node)
-{
-    CF_CList_Remove(&chan->qs[queueidx], node);
-    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx]); /* sanity check */
-    // --CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
-}
-
-static inline void CF_CList_InsertAfter_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *start,
-                                           CF_CListNode_t *after)
-{
-    CF_CList_InsertAfter(&chan->qs[queueidx], start, after);
-    // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
-}
-
-static inline void CF_CList_InsertBack_Ex(CF_Channel_t *chan, CfdpQueueId::T queueidx, CF_CListNode_t *node)
-{
-    CF_CList_InsertBack(&chan->qs[queueidx], node);
-    // ++CF_AppData.hk.Payload.channel_hk[chan - cfdpEngine.channels].q_size[queueidx];
-}
-
-/************************************************************************/
-/** @brief Find an unused transaction on a channel.
- *
- * @par Assumptions, External Events, and Notes:
- *       chan must not be NULL.
- *
- * @param chan Pointer to the CF channel
- * @param direction Intended direction of data flow (TX or RX)
- *
- * @returns Pointer to a free transaction
- * @retval  NULL if no free transactions available.
- */
-CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t direction);
-
-/************************************************************************/
-/** @brief Returns a history structure back to its unused state.
- *
- * @par Description
- *       There's nothing to do currently other than remove the history
- *       from its current queue and put it back on CfdpQueueId::HIST_FREE.
- *
- * @par Assumptions, External Events, and Notes:
- *       chan must not be NULL. history must not be NULL.
- *
- * @param chan Pointer to the CF channel
- * @param history Pointer to the history entry
- */
-void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history);
-
-/************************************************************************/
-/** @brief Finds an active transaction by sequence number.
- *
- * @par Description
- *       This function traverses the active rx, pending, txa, and txw
- *       transaction and looks for the requested transaction.
- *
- * @par Assumptions, External Events, and Notes:
- *       chan must not be NULL.
- *
- * @param chan Pointer to the CF channel
- * @param transaction_sequence_number  Sequence number to find
- * @param src_eid                      Entity ID associated with sequence number
- *
- * @returns Pointer to the given transaction if found
- * @retval  NULL if the transaction is not found
- */
-CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
-                                                     CfdpTransactionSeq transaction_sequence_number,
-                                                     CfdpEntityId       src_eid);
-
 /************************************************************************/
 /** @brief List traversal function to check if the desired sequence number matches.
  *
@@ -161,20 +90,6 @@ CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
  *
  */
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
-
-/************************************************************************/
-/** @brief Traverses all transactions on all active queues and performs an operation on them.
- *
- * @par Assumptions, External Events, and Notes:
- *       chan must not be NULL. fn must be a valid function. context must not be NULL.
- *
- * @param chan       Channel to operate on
- * @param fn      Callback to invoke for all traversed transactions
- * @param context Opaque object to pass to all callbacks
- *
- * @returns Number of transactions traversed
- */
-I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context);
 
 /************************************************************************/
 /** @brief List traversal function performs operation on every active transaction.
@@ -239,21 +154,6 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
  * @retval false if no error has occurred during the transaction yet
  */
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat);
-
-/************************************************************************/
-/** @brief Gets the head of the chunk list for the given channel + direction
- *
- * The chunk list contains structs that are available for tracking the chunks
- * associated with files in transit.  An entry needs to be pulled from this
- * list for every transaction, and returned to this list when the transaction
- * completes.
- *
- * @param chan       Pointer to channel struct
- * @param direction  Whether this is TX or RX
- *
- * @returns Pointer to list head
- */
-CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction);
 
 /************************************************************************/
 /** @brief Gets the status of this transaction

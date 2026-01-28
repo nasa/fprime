@@ -39,22 +39,6 @@
 namespace Svc {
 namespace Ccsds {
 
-CF_CListNode_t **CF_GetChunkListHead(CF_Channel_t *chan, U8 direction)
-{
-    CF_CListNode_t **result;
-
-    if (chan != NULL && direction < CF_Direction_NUM)
-    {
-        result = &chan->cs[direction];
-    }
-    else
-    {
-        result = NULL;
-    }
-
-    return result;
-}
-
 CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
 {
     CF_CFDP_AckTxnStatus_t LocalStatus;
@@ -89,59 +73,6 @@ CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
     return LocalStatus;
 }
 
-CF_Transaction_t *CF_FindUnusedTransaction(CF_Channel_t *chan, CF_Direction_t direction)
-{
-    CF_CListNode_t *  node;
-    CF_Transaction_t *txn;
-    CfdpQueueId::T q_index; /* initialized below in if */
-
-    FW_ASSERT(chan);
-
-    if (chan->qs[CfdpQueueId::FREE])
-    {
-        node = chan->qs[CfdpQueueId::FREE];
-        txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
-
-        CF_CList_Remove_Ex(chan, CfdpQueueId::FREE, &txn->cl_node);
-
-        /* now that a transaction is acquired, must also acquire a history slot to go along with it */
-        if (chan->qs[CfdpQueueId::HIST_FREE])
-        {
-            q_index = CfdpQueueId::HIST_FREE;
-        }
-        else
-        {
-            /* no free history, so take the oldest one from the channel's history queue */
-            FW_ASSERT(chan->qs[CfdpQueueId::HIST]);
-            q_index = CfdpQueueId::HIST;
-        }
-
-        txn->history = container_of_cpp(chan->qs[q_index], &CF_History_t::cl_node);
-
-        CF_CList_Remove_Ex(chan, q_index, &txn->history->cl_node);
-
-        /* Indicate that this was freshly pulled from the free list */
-        /* notably this state is distinguishable from items still on the free list */
-        txn->state        = CF_TxnState_INIT;
-        txn->history->dir = direction;
-
-        /* Re-initialize the linked list node to clear stale pointers from FREE list */
-        CF_CList_InitNode(&txn->cl_node);
-    }
-    else
-    {
-        txn = NULL;
-    }
-
-    return txn;
-}
-
-void CF_ResetHistory(CF_Channel_t *chan, CF_History_t *history)
-{
-    CF_CList_Remove_Ex(chan, CfdpQueueId::HIST, &history->cl_node);
-    CF_CList_InsertBack_Ex(chan, CfdpQueueId::HIST_FREE, &history->cl_node);
-}
-
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
 {
     CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
@@ -152,32 +83,6 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
     {
         seqContext->txn = txn;
         ret = CF_CListTraverse_Status_EXIT; /* exit early */
-    }
-
-    return ret;
-}
-
-CF_Transaction_t *CF_FindTransactionBySequenceNumber(CF_Channel_t *      chan,
-                                                     CfdpTransactionSeq transaction_sequence_number,
-                                                     CfdpEntityId       src_eid)
-{
-    /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
-     * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
-     *
-     * Let's put CfdpQueueId::RX up front, because most RX packets will be file data PDUs */
-    CF_Traverse_TransSeqArg_t ctx    = {transaction_sequence_number, src_eid, NULL};
-    CF_CListNode_t *          ptrs[] = {chan->qs[CfdpQueueId::RX], chan->qs[CfdpQueueId::PEND], chan->qs[CfdpQueueId::TXA],
-                              chan->qs[CfdpQueueId::TXW]};
-    CF_Transaction_t *        ret = NULL;
-
-    for (CF_CListNode_t* head : ptrs)
-    {
-        CF_CList_Traverse(head, CF_FindTransactionBySequenceNumber_Impl, &ctx);
-        if (ctx.txn)
-        {
-            ret = ctx.txn;
-            break;
-        }
     }
 
     return ret;
@@ -208,15 +113,6 @@ CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, 
     traverse_all->fn(txn, traverse_all->context);
     ++traverse_all->counter;
     return CF_CLIST_CONT;
-}
-
-I32 CF_TraverseAllTransactions(CF_Channel_t *chan, CF_TraverseAllTransactions_fn_t fn, void *context)
-{
-    CF_TraverseAll_Arg_t args = {fn, context, 0};
-    for (I32 queueidx = CfdpQueueId::PEND; queueidx <= CfdpQueueId::RX; ++queueidx)
-        CF_CList_Traverse(chan->qs[queueidx], CF_TraverseAllTransactions_Impl, &args);
-
-    return args.counter;
 }
 
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat)

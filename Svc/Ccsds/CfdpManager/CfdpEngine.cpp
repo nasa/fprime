@@ -259,29 +259,6 @@ void CfdpEngine::dispatchTx(CF_Transaction_t *txn)
     CF_CFDP_TxStateDispatch(txn, &state_fns);
 }
 
-CF_ChunkWrapper_t *CF_CFDP_FindUnusedChunks(CF_Channel_t *chan, CF_Direction_t dir)
-{
-    CF_ChunkWrapper_t *ret = NULL;
-    CF_CListNode_t* node;
-    CF_CListNode_t ** chunklist_head;
-
-    chunklist_head = CF_GetChunkListHead(chan, dir);
-
-    /* this should never be null */
-    FW_ASSERT(chunklist_head);
-
-    if (*chunklist_head != NULL)
-    {
-        node = CF_CList_Pop(chunklist_head);
-        if(node != NULL)
-        {
-            ret = container_of_cpp(node, &CF_ChunkWrapper_t::cl_node);
-        }
-    }
-
-    return ret;
-}
-
 void CfdpEngine::setPduLength(CF_Logical_PduBuffer_t *ph)
 {
     U16 final_pos;

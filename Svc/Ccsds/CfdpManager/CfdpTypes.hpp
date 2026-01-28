@@ -443,45 +443,6 @@ typedef enum
     CF_TickType_NUM_TYPES
 } CF_TickType_t;
 
-/**
- * @brief Channel state object
- *
- * This keeps the state of CF channels
- *
- * Each CF channel has a separate transaction list, PDU throttle, playback,
- * and poll state, as well as separate addresses on the underlying message
- * transport (e.g. SB).
- */
-typedef struct CF_Channel
-{
-    CF_CListNode_t *qs[CfdpQueueId::NUM];
-    CF_CListNode_t *cs[CF_Direction_NUM];
-
-    U32 num_cmd_tx;
-
-    CF_Playback_t playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];
-
-    /* Polling directory state */
-    CF_PollDir_t polldir[CF_MAX_POLLING_DIR_PER_CHAN];
-
-    const CF_Transaction_t *cur; /**< \brief current transaction during channel cycle */
-
-    /**< \brief Reference to the wrapper F' component in order to reference parameters */
-    CfdpManager* cfdpManager;
-    
-    U8 tick_type;
-    
-    /**< \brief ID used to index into the engine channel array */
-    U8 channel_id;
-
-    /**< \brief State of the channel */
-    CfdpFlow::T flowState;
-
-    /**< \brief Tracks number of PDUs sent this cycle for throttling */
-    U32 outgoing_counter;
-
-} CF_Channel_t;
-
 }  // namespace Ccsds
 }  // namespace Svc
 
