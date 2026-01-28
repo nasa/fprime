@@ -12,6 +12,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 #include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 
 namespace Svc {
 

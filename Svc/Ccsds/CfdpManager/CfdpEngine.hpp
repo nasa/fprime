@@ -808,6 +808,9 @@ class CfdpEngine {
      * @returns CfdpStatus::SUCCESS on success, ERROR if length is zero or invalid
      */
     CfdpStatus::T copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
+
+    // Friend declarations for testing
+    friend class CfdpManagerTester;
 };
 
 }  // namespace Ccsds

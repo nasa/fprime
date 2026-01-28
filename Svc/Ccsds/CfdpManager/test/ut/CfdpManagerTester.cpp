@@ -80,12 +80,12 @@ void CfdpManagerTester::from_dataOut_handler(
 // ----------------------------------------------------------------------
 
 CF_Transaction_t* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransactionSeq seqNum) {
-    // Access global cfdpEngine to search for transaction
-    CF_Channel_t* chan = &cfdpEngine.channels[chanNum];
+    // Access engine through component (friend access)
+    CfdpChannel* chan = component.m_engine->m_channels[chanNum];
 
     // Search through all transaction queues (PEND, TXA, TXW, RX)
     for (U8 qIdx = 0; qIdx < CfdpQueueId::NUM; qIdx++) {
-        CF_CListNode_t* head = chan->qs[qIdx];
+        CF_CListNode_t* head = chan->m_qs[qIdx];
         if (head == nullptr) {
             continue;
         }
@@ -151,7 +151,7 @@ void CfdpManagerTester::setupTxTransaction(
     CF_TxnState_t expectedState,
     TransactionSetup& setup)
 {
-    const U32 initialSeqNum = cfdpEngine.seq_num;
+    const U32 initialSeqNum = component.m_engine->m_seqNum;
 
     this->sendCmd_SendFile(0, 0, channelId, destEid, cfdpClass,
                           CfdpKeep::KEEP, priority,
@@ -162,7 +162,7 @@ void CfdpManagerTester::setupTxTransaction(
     ASSERT_CMD_RESPONSE(0, CfdpManager::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
 
     setup.expectedSeqNum = initialSeqNum + 1;
-    EXPECT_EQ(setup.expectedSeqNum, cfdpEngine.seq_num) << "Sequence number should increment";
+    EXPECT_EQ(setup.expectedSeqNum, component.m_engine->m_seqNum) << "Sequence number should increment";
 
     setup.txn = findTransaction(channelId, setup.expectedSeqNum);
     ASSERT_NE(nullptr, setup.txn) << "Transaction should exist";

@@ -454,6 +454,9 @@ class CfdpChannel {
 
     CfdpFlow::T m_flowState;                   //!< Channel flow state (normal/frozen)
     U32 m_outgoingCounter;                     //!< PDU throttling counter
+
+    // Friend declarations for testing
+    friend class CfdpManagerTester;
 };
 
 // ----------------------------------------------------------------------

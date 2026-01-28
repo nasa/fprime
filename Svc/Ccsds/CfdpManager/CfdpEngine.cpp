@@ -298,7 +298,7 @@ void CfdpEngine::setPduLength(CF_Logical_PduBuffer_t *ph)
     CF_CFDP_EncodeHeaderFinalSize(ph->penc, &ph->pdu_header);
 }
 
-CF_Logical_PduBuffer_t *CF_CFDP_ConstructPduHeader(const CF_Transaction_t *txn, CF_CFDP_FileDirective_t directive_code,
+CF_Logical_PduBuffer_t * CfdpEngine::constructPduHeader(const CF_Transaction_t *txn, CF_CFDP_FileDirective_t directive_code,
                                                    CfdpEntityId src_eid, CfdpEntityId dst_eid, bool towards_sender,
                                                    CfdpTransactionSeq tsn, bool silent)
 {

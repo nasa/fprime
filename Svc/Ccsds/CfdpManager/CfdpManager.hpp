@@ -213,6 +213,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     // Friend declaration allows engine to access protected logging methods
     friend class CfdpEngine;
+    friend class CfdpManagerTester;
 
 };
 
