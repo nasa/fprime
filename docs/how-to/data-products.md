@@ -204,7 +204,7 @@ Fw::Success::T ProducerTester ::productGet_handler(FwDpIdType id, FwSizeType dat
 
 ## Topology Integration
 
-Data product producers should be integrated with a `Svc.DpManager`, which is typically supplied by the `DataProducts` subtopology. Users should import the topology, connect their producers, connect the catalog to file downlinke, and (optionally) configure the `DataProducts` subtopology parameters.
+Data product producers should be integrated with a `Svc.DpManager`, which is typically supplied by the `DataProducts` subtopology. Users should import the topology, connect their producers, connect the catalog to file downlink, and (optionally) configure the `DataProducts` subtopology parameters.
 
 For example, in the project topology FPP file:
 
