@@ -118,6 +118,17 @@ This creates a simple internal flow:
 
 * Allocate → Fill → Send → Reset
 
+Containers are of the type `DpContainer` in the component's base class, which derives from `Fw::Container`. Users typically instantiate the container in their header as a member variable.
+
+```
+DpContainer m_container; //! Tracked container state
+```
+
+This member variable can be filled by container allocation calls, and set via container send calls.
+
+> [!CAUTION]
+> It is very important to use the local `DpContainer` type provided by the autocoding and not the `Fw::DpContainer`.
+
 ### Compute Container Size
 
 Container allocation requires an explicit data size, which includes the record overhead and data type size. Users should request a container with sufficient size to hold (id + data) for the maximum records possible before the container is "ready".
