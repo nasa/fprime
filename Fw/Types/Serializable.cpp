@@ -541,7 +541,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         if ((storedLength > this->getDeserializeSizeLeft()) or (storedLength > length)) {
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
-        
+
         if (storedLength > 0) {
             FW_ASSERT(buff);
         }
