@@ -248,20 +248,22 @@ TEST_F(FormatTest, String) {
     FormatString a(testVals);
 
     actual << a;
-    Fw::String s;
-    expected.str("");
-    s += "[ ";
+
+    // Construct the full expected string
+    std::stringstream expectedStream;
+    expectedStream << "[ ";
     for (U32 i = 0; i < FormatString::SIZE; i++) {
         if (i > 0) {
-            s += ", ";
+            expectedStream << ", ";
         }
-        s += "% ";
-        s += testVals[i].toChar();
+        expectedStream << "% " << testVals[i];
     }
-    s += " ]";
-    expected << s;
+    expectedStream << " ]";
 
-    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
+    // Handle F Prime string truncation
+    Fw::String expected(expectedStream.str().c_str());
+
+    ASSERT_STREQ(actual.str().c_str(), expected.toChar());
 }
 
 TEST_F(FormatTest, Char) {
