@@ -71,57 +71,6 @@ CF_CFDP_FileDirectiveDispatchTable_t makeFileDirectiveTable(
     return table;
 }
 
-// Free function wrappers for dispatch tables - these call member methods
-void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2EarlyFin(ph);
-}
-
-void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2Fin(ph);
-}
-
-void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2Nak(ph);
-}
-
-void CF_CFDP_S2_Nak_Arm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2NakArm(ph);
-}
-
-void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2EofAck(ph);
-}
-
-void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->sSubstateSendMetadata();
-}
-
-void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->sSubstateSendFileData();
-}
-
-void CF_CFDP_S1_SubstateSendEof(CF_Transaction_t *txn) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s1SubstateSendEof();
-}
-
-void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2SubstateSendFileData();
-}
-
-void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn) {
-    CfdpTransaction* txnHandler = reinterpret_cast<CfdpTransaction*>(txn);
-    txnHandler->s2SubstateSendEof();
-}
-
 }  // anonymous namespace
 
 // ======================================================================
@@ -137,23 +86,23 @@ void CfdpTransaction::s1Recv(CF_Logical_PduBuffer_t *ph) {
 void CfdpTransaction::s2Recv(CF_Logical_PduBuffer_t *ph) {
     static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta =
         makeFileDirectiveTable(
-            CF_CFDP_S2_EarlyFin,
+            &CfdpTransaction::s2EarlyFin,
             nullptr,
             nullptr
         );
 
     static const CF_CFDP_FileDirectiveDispatchTable_t s2_fd_or_eof =
         makeFileDirectiveTable(
-            CF_CFDP_S2_EarlyFin,
+            &CfdpTransaction::s2EarlyFin,
             nullptr,
-            CF_CFDP_S2_Nak
+            &CfdpTransaction::s2Nak
         );
 
     static const CF_CFDP_FileDirectiveDispatchTable_t s2_wait_ack =
         makeFileDirectiveTable(
-            CF_CFDP_S2_Fin,
-            CF_CFDP_S2_EofAck,
-            CF_CFDP_S2_Nak_Arm
+            &CfdpTransaction::s2Fin,
+            &CfdpTransaction::s2EofAck,
+            &CfdpTransaction::s2NakArm
         );
 
     static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {
@@ -170,9 +119,9 @@ void CfdpTransaction::s2Recv(CF_Logical_PduBuffer_t *ph) {
 
 void CfdpTransaction::s1Tx() {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {{
-        &CF_CFDP_S_SubstateSendMetadata, // CF_TxSubState_METADATA
-        &CF_CFDP_S_SubstateSendFileData, // CF_TxSubState_FILEDATA
-        &CF_CFDP_S1_SubstateSendEof, // CF_TxSubState_EOF
+        &CfdpTransaction::sSubstateSendMetadata, // CF_TxSubState_METADATA
+        &CfdpTransaction::sSubstateSendFileData, // CF_TxSubState_FILEDATA
+        &CfdpTransaction::s1SubstateSendEof, // CF_TxSubState_EOF
         nullptr // CF_TxSubState_CLOSEOUT_SYNC
     }};
 
@@ -181,9 +130,9 @@ void CfdpTransaction::s1Tx() {
 
 void CfdpTransaction::s2Tx() {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {{
-        &CF_CFDP_S_SubstateSendMetadata, // CF_TxSubState_METADATA
-        &CF_CFDP_S2_SubstateSendFileData, // CF_TxSubState_FILEDATA
-        &CF_CFDP_S2_SubstateSendEof, // CF_TxSubState_EOF
+        &CfdpTransaction::sSubstateSendMetadata, // CF_TxSubState_METADATA
+        &CfdpTransaction::s2SubstateSendFileData, // CF_TxSubState_FILEDATA
+        &CfdpTransaction::s2SubstateSendEof, // CF_TxSubState_EOF
         nullptr // CF_TxSubState_CLOSEOUT_SYNC
     }};
 
@@ -849,7 +798,7 @@ void CfdpTransaction::sDispatchRecv(CF_Logical_PduBuffer_t *ph,
      * ignore the received packet and keep chugging along. */
     if (selected_handler)
     {
-        selected_handler(this, ph);
+        (this->*selected_handler)(ph);
     }
 }
 
@@ -860,7 +809,7 @@ void CfdpTransaction::sDispatchTransmit(const CF_CFDP_S_SubstateSendDispatchTabl
     selected_handler = dispatch->substate[this->m_state_data.send.sub_state];
     if (selected_handler != NULL)
     {
-        selected_handler(this);
+        (this->*selected_handler)();
     }
 }
 
@@ -873,7 +822,7 @@ void CfdpTransaction::txStateDispatch(const CF_CFDP_TxnSendDispatchTable_t *disp
     selected_handler = dispatch->tx[this->m_state];
     if (selected_handler != NULL)
     {
-        selected_handler(this);
+        (this->*selected_handler)();
     }
 }
 

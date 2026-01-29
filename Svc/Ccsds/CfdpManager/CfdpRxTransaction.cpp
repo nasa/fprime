@@ -42,7 +42,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
@@ -50,28 +49,140 @@
 namespace Svc {
 namespace Ccsds {
 
+/**
+ * @brief Argument for Gap Compute function
+ *
+ * This is used in conjunction with CfdpTransaction::r2GapCompute
+ */
+typedef struct
+{
+    CfdpTransaction *    txn; /**< \brief Current transaction being processed */
+    CF_Logical_PduNak_t *nak; /**< \brief Current NAK PDU contents */
+} CF_GapComputeArgs_t;
+
+/**
+ * @brief Free function wrapper for CfdpTransaction::r2GapCompute
+ *
+ * This wrapper is needed because CF_ChunkList_ComputeGaps expects a free function pointer,
+ * but r2GapCompute is a member function. The opaque pointer contains a CF_GapComputeArgs_t
+ * which includes the transaction pointer.
+ */
+void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque)
+{
+    CF_GapComputeArgs_t* args = static_cast<CF_GapComputeArgs_t*>(opaque);
+    args->txn->r2GapCompute(chunks, chunk, opaque);
+}
+
 // ======================================================================
 // Construction and Destruction
 // ======================================================================
 
-CfdpTransaction::CfdpTransaction() {
-    // No state yet - methods operate on CF_Transaction_t*
+CfdpTransaction::CfdpTransaction() :
+    m_state(CF_TxnState_UNDEF),
+    m_txn_class(CfdpClass::CLASS_1),
+    m_history(nullptr),
+    m_chunks(nullptr),
+    m_inactivity_timer(),
+    m_ack_timer(),
+    m_fsize(0),
+    m_foffs(0),
+    m_fd(),
+    m_crc(),
+    m_keep(CfdpKeep::KEEP),
+    m_chan_num(0),
+    m_priority(0),
+    m_cl_node{},
+    m_pb(nullptr),
+    m_state_data{},
+    m_flags{},
+    m_cfdpManager(nullptr),
+    m_chan(nullptr),
+    m_engine(nullptr)
+{
+    // All members initialized via member initializer list above
 }
 
-CfdpTransaction::~CfdpTransaction() {
-    // No cleanup needed yet
-}
+CfdpTransaction::~CfdpTransaction() { }
 
 // ======================================================================
 // RX State Machine - Public Methods
 // ======================================================================
 
 void CfdpTransaction::r1Recv(CF_Logical_PduBuffer_t *ph) {
-    CF_CFDP_R1_Recv(this, ph);
+    static const CF_CFDP_FileDirectiveDispatchTable_t r1_fdir_handlers = {
+        {
+            nullptr, /* CF_CFDP_FileDirective_INVALID_MIN */
+            nullptr, /* 1 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 2 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 3 is unused in the CF_CFDP_FileDirective_t enum */
+            &CfdpTransaction::r1SubstateRecvEof, /* CF_CFDP_FileDirective_EOF */
+            nullptr, /* CF_CFDP_FileDirective_FIN */
+            nullptr, /* CF_CFDP_FileDirective_ACK */
+            nullptr, /* CF_CFDP_FileDirective_METADATA */
+            nullptr, /* CF_CFDP_FileDirective_NAK */
+            nullptr, /* CF_CFDP_FileDirective_PROMPT */
+            nullptr, /* 10 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 11 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* CF_CFDP_FileDirective_KEEP_ALIVE */
+        }
+    };
+
+    static const CF_CFDP_R_SubstateDispatchTable_t substate_fns = {
+        {
+            &r1_fdir_handlers, /* CF_RxSubState_FILEDATA */
+            &r1_fdir_handlers, /* CF_RxSubState_EOF */
+            &r1_fdir_handlers, /* CF_RxSubState_CLOSEOUT_SYNC */
+        }
+    };
+
+    this->rDispatchRecv(ph, &substate_fns, &CfdpTransaction::r1SubstateRecvFileData);
 }
 
 void CfdpTransaction::r2Recv(CF_Logical_PduBuffer_t *ph) {
-    CF_CFDP_R2_Recv(this, ph);
+    static const CF_CFDP_FileDirectiveDispatchTable_t r2_fdir_handlers_normal = {
+        {
+            nullptr, /* CF_CFDP_FileDirective_INVALID_MIN */
+            nullptr, /* 1 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 2 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 3 is unused in the CF_CFDP_FileDirective_t enum */
+            &CfdpTransaction::r2SubstateRecvEof, /* CF_CFDP_FileDirective_EOF */
+            nullptr, /* CF_CFDP_FileDirective_FIN */
+            nullptr, /* CF_CFDP_FileDirective_ACK */
+            &CfdpTransaction::r2RecvMd, /* CF_CFDP_FileDirective_METADATA */
+            nullptr, /* CF_CFDP_FileDirective_NAK */
+            nullptr, /* CF_CFDP_FileDirective_PROMPT */
+            nullptr, /* 10 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 11 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* CF_CFDP_FileDirective_KEEP_ALIVE */
+        }
+    };
+    static const CF_CFDP_FileDirectiveDispatchTable_t r2_fdir_handlers_finack = {
+        {
+            nullptr, /* CF_CFDP_FileDirective_INVALID_MIN */
+            nullptr, /* 1 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 2 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 3 is unused in the CF_CFDP_FileDirective_t enum */
+            &CfdpTransaction::r2SubstateRecvEof, /* CF_CFDP_FileDirective_EOF */
+            nullptr, /* CF_CFDP_FileDirective_FIN */
+            &CfdpTransaction::r2RecvFinAck, /* CF_CFDP_FileDirective_ACK */
+            nullptr, /* CF_CFDP_FileDirective_METADATA */
+            nullptr, /* CF_CFDP_FileDirective_NAK */
+            nullptr, /* CF_CFDP_FileDirective_PROMPT */
+            nullptr, /* 10 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* 11 is unused in the CF_CFDP_FileDirective_t enum */
+            nullptr, /* CF_CFDP_FileDirective_KEEP_ALIVE */
+        }
+    };
+
+    static const CF_CFDP_R_SubstateDispatchTable_t substate_fns = {
+        {
+            &r2_fdir_handlers_normal, /* CF_RxSubState_FILEDATA */
+            &r2_fdir_handlers_normal, /* CF_RxSubState_EOF */
+            &r2_fdir_handlers_finack, /* CF_RxSubState_CLOSEOUT_SYNC */
+        }
+    };
+
+    this->rDispatchRecv(ph, &substate_fns, &CfdpTransaction::r2SubstateRecvFileData);
 }
 
 void CfdpTransaction::rAckTimerTick() {
@@ -691,7 +802,7 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
                                             (this->m_chunks->chunks.count < this->m_chunks->chunks.max_chunks)
                                                             ? this->m_chunks->chunks.max_chunks
                                                             : (this->m_chunks->chunks.max_chunks - 1),
-                                            this->m_fsize, 0, CF_CFDP_R2_GapCompute, &args);
+                                            this->m_fsize, 0, CF_CFDP_R2_GapCompute_Wrapper, &args);
 
             if (!cret)
             {
@@ -1055,7 +1166,7 @@ void CfdpTransaction::rDispatchRecv(CF_Logical_PduBuffer_t *ph,
      */
     if (selected_handler != NULL)
     {
-        selected_handler(this, ph);
+        (this->*selected_handler)(ph);
     }
 }
 
@@ -1068,7 +1179,7 @@ void CfdpTransaction::rxStateDispatch(CF_Logical_PduBuffer_t *ph,
     selected_handler = dispatch->rx[this->m_state];
     if (selected_handler != NULL)
     {
-        selected_handler(this, ph);
+        (this->*selected_handler)(ph);
     }
 }
 

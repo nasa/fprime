@@ -41,27 +41,27 @@ namespace Ccsds {
 class CfdpTransaction;
 
 /**
- * @brief A function for dispatching actions to a handler, without existing PDU data
+ * @brief A member function pointer for dispatching actions to a handler, without existing PDU data
  *
  * This allows quick delegation to handler functions using dispatch tables.  This version is
  * used on the transmit side, where a PDU will likely be generated/sent by the handler being
  * invoked.
  *
- * @param[inout] txn  The transaction object
+ * @note This is a member function pointer - invoke with: (txn->*fn)()
  */
-typedef void (*CF_CFDP_StateSendFunc_t)(CfdpTransaction *txn);
+typedef void (CfdpTransaction::*CF_CFDP_StateSendFunc_t)();
 
 /**
- * @brief A function for dispatching actions to a handler, with existing PDU data
+ * @brief A member function pointer for dispatching actions to a handler, with existing PDU data
  *
  * This allows quick delegation of PDUs to handler functions using dispatch tables.  This version is
  * used on the receive side where a PDU buffer is associated with the activity, which is then
  * interpreted by the handler being invoked.
  *
- * @param[inout] txn  The transaction object
  * @param[inout] ph The PDU buffer currently being received/processed
+ * @note This is a member function pointer - invoke with: (txn->*fn)(ph)
  */
-typedef void (*CF_CFDP_StateRecvFunc_t)(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(CF_Logical_PduBuffer_t *ph);
 
 /**
  * @brief A table of transmit handler functions based on transaction state

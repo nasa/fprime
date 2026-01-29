@@ -50,7 +50,7 @@ typedef struct CF_Traverse_TransSeqArg
 {
     CfdpTransactionSeq transaction_sequence_number;
     CfdpEntityId       src_eid;
-    CF_Transaction_t *  txn; /**< \brief output transaction pointer */
+    CfdpTransaction *  txn; /**< \brief output transaction pointer */
 } CF_Traverse_TransSeqArg_t;
 
 /**
@@ -72,7 +72,7 @@ typedef struct CF_TraverseAll_Arg
  */
 typedef struct CF_Traverse_PriorityArg
 {
-    CF_Transaction_t *txn; /**< \brief OUT: holds value of transaction with which to call CF_CList_InsertAfter on */
+    CfdpTransaction *txn; /**< \brief OUT: holds value of transaction with which to call CF_CList_InsertAfter on */
     U8             priority; /**< \brief seeking this priority */
 } CF_Traverse_PriorityArg_t;
 

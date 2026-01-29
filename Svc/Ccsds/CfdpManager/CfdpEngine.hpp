@@ -63,10 +63,10 @@ typedef struct CF_CFDP_CycleTx_args
  */
 typedef struct CF_CFDP_Tick_args
 {
-    CfdpChannel *chan;                      /**< \brief channel object */
-    void (*fn)(CfdpTransaction *, int *);   /**< \brief function pointer */
-    bool early_exit;                        /**< \brief early exit result */
-    int  cont;                              /**< \brief if 1, then re-traverse the list */
+    CfdpChannel *chan;                                /**< \brief channel object */
+    void (CfdpTransaction::*fn)(int *);               /**< \brief member function pointer */
+    bool early_exit;                                  /**< \brief early exit result */
+    int  cont;                                        /**< \brief if 1, then re-traverse the list */
 } CF_CFDP_Tick_args_t;
 
 //

@@ -75,11 +75,11 @@ CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
 
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
 {
-    CF_Transaction_t *txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
+    CfdpTransaction *txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CF_CListTraverse_Status_t ret = CF_CListTraverse_Status_CONTINUE;
     CF_Traverse_TransSeqArg_t* seqContext = static_cast<CF_Traverse_TransSeqArg_t*>(context);
 
-    if ((txn->history->src_eid == seqContext->src_eid) && (txn->history->seq_num == seqContext->transaction_sequence_number))
+    if ((txn->m_history->src_eid == seqContext->src_eid) && (txn->m_history->seq_num == seqContext->transaction_sequence_number))
     {
         seqContext->txn = txn;
         ret = CF_CListTraverse_Status_EXIT; /* exit early */
@@ -90,10 +90,10 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
 
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 {
-    CF_Transaction_t *         txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
+    CfdpTransaction *         txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CF_Traverse_PriorityArg_t *arg = static_cast<CF_Traverse_PriorityArg_t *>(context);
 
-    if (txn->priority <= arg->priority)
+    if (txn->m_priority <= arg->priority)
     {
         /* found it!
          *

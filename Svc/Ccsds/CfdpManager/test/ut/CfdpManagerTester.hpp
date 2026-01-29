@@ -91,7 +91,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param sequenceId Transaction sequence number
     //! @param peerId Peer entity ID
     //! @return Pointer to configured transaction (owned by component)
-    CF_Transaction_t* setupTestTransaction(
+    CfdpTransaction* setupTestTransaction(
         CF_TxnState_t state,
         U8 channelId,
         const char* srcFilename,
@@ -225,7 +225,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param chanNum Channel number to search
     //! @param seqNum Transaction sequence number
     //! @return Pointer to transaction or nullptr if not found
-    CF_Transaction_t* findTransaction(U8 chanNum, CfdpTransactionSeq seqNum);
+    CfdpTransaction* findTransaction(U8 chanNum, CfdpTransactionSeq seqNum);
 
     // ----------------------------------------------------------------------
     // PDU Uplink Helper Functions
@@ -405,7 +405,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Helper struct for transaction setup results
     struct TransactionSetup {
         U32 expectedSeqNum;
-        CF_Transaction_t* txn;
+        CfdpTransaction* txn;
     };
 
     //! Create test file and verify size matches expected
@@ -448,7 +448,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U8 channelId,
         CfdpEntityId destEid,
         U32 expectedSeqNum,
-        CF_Transaction_t* txn
+        CfdpTransaction* txn
     );
 
     //! Verify FIN-ACK PDU at given index

@@ -42,6 +42,7 @@ namespace Ccsds {
 
 // Forward declarations
 class CfdpEngine;
+class CfdpTransaction;
 
 /**
  * @brief CFDP Channel class

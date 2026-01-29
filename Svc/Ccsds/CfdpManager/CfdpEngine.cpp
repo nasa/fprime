@@ -43,8 +43,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
@@ -255,9 +253,9 @@ void CfdpEngine::dispatchTx(CfdpTransaction *txn)
             nullptr, // CF_TxnState_UNDEF
             nullptr, // CF_TxnState_INIT
             nullptr, // CF_TxnState_R1
-            CF_CFDP_S1_Tx, // CF_TxnState_S1
+            &CfdpTransaction::s1Tx, // CF_TxnState_S1
             nullptr, // CF_TxnState_R2
-            CF_CFDP_S2_Tx, // CF_TxnState_S2
+            &CfdpTransaction::s2Tx, // CF_TxnState_S2
             nullptr, // CF_TxnState_DROP
             nullptr // CF_TxnState_HOLD
         }
@@ -894,7 +892,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
             /* R2 can handle missing metadata, so go ahead and create a temp file */
             txn->m_state = CF_TxnState_R2;
             txn->m_txn_class = CfdpClass::CLASS_2;
-            CF_CFDP_R_Init(txn);
+            txn->rInit();
             this->dispatchRecv(txn, ph); /* re-dispatch to enter r2 */
         }
     }
@@ -913,7 +911,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
                     txn->m_state            = ph->pdu_header.txm_mode ? CF_TxnState_R1 : CF_TxnState_R2;
                     txn->m_txn_class        = ph->pdu_header.txm_mode ? CfdpClass::CLASS_1 : CfdpClass::CLASS_2;
                     txn->m_flags.rx.md_recv = true;
-                    CF_CFDP_R_Init(txn); /* initialize R */
+                    txn->rInit(); /* initialize R */
                 }
                 else
                 {
@@ -1395,10 +1393,10 @@ CfdpStatus::T CfdpEngine::copyStringFromLV(Fw::String& out, const CF_Logical_Lv_
 
 void CfdpEngine::cancelTransaction(CfdpTransaction *txn)
 {
-    void (*fns[CF_Direction_NUM])(CfdpTransaction*) = {nullptr};
+    void (CfdpTransaction::*fns[CF_Direction_NUM])() = {nullptr};
 
-    fns[CF_Direction_RX] = CF_CFDP_R_Cancel;
-    fns[CF_Direction_TX] = CF_CFDP_S_Cancel;
+    fns[CF_Direction_RX] = &CfdpTransaction::rCancel;
+    fns[CF_Direction_TX] = &CfdpTransaction::sCancel;
 
     if (!txn->m_flags.com.canceled)
     {
@@ -1408,7 +1406,7 @@ void CfdpEngine::cancelTransaction(CfdpTransaction *txn)
         /* this should always be true, just confirming before indexing into array */
         if (txn->m_history->dir < CF_Direction_NUM)
         {
-            fns[txn->m_history->dir](txn);
+            (txn->*fns[txn->m_history->dir])();
         }
     }
 }

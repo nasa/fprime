@@ -38,8 +38,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -155,9 +153,9 @@ void CfdpChannel::tickTransactions()
 {
     bool reset = true;
 
-    void (*fns[CF_TickType_NUM_TYPES])(CfdpTransaction*, int*) = {CF_CFDP_R_Tick, CF_CFDP_S_Tick,
-                                                                    CF_CFDP_S_Tick_Nak};
-    int qs[CF_TickType_NUM_TYPES]                                 = {CfdpQueueId::RX, CfdpQueueId::TXW, CfdpQueueId::TXW};
+    void (CfdpTransaction::*fns[CF_TickType_NUM_TYPES])(int*) = {&CfdpTransaction::rTick, &CfdpTransaction::sTick,
+                                                                  &CfdpTransaction::sTickNak};
+    int qs[CF_TickType_NUM_TYPES]                              = {CfdpQueueId::RX, CfdpQueueId::TXW, CfdpQueueId::TXW};
 
     FW_ASSERT(m_tickType < CF_TickType_NUM_TYPES, m_tickType);
 
@@ -683,7 +681,7 @@ CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* contex
         this->m_cur = NULL;
         if (!txn->m_flags.com.suspended)
         {
-            args->fn(txn, &args->cont);
+            (txn->*args->fn)(&args->cont);
         }
 
         /* if this->m_cur was set to not-NULL above, then exit early */

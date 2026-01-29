@@ -48,7 +48,11 @@ namespace Ccsds {
 // Forward declarations
 class CfdpEngine;
 class CfdpChannel;
+class CfdpTransaction;
 class CfdpManager;
+
+// Free function wrappers for compatibility with legacy interfaces
+void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
 
 /**
  * @brief CFDP Transaction state machine class
@@ -62,53 +66,14 @@ class CfdpTransaction {
   // Allow CfdpEngine and CfdpChannel to access private members during initialization
   friend class CfdpEngine;
   friend class CfdpChannel;
+  friend class CfdpManagerTester;  // Needed for whitebox testing
 
   // Free function wrappers need access to private members
   friend void CF_CFDP_ArmInactTimer(CfdpTransaction *txn);
   friend void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue);
-
-  // Legacy CF_CFDP functions from CfdpRx.cpp and CfdpTx.cpp (to be refactored in Phase 3)
-  // These are temporary friend declarations to allow gradual migration
-  friend void CF_CFDP_R2_SetFinTxnStatus(CfdpTransaction *txn, CF_TxnStatus_t txn_stat);
-  friend void CF_CFDP_R1_Reset(CfdpTransaction *txn);
-  friend void CF_CFDP_R2_Reset(CfdpTransaction *txn);
-  friend CfdpStatus::T CF_CFDP_R_CheckCrc(CfdpTransaction *txn, U32 expected_crc);
-  friend void CF_CFDP_R2_Complete(CfdpTransaction *txn, bool ok_to_send_nak);
-  friend CfdpStatus::T CF_CFDP_R_ProcessFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R1_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R2_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R1_SubstateRecvFileData(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R2_SubstateRecvFileData(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend CfdpStatus::T CF_CFDP_R_SubstateSendNak(CfdpTransaction *txn);
-  friend void CF_CFDP_R_Init(CfdpTransaction *txn);
-  friend CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CfdpTransaction *txn);
-  friend CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CfdpTransaction *txn);
-  friend void CF_CFDP_R2_Recv_fin_ack(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R2_RecvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R1_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R2_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_R_Cancel(CfdpTransaction *txn);
-  friend void CF_CFDP_R_SendInactivityEvent(CfdpTransaction *txn);
-  friend void CF_CFDP_R_AckTimerTick(CfdpTransaction *txn);
-  friend void CF_CFDP_R_Tick(CfdpTransaction *txn, int *cont);
-  friend void CF_CFDP_S_Reset(CfdpTransaction *txn);
-  friend void CF_CFDP_S_SendEof(CfdpTransaction *txn);
-  friend void CF_CFDP_S1_SubstateSendEof(CfdpTransaction *txn);
-  friend void CF_CFDP_S2_SubstateSendEof(CfdpTransaction *txn);
-  friend CfdpStatus::T CF_CFDP_S_SendFileData(CfdpTransaction *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32 *total_bytes);
-  friend void CF_CFDP_S_SubstateSendFileData(CfdpTransaction *txn);
-  friend CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CfdpTransaction *txn, bool *sent_nak_response);
-  friend void CF_CFDP_S2_SubstateSendFileData(CfdpTransaction *txn);
-  friend void CF_CFDP_S_Cancel(CfdpTransaction *txn);
-  friend void CF_CFDP_S_Tick(CfdpTransaction *txn, int *cont);
-  friend void CF_CFDP_S_Tick_Nak(CfdpTransaction *txn, int *cont);
-  friend CfdpStatus::T CF_CFDP_S_SendFinAck(CfdpTransaction *txn);
-  friend void CF_CFDP_S2_EarlyFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_S2_Nak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_S2_Nak_Arm(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_S2_WaitForEofAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
-  friend void CF_CFDP_S_AckTimerTick(CfdpTransaction *txn);
+  friend void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
+  friend CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
+  friend CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
 
   public:
     // ----------------------------------------------------------------------
@@ -500,6 +465,86 @@ class CfdpTransaction {
      */
     void r2Complete(int ok_to_send_nak);
 
+    // ----------------------------------------------------------------------
+    // Dispatch Methods (ported from cf_cfdp_dispatch.c)
+    // ----------------------------------------------------------------------
+
+    /************************************************************************/
+    /** @brief Dispatch function for received PDUs on receive-file transactions
+     *
+     * @par Description
+     *       Receive file transactions primarily only react/respond to received PDUs.
+     *       This function dispatches to the appropriate handler based on the
+     *       transaction substate and PDU type.
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       Operates on this transaction instance.
+     *
+     * @param ph        PDU Buffer
+     * @param dispatch  Dispatch table for file directive PDUs
+     * @param fd_fn     Function to handle file data PDUs
+     */
+    void rDispatchRecv(CF_Logical_PduBuffer_t *ph,
+                       const CF_CFDP_R_SubstateDispatchTable_t *dispatch,
+                       CF_CFDP_StateRecvFunc_t fd_fn);
+
+    /************************************************************************/
+    /** @brief Dispatch function for received PDUs on send-file transactions
+     *
+     * @par Description
+     *       Send file transactions also react/respond to received PDUs.
+     *       Note that a file data PDU is not expected here.
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       Operates on this transaction instance.
+     *
+     * @param ph        PDU Buffer
+     * @param dispatch  Dispatch table for file directive PDUs
+     */
+    void sDispatchRecv(CF_Logical_PduBuffer_t *ph,
+                       const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch);
+
+    /************************************************************************/
+    /** @brief Dispatch function to send/generate PDUs on send-file transactions
+     *
+     * @par Description
+     *       Send file transactions generate PDUs each cycle based on the
+     *       transaction state. This does not have an existing PDU buffer at
+     *       the time of dispatch, but one may be generated by the invoked function.
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       Operates on this transaction instance.
+     *
+     * @param dispatch  State-based dispatch table
+     */
+    void sDispatchTransmit(const CF_CFDP_S_SubstateSendDispatchTable_t *dispatch);
+
+    /************************************************************************/
+    /** @brief Top-level Dispatch function to send a PDU based on current state
+     *
+     * @par Description
+     *       This does not have an existing PDU buffer at the time of dispatch,
+     *       but one may be generated by the invoked function.
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       Operates on this transaction instance.
+     *
+     * @param dispatch  Transaction State-based Dispatch table
+     */
+    void txStateDispatch(const CF_CFDP_TxnSendDispatchTable_t *dispatch);
+
+    /************************************************************************/
+    /** @brief Top-level Dispatch function to receive a PDU based on current state
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       Operates on this transaction instance.
+     *
+     * @param ph        Received PDU Buffer
+     * @param dispatch  Transaction State-based Dispatch table
+     */
+    void rxStateDispatch(CF_Logical_PduBuffer_t *ph,
+                         const CF_CFDP_TxnRecvDispatchTable_t *dispatch);
+
   private:
     /************************************************************************/
     /** @brief Process a filedata PDU on a transaction.
@@ -699,86 +744,6 @@ class CfdpTransaction {
      *
      */
     void rSendInactivityEvent();
-
-    // ----------------------------------------------------------------------
-    // Dispatch Methods (ported from cf_cfdp_dispatch.c)
-    // ----------------------------------------------------------------------
-
-    /************************************************************************/
-    /** @brief Dispatch function for received PDUs on receive-file transactions
-     *
-     * @par Description
-     *       Receive file transactions primarily only react/respond to received PDUs.
-     *       This function dispatches to the appropriate handler based on the
-     *       transaction substate and PDU type.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param ph        PDU Buffer
-     * @param dispatch  Dispatch table for file directive PDUs
-     * @param fd_fn     Function to handle file data PDUs
-     */
-    void rDispatchRecv(CF_Logical_PduBuffer_t *ph,
-                       const CF_CFDP_R_SubstateDispatchTable_t *dispatch,
-                       CF_CFDP_StateRecvFunc_t fd_fn);
-
-    /************************************************************************/
-    /** @brief Dispatch function for received PDUs on send-file transactions
-     *
-     * @par Description
-     *       Send file transactions also react/respond to received PDUs.
-     *       Note that a file data PDU is not expected here.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param ph        PDU Buffer
-     * @param dispatch  Dispatch table for file directive PDUs
-     */
-    void sDispatchRecv(CF_Logical_PduBuffer_t *ph,
-                       const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch);
-
-    /************************************************************************/
-    /** @brief Dispatch function to send/generate PDUs on send-file transactions
-     *
-     * @par Description
-     *       Send file transactions generate PDUs each cycle based on the
-     *       transaction state. This does not have an existing PDU buffer at
-     *       the time of dispatch, but one may be generated by the invoked function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param dispatch  State-based dispatch table
-     */
-    void sDispatchTransmit(const CF_CFDP_S_SubstateSendDispatchTable_t *dispatch);
-
-    /************************************************************************/
-    /** @brief Top-level Dispatch function to send a PDU based on current state
-     *
-     * @par Description
-     *       This does not have an existing PDU buffer at the time of dispatch,
-     *       but one may be generated by the invoked function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param dispatch  Transaction State-based Dispatch table
-     */
-    void txStateDispatch(const CF_CFDP_TxnSendDispatchTable_t *dispatch);
-
-    /************************************************************************/
-    /** @brief Top-level Dispatch function to receive a PDU based on current state
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param ph        Received PDU Buffer
-     * @param dispatch  Transaction State-based Dispatch table
-     */
-    void rxStateDispatch(CF_Logical_PduBuffer_t *ph,
-                         const CF_CFDP_TxnRecvDispatchTable_t *dispatch);
 
   private:
     // ----------------------------------------------------------------------

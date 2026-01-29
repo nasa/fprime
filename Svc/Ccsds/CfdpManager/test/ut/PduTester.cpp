@@ -28,7 +28,7 @@ namespace Ccsds {
 // PDU Test Helper Implementations
 // ----------------------------------------------------------------------
 
-CF_Transaction_t* CfdpManagerTester::setupTestTransaction(
+CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     CF_TxnState_t state,
     U8 channelId,
     const char* srcFilename,
@@ -39,25 +39,25 @@ CF_Transaction_t* CfdpManagerTester::setupTestTransaction(
 ) {
     // For white box testing, directly use the first transaction for the specified channel
     U32 txnIndex = channelId * CF_NUM_TRANSACTIONS_PER_CHANNEL;
-    CF_Transaction_t* txn = &component.m_engine->m_transactions[txnIndex];
+    CfdpTransaction* txn = &component.m_engine->m_transactions[txnIndex];
 
     // Use the first history for the specified channel
     U32 histIndex = channelId * CF_NUM_HISTORIES_PER_CHANNEL;
     CF_History_t* history = &component.m_engine->m_histories[histIndex];
 
     // Initialize transaction state
-    txn->state = state;
-    txn->fsize = fileSize;
-    txn->chan_num = channelId;
-    txn->cfdpManager = &this->component;
-    txn->history = history;
+    txn->m_state = state;
+    txn->m_fsize = fileSize;
+    txn->m_chan_num = channelId;
+    txn->m_cfdpManager = &this->component;
+    txn->m_history = history;
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
     if ((state == CF_TxnState_S2) || (state == CF_TxnState_R2)) {
-        txn->txn_class = CfdpClass::CLASS_2;
+        txn->m_txn_class = CfdpClass::CLASS_2;
     } else {
-        txn->txn_class = CfdpClass::CLASS_1;
+        txn->m_txn_class = CfdpClass::CLASS_1;
     }
 
     // Initialize history
@@ -597,7 +597,7 @@ void CfdpManagerTester::testMetaDataPdu() {
     const U32 testSequenceId = 98;
     const U32 testPeerId = 100;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_S1,  // Sender, class 1
         channelId,
         srcFile,
@@ -647,7 +647,7 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testSequenceId = 42;
     const U32 testPeerId = 200;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_S1,  // Sender, class 1
         channelId,
         srcFile,
@@ -739,7 +739,7 @@ void CfdpManagerTester::testEofPdu() {
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_S2,  // Sender, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -752,7 +752,7 @@ void CfdpManagerTester::testEofPdu() {
 
     // Setup transaction to simulate file transfer complete
     const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
-    txn->state_data.send.cached_pos = fileSize;  // Simulate file transfer complete
+    txn->m_state_data.send.cached_pos = fileSize;  // Simulate file transfer complete
 
     // Read test file and compute CRC
     Os::File file;
@@ -767,7 +767,7 @@ void CfdpManagerTester::testEofPdu() {
     ASSERT_EQ(fileSize, bytesRead) << "Failed to read complete test file";
 
     // Compute and set CRC in transaction (matches what sendEof expects)
-    txn->crc.update(fileData, 0, fileSize);
+    txn->m_crc.update(fileData, 0, fileSize);
     delete[] fileData;
 
     // Clear port history before test
@@ -804,7 +804,7 @@ void CfdpManagerTester::testFinPdu() {
     const U32 testSequenceId = 77;
     const U32 testPeerId = 200;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -859,7 +859,7 @@ void CfdpManagerTester::testAckPdu() {
     const U32 testSequenceId = 88;
     const U32 testPeerId = 175;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -917,7 +917,7 @@ void CfdpManagerTester::testNakPdu() {
     const U32 testSequenceId = 99;
     const U32 testPeerId = 200;
 
-    CF_Transaction_t* txn = setupTestTransaction(
+    CfdpTransaction* txn = setupTestTransaction(
         CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,

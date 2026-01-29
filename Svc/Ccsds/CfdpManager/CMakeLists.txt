@@ -27,8 +27,6 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpChannel.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpTxTransaction.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpRxTransaction.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpTx.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpRx.cpp"
     DEPENDS
         CFDP_Checksum
         Svc_Ccsds_CfdpManager_Pdu
