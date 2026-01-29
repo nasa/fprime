@@ -39,6 +39,7 @@ A typical system using data products includes:
     - `Svc.FileDownlink` for downlinking products
 
 The producer itself is intentionally simple: it requests a container, fills it with records, and sends it off.  To model a producer, we need to define the following for the component:
+
 - Define types
 - Product records
 - Product containers
