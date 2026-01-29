@@ -48,7 +48,7 @@ namespace Ccsds {
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S1_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S2 receive PDU processing.
@@ -59,7 +59,7 @@ void CF_CFDP_S1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S1 dispatch function.
@@ -69,7 +69,7 @@ void CF_CFDP_S2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_S1_Tx(CF_Transaction_t *txn);
+void CF_CFDP_S1_Tx(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief S2 dispatch function.
@@ -79,7 +79,7 @@ void CF_CFDP_S1_Tx(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_S2_Tx(CF_Transaction_t *txn);
+void CF_CFDP_S2_Tx(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Perform acknowledgement timer tick (time-based) processing for S transactions.
@@ -94,7 +94,7 @@ void CF_CFDP_S2_Tx(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  *
  */
-void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn);
+void CF_CFDP_S_AckTimerTick(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Perform tick (time-based) processing for S transactions.
@@ -111,7 +111,7 @@ void CF_CFDP_S_AckTimerTick(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  * @param cont Unused, exists for compatibility with tick processor
  */
-void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont);
+void CF_CFDP_S_Tick(CfdpTransaction *txn, int *cont);
 
 /************************************************************************/
 /** @brief Perform NAK response for TX transactions
@@ -127,7 +127,7 @@ void CF_CFDP_S_Tick(CF_Transaction_t *txn, int *cont);
  * @param txn  Pointer to the transaction object
  * @param cont Set to 1 if a NAK was generated
  */
-void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont);
+void CF_CFDP_S_Tick_Nak(CfdpTransaction *txn, int *cont);
 
 /************************************************************************/
 /** @brief Cancel an S transaction.
@@ -137,7 +137,7 @@ void CF_CFDP_S_Tick_Nak(CF_Transaction_t *txn, int *cont);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_S_Cancel(CF_Transaction_t *txn);
+void CF_CFDP_S_Cancel(CfdpTransaction *txn);
 
 /***********************************************************************
  *
@@ -158,7 +158,7 @@ void CF_CFDP_S_Cancel(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_SendEof(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Sends an EOF for S1.
@@ -168,7 +168,7 @@ CfdpStatus::T CF_CFDP_S_SendEof(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_S1_SubstateSendEof(CF_Transaction_t *txn);
+void CF_CFDP_S1_SubstateSendEof(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Triggers tick processing to send an EOF and wait for EOF-ACK for S2
@@ -178,7 +178,7 @@ void CF_CFDP_S1_SubstateSendEof(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn);
+void CF_CFDP_S2_SubstateSendEof(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Helper function to populate the PDU with file data and send it.
@@ -200,7 +200,7 @@ void CF_CFDP_S2_SubstateSendEof(CF_Transaction_t *txn);
  * @param calc_crc Enable CRC/Checksum calculation
  *
  */
-CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
+CfdpStatus::T CF_CFDP_S_SendFileData(CfdpTransaction *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
 
 /************************************************************************/
 /** @brief Standard state function to send the next file data PDU for active transaction.
@@ -216,7 +216,7 @@ CfdpStatus::T CF_CFDP_S_SendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes
  *
  * @param txn     Pointer to the transaction object
  */
-void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn);
+void CF_CFDP_S_SubstateSendFileData(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Respond to a NAK by sending filedata PDUs as response.
@@ -233,7 +233,7 @@ void CF_CFDP_S_SubstateSendFileData(CF_Transaction_t *txn);
  * @param txn          Pointer to the transaction object
  * @param nakProcessed true if a NAK was processed, otherwise false
  */
-CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed);
+CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CfdpTransaction *txn, bool* nakProcessed);
 
 /************************************************************************/
 /** @brief Send filedata handling for S2.
@@ -247,7 +247,7 @@ CfdpStatus::T CF_CFDP_S_CheckAndRespondNak(CF_Transaction_t *txn, bool* nakProce
  *
  * @param txn     Pointer to the transaction object
  */
-void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn);
+void CF_CFDP_S2_SubstateSendFileData(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Send metadata PDU.
@@ -261,7 +261,7 @@ void CF_CFDP_S2_SubstateSendFileData(CF_Transaction_t *txn);
  *
  * @param txn     Pointer to the transaction object
  */
-void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn);
+void CF_CFDP_S_SubstateSendMetadata(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Send FIN-ACK packet for S2.
@@ -271,7 +271,7 @@ void CF_CFDP_S_SubstateSendMetadata(CF_Transaction_t *txn);
  *
  * @param txn     Pointer to the transaction object
  */
-CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_S_SendFinAck(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief A FIN was received before file complete, so abandon the transaction.
@@ -282,7 +282,7 @@ CfdpStatus::T CF_CFDP_S_SendFinAck(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_EarlyFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S2 received FIN, so set flag to send FIN-ACK.
@@ -293,7 +293,7 @@ void CF_CFDP_S2_EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_Fin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S2 NAK PDU received handling.
@@ -309,7 +309,7 @@ void CF_CFDP_S2_Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_Nak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S2 NAK handling but with arming the NAK timer.
@@ -320,7 +320,7 @@ void CF_CFDP_S2_Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_Nak_Arm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_Nak_Arm(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief S2 received ACK PDU.
@@ -334,7 +334,7 @@ void CF_CFDP_S2_Nak_Arm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_S2_EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_S2_EofAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 }  // namespace Ccsds
 }  // namespace Svc

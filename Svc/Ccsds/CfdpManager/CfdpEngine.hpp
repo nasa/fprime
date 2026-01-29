@@ -36,6 +36,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
 namespace Svc {
@@ -62,10 +63,10 @@ typedef struct CF_CFDP_CycleTx_args
  */
 typedef struct CF_CFDP_Tick_args
 {
-    CfdpChannel *chan;                     /**< \brief channel object */
-    void (*fn)(CF_Transaction_t *, int *); /**< \brief function pointer */
-    bool early_exit;                       /**< \brief early exit result */
-    int  cont;                             /**< \brief if 1, then re-traverse the list */
+    CfdpChannel *chan;                      /**< \brief channel object */
+    void (*fn)(CfdpTransaction *, int *);   /**< \brief function pointer */
+    bool early_exit;                        /**< \brief early exit result */
+    int  cont;                              /**< \brief if 1, then re-traverse the list */
 } CF_CFDP_Tick_args_t;
 
 //
@@ -261,7 +262,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param keep_history Whether the transaction info should be preserved in history
      */
-    void finishTransaction(CF_Transaction_t *txn, bool keep_history);
+    void finishTransaction(CfdpTransaction *txn, bool keep_history);
 
     /**
      * @brief Helper function to store transaction status code only
@@ -275,7 +276,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
      */
-    void setTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat);
+    void setTxnStatus(CfdpTransaction *txn, CF_TxnStatus_t txn_stat);
 
     /**
      * @brief Arm the ACK timer for a transaction
@@ -285,7 +286,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void armAckTimer(CF_Transaction_t *txn);
+    void armAckTimer(CfdpTransaction *txn);
 
     /**
      * @brief Arm the inactivity timer for a transaction
@@ -295,7 +296,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void armInactTimer(CF_Transaction_t *txn);
+    void armInactTimer(CfdpTransaction *txn);
 
     /**
      * @brief Build the PDU header in the output buffer to prepare to send a packet
@@ -314,7 +315,7 @@ class CfdpEngine {
      * @returns Pointer to PDU buffer which may be filled with additional data
      * @retval  NULL if no message buffer available
      */
-    CF_Logical_PduBuffer_t* constructPduHeader(const CF_Transaction_t *txn, CF_CFDP_FileDirective_t directive_code,
+    CF_Logical_PduBuffer_t* constructPduHeader(const CfdpTransaction *txn, CF_CFDP_FileDirective_t directive_code,
                                                CfdpEntityId src_eid, CfdpEntityId dst_eid, bool towards_sender,
                                                CfdpTransactionSeq tsn, bool silent);
 
@@ -330,7 +331,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendMd(CF_Transaction_t *txn);
+    CfdpStatus::T sendMd(CfdpTransaction *txn);
 
     /**
      * @brief Send a previously-assembled filedata PDU for transmit
@@ -349,7 +350,7 @@ class CfdpEngine {
      * @returns CfdpStatus::T status code
      * @retval CfdpStatus::SUCCESS on success. (error checks not yet implemented)
      */
-    CfdpStatus::T sendFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T sendFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Build an EOF PDU for transmit
@@ -363,7 +364,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendEof(CF_Transaction_t *txn);
+    CfdpStatus::T sendEof(CfdpTransaction *txn);
 
     /**
      * @brief Build an ACK PDU for transmit
@@ -386,7 +387,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendAck(CF_Transaction_t *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
+    CfdpStatus::T sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                           CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
 
     /**
@@ -404,7 +405,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendFin(CF_Transaction_t *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+    CfdpStatus::T sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                           CF_CFDP_ConditionCode_t cc);
 
     /**
@@ -425,7 +426,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a metadata PDU from a received message
@@ -443,7 +444,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success
      * @retval CfdpStatus::PDU_METADATA_ERROR on error
      */
-    CfdpStatus::T recvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -462,7 +463,7 @@ class CfdpEngine {
      * @retval CfdpStatus::ERROR for general errors
      * @retval CfdpStatus::SHORT_PDU_ERROR PDU too short
      */
-    CfdpStatus::T recvFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an EOF PDU from a received message
@@ -480,7 +481,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success
      * @retval CfdpStatus::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an ACK PDU from a received message
@@ -498,7 +499,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success
      * @retval CfdpStatus::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an FIN PDU from a received message
@@ -516,7 +517,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success
      * @retval CfdpStatus::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a NAK PDU from a received message
@@ -534,7 +535,7 @@ class CfdpEngine {
      * @retval CfdpStatus::SUCCESS on success
      * @retval CfdpStatus::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvNak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T recvNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Initiate a file transfer transaction
@@ -546,7 +547,7 @@ class CfdpEngine {
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      */
-    void txFileInitiate(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
+    void txFileInitiate(CfdpTransaction *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
                         U8 priority, CfdpEntityId dest_id);
 
     /**
@@ -572,7 +573,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction state
      */
-    void dispatchTx(CF_Transaction_t *txn);
+    void dispatchTx(CfdpTransaction *txn);
 
   private:
     // ----------------------------------------------------------------------
@@ -589,7 +590,7 @@ class CfdpEngine {
     CfdpTransactionSeq m_seqNum;
 
     //! All transaction objects (allocated once at init)
-    CF_Transaction_t m_transactions[CF_NUM_TRANSACTIONS];
+    CfdpTransaction m_transactions[CF_NUM_TRANSACTIONS];
 
     //! History entries for completed transactions
     CF_History_t m_histories[CF_NUM_HISTORIES];
@@ -615,7 +616,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void sendEotPkt(CF_Transaction_t *txn);
+    void sendEotPkt(CfdpTransaction *txn);
 
     /**
      * @brief Cancels a transaction
@@ -625,7 +626,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction state
      */
-    void cancelTransaction(CF_Transaction_t *txn);
+    void cancelTransaction(CfdpTransaction *txn);
 
     /**
      * @brief Helper function to set tx file state in a transaction
@@ -642,7 +643,7 @@ class CfdpEngine {
      * @param chan         CF channel number
      * @param priority     Priority of transfer
      */
-    void initTxnTxFile(CF_Transaction_t *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
+    void initTxnTxFile(CfdpTransaction *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
 
     /**
      * @brief Helper function to start a new RX transaction
@@ -657,7 +658,7 @@ class CfdpEngine {
      * @param chan_num  CF channel number
      * @returns Pointer to new transaction
      */
-    CF_Transaction_t* startRxTransaction(U8 chan_num);
+    CfdpTransaction* startRxTransaction(U8 chan_num);
 
     // PDU Operations - Send
 
@@ -719,7 +720,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param ph   The logical PDU buffer being received
      */
-    void recvDrop(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void recvDrop(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Receive state function during holdover period
@@ -737,7 +738,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param ph   The logical PDU buffer being received
      */
-    void recvHold(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void recvHold(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Receive state function to process new rx transaction
@@ -755,7 +756,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param ph   The logical PDU buffer being received
      */
-    void recvInit(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     // Dispatch
 
@@ -771,7 +772,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param ph   The logical PDU buffer being received
      */
-    void dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void dispatchRecv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     // Channel Processing
 
@@ -796,7 +797,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void handleNotKeepFile(CF_Transaction_t *txn);
+    void handleNotKeepFile(CfdpTransaction *txn);
 
     // Utilities
 

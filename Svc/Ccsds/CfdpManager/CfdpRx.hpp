@@ -46,7 +46,7 @@ namespace Ccsds {
  */
 typedef struct
 {
-    CF_Transaction_t *   txn; /**< \brief Current transaction being processed */
+    CfdpTransaction *   txn; /**< \brief Current transaction being processed */
     CF_Logical_PduNak_t *nak; /**< \brief Current NAK PDU contents */
 } CF_GapComputeArgs_t;
 
@@ -59,7 +59,7 @@ typedef struct
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R1_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief R2 receive PDU processing.
@@ -70,7 +70,7 @@ void CF_CFDP_R1_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R2_Recv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Perform acknowledgement timer tick (time-based) processing for R transactions.
@@ -85,7 +85,7 @@ void CF_CFDP_R2_Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  *
  */
-void CF_CFDP_R_AckTimerTick(CF_Transaction_t *txn);
+void CF_CFDP_R_AckTimerTick(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Perform tick (time-based) processing for R transactions.
@@ -104,7 +104,7 @@ void CF_CFDP_R_AckTimerTick(CF_Transaction_t *txn);
  * @param cont Ignored/Unused
  *
  */
-void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont);
+void CF_CFDP_R_Tick(CfdpTransaction *txn, int *cont);
 
 /************************************************************************/
 /** @brief Cancel an R transaction.
@@ -114,7 +114,7 @@ void CF_CFDP_R_Tick(CF_Transaction_t *txn, int *cont);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_R_Cancel(CF_Transaction_t *txn);
+void CF_CFDP_R_Cancel(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Initialize a transaction structure for R.
@@ -124,7 +124,7 @@ void CF_CFDP_R_Cancel(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_R_Init(CF_Transaction_t *txn);
+void CF_CFDP_R_Init(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Helper function to store transaction status code and set send_fin flag.
@@ -135,7 +135,7 @@ void CF_CFDP_R_Init(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  * @param txn_stat Status Code value to set within transaction
  */
-void CF_CFDP_R2_SetFinTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat);
+void CF_CFDP_R2_SetFinTxnStatus(CfdpTransaction *txn, CF_TxnStatus_t txn_stat);
 
 /************************************************************************/
 /** @brief CFDP R1 transaction reset function.
@@ -150,7 +150,7 @@ void CF_CFDP_R2_SetFinTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_R1_Reset(CF_Transaction_t *txn);
+void CF_CFDP_R1_Reset(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief CFDP R2 transaction reset function.
@@ -163,7 +163,7 @@ void CF_CFDP_R1_Reset(CF_Transaction_t *txn);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_R2_Reset(CF_Transaction_t *txn);
+void CF_CFDP_R2_Reset(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Checks that the transaction file's CRC matches expected.
@@ -178,7 +178,7 @@ void CF_CFDP_R2_Reset(CF_Transaction_t *txn);
  * @param txn            Pointer to the transaction object
  * @param expected_crc Expected CRC
  */
-CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc);
+CfdpStatus::T CF_CFDP_R_CheckCrc(CfdpTransaction *txn, U32 expected_crc);
 
 /************************************************************************/
 /** @brief Checks R2 transaction state for transaction completion status.
@@ -198,7 +198,7 @@ CfdpStatus::T CF_CFDP_R_CheckCrc(CF_Transaction_t *txn, U32 expected_crc);
  * @param txn  Pointer to the transaction object
  * @param ok_to_send_nak If set to 0, suppress sending of a NAK packet
  */
-void CF_CFDP_R2_Complete(CF_Transaction_t *txn, int ok_to_send_nak);
+void CF_CFDP_R2_Complete(CfdpTransaction *txn, int ok_to_send_nak);
 
 /************************************************************************/
 /** @brief Process a filedata PDU on a transaction.
@@ -213,7 +213,7 @@ void CF_CFDP_R2_Complete(CF_Transaction_t *txn, int ok_to_send_nak);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_R_ProcessFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Processing receive EOF common functionality for R1/R2.
@@ -233,7 +233,7 @@ CfdpStatus::T CF_CFDP_R_ProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t 
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process receive EOF for R1.
@@ -248,7 +248,7 @@ CfdpStatus::T CF_CFDP_R_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuf
  * @param ph Pointer to the PDU information
  *
  */
-void CF_CFDP_R1_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R1_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process receive EOF for R2.
@@ -264,7 +264,7 @@ void CF_CFDP_R1_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
  * @param ph Pointer to the PDU information
  *
  */
-void CF_CFDP_R2_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R2_SubstateRecvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process received file data for R1.
@@ -278,7 +278,7 @@ void CF_CFDP_R2_SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *p
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R1_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R1_SubstateRecvFileData(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process received file data for R2.
@@ -296,7 +296,7 @@ void CF_CFDP_R1_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R2_SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R2_SubstateRecvFileData(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Loads a single NAK segment request.
@@ -330,7 +330,7 @@ void CF_CFDP_R2_GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk
  *
  * @param txn  Pointer to the transaction object
  */
-CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R_SubstateSendNak(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Calculate up to the configured amount of bytes of CRC.
@@ -353,7 +353,7 @@ CfdpStatus::T CF_CFDP_R_SubstateSendNak(CF_Transaction_t *txn);
  * @retval CfdpStatus::CFDP_ERROR on non-completion.
  *
  */
-CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Send a FIN PDU.
@@ -366,7 +366,7 @@ CfdpStatus::T CF_CFDP_R2_CalcCrcChunk(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  *
  */
-CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn);
+CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CfdpTransaction *txn);
 
 /************************************************************************/
 /** @brief Process receive FIN-ACK PDU.
@@ -381,7 +381,7 @@ CfdpStatus::T CF_CFDP_R2_SubstateSendFin(CF_Transaction_t *txn);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R2_Recv_fin_ack(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R2_Recv_fin_ack(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Process receive metadata PDU for R2.
@@ -399,7 +399,7 @@ void CF_CFDP_R2_Recv_fin_ack(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  * @param txn  Pointer to the transaction object
  * @param ph Pointer to the PDU information
  */
-void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+void CF_CFDP_R2_RecvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
 /************************************************************************/
 /** @brief Sends an inactivity timer expired event to EVS.
@@ -409,7 +409,7 @@ void CF_CFDP_R2_RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
  *
  * @param txn  Pointer to the transaction object
  */
-void CF_CFDP_R_SendInactivityEvent(CF_Transaction_t *txn);
+void CF_CFDP_R_SendInactivityEvent(CfdpTransaction *txn);
 
 }  // namespace Ccsds
 }  // namespace Svc

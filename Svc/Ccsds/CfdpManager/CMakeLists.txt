@@ -23,7 +23,6 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpChunk.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpClist.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpUtils.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpDispatch.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpChannel.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpTxTransaction.cpp"

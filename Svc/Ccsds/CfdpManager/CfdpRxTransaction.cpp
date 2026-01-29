@@ -2,12 +2,13 @@
 // \title  CfdpRxTransaction.cpp
 // \brief  cpp file for CFDP RX Transaction state machine
 //
-// This file is a port of the cf_cfdp_r.c file from the
+// This file is a port of the cf_cfdp_r.c and cf_cfdp_dispatch.c files from the
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //
 // This file contains various state handling routines for
-// transactions which are receiving a file.
+// transactions which are receiving a file, as well as dispatch
+// functions for RX state machines and top-level transaction dispatch.
 //
 // ======================================================================
 //
@@ -66,11 +67,11 @@ CfdpTransaction::~CfdpTransaction() {
 // ======================================================================
 
 void CfdpTransaction::r1Recv(CF_Logical_PduBuffer_t *ph) {
-    CF_CFDP_R1_Recv(reinterpret_cast<CF_Transaction_t*>(this), ph);
+    CF_CFDP_R1_Recv(this, ph);
 }
 
 void CfdpTransaction::r2Recv(CF_Logical_PduBuffer_t *ph) {
-    CF_CFDP_R2_Recv(reinterpret_cast<CF_Transaction_t*>(this), ph);
+    CF_CFDP_R2_Recv(this, ph);
 }
 
 void CfdpTransaction::rAckTimerTick() {
@@ -106,11 +107,11 @@ void CfdpTransaction::rAckTimerTick() {
                 // CFE_EVS_SendEvent(CF_CFDP_R_ACK_LIMIT_ERR_EID, CFE_EVS_EventType_ERROR,
                 //                   "CF R2(%lu:%lu): ACK limit reached, no fin-ack", (unsigned long)this->m_history->src_eid,
                 //                   (unsigned long)this->m_history->seq_num);
-                this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_ACK_LIMIT_NO_FIN);
+                this->m_engine->setTxnStatus(this, CF_TxnStatus_ACK_LIMIT_NO_FIN);
                 // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.ack_limit;
 
                 /* give up on this */
-                this->m_engine->finishTransaction(reinterpret_cast<CF_Transaction_t*>(this), true);
+                this->m_engine->finishTransaction(this, true);
                 this->m_flags.com.ack_timer_armed = false;
             }
             else
@@ -123,7 +124,7 @@ void CfdpTransaction::rAckTimerTick() {
         if (this->m_flags.com.ack_timer_armed)
         {
             /* whether sending FIN or waiting for more filedata, need ACK timer armed */
-            this->m_engine->armAckTimer(reinterpret_cast<CF_Transaction_t*>(this));
+            this->m_engine->armAckTimer(this);
         }
     }
 }
@@ -166,7 +167,7 @@ void CfdpTransaction::rTick(int *cont /* unused */) {
     /* rx maintenance: possibly process send_eof_ack, send_nak or send_fin */
     if (this->m_flags.rx.send_eof_ack)
     {
-        sret = this->m_engine->sendAck(reinterpret_cast<CF_Transaction_t*>(this), CF_CFDP_AckTxnStatus_ACTIVE, CF_CFDP_FileDirective_EOF,
+        sret = this->m_engine->sendAck(this, CF_CFDP_AckTxnStatus_ACTIVE, CF_CFDP_FileDirective_EOF,
                                static_cast<CF_CFDP_ConditionCode_t>(this->m_state_data.receive.r2.eof_cc),
                                this->m_history->peer_eid, this->m_history->seq_num);
         FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR);
@@ -209,7 +210,7 @@ void CfdpTransaction::rTick(int *cont /* unused */) {
          * wakes up or if the network delivers severely delayed PDUs at
          * some future point, then they will be seen as spurious.  They
          * will no longer be associable with this transaction at all */
-        this->m_chan->recycleTransaction(reinterpret_cast<CF_Transaction_t*>(this));
+        this->m_chan->recycleTransaction(this);
 
         /* NOTE: this must be the last thing in here.  Do not use txn after this */
     }
@@ -260,7 +261,7 @@ void CfdpTransaction::rInit() {
             //                   (unsigned long)this->m_history->seq_num, this->m_history->fnames.dst_filename);
         }
 
-        this->m_engine->armAckTimer(reinterpret_cast<CF_Transaction_t*>(this));
+        this->m_engine->armAckTimer(this);
     }
 
     status = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
@@ -288,12 +289,12 @@ void CfdpTransaction::rInit() {
 }
 
 void CfdpTransaction::r2SetFinTxnStatus(CF_TxnStatus_t txn_stat) {
-    this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), txn_stat);
+    this->m_engine->setTxnStatus(this, txn_stat);
     this->m_flags.rx.send_fin = true;
 }
 
 void CfdpTransaction::r1Reset() {
-    this->m_engine->finishTransaction(reinterpret_cast<CF_Transaction_t*>(this), true);
+    this->m_engine->finishTransaction(this, true);
 }
 
 void CfdpTransaction::r2Reset() {
@@ -381,7 +382,7 @@ void CfdpTransaction::r2Complete(int ok_to_send_nak) {
                 send_fin = true;
                 // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.nak_limit;
                 /* don't use CF_CFDP_R2_SetFinTxnStatus because many places in this function set send_fin */
-                this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_NAK_LIMIT_REACHED);
+                this->m_engine->setTxnStatus(this, CF_TxnStatus_NAK_LIMIT_REACHED);
                 this->m_state_data.receive.r2.acknak_count = 0; /* reset for fin/ack */
             }
             else
@@ -433,7 +434,7 @@ CfdpStatus::T CfdpTransaction::rProcessFd(CF_Logical_PduBuffer_t *ph) {
             //                   "CF R%d(%lu:%lu): failed to seek offset %ld, got %ld", (this->m_state == CF_TxnState_R2),
             //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
             //                   (long)pdu->offset, (long)fret);
-            this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_FILE_SIZE_ERROR);
+            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
             ret = CfdpStatus::ERROR; /* connection will reset in caller */
         }
@@ -449,7 +450,7 @@ CfdpStatus::T CfdpTransaction::rProcessFd(CF_Logical_PduBuffer_t *ph) {
             //                   "CF R%d(%lu:%lu): OS_write expected %ld, got %ld", (this->m_state == CF_TxnState_R2),
             //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
             //                   (long)pdu->data_len, (long)fret);
-            this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_FILESTORE_REJECTION);
+            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILESTORE_REJECTION);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_write;
             ret = CfdpStatus::ERROR; /* connection will reset in caller */
         }
@@ -467,7 +468,7 @@ CfdpStatus::T CfdpTransaction::rSubstateRecvEof(CF_Logical_PduBuffer_t *ph) {
     CfdpStatus::T               ret = CfdpStatus::SUCCESS;
     const CF_Logical_PduEof_t *eof;
 
-    if (!this->m_engine->recvEof(reinterpret_cast<CF_Transaction_t*>(this), ph))
+    if (!this->m_engine->recvEof(this, ph))
     {
         /* this function is only entered for PDUs identified as EOF type */
         eof = &ph->int_header.eof;
@@ -552,7 +553,7 @@ void CfdpTransaction::r2SubstateRecvEof(CF_Logical_PduBuffer_t *ph) {
             else
             {
                 /* All CFDP CC values directly correspond to a Transaction Status of the same numeric value */
-                this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), static_cast<CF_TxnStatus_t>(this->m_state_data.receive.r2.eof_cc));
+                this->m_engine->setTxnStatus(this, static_cast<CF_TxnStatus_t>(this->m_state_data.receive.r2.eof_cc));
                 this->r2Reset();
             }
         }
@@ -576,7 +577,7 @@ void CfdpTransaction::r1SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
     int ret;
 
     /* got file data PDU? */
-    ret = this->m_engine->recvFd(reinterpret_cast<CF_Transaction_t*>(this), ph);
+    ret = this->m_engine->recvFd(this, ph);
     if (ret == CfdpStatus::SUCCESS)
     {
         ret = this->rProcessFd(ph);
@@ -612,7 +613,7 @@ void CfdpTransaction::r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
     }
 
     /* got file data PDU? */
-    ret = this->m_engine->recvFd(reinterpret_cast<CF_Transaction_t*>(this), ph);
+    ret = this->m_engine->recvFd(this, ph);
     if (ret == CfdpStatus::SUCCESS)
     {
         ret = this->rProcessFd(ph);
@@ -630,7 +631,7 @@ void CfdpTransaction::r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
 
         if (!this->m_flags.rx.complete)
         {
-            this->m_engine->armAckTimer(reinterpret_cast<CF_Transaction_t*>(this)); /* re-arm ACK timer, since we got data */
+            this->m_engine->armAckTimer(this); /* re-arm ACK timer, since we got data */
         }
 
         this->m_state_data.receive.r2.acknak_count = 0;
@@ -669,7 +670,7 @@ void CfdpTransaction::r2GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_
 
 CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
     CF_Logical_PduBuffer_t *ph =
-        this->m_engine->constructPduHeader(reinterpret_cast<CF_Transaction_t*>(this), CF_CFDP_FileDirective_NAK, this->m_history->peer_eid,
+        this->m_engine->constructPduHeader(this, CF_CFDP_FileDirective_NAK, this->m_history->peer_eid,
                                    this->m_cfdpManager->getLocalEidParam(), 1, this->m_history->seq_num, true);
     CF_Logical_PduNak_t *nak;
     CfdpStatus::T sret;
@@ -683,7 +684,7 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
         if (this->m_flags.rx.md_recv)
         {
             /* we have metadata, so send valid NAK */
-            CF_GapComputeArgs_t args = {reinterpret_cast<CF_Transaction_t*>(this), nak};
+            CF_GapComputeArgs_t args = {this, nak};
 
             nak->scope_start = 0;
             cret             = CF_ChunkList_ComputeGaps(&this->m_chunks->chunks,
@@ -702,7 +703,7 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
             {
                 /* gaps are present, so let's send the NAK PDU */
                 nak->scope_end = 0;
-                sret = this->m_engine->sendNak(reinterpret_cast<CF_Transaction_t*>(this), ph);
+                sret = this->m_engine->sendNak(this, ph);
                 this->m_flags.rx.fd_nak_sent = true; /* latch that at least one NAK has been sent requesting filedata */
                 /* NOTE: this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR,
                    so if it's ever added to that function we need to test handling it here */
@@ -728,7 +729,7 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
             nak->segment_list.segments[0].offset_end   = 0;
             nak->segment_list.num_segments             = 1;
 
-            sret = this->m_engine->sendNak(reinterpret_cast<CF_Transaction_t*>(this), ph);
+            sret = this->m_engine->sendNak(this, ph);
             // this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR */
             FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR);
             if (sret == CfdpStatus::SUCCESS)
@@ -770,7 +771,7 @@ CfdpStatus::T CfdpTransaction::r2CalcCrcChunk() {
         fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
         if (fileStatus != Os::File::OP_OK)
         {
-            this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_FILE_SIZE_ERROR);
+            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
             return CfdpStatus::ERROR;
         }
 
@@ -803,7 +804,7 @@ CfdpStatus::T CfdpTransaction::r2CalcCrcChunk() {
                 //                   "CF R%d(%lu:%lu): failed to seek offset %lu, got %ld", (this->m_state == CF_TxnState_R2),
                 //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
                 //                   (unsigned long)this->m_state_data.receive.r2.rx_crc_calc_bytes, (long)fret);
-                // this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_FILE_SIZE_ERROR);
+                // this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
                 // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
                 success = false;
                 break;
@@ -817,7 +818,7 @@ CfdpStatus::T CfdpTransaction::r2CalcCrcChunk() {
             //                   "CF R%d(%lu:%lu): failed to read file expected %lu, got %ld",
             //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
             //                   (unsigned long)this->m_history->seq_num, (unsigned long)read_size, (long)fret);
-            this->m_engine->setTxnStatus(reinterpret_cast<CF_Transaction_t*>(this), CF_TxnStatus_FILE_SIZE_ERROR);
+            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_read;
             success = false;
             break;
@@ -869,7 +870,7 @@ CfdpStatus::T CfdpTransaction::r2SubstateSendFin() {
 
     if (ret != CfdpStatus::ERROR)
     {
-        sret = this->m_engine->sendFin(reinterpret_cast<CF_Transaction_t*>(this), this->m_state_data.receive.r2.dc, this->m_state_data.receive.r2.fs,
+        sret = this->m_engine->sendFin(this, this->m_state_data.receive.r2.dc, this->m_state_data.receive.r2.fs,
                                CF_TxnStatus_To_ConditionCode(this->m_history->txn_stat));
         /* CF_CFDP_SendFin does not return SEND_PDU_ERROR */
         FW_ASSERT(sret != CfdpStatus::SEND_PDU_ERROR);
@@ -886,7 +887,7 @@ CfdpStatus::T CfdpTransaction::r2SubstateSendFin() {
 }
 
 void CfdpTransaction::r2RecvFinAck(CF_Logical_PduBuffer_t *ph) {
-    if (!this->m_engine->recvAck(reinterpret_cast<CF_Transaction_t*>(this), ph))
+    if (!this->m_engine->recvAck(this, ph))
     {
         /* got fin-ack, so time to close the state */
         this->r2Reset();
@@ -916,7 +917,7 @@ void CfdpTransaction::r2RecvMd(CF_Logical_PduBuffer_t *ph) {
          * the md PDU */
         fname = this->m_history->fnames.dst_filename;
 
-        status = this->m_engine->recvMd(reinterpret_cast<CF_Transaction_t*>(this), ph);
+        status = this->m_engine->recvMd(this, ph);
         if (status == CfdpStatus::SUCCESS)
         {
             /* successfully obtained md PDU */
@@ -997,6 +998,78 @@ void CfdpTransaction::rSendInactivityEvent() {
     //                   "CF R%d(%lu:%lu): inactivity timer expired", (this->m_state == CF_TxnState_R2),
     //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
     // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.inactivity_timer;
+}
+
+// ======================================================================
+// Dispatch Methods (ported from cf_cfdp_dispatch.c)
+// ======================================================================
+
+void CfdpTransaction::rDispatchRecv(CF_Logical_PduBuffer_t *ph,
+                                    const CF_CFDP_R_SubstateDispatchTable_t *dispatch,
+                                    CF_CFDP_StateRecvFunc_t fd_fn)
+{
+    CF_CFDP_StateRecvFunc_t              selected_handler;
+    CF_Logical_PduFileDirectiveHeader_t *fdh;
+
+    FW_ASSERT(this->m_state_data.receive.sub_state < CF_RxSubState_NUM_STATES,
+              this->m_state_data.receive.sub_state, CF_RxSubState_NUM_STATES);
+
+    selected_handler = NULL;
+
+    /* the CF_CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */
+    if (ph->pdu_header.pdu_type == 0)
+    {
+        fdh = &ph->fdirective;
+        if (fdh->directive_code < CF_CFDP_FileDirective_INVALID_MAX)
+        {
+            if (dispatch->state[this->m_state_data.receive.sub_state] != NULL)
+            {
+                selected_handler = dispatch->state[this->m_state_data.receive.sub_state]->fdirective[fdh->directive_code];
+            }
+        }
+        else
+        {
+            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
+            // CFE_EVS_SendEvent(CF_CFDP_R_DC_INV_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF R%d(%lu:%lu): received PDU with invalid directive code %d for sub-state %d",
+            //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+            //                   (unsigned long)this->m_history->seq_num, fdh->directive_code,
+            //                   this->m_state_data.receive.sub_state);
+        }
+    }
+    else
+    {
+        if (!CF_TxnStatus_IsError(this->m_history->txn_stat))
+        {
+            selected_handler = fd_fn;
+        }
+        else
+        {
+            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.dropped;
+        }
+    }
+
+    /*
+     * NOTE: if no handler is selected, this will drop packets on the floor here,
+     * without incrementing any counter.  This was existing behavior.
+     */
+    if (selected_handler != NULL)
+    {
+        selected_handler(this, ph);
+    }
+}
+
+void CfdpTransaction::rxStateDispatch(CF_Logical_PduBuffer_t *ph,
+                                      const CF_CFDP_TxnRecvDispatchTable_t *dispatch)
+{
+    CF_CFDP_StateRecvFunc_t selected_handler;
+
+    FW_ASSERT(this->m_state < CF_TxnState_INVALID, this->m_state, CF_TxnState_INVALID);
+    selected_handler = dispatch->rx[this->m_state];
+    if (selected_handler != NULL)
+    {
+        selected_handler(this, ph);
+    }
 }
 
 }  // namespace Ccsds

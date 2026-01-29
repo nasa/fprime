@@ -96,7 +96,7 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
 
 void CfdpChannel::cycleTx()
 {
-    CF_Transaction_t* txn;
+    CfdpTransaction* txn;
     CF_CFDP_CycleTx_args_t args;
 
     if (m_cfdpManager->getDequeueEnabledParam(m_channelId))
@@ -108,7 +108,7 @@ void CfdpChannel::cycleTx()
 
         /* NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
          * PDUs that can be sent once we get to here */
-        if (!m_cur)
+        if (!this->m_cur)
         { /* don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup */
 
             // TODO BPC: refactor all while loops
@@ -123,17 +123,17 @@ void CfdpChannel::cycleTx()
                     break;
                 }
 
-                txn = container_of_cpp(m_qs[CfdpQueueId::PEND], &CF_Transaction_t::cl_node);
+                txn = container_of_cpp(m_qs[CfdpQueueId::PEND], &CfdpTransaction::m_cl_node);
 
                 /* Class 2 transactions need a chunklist for NAK processing, get one now.
                  * Class 1 transactions don't need chunks since they don't support NAKs. */
-                if (txn->txn_class == CfdpClass::CLASS_2)
+                if (txn->m_txn_class == CfdpClass::CLASS_2)
                 {
-                    if (txn->chunks == NULL)
+                    if (txn->m_chunks == NULL)
                     {
-                        txn->chunks = this->findUnusedChunks(CF_Direction_TX);
+                        txn->m_chunks = this->findUnusedChunks(CF_Direction_TX);
                     }
-                    if (txn->chunks == NULL)
+                    if (txn->m_chunks == NULL)
                     {
                         // TODO BPC: Emit EVR
                         // Leave transaction pending until a chunklist is available.
@@ -147,7 +147,7 @@ void CfdpChannel::cycleTx()
         }
 
         /* in case the loop exited due to no message buffers, clear it and start from the top next time */
-        m_cur = NULL;
+        this->m_cur = NULL;
     }
 }
 
@@ -155,8 +155,8 @@ void CfdpChannel::tickTransactions()
 {
     bool reset = true;
 
-    void (*fns[CF_TickType_NUM_TYPES])(CF_Transaction_t*, int*) = {CF_CFDP_R_Tick, CF_CFDP_S_Tick,
-                                                                     CF_CFDP_S_Tick_Nak};
+    void (*fns[CF_TickType_NUM_TYPES])(CfdpTransaction*, int*) = {CF_CFDP_R_Tick, CF_CFDP_S_Tick,
+                                                                    CF_CFDP_S_Tick_Nak};
     int qs[CF_TickType_NUM_TYPES]                                 = {CfdpQueueId::RX, CfdpQueueId::TXW, CfdpQueueId::TXW};
 
     FW_ASSERT(m_tickType < CF_TickType_NUM_TYPES, m_tickType);
@@ -281,18 +281,18 @@ void CfdpChannel::processPollingDirectories()
 // Transaction Management
 // ----------------------------------------------------------------------
 
-CF_Transaction_t* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
+CfdpTransaction* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
 {
     CF_CListNode_t*  node;
-    CF_Transaction_t* txn;
+    CfdpTransaction* txn;
     CfdpQueueId::T q_index; /* initialized below in if */
 
     if (m_qs[CfdpQueueId::FREE])
     {
         node = m_qs[CfdpQueueId::FREE];
-        txn = container_of_cpp(node, &CF_Transaction_t::cl_node);
+        txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
 
-        this->removeFromQueue(CfdpQueueId::FREE, &txn->cl_node);
+        this->removeFromQueue(CfdpQueueId::FREE, &txn->m_cl_node);
 
         /* now that a transaction is acquired, must also acquire a history slot to go along with it */
         if (m_qs[CfdpQueueId::HIST_FREE])
@@ -306,18 +306,18 @@ CF_Transaction_t* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
             q_index = CfdpQueueId::HIST;
         }
 
-        txn->history = container_of_cpp(m_qs[q_index], &CF_History_t::cl_node);
+        txn->m_history = container_of_cpp(m_qs[q_index], &CF_History_t::cl_node);
 
-        this->removeFromQueue(q_index, &txn->history->cl_node);
+        this->removeFromQueue(q_index, &txn->m_history->cl_node);
 
         /* Indicate that this was freshly pulled from the free list */
         /* notably this state is distinguishable from items still on the free list */
-        txn->state        = CF_TxnState_INIT;
-        txn->history->dir = direction;
-        txn->chan         = this;  /* Set channel pointer */
+        txn->m_state        = CF_TxnState_INIT;
+        txn->m_history->dir = direction;
+        txn->m_chan         = this;  /* Set channel pointer */
 
         /* Re-initialize the linked list node to clear stale pointers from FREE list */
-        CF_CList_InitNode(&txn->cl_node);
+        CF_CList_InitNode(&txn->m_cl_node);
     }
     else
     {
@@ -327,8 +327,8 @@ CF_Transaction_t* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
     return txn;
 }
 
-CF_Transaction_t* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSeq transaction_sequence_number,
-                                                                CfdpEntityId src_eid)
+CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSeq transaction_sequence_number,
+                                                               CfdpEntityId src_eid)
 {
     /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
      * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
@@ -337,7 +337,7 @@ CF_Transaction_t* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSe
     CF_Traverse_TransSeqArg_t ctx    = {transaction_sequence_number, src_eid, NULL};
     CF_CListNode_t*          ptrs[] = {m_qs[CfdpQueueId::RX], m_qs[CfdpQueueId::PEND], m_qs[CfdpQueueId::TXA],
                               m_qs[CfdpQueueId::TXW]};
-    CF_Transaction_t*        ret = NULL;
+    CfdpTransaction*        ret = NULL;
 
     for (CF_CListNode_t* head : ptrs)
     {
@@ -371,41 +371,41 @@ void CfdpChannel::resetHistory(CF_History_t* history)
 // Transaction Queue Management
 // ----------------------------------------------------------------------
 
-void CfdpChannel::dequeueTransaction(CF_Transaction_t* txn)
+void CfdpChannel::dequeueTransaction(CfdpTransaction* txn)
 {
     FW_ASSERT(txn);
-    CF_CList_Remove(&m_qs[txn->flags.com.q_index], &txn->cl_node);
+    CF_CList_Remove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
     // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-void CfdpChannel::moveTransaction(CF_Transaction_t* txn, CfdpQueueId::T queue)
+void CfdpChannel::moveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue)
 {
     FW_ASSERT(txn);
-    CF_CList_Remove(&m_qs[txn->flags.com.q_index], &txn->cl_node);
+    CF_CList_Remove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
     // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-    CF_CList_InsertBack(&m_qs[queue], &txn->cl_node);
-    txn->flags.com.q_index = queue;
+    CF_CList_InsertBack(&m_qs[queue], &txn->m_cl_node);
+    txn->m_flags.com.q_index = queue;
     // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-void CfdpChannel::freeTransaction(CF_Transaction_t* txn)
+void CfdpChannel::freeTransaction(CfdpTransaction* txn)
 {
     // Preserve the cfdpManager pointer across transaction reuse
-    CfdpManager* savedCfdpManager = txn->cfdpManager;
+    CfdpManager* savedCfdpManager = txn->m_cfdpManager;
 
     // TODO BPC: make sure transaction default constructor is sane
-    *txn = CF_Transaction_t{};
-    txn->chan_num = m_channelId;
-    txn->chan = this;  // Set chan pointer to this channel
-    txn->engine = m_engine;  // Set engine pointer
-    txn->cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer
-    CF_CList_InitNode(&txn->cl_node);
-    this->insertBackInQueue(CfdpQueueId::FREE, &txn->cl_node);
+    *txn = CfdpTransaction{};
+    txn->m_chan_num = m_channelId;
+    txn->m_chan = this;  // Set chan pointer to this channel
+    txn->m_engine = m_engine;  // Set engine pointer
+    txn->m_cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer
+    CF_CList_InitNode(&txn->m_cl_node);
+    this->insertBackInQueue(CfdpQueueId::FREE, &txn->m_cl_node);
 }
 
-void CfdpChannel::recycleTransaction(CF_Transaction_t *txn)
+void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
 {
     CF_CListNode_t **chunklist_head;
     CfdpQueueId::T    hist_destq;
@@ -413,28 +413,28 @@ void CfdpChannel::recycleTransaction(CF_Transaction_t *txn)
     /* File should have been closed by the state machine, but if
      * it still hanging open at this point, close it now so its not leaked.
      * This is not normal/expected so log it if this happens. */
-    if (true == txn->fd.isOpen())
+    if (true == txn->m_fd.isOpen())
     {
         // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
-        txn->fd.close();
+        txn->m_fd.close();
     }
 
     this->dequeueTransaction(txn); /* this makes it "float" (not in any queue) */
 
     /* this should always be */
-    if (txn->history != NULL)
+    if (txn->m_history != NULL)
     {
-        if (txn->chunks != NULL)
+        if (txn->m_chunks != NULL)
         {
-            chunklist_head = this->getChunkListHead(txn->history->dir);
+            chunklist_head = this->getChunkListHead(txn->m_history->dir);
             if (chunklist_head != NULL)
             {
-                CF_CList_InsertBack(chunklist_head, &txn->chunks->cl_node);
-                txn->chunks = NULL;
+                CF_CList_InsertBack(chunklist_head, &txn->m_chunks->cl_node);
+                txn->m_chunks = NULL;
             }
         }
 
-        if (txn->flags.com.keep_history)
+        if (txn->m_flags.com.keep_history)
         {
             /* move transaction history to history queue */
             hist_destq = CfdpQueueId::HIST;
@@ -443,8 +443,8 @@ void CfdpChannel::recycleTransaction(CF_Transaction_t *txn)
         {
             hist_destq = CfdpQueueId::HIST_FREE;
         }
-        this->insertBackInQueue(hist_destq, &txn->history->cl_node);
-        txn->history = NULL;
+        this->insertBackInQueue(hist_destq, &txn->m_history->cl_node);
+        txn->m_history = NULL;
     }
 
     /* this wipes it and puts it back onto the list to be found by
@@ -453,7 +453,7 @@ void CfdpChannel::recycleTransaction(CF_Transaction_t *txn)
     this->freeTransaction(txn);
 }
 
-void CfdpChannel::insertSortPrio(CF_Transaction_t* txn, CfdpQueueId::T queue)
+void CfdpChannel::insertSortPrio(CfdpTransaction* txn, CfdpQueueId::T queue)
 {
     bool insert_back = false;
 
@@ -469,11 +469,11 @@ void CfdpChannel::insertSortPrio(CF_Transaction_t* txn, CfdpQueueId::T queue)
     }
     else
     {
-        CF_Traverse_PriorityArg_t arg = {NULL, txn->priority};
+        CF_Traverse_PriorityArg_t arg = {NULL, txn->m_priority};
         CF_CList_Traverse_R(m_qs[queue], CF_PrioSearch, &arg);
         if (arg.txn)
         {
-            this->insertAfterInQueue(queue, &arg.txn->cl_node, &txn->cl_node);
+            this->insertAfterInQueue(queue, &arg.txn->m_cl_node, &txn->m_cl_node);
         }
         else
         {
@@ -483,9 +483,9 @@ void CfdpChannel::insertSortPrio(CF_Transaction_t* txn, CfdpQueueId::T queue)
 
     if (insert_back)
     {
-        this->insertBackInQueue(queue, &txn->cl_node);
+        this->insertBackInQueue(queue, &txn->m_cl_node);
     }
-    txn->flags.com.q_index = queue;
+    txn->m_flags.com.q_index = queue;
 }
 
 // ----------------------------------------------------------------------
@@ -498,12 +498,12 @@ void CfdpChannel::decrementCmdTxCounter()
     --m_numCmdTx;
 }
 
-void CfdpChannel::clearCurrentIfMatch(CF_Transaction_t* txn)
+void CfdpChannel::clearCurrentIfMatch(CfdpTransaction* txn)
 {
     // Done with this TX transaction
-    if (m_cur == txn)
+    if (this->m_cur == txn)
     {
-        m_cur = NULL;
+        this->m_cur = NULL;
     }
 }
 
@@ -556,7 +556,7 @@ CF_ChunkWrapper_t* CfdpChannel::findUnusedChunks(CF_Direction_t dir)
 
 void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
 {
-    CF_Transaction_t* txn;
+    CfdpTransaction* txn;
     char path[CfdpManagerMaxFileSize];
     Os::Directory::Status status;
 
@@ -599,18 +599,18 @@ void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
             }
 
             // Append file name to source/destination folders
-            txn->history->fnames.src_filename = pb->fnames.src_filename;
-            txn->history->fnames.src_filename += "/";
-            txn->history->fnames.src_filename += pb->pending_file;
+            txn->m_history->fnames.src_filename = pb->fnames.src_filename;
+            txn->m_history->fnames.src_filename += "/";
+            txn->m_history->fnames.src_filename += pb->pending_file;
 
-            txn->history->fnames.dst_filename = pb->fnames.dst_filename;
-            txn->history->fnames.dst_filename += "/";
-            txn->history->fnames.dst_filename += pb->pending_file;
+            txn->m_history->fnames.dst_filename = pb->fnames.dst_filename;
+            txn->m_history->fnames.dst_filename += "/";
+            txn->m_history->fnames.dst_filename += pb->pending_file;
 
             m_engine->txFileInitiate(txn, pb->cfdp_class, pb->keep, m_channelId, pb->priority,
                                     pb->dest_id);
 
-            txn->pb = pb;
+            txn->m_pb = pb;
             ++pb->num_ts;
 
             pb->pending_file[0] = 0; /* continue reading dir */
@@ -647,23 +647,23 @@ void CfdpChannel::updatePollPbCounted(CF_Playback_t* pb, int up, U8* counter)
 CF_CListTraverse_Status_t CfdpChannel::cycleTxFirstActive(CF_CListNode_t* node, void* context)
 {
     CF_CFDP_CycleTx_args_t*  args = static_cast<CF_CFDP_CycleTx_args_t*>(context);
-    CF_Transaction_t*        txn  = container_of_cpp(node, &CF_Transaction_t::cl_node);
+    CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CF_CListTraverse_Status_t ret  = CF_CLIST_EXIT; /* default option is exit traversal */
 
-    if (txn->flags.com.suspended)
+    if (txn->m_flags.com.suspended)
     {
         ret = CF_CLIST_CONT; /* suspended, so move on to next */
     }
     else
     {
-        FW_ASSERT(txn->flags.com.q_index == CfdpQueueId::TXA); /* huh? */
+        FW_ASSERT(txn->m_flags.com.q_index == CfdpQueueId::TXA); /* huh? */
 
         /* if no more messages, then chan->m_cur will be set.
          * If the transaction sent the last filedata PDU and EOF, it will move itself
          * off the active queue. Run until either of these occur. */
-        while (!args->chan->m_cur && txn->flags.com.q_index == CfdpQueueId::TXA)
+        while (!this->m_cur && txn->m_flags.com.q_index == CfdpQueueId::TXA)
         {
-            txn->engine->dispatchTx(txn);
+            txn->m_engine->dispatchTx(txn);
         }
 
         args->ran_one = 1;
@@ -676,20 +676,20 @@ CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* contex
 {
     CF_CListTraverse_Status_t ret  = CF_CLIST_CONT; /* CF_CLIST_CONT means don't tick one, keep looking for cur */
     CF_CFDP_Tick_args_t*     args = static_cast<CF_CFDP_Tick_args_t*>(context);
-    CF_Transaction_t*        txn  = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    if (!args->chan->m_cur || (args->chan->m_cur == txn))
+    CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+    if (!this->m_cur || (this->m_cur == txn))
     {
         /* found where we left off, so clear that and move on */
-        args->chan->m_cur = NULL;
-        if (!txn->flags.com.suspended)
+        this->m_cur = NULL;
+        if (!txn->m_flags.com.suspended)
         {
             args->fn(txn, &args->cont);
         }
 
-        /* if args->chan->m_cur was set to not-NULL above, then exit early */
+        /* if this->m_cur was set to not-NULL above, then exit early */
         /* NOTE: if channel is frozen, then tick processing won't have been entered.
          *     so there is no need to check it here */
-        if (args->chan->m_cur)
+        if (this->m_cur)
         {
             ret              = CF_CLIST_EXIT;
             args->early_exit = true;
@@ -715,14 +715,14 @@ CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context)
     return args->chan->doTick(node, context);
 }
 
-void CF_CFDP_ArmInactTimer(CF_Transaction_t *txn)
+void CF_CFDP_ArmInactTimer(CfdpTransaction *txn)
 {
-    txn->engine->armInactTimer(txn);
+    txn->m_engine->armInactTimer(txn);
 }
 
-void CF_MoveTransaction(CF_Transaction_t* txn, CfdpQueueId::T queue)
+void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue)
 {
-    txn->chan->moveTransaction(txn, queue);
+    txn->m_chan->moveTransaction(txn, queue);
 }
 
 }  // namespace Ccsds

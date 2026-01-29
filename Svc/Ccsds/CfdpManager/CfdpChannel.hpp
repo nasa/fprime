@@ -108,7 +108,7 @@ class CfdpChannel {
      * @returns Pointer to a free transaction
      * @retval  NULL if no free transactions available.
      */
-    CF_Transaction_t* findUnusedTransaction(CF_Direction_t direction);
+    CfdpTransaction* findUnusedTransaction(CF_Direction_t direction);
 
     /**
      * @brief Finds an active transaction by sequence number
@@ -126,8 +126,8 @@ class CfdpChannel {
      * @returns Pointer to the given transaction if found
      * @retval  NULL if the transaction is not found
      */
-    CF_Transaction_t* findTransactionBySequenceNumber(CfdpTransactionSeq transaction_sequence_number,
-                                                      CfdpEntityId src_eid);
+    CfdpTransaction* findTransactionBySequenceNumber(CfdpTransactionSeq transaction_sequence_number,
+                                                     CfdpEntityId src_eid);
 
     /**
      * @brief Traverses all transactions on all active queues and performs an operation on them
@@ -209,7 +209,7 @@ class CfdpChannel {
      *
      * @param txn Transaction to check against current
      */
-    void clearCurrentIfMatch(CF_Transaction_t* txn);
+    void clearCurrentIfMatch(CfdpTransaction* txn);
 
     /**
      * @brief Set the flow state for this channel
@@ -297,7 +297,7 @@ class CfdpChannel {
      *
      * @param txn Pointer to the transaction object
      */
-    void dequeueTransaction(CF_Transaction_t* txn);
+    void dequeueTransaction(CfdpTransaction* txn);
 
     /**
      * @brief Move a transaction from one queue to another
@@ -308,7 +308,7 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of destination queue
      */
-    void moveTransaction(CF_Transaction_t* txn, CfdpQueueId::T queue);
+    void moveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue);
 
     /**
      * @brief Frees and resets a transaction and returns it for later use
@@ -318,7 +318,7 @@ class CfdpChannel {
      *
      * @param txn Pointer to the transaction object
      */
-    void freeTransaction(CF_Transaction_t* txn);
+    void freeTransaction(CfdpTransaction* txn);
 
     /**
      * @brief Recover resources associated with a transaction
@@ -336,7 +336,7 @@ class CfdpChannel {
      *
      * @param txn  Pointer to the transaction object
      */
-    void recycleTransaction(CF_Transaction_t *txn);
+    void recycleTransaction(CfdpTransaction *txn);
 
     /**
      * @brief Insert a transaction into a priority sorted transaction queue
@@ -353,7 +353,7 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of queue to insert into
      */
-    void insertSortPrio(CF_Transaction_t* txn, CfdpQueueId::T queue);
+    void insertSortPrio(CfdpTransaction* txn, CfdpQueueId::T queue);
 
     // ----------------------------------------------------------------------
     // Queue Management
@@ -445,7 +445,7 @@ class CfdpChannel {
     CF_Playback_t m_playback[CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
     CF_PollDir_t m_polldir[CF_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
 
-    const CF_Transaction_t* m_cur;             //!< Current transaction during channel cycle
+    const CfdpTransaction* m_cur;              //!< Current transaction during channel cycle
     CfdpManager* m_cfdpManager;                //!< Reference to F' component for parameters
 
     U8 m_tickType;                             //!< Type of tick being processed
@@ -483,8 +483,8 @@ inline void CfdpChannel::insertBackInQueue(CfdpQueueId::T queueidx, CF_CListNode
 
 CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t* node, void* context);
 CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context);
-void CF_CFDP_ArmInactTimer(CF_Transaction_t *txn);
-void CF_MoveTransaction(CF_Transaction_t* txn, CfdpQueueId::T queue);
+void CF_CFDP_ArmInactTimer(CfdpTransaction *txn);
+void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue);
 
 }  // namespace Ccsds
 }  // namespace Svc
