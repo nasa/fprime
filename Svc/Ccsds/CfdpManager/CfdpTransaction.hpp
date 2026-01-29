@@ -226,9 +226,10 @@ class CfdpTransaction {
      * @param foffs Position in file to send data from
      * @param bytes_to_read Number of bytes to send (maximum)
      * @param calc_crc Enable CRC/Checksum calculation
+     * @param bytes_processed Output: actual bytes sent
      *
      */
-    CfdpStatus::T sSendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc);
+    CfdpStatus::T sSendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
 
     /************************************************************************/
     /** @brief Standard state function to send the next file data PDU for active transaction.
