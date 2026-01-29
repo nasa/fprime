@@ -42,8 +42,9 @@
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTx.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpRx.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
@@ -209,6 +210,8 @@ void CfdpEngine::armInactTimer(CF_Transaction_t *txn)
 
 void CfdpEngine::dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
 {
+    CfdpTransaction txnHandler;
+
     // Dispatch based on transaction state
     switch (txn->state)
     {
@@ -216,16 +219,16 @@ void CfdpEngine::dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
             this->recvInit(txn, ph);
             break;
         case CF_TxnState_R1:
-            CF_CFDP_R1_Recv(txn, ph);
+            txnHandler.r1Recv(txn, ph);
             break;
         case CF_TxnState_S1:
-            CF_CFDP_S1_Recv(txn, ph);
+            txnHandler.s1Recv(txn, ph);
             break;
         case CF_TxnState_R2:
-            CF_CFDP_R2_Recv(txn, ph);
+            txnHandler.r2Recv(txn, ph);
             break;
         case CF_TxnState_S2:
-            CF_CFDP_S2_Recv(txn, ph);
+            txnHandler.s2Recv(txn, ph);
             break;
         case CF_TxnState_DROP:
             this->recvDrop(txn, ph);

@@ -4,10 +4,10 @@
 // \brief  F Prime CFDP configuration constants
 // ======================================================================
 
+#include <Fw/FPrimeBasicTypes.hpp>
+
 namespace Svc {
 namespace Ccsds {
-    
-#include <Fw/FPrimeBasicTypes.hpp>
 
 /**
  *  @brief Number of channels

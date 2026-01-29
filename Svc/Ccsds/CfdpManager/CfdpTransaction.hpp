@@ -36,19 +36,23 @@
 #ifndef Svc_Ccsds_CfdpTransaction_HPP
 #define Svc_Ccsds_CfdpTransaction_HPP
 
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Fw/Types/BasicTypes.hpp>
+
+#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
+
+// Forward declarations
+class CfdpEngine;
+class CfdpChannel;
+class CfdpManager;
 
 /**
  * @brief CFDP Transaction state machine class
  *
  * This class provides TX and RX state machine operations for CFDP transactions.
- * Currently, it operates on CF_Transaction_t structures passed as parameters.
- * In a future refactor, CF_Transaction_t members will be migrated to become
- * class members of CfdpTransaction.
- *
  * Implementation is split across multiple files for maintainability:
  * - CfdpTxTransaction.cpp: TX (send) state machine implementation
  * - CfdpRxTransaction.cpp: RX (receive) state machine implementation
@@ -166,28 +170,6 @@ class CfdpTransaction {
      */
     void sCancel(CF_Transaction_t *txn);
 
-  private:
-    /***********************************************************************
-     *
-     * Handler routines for send-file transactions
-     * These are not called from outside this module, but are declared here so they can be unit tested
-     *
-     ************************************************************************/
-
-    /************************************************************************/
-    /** @brief Send an EOF PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
-     * @retval SEND_PDU_ERROR if an error occurred while building the packet.
-     *
-     * @param txn  Pointer to the transaction object
-     */
-    CfdpStatus::T sSendEof(CF_Transaction_t *txn);
-
     /************************************************************************/
     /** @brief Sends an EOF for S1.
      *
@@ -209,29 +191,6 @@ class CfdpTransaction {
     void s2SubstateSendEof(CF_Transaction_t *txn);
 
     /************************************************************************/
-    /** @brief Helper function to populate the PDU with file data and send it.
-     *
-     * @par Description
-     *       This function checks the file offset cache and if the desired
-     *       location is where the file offset is, it can skip a seek() call.
-     *       The file is read into the filedata PDU and then the PDU is sent.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
-     * @returns The number of bytes sent in the file data PDU (CfdpStatus::SUCCESS,
-     *          i.e. 0, if no bytes were processed), or CfdpStatus::ERROR on error
-     *
-     * @param txn     Pointer to the transaction object
-     * @param foffs Position in file to send data from
-     * @param bytes_to_read Number of bytes to send (maximum)
-     * @param calc_crc Enable CRC/Checksum calculation
-     * @param bytes_processed Output: actual bytes sent
-     *
-     */
-    CfdpStatus::T sSendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
-
-    /************************************************************************/
     /** @brief Standard state function to send the next file data PDU for active transaction.
      *
      * @par Description
@@ -246,23 +205,6 @@ class CfdpTransaction {
      * @param txn     Pointer to the transaction object
      */
     void sSubstateSendFileData(CF_Transaction_t *txn);
-
-    /************************************************************************/
-    /** @brief Respond to a NAK by sending filedata PDUs as response.
-     *
-     * @par Description
-     *       Checks to see if a metadata PDU or filedata re-transmits must
-     *       occur.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
-     * @returns ERROR if error otherwise SUCCESS
-     *
-     * @param txn          Pointer to the transaction object
-     * @param nakProcessed true if a NAK was processed, otherwise false
-     */
-    CfdpStatus::T sCheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed);
 
     /************************************************************************/
     /** @brief Send filedata handling for S2.
@@ -291,16 +233,6 @@ class CfdpTransaction {
      * @param txn     Pointer to the transaction object
      */
     void sSubstateSendMetadata(CF_Transaction_t *txn);
-
-    /************************************************************************/
-    /** @brief Send FIN-ACK packet for S2.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
-     * @param txn     Pointer to the transaction object
-     */
-    CfdpStatus::T sSendFinAck(CF_Transaction_t *txn);
 
     /************************************************************************/
     /** @brief A FIN was received before file complete, so abandon the transaction.
@@ -364,6 +296,34 @@ class CfdpTransaction {
      * @param ph Pointer to the PDU information
      */
     void s2EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+
+  private:
+    /***********************************************************************
+     *
+     * Handler routines for send-file transactions
+     * These are not called from outside this module, but are declared here so they can be unit tested
+     *
+     ************************************************************************/
+
+    /************************************************************************/
+    /** @brief Send an EOF PDU.
+     *
+     * @par Assumptions, External Events, and Notes:
+     *       txn must not be NULL.
+     *
+     * @retval CfdpStatus::SUCCESS on success.
+     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval SEND_PDU_ERROR if an error occurred while building the packet.
+     *
+     * @param txn  Pointer to the transaction object
+     */
+    CfdpStatus::T sSendEof(CF_Transaction_t *txn);
+
+    CfdpStatus::T sSendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
+
+    CfdpStatus::T sCheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed);
+
+    CfdpStatus::T sSendFinAck(CF_Transaction_t *txn);
 
   public:
     // ----------------------------------------------------------------------

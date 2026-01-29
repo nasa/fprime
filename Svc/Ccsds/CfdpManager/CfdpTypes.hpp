@@ -34,6 +34,7 @@
 #ifndef CFDP_TYPES_HPP
 #define CFDP_TYPES_HPP
 
+#include <Fw/Types/BasicTypes.hpp>
 #include <config/CfdpCfg.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
 #include <Os/File.hpp>
