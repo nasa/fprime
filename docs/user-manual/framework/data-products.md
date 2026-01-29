@@ -1,5 +1,8 @@
 # Data Products
 
+> [!TIP]
+> The following document is a technical guide to the Data Products system in F´. For a quick introduction to get started with using data products, see the [How To: Generate Data Products](../../how-to/data-products.md).
+
 ## 1. Introduction
 
 A **data product** is any data that is produced by an embedded
@@ -467,4 +470,4 @@ For a preliminary implementation of the data product catalog,
 see [`Svc::DpCatalog`](../../../Svc/DpCatalog/docs/sdd.md).
 
 **Processing data products:**
-TODO
+Data product binary files (typically with the `.fdp` extension) can be decoded on the ground with the `fprime-dp` command, which is a CLI tool shipped with the F Prime GDS. See `fprime-dp decode -h` for options on how to use the tool.
