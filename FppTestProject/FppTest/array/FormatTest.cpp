@@ -261,9 +261,9 @@ TEST_F(FormatTest, String) {
     expectedStream << " ]";
 
     // Handle F Prime string truncation
-    Fw::String expected(expectedStream.str().c_str());
+    Fw::String expectedString(expectedStream.str().c_str());
 
-    ASSERT_STREQ(actual.str().c_str(), expected.toChar());
+    ASSERT_STREQ(actual.str().c_str(), expectedString.toChar());
 }
 
 TEST_F(FormatTest, Char) {
