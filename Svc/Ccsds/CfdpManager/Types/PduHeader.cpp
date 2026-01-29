@@ -4,7 +4,7 @@
 // \brief  cpp file for CFDP PDU Header
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
@@ -14,7 +14,7 @@ namespace Cfdp {
 
 void Pdu::Header::initialize(Type type,
                               Direction direction,
-                              Class txmMode,
+                              Cfdp::Class::T txmMode,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid) {
@@ -174,7 +174,7 @@ Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     this->m_version = (flags >> 5) & 0x07;
     this->m_pduType = static_cast<PduType>((flags >> 4) & 0x01);
     this->m_direction = static_cast<Direction>((flags >> 3) & 0x01);
-    this->m_class = static_cast<Class>((flags >> 2) & 0x01);
+    this->m_class = static_cast<Cfdp::Class::T>((flags >> 2) & 0x01);
     this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
     this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
 

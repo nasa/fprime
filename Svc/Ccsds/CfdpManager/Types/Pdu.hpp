@@ -14,6 +14,7 @@
 #include <config/CfdpCfg.hpp>
 #include <config/CfdpEntityIdAliasAc.hpp>
 #include <config/CfdpTransactionSeqAliasAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -97,12 +98,6 @@ enum Direction : U8 {
     DIRECTION_TOWARD_SENDER = 1     // Toward file sender
 };
 
-// CFDP Class (Transmission Mode)
-enum Class : U8 {
-    CLASS_2 = 0,  // Class 2 (Acknowledged)
-    CLASS_1 = 1   // Class 1 (Unacknowledged)
-};
-
 // CFDP CRC Flag
 enum CrcFlag : U8 {
     CRC_NOT_PRESENT = 0,  // CRC not present
@@ -158,7 +153,7 @@ union Pdu {
         Direction m_direction;
 
         //! Transmission mode
-        Class m_class;
+        Cfdp::Class::T m_class;
 
         //! CRC flag
         CrcFlag m_crcFlag;
@@ -191,7 +186,7 @@ union Pdu {
         //! Initialize a PDU header
         void initialize(Type type,
                        Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid);
@@ -212,7 +207,7 @@ union Pdu {
         Direction getDirection() const { return this->m_direction; }
 
         //! Get the transmission mode
-        Class getTxmMode() const { return this->m_class; }
+        Cfdp::Class::T getTxmMode() const { return this->m_class; }
 
         //! Get the source entity ID
         CfdpEntityId getSourceEid() const { return this->m_sourceEid; }
@@ -268,7 +263,7 @@ union Pdu {
       public:
         //! Initialize a Metadata PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -333,7 +328,7 @@ union Pdu {
       public:
         //! Initialize a File Data PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -390,7 +385,7 @@ union Pdu {
       public:
         //! Initialize an EOF PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -447,7 +442,7 @@ union Pdu {
       public:
         //! Initialize a Finished PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -507,7 +502,7 @@ union Pdu {
       public:
         //! Initialize an ACK PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
@@ -577,7 +572,7 @@ union Pdu {
       public:
         //! Initialize a NAK PDU
         void initialize(Direction direction,
-                       Class txmMode,
+                       Cfdp::Class::T txmMode,
                        CfdpEntityId sourceEid,
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,

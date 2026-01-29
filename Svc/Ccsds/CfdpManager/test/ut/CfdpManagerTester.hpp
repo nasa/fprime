@@ -10,7 +10,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 
@@ -123,7 +123,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpFileSize expectedFileSize,
         const char* expectedSourceFilename,
         const char* expectedDestFilename,
-        Svc::Ccsds::Cfdp::Class expectedClass
+        Svc::Ccsds::Cfdp::Class::T expectedClass
     );
 
     //! Helper to verify File Data PDU (deserialize + validate)
@@ -142,7 +142,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedOffset,
         U16 expectedDataSize,
         const char* filename,
-        Svc::Ccsds::Cfdp::Class expectedClass
+        Svc::Ccsds::Cfdp::Class::T expectedClass
     );
 
     //! Helper to verify EOF PDU (deserialize + validate)
@@ -249,7 +249,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpFileSize fileSize,
         const char* sourceFilename,
         const char* destFilename,
-        Cfdp::Class txmMode,
+        Cfdp::Class::T txmMode,
         U8 closureRequested
     );
 
@@ -270,7 +270,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpFileSize offset,
         U16 dataSize,
         const U8* data,
-        Cfdp::Class txmMode
+        Cfdp::Class::T txmMode
     );
 
     //! Helper to send an EOF PDU to CfdpManager via dataIn
@@ -290,7 +290,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::ConditionCode conditionCode,
         U32 checksum,
         CfdpFileSize fileSize,
-        Cfdp::Class txmMode
+        Cfdp::Class::T txmMode
     );
 
     //! Helper to send a FIN PDU to CfdpManager via dataIn
@@ -421,7 +421,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* dstFile,
         U8 channelId,
         CfdpEntityId destEid,
-        CfdpClass cfdpClass,
+        Cfdp::Class cfdpClass,
         U8 priority,
         CF_TxnState_t expectedState,
         TransactionSetup& setup
@@ -433,7 +433,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* dstFile,
         U8 channelId,
         CfdpEntityId sourceEid,
-        Cfdp::Class cfdpClass,
+        Cfdp::Class::T cfdpClass,
         U32 fileSize,
         U32 transactionSeq,
         CF_TxnState_t expectedState,
@@ -466,7 +466,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         FwSizeType fileSize,
         const char* srcFile,
         const char* dstFile,
-        Cfdp::Class cfdpClass
+        Cfdp::Class::T cfdpClass
     );
 
     //! Verify multiple FileData PDUs in sequence
@@ -476,7 +476,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const TransactionSetup& setup,
         U16 dataPerPdu,
         const char* srcFile,
-        Cfdp::Class cfdpClass
+        Cfdp::Class::T cfdpClass
     );
 
     //! Clean up test file (remove and verify)

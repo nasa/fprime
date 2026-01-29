@@ -54,7 +54,7 @@ event PollDirStopped(
 
 event SetFlowState(
     channelId: U8 @< Channel being set
-    flowState: CfdpFlow @< Flow state set
+    flowState: Cfdp.Flow @< Flow state set
 ) \
     severity activity low \
     format "Set channel {} to {}" 

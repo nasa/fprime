@@ -4,7 +4,7 @@
 // \brief  cpp file for CFDP ACK (Acknowledge) PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Svc {
@@ -12,7 +12,7 @@ namespace Ccsds {
 namespace Cfdp {
 
 void Pdu::AckPdu::initialize(Direction direction,
-                              Class txmMode,
+                              Cfdp::Class::T txmMode,
                               CfdpEntityId sourceEid,
                               CfdpTransactionSeq transactionSeq,
                               CfdpEntityId destEid,

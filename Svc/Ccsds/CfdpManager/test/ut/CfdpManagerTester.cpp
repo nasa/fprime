@@ -85,9 +85,9 @@ CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransactionS
 
     // Search through all transaction queues (PEND, TXA, TXW, RX, FREE)
     // Skip HIST and HIST_FREE as they contain CF_History_t, not CfdpTransaction
-    for (U8 qIdx = 0; qIdx < CfdpQueueId::NUM; qIdx++) {
+    for (U8 qIdx = 0; qIdx < Cfdp::QueueId::NUM; qIdx++) {
         // Skip history queues (HIST=4, HIST_FREE=5)
-        if (qIdx == CfdpQueueId::HIST || qIdx == CfdpQueueId::HIST_FREE) {
+        if (qIdx == Cfdp::QueueId::HIST || qIdx == Cfdp::QueueId::HIST_FREE) {
             continue;
         }
 
@@ -152,7 +152,7 @@ void CfdpManagerTester::setupTxTransaction(
     const char* dstFile,
     U8 channelId,
     CfdpEntityId destEid,
-    CfdpClass cfdpClass,
+    Cfdp::Class cfdpClass,
     U8 priority,
     CF_TxnState_t expectedState,
     TransactionSetup& setup)
@@ -160,7 +160,7 @@ void CfdpManagerTester::setupTxTransaction(
     const U32 initialSeqNum = component.m_engine->m_seqNum;
 
     this->sendCmd_SendFile(0, 0, channelId, destEid, cfdpClass,
-                          CfdpKeep::KEEP, priority,
+                          Cfdp::Keep::KEEP, priority,
                           Fw::CmdStringArg(srcFile), Fw::CmdStringArg(dstFile));
     this->component.doDispatch();
 
@@ -192,14 +192,14 @@ void CfdpManagerTester::setupRxTransaction(
     const char* dstFile,
     U8 channelId,
     CfdpEntityId sourceEid,
-    Cfdp::Class cfdpClass,
+    Cfdp::Class::T cfdpClass,
     U32 fileSize,
     U32 transactionSeq,
     CF_TxnState_t expectedState,
     TransactionSetup& setup)
 {
     // Send Metadata PDU to initiate RX transaction
-    U8 closureRequested = (cfdpClass == Cfdp::CLASS_1) ? 0 : 1;
+    U8 closureRequested = (cfdpClass == Cfdp::Class::CLASS_1) ? 0 : 1;
 
     this->sendMetadataPdu(
         channelId,
@@ -319,7 +319,7 @@ void CfdpManagerTester::verifyMetadataPduAtIndex(
     FwSizeType fileSize,
     const char* srcFile,
     const char* dstFile,
-    Cfdp::Class cfdpClass)
+    Cfdp::Class::T cfdpClass)
 {
     Fw::Buffer metadataPduBuffer = this->getSentPduBuffer(pduIndex);
     ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
@@ -334,7 +334,7 @@ void CfdpManagerTester::verifyMultipleFileDataPdus(
     const TransactionSetup& setup,
     U16 dataPerPdu,
     const char* srcFile,
-    Cfdp::Class cfdpClass)
+    Cfdp::Class::T cfdpClass)
 {
     for (U8 pduIdx = 0; pduIdx < numPdus; pduIdx++) {
         Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(startIndex + pduIdx);
@@ -393,7 +393,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                             CfdpClass::CLASS_1, TEST_PRIORITY, CF_TxnState_S1, setup);
+                             Cfdp::Class::CLASS_1, TEST_PRIORITY, CF_TxnState_S1, setup);
 
     // Run first engine cycle - should send Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -401,13 +401,13 @@ void CfdpManagerTester::testClass1TxNominal() {
     ASSERT_FROM_PORT_HISTORY_SIZE(2);
 
     // Verify Metadata PDU
-    verifyMetadataPduAtIndex(0, setup, fileSize, srcFile, dstFile, Cfdp::CLASS_1);
+    verifyMetadataPduAtIndex(0, setup, fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1);
 
     // Verify FileData PDU
     Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1);
     ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU should be sent";
     verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                     setup.expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::CLASS_1);
+                     setup.expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::Class::CLASS_1);
 
     EXPECT_EQ(fileSize, setup.txn->m_foffs) << "Should have read entire file";
     EXPECT_EQ(CF_TxSubState_EOF, setup.txn->m_state_data.send.sub_state) << "Should progress to EOF sub-state";
@@ -441,15 +441,15 @@ void CfdpManagerTester::testClass2TxNominal() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_1, TEST_GROUND_EID,
-                             CfdpClass::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
+                             Cfdp::Class::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
     ASSERT_FROM_PORT_HISTORY_SIZE(6);
 
-    verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::CLASS_2);
-    verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::CLASS_2);
+    verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::Class::CLASS_2);
+    verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
 
     EXPECT_EQ(expectedFileSize, setup.txn->m_foffs) << "Should have read entire file";
     EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
@@ -497,15 +497,15 @@ void CfdpManagerTester::testClass2TxNack() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                             CfdpClass::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
+                             Cfdp::Class::CLASS_2, TEST_PRIORITY, CF_TxnState_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
     ASSERT_FROM_PORT_HISTORY_SIZE(6);
 
-    verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::CLASS_2);
-    verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::CLASS_2);
+    verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::Class::CLASS_2);
+    verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
 
     EXPECT_EQ(CF_TxSubState_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
     EXPECT_TRUE(setup.txn->m_flags.tx.send_eof) << "send_eof flag should be set";
@@ -602,7 +602,7 @@ void CfdpManagerTester::testClass1RxNominal() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::CLASS_1, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R1, setup);
+                       Cfdp::Class::CLASS_1, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R1, setup);
 
     // Uplink FileData PDU
     // Read test data from source file
@@ -626,7 +626,7 @@ void CfdpManagerTester::testClass1RxNominal() {
         0,                                 // offset
         static_cast<U16>(actualFileSize),  // size
         testData,
-        Cfdp::CLASS_1
+        Cfdp::Class::CLASS_1
     );
     component.doDispatch();
 
@@ -648,7 +648,7 @@ void CfdpManagerTester::testClass1RxNominal() {
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
         static_cast<CfdpFileSize>(actualFileSize),
-        Cfdp::CLASS_1
+        Cfdp::Class::CLASS_1
     );
     component.doDispatch();
 
@@ -685,7 +685,7 @@ void CfdpManagerTester::testClass2RxNominal() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R2, setup);
+                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R2, setup);
 
     // Read test data from source file
     U8* testData = new U8[actualFileSize];
@@ -710,7 +710,7 @@ void CfdpManagerTester::testClass2RxNominal() {
             offset,
             dataPerPdu,
             testData + offset,
-            Cfdp::CLASS_2
+            Cfdp::Class::CLASS_2
         );
         component.doDispatch();
     }
@@ -737,7 +737,7 @@ void CfdpManagerTester::testClass2RxNominal() {
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
         static_cast<CfdpFileSize>(actualFileSize),
-        Cfdp::CLASS_2
+        Cfdp::Class::CLASS_2
     );
     component.doDispatch();
 
@@ -848,7 +848,7 @@ void CfdpManagerTester::testClass2RxNack() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R2, setup);
+                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CF_TxnState_R2, setup);
 
     // Read test data from source file
     U8* testData = new U8[actualFileSize];
@@ -875,7 +875,7 @@ void CfdpManagerTester::testClass2RxNack() {
             offset,
             dataPerPdu,
             testData + offset,
-            Cfdp::CLASS_2
+            Cfdp::Class::CLASS_2
         );
         component.doDispatch();
     }
@@ -901,7 +901,7 @@ void CfdpManagerTester::testClass2RxNack() {
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
         static_cast<CfdpFileSize>(actualFileSize),
-        Cfdp::CLASS_2
+        Cfdp::Class::CLASS_2
     );
     component.doDispatch();
 
@@ -989,7 +989,7 @@ void CfdpManagerTester::testClass2RxNack() {
             offset,
             dataPerPdu,
             testData + offset,
-            Cfdp::CLASS_2
+            Cfdp::Class::CLASS_2
         );
         component.doDispatch();
     }

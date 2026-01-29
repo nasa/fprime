@@ -10,7 +10,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
-#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -62,7 +62,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  CfdpStatus::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
+  Cfdp::Status::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
                              CF_EncoderState*& encoderPtr, CfdpChannel& chan,
                              FwSizeType size);
   // Not sure there is an equivelent
@@ -124,8 +124,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U32 cmdSeq, //!< The command sequence number
         U8 channelId, //!< Channel ID for the file transaction
         CfdpEntityId destId, //!< Destination entity id
-        CfdpClass cfdpClass, //!< CFDP class for the file transfer
-        CfdpKeep keep, //!< Whether or not to keep or delete the file upon completion
+        Cfdp::Class cfdpClass, //!< CFDP class for the file transfer
+        Cfdp::Keep keep, //!< Whether or not to keep or delete the file upon completion
         U8 priority, //!< Priority: 0=highest priority
         const Fw::CmdStringArg& sourceFileName, //!< The name of the on-board file to send
         const Fw::CmdStringArg& destFileName //!< The name of the destination file on the ground
@@ -139,8 +139,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U32 cmdSeq, //!< The command sequence number
         U8 channelId, //!< Channel ID for the file transaction(s)
         CfdpEntityId destId, //!< Destination entity id
-        CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
-        CfdpKeep keep, //!< Whether or not to keep or delete the file(s) upon completion
+        Cfdp::Class cfdpClass, //!< CFDP class for the file transfer(s)
+        Cfdp::Keep keep, //!< Whether or not to keep or delete the file(s) upon completion
         U8 priority, //!< Priority: 0=highest priority
         const Fw::CmdStringArg& sourceDirectory, //!< The name of the on-board directory to send
         const Fw::CmdStringArg& destDirectory //!< The name of the destination directory on the ground
@@ -155,7 +155,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U8 channelId, //!< Channel ID for the file transaction(s)
         U8 pollId, //!< Channel poll ID for the file transaction(s)
         CfdpEntityId destId, //!< Destination entity id
-        CfdpClass cfdpClass, //!< CFDP class for the file transfer(s)
+        Cfdp::Class cfdpClass, //!< CFDP class for the file transfer(s)
         U8 priority, //!< Priority: 0=highest priority
         U32 interval, //!< Interval to poll the directory in seconds
         const Fw::CmdStringArg& sourceDirectory, //!< The name of the on-board directory to send
@@ -179,7 +179,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         U8 channelId, //!< Channel ID to set
-        CfdpFlow freeze //!< Flow state to set
+        Cfdp::Flow freeze //!< Flow state to set
     ) override;
 
   private:

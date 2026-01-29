@@ -608,10 +608,10 @@ U64 CF_DecodeIntegerInSize(CF_DecoderState_t *state, U8 decode_size)
     return temp_val;
 }
 
-CfdpStatus::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh)
+Cfdp::Status::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh)
 {
     const CF_CFDP_PduHeader_t *peh; /* for decoding fixed sized fields */
-    CfdpStatus::T              ret = CfdpStatus::SUCCESS;
+    Cfdp::Status::T              ret = Cfdp::Status::SUCCESS;
 
     /* decode the standard PDU header */
     peh = CF_DECODE_FIXED_CHUNK(state, CF_CFDP_PduHeader_t);
@@ -634,7 +634,7 @@ CfdpStatus::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeade
         CF_Codec_Load_U16(&(plh->data_encoded_length), &(peh->length));
         if ((plh->eid_length > sizeof(plh->source_eid)) || (plh->txn_seq_length > sizeof(plh->sequence_num)))
         {
-            ret = CfdpStatus::ERROR;
+            ret = Cfdp::Status::ERROR;
         }
         else
         {

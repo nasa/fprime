@@ -36,7 +36,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
-#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {

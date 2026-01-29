@@ -19,7 +19,7 @@ param FailDir: string size CfdpManagerMaxFileSize \
     default "/fail"
 
 @ Parameter configuration for an array CFDP channels
-param ChannelConfig: CfdpChannelArrayParams \
+param ChannelConfig: Cfdp.ChannelArrayParams \
     default [ \
         {
             ack_limit = 4, \

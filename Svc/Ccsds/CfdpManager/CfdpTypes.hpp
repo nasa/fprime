@@ -48,10 +48,10 @@
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
-#include <Svc/Ccsds/Types/CfdpFlowEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpClassEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpQueueIdEnumAc.hpp>
-#include <Svc/Ccsds/Types/CfdpKeepEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/QueueIdEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/KeepEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -242,7 +242,7 @@ typedef struct CF_ChunkWrapper
 typedef struct CF_Playback
 {
     Os::Directory dir;
-    CfdpClass::T cfdp_class;
+    Cfdp::Class::T cfdp_class;
     CfdpTxnFilenames fnames;
     U16 num_ts; /**< \brief number of transactions */
     U8 priority;
@@ -251,7 +251,7 @@ typedef struct CF_Playback
 
     bool busy;
     bool diropen;
-    CfdpKeep::T keep;
+    Cfdp::Keep::T keep;
     bool counted;
 } CF_Playback_t;
 
@@ -268,7 +268,7 @@ typedef struct CF_PollDir
     U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */
 
     U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
-    CfdpClass::T cfdpClass; /**< \brief the CFDP class to send */
+    Cfdp::Class::T cfdpClass; /**< \brief the CFDP class to send */
     CfdpEntityId destEid;   /**< \brief destination entity id */
 
     Fw::String srcDir; /**< \brief path to source dir */

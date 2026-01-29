@@ -93,7 +93,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 // ----------------------------------------------------------------------
 
 void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpEntityId destId,
-                                       CfdpClass cfdpClass, CfdpKeep keep, U8 priority,
+                                       Cfdp::Class cfdpClass, Cfdp::Keep keep, U8 priority,
                                        const Fw::CmdStringArg& sourceFileName,
                                        const Fw::CmdStringArg& destFileName)
 {
@@ -103,7 +103,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
+        (Cfdp::Status::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
                                                         channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
@@ -121,7 +121,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
 }
 
 void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpEntityId destId,
-                                                CfdpClass cfdpClass, CfdpKeep keep, U8 priority,
+                                                Cfdp::Class cfdpClass, Cfdp::Keep keep, U8 priority,
                                                 const Fw::CmdStringArg& sourceDirectory,
                                                 const Fw::CmdStringArg& destDirectory)
 {
@@ -131,7 +131,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
+        (Cfdp::Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
                                                              keep.e, channelId, priority, destId)))
     {
         this->log_ACTIVITY_LO_PlaybackInitiatied(sourceDirectory);
@@ -148,7 +148,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
 }
 
 void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, U8 pollId,
-                                            CfdpEntityId destId, CfdpClass cfdpClass, U8 priority,
+                                            CfdpEntityId destId, Cfdp::Class cfdpClass, U8 priority,
                                             U32 interval, const Fw::CmdStringArg& sourceDirectory,
                                             const Fw::CmdStringArg& destDirectory)
 {
@@ -162,7 +162,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
     }
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
+        (Cfdp::Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
                                                               cfdpClass.e, priority, destId, interval)))
     {
         this->log_ACTIVITY_LO_PollDirInitiatied(sourceDirectory);
@@ -188,7 +188,7 @@ void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     }
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
-        (CfdpStatus::SUCCESS == this->m_engine->stopPollDir(channelId, pollId)))
+        (Cfdp::Status::SUCCESS == this->m_engine->stopPollDir(channelId, pollId)))
     {
         this->log_ACTIVITY_LO_PollDirStopped(channelId, pollId);
     }
@@ -199,7 +199,7 @@ void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
 }
 
-void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, CfdpFlow flowState)
+void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId, Cfdp::Flow flowState)
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
@@ -252,7 +252,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
+Cfdp::Status::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
                                          CF_EncoderState*& encoderPtr, CfdpChannel& chan,
                                          FwSizeType size)
 {
@@ -265,7 +265,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
     // return this->bufferAllocate_out(portNum, size);
 
     // For now, just pull a buffer from the preallocated pool
-    CfdpStatus::T status = CfdpStatus::ERROR;
+    Cfdp::Status::T status = Cfdp::Status::ERROR;
 
     FW_ASSERT(pduPtr == NULL);
     FW_ASSERT(msgPtr == NULL);
@@ -275,7 +275,7 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
     U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.getChannelId());
     if (chan.getOutgoingCounter() >= max_pdus)
     {
-        status = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
+        status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
     }
     else
     {
@@ -291,16 +291,16 @@ CfdpStatus::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& m
                 encoderPtr = &this->pduBuffers[i].encoder;
 
                 chan.incrementOutgoingCounter();
-                status = CfdpStatus::SUCCESS;
+                status = Cfdp::Status::SUCCESS;
                 break;
             }
         }
 
         // Check if we were unable to allocate a buffer (pool exhausted)
-        if(status != CfdpStatus::SUCCESS)
+        if(status != Cfdp::Status::SUCCESS)
         {
             this->log_WARNING_LO_BuffersExuasted();
-            status = CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR;
+            status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
         }
     }
 
@@ -423,7 +423,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -439,7 +439,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -455,7 +455,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -471,7 +471,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -487,7 +487,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -503,7 +503,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
@@ -519,7 +519,7 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
 
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
-    CfdpChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    Cfdp::ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 

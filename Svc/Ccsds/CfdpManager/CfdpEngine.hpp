@@ -140,10 +140,8 @@ class CfdpEngine {
 
     /**
      * @brief Initialize the CFDP engine
-     *
-     * @returns CfdpStatus::SUCCESS on success, error code otherwise
      */
-    CfdpStatus::T init();
+    void init();
 
     /**
      * @brief Cycle the engine once per wakeup
@@ -170,10 +168,10 @@ class CfdpEngine {
      * @param chan_num   CF channel number to use
      * @param priority   CF priority level
      * @param dest_id    Entity ID of remote receiver
-     * @returns CfdpStatus::SUCCESS on success, error code otherwise
+     * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    CfdpStatus::T txFile(const Fw::String& src, const Fw::String& dst,
-                         CfdpClass::T cfdp_class, CfdpKeep::T keep,
+    Cfdp::Status::T txFile(const Fw::String& src, const Fw::String& dst,
+                         Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep,
                          U8 chan_num, U8 priority, CfdpEntityId dest_id);
 
     /**
@@ -186,10 +184,10 @@ class CfdpEngine {
      * @param chan       CF channel number to use
      * @param priority   CF priority level
      * @param dest_id    Entity ID of remote receiver
-     * @returns CfdpStatus::SUCCESS on success, error code otherwise
+     * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    CfdpStatus::T playbackDir(const Fw::String& src, const Fw::String& dst,
-                              CfdpClass::T cfdp_class, CfdpKeep::T keep,
+    Cfdp::Status::T playbackDir(const Fw::String& src, const Fw::String& dst,
+                              Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep,
                               U8 chan, U8 priority, CfdpEntityId dest_id);
 
     /**
@@ -203,10 +201,10 @@ class CfdpEngine {
      * @param priority    CF priority level
      * @param destEid     Entity ID of remote receiver
      * @param intervalSec Time between directory playbacks in seconds
-     * @returns CfdpStatus::SUCCESS on success, error code otherwise
+     * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    CfdpStatus::T startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir,
-                               const Fw::String& dstDir, CfdpClass::T cfdp_class,
+    Cfdp::Status::T startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir,
+                               const Fw::String& dstDir, Cfdp::Class::T cfdp_class,
                                U8 priority, CfdpEntityId destEid, U32 intervalSec);
 
     /**
@@ -214,9 +212,9 @@ class CfdpEngine {
      *
      * @param chanId CFDP channel number
      * @param pollId Channel poll directory index
-     * @returns CfdpStatus::SUCCESS on success, error code otherwise
+     * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    CfdpStatus::T stopPollDir(U8 chanId, U8 pollId);
+    Cfdp::Status::T stopPollDir(U8 chanId, U8 pollId);
 
     /**
      * @brief Set channel flow state
@@ -226,7 +224,7 @@ class CfdpEngine {
      * @param channelId Channel index
      * @param flowState Flow state to set (normal or frozen)
      */
-    void setChannelFlowState(U8 channelId, CfdpFlow::T flowState);
+    void setChannelFlowState(U8 channelId, Cfdp::Flow::T flowState);
 
     // ----------------------------------------------------------------------
     // Public Transaction Interface
@@ -317,11 +315,11 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendMd(CfdpTransaction *txn);
+    Cfdp::Status::T sendMd(CfdpTransaction *txn);
 
     /**
      * @brief Send a previously-assembled filedata PDU for transmit
@@ -337,10 +335,10 @@ class CfdpEngine {
      * sends the PDU that was previously allocated and assembled.  As such, the
      * typical failure possibilities do not apply to this call.
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success. (error checks not yet implemented)
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success. (error checks not yet implemented)
      */
-    CfdpStatus::T sendFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T sendFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Build an EOF PDU for transmit
@@ -350,11 +348,11 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendEof(CfdpTransaction *txn);
+    Cfdp::Status::T sendEof(CfdpTransaction *txn);
 
     /**
      * @brief Build an ACK PDU for transmit
@@ -373,11 +371,11 @@ class CfdpEngine {
      * @param peer_eid  Remote entity ID
      * @param tsn       Transaction sequence number
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
+    Cfdp::Status::T sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                           CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
 
     /**
@@ -391,11 +389,11 @@ class CfdpEngine {
      * @param fs   Final file status (retained or rejected, etc)
      * @param cc   Final CFDP condition code
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+    Cfdp::Status::T sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                           CF_CFDP_ConditionCode_t cc);
 
     /**
@@ -412,11 +410,11 @@ class CfdpEngine {
      * encodes and sends the previously-assembled PDU buffer.  As such, the
      * typical failure possibilities do not apply to this call.
      *
-     * @returns CfdpStatus::T status code
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @returns Cfdp::Status::T status code
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    CfdpStatus::T sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a metadata PDU from a received message
@@ -431,10 +429,10 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::PDU_METADATA_ERROR on error
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::PDU_METADATA_ERROR on error
      */
-    CfdpStatus::T recvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -449,11 +447,11 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::ERROR for general errors
-     * @retval CfdpStatus::SHORT_PDU_ERROR PDU too short
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::ERROR for general errors
+     * @retval Cfdp::Status::SHORT_PDU_ERROR PDU too short
      */
-    CfdpStatus::T recvFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an EOF PDU from a received message
@@ -468,10 +466,10 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::SHORT_PDU_ERROR on error
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an ACK PDU from a received message
@@ -486,10 +484,10 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::SHORT_PDU_ERROR on error
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack an FIN PDU from a received message
@@ -504,10 +502,10 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::SHORT_PDU_ERROR on error
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Unpack a NAK PDU from a received message
@@ -522,10 +520,10 @@ class CfdpEngine {
      * @param ph   The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::SHORT_PDU_ERROR on error
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    CfdpStatus::T recvNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Initiate a file transfer transaction
@@ -537,7 +535,7 @@ class CfdpEngine {
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      */
-    void txFileInitiate(CfdpTransaction *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan,
+    void txFileInitiate(CfdpTransaction *txn, Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan,
                         U8 priority, CfdpEntityId dest_id);
 
     /**
@@ -553,8 +551,8 @@ class CfdpEngine {
      * @param dest_id      Destination entity ID
      * @returns SUCCESS if initiated, error otherwise
      */
-    CfdpStatus::T playbackDirInitiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
-                                      CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
+    Cfdp::Status::T playbackDirInitiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
+                                      Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
 
     /**
      * @brief Dispatch TX state machine for a transaction
@@ -664,11 +662,11 @@ class CfdpEngine {
      * @param ph       The logical PDU buffer being received
      *
      * @returns integer status code
-     * @retval CfdpStatus::SUCCESS on success
-     * @retval CfdpStatus::ERROR for general errors
-     * @retval CfdpStatus::SHORT_PDU_ERROR if PDU too short
+     * @retval Cfdp::Status::SUCCESS on success
+     * @retval Cfdp::Status::ERROR for general errors
+     * @retval Cfdp::Status::SHORT_PDU_ERROR if PDU too short
      */
-    CfdpStatus::T recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Receive state function to ignore a packet
@@ -769,9 +767,9 @@ class CfdpEngine {
      *
      * @param out     Output F' string
      * @param src_lv  Source LV structure
-     * @returns CfdpStatus::SUCCESS on success, ERROR if length is zero or invalid
+     * @returns Cfdp::Status::SUCCESS on success, ERROR if length is zero or invalid
      */
-    CfdpStatus::T copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
+    Cfdp::Status::T copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

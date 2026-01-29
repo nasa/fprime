@@ -4,7 +4,7 @@
 // \brief  cpp file for CFDP Metadata PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <config/CfdpCfg.hpp>
@@ -14,7 +14,7 @@ namespace Ccsds {
 namespace Cfdp {
 
 void Pdu::MetadataPdu::initialize(Direction direction,
-                                   Class txmMode,
+                                   Cfdp::Class::T txmMode,
                                    CfdpEntityId sourceEid,
                                    CfdpTransactionSeq transactionSeq,
                                    CfdpEntityId destEid,

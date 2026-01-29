@@ -40,7 +40,7 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
-#include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -634,10 +634,10 @@ void CF_CFDP_EncodeCrc(CF_EncoderState_t *state, U32 *plcrc);
  *
  * @param state  Decoder state object
  * @param plh    Pointer to logical PDU base header data
- * @retval CfdpStatus::SUCCESS if decode was successful
- * @retval CfdpStatus::ERROR if EID or sequence number field size exceeds configured limits
+ * @retval Cfdp::Status::SUCCESS if decode was successful
+ * @retval Cfdp::Status::ERROR if EID or sequence number field size exceeds configured limits
  */
-CfdpStatus::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
+Cfdp::Status::T CF_CFDP_DecodeHeader(CF_DecoderState_t *state, CF_Logical_PduHeader_t *plh);
 
 /************************************************************************/
 /**

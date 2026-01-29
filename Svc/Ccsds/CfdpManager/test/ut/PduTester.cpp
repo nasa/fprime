@@ -11,7 +11,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/Pdu/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
@@ -54,9 +54,9 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
     if ((state == CF_TxnState_S2) || (state == CF_TxnState_R2)) {
-        txn->m_txn_class = CfdpClass::CLASS_2;
+        txn->m_txn_class = Cfdp::Class::CLASS_2;
     } else {
-        txn->m_txn_class = CfdpClass::CLASS_1;
+        txn->m_txn_class = Cfdp::Class::CLASS_1;
     }
 
     // Initialize history
@@ -95,7 +95,7 @@ void CfdpManagerTester::verifyMetadataPdu(
     CfdpFileSize expectedFileSize,
     const char* expectedSourceFilename,
     const char* expectedDestFilename,
-    Svc::Ccsds::Cfdp::Class expectedClass
+    Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
     // Deserialize PDU
     Cfdp::Pdu::MetadataPdu metadataPdu;
@@ -116,7 +116,7 @@ void CfdpManagerTester::verifyMetadataPdu(
     EXPECT_EQ(Cfdp::CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
 
     // Closure requested should be 0 for Class 1, 1 for Class 2
-    U8 expectedClosureRequested = (expectedClass == Cfdp::CLASS_2) ? 1 : 0;
+    U8 expectedClosureRequested = (expectedClass == Cfdp::Class::CLASS_2) ? 1 : 0;
     EXPECT_EQ(expectedClosureRequested, metadataPdu.getClosureRequested())
         << "Closure requested mismatch for class " << static_cast<int>(expectedClass);
 
@@ -141,7 +141,7 @@ void CfdpManagerTester::verifyFileDataPdu(
     U32 expectedOffset,
     U16 expectedDataSize,
     const char* filename,
-    Svc::Ccsds::Cfdp::Class expectedClass
+    Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
     // Deserialize PDU
     Cfdp::Pdu::FileDataPdu fileDataPdu;
@@ -265,7 +265,7 @@ void CfdpManagerTester::verifyFinPdu(
     const Cfdp::Pdu::Header& header = finPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_FIN, header.getType()) << "Expected T_FIN type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
-    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -294,7 +294,7 @@ void CfdpManagerTester::verifyAckPdu(
     // Validate header fields
     const Cfdp::Pdu::Header& header = ackPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_ACK, header.getType()) << "Expected T_ACK type";
-    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -324,7 +324,7 @@ void CfdpManagerTester::verifyNakPdu(
     // Validate header fields
     const Cfdp::Pdu::Header& header = nakPdu.asHeader();
     EXPECT_EQ(Cfdp::Pdu::T_NAK, header.getType()) << "Expected T_NAK type";
-    EXPECT_EQ(Cfdp::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
+    EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
     EXPECT_EQ(expectedTransactionSeq, header.getTransactionSeq()) << "Transaction sequence mismatch";
@@ -362,7 +362,7 @@ void CfdpManagerTester::sendMetadataPdu(
     CfdpFileSize fileSize,
     const char* sourceFilename,
     const char* destFilename,
-    Cfdp::Class txmMode,
+    Cfdp::Class::T txmMode,
     U8 closureRequested
 ) {
     // Create and initialize Metadata PDU
@@ -400,7 +400,7 @@ void CfdpManagerTester::sendFileDataPdu(
     CfdpFileSize offset,
     U16 dataSize,
     const U8* data,
-    Cfdp::Class txmMode
+    Cfdp::Class::T txmMode
 ) {
     // Create and initialize File Data PDU
     Cfdp::Pdu::FileDataPdu fileDataPdu;
@@ -435,7 +435,7 @@ void CfdpManagerTester::sendEofPdu(
     Cfdp::ConditionCode conditionCode,
     U32 checksum,
     CfdpFileSize fileSize,
-    Cfdp::Class txmMode
+    Cfdp::Class::T txmMode
 ) {
     // Create and initialize EOF PDU
     Cfdp::Pdu::EofPdu eofPdu;
@@ -475,7 +475,7 @@ void CfdpManagerTester::sendFinPdu(
     Cfdp::Pdu::FinPdu finPdu;
     finPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
-        Cfdp::CLASS_2,  // FIN is only used in Class 2
+        Cfdp::Class::CLASS_2,  // FIN is only used in Class 2
         sourceEid,
         transactionSeq,
         destEid,
@@ -511,7 +511,7 @@ void CfdpManagerTester::sendAckPdu(
     Cfdp::Pdu::AckPdu ackPdu;
     ackPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
-        Cfdp::CLASS_2,  // ACK is only used in Class 2
+        Cfdp::Class::CLASS_2,  // ACK is only used in Class 2
         sourceEid,
         transactionSeq,
         destEid,
@@ -548,7 +548,7 @@ void CfdpManagerTester::sendNakPdu(
     Cfdp::Pdu::NakPdu nakPdu;
     nakPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
-        Cfdp::CLASS_2,  // NAK is only used in Class 2
+        Cfdp::Class::CLASS_2,  // NAK is only used in Class 2
         sourceEid,
         transactionSeq,
         destEid,
@@ -611,8 +611,8 @@ void CfdpManagerTester::testMetaDataPdu() {
     this->clearHistory();
 
     // Invoke sender to emit Metadata PDU using refactored API
-    CfdpStatus::T status = component.m_engine->sendMd(txn);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendMd failed";
+    Cfdp::Status::T status = component.m_engine->sendMd(txn);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendMd failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -623,7 +623,7 @@ void CfdpManagerTester::testMetaDataPdu() {
 
     // Verify Metadata PDU
     verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileSize, srcFile, dstFile, Cfdp::CLASS_1);
+                      testSequenceId, fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1);
 }
 
 void CfdpManagerTester::testFileDataPdu() {
@@ -634,7 +634,7 @@ void CfdpManagerTester::testFileDataPdu() {
     // 4. Capture PDU from dataOut and validate
 
     // Test file configuration
-    const char* testFilePath = "Pdu/test/ut/data/test_file.bin";
+    const char* testFilePath = "Types/test/ut/data/test_file.bin";
     const U32 fileOffset = 50;   // Read from offset 50
     const U16 readSize = 64;     // Read 64 bytes
 
@@ -708,8 +708,8 @@ void CfdpManagerTester::testFileDataPdu() {
     fd->data_ptr = data_ptr;
 
     // Invoke sendFd using refactored API
-    CfdpStatus::T status = component.m_engine->sendFd(txn, ph);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendFd failed";
+    Cfdp::Status::T status = component.m_engine->sendFd(txn, ph);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendFd failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -720,7 +720,7 @@ void CfdpManagerTester::testFileDataPdu() {
 
     // Verify File Data PDU
     verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileOffset, readSize, testFilePath, Cfdp::CLASS_1);
+                      testSequenceId, fileOffset, readSize, testFilePath, Cfdp::Class::CLASS_1);
 }
 
 void CfdpManagerTester::testEofPdu() {
@@ -731,7 +731,7 @@ void CfdpManagerTester::testEofPdu() {
     // 4. Deserialize and validate
 
     // Configure transaction for EOF PDU emission
-    const char* srcFile = "Pdu/test/ut/data/test_file.bin";
+    const char* srcFile = "Types/test/ut/data/test_file.bin";
     const char* dstFile = "/tmp/dest_eof.bin";
     const CfdpFileSize fileSize = 242;  // Actual size of test_file.bin
     const U8 channelId = 0;
@@ -773,8 +773,8 @@ void CfdpManagerTester::testEofPdu() {
     this->clearHistory();
 
     // Invoke sender to emit EOF PDU using refactored API
-    CfdpStatus::T status = component.m_engine->sendEof(txn);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendEof failed";
+    Cfdp::Status::T status = component.m_engine->sendEof(txn);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendEof failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -823,8 +823,8 @@ void CfdpManagerTester::testFinPdu() {
     this->clearHistory();
 
     // Invoke receiver to emit FIN PDU using refactored API
-    CfdpStatus::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendFin failed";
+    Cfdp::Status::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendFin failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -878,9 +878,9 @@ void CfdpManagerTester::testAckPdu() {
     this->clearHistory();
 
     // Invoke sendAck using refactored API
-    CfdpStatus::T status = component.m_engine->sendAck(txn, testTransactionStatus, testDirectiveCode,
+    Cfdp::Status::T status = component.m_engine->sendAck(txn, testTransactionStatus, testDirectiveCode,
                                                        testConditionCode, testPeerId, testSequenceId);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendAck failed";
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendAck failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
@@ -966,8 +966,8 @@ void CfdpManagerTester::testNakPdu() {
     nak->segment_list.segments[2].offset_end = 4096;
 
     // Invoke sendNak using refactored API
-    CfdpStatus::T status = component.m_engine->sendNak(txn, ph);
-    ASSERT_EQ(status, CfdpStatus::SUCCESS) << "sendNak failed";
+    Cfdp::Status::T status = component.m_engine->sendNak(txn, ph);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendNak failed";
 
     // Verify PDU was sent through dataOut port
     ASSERT_FROM_PORT_HISTORY_SIZE(1);

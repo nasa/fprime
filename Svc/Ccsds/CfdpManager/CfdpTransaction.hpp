@@ -193,7 +193,7 @@ class CfdpTransaction {
      * @param chan       Channel number
      * @param priority   Transaction priority
      */
-    void initTxFile(CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
+    void initTxFile(Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority);
 
     /**
      * @brief Static callback for finding transaction by sequence number
@@ -243,7 +243,7 @@ class CfdpTransaction {
      * @brief Get transaction class (CLASS_1 or CLASS_2)
      * @return Transaction class
      */
-    CfdpClass::T getClass() const { return m_txn_class; }
+    Cfdp::Class::T getClass() const { return m_txn_class; }
 
     /**
      * @brief Get transaction state
@@ -477,18 +477,18 @@ class CfdpTransaction {
      * @par Assumptions, External Events, and Notes:
      *       Operates on this transaction instance.
      *
-     * @retval CfdpStatus::SUCCESS on success.
-     * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval SEND_PDU_ERROR if an error occurred while building the packet.
      *
      */
-    CfdpStatus::T sSendEof();
+    Cfdp::Status::T sSendEof();
 
-    CfdpStatus::T sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
+    Cfdp::Status::T sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
 
-    CfdpStatus::T sCheckAndRespondNak(bool* nakProcessed);
+    Cfdp::Status::T sCheckAndRespondNak(bool* nakProcessed);
 
-    CfdpStatus::T sSendFinAck();
+    Cfdp::Status::T sSendFinAck();
 
   public:
     // ----------------------------------------------------------------------
@@ -607,12 +607,12 @@ class CfdpTransaction {
      *       Operates on this transaction instance.
      *
      *
-     * @retval CfdpStatus::SUCCESS on CRC match, otherwise CfdpStatus::CFDP_ERROR.
+     * @retval Cfdp::Status::SUCCESS on CRC match, otherwise Cfdp::Status::CFDP_ERROR.
      *
      *
      * @param expected_crc Expected CRC
      */
-    CfdpStatus::T rCheckCrc(U32 expected_crc);
+    Cfdp::Status::T rCheckCrc(U32 expected_crc);
 
     /************************************************************************/
     /** @brief Checks R2 transaction state for transaction completion status.
@@ -721,12 +721,12 @@ class CfdpTransaction {
      *       Operates on this transaction instance.
      *
      *
-     * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
+     * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      *
      *
      * @param ph Pointer to the PDU information
      */
-    CfdpStatus::T rProcessFd(CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T rProcessFd(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Processing receive EOF common functionality for R1/R2.
@@ -740,12 +740,12 @@ class CfdpTransaction {
      *       Operates on this transaction instance. ph must not be NULL.
      *
      *
-     * @retval CfdpStatus::SUCCESS on success. Returns anything else on error.
+     * @retval Cfdp::Status::SUCCESS on success. Returns anything else on error.
      *
      *
      * @param ph Pointer to the PDU information
      */
-    CfdpStatus::T rSubstateRecvEof(CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T rSubstateRecvEof(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process receive EOF for R1.
@@ -834,10 +834,10 @@ class CfdpTransaction {
      * @par Assumptions, External Events, and Notes:
      *       Operates on this transaction instance.
      *
-     * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
+     * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      *
      */
-    CfdpStatus::T rSubstateSendNak();
+    Cfdp::Status::T rSubstateSendNak();
 
     /************************************************************************/
     /** @brief Calculate up to the configured amount of bytes of CRC.
@@ -856,11 +856,11 @@ class CfdpTransaction {
      * @par Assumptions, External Events, and Notes:
      *       Operates on this transaction instance.
      *
-     * @retval CfdpStatus::SUCCESS on completion.
-     * @retval CfdpStatus::CFDP_ERROR on non-completion.
+     * @retval Cfdp::Status::SUCCESS on completion.
+     * @retval Cfdp::Status::CFDP_ERROR on non-completion.
      *
      */
-    CfdpStatus::T r2CalcCrcChunk();
+    Cfdp::Status::T r2CalcCrcChunk();
 
     /************************************************************************/
     /** @brief Send a FIN PDU.
@@ -868,10 +868,10 @@ class CfdpTransaction {
      * @par Assumptions, External Events, and Notes:
      *       Operates on this transaction instance.
      *
-     * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
+     * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      *
      */
-    CfdpStatus::T r2SubstateSendFin();
+    Cfdp::Status::T r2SubstateSendFin();
 
     /************************************************************************/
     /** @brief Process receive FIN-ACK PDU.
@@ -930,7 +930,7 @@ class CfdpTransaction {
      *
      * Set at initialization and never changes.
      */
-    CfdpClass::T m_txn_class;
+    Cfdp::Class::T m_txn_class;
 
     /**
      * @brief Pointer to history entry
@@ -983,7 +983,7 @@ class CfdpTransaction {
     /**
      * @brief Keep file flag
      */
-    CfdpKeep::T m_keep;
+    Cfdp::Keep::T m_keep;
 
     /**
      * @brief Channel number
