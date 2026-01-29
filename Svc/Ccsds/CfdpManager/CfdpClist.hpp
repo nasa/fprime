@@ -32,6 +32,7 @@
 #define CFDP_CLIST_HPP
 
 #include <cstddef>
+#include <functional>
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -96,6 +97,14 @@ constexpr Container* container_of_cpp(Member* member_ptr,
  * @retval  #CF_CLIST_EXIT Indicates to stop traversing the list
  */
 typedef CF_CListTraverse_Status_t (*CF_CListFn_t)(CF_CListNode_t *node, void *context);
+
+/**
+ * @brief Modern callback type for list traversal
+ *
+ * Replaces CF_CListFn_t with a more flexible std::function-based callback.
+ * The callback receives the node and an opaque context pointer.
+ */
+using CListTraverseCallback = std::function<CF_CListTraverse_Status_t(CF_CListNode_t* node, void* context)>;
 
 /************************************************************************/
 /** @brief Initialize a clist node.
@@ -180,6 +189,21 @@ void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CList
  * @param context Opaque pointer to pass to callback
  */
 void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context);
+
+/************************************************************************/
+/** @brief Traverse the entire list, calling the given function on all nodes (modern C++ version).
+ *
+ * @par Assumptions, External Events, and Notes:
+ *       start may be NULL, callback must be valid, context may be NULL.
+ *
+ * @note on traversal it's ok to delete the current node, but do not delete
+ * other nodes in the same list!!
+ *
+ * @param start    List to traverse (first node)
+ * @param callback Callback function to invoke for each node
+ * @param context  Opaque pointer to pass to callback
+ */
+void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callback, void *context);
 
 /************************************************************************/
 /** @brief Reverse list traversal, starting from end, calling given function on all nodes.

@@ -34,6 +34,8 @@
 #ifndef CFDP_TYPES_HPP
 #define CFDP_TYPES_HPP
 
+#include <functional>
+
 #include <Fw/Types/BasicTypes.hpp>
 #include <config/CfdpCfg.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
@@ -58,6 +60,7 @@ namespace Ccsds {
 class CfdpChannel;
 class CfdpManager;
 class CfdpEngine;
+class CfdpTransaction;
 
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
@@ -218,8 +221,8 @@ typedef struct CF_History
  */
 typedef struct CF_ChunkWrapper
 {
-    CfdpChunkList chunks;  // Changed from CF_ChunkList_t to CfdpChunkList class
-    CF_CListNode_t cl_node;
+    CfdpChunkList chunks;   //!< Chunk list for gap tracking
+    CF_CListNode_t cl_node; //!< Circular list node for pooling
 
     /**
      * @brief Constructor for initializing the chunk list
@@ -383,57 +386,6 @@ typedef union CF_StateData
     CF_RxState_Data_t receive; /**< \brief applies to only receive file transactions */
 } CF_StateData_t;
 
-/**
- * @brief Transaction state object
- *
- * This keeps the state of CF file transactions
- */
-typedef struct CF_Transaction
-{
-    CF_TxnState_t state; /**< \brief each engine is commanded to do something, which is the overall state */
-    CfdpClass::T txn_class; /**< \brief transaction class (CLASS_1 or CLASS_2), set at initialization and never changes */
-
-    CF_History_t * history; /**< \brief weird, holds active filenames and possibly other info */
-    CF_ChunkWrapper_t *chunks; /**< \brief for gap tracking, only used on class 2 */
-    CfdpTimer inactivity_timer; /**< \brief set to the overall inactivity timer of a remote */
-    CfdpTimer ack_timer; /**< \brief called ack_timer, but is also nak_timer */
-
-    CfdpFileSize fsize; /**< \brief File size */
-    CfdpFileSize foffs; /**< \brief offset into file for next read */
-    Os::File fd;
-
-    CFDP::Checksum crc;
-
-    CfdpKeep::T keep;
-    U8 chan_num; /**< \brief if ever more than one engine, this may need to change to pointer */
-    U8 priority;
-
-    CF_CListNode_t cl_node;
-
-    CF_Playback_t *pb; /**< \brief NULL if transaction does not belong to a playback */
-
-    CF_StateData_t state_data;
-
-    /**
-     * @brief State flags
-     *
-     * \note The flags here look a little strange, because there are different flags for TX and RX.
-     * Both types share the same type of flag, though. Since RX flags plus the global flags is
-     * over one byte, storing them this way allows 2 bytes to cover all possible flags.
-     * Please ignore the duplicate declarations of the "all" flags.
-     */
-    CF_StateFlags_t flags;
-
-    /**< \brief Reference to the wrapper F' component in order to send PDUs */
-    CfdpManager* cfdpManager;
-
-    /**< \brief Pointer to the channel wrapper this transaction belongs to */
-    CfdpChannel* chan;
-
-    /**< \brief Pointer to the CFDP engine this transaction belongs to */
-    CfdpEngine* engine;
-
-} CF_Transaction_t;
 
 /**
  * @brief Callback function type for use with CF_TraverseAllTransactions()
@@ -441,7 +393,7 @@ typedef struct CF_Transaction
  * @param txn Pointer to current transaction being traversed
  * @param context Opaque object passed from initial call
  */
-typedef void (*CF_TraverseAllTransactions_fn_t)(CF_Transaction_t *txn, void *context);
+using CF_TraverseAllTransactions_fn_t = std::function<void(CfdpTransaction *txn, void *context)>;
 
 /**
  * @brief Identifies the type of timer tick being processed

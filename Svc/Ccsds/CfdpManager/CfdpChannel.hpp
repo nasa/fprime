@@ -507,13 +507,6 @@ inline void CfdpChannel::insertBackInQueue(CfdpQueueId::T queueidx, CF_CListNode
     CF_CList_InsertBack(&m_qs[queueidx], node);
 }
 
-// ----------------------------------------------------------------------
-// Free function wrappers (forward declarations)
-// ----------------------------------------------------------------------
-
-CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t* node, void* context);
-CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context);
-
 }  // namespace Ccsds
 }  // namespace Svc
 

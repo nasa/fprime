@@ -39,7 +39,7 @@
 namespace Svc {
 namespace Ccsds {
 
-CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
+CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CfdpTransaction *txn)
 {
     CF_CFDP_AckTxnStatus_t LocalStatus;
 
@@ -51,7 +51,7 @@ CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
         LocalStatus = CF_CFDP_AckTxnStatus_UNRECOGNIZED;
     }
     else
-        switch (txn->state)
+        switch (txn->getState())
         {
             case CF_TxnState_S1:
             case CF_TxnState_R1:
@@ -118,15 +118,6 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
 {
     return CfdpTransaction::prioritySearchCallback(node, context);
-}
-
-CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)
-{
-    CF_TraverseAll_Arg_t *traverse_all = static_cast<CF_TraverseAll_Arg_t *>(arg);
-    CF_Transaction_t *    txn          = container_of_cpp(node, &CF_Transaction_t::cl_node);
-    traverse_all->fn(txn, traverse_all->context);
-    ++traverse_all->counter;
-    return CF_CLIST_CONT;
 }
 
 bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat)

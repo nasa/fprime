@@ -44,7 +44,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 
 namespace Svc {
@@ -125,36 +124,20 @@ CfdpStatus::T CfdpEngine::init()
 
 void CfdpEngine::armAckTimer(CfdpTransaction *txn)
 {
-    CF_Transaction_t* t = reinterpret_cast<CF_Transaction_t*>(txn);
-    t->ack_timer.setTimer(t->cfdpManager->getAckTimerParam(t->chan_num));
-    t->flags.com.ack_timer_armed = true;
+    txn->m_ack_timer.setTimer(txn->m_cfdpManager->getAckTimerParam(txn->m_chan_num));
+    txn->m_flags.com.ack_timer_armed = true;
 }
 
-inline CfdpClass::T CF_CFDP_GetClass(const CfdpTransaction *txn)
-{
-    const CF_Transaction_t* t = reinterpret_cast<const CF_Transaction_t*>(txn);
-    FW_ASSERT(t->flags.com.q_index != CfdpQueueId::FREE, t->flags.com.q_index);
-    return t->txn_class;
-}
-
-inline bool CF_CFDP_IsSender(CfdpTransaction *txn)
-{
-    CF_Transaction_t* t = reinterpret_cast<CF_Transaction_t*>(txn);
-    FW_ASSERT(t->history);
-
-    return (t->history->dir == CF_Direction_TX);
-}
 
 void CfdpEngine::armInactTimer(CfdpTransaction *txn)
 {
-    CF_Transaction_t* t = reinterpret_cast<CF_Transaction_t*>(txn);
     U32 timerDuration = 0;
 
     /* select timeout based on the state */
-    if (CF_CFDP_GetTxnStatus(t) == CF_CFDP_AckTxnStatus_ACTIVE)
+    if (CF_CFDP_GetTxnStatus(txn) == CF_CFDP_AckTxnStatus_ACTIVE)
     {
         /* in an active transaction, we expect traffic so use the normal inactivity timer */
-        timerDuration = t->cfdpManager->getInactivityTimerParam(t->chan_num);
+        timerDuration = txn->m_cfdpManager->getInactivityTimerParam(txn->m_chan_num);
     }
     else
     {
@@ -165,10 +148,10 @@ void CfdpEngine::armInactTimer(CfdpTransaction *txn)
          * timeout would hold resources longer than needed).  Using double the ack timer should
          * ensure that if the remote retransmitted anything, we will see it, and avoids adding
          * another config option just for this. */
-        timerDuration = t->cfdpManager->getAckTimerParam(t->chan_num) * 2;
+        timerDuration = txn->m_cfdpManager->getAckTimerParam(txn->m_chan_num) * 2;
     }
 
-    t->inactivity_timer.setTimer(timerDuration);
+    txn->m_inactivity_timer.setTimer(timerDuration);
 }
 
 void CfdpEngine::dispatchRecv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
@@ -272,7 +255,7 @@ CF_Logical_PduBuffer_t * CfdpEngine::constructPduHeader(const CfdpTransaction *t
         hdr->version   = 1;
         hdr->pdu_type  = (directive_code == 0);     /* set to '1' for file data PDU, '0' for a directive PDU */
         hdr->direction = (towards_sender != false); /* set to '1' for toward sender, '0' for toward receiver */
-        hdr->txm_mode  = (CF_CFDP_GetClass(txn) == CfdpClass::CLASS_1); /* set to '1' for class 1 data, '0' for class 2 */
+        hdr->txm_mode  = (txn->getClass() == CfdpClass::CLASS_1); /* set to '1' for class 1 data, '0' for class 2 */
 
         /* choose the larger of the two EIDs to determine size */
         if (src_eid > dst_eid)
@@ -458,7 +441,7 @@ CfdpStatus::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t t
 
     FW_ASSERT((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN), dir_code);
 
-    if (CF_CFDP_IsSender(txn))
+    if (txn->getHistory()->dir == CF_Direction_TX)
     {
         src_eid = m_manager->getLocalEidParam();
         dst_eid = peer_eid;
@@ -537,7 +520,7 @@ CfdpStatus::T CfdpEngine::sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *
     }
     else
     {
-        CfdpClass::T tx_class = CF_CFDP_GetClass(txn);
+        CfdpClass::T tx_class = txn->getClass();
         FW_ASSERT(tx_class == CfdpClass::CLASS_2, tx_class);
 
         nak = &ph->int_header.nak;
@@ -1393,9 +1376,9 @@ void CfdpEngine::handleNotKeepFile(CfdpTransaction *txn)
     Fw::String moveDir;
 
     /* Sender */
-    if (CF_CFDP_IsSender(txn))
+    if (txn->getHistory()->dir == CF_Direction_TX)
     {
-        if (!CF_TxnStatus_IsError(txn->m_history->txn_stat))
+        if (!CF_TxnStatus_IsError(txn->getHistory()->txn_stat))
         {
             /* If move directory is defined attempt move */
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());

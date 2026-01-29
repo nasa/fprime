@@ -40,7 +40,6 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -51,6 +50,104 @@ class CfdpChannel;
 class CfdpTransaction;
 class CfdpManager;
 
+// ======================================================================
+// Dispatch Table Type Definitions
+// ======================================================================
+
+/**
+ * @brief A member function pointer for dispatching actions to a handler, without existing PDU data
+ *
+ * This allows quick delegation to handler functions using dispatch tables.  This version is
+ * used on the transmit side, where a PDU will likely be generated/sent by the handler being
+ * invoked.
+ *
+ * @note This is a member function pointer - invoke with: (txn->*fn)()
+ */
+typedef void (CfdpTransaction::*CF_CFDP_StateSendFunc_t)();
+
+/**
+ * @brief A member function pointer for dispatching actions to a handler, with existing PDU data
+ *
+ * This allows quick delegation of PDUs to handler functions using dispatch tables.  This version is
+ * used on the receive side where a PDU buffer is associated with the activity, which is then
+ * interpreted by the handler being invoked.
+ *
+ * @param[inout] ph The PDU buffer currently being received/processed
+ * @note This is a member function pointer - invoke with: (txn->*fn)(ph)
+ */
+typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(CF_Logical_PduBuffer_t *ph);
+
+/**
+ * @brief A table of transmit handler functions based on transaction state
+ *
+ * This reflects the main dispatch table for the transmit side of a transaction.
+ * Each possible state has a corresponding function pointer in the table to implement
+ * the PDU transmit action(s) associated with that state.
+ */
+typedef struct
+{
+    CF_CFDP_StateSendFunc_t tx[CF_TxnState_INVALID]; /**< \brief Transmit handler function */
+} CF_CFDP_TxnSendDispatchTable_t;
+
+/**
+ * @brief A table of receive handler functions based on transaction state
+ *
+ * This reflects the main dispatch table for the receive side of a transaction.
+ * Each possible state has a corresponding function pointer in the table to implement
+ * the PDU receive action(s) associated with that state.
+ */
+typedef struct
+{
+    /** \brief a separate recv handler for each possible file directive PDU in this state */
+    CF_CFDP_StateRecvFunc_t rx[CF_TxnState_INVALID];
+} CF_CFDP_TxnRecvDispatchTable_t;
+
+/**
+ * @brief A table of receive handler functions based on file directive code
+ *
+ * For PDUs identified as a "file directive" type - generally anything other
+ * than file data - this provides a table to branch to a different handler
+ * function depending on the value of the file directive code.
+ */
+typedef struct
+{
+    /** \brief a separate recv handler for each possible file directive PDU in this state */
+    CF_CFDP_StateRecvFunc_t fdirective[CF_CFDP_FileDirective_INVALID_MAX];
+} CF_CFDP_FileDirectiveDispatchTable_t;
+
+/**
+ * @brief A dispatch table for receive file transactions, receive side
+ *
+ * This is used for "receive file" transactions upon receipt of a directive PDU.
+ * Depending on the sub-state of the transaction, a different action may be taken.
+ */
+typedef struct
+{
+    const CF_CFDP_FileDirectiveDispatchTable_t *state[CF_RxSubState_NUM_STATES];
+} CF_CFDP_R_SubstateDispatchTable_t;
+
+/**
+ * @brief A dispatch table for send file transactions, receive side
+ *
+ * This is used for "send file" transactions upon receipt of a directive PDU.
+ * Depending on the sub-state of the transaction, a different action may be taken.
+ */
+typedef struct
+{
+    const CF_CFDP_FileDirectiveDispatchTable_t *substate[CF_TxSubState_NUM_STATES];
+} CF_CFDP_S_SubstateRecvDispatchTable_t;
+
+/**
+ * @brief A dispatch table for send file transactions, transmit side
+ *
+ * This is used for "send file" transactions to generate the next PDU to be sent.
+ * Depending on the sub-state of the transaction, a different action may be taken.
+ */
+typedef struct
+{
+    CF_CFDP_StateSendFunc_t substate[CF_TxSubState_NUM_STATES];
+} CF_CFDP_S_SubstateSendDispatchTable_t;
+
 /**
  * @brief CFDP Transaction state machine class
  *
@@ -60,7 +157,6 @@ class CfdpManager;
  * - CfdpRxTransaction.cpp: RX (receive) state machine implementation
  */
 class CfdpTransaction {
-  // Allow CfdpEngine and CfdpChannel to access private members during initialization
   friend class CfdpEngine;
   friend class CfdpChannel;
   friend class CfdpManagerTester;
@@ -148,6 +244,12 @@ class CfdpTransaction {
      * @return Transaction class
      */
     CfdpClass::T getClass() const { return m_txn_class; }
+
+    /**
+     * @brief Get transaction state
+     * @return Transaction state
+     */
+    CF_TxnState_t getState() const { return m_state; }
 
     // ----------------------------------------------------------------------
     // TX State Machine - Implemented in CfdpTxTransaction.cpp

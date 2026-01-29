@@ -215,7 +215,11 @@ void CfdpChannel::cycleTx()
             while (true)
             {
                 /* Attempt to run something on TXA */
-                CF_CList_Traverse(m_qs[CfdpQueueId::TXA], CF_CFDP_CycleTxFirstActive, &args);
+                CF_CList_Traverse(m_qs[CfdpQueueId::TXA],
+                                  [this](CF_CListNode_t* node, void* context) -> CF_CListTraverse_Status_t {
+                                      return this->cycleTxFirstActive(node, context);
+                                  },
+                                  &args);
 
                 /* Keep going until CfdpQueueId::PEND is empty or something is run */
                 if (args.ran_one || m_qs[CfdpQueueId::PEND] == NULL)
@@ -268,7 +272,11 @@ void CfdpChannel::tickTransactions()
         do
         {
             args.cont = 0;
-            CF_CList_Traverse(m_qs[qs[m_tickType]], CF_CFDP_DoTick, &args);
+            CF_CList_Traverse(m_qs[qs[m_tickType]],
+                              [this](CF_CListNode_t* node, void* context) -> CF_CListTraverse_Status_t {
+                                  return this->doTick(node, context);
+                              },
+                              &args);
 
             if (args.early_exit)
             {
@@ -456,7 +464,16 @@ I32 CfdpChannel::traverseAllTransactions(CF_TraverseAllTransactions_fn_t fn, voi
 {
     CF_TraverseAll_Arg_t args = {fn, context, 0};
     for (I32 queueidx = CfdpQueueId::PEND; queueidx <= CfdpQueueId::RX; ++queueidx)
-        CF_CList_Traverse(m_qs[queueidx], CF_TraverseAllTransactions_Impl, &args);
+    {
+        CF_CList_Traverse(m_qs[queueidx],
+                          [&args](CF_CListNode_t* node, void*) -> CF_CListTraverse_Status_t {
+                              CfdpTransaction* txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+                              args.fn(txn, args.context);
+                              ++args.counter;
+                              return CF_CLIST_CONT;
+                          },
+                          nullptr);
+    }
 
     return args.counter;
 }
@@ -804,22 +821,6 @@ CF_History_t* CfdpChannel::getHistory(U32 index)
 {
     FW_ASSERT(index < CF_NUM_HISTORIES_PER_CHANNEL);
     return &m_histories[index];
-}
-
-// ----------------------------------------------------------------------
-// Free function wrappers for C-style callbacks
-// ----------------------------------------------------------------------
-
-CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t* node, void* context)
-{
-    CF_CFDP_CycleTx_args_t* args = static_cast<CF_CFDP_CycleTx_args_t*>(context);
-    return args->chan->cycleTxFirstActive(node, context);
-}
-
-CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context)
-{
-    CF_CFDP_Tick_args_t* args = static_cast<CF_CFDP_Tick_args_t*>(context);
-    return args->chan->doTick(node, context);
 }
 
 }  // namespace Ccsds

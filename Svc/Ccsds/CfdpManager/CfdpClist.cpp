@@ -184,6 +184,40 @@ void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
     }
 }
 
+void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callback, void *context)
+{
+    CF_CListNode_t *node = start;
+    CF_CListNode_t *node_next;
+    bool            last = false;
+
+    if (node)
+    {
+        do
+        {
+            /* set node_next in case callback removes this node from the list */
+            node_next = node->next;
+            if (node_next == start)
+            {
+                last = true;
+            }
+            if (!CF_CListTraverse_Status_IS_CONTINUE(callback(node, context)))
+            {
+                break;
+            }
+            /* list traversal is robust against an item deleting itself during traversal,
+             * but there is a special case if that item is the starting node. Since this is
+             * a circular list, start is remembered so we know when to stop. Must set start
+             * to the next node in this case. */
+            if ((start == node) && (node->next != node_next))
+            {
+                start = node_next;
+            }
+            node = node_next;
+        }
+        while (!last);
+    }
+}
+
 void CF_CList_Traverse_R(CF_CListNode_t *end, CF_CListFn_t fn, void *context)
 {
     if (end)

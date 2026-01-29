@@ -92,23 +92,6 @@ typedef struct CF_Traverse_PriorityArg
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
 
 /************************************************************************/
-/** @brief List traversal function performs operation on every active transaction.
- *
- * @par Description
- *       Called on every transaction via list traversal. Calls another function
- *       on that transaction.
- *
- * @par Assumptions, External Events, and Notes:
- *       node must not be NULL. args must not be NULL.
- *
- * @param node  Node being currently traversed
- * @param arg   Intermediate context object from initial call
- *
- * @retval 0 for do not exit early (always continue)
- */
-CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg);
-
-/************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
  *
  * @par Assumptions, External Events, and Notes:
@@ -164,7 +147,7 @@ bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat);
  * @param txn   Transaction
  * @returns CF_CFDP_AckTxnStatus_t value corresponding to transaction
  */
-CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn);
+CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CfdpTransaction *txn);
 
 }  // namespace Ccsds
 }  // namespace Svc

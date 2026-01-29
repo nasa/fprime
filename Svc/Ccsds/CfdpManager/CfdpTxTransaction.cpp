@@ -42,7 +42,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpDispatch.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
 
 namespace Svc {
@@ -632,7 +631,7 @@ void CfdpTransaction::sSubstateSendMetadata() {
 }
 
 CfdpStatus::T CfdpTransaction::sSendFinAck() {
-    CfdpStatus::T ret = this->m_engine->sendAck(this, CF_CFDP_GetTxnStatus(reinterpret_cast<CF_Transaction_t*>(this)), CF_CFDP_FileDirective_FIN,
+    CfdpStatus::T ret = this->m_engine->sendAck(this, CF_CFDP_GetTxnStatus(this), CF_CFDP_FileDirective_FIN,
                            static_cast<CF_CFDP_ConditionCode_t>(this->m_state_data.send.s2.fin_cc),
                            this->m_history->peer_eid, this->m_history->seq_num);
     return ret;

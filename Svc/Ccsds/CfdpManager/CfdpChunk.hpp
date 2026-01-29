@@ -53,27 +53,6 @@ typedef struct CF_Chunk
 } CF_Chunk_t;
 
 /**
- * @brief A list of CF_Chunk_t pairs
- *
- * This list is ordered by chunk offset, from lowest to highest
- */
-typedef struct CF_ChunkList
-{
-    CF_ChunkIdx_t count;      /**< \brief number of chunks currently in the array */
-    CF_ChunkIdx_t max_chunks; /**< \brief maximum number of chunks allowed in the list (allocation size) */
-    CF_Chunk_t *  chunks;     /**< \brief chunk list array */
-} CF_ChunkList_t;
-
-/**
- * @brief Function for use with CF_ChunkList_ComputeGaps()
- *
- * @param cs Pointer to the CF_ChunkList_t object
- * @param chunk  Pointer to the chunk being currently processed
- * @param opaque Opaque pointer passed through from initial call
- */
-typedef void (*CF_ChunkList_ComputeGapFn_t)(const CF_ChunkList_t *cs, const CF_Chunk_t *chunk, void *opaque);
-
-/**
  * @brief Selects the larger of the two passed-in offsets
  *
  * @param a First chunk offset
@@ -93,9 +72,9 @@ static inline CfdpFileSize CF_Chunk_MAX(CfdpFileSize a, CfdpFileSize b)
 }
 
 /**
- * @brief Modern callback type for gap computation
+ * @brief Callback type for gap computation
  *
- * Replaces CF_ChunkList_ComputeGapFn_t with a more flexible std::function-based callback.
+ * std::function-based callback used by CfdpChunkList::computeGaps().
  * The callback receives the gap chunk and an opaque context pointer.
  */
 using GapComputeCallback = std::function<void(const CF_Chunk_t* chunk, void* opaque)>;
