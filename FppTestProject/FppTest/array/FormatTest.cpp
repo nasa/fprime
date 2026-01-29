@@ -31,6 +31,10 @@
 #include <limits>
 #include <sstream>
 
+namespace FppTest {
+
+namespace Array {
+
 // Tests FPP format strings
 class FormatTest : public ::testing::Test {
   protected:
@@ -276,3 +280,7 @@ TEST_F(FormatTest, Char) {
 
     ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
+
+}  // namespace Array
+
+}  // namespace FppTest

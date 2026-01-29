@@ -1,13 +1,7 @@
 // ======================================================================
-// \title  NonPrimitiveStructTest.cpp
-// \author T. Chieu
-// \brief  cpp file for NonPrimitiveStructTest class
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
+// \title  NonPrimitiveTest.cpp
+// \author T. Chieu, R. Bocchino
+// \brief  cpp file for NonPrimitiveTest class
 // ======================================================================
 
 #include "FppTest/struct/NonPrimitiveSerializableAc.hpp"
@@ -22,8 +16,12 @@
 
 #include <sstream>
 
+namespace FppTest {
+
+namespace Struct {
+
 // Test NonPrimitive struct class
-class NonPrimitiveStructTest : public ::testing::Test {
+class NonPrimitiveTest : public ::testing::Test {
   protected:
     void SetUp() override {
         char buf[testString.getCapacity()];
@@ -88,7 +86,7 @@ class NonPrimitiveStructTest : public ::testing::Test {
 };
 
 // Test struct constants and default constructor
-TEST_F(NonPrimitiveStructTest, Default) {
+TEST_F(NonPrimitiveTest, Default) {
     NonPrimitive s;
 
     StructArray defaultArray;
@@ -116,7 +114,7 @@ TEST_F(NonPrimitiveStructTest, Default) {
 }
 
 // Test struct constructors
-TEST_F(NonPrimitiveStructTest, Constructors) {
+TEST_F(NonPrimitiveTest, Constructors) {
     // Member constructor
     NonPrimitive s1(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     assertStructMembers(s1);
@@ -143,7 +141,7 @@ TEST_F(NonPrimitiveStructTest, Constructors) {
 }
 
 // Test struct assignment operator
-TEST_F(NonPrimitiveStructTest, AssignmentOp) {
+TEST_F(NonPrimitiveTest, AssignmentOp) {
     NonPrimitive s1;
     NonPrimitive s2(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
 
@@ -157,7 +155,7 @@ TEST_F(NonPrimitiveStructTest, AssignmentOp) {
 }
 
 // Test struct equality and inequality operators
-TEST_F(NonPrimitiveStructTest, EqualityOp) {
+TEST_F(NonPrimitiveTest, EqualityOp) {
     NonPrimitive s1, s2;
 
     ASSERT_TRUE(s1 == s2);
@@ -206,7 +204,7 @@ TEST_F(NonPrimitiveStructTest, EqualityOp) {
 }
 
 // Test struct getter and setter functions
-TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
+TEST_F(NonPrimitiveTest, GetterSetterFunctions) {
     NonPrimitive s1, s2;
 
     // Set all members
@@ -242,7 +240,7 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
 }
 
 // Test struct serialization and deserialization
-TEST_F(NonPrimitiveStructTest, Serialization) {
+TEST_F(NonPrimitiveTest, Serialization) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     NonPrimitive sCopy;
 
@@ -281,7 +279,7 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
 }
 
 // Test struct toString() and ostream operator functions
-TEST_F(NonPrimitiveStructTest, ToString) {
+TEST_F(NonPrimitiveTest, ToString) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
@@ -303,3 +301,7 @@ TEST_F(NonPrimitiveStructTest, ToString) {
 
     ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
 }
+
+}  // namespace Struct
+
+}  // namespace FppTest

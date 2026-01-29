@@ -1,9 +1,17 @@
-type EA = E
+module FppTest {
 
-array ArrayOfAlias = [3] EA default [ E.A, E.B, E.C ]
+  module Array {
 
-type AString = string size 32
+    type EA = E
 
-array AliasString = [3] AString
+    array ArrayOfAlias = [3] EA default [ E.A, E.B, E.C ]
 
-type AliasOfArray = ArrayOfAlias
+    type AString = string size 32
+
+    array AliasString = [3] AString
+
+    type AliasOfArray = ArrayOfAlias
+
+  }
+
+}
