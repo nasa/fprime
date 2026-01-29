@@ -32,10 +32,10 @@ A typical system using data products includes:
 
 - One or more data product **producer components** (mission-specific)
 - Framework services that manage storage and delivery:
-  - `Svc.DpManager` for allocating containers
-  - `Svc.DpWriter` for storing products to disk
-  - `Svc.DpCatalog` for tracking products
-  - `Svc.FileDownlink` for downlinking products
+    - `Svc.DpManager` for allocating containers
+    - `Svc.DpWriter` for storing products to disk
+    - `Svc.DpCatalog` for tracking products
+    - `Svc.FileDownlink` for downlinking products
 
 The producer itself is intentionally simple: it requests a container, fills it with records, and sends it off.  To model a producer, we need to define the following for the component:
 - Define types
