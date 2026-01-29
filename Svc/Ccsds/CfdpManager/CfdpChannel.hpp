@@ -66,6 +66,13 @@ class CfdpChannel {
      */
     CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpManager);
 
+    /**
+     * @brief Destruct a CfdpChannel
+     *
+     * Frees dynamically allocated resources (transactions, histories, chunks)
+     */
+    ~CfdpChannel();
+
     // ----------------------------------------------------------------------
     // Channel Processing
     // ----------------------------------------------------------------------
@@ -247,6 +254,22 @@ class CfdpChannel {
         FW_ASSERT(index < CF_MAX_POLLING_DIR_PER_CHAN);
         return &m_polldir[index];
     }
+
+    /**
+     * @brief Get a transaction by index (for testing)
+     *
+     * @param index Transaction index within this channel
+     * @returns Pointer to transaction
+     */
+    CfdpTransaction* getTransaction(U32 index);
+
+    /**
+     * @brief Get a history by index (for testing)
+     *
+     * @param index History index within this channel
+     * @returns Pointer to history entry
+     */
+    CF_History_t* getHistory(U32 index);
 
     // ----------------------------------------------------------------------
     // Resource Management
@@ -454,6 +477,12 @@ class CfdpChannel {
 
     CfdpFlow::T m_flowState;                   //!< Channel flow state (normal/frozen)
     U32 m_outgoingCounter;                     //!< PDU throttling counter
+
+    // Per-channel resource arrays (dynamically allocated, moved from CfdpEngine)
+    CfdpTransaction* m_transactions;           //!< Array of CF_NUM_TRANSACTIONS_PER_CHANNEL
+    CF_History_t* m_histories;                 //!< Array of CF_NUM_HISTORIES_PER_CHANNEL
+    CF_ChunkWrapper_t* m_chunks;               //!< Array of CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM
+    CF_Chunk_t* m_chunkMem;                    //!< Chunk memory backing store
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

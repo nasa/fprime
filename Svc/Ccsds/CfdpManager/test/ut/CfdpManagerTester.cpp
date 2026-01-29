@@ -80,11 +80,17 @@ void CfdpManagerTester::from_dataOut_handler(
 // ----------------------------------------------------------------------
 
 CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransactionSeq seqNum) {
-    // Access engine through component (friend access)
+    // Grab requested channel
     CfdpChannel* chan = component.m_engine->m_channels[chanNum];
 
-    // Search through all transaction queues (PEND, TXA, TXW, RX)
+    // Search through all transaction queues (PEND, TXA, TXW, RX, FREE)
+    // Skip HIST and HIST_FREE as they contain CF_History_t, not CfdpTransaction
     for (U8 qIdx = 0; qIdx < CfdpQueueId::NUM; qIdx++) {
+        // Skip history queues (HIST=4, HIST_FREE=5)
+        if (qIdx == CfdpQueueId::HIST || qIdx == CfdpQueueId::HIST_FREE) {
+            continue;
+        }
+
         CF_CListNode_t* head = chan->m_qs[qIdx];
         if (head == nullptr) {
             continue;

@@ -31,6 +31,7 @@
 // ======================================================================
 
 #include <string.h>
+#include <new>
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
@@ -54,7 +55,11 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     m_tickType(0),
     m_channelId(channelId),
     m_flowState(CfdpFlow::NOT_FROZEN),
-    m_outgoingCounter(0)
+    m_outgoingCounter(0),
+    m_transactions(nullptr),
+    m_histories(nullptr),
+    m_chunks(nullptr),
+    m_chunkMem(nullptr)
 {
     FW_ASSERT(engine != nullptr);
     FW_ASSERT(cfdpManager != nullptr);
@@ -85,6 +90,94 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
         m_playback[i].counted = false;
         m_playback[i].num_ts = 0;
         m_playback[i].pending_file[0] = '\0';
+    }
+
+    // Allocate and initialize per-channel resources
+    U32 j, k;
+    CF_History_t* history;
+    CfdpTransaction* txn;
+    CF_ChunkWrapper_t* cw;
+    CF_CListNode_t** list_head;
+    U32 chunk_mem_offset = 0;
+    U32 total_chunks_needed;
+
+    // Chunk configuration arrays (extract from config)
+    static const int CF_DIR_MAX_CHUNKS[CF_Direction_NUM][CF_NUM_CHANNELS] = {
+        CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
+        CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION
+    };
+
+    // Calculate total chunks needed for this channel
+    total_chunks_needed = 0;
+    for (k = 0; k < CF_Direction_NUM; ++k) {
+        total_chunks_needed += CF_DIR_MAX_CHUNKS[k][m_channelId] * CF_NUM_TRANSACTIONS_PER_CHANNEL;
+    }
+
+    // Allocate arrays
+    // Use operator new for raw memory
+    m_transactions = static_cast<CfdpTransaction*>(
+        ::operator new(CF_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(CfdpTransaction))
+    );
+    m_histories = new CF_History_t[CF_NUM_HISTORIES_PER_CHANNEL];
+    m_chunks = new CF_ChunkWrapper_t[CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM];
+    m_chunkMem = new CF_Chunk_t[total_chunks_needed];
+
+    // Initialize transactions using placement new with parameterized constructor
+    cw = m_chunks;
+    for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j)
+    {
+        // Construct transaction in-place with parameterized constructor
+        txn = new (&m_transactions[j]) CfdpTransaction(this, m_channelId, m_engine, m_cfdpManager);
+
+        // Put transaction on free list
+        this->freeTransaction(txn);
+
+        // Initialize chunk wrappers for this transaction (TX and RX)
+        for (k = 0; k < CF_Direction_NUM; ++k, ++cw)
+        {
+            list_head = this->getChunkListHead(static_cast<U8>(k));
+
+            CF_ChunkListInit(&cw->chunks, CF_DIR_MAX_CHUNKS[k][m_channelId], &m_chunkMem[chunk_mem_offset]);
+            chunk_mem_offset += CF_DIR_MAX_CHUNKS[k][m_channelId];
+            CF_CList_InitNode(&cw->cl_node);
+            CF_CList_InsertBack(list_head, &cw->cl_node);
+        }
+    }
+
+    // Initialize histories
+    for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
+    {
+        history = &m_histories[j];
+        // Zero-initialize using aggregate initialization
+        *history = {};
+        CF_CList_InitNode(&history->cl_node);
+        this->insertBackInQueue(CfdpQueueId::HIST_FREE, &history->cl_node);
+    }
+}
+
+CfdpChannel::~CfdpChannel()
+{
+    // Free dynamically allocated resources
+    if (m_transactions != nullptr) {
+        // Manually call destructors since we used placement new
+        for (U32 j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
+            m_transactions[j].~CfdpTransaction();
+        }
+        // Free raw memory allocated with operator new
+        ::operator delete(m_transactions);
+        m_transactions = nullptr;
+    }
+    if (m_histories != nullptr) {
+        delete[] m_histories;
+        m_histories = nullptr;
+    }
+    if (m_chunks != nullptr) {
+        delete[] m_chunks;
+        m_chunks = nullptr;
+    }
+    if (m_chunkMem != nullptr) {
+        delete[] m_chunkMem;
+        m_chunkMem = nullptr;
     }
 }
 
@@ -390,15 +483,10 @@ void CfdpChannel::moveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue)
 
 void CfdpChannel::freeTransaction(CfdpTransaction* txn)
 {
-    // Preserve the cfdpManager pointer across transaction reuse
-    CfdpManager* savedCfdpManager = txn->m_cfdpManager;
+    // Reset transaction to default state (preserves channel context)
+    txn->reset();
 
-    // TODO BPC: make sure transaction default constructor is sane
-    *txn = CfdpTransaction{};
-    txn->m_chan_num = m_channelId;
-    txn->m_chan = this;  // Set chan pointer to this channel
-    txn->m_engine = m_engine;  // Set engine pointer
-    txn->m_cfdpManager = savedCfdpManager;  // Restore cfdpManager pointer
+    // Initialize the linked list node for the FREE queue
     CF_CList_InitNode(&txn->m_cl_node);
     this->insertBackInQueue(CfdpQueueId::FREE, &txn->m_cl_node);
 }
@@ -695,6 +783,18 @@ CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* contex
     }
 
     return ret; /* don't tick one, keep looking for cur */
+}
+
+CfdpTransaction* CfdpChannel::getTransaction(U32 index)
+{
+    FW_ASSERT(index < CF_NUM_TRANSACTIONS_PER_CHANNEL);
+    return &m_transactions[index];
+}
+
+CF_History_t* CfdpChannel::getHistory(U32 index)
+{
+    FW_ASSERT(index < CF_NUM_HISTORIES_PER_CHANNEL);
+    return &m_histories[index];
 }
 
 // ----------------------------------------------------------------------

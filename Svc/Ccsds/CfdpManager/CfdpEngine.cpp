@@ -110,52 +110,13 @@ CfdpEngine::~CfdpEngine()
 
 CfdpStatus::T CfdpEngine::init()
 {
-    /* initialize all transaction nodes */
-    CF_History_t * history;
-    CfdpTransaction * txn = this->m_transactions;
-    CF_ChunkWrapper_t *cw  = this->m_chunks;
-    CF_CListNode_t **  list_head;
     CfdpStatus::T ret = CfdpStatus::SUCCESS;
-    U32 chunk_mem_offset = 0;
-    U8 i;
-    U32 j;
-    U8 k;
 
-    static const int CF_DIR_MAX_CHUNKS[CF_Direction_NUM][CF_NUM_CHANNELS] = {CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
-                                                                             CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION};
-
-    for (i = 0; i < CF_NUM_CHANNELS; ++i)
+    // Create all channels
+    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
     {
         m_channels[i] = new CfdpChannel(this, i, this->m_manager);
         FW_ASSERT(m_channels[i] != nullptr);
-
-        for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j, ++txn)
-        {
-            // TODO BPC: Add pointer to component in order to send output buffers
-            txn->m_cfdpManager = this->m_manager;
-
-            /* Initially put this on the free list for this channel */
-            m_channels[i]->freeTransaction(txn);
-
-            for (k = 0; k < CF_Direction_NUM; ++k, ++cw)
-            {
-                list_head = m_channels[i]->getChunkListHead(k);
-
-                FW_ASSERT((chunk_mem_offset + CF_DIR_MAX_CHUNKS[k][i]) <= CF_NUM_CHUNKS_ALL_CHANNELS,
-                          chunk_mem_offset, CF_DIR_MAX_CHUNKS[k][i], CF_NUM_CHUNKS_ALL_CHANNELS);
-                CF_ChunkListInit(&cw->chunks, CF_DIR_MAX_CHUNKS[k][i], &this->m_chunkMem[chunk_mem_offset]);
-                chunk_mem_offset += CF_DIR_MAX_CHUNKS[k][i];
-                CF_CList_InitNode(&cw->cl_node);
-                CF_CList_InsertBack(list_head, &cw->cl_node);
-            }
-        }
-
-        for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
-        {
-            history = &this->m_histories[(i * CF_NUM_HISTORIES_PER_CHANNEL) + j];
-            CF_CList_InitNode(&history->cl_node);
-            m_channels[i]->insertBackInQueue(CfdpQueueId::HIST_FREE, &history->cl_node);
-        }
     }
 
     return ret;
@@ -212,8 +173,6 @@ void CfdpEngine::armInactTimer(CfdpTransaction *txn)
 
 void CfdpEngine::dispatchRecv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
 {
-    CfdpTransaction txnHandler;
-
     // Dispatch based on transaction state
     switch (txn->m_state)
     {

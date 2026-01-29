@@ -589,17 +589,7 @@ class CfdpEngine {
     //! Sequence number tracker for outgoing transactions
     CfdpTransactionSeq m_seqNum;
 
-    //! All transaction objects (allocated once at init)
-    CfdpTransaction m_transactions[CF_NUM_TRANSACTIONS];
-
-    //! History entries for completed transactions
-    CF_History_t m_histories[CF_NUM_HISTORIES];
-
-    //! Chunk wrappers for file data chunks
-    CF_ChunkWrapper_t m_chunks[CF_NUM_TRANSACTIONS * CF_Direction_NUM];
-
-    //! Chunk memory backing store
-    CF_Chunk_t m_chunkMem[CF_NUM_CHUNKS_ALL_CHANNELS];
+    // Note: Transactions, histories, and chunks are now owned by each CfdpChannel
 
     // ----------------------------------------------------------------------
     // Private helper methods

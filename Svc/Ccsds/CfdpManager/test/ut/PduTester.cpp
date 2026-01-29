@@ -38,12 +38,11 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     U32 peerId
 ) {
     // For white box testing, directly use the first transaction for the specified channel
-    U32 txnIndex = channelId * CF_NUM_TRANSACTIONS_PER_CHANNEL;
-    CfdpTransaction* txn = &component.m_engine->m_transactions[txnIndex];
+    CfdpChannel* chan = component.m_engine->m_channels[channelId];
+    FW_ASSERT(chan != nullptr);
 
-    // Use the first history for the specified channel
-    U32 histIndex = channelId * CF_NUM_HISTORIES_PER_CHANNEL;
-    CF_History_t* history = &component.m_engine->m_histories[histIndex];
+    CfdpTransaction* txn = chan->getTransaction(0);  // Use first transaction for channel
+    CF_History_t* history = chan->getHistory(0);     // Use first history for channel
 
     // Initialize transaction state
     txn->m_state = state;

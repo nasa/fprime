@@ -80,8 +80,22 @@ class CfdpTransaction {
     // Construction and Destruction
     // ----------------------------------------------------------------------
 
-    CfdpTransaction();
+    //! Parameterized constructor for channel-bound transaction initialization
+    //! @param channel Pointer to the channel this transaction belongs to
+    //! @param channelId Channel ID number
+    //! @param engine Pointer to the CFDP engine
+    //! @param manager Pointer to the CfdpManager component
+    CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine* engine, CfdpManager* manager);
+
     ~CfdpTransaction();
+
+    /**
+     * @brief Reset transaction to default state
+     *
+     * Resets the transaction to a clean state while preserving channel binding.
+     * Used when returning a transaction to the free pool for reuse.
+     */
+    void reset();
 
     // ----------------------------------------------------------------------
     // TX State Machine - Implemented in CfdpTxTransaction.cpp

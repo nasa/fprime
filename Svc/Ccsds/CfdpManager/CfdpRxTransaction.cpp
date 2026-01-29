@@ -77,7 +77,7 @@ void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_
 // Construction and Destruction
 // ======================================================================
 
-CfdpTransaction::CfdpTransaction() :
+CfdpTransaction::CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine* engine, CfdpManager* manager) :
     m_state(CF_TxnState_UNDEF),
     m_txn_class(CfdpClass::CLASS_1),
     m_history(nullptr),
@@ -89,20 +89,56 @@ CfdpTransaction::CfdpTransaction() :
     m_fd(),
     m_crc(),
     m_keep(CfdpKeep::KEEP),
-    m_chan_num(0),
+    m_chan_num(channelId),          // Initialize from parameter
     m_priority(0),
     m_cl_node{},
     m_pb(nullptr),
     m_state_data{},
     m_flags{},
-    m_cfdpManager(nullptr),
-    m_chan(nullptr),
-    m_engine(nullptr)
+    m_cfdpManager(manager),         // Initialize from parameter
+    m_chan(channel),                // Initialize from parameter
+    m_engine(engine)                // Initialize from parameter
 {
     // All members initialized via member initializer list above
+    // This constructor is used by CfdpChannel::freeTransaction() to reset
+    // transactions while preserving channel-specific context
 }
 
 CfdpTransaction::~CfdpTransaction() { }
+
+void CfdpTransaction::reset()
+{
+    // Reset transaction state to default values
+    this->m_state = CF_TxnState_UNDEF;
+    this->m_txn_class = CfdpClass::CLASS_1;
+    this->m_fsize = 0;
+    this->m_foffs = 0;
+    this->m_keep = CfdpKeep::KEEP;
+    this->m_priority = 0;
+    this->m_crc = CFDP::Checksum(0);
+    this->m_pb = nullptr;
+
+    // Use aggregate initialization to zero out unions
+    this->m_state_data = {};
+    this->m_flags = {};
+
+    // Close the file if it is open
+    if(this->m_fd.isOpen())
+    {
+        this->m_fd.close();
+    }
+
+    // The following state information is PRESERVED across reset (NOT modified):
+    // - this->m_cfdpManager  // Channel binding
+    // - this->m_chan         // Channel binding
+    // - this->m_engine       // Channel binding
+    // - this->m_chan_num     // Channel binding
+    // - this->m_history      // Assigned when transaction is activated
+    // - this->m_chunks       // Assigned when transaction is activated
+    // - this->m_ack_timer    // Timer state preserved
+    // - this->m_inactivity_timer // Timer state preserved
+    // - this->m_cl_node      // Managed by queue operations in freeTransaction()
+}
 
 // ======================================================================
 // RX State Machine - Public Methods
@@ -430,7 +466,6 @@ CfdpStatus::T CfdpTransaction::rCheckCrc(U32 expected_crc) {
     // - Never stores a partial word internally
     // - Never needs to "flush" anything
     // - Always accounts for padding at update time
-    // CF_CRC_Finalize(&this->m_crc);
     crc_result = this->m_crc.getValue();
     if (crc_result != expected_crc)
     {
