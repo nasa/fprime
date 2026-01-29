@@ -38,18 +38,23 @@ TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 // Test array toString() and ostream operator functions
 TYPED_TEST(ArrayToStringTest, ToString) {
     TypeParam a(this->testVals);
-    std::stringstream buf1, buf2;
+    std::stringstream actual;
+    std::stringstream expected;
 
-    buf1 << a;
+    actual << a;
 
-    buf2 << "[ ";
+    Fw::String s;
+    s += "[ ";
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            s += ", ";
         }
-        buf2 << this->testVals[i];
+        Fw::String s1;
+        this->testVals[i].toString(s1);
+        s += s1;
     }
-    buf2 << " ]";
+    s += " ]";
+    expected << s;
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
