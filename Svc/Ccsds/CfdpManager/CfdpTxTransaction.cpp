@@ -518,8 +518,8 @@ CfdpStatus::T CfdpTransaction::sCheckAndRespondNak(bool* nakProcessed) {
     else
     {
         /* Get first chunk and process if available */
-        chunk = CF_ChunkList_GetFirstChunk(&this->m_chunks->chunks);
-        if (chunk != NULL)
+        chunk = this->m_chunks->chunks.getFirstChunk();
+        if (chunk != nullptr)
         {
             ret = this->sSendFileData(chunk->offset, chunk->size, 0, &bytes_processed);
             if(ret != CfdpStatus::SUCCESS)
@@ -529,7 +529,7 @@ CfdpStatus::T CfdpTransaction::sCheckAndRespondNak(bool* nakProcessed) {
             }
             else if (bytes_processed > 0)
             {
-                CF_ChunkList_RemoveFromFirst(&this->m_chunks->chunks, bytes_processed);
+                this->m_chunks->chunks.removeFromFirst(bytes_processed);
                 *nakProcessed = true; /* nak processed, so caller doesn't send file data */
             }
         }
@@ -712,7 +712,7 @@ void CfdpTransaction::s2Nak(CF_Logical_PduBuffer_t *ph) {
                 }
 
                 /* insert gap data in chunks */
-                CF_ChunkListAdd(&this->m_chunks->chunks, sr->offset_start, sr->offset_end - sr->offset_start);
+                this->m_chunks->chunks.add(sr->offset_start, sr->offset_end - sr->offset_start);
             }
         }
 

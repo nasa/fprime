@@ -100,18 +100,6 @@ class CfdpTransaction {
     void initTxFile(CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
 
     /**
-     * @brief Static wrapper for R2 gap computation callback
-     *
-     * C-style callback wrapper that delegates to the member function r2GapCompute().
-     * Used with CF_ChunkList_ComputeGaps which requires a function pointer.
-     *
-     * @param chunks Pointer to chunk list
-     * @param chunk  Pointer to a single chunk information
-     * @param opaque Pointer to a CF_GapComputeArgs_t object
-     */
-    static void gapComputeCallback(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
-
-    /**
      * @brief Static callback for finding transaction by sequence number
      *
      * C-style callback for list traversal. Used with CF_CList_Traverse.
@@ -720,16 +708,16 @@ class CfdpTransaction {
     /** @brief Loads a single NAK segment request.
      *
      * @par Description
-     *       This is a function callback from CF_ChunkList_ComputeGaps().
+     *       This is a callback function used with CfdpChunkList::computeGaps().
+     *       For each gap found, this function adds a segment request to the NAK PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       chunks must not be NULL, chunk must not be NULL, opaque must not be NULL.
+     *       chunk must not be NULL, nak must not be NULL.
      *
-     * @param chunks Not used, required for compatibility with CF_ChunkList_ComputeGaps
-     * @param chunk      Pointer to a single chunk information
-     * @param opaque Pointer to a CF_GapComputeArgs_t object (passed via CF_ChunkList_ComputeGaps)
+     * @param chunk Pointer to the gap chunk information
+     * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
+    void r2GapCompute(const CF_Chunk_t *chunk, CF_Logical_PduNak_t *nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.

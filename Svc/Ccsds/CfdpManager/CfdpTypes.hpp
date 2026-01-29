@@ -211,14 +211,24 @@ typedef struct CF_History
 } CF_History_t;
 
 /**
- * @brief Wrapper around a CF_ChunkList_t object
+ * @brief Wrapper around a CfdpChunkList object
  *
- * This allows a CF_ChunkList_t to be stored within a CList data storage structure
+ * This allows a CfdpChunkList to be stored within a CList data storage structure.
+ * The wrapper is pooled by CfdpChannel for reuse across transactions.
  */
 typedef struct CF_ChunkWrapper
 {
-    CF_ChunkList_t chunks;
+    CfdpChunkList chunks;  // Changed from CF_ChunkList_t to CfdpChunkList class
     CF_CListNode_t cl_node;
+
+    /**
+     * @brief Constructor for initializing the chunk list
+     *
+     * @param maxChunks Maximum number of chunks this list can hold
+     * @param chunkMem Pointer to pre-allocated chunk memory
+     */
+    CF_ChunkWrapper(CF_ChunkIdx_t maxChunks, CF_Chunk_t* chunkMem)
+        : chunks(maxChunks, chunkMem), cl_node{} {}
 } CF_ChunkWrapper_t;
 
 /**

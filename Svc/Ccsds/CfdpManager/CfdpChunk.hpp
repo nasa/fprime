@@ -31,24 +31,25 @@
 #ifndef CFDP_CHUNK_HPP
 #define CFDP_CHUNK_HPP
 
+#include <functional>
+
 #include <Fw/FPrimeBasicTypes.hpp>
 
+#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 #include <Svc/Ccsds/Types/CfdpStatusEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
 
 typedef U32 CF_ChunkIdx_t;
-typedef U32 CF_ChunkOffset_t;
-typedef U32 CF_ChunkSize_t;
 
 /**
  * @brief Pairs an offset with a size to identify a specific piece of a file
  */
 typedef struct CF_Chunk
 {
-    CF_ChunkOffset_t offset; /**< \brief The start offset of the chunk within the file */
-    CF_ChunkSize_t   size;   /**< \brief The size of the chunk */
+    CfdpFileSize offset; /**< \brief The start offset of the chunk within the file */
+    CfdpFileSize size;   /**< \brief The size of the chunk */
 } CF_Chunk_t;
 
 /**
@@ -77,9 +78,9 @@ typedef void (*CF_ChunkList_ComputeGapFn_t)(const CF_ChunkList_t *cs, const CF_C
  *
  * @param a First chunk offset
  * @param b Second chunk offset
- * @return the larger CF_ChunkOffset_t value
+ * @return the larger CfdpFileSize value
  */
-static inline CF_ChunkOffset_t CF_Chunk_MAX(CF_ChunkOffset_t a, CF_ChunkOffset_t b)
+static inline CfdpFileSize CF_Chunk_MAX(CfdpFileSize a, CfdpFileSize b)
 {
     if (a > b)
     {
@@ -91,234 +92,221 @@ static inline CF_ChunkOffset_t CF_Chunk_MAX(CF_ChunkOffset_t a, CF_ChunkOffset_t
     }
 }
 
-/************************************************************************/
-/** @brief Initialize a CF_ChunkList_t structure.
+/**
+ * @brief Modern callback type for gap computation
  *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL. chunks_mem must not be NULL.
- *
- * @param chunks      Pointer to CF_ChunkList_t object to initialize
- * @param max_chunks  Maximum number of entries in the chunks_mem array
- * @param chunks_mem  Array of CF_Chunk_t objects with length of max_chunks
+ * Replaces CF_ChunkList_ComputeGapFn_t with a more flexible std::function-based callback.
+ * The callback receives the gap chunk and an opaque context pointer.
  */
-void CF_ChunkListInit(CF_ChunkList_t *chunks, CF_ChunkIdx_t max_chunks, CF_Chunk_t *chunks_mem);
+using GapComputeCallback = std::function<void(const CF_Chunk_t* chunk, void* opaque)>;
 
-/************************************************************************/
-/** @brief Public function to add a chunk.
+/**
+ * @brief C++ class encapsulation of CFDP chunk list operations
  *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
+ * This class provides modern C++ encapsulation around the gap tracking functionality
+ * previously implemented as C-style free functions. The class does not own the backing
+ * memory for chunks; it takes a pointer to pre-allocated memory in the constructor,
+ * preserving the existing memory pooling system managed by CfdpChannel.
  *
- * @param chunks   Pointer to CF_ChunkList_t object
- * @param offset   Offset of chunk to add
- * @param size     Size of chunk to add
+ * The chunk list maintains file segments in offset-sorted order and provides operations
+ * for adding segments, computing gaps, and managing the list. This is primarily used for:
+ * - RX transactions: Track received file data segments to identify gaps for NAK packets
+ * - TX transactions: Track NAK segment requests for retransmission
  */
-void CF_ChunkListAdd(CF_ChunkList_t *chunks, CF_ChunkOffset_t offset, CF_ChunkSize_t size);
+class CfdpChunkList {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and Destruction
+    // ----------------------------------------------------------------------
 
-/************************************************************************/
-/** @brief Resets a chunks structure.
- *
- * All chunks are removed from the list, but the max_chunks and chunk memory
- * pointers are retained.  This returns the chunk list to the same state as
- * it was after the initial call to CF_ChunkListInit().
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
- *
- * @param chunks   Pointer to CF_ChunkList_t object
- */
-void CF_ChunkListReset(CF_ChunkList_t *chunks);
+    /**
+     * @brief Constructor - initializes chunk list with pre-allocated memory
+     *
+     * @param maxChunks  Maximum number of chunks this list can hold
+     * @param chunkMem   Pointer to pre-allocated array of CF_Chunk_t objects
+     *
+     * @note The class does NOT take ownership of chunkMem; memory is externally managed
+     */
+    CfdpChunkList(CF_ChunkIdx_t maxChunks, CF_Chunk_t* chunkMem);
 
-/************************************************************************/
-/** @brief Public function to remove some amount of size from the first chunk.
- *
- * @par Description
- *       This may remove the chunk entirely. This function is to satisfy the
- *       use-case where data is retrieved from the structure in-order and
- *       once consumed should be removed.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL and list must not be empty
- *
- * @note
- * Good computer science would have a generic remove function, but that's much more complex
- * than we need for the use case. We aren't trying to make chunks a general purpose
- * reusable module, so just take the simple case that we need.
- *
- * @param chunks   Pointer to CF_ChunkList_t object
- * @param size     Size to remove
- */
-void CF_ChunkList_RemoveFromFirst(CF_ChunkList_t *chunks, CF_ChunkSize_t size);
+    // ----------------------------------------------------------------------
+    // Public Interface
+    // ----------------------------------------------------------------------
 
-/************************************************************************/
-/** @brief Public function to get the entire first chunk from the list
- *
- * This returns the first chunk from the list, or NULL if the list is empty.
- *
- * @note The chunk remains on the list - this call does not consume or remove the chunk
- * from the list.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
- *
- * @returns Pointer to first chunk from the CF_ChunkList_t object
- * @retval  NULL if the list was empty
- */
-const CF_Chunk_t *CF_ChunkList_GetFirstChunk(const CF_ChunkList_t *chunks);
+    /**
+     * @brief Add a chunk (file segment) to the list
+     *
+     * Adds a new chunk representing a file segment at the given offset and size.
+     * The chunk may be combined with adjacent chunks if they are contiguous.
+     * If the list is full, the smallest chunk may be evicted.
+     *
+     * @param offset  Starting offset of the chunk within the file
+     * @param size    Size of the chunk in bytes
+     */
+    void add(CfdpFileSize offset, CfdpFileSize size);
 
-/************************************************************************/
-/** @brief Compute gaps between chunks, and call a callback for each.
- *
- * @par Description
- *       This function walks over all chunks and computes the gaps between.
- *       It can exit early if the calculated gap start is larger than the
- *       desired total.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL. compute_gap_fn is a valid function address.
- *
- * @param chunks         Pointer to CF_ChunkList_t object
- * @param max_gaps       Maximum number of gaps to compute
- * @param total          Size of the entire file
- * @param start          Beginning offset for gap computation
- * @param compute_gap_fn Callback function to be invoked for each gap
- * @param opaque         Opaque pointer to pass through to callback function
- *
- * @returns The number of computed gaps.
- */
-U32 CF_ChunkList_ComputeGaps(const CF_ChunkList_t *chunks, CF_ChunkIdx_t max_gaps, CF_ChunkSize_t total,
-                                CF_ChunkOffset_t start, CF_ChunkList_ComputeGapFn_t compute_gap_fn, void *opaque);
+    /**
+     * @brief Reset the chunk list to empty state
+     *
+     * Removes all chunks from the list while preserving the max_chunks and
+     * memory pointer configuration. After reset, the list is in the same state
+     * as immediately after construction.
+     */
+    void reset();
 
-/************************************************************************/
-/** @brief Erase a range of chunks.
- *
- * Items in the list starting at the end index will be shifted/moved to close the gap.
- * If end <= start nothing will be done (OK to pass matching start/end as a no-op)
- * If end == list size, list from start on will be erased (nothing moved)
- *
- * Example:
- *   list = {a, b, c, d, e}
- *   EraseRange index start 1, end 3
- *   list = {a, d, e}
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
- *
- * @param chunks   Pointer to CF_ChunkList_t object
- * @param start    Starting chunk ID to erase (inclusive)
- * @param end      Ending chunk ID (exclusive, this chunk will not be erased)
- */
-void CF_Chunks_EraseRange(CF_ChunkList_t *chunks, CF_ChunkIdx_t start, CF_ChunkIdx_t end);
+    /**
+     * @brief Get the first chunk in the list
+     *
+     * Returns a pointer to the first chunk (lowest offset) in the list without
+     * removing it from the list.
+     *
+     * @returns Pointer to the first chunk
+     * @retval  nullptr if the list is empty
+     */
+    const CF_Chunk_t* getFirstChunk() const;
 
-/************************************************************************/
-/** @brief Erase a single chunk.
- *
- * @note This changes the chunk IDs of all chunks that follow
- * Items in the list after the erase_index will be shifted/moved to close the gap.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
- *
- * @param chunks      Pointer to CF_ChunkList_t object
- * @param erase_index chunk ID to erase
- */
-void CF_Chunks_EraseChunk(CF_ChunkList_t *chunks, CF_ChunkIdx_t erase_index);
+    /**
+     * @brief Remove a specified size from the first chunk
+     *
+     * Reduces the size of the first chunk by the specified amount. If the
+     * size exactly matches the chunk size, the entire chunk is removed.
+     * This is used for consuming data in-order during processing.
+     *
+     * @param size  Number of bytes to remove from the first chunk
+     *
+     * @note The list must not be empty when calling this function
+     */
+    void removeFromFirst(CfdpFileSize size);
 
-/************************************************************************/
-/** @brief Insert a chunk before index_before.
- *
- * @note This changes the chunk IDs of all chunks that follow
- * Items in the list after the index_before will be shifted/moved to open a gap.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL, chunk must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- * @param index_before position to insert at - this becomes the ID of the inserted chunk
- * @param chunk        Chunk data to insert (copied)
- */
-void CF_Chunks_InsertChunk(CF_ChunkList_t *chunks, CF_ChunkIdx_t index_before, const CF_Chunk_t *chunk);
+    /**
+     * @brief Compute gaps between chunks and invoke callback for each
+     *
+     * Walks the chunk list and computes gaps (missing file segments) between
+     * chunks. For each gap found, invokes the provided callback function.
+     * This is used to generate NAK segment requests.
+     *
+     * @param maxGaps    Maximum number of gaps to compute
+     * @param total      Total size of the file
+     * @param start      Starting offset for gap computation
+     * @param callback   Callback function to invoke for each gap
+     * @param opaque     Opaque pointer passed through to callback
+     *
+     * @returns Number of gaps computed (may be less than maxGaps if fewer gaps exist)
+     */
+    U32 computeGaps(CF_ChunkIdx_t maxGaps,
+                    CfdpFileSize total,
+                    CfdpFileSize start,
+                    const GapComputeCallback& callback,
+                    void* opaque) const;
 
-/************************************************************************/
-/** @brief Finds where a chunk should be inserted in the chunks.
- *
- * @par Description
- *       This is a C version of std::lower_bound from C++ algorithms.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL, chunk must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- * @param chunk        Chunk data to insert
- *
- * @returns an index to the first chunk that is greater than or equal to the requested's offset.
- *
- */
-CF_ChunkIdx_t CF_Chunks_FindInsertPosition(CF_ChunkList_t *chunks, const CF_Chunk_t *chunk);
+    /**
+     * @brief Get the current number of chunks in the list
+     * @returns Current chunk count
+     */
+    CF_ChunkIdx_t getCount() const { return m_count; }
 
-/************************************************************************/
-/** @brief Possibly combines the given chunk with the previous chunk.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL, chunk must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- * @param i            Index of chunk to combine
- * @param chunk        Chunk data to combine
- *
- * @returns boolean code indicating if chunks were combined
- * @retval 1 if combined with another chunk
- * @retval 0 if not combined
- *
- */
-int CF_Chunks_CombinePrevious(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
+    /**
+     * @brief Get the maximum number of chunks this list can hold
+     * @returns Maximum chunk capacity
+     */
+    CF_ChunkIdx_t getMaxChunks() const { return m_maxChunks; }
 
-/************************************************************************/
-/** @brief Possibly combines the given chunk with the next chunk.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL, chunk must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- * @param i            Index of chunk to combine
- * @param chunk        Chunk data to combine
- *
- * @returns boolean code indicating if chunks were combined
- * @retval true if combined with another chunk
- * @retval false if not combined
- *
- */
-bool CF_Chunks_CombineNext(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
+  private:
+    // ----------------------------------------------------------------------
+    // Private Implementation
+    // ----------------------------------------------------------------------
 
-/************************************************************************/
-/** @brief Finds the smallest size out of all chunks.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- *
- * @returns The chunk index with the smallest size.
- * @retval  0 if the chunk list is empty
- *
- */
-CF_ChunkIdx_t CF_Chunks_FindSmallestSize(const CF_ChunkList_t *chunks);
+    /**
+     * @brief Insert a chunk at a specific index
+     *
+     * Inserts the chunk at the specified index position, shifting existing
+     * chunks as needed. May combine with adjacent chunks if contiguous.
+     *
+     * @param index  Index position to insert at
+     * @param chunk  Chunk data to insert
+     */
+    void insertChunk(CF_ChunkIdx_t index, const CF_Chunk_t* chunk);
 
-/************************************************************************/
-/** @brief Insert a chunk.
- *
- * @par Description
- *       Inserts the chunk at the specified location. May combine with
- *       an existing chunk if contiguous.
- *
- * @par Assumptions, External Events, and Notes:
- *       chunks must not be NULL, chunk must not be NULL.
- *
- * @param chunks       Pointer to CF_ChunkList_t object
- * @param i            Position to insert chunk at
- * @param chunk        Chunk data to insert
- */
-void CF_Chunks_Insert(CF_ChunkList_t *chunks, CF_ChunkIdx_t i, const CF_Chunk_t *chunk);
+    /**
+     * @brief Erase a single chunk at the given index
+     *
+     * Removes the chunk and shifts subsequent chunks to close the gap.
+     *
+     * @param index  Index of chunk to erase
+     */
+    void eraseChunk(CF_ChunkIdx_t index);
+
+    /**
+     * @brief Erase a range of chunks
+     *
+     * Removes chunks from start (inclusive) to end (exclusive) and shifts
+     * remaining chunks to close the gap.
+     *
+     * @param start  Starting index (inclusive)
+     * @param end    Ending index (exclusive)
+     */
+    void eraseRange(CF_ChunkIdx_t start, CF_ChunkIdx_t end);
+
+    /**
+     * @brief Find where a chunk should be inserted to maintain sorted order
+     *
+     * Uses binary search to find the insertion point based on chunk offset.
+     *
+     * @param chunk  Chunk data to find insertion point for
+     * @returns Index where chunk should be inserted
+     */
+    CF_ChunkIdx_t findInsertPosition(const CF_Chunk_t* chunk);
+
+    /**
+     * @brief Attempt to combine chunk with the next chunk
+     *
+     * If the chunk is contiguous with the next chunk in the list, combines them.
+     *
+     * @param i      Index of the current chunk
+     * @param chunk  Chunk data to attempt combining
+     * @returns true if chunks were combined, false otherwise
+     */
+    bool combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+
+    /**
+     * @brief Attempt to combine chunk with the previous chunk
+     *
+     * If the chunk is contiguous with the previous chunk in the list, combines them.
+     *
+     * @param i      Index of the current chunk
+     * @param chunk  Chunk data to attempt combining
+     * @returns 1 if chunks were combined, 0 otherwise
+     */
+    int combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+
+    /**
+     * @brief Insert a chunk, potentially combining with neighbors
+     *
+     * Inserts the chunk at position i and attempts to combine with adjacent chunks.
+     *
+     * @param i      Position to insert at
+     * @param chunk  Chunk data to insert
+     */
+    void insert(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+
+    /**
+     * @brief Find the index of the chunk with the smallest size
+     *
+     * Used when the list is full and a chunk needs to be evicted.
+     *
+     * @returns Index of the smallest chunk, or 0 if list is empty
+     */
+    CF_ChunkIdx_t findSmallestSize() const;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private Member Variables
+    // ----------------------------------------------------------------------
+
+    CF_ChunkIdx_t m_count;       //!< Current number of chunks in the list
+    CF_ChunkIdx_t m_maxChunks;   //!< Maximum number of chunks allowed
+    CF_Chunk_t* m_chunks;        //!< Pointer to pre-allocated chunk array (not owned)
+};
 
 }  // namespace Ccsds
 }  // namespace Svc

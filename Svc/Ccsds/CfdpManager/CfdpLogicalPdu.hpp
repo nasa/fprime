@@ -46,6 +46,7 @@
 #define CFDP_LOGICAL_PDU_HPP
 
 #include <config/CfdpEntityIdAliasAc.hpp>
+#include <config/CfdpFileSizeAliasAc.hpp>
 #include <config/CfdpTransactionSeqAliasAc.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
@@ -73,15 +74,6 @@ namespace Ccsds {
  * segment structures in a single PDU.
  */
 #define CF_PDU_MAX_SEGMENTS (CF_NAK_MAX_SEGMENTS)
-/**
- * @brief Type for logical file size/offset value
- *
- * The CFDP protocol permits use of 64-bit values for file size/offsets
- * Although the CF application only supports 32-bit legacy file size
- * type at this point, the logical structures should use this type in
- * case future support for large files is added.
- */
-typedef U32 CfdpFileSize;
 
 /*
  * Note that by exploding the bit-fields into separate members, this will make the

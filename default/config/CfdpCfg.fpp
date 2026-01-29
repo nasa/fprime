@@ -51,6 +51,17 @@ module Svc {
         @         Must be one of U8, U16, U32, U64.
         type CfdpTransactionSeq = U32
 
+        @ @brief File size and offset type
+        @
+        @ @par Description:
+        @      The type used for file sizes and offsets in CFDP operations.
+        @      The CFDP protocol permits use of 64-bit values for file size/offsets,
+        @      although the current implementation supports 32-bit values.
+        @
+        @ @par Limits
+        @         Must be one of U8, U16, U32, U64.
+        type CfdpFileSize = U32
+
         @ @brief Maximum PDU size in bytes
         @
         @ @par Description:

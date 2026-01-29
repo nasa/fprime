@@ -114,12 +114,15 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     }
 
     // Allocate arrays
-    // Use operator new for raw memory
+    // Use operator new for raw memory (for types requiring placement new with constructor params)
     m_transactions = static_cast<CfdpTransaction*>(
         ::operator new(CF_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(CfdpTransaction))
     );
+    m_chunks = static_cast<CF_ChunkWrapper_t*>(
+        ::operator new((CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM) * sizeof(CF_ChunkWrapper_t))
+    );
+    // Regular new for simple types
     m_histories = new CF_History_t[CF_NUM_HISTORIES_PER_CHANNEL];
-    m_chunks = new CF_ChunkWrapper_t[CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM];
     m_chunkMem = new CF_Chunk_t[total_chunks_needed];
 
     // Initialize transactions using placement new with parameterized constructor
@@ -137,7 +140,8 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
         {
             list_head = this->getChunkListHead(static_cast<U8>(k));
 
-            CF_ChunkListInit(&cw->chunks, CF_DIR_MAX_CHUNKS[k][m_channelId], &m_chunkMem[chunk_mem_offset]);
+            // Use placement new to construct CF_ChunkWrapper with the new class-based interface
+            new (cw) CF_ChunkWrapper_t(CF_DIR_MAX_CHUNKS[k][m_channelId], &m_chunkMem[chunk_mem_offset]);
             chunk_mem_offset += CF_DIR_MAX_CHUNKS[k][m_channelId];
             CF_CList_InitNode(&cw->cl_node);
             CF_CList_InsertBack(list_head, &cw->cl_node);
@@ -172,7 +176,12 @@ CfdpChannel::~CfdpChannel()
         m_histories = nullptr;
     }
     if (m_chunks != nullptr) {
-        delete[] m_chunks;
+        // Manually call destructors since we used placement new
+        for (U32 j = 0; j < (CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM); ++j) {
+            m_chunks[j].~CF_ChunkWrapper_t();
+        }
+        // Free raw memory allocated with operator new
+        ::operator delete(m_chunks);
         m_chunks = nullptr;
     }
     if (m_chunkMem != nullptr) {

@@ -49,34 +49,6 @@
 namespace Svc {
 namespace Ccsds {
 
-/**
- * @brief Argument for Gap Compute function
- *
- * This is used in conjunction with CfdpTransaction::r2GapCompute
- */
-typedef struct
-{
-    CfdpTransaction *    txn; /**< \brief Current transaction being processed */
-    CF_Logical_PduNak_t *nak; /**< \brief Current NAK PDU contents */
-} CF_GapComputeArgs_t;
-
-/**
- * @brief Free function wrapper for CfdpTransaction::r2GapCompute
- *
- * This wrapper is needed because CF_ChunkList_ComputeGaps expects a free function pointer,
- * but r2GapCompute is a member function. The opaque pointer contains a CF_GapComputeArgs_t
- * which includes the transaction pointer.
- */
-// ======================================================================
-// Static callback wrapper
-// ======================================================================
-
-void CfdpTransaction::gapComputeCallback(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque)
-{
-    CF_GapComputeArgs_t* args = static_cast<CF_GapComputeArgs_t*>(opaque);
-    args->txn->r2GapCompute(chunks, chunk, opaque);
-}
-
 // ======================================================================
 // Construction and Destruction
 // ======================================================================
@@ -501,7 +473,7 @@ void CfdpTransaction::r2Complete(int ok_to_send_nak) {
         else
         {
             /* only look for 1 gap, since the goal here is just to know that there are gaps */
-            ret = CF_ChunkList_ComputeGaps(&this->m_chunks->chunks, 1, this->m_fsize, 0, NULL, NULL);
+            ret = this->m_chunks->chunks.computeGaps(1, this->m_fsize, 0, nullptr, nullptr);
 
             if (ret)
             {
@@ -770,7 +742,7 @@ void CfdpTransaction::r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
     if (ret == CfdpStatus::SUCCESS)
     {
         /* class 2 does CRC at FIN, but track gaps */
-        CF_ChunkListAdd(&this->m_chunks->chunks, fd->offset, static_cast<CF_ChunkSize_t>(fd->data_len));
+        this->m_chunks->chunks.add(fd->offset, static_cast<CfdpFileSize>(fd->data_len));
 
         if (this->m_flags.rx.fd_nak_sent)
         {
@@ -791,14 +763,11 @@ void CfdpTransaction::r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
     }
 }
 
-void CfdpTransaction::r2GapCompute(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque) {
-    CF_GapComputeArgs_t *        args = static_cast<CF_GapComputeArgs_t *>(opaque);
+void CfdpTransaction::r2GapCompute(const CF_Chunk_t *chunk, CF_Logical_PduNak_t *nak) {
     CF_Logical_SegmentRequest_t *pseg;
-    CF_Logical_SegmentList_t *   pseglist;
-    CF_Logical_PduNak_t *        nak;
+    CF_Logical_SegmentList_t *pseglist;
 
     /* This function is only invoked for NAK types */
-    nak      = args->nak;
     pseglist = &nak->segment_list;
     FW_ASSERT(chunk->size > 0, chunk->size);
 
@@ -832,14 +801,19 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
         if (this->m_flags.rx.md_recv)
         {
             /* we have metadata, so send valid NAK */
-            CF_GapComputeArgs_t args = {this, nak};
-
             nak->scope_start = 0;
-            cret             = CF_ChunkList_ComputeGaps(&this->m_chunks->chunks,
-                                            (this->m_chunks->chunks.count < this->m_chunks->chunks.max_chunks)
-                                                            ? this->m_chunks->chunks.max_chunks
-                                                            : (this->m_chunks->chunks.max_chunks - 1),
-                                            this->m_fsize, 0, CfdpTransaction::gapComputeCallback, &args);
+
+            // Use lambda to call r2GapCompute - no wrapper needed!
+            cret = this->m_chunks->chunks.computeGaps(
+                (this->m_chunks->chunks.getCount() < this->m_chunks->chunks.getMaxChunks())
+                    ? this->m_chunks->chunks.getMaxChunks()
+                    : (this->m_chunks->chunks.getMaxChunks() - 1),
+                this->m_fsize,
+                0,
+                [this, nak](const CF_Chunk_t* chunk, void* opaque) {
+                    this->r2GapCompute(chunk, nak);
+                },
+                nullptr);  // opaque not needed with lambda capture
 
             if (!cret)
             {
