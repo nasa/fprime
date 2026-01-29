@@ -73,13 +73,15 @@ CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CF_Transaction_t *txn)
     return LocalStatus;
 }
 
-CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
+// Static member function - can access private members
+CF_CListTraverse_Status_t CfdpTransaction::findBySequenceNumberCallback(CF_CListNode_t *node, void *context)
 {
     CfdpTransaction *txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CF_CListTraverse_Status_t ret = CF_CListTraverse_Status_CONTINUE;
     CF_Traverse_TransSeqArg_t* seqContext = static_cast<CF_Traverse_TransSeqArg_t*>(context);
 
-    if ((txn->m_history->src_eid == seqContext->src_eid) && (txn->m_history->seq_num == seqContext->transaction_sequence_number))
+    if (txn->m_history && (txn->m_history->src_eid == seqContext->src_eid) &&
+        (txn->m_history->seq_num == seqContext->transaction_sequence_number))
     {
         seqContext->txn = txn;
         ret = CF_CListTraverse_Status_EXIT; /* exit early */
@@ -88,7 +90,8 @@ CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t
     return ret;
 }
 
-CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
+// Static member function - can access private members
+CF_CListTraverse_Status_t CfdpTransaction::prioritySearchCallback(CF_CListNode_t *node, void *context)
 {
     CfdpTransaction *         txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CF_Traverse_PriorityArg_t *arg = static_cast<CF_Traverse_PriorityArg_t *>(context);
@@ -104,6 +107,17 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
     }
 
     return CF_CLIST_CONT;
+}
+
+// Legacy wrappers for backward compatibility
+CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context)
+{
+    return CfdpTransaction::findBySequenceNumberCallback(node, context);
+}
+
+CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context)
+{
+    return CfdpTransaction::prioritySearchCallback(node, context);
 }
 
 CF_CListTraverse_Status_t CF_TraverseAllTransactions_Impl(CF_CListNode_t *node, void *arg)

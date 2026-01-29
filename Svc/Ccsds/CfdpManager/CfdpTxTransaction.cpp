@@ -117,6 +117,16 @@ void CfdpTransaction::s2Recv(CF_Logical_PduBuffer_t *ph) {
     this->sDispatchRecv(ph, &substate_fns);
 }
 
+void CfdpTransaction::initTxFile(CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority)
+{
+    m_chan_num = chan;
+    m_priority = priority;
+    m_keep = keep;
+    m_txn_class = cfdp_class;
+    m_state = (cfdp_class == CfdpClass::CLASS_2) ? CF_TxnState_S2 : CF_TxnState_S1;
+    m_state_data.send.sub_state = CF_TxSubState_METADATA;
+}
+
 void CfdpTransaction::s1Tx() {
     static const CF_CFDP_S_SubstateSendDispatchTable_t substate_fns = {{
         &CfdpTransaction::sSubstateSendMetadata, // CF_TxSubState_METADATA

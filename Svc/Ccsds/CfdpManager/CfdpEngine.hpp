@@ -229,16 +229,6 @@ class CfdpEngine {
     void setChannelFlowState(U8 channelId, CfdpFlow::T flowState);
 
     // ----------------------------------------------------------------------
-    // Internal interfaces (used by other CFDP classes and legacy code)
-    // ----------------------------------------------------------------------
-
-    /**
-     * @brief Get manager pointer (for access to protected methods)
-     * @returns Pointer to parent CfdpManager
-     */
-    CfdpManager* getManager() { return m_manager; }
-
-    // ----------------------------------------------------------------------
     // Public Transaction Interface
     // Methods used by CfdpRx/CfdpTx transaction processing
     // ----------------------------------------------------------------------
@@ -617,23 +607,6 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      */
     void cancelTransaction(CfdpTransaction *txn);
-
-    /**
-     * @brief Helper function to set tx file state in a transaction
-     *
-     * This sets various fields inside a newly-allocated transaction
-     * structure appropriately for sending a file.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
-     * @param txn          Pointer to the transaction state
-     * @param cfdp_class   Set to class 1 or class 2
-     * @param keep         Whether to keep the local file
-     * @param chan         CF channel number
-     * @param priority     Priority of transfer
-     */
-    void initTxnTxFile(CfdpTransaction *txn, CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
 
     /**
      * @brief Helper function to start a new RX transaction

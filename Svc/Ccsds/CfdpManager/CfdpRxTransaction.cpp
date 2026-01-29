@@ -67,7 +67,11 @@ typedef struct
  * but r2GapCompute is a member function. The opaque pointer contains a CF_GapComputeArgs_t
  * which includes the transaction pointer.
  */
-void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque)
+// ======================================================================
+// Static callback wrapper
+// ======================================================================
+
+void CfdpTransaction::gapComputeCallback(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque)
 {
     CF_GapComputeArgs_t* args = static_cast<CF_GapComputeArgs_t*>(opaque);
     args->txn->r2GapCompute(chunks, chunk, opaque);
@@ -100,8 +104,6 @@ CfdpTransaction::CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine*
     m_engine(engine)                // Initialize from parameter
 {
     // All members initialized via member initializer list above
-    // This constructor is used by CfdpChannel::freeTransaction() to reset
-    // transactions while preserving channel-specific context
 }
 
 CfdpTransaction::~CfdpTransaction() { }
@@ -837,7 +839,7 @@ CfdpStatus::T CfdpTransaction::rSubstateSendNak() {
                                             (this->m_chunks->chunks.count < this->m_chunks->chunks.max_chunks)
                                                             ? this->m_chunks->chunks.max_chunks
                                                             : (this->m_chunks->chunks.max_chunks - 1),
-                                            this->m_fsize, 0, CF_CFDP_R2_GapCompute_Wrapper, &args);
+                                            this->m_fsize, 0, CfdpTransaction::gapComputeCallback, &args);
 
             if (!cret)
             {

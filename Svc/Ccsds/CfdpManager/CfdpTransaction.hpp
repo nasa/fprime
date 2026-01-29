@@ -51,9 +51,6 @@ class CfdpChannel;
 class CfdpTransaction;
 class CfdpManager;
 
-// Free function wrappers for compatibility with legacy interfaces
-void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
-
 /**
  * @brief CFDP Transaction state machine class
  *
@@ -66,14 +63,7 @@ class CfdpTransaction {
   // Allow CfdpEngine and CfdpChannel to access private members during initialization
   friend class CfdpEngine;
   friend class CfdpChannel;
-  friend class CfdpManagerTester;  // Needed for whitebox testing
-
-  // Free function wrappers need access to private members
-  friend void CF_CFDP_ArmInactTimer(CfdpTransaction *txn);
-  friend void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue);
-  friend void CF_CFDP_R2_GapCompute_Wrapper(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
-  friend CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
-  friend CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
+  friend class CfdpManagerTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -96,6 +86,80 @@ class CfdpTransaction {
      * Used when returning a transaction to the free pool for reuse.
      */
     void reset();
+
+    /**
+     * @brief Initialize transaction for outgoing file transfer
+     *
+     * Sets up transaction state for transmitting a file.
+     *
+     * @param cfdp_class CFDP class (1 or 2)
+     * @param keep       Whether to keep file after transfer
+     * @param chan       Channel number
+     * @param priority   Transaction priority
+     */
+    void initTxFile(CfdpClass::T cfdp_class, CfdpKeep::T keep, U8 chan, U8 priority);
+
+    /**
+     * @brief Static wrapper for R2 gap computation callback
+     *
+     * C-style callback wrapper that delegates to the member function r2GapCompute().
+     * Used with CF_ChunkList_ComputeGaps which requires a function pointer.
+     *
+     * @param chunks Pointer to chunk list
+     * @param chunk  Pointer to a single chunk information
+     * @param opaque Pointer to a CF_GapComputeArgs_t object
+     */
+    static void gapComputeCallback(const CF_ChunkList_t *chunks, const CF_Chunk_t *chunk, void *opaque);
+
+    /**
+     * @brief Static callback for finding transaction by sequence number
+     *
+     * C-style callback for list traversal. Used with CF_CList_Traverse.
+     *
+     * @param node    List node pointer
+     * @param context Pointer to CF_Traverse_TransSeqArg_t
+     * @return Traversal status (CONTINUE or EXIT)
+     */
+    static CF_CListTraverse_Status_t findBySequenceNumberCallback(CF_CListNode_t *node, void *context);
+
+    /**
+     * @brief Static callback for priority search
+     *
+     * C-style callback for list traversal. Used with CF_CList_Traverse_R.
+     *
+     * @param node    List node pointer
+     * @param context Pointer to CF_Traverse_PriorityArg_t
+     * @return Traversal status (CONTINUE or EXIT)
+     */
+    static CF_CListTraverse_Status_t prioritySearchCallback(CF_CListNode_t *node, void *context);
+
+    // ----------------------------------------------------------------------
+    // Accessors
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Get transaction history
+     * @return Pointer to history structure
+     */
+    CF_History_t* getHistory() const { return m_history; }
+
+    /**
+     * @brief Get transaction priority
+     * @return Priority value
+     */
+    U8 getPriority() const { return m_priority; }
+
+    /**
+     * @brief Get channel ID
+     * @return Channel ID number
+     */
+    U8 getChannelId() const { return m_chan_num; }
+
+    /**
+     * @brief Get transaction class (CLASS_1 or CLASS_2)
+     * @return Transaction class
+     */
+    CfdpClass::T getClass() const { return m_txn_class; }
 
     // ----------------------------------------------------------------------
     // TX State Machine - Implemented in CfdpTxTransaction.cpp

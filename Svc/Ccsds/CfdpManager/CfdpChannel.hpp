@@ -513,8 +513,6 @@ inline void CfdpChannel::insertBackInQueue(CfdpQueueId::T queueidx, CF_CListNode
 
 CF_CListTraverse_Status_t CF_CFDP_CycleTxFirstActive(CF_CListNode_t* node, void* context);
 CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context);
-void CF_CFDP_ArmInactTimer(CfdpTransaction *txn);
-void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue);
 
 }  // namespace Ccsds
 }  // namespace Svc

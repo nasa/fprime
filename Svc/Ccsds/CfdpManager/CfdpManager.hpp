@@ -211,8 +211,6 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // CFDP Engine - owns all protocol state and operations
     CfdpEngine* m_engine;
 
-    // Friend declaration allows engine to access protected logging methods
-    friend class CfdpEngine;
     friend class CfdpManagerTester;
 
 };

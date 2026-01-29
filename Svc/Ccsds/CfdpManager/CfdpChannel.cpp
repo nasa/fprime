@@ -218,7 +218,7 @@ void CfdpChannel::cycleTx()
 
                 /* Class 2 transactions need a chunklist for NAK processing, get one now.
                  * Class 1 transactions don't need chunks since they don't support NAKs. */
-                if (txn->m_txn_class == CfdpClass::CLASS_2)
+                if (txn->getClass() == CfdpClass::CLASS_2)
                 {
                     if (txn->m_chunks == NULL)
                     {
@@ -232,8 +232,8 @@ void CfdpChannel::cycleTx()
                     }
                 }
 
-                CF_CFDP_ArmInactTimer(txn);
-                CF_MoveTransaction(txn, CfdpQueueId::TXA);
+                m_engine->armInactTimer(txn);
+                this->moveTransaction(txn, CfdpQueueId::TXA);
             }
         }
 
@@ -432,7 +432,7 @@ CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSeq
 
     for (CF_CListNode_t* head : ptrs)
     {
-        CF_CList_Traverse(head, CF_FindTransactionBySequenceNumber_Impl, &ctx);
+        CF_CList_Traverse(head, CfdpTransaction::findBySequenceNumberCallback, &ctx);
         if (ctx.txn)
         {
             ret = ctx.txn;
@@ -555,8 +555,8 @@ void CfdpChannel::insertSortPrio(CfdpTransaction* txn, CfdpQueueId::T queue)
     }
     else
     {
-        CF_Traverse_PriorityArg_t arg = {NULL, txn->m_priority};
-        CF_CList_Traverse_R(m_qs[queue], CF_PrioSearch, &arg);
+        CF_Traverse_PriorityArg_t arg = {NULL, txn->getPriority()};
+        CF_CList_Traverse_R(m_qs[queue], CfdpTransaction::prioritySearchCallback, &arg);
         if (arg.txn)
         {
             this->insertAfterInQueue(queue, &arg.txn->m_cl_node, &txn->m_cl_node);
@@ -749,7 +749,7 @@ CF_CListTraverse_Status_t CfdpChannel::cycleTxFirstActive(CF_CListNode_t* node, 
          * off the active queue. Run until either of these occur. */
         while (!this->m_cur && txn->m_flags.com.q_index == CfdpQueueId::TXA)
         {
-            txn->m_engine->dispatchTx(txn);
+            m_engine->dispatchTx(txn);
         }
 
         args->ran_one = 1;
@@ -811,16 +811,6 @@ CF_CListTraverse_Status_t CF_CFDP_DoTick(CF_CListNode_t* node, void* context)
 {
     CF_CFDP_Tick_args_t* args = static_cast<CF_CFDP_Tick_args_t*>(context);
     return args->chan->doTick(node, context);
-}
-
-void CF_CFDP_ArmInactTimer(CfdpTransaction *txn)
-{
-    txn->m_engine->armInactTimer(txn);
-}
-
-void CF_MoveTransaction(CfdpTransaction* txn, CfdpQueueId::T queue)
-{
-    txn->m_chan->moveTransaction(txn, queue);
 }
 
 }  // namespace Ccsds
