@@ -219,16 +219,16 @@ void CfdpEngine::dispatchRecv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph)
             this->recvInit(txn, ph);
             break;
         case CF_TxnState_R1:
-            txnHandler.r1Recv(txn, ph);
+            reinterpret_cast<CfdpTransaction*>(txn)->r1Recv(ph);
             break;
         case CF_TxnState_S1:
-            txnHandler.s1Recv(txn, ph);
+            reinterpret_cast<CfdpTransaction*>(txn)->s1Recv(ph);
             break;
         case CF_TxnState_R2:
-            txnHandler.r2Recv(txn, ph);
+            reinterpret_cast<CfdpTransaction*>(txn)->r2Recv(ph);
             break;
         case CF_TxnState_S2:
-            txnHandler.s2Recv(txn, ph);
+            reinterpret_cast<CfdpTransaction*>(txn)->s2Recv(ph);
             break;
         case CF_TxnState_DROP:
             this->recvDrop(txn, ph);

@@ -74,43 +74,39 @@ class CfdpTransaction {
     /** @brief S1 receive PDU processing.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s1Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s1Recv(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S2 receive PDU processing.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2Recv(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S1 dispatch function.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void s1Tx(CF_Transaction_t *txn);
+    void s1Tx();
 
     /************************************************************************/
     /** @brief S2 dispatch function.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void s2Tx(CF_Transaction_t *txn);
+    void s2Tx();
 
     /************************************************************************/
     /** @brief Perform acknowledgement timer tick (time-based) processing for S transactions.
@@ -120,12 +116,10 @@ class CfdpTransaction {
      *       has some sort of acknowledgement pending from the remote.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL
-     *
-     * @param txn  Pointer to the transaction object
+     *       Operates on this transaction instance.
      *
      */
-    void sAckTimerTick(CF_Transaction_t *txn);
+    void sAckTimerTick();
 
     /************************************************************************/
     /** @brief Perform tick (time-based) processing for S transactions.
@@ -137,12 +131,11 @@ class CfdpTransaction {
      *       retransmit must occur.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. cont is unused, so may be NULL
+     *       Operates on this transaction instance. cont is unused, so may be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param cont Unused, exists for compatibility with tick processor
      */
-    void sTick(CF_Transaction_t *txn, int *cont);
+    void sTick(int *cont);
 
     /************************************************************************/
     /** @brief Perform NAK response for TX transactions
@@ -153,42 +146,38 @@ class CfdpTransaction {
      *       left to send.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. cont must not be NULL.
+     *       Operates on this transaction instance. cont must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param cont Set to 1 if a NAK was generated
      */
-    void sTickNak(CF_Transaction_t *txn, int *cont);
+    void sTickNak(int *cont);
 
     /************************************************************************/
     /** @brief Cancel an S transaction.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void sCancel(CF_Transaction_t *txn);
+    void sCancel();
 
     /************************************************************************/
     /** @brief Sends an EOF for S1.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void s1SubstateSendEof(CF_Transaction_t *txn);
+    void s1SubstateSendEof();
 
     /************************************************************************/
     /** @brief Triggers tick processing to send an EOF and wait for EOF-ACK for S2
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void s2SubstateSendEof(CF_Transaction_t *txn);
+    void s2SubstateSendEof();
 
     /************************************************************************/
     /** @brief Standard state function to send the next file data PDU for active transaction.
@@ -200,11 +189,10 @@ class CfdpTransaction {
      *       state.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn     Pointer to the transaction object
      */
-    void sSubstateSendFileData(CF_Transaction_t *txn);
+    void sSubstateSendFileData();
 
     /************************************************************************/
     /** @brief Send filedata handling for S2.
@@ -214,11 +202,10 @@ class CfdpTransaction {
      *       absence of a NAK, it will send more of the original file data.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn     Pointer to the transaction object
      */
-    void s2SubstateSendFileData(CF_Transaction_t *txn);
+    void s2SubstateSendFileData();
 
     /************************************************************************/
     /** @brief Send metadata PDU.
@@ -228,33 +215,30 @@ class CfdpTransaction {
      *       size of the file to put in the metadata PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn     Pointer to the transaction object
      */
-    void sSubstateSendMetadata(CF_Transaction_t *txn);
+    void sSubstateSendMetadata();
 
     /************************************************************************/
     /** @brief A FIN was received before file complete, so abandon the transaction.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2EarlyFin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2EarlyFin(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S2 received FIN, so set flag to send FIN-ACK.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2Fin(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2Fin(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S2 NAK PDU received handling.
@@ -265,23 +249,21 @@ class CfdpTransaction {
      *       PDUs.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2Nak(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2Nak(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S2 NAK handling but with arming the NAK timer.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2NakArm(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2NakArm(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief S2 received ACK PDU.
@@ -290,12 +272,11 @@ class CfdpTransaction {
      *       Handles reception of an ACK PDU
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void s2EofAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void s2EofAck(CF_Logical_PduBuffer_t *ph);
 
   private:
     /***********************************************************************
@@ -309,21 +290,20 @@ class CfdpTransaction {
     /** @brief Send an EOF PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      * @retval CfdpStatus::SUCCESS on success.
      * @retval CfdpStatus::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval SEND_PDU_ERROR if an error occurred while building the packet.
      *
-     * @param txn  Pointer to the transaction object
      */
-    CfdpStatus::T sSendEof(CF_Transaction_t *txn);
+    CfdpStatus::T sSendEof();
 
-    CfdpStatus::T sSendFileData(CF_Transaction_t *txn, U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
+    CfdpStatus::T sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
 
-    CfdpStatus::T sCheckAndRespondNak(CF_Transaction_t *txn, bool* nakProcessed);
+    CfdpStatus::T sCheckAndRespondNak(bool* nakProcessed);
 
-    CfdpStatus::T sSendFinAck(CF_Transaction_t *txn);
+    CfdpStatus::T sSendFinAck();
 
   public:
     // ----------------------------------------------------------------------
@@ -334,23 +314,21 @@ class CfdpTransaction {
     /** @brief R1 receive PDU processing.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r1Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r1Recv(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief R2 receive PDU processing.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r2Recv(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r2Recv(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Perform acknowledgement timer tick (time-based) processing for R transactions.
@@ -360,12 +338,10 @@ class CfdpTransaction {
      *       has some sort of acknowledgement pending from the remote.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL
-     *
-     * @param txn  Pointer to the transaction object
+     *       Operates on this transaction instance.
      *
      */
-    void rAckTimerTick(CF_Transaction_t *txn);
+    void rAckTimerTick();
 
     /************************************************************************/
     /** @brief Perform tick (time-based) processing for R transactions.
@@ -378,44 +354,40 @@ class CfdpTransaction {
      *       that require acknowledgment.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. cont is unused, so may be NULL
+     *       Operates on this transaction instance. cont is unused, so may be NULL
      *
-     * @param txn  Pointer to the transaction object
      * @param cont Ignored/Unused
      *
      */
-    void rTick(CF_Transaction_t *txn, int *cont);
+    void rTick(int *cont);
 
     /************************************************************************/
     /** @brief Cancel an R transaction.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void rCancel(CF_Transaction_t *txn);
+    void rCancel();
 
     /************************************************************************/
     /** @brief Initialize a transaction structure for R.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void rInit(CF_Transaction_t *txn);
+    void rInit();
 
     /************************************************************************/
     /** @brief Helper function to store transaction status code and set send_fin flag.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
      */
-    void r2SetFinTxnStatus(CF_Transaction_t *txn, CF_TxnStatus_t txn_stat);
+    void r2SetFinTxnStatus(CF_TxnStatus_t txn_stat);
 
     /************************************************************************/
     /** @brief CFDP R1 transaction reset function.
@@ -426,11 +398,10 @@ class CfdpTransaction {
      *       only calls CF_CFDP_ResetTransaction(), it is here as a placeholder.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void r1Reset(CF_Transaction_t *txn);
+    void r1Reset();
 
     /************************************************************************/
     /** @brief CFDP R2 transaction reset function.
@@ -439,26 +410,24 @@ class CfdpTransaction {
      *       Handles reset logic for R2, then calls R1 reset logic.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void r2Reset(CF_Transaction_t *txn);
+    void r2Reset();
 
     /************************************************************************/
     /** @brief Checks that the transaction file's CRC matches expected.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      *
      * @retval CfdpStatus::SUCCESS on CRC match, otherwise CfdpStatus::CFDP_ERROR.
      *
      *
-     * @param txn            Pointer to the transaction object
      * @param expected_crc Expected CRC
      */
-    CfdpStatus::T rCheckCrc(CF_Transaction_t *txn, U32 expected_crc);
+    CfdpStatus::T rCheckCrc(U32 expected_crc);
 
     /************************************************************************/
     /** @brief Checks R2 transaction state for transaction completion status.
@@ -473,28 +442,26 @@ class CfdpTransaction {
      *       it's only called from functions after EOF is received.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      * @param ok_to_send_nak If set to 0, suppress sending of a NAK packet
      */
-    void r2Complete(CF_Transaction_t *txn, int ok_to_send_nak);
+    void r2Complete(int ok_to_send_nak);
 
   private:
     /************************************************************************/
     /** @brief Process a filedata PDU on a transaction.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      *
      * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
      *
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    CfdpStatus::T rProcessFd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T rProcessFd(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Processing receive EOF common functionality for R1/R2.
@@ -505,16 +472,15 @@ class CfdpTransaction {
      *       data against the PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
      *
      * @retval CfdpStatus::SUCCESS on success. Returns anything else on error.
      *
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    CfdpStatus::T rSubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    CfdpStatus::T rSubstateRecvEof(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process receive EOF for R1.
@@ -523,13 +489,12 @@ class CfdpTransaction {
      *       Only need to confirm CRC for R1.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      *
      */
-    void r1SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r1SubstateRecvEof(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process receive EOF for R2.
@@ -539,13 +504,12 @@ class CfdpTransaction {
      *       check complete function which will either send NAK or FIN.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      *
      */
-    void r2SubstateRecvEof(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r2SubstateRecvEof(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process received file data for R1.
@@ -554,12 +518,11 @@ class CfdpTransaction {
      *       For R1, only need to digest the CRC.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r1SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r1SubstateRecvFileData(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process received file data for R2.
@@ -572,12 +535,11 @@ class CfdpTransaction {
      *       the ACK timer.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r2SubstateRecvFileData(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Loads a single NAK segment request.
@@ -605,13 +567,12 @@ class CfdpTransaction {
      *       packet will be sent to request another.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
      *
-     * @param txn  Pointer to the transaction object
      */
-    CfdpStatus::T rSubstateSendNak(CF_Transaction_t *txn);
+    CfdpStatus::T rSubstateSendNak();
 
     /************************************************************************/
     /** @brief Calculate up to the configured amount of bytes of CRC.
@@ -628,26 +589,24 @@ class CfdpTransaction {
      *       of the value in the configuration table.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      * @retval CfdpStatus::SUCCESS on completion.
      * @retval CfdpStatus::CFDP_ERROR on non-completion.
      *
      */
-    CfdpStatus::T r2CalcCrcChunk(CF_Transaction_t *txn);
+    CfdpStatus::T r2CalcCrcChunk();
 
     /************************************************************************/
     /** @brief Send a FIN PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
      * @retval CfdpStatus::SUCCESS on success. CfdpStatus::CFDP_ERROR on error.
      *
-     * @param txn  Pointer to the transaction object
-     *
      */
-    CfdpStatus::T r2SubstateSendFin(CF_Transaction_t *txn);
+    CfdpStatus::T r2SubstateSendFin();
 
     /************************************************************************/
     /** @brief Process receive FIN-ACK PDU.
@@ -657,12 +616,11 @@ class CfdpTransaction {
      *       state.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r2RecvFinAck(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r2RecvFinAck(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Process receive metadata PDU for R2.
@@ -675,29 +633,155 @@ class CfdpTransaction {
      *       destination according to the metadata PDU.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. ph must not be NULL.
+     *       Operates on this transaction instance. ph must not be NULL.
      *
-     * @param txn  Pointer to the transaction object
      * @param ph Pointer to the PDU information
      */
-    void r2RecvMd(CF_Transaction_t *txn, CF_Logical_PduBuffer_t *ph);
+    void r2RecvMd(CF_Logical_PduBuffer_t *ph);
 
     /************************************************************************/
     /** @brief Sends an inactivity timer expired event to EVS.
      *
      * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     *       Operates on this transaction instance.
      *
-     * @param txn  Pointer to the transaction object
      */
-    void rSendInactivityEvent(CF_Transaction_t *txn);
+    void rSendInactivityEvent();
 
   private:
     // ----------------------------------------------------------------------
     // Member Variables
     // ----------------------------------------------------------------------
 
-    // Future: CF_Transaction_t members will be moved here in a later refactor
+    /**
+     * @brief High-level transaction state
+     *
+     * Each engine is commanded to do something, which is the overall state.
+     */
+    CF_TxnState_t m_state;
+
+    /**
+     * @brief Transaction class (CLASS_1 or CLASS_2)
+     *
+     * Set at initialization and never changes.
+     */
+    CfdpClass::T m_txn_class;
+
+    /**
+     * @brief Pointer to history entry
+     *
+     * Holds active filenames and possibly other info.
+     */
+    CF_History_t* m_history;
+
+    /**
+     * @brief Pointer to chunk wrapper
+     *
+     * For gap tracking, only used on class 2.
+     */
+    CF_ChunkWrapper_t* m_chunks;
+
+    /**
+     * @brief Inactivity timer
+     *
+     * Set to the overall inactivity timer of a remote.
+     */
+    CfdpTimer m_inactivity_timer;
+
+    /**
+     * @brief ACK/NAK timer
+     *
+     * Called ack_timer, but is also nak_timer.
+     */
+    CfdpTimer m_ack_timer;
+
+    /**
+     * @brief File size
+     */
+    CfdpFileSize m_fsize;
+
+    /**
+     * @brief File offset for next read
+     */
+    CfdpFileSize m_foffs;
+
+    /**
+     * @brief File descriptor
+     */
+    Os::File m_fd;
+
+    /**
+     * @brief CRC checksum object
+     */
+    CFDP::Checksum m_crc;
+
+    /**
+     * @brief Keep file flag
+     */
+    CfdpKeep::T m_keep;
+
+    /**
+     * @brief Channel number
+     *
+     * If ever more than one engine, this may need to change to pointer.
+     */
+    U8 m_chan_num;
+
+    /**
+     * @brief Priority
+     */
+    U8 m_priority;
+
+    /**
+     * @brief Circular list node
+     *
+     * For connection to a CList (intrusive linked list).
+     */
+    CF_CListNode_t m_cl_node;
+
+    /**
+     * @brief Pointer to playback entry
+     *
+     * NULL if transaction does not belong to a playback.
+     */
+    CF_Playback_t* m_pb;
+
+    /**
+     * @brief State-specific data (TX or RX)
+     */
+    CF_StateData_t m_state_data;
+
+    /**
+     * @brief State flags (TX or RX)
+     *
+     * Note: The flags here look a little strange, because there are different
+     * flags for TX and RX. Both types share the same type of flag, though.
+     * Since RX flags plus the global flags is over one byte, storing them this
+     * way allows 2 bytes to cover all possible flags. Please ignore the
+     * duplicate declarations of the "all" flags.
+     */
+    CF_StateFlags_t m_flags;
+
+    /**
+     * @brief Reference to the wrapper F' component
+     *
+     * Used to send PDUs.
+     */
+    CfdpManager* m_cfdpManager;
+
+    /**
+     * @brief Pointer to the channel wrapper
+     *
+     * The channel this transaction belongs to.
+     */
+    CfdpChannel* m_chan;
+
+    /**
+     * @brief Pointer to the CFDP engine
+     *
+     * The engine this transaction belongs to.
+     */
+    CfdpEngine* m_engine;
 };
 
 }  // namespace Ccsds
