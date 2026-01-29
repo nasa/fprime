@@ -20,6 +20,7 @@ Data products complement, rather than replace, other F Prime data mechanisms:
 - **Data products** are best for *mission data* that is generated, accumulated, and delivered asynchronously.
 
 Typical examples include:
+
 - Science samples
 - Image tiles or processed results
 - Batched sensor data
