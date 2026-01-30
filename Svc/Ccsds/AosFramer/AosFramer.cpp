@@ -323,7 +323,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Shift our offset into the M_PDU payload region by how many bytes we wrote
-    currentVc.current_payload_offset += static_cast<U16>(dataSize);
+    currentVc.current_payload_offset = static_cast<U16>(currentVc.current_payload_offset + dataSize);
 
     // Context must always be present once any packet payload bytes are written
     currentVc.outstanding.context = context;
@@ -371,7 +371,7 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     FW_ASSERT(vc.frame.buffer.getSize() > 0, static_cast<FwAssertArgType>(vc.frame.buffer.getSize()));
     FW_ASSERT(vc.frame.buffer.getSize() < std::numeric_limits<U16>::max(),
               static_cast<FwAssertArgType>(vc.frame.buffer.getSize()));
-    const U16 pduSize = static_cast<U16>(vc.frame.buffer.getSize()) - overhead;
+    const U16 pduSize = static_cast<U16>(vc.frame.buffer.getSize() - overhead);
 
     // How many bytes are left over
     const U16 idlePacketSize = static_cast<U16>(pduSize - vc.current_payload_offset);
@@ -425,7 +425,7 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         serialize_idle_spp_packet(frameSerializer, idlePacketSize);
 
         // Increment the offset since we serialized directly into the frame
-        vc.current_payload_offset += idlePacketSize;
+        vc.current_payload_offset = static_cast<U16>(vc.current_payload_offset + idlePacketSize);
     }
 }
 
