@@ -2,12 +2,13 @@
 // \title  CfdpTypes.hpp
 // \brief  Macros and data types used by CFDP
 //
-// This file is a port of the cf_cfdp_types.h file from the 
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of CFDP type definitions from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp_types.h (CFDP macros and data type definitions)
 //
 // Functions should not be declared in this file. This should
-// be limited to shared macros and data types only. 
+// be limited to shared macros and data types only.
 //
 // ======================================================================
 //

@@ -2,9 +2,10 @@
 // \title  CfdpEngine.hpp
 // \brief  CFDP Engine header
 //
-// This file is a port of the cf_cfdp.h file from the
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of CFDP engine definitions from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp.h (CFDP engine and packet parsing definitions)
 //
 // CFDP engine and packet parsing header file
 //

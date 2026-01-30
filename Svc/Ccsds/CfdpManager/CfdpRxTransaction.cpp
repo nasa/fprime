@@ -2,9 +2,11 @@
 // \title  CfdpRxTransaction.cpp
 // \brief  cpp file for CFDP RX Transaction state machine
 //
-// This file is a port of the cf_cfdp_r.c and cf_cfdp_dispatch.c files from the
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of RX transaction state machine operations from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp_r.c (receive-file transaction state handling routines)
+// - cf_cfdp_dispatch.c (RX state machine dispatch functions)
 //
 // This file contains various state handling routines for
 // transactions which are receiving a file, as well as dispatch

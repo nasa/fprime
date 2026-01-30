@@ -2,9 +2,12 @@
 // \title  CfdpTransaction.hpp
 // \brief  CFDP Transaction state machine class for TX and RX operations
 //
-// This file is a port of the cf_cfdp_r.h and cf_cfdp_s.h files from the
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of transaction state machine definitions from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp_r.h (receive transaction state machine definitions)
+// - cf_cfdp_s.h (send transaction state machine definitions)
+// - cf_cfdp_dispatch.h (transaction dispatch definitions)
 //
 // This file contains the unified interface for CFDP transaction state
 // machines, encompassing both TX (send) and RX (receive) operations.

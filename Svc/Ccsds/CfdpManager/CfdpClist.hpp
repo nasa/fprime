@@ -2,9 +2,10 @@
 // \title  CfdpClist.hpp
 // \brief  CFDP circular list header file
 //
-// This file is a port of the cf_clist.h file from the 
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of CFDP circular list from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_clist.h (CFDP circular list data structure definitions)
 //
 // ======================================================================
 //

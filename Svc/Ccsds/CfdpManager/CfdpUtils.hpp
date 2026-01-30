@@ -2,9 +2,10 @@
 // \title  CfdpUtils.hpp
 // \brief  CFDP utilities header
 //
-// This file is a port of the cf_utils.h file from the 
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of CFDP utility functions from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_utils.h (CFDP utility function declarations)
 //
 // CFDP utils header file
 //

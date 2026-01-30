@@ -2,15 +2,16 @@
 // \title  CfdpPdu.hpp
 // \brief  Structures defining CFDP PDUs
 //
-// This file is a port of the cf_cfdp_pdu.h file from the 
-// NASA Core Flight System (cFS) CFDP (CF) Application,
-// version 3.0.0, adapted for use within the F-Prime (F') framework.
+// This file is a port of CFDP PDU structures from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp_pdu.h (CFDP PDU structure definitions per CCSDS 727.0-B-5)
 //
 // The structures and enumerations defined in this file with a CF_CFDP
 // prefix are defined according to the CCSDS CFDP specification (727.0-B-5).
 // These values must match the specification for that structure/field, they are
 // not locally changeable.
-// 
+//
 // Many of the structures defined in this file are variably-sized when
 // encoded for network transmission.  As a result, C structures used to map
 // to these structures are of limited usefulness, generally only capable
