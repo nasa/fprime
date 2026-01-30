@@ -132,6 +132,85 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset),
               static_cast<FwAssertArgType>(totalAllocation));
 }
+
+// ----------------------------------------------------------------------
+// Handler implementations for commands
+// ----------------------------------------------------------------------
+
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+    // Acquire the queue that we need to drain
+    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+
+    // Validate queue index
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    this->drainQueue(queueIndex);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
+        this->drainQueue(i);
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                             U32 cmdSeq,
+                                             Svc::QueueType queueType,
+                                             FwIndexType index,
+                                             U32 newPriority) {
+    // Acquire the queue we are reprioritizing
+    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+
+    // Validate queue index
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Validate priority range
+    if (newPriority >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Find our queue in the prioritized list & update the priority
+    for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
+        // If the port based index matches, then update
+        if (m_prioritizedList[prioIndex].index == queueIndex) {
+            m_prioritizedList[prioIndex].priority = static_cast<FwIndexType>(newPriority);
+            break;  // Since we shouldn't find more than one queue at this port index
+        }
+    }
+
+    // Re-sort the prioritized list to maintain priority ordering
+    // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT - 1; i++) {
+        for (FwIndexType j = 0; j < TOTAL_PORT_COUNT - i - 1; j++) {
+            if (m_prioritizedList[j].priority > m_prioritizedList[j + 1].priority) {
+                // Swap metadata
+                QueueMetadata temp = m_prioritizedList[j];
+                m_prioritizedList[j] = m_prioritizedList[j + 1];
+                m_prioritizedList[j + 1] = temp;
+
+                // Update indices to match new positions
+                m_prioritizedList[j].index = j;
+                m_prioritizedList[j + 1].index = j + 1;
+            }
+        }
+    }
+
+    // Emit event for successful priority change
+    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, queueIndex, newPriority);
+
+    // Send command response
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -213,84 +292,6 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         // If this is a buffer port, return the buffer to the BufferDownlink
         this->bufferReturnOut_out(bufferReturnPortNum, data);
     }
-}
-
-// ----------------------------------------------------------------------
-// Handler implementations for commands
-// ----------------------------------------------------------------------
-
-void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
-    // Acquire the queue that we need to drain
-    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
-
-    // Validate queue index
-    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-        return;
-    }
-
-    this->drainQueue(queueIndex);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
-        this->drainQueue(i);
-    }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
-                                             U32 cmdSeq,
-                                             Svc::QueueType queueType,
-                                             FwIndexType index,
-                                             U32 newPriority) {
-    // Acquire the queue we are reprioritizing
-    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
-
-    // Validate queue index
-    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-        return;
-    }
-
-    // Validate priority range
-    if (newPriority >= TOTAL_PORT_COUNT) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-        return;
-    }
-
-    // Find our queue in the prioritized list & update the priority
-    for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
-        // If the port based index matches, then update
-        if (m_prioritizedList[prioIndex].index == queueIndex) {
-            m_prioritizedList[prioIndex].priority = static_cast<FwIndexType>(newPriority);
-            break;  // Since we shouldn't find more than one queue at this port index
-        }
-    }
-
-    // Re-sort the prioritized list to maintain priority ordering
-    // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
-    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT - 1; i++) {
-        for (FwIndexType j = 0; j < TOTAL_PORT_COUNT - i - 1; j++) {
-            if (m_prioritizedList[j].priority > m_prioritizedList[j + 1].priority) {
-                // Swap metadata
-                QueueMetadata temp = m_prioritizedList[j];
-                m_prioritizedList[j] = m_prioritizedList[j + 1];
-                m_prioritizedList[j + 1] = temp;
-
-                // Update indices to match new positions
-                m_prioritizedList[j].index = j;
-                m_prioritizedList[j + 1].index = j + 1;
-            }
-        }
-    }
-
-    // Emit event for successful priority change
-    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, queueIndex, newPriority);
-
-    // Send command response
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // ----------------------------------------------------------------------

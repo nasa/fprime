@@ -132,6 +132,39 @@ class ComQueue final : public ComQueueComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Handler implementations for commands
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for command FLUSH_QUEUE
+    //!
+    //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
+    //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                U32 cmdSeq,                //!< The command sequence number
+                                Svc::QueueType queueType,  //!< The Queue data type
+                                FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
+                                ) override;
+
+    //! Handler implementation for command FLUSH_ALL_QUEUES
+    //!
+    //! Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
+    //! ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq            //!< The command sequence number
+                                     ) override;
+
+    //! Handler for SET_QUEUE_PRIORITY command
+    //!
+    void SET_QUEUE_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,       //!< The opcode
+        U32 cmdSeq,                //!< The command sequence number
+        Svc::QueueType queueType,  //!< The Queue data type
+        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
+        U32 newPriority            //!< New priority value for the queue
+        ) override;
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
@@ -165,38 +198,6 @@ class ComQueue final : public ComQueueComponentBase {
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
-
-    // ----------------------------------------------------------------------
-    // Command handler implementations
-    // ----------------------------------------------------------------------
-
-    //! Handler for SET_QUEUE_PRIORITY command
-    //!
-    void SET_QUEUE_PRIORITY_cmdHandler(
-        FwOpcodeType opCode,       //!< The opcode
-        U32 cmdSeq,                //!< The command sequence number
-        Svc::QueueType queueType,  //!< The Queue data type
-        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
-        U32 newPriority            //!< New priority value for the queue
-        ) override;
-
-    //! Handler implementation for command FLUSH_QUEUE
-    //!
-    //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
-    //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
-                                U32 cmdSeq,                //!< The command sequence number
-                                Svc::QueueType queueType,  //!< The Queue data type
-                                FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
-                                ) override;
-
-    //! Handler implementation for command FLUSH_ALL_QUEUES
-    //!
-    //! Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
-    //! ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                     U32 cmdSeq            //!< The command sequence number
-                                     ) override;
 
     // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
