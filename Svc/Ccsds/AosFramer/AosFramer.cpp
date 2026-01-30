@@ -16,7 +16,10 @@ namespace Ccsds {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compName) {}
+AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compName) {
+    // Default to FECF on, Max Sized if you don't override w/ another configure call
+    configure(ComCfg::AosMaxFrameFixedSize, true);
+}
 
 AosFramer ::~AosFramer() {}
 

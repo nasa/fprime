@@ -170,7 +170,7 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
   private:
     // Config Parameters
-    bool m_fecf;  //!< AOS Frame Error Control Field presence
+    bool m_fecf = true;  //!< AOS Frame Error Control Field presence
 
     AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
 };
