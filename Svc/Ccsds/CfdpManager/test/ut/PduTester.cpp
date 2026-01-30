@@ -676,39 +676,23 @@ void CfdpManagerTester::testFileDataPdu() {
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read from test file";
     ASSERT_EQ(readSize, bytesRead) << "Failed to read test data from file";
 
-    // Construct PDU buffer with File Data header using refactored API
-    CF_Logical_PduBuffer_t* ph = component.m_engine->constructPduHeader(
-        txn,
-        CF_CFDP_FileDirective_INVALID_MIN,  // File data PDU has invalid directive
-        component.getLocalEidParam(),
-        testPeerId,
-        0,  // towards receiver
-        testSequenceId,
-        false
+    // Create File Data PDU with test data
+    Cfdp::Pdu::FileDataPdu fdPdu;
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+
+    fdPdu.initialize(
+        direction,
+        Cfdp::Class::CLASS_1,  // transmission mode
+        component.getLocalEidParam(),  // source EID
+        testSequenceId,  // transaction sequence number
+        testPeerId,  // destination EID
+        fileOffset,  // file offset
+        readSize,  // data size
+        testData  // data pointer
     );
-    ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
-
-    // Setup file data header
-    CF_Logical_PduFileDataHeader_t* fd = &ph->int_header.fd;
-    fd->offset = fileOffset;
-
-    // Encode file data header
-    CF_CFDP_EncodeFileDataHeader(ph->penc, ph->pdu_header.segment_meta_flag, fd);
-
-    // Get pointer to data area and copy test data
-    size_t actual_bytes = CF_CODEC_GET_REMAIN(ph->penc);
-    ASSERT_GE(actual_bytes, readSize) << "Insufficient space in PDU buffer";
-
-    U8* data_ptr = CF_CFDP_DoEncodeChunk(ph->penc, readSize);
-    ASSERT_NE(data_ptr, nullptr) << "Failed to get data pointer";
-
-    // Copy test data into PDU
-    memcpy(data_ptr, testData, readSize);
-    fd->data_len = readSize;
-    fd->data_ptr = data_ptr;
 
     // Invoke sendFd using refactored API
-    Cfdp::Status::T status = component.m_engine->sendFd(txn, ph);
+    Cfdp::Status::T status = component.m_engine->sendFd(txn, fdPdu);
     ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendFd failed";
 
     // Verify PDU was sent through dataOut port
@@ -930,43 +914,36 @@ void CfdpManagerTester::testNakPdu() {
     // Clear port history before test
     this->clearHistory();
 
-    // Construct PDU buffer with NAK header using refactored API
-    CF_Logical_PduBuffer_t* ph = component.m_engine->constructPduHeader(
-        txn,
-        CF_CFDP_FileDirective_NAK,
-        component.getLocalEidParam(),  // NAK sent from receiver (local)
-        testPeerId,                     // to sender (peer)
-        1,  // towards sender
-        testSequenceId,
-        false
-    );
-    ASSERT_NE(ph, nullptr) << "Failed to construct PDU header";
-
-    // Setup NAK-specific fields
-    CF_Logical_PduNak_t* nak = &ph->int_header.nak;
+    // Create and initialize NAK PDU
+    Cfdp::Pdu::NakPdu nakPdu;
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
     const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
     const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
-    nak->scope_start = testScopeStart;
-    nak->scope_end = testScopeEnd;
+
+    nakPdu.initialize(
+        direction,
+        Cfdp::Class::CLASS_2,              // Class 2 (acknowledged mode)
+        testPeerId,                         // source EID (sender/peer)
+        testSequenceId,                     // transaction sequence number
+        component.getLocalEidParam(),       // destination EID (receiver/local)
+        testScopeStart,                     // scope start
+        testScopeEnd                        // scope end
+    );
 
     // Add segment requests indicating specific missing data ranges
     // Simulates receiver requesting retransmission of 3 gaps
-    nak->segment_list.num_segments = 3;
 
     // Gap 1: Missing data from 512-1024
-    nak->segment_list.segments[0].offset_start = 512;
-    nak->segment_list.segments[0].offset_end = 1024;
+    nakPdu.addSegment(512, 1024);
 
     // Gap 2: Missing data from 2048-2560
-    nak->segment_list.segments[1].offset_start = 2048;
-    nak->segment_list.segments[1].offset_end = 2560;
+    nakPdu.addSegment(2048, 2560);
 
     // Gap 3: Missing data from 3584-4096
-    nak->segment_list.segments[2].offset_start = 3584;
-    nak->segment_list.segments[2].offset_end = 4096;
+    nakPdu.addSegment(3584, 4096);
 
     // Invoke sendNak using refactored API
-    Cfdp::Status::T status = component.m_engine->sendNak(txn, ph);
+    Cfdp::Status::T status = component.m_engine->sendNak(txn, nakPdu);
     ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendNak failed";
 
     // Verify PDU was sent through dataOut port

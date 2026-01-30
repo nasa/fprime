@@ -27,8 +27,8 @@ void Pdu::FileDataPdu::initialize(Direction direction,
     this->m_data = data;
 }
 
-U32 Pdu::FileDataPdu::bufferSize() const {
-    U32 size = this->m_header.bufferSize();
+U32 Pdu::FileDataPdu::getBufferSize() const {
+    U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
     if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
@@ -39,6 +39,19 @@ U32 Pdu::FileDataPdu::bufferSize() const {
 
     size += this->m_dataSize;  // actual data
     return size;
+}
+
+U32 Pdu::FileDataPdu::getMaxFileDataSize() {
+    U32 size = this->m_header.getBufferSize();
+
+    // Offset field size depends on large file flag
+    if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
+        size += sizeof(U64);  // 8-byte offset
+    } else {
+        size += sizeof(U32);  // 4-byte offset
+    }
+
+    return CF_MAX_PDU_SIZE - size;
 }
 
 Fw::SerializeStatus Pdu::FileDataPdu::toBuffer(Fw::Buffer& buffer) const {
@@ -78,7 +91,7 @@ Fw::SerializeStatus Pdu::FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
     FW_ASSERT(this->m_header.m_type == T_FILE_DATA);
 
     // Calculate PDU data length (everything after header)
-    U32 dataLength = this->bufferSize() - this->m_header.bufferSize();
+    U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
 
     // Update header with data length
     Header headerCopy = this->m_header;

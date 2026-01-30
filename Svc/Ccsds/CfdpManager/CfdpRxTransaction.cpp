@@ -762,105 +762,83 @@ void CfdpTransaction::r2SubstateRecvFileData(CF_Logical_PduBuffer_t *ph) {
     }
 }
 
-void CfdpTransaction::r2GapCompute(const CF_Chunk_t *chunk, CF_Logical_PduNak_t *nak) {
-    CF_Logical_SegmentRequest_t *pseg;
-    CF_Logical_SegmentList_t *pseglist;
-
-    /* This function is only invoked for NAK types */
-    pseglist = &nak->segment_list;
+void CfdpTransaction::r2GapCompute(const CF_Chunk_t *chunk, Cfdp::Pdu::NakPdu& nak) {
     FW_ASSERT(chunk->size > 0, chunk->size);
 
-    /* it seems that scope in the old engine is not used the way I read it in the spec, so
-     * leave this code here for now for future reference */
+    // Calculate segment offsets relative to scope start
+    CfdpFileSize offsetStart = chunk->offset - nak.getScopeStart();
+    CfdpFileSize offsetEnd = offsetStart + chunk->size;
 
-    if (pseglist->num_segments < CF_PDU_MAX_SEGMENTS)
-    {
-        pseg = &pseglist->segments[pseglist->num_segments];
-
-        pseg->offset_start = chunk->offset - nak->scope_start;
-        pseg->offset_end   = pseg->offset_start + chunk->size;
-
-        ++pseglist->num_segments;
-    }
+    // Add segment to NAK PDU (returns false if array is full)
+    nak.addSegment(offsetStart, offsetEnd);
 }
 
 Cfdp::Status::T CfdpTransaction::rSubstateSendNak() {
-    CF_Logical_PduBuffer_t *ph =
-        this->m_engine->constructPduHeader(this, CF_CFDP_FileDirective_NAK, this->m_history->peer_eid,
-                                   this->m_cfdpManager->getLocalEidParam(), 1, this->m_history->seq_num, true);
-    CF_Logical_PduNak_t *nak;
-    Cfdp::Status::T sret;
-    U32 cret;
-    Cfdp::Status::T ret = Cfdp::Status::ERROR;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    if (ph)
-    {
-        nak = &ph->int_header.nak;
+    // Create and initialize NAK PDU
+    Cfdp::Pdu::NakPdu nakPdu;
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
 
-        if (this->m_flags.rx.md_recv)
-        {
-            /* we have metadata, so send valid NAK */
-            nak->scope_start = 0;
+    if (this->m_flags.rx.md_recv) {
+        // We have metadata, so send NAK with file data gaps
+        nakPdu.initialize(
+            direction,
+            this->getClass(),  // transmission mode
+            this->m_history->peer_eid,  // source EID (receiver)
+            this->m_history->seq_num,  // transaction sequence number
+            this->m_cfdpManager->getLocalEidParam(),  // destination EID (sender)
+            0,  // scope start
+            0   // scope end
+        );
 
-            // Use lambda to call r2GapCompute - no wrapper needed!
-            cret = this->m_chunks->chunks.computeGaps(
-                (this->m_chunks->chunks.getCount() < this->m_chunks->chunks.getMaxChunks())
-                    ? this->m_chunks->chunks.getMaxChunks()
-                    : (this->m_chunks->chunks.getMaxChunks() - 1),
-                this->m_fsize,
-                0,
-                [this, nak](const CF_Chunk_t* chunk, void* opaque) {
-                    this->r2GapCompute(chunk, nak);
-                },
-                nullptr);  // opaque not needed with lambda capture
+        // Compute gaps and add segments to NAK PDU
+        U32 chunkCount = this->m_chunks->chunks.getCount();
+        U32 maxChunks = this->m_chunks->chunks.getMaxChunks();
+        U32 gapLimit = (chunkCount < maxChunks) ? maxChunks : (maxChunks - 1);
 
-            if (!cret)
-            {
-                /* no gaps left, so go ahead and check for completion */
-                this->m_flags.rx.complete = true; /* we know md was received, and there's no gaps -- it's complete */
-                ret                    = Cfdp::Status::SUCCESS;
-            }
-            else
-            {
-                /* gaps are present, so let's send the NAK PDU */
-                nak->scope_end = 0;
-                sret = this->m_engine->sendNak(this, ph);
-                this->m_flags.rx.fd_nak_sent = true; /* latch that at least one NAK has been sent requesting filedata */
-                /* NOTE: this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR,
-                   so if it's ever added to that function we need to test handling it here */
-                FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
-                if (sret == Cfdp::Status::SUCCESS)
-                {
-                    // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.nak_segment_requests += cret;
-                    ret = Cfdp::Status::SUCCESS;
-                }
-            }
+        // For each gap found, add it as a segment to the NAK PDU via callback
+        U32 gapCount = this->m_chunks->chunks.computeGaps(
+            gapLimit,
+            this->m_fsize,
+            0,
+            [this, &nakPdu](const CF_Chunk_t* chunk, void* opaque) {
+                this->r2GapCompute(chunk, nakPdu);
+            },
+            nullptr);
+
+        if (!gapCount) {
+            // No gaps left, file reception is complete
+            this->m_flags.rx.complete = true;
+            return Cfdp::Status::SUCCESS;
         }
-        else
-        {
-            /* need to send simple NAK packet to request metadata PDU again */
-            /* after doing so, transition to recv md state */
-            // CFE_EVS_SendEvent(CF_CFDP_R_REQUEST_MD_INF_EID, CFE_EVS_EventType_INFORMATION,
-            //                   "CF R%d(%lu:%lu): requesting MD", (this->m_state == CF_TxnState_R2),
-            //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
-            /* scope start/end, and sr[0] start/end == 0 special value to request metadata */
-            nak->scope_start                           = 0;
-            nak->scope_end                             = 0;
-            nak->segment_list.segments[0].offset_start = 0;
-            nak->segment_list.segments[0].offset_end   = 0;
-            nak->segment_list.num_segments             = 1;
 
-            sret = this->m_engine->sendNak(this, ph);
-            // this assert is here because CF_CFDP_SendNak() does not return SEND_PDU_ERROR */
-            FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
-            if (sret == Cfdp::Status::SUCCESS)
-            {
-                ret = Cfdp::Status::SUCCESS;
-            }
+        // Gaps are present, send the NAK PDU
+        status = this->m_engine->sendNak(this, nakPdu);
+        if (status == Cfdp::Status::SUCCESS) {
+            this->m_flags.rx.fd_nak_sent = true;
+            // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.nak_segment_requests += gapCount;
         }
+    } else {
+        // Need to send NAK to request metadata PDU again
+        // Special case: scope start/end and segment[0] all zeros requests metadata
+        nakPdu.initialize(
+            direction,
+            this->getClass(),  // transmission mode
+            this->m_history->peer_eid,  // source EID (receiver)
+            this->m_history->seq_num,  // transaction sequence number
+            this->m_cfdpManager->getLocalEidParam(),  // destination EID (sender)
+            0,  // scope start (special value)
+            0   // scope end (special value)
+        );
+
+        // Add special segment [0,0] to request metadata
+        nakPdu.addSegment(0, 0);
+
+        status = this->m_engine->sendNak(this, nakPdu);
     }
 
-    return ret;
+    return status;
 }
 
 Cfdp::Status::T CfdpTransaction::r2CalcCrcChunk() {

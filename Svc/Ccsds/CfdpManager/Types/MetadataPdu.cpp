@@ -44,8 +44,8 @@ void Pdu::MetadataPdu::initialize(Direction direction,
     this->m_closureRequested = closureRequested;
 }
 
-U32 Pdu::MetadataPdu::bufferSize() const {
-    U32 size = this->m_header.bufferSize();
+U32 Pdu::MetadataPdu::getBufferSize() const {
+    U32 size = this->m_header.getBufferSize();
 
     // Directive code: 1 byte
     // Segmentation control byte (includes closure requested and checksum type): 1 byte
@@ -108,7 +108,7 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
     // Calculate PDU data length (everything after header)
-    U32 dataLength = this->bufferSize() - this->m_header.bufferSize();
+    U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
 
     // Update header with data length
     Header headerCopy = this->m_header;

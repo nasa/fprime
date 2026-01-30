@@ -16,28 +16,10 @@ namespace Svc {
 namespace Ccsds {
 
 // Forward declarations
-struct CF_Channel;
 class CfdpEngine;
 class CfdpChannel;
 
 class CfdpManager final : public CfdpManagerComponentBase {
-  public:
-    // ----------------------------------------------------------------------
-    // Types
-    // ----------------------------------------------------------------------
-    typedef struct CfdpPduBuffer
-    {
-      //!< This is the logical structure that is used to build a PDU
-      CF_Logical_PduBuffer_t pdu;
-      //!< Encoder state for building the PDU
-      CF_EncoderState encoder;
-      //!< This is where the PDU is encoded
-      U8 data[CF_MAX_PDU_SIZE];
-      //!< Flag if the buffer has already been sent
-      bool inUse;
-    } CfdpPduBuffer;
-    #define CFDP_MANAGER_NUM_BUFFERS (80)
-
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -62,13 +44,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // ----------------------------------------------------------------------
 
   // Equivelent of CF_CFDP_MsgOutGet
-  Cfdp::Status::T getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
-                             CF_EncoderState*& encoderPtr, CfdpChannel& chan,
+  Cfdp::Status::T getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
                              FwSizeType size);
   // Not sure there is an equivelent
-  void returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t *);
+  void returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
   // Equivelent of CF_CFDP_Send
-  void sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr);
+  void sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
 
   public:
   // ----------------------------------------------------------------------
@@ -197,17 +178,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
-    // Buffer management helpers
-    // These will probably be removed
-    // ----------------------------------------------------------------------
-    void returnBufferHelper(CF_Logical_PduBuffer_t * pdu);
-
-  private:
-    // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    CfdpPduBuffer pduBuffers[CFDP_MANAGER_NUM_BUFFERS];
-
     // CFDP Engine - owns all protocol state and operations
     CfdpEngine* m_engine;
 

@@ -351,112 +351,73 @@ void CfdpTransaction::s2SubstateSendEof() {
 }
 
 Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed) {
-    I32 status = 0;
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-    CF_Logical_PduBuffer_t * ph = NULL;
-    CF_Logical_PduFileDataHeader_t *fd;
-    size_t actual_bytes;
-    U8* data_ptr;
-    U32 outgoing_file_chunk_size;
-
     FW_ASSERT(bytes_processed != NULL);
     *bytes_processed = 0;
 
-    ph = this->m_engine->constructPduHeader(this, CF_CFDP_FileDirective_INVALID_MIN, this->m_cfdpManager->getLocalEidParam(),
-                                    this->m_history->peer_eid, 0, this->m_history->seq_num, true);
-    if (!ph)
-    {
-        ret = Cfdp::Status::SUCCESS; /* couldn't get message, so no bytes sent. Will try again next time */
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
+
+    // Local buffer for file data
+    U8 fileDataBuffer[CF_MAX_PDU_SIZE];
+
+    // Calculate maximum data size we can send, accounting for PDU overhead
+    U32 maxDataCapacity = Cfdp::Pdu::FileDataPdu::getMaxFileDataSize();
+
+    // Limited by: bytes_to_read, outgoing_file_chunk_size, and maxDataCapacity
+    U32 outgoing_file_chunk_size = this->m_cfdpManager->getOutgoingFileChunkSizeParam();
+    U32 max_data_bytes = bytes_to_read;
+    if (max_data_bytes > outgoing_file_chunk_size) {
+        max_data_bytes = outgoing_file_chunk_size;
     }
-    else
-    {
-        fd = &ph->int_header.fd;
+    if (max_data_bytes > maxDataCapacity) {
+        max_data_bytes = maxDataCapacity;
+    }
 
-        /* need to encode data header up to this point to figure out where data needs to get copied to */
-        fd->offset = foffs;
-        CF_CFDP_EncodeFileDataHeader(ph->penc, ph->pdu_header.segment_meta_flag, fd);
-
-        /*
-         * the actual bytes to read is the smallest of these:
-         *  - amount of space actually available in the PDU after encoding the headers
-         *  - passed-in size
-         *  - outgoing_file_chunk_size from configuration
-         */
-        actual_bytes = CF_CODEC_GET_REMAIN(ph->penc);
-        if (actual_bytes > bytes_to_read)
-        {
-            actual_bytes = bytes_to_read;
-        }
-        outgoing_file_chunk_size = this->m_cfdpManager->getOutgoingFileChunkSizeParam();
-        if (actual_bytes > outgoing_file_chunk_size)
-        {
-            actual_bytes = outgoing_file_chunk_size;
-        }
-
-        /*
-         * The call to CF_CFDP_DoEncodeChunk() should never fail because actual_bytes is
-         * guaranteed to be less than or equal to the remaining space in the encode buffer.
-         */
-        data_ptr = CF_CFDP_DoEncodeChunk(ph->penc, actual_bytes);
-
-        /*
-         * save off a pointer to the data for future reference.
-         * This isn't encoded into the output PDU, but it allows a future step (such as CRC)
-         * to easily find and read the data blob in this PDU.
-         */
-        fd->data_len = actual_bytes;
-        fd->data_ptr = data_ptr;
-
-        if (this->m_state_data.send.cached_pos != foffs)
-        {
-            status = this->m_fd.seek(foffs, Os::File::SeekType::ABSOLUTE);
-            if (status != Os::File::OP_OK)
-            {
-                // CFE_EVS_SendEvent(CF_CFDP_S_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S%d(%lu:%lu): error seeking to offset %ld, got %ld",
-                //                   (this->m_state == CF_TxnState_S2), (unsigned long)this->m_history->src_eid,
-                //                   (unsigned long)this->m_history->seq_num, (long)foffs, (long)status);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
-                ret = Cfdp::Status::ERROR;
-            }
-        }
-
-        if (ret == Cfdp::Status::SUCCESS)
-        {
-            status = this->m_fd.read(data_ptr, actual_bytes, Os::File::WaitType::WAIT);
-            if (status != Os::File::OP_OK)
-            {
-                // CFE_EVS_SendEvent(CF_CFDP_S_READ_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S%d(%lu:%lu): error reading bytes: expected %ld, got %ld",
-                //                   (this->m_state == CF_TxnState_S2), (unsigned long)this->m_history->src_eid,
-                //                   (unsigned long)this->m_history->seq_num, (long)actual_bytes, (long)status);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_read;
-                ret = Cfdp::Status::ERROR;
-            }
-        }
-
-        if (ret == Cfdp::Status::SUCCESS)
-        {
-            this->m_state_data.send.cached_pos += status;
-            this->m_engine->sendFd(this, ph); /* CF_CFDP_SendFd only returns Cfdp::Status::SUCCESS */
-
-            // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.file_data_bytes += actual_bytes;
-            FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), this->m_fsize); /* sanity check */
-            if (calc_crc)
-            {
-                this->m_crc.update(fd->data_ptr, fd->offset, static_cast<U32>(fd->data_len));
-            }
-
-            *bytes_processed = static_cast<U32>(actual_bytes);
-        }
-        else
-        {
-            // PDU was not sent, so return the buffer allocated by CF_CFDP_ConstructPduHeader()
-            this->m_cfdpManager->returnPduBuffer(this->m_chan_num, ph);
+    // Seek to file offset if needed
+    if (this->m_state_data.send.cached_pos != foffs) {
+        Os::File::Status fileStatus = this->m_fd.seek(foffs, Os::File::SeekType::ABSOLUTE);
+        if (fileStatus != Os::File::OP_OK) {
+            return Cfdp::Status::ERROR;
         }
     }
 
-    return ret;
+    // Read file data
+    FwSizeType actual_bytes = max_data_bytes;
+    Os::File::Status fileStatus = this->m_fd.read(fileDataBuffer, actual_bytes, Os::File::WaitType::WAIT);
+    if (fileStatus != Os::File::OP_OK) {
+        return Cfdp::Status::ERROR;
+    }
+
+    // Create File Data PDU
+    Cfdp::Pdu::FileDataPdu fdPdu;
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+
+    fdPdu.initialize(
+        direction,
+        this->getClass(),  // transmission mode
+        this->m_cfdpManager->getLocalEidParam(),  // source EID
+        this->m_history->seq_num,  // transaction sequence number
+        this->m_history->peer_eid,  // destination EID
+        foffs,  // file offset
+        static_cast<U16>(actual_bytes),  // data size
+        fileDataBuffer  // data pointer
+    );
+
+    // Send the PDU
+    status = this->m_engine->sendFd(this, fdPdu);
+
+    if (status == Cfdp::Status::SUCCESS) {
+        this->m_state_data.send.cached_pos += actual_bytes;
+
+        FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), this->m_fsize);
+
+        if (calc_crc) {
+            this->m_crc.update(fileDataBuffer, foffs, static_cast<U32>(actual_bytes));
+        }
+
+        *bytes_processed = static_cast<U32>(actual_bytes);
+    }
+
+    return status;
 }
 
 void CfdpTransaction::sSubstateSendFileData() {

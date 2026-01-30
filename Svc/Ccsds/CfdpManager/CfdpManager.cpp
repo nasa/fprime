@@ -15,24 +15,13 @@ namespace Ccsds {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName), m_engine(nullptr)
+CfdpManager ::CfdpManager(const char* const compName) :
+    CfdpManagerComponentBase(compName),
+    m_engine(nullptr)
 {
     // Create the CFDP engine
     this->m_engine = new CfdpEngine(this);
     FW_ASSERT(this->m_engine != nullptr);
-
-    // Temporary buffer pool for prototyping
-    CF_Logical_PduBuffer_t* pduPtr = NULL;
-    for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
-    {
-        memset(&this->pduBuffers[i], 0, sizeof(CfdpPduBuffer));
-        this->pduBuffers[i].inUse = false;
-
-        pduPtr = &this->pduBuffers[i].pdu;
-        FW_ASSERT(pduPtr != NULL);
-        pduPtr->index = CFDP_MANAGER_NUM_BUFFERS;
-        pduPtr = NULL;
-    }
 }
 
 CfdpManager ::~CfdpManager() {
@@ -252,104 +241,59 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-Cfdp::Status::T CfdpManager ::getPduBuffer(CF_Logical_PduBuffer_t*& pduPtr, U8*& msgPtr,
-                                         CF_EncoderState*& encoderPtr, CfdpChannel& chan,
-                                         FwSizeType size)
+Cfdp::Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
+                                           FwSizeType size)
 {
-    // FwIndexType portNum;
-
-    // // There is a direct mapping between channel index and port number
-    // FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
-    // portNum = static_cast<FwIndexType>(channelId);
-
-    // return this->bufferAllocate_out(portNum, size);
-
-    // For now, just pull a buffer from the preallocated pool
     Cfdp::Status::T status = Cfdp::Status::ERROR;
+    FwIndexType portNum;
 
-    FW_ASSERT(pduPtr == NULL);
-    FW_ASSERT(msgPtr == NULL);
-    FW_ASSERT(encoderPtr == NULL);
+    // There is a direct mapping between channel index and port number
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
 
-    // Check throttling limit first
-    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(chan.getChannelId());
+    // Check if we have reached the maximum number of output PDUs for this cycle
+    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(channel.getChannelId());
     if (chan.getOutgoingCounter() >= max_pdus)
     {
         status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
     }
     else
     {
-        // Try to allocate from buffer pool
-        for(U32 i = 0; i < CFDP_MANAGER_NUM_BUFFERS; i++)
+        buffer = this->bufferAllocate_out(portNum, size);
+        // Check the allocation was successful based on size
+        if(buffer.getSize() == size)
         {
-            if(this->pduBuffers[i].inUse == false)
-            {
-                this->pduBuffers[i].inUse = true;
-                pduPtr = &this->pduBuffers[i].pdu;
-                pduPtr->index = i;
-                msgPtr = this->pduBuffers[i].data;
-                encoderPtr = &this->pduBuffers[i].encoder;
-
-                chan.incrementOutgoingCounter();
-                status = Cfdp::Status::SUCCESS;
-                break;
-            }
+            chan.incrementOutgoingCounter();
+            status = Cfdp::Status::SUCCESS;
         }
-
-        // Check if we were unable to allocate a buffer (pool exhausted)
-        if(status != Cfdp::Status::SUCCESS)
+        else 
         {
             this->log_WARNING_LO_BuffersExuasted();
             status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
         }
     }
-
     return status;
 }
 
-void CfdpManager ::returnPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu)
-{
-    // FwIndexType portNum;
-    
-    FW_ASSERT(pdu != NULL);
-    // // There is a direct mapping between channel index and port number
-    // FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
-    // portNum = static_cast<FwIndexType>(channelId);
-
-    // // Was unable to succesfully populate the PDU buffer, return it
-    // this->bufferDeallocate_out(portNum, buffer);
-
-    // Return to buffer pool for now
-    this->returnBufferHelper(pdu);
-}
-
-void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, const U8* msgPtr)
+void CfdpManager ::returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
 {
     FwIndexType portNum;
-    FwSizeType msgSize;
-    Fw::SerializeStatus status;
     
-    FW_ASSERT(pdu != NULL);
-    FW_ASSERT(msgPtr != NULL);
     // There is a direct mapping between channel index and port number
-    FW_ASSERT(channelId < CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
-    portNum = static_cast<FwIndexType>(channelId);
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
+
+    // Was unable to succesfully populate the PDU buffer, return it
+    this->bufferDeallocate_out(portNum, pduBuffer);
+}
+
+void CfdpManager ::sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
+{
+    FwIndexType portNum;
     
-    // TODO BPC: it would be more efficient to allocate a buffer in CF_CFDP_ConstructPduHeader()
-    // However for the proof of concept I am just going to copy the data here
-    // Just want the PDU header and data
-    msgSize = pdu->pdu_header.header_encoded_length + pdu->pdu_header.data_encoded_length;
-    Fw::Buffer buffer = this->bufferAllocate_out(portNum, msgSize);
-
-    auto serializer = buffer.getSerializer();
-    status = serializer.serializeFrom(msgPtr, msgSize, Fw::Serialization::OMIT_LENGTH);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-
+    // There is a direct mapping between channel index and port number
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
+    
     // Full send
-    this->dataOut_out(portNum, buffer);
-    
-    // Mark interal buffer as available
-    this->returnBufferHelper(pdu);
+    this->dataOut_out(portNum, pduBuffer);
 }
 
   // ----------------------------------------------------------------------
@@ -526,24 +470,6 @@ void CfdpManager ::sendPduBuffer(U8 channelId, CF_Logical_PduBuffer_t * pdu, con
     // Now get individual parameter
     return paramArray[channelIndex].get_max_outgoing_pdus_per_cycle();
   }
-
-// ----------------------------------------------------------------------
-// Buffer helpers
-// ----------------------------------------------------------------------
-void CfdpManager ::returnBufferHelper(CF_Logical_PduBuffer_t * pdu)
-{
-    U32 index = pdu->index;
-    CfdpPduBuffer* bufferPtr;
-
-    FW_ASSERT(pdu != NULL);
-    FW_ASSERT(index < CFDP_MANAGER_NUM_BUFFERS, index, CFDP_MANAGER_NUM_BUFFERS);
-    bufferPtr = &this->pduBuffers[index];
-
-    bufferPtr->inUse = false;
-    memset(&bufferPtr->data, 0, CF_MAX_PDU_SIZE);
-    memset(&bufferPtr->pdu, 0, sizeof(CF_Logical_PduBuffer_t));
-    bufferPtr->pdu.index = CFDP_MANAGER_NUM_BUFFERS;
-}
 
 }  // namespace Ccsds
 }  // namespace Svc

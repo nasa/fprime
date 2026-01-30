@@ -27,8 +27,8 @@ void Pdu::FinPdu::initialize(Direction direction,
     this->m_fileStatus = fileStatus;
 }
 
-U32 Pdu::FinPdu::bufferSize() const {
-    U32 size = this->m_header.bufferSize();
+U32 Pdu::FinPdu::getBufferSize() const {
+    U32 size = this->m_header.getBufferSize();
 
     // Directive code: 1 byte
     // Flags: 1 byte (condition code, delivery code, file status all packed)
@@ -84,7 +84,7 @@ Fw::SerializeStatus Pdu::FinPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
     FW_ASSERT(this->m_header.m_type == T_FIN);
 
     // Calculate PDU data length (everything after header)
-    U32 dataLength = this->bufferSize() - this->m_header.bufferSize();
+    U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
 
     // Update header with data length
     Header headerCopy = this->m_header;

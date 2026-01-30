@@ -34,7 +34,7 @@ TEST_F(PduTest, HeaderBufferSize) {
 
     // Minimum header size with 1-byte EIDs and TSN
     // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(2) + tsn(2) + destEid(2) = 10
-    ASSERT_GE(header.bufferSize(), 7U);
+    ASSERT_GE(header.getBufferSize(), 7U);
 }
 
 TEST_F(PduTest, HeaderRoundTrip) {
@@ -81,7 +81,7 @@ TEST_F(PduTest, MetadataBufferSize) {
                    1, 2, 3, 1024, "src.txt", "dst.txt",
                    CHECKSUM_TYPE_MODULAR, 1);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + directive + segmentation + filesize + 2 LVs
     ASSERT_GT(size, 0U);
 }
@@ -202,11 +202,11 @@ TEST_F(PduTest, FileDataBufferSize) {
     pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
                    1, 2, 3, 100, sizeof(testData), testData);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + offset(4) + data(5)
     ASSERT_GT(size, 0U);
     // Verify expected size
-    U32 expectedSize = pdu.asHeader().bufferSize() + 4 + sizeof(testData);
+    U32 expectedSize = pdu.asHeader().getBufferSize() + 4 + sizeof(testData);
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -301,10 +301,10 @@ TEST_F(PduTest, EofBufferSize) {
     pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
                    1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(CfdpFileSize))
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().bufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+    U32 expectedSize = pdu.asHeader().getBufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -418,10 +418,10 @@ TEST_F(PduTest, FinBufferSize) {
                    1, 2, 3, CONDITION_CODE_NO_ERROR,
                    FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + flags(1) = header + 2
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().bufferSize() + 2;
+    U32 expectedSize = pdu.asHeader().getBufferSize() + 2;
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -591,10 +591,10 @@ TEST_F(PduTest, AckBufferSize) {
                    1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
                    CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + directive_and_subtype(1) + cc_and_status(1) = header + 3
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().bufferSize() + 3;
+    U32 expectedSize = pdu.asHeader().getBufferSize() + 3;
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -773,10 +773,10 @@ TEST_F(PduTest, NakBufferSize) {
     pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, 100, 500);
 
-    U32 size = pdu.bufferSize();
+    U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + scope_start(4) + scope_end(4) = header + 9
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().bufferSize() + 9;
+    U32 expectedSize = pdu.asHeader().getBufferSize() + 9;
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -1052,16 +1052,16 @@ TEST_F(PduTest, NakBufferSizeWithSegments) {
     pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                  1, 2, 3, 0, 4096);
 
-    U32 baseSizeNoSegments = pdu.bufferSize();
+    U32 baseSizeNoSegments = pdu.getBufferSize();
 
     // Add one segment
     ASSERT_TRUE(pdu.addSegment(100, 200));
-    U32 sizeWithOneSegment = pdu.bufferSize();
+    U32 sizeWithOneSegment = pdu.getBufferSize();
     EXPECT_EQ(baseSizeNoSegments + 8, sizeWithOneSegment);  // 2 * sizeof(CfdpFileSize) = 8
 
     // Add another segment
     ASSERT_TRUE(pdu.addSegment(300, 400));
-    U32 sizeWithTwoSegments = pdu.bufferSize();
+    U32 sizeWithTwoSegments = pdu.getBufferSize();
     EXPECT_EQ(baseSizeNoSegments + 16, sizeWithTwoSegments);  // 4 * sizeof(CfdpFileSize) = 16
 }
 

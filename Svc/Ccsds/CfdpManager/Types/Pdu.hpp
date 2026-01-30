@@ -192,7 +192,12 @@ union Pdu {
                        CfdpEntityId destEid);
 
         //! Compute the buffer size needed to hold this Header
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
+
+        //! Calculate the number of bytes needed to encode a value
+        //! @param value The value to encode
+        //! @return Number of bytes needed (1, 2, 4, or 8)
+        static U8 getValueEncodedSize(U64 value);
 
         //! Initialize this Header from a SerialBuffer
         Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
@@ -274,7 +279,7 @@ union Pdu {
                        U8 closureRequested);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this MetadataPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -337,7 +342,7 @@ union Pdu {
                        const U8* data);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this FileDataPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -356,6 +361,10 @@ union Pdu {
 
         //! Get the data pointer
         const U8* getData() const { return this->m_data; }
+
+        //! Calculate maximum file data payload size
+        //! @return Maximum number of data bytes that can fit in a File Data PDU
+        U32 getMaxFileDataSize();
 
       private:
         //! Initialize this FileDataPdu from a SerialBuffer
@@ -394,7 +403,7 @@ union Pdu {
                        CfdpFileSize fileSize);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this EofPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -451,7 +460,7 @@ union Pdu {
                        FinFileStatus fileStatus);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this FinPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -512,7 +521,7 @@ union Pdu {
                        AckTxnStatus transactionStatus);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this AckPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -580,7 +589,7 @@ union Pdu {
                        CfdpFileSize scopeEnd);
 
         //! Compute the buffer size needed
-        U32 bufferSize() const;
+        U32 getBufferSize() const;
 
         //! Convert this NakPdu to a Buffer
         Fw::SerializeStatus toBuffer(Fw::Buffer& buffer) const;
@@ -688,7 +697,7 @@ union Pdu {
 
     //! Get the buffer size needed to hold this Pdu
     //!
-    U32 bufferSize() const;
+    U32 getBufferSize() const;
 
     //! Convert this Pdu to a Buffer
     //!

@@ -34,7 +34,7 @@ void Pdu::Header::initialize(Type type,
 }
 
 // Helper function to calculate minimum bytes needed to encode a value
-static U8 getValueEncodedSize(U64 value) {
+U8 Pdu::Header::getValueEncodedSize(U64 value) {
     U8  minSize;
     U64 limit = 0x100;
 
@@ -76,7 +76,7 @@ static U64 decodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U8 decodeSize, Fw
     return value;
 }
 
-U32 Pdu::Header::bufferSize() const {
+U32 Pdu::Header::getBufferSize() const {
     // Fixed portion: flags(1) + length(2) + eidTsnLengths(1) = 4 bytes
     U32 size = 4;
 

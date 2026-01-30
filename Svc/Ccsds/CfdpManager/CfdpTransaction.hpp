@@ -819,7 +819,7 @@ class CfdpTransaction {
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CF_Chunk_t *chunk, CF_Logical_PduNak_t *nak);
+    void r2GapCompute(const CF_Chunk_t *chunk, Cfdp::Pdu::NakPdu& nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
