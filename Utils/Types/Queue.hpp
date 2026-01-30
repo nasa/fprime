@@ -46,7 +46,8 @@ class Queue {
      * \brief setup the queue object to setup storage
      *
      * The queue must be configured before use to setup storage parameters. This function supplies those parameters
-     * including depth, message size, queue mode, and overflow mode.  Storage size must be greater than or equal to the depth x message size.
+     * including depth, message size, queue mode, and overflow mode.  Storage size must be greater than or equal to the
+     * depth x message size.
      *
      * \param storage: storage memory allocation
      * \param storage_size: size of the provided allocation
@@ -63,7 +64,7 @@ class Queue {
                const QueueOverflowMode overflow_mode = QUEUE_DROP_NEWEST);
 
     /**
-     * \brief pushes a fixed-size message onto the back of the queue
+     * \brief pushes a fixed-size message onto the the queue
      *
      * Pushes a fixed-size message onto the queue. This performs a copy of the data onto the queue so the user is free
      * to dispose the message data as soon as the call returns. Note: message is required to be of the size message_size
@@ -72,11 +73,12 @@ class Queue {
      *
      * When the queue is full, behavior depends on the overflow mode:
      * - DROP_NEWEST: Returns FW_SERIALIZE_NO_ROOM_LEFT without modifying the queue
-     * - DROP_OLDEST: Removes the oldest message and adds the new one, returns FW_SERIALIZE_OK
+     * - DROP_OLDEST: Removes the oldest message and adds the new one, returns FW_SERIALIZE_DISCARDED_EXISTING
      *
      * \param message: message of size m_message_size to enqueue
      * \param size: size of the message being sent. Must be equivalent to queue's message size.
-     * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode
+     * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
+     * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
      */
     Fw::SerializeStatus enqueue(const U8* const message, const FwSizeType size);
 

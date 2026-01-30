@@ -7,8 +7,8 @@
 // ======================================================================
 
 #include <gtest/gtest.h>
-#include <Utils/Types/Queue.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Utils/Types/Queue.hpp>
 
 class QueueTest : public ::testing::Test {
   protected:
@@ -99,7 +99,7 @@ TEST_F(QueueTest, DropOldestMode) {
     // Enqueue 99 when full - should succeed and drop oldest (1)
     U32 newValue = 99;
     Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE);
-    EXPECT_EQ(Fw::FW_SERIALIZE_OK, status);
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
 
     // Should now have: 2, 3, 4, 5, 99
     EXPECT_EQ(2, dequeueValue(queue));
@@ -121,7 +121,9 @@ TEST_F(QueueTest, LIFOWithDropOldest) {
     }
 
     // Enqueue 99 when full - should succeed and drop oldest (1)
-    enqueueValue(queue, 99);
+    U32 newValue = 99;
+    Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE);
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
 
     // LIFO should return newest first: 99, 5, 4, 3, 2
     EXPECT_EQ(99, dequeueValue(queue));

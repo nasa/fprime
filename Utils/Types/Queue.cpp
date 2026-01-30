@@ -41,11 +41,18 @@ Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType siz
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && m_overflow_mode == QUEUE_DROP_OLDEST) {
         // Remove the oldest message by rotating
         Fw::SerializeStatus rotate_status = m_internal.rotate(m_message_size);
-        FW_ASSERT(rotate_status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(rotate_status));
+        if (rotate_status != Fw::FW_SERIALIZE_OK) {
+            return rotate_status;
+        }
 
         // Now enqueue the new message (should succeed since we just freed space)
         status = m_internal.serialize(message, m_message_size);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        } else {
+            // Let the caller know we deleted data
+            return Fw::FW_SERIALIZE_DISCARDED_EXISTING;
+        }
     }
 
     return status;
