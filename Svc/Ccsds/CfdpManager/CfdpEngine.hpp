@@ -338,7 +338,7 @@ class CfdpEngine {
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success. (error checks not yet implemented)
      */
-    Cfdp::Status::T sendFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu& fdPdu);
 
     /**
      * @brief Build an EOF PDU for transmit
@@ -414,7 +414,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      */
-    Cfdp::Status::T sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph);
+    Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu);
 
     /**
      * @brief Unpack a metadata PDU from a received message

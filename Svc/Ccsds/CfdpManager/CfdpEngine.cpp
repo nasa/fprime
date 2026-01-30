@@ -45,6 +45,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -306,60 +307,74 @@ CF_Logical_PduBuffer_t * CfdpEngine::constructPduHeader(const CfdpTransaction *t
 
 Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
 {
-    CF_Logical_PduBuffer_t *ph =
-        this->constructPduHeader(txn, CF_CFDP_FileDirective_METADATA, m_manager->getLocalEidParam(),
-                                   txn->m_history->peer_eid, 0, txn->m_history->seq_num, false);
-    CF_Logical_PduMd_t *md;
-    Cfdp::Status::T sret = Cfdp::Status::SUCCESS;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    if (!ph)
-    {
-        sret = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
+    FW_ASSERT((txn->m_state == CF_TxnState_S1) || (txn->m_state == CF_TxnState_S2), txn->m_state);
+    FW_ASSERT(txn->m_chan != NULL);
+
+    // Create and initialize Metadata PDU
+    Cfdp::Pdu pdu;
+    Cfdp::Pdu::MetadataPdu& md = pdu.asMetadataPdu();
+
+    // Set closure requested flag based on transaction class
+    // Class 1: closure not requested (0), Class 2: closure requested (1)
+    U8 closureRequested = (txn->m_state == CF_TxnState_S2) ? 1 : 0;
+
+    // Direction is toward receiver for metadata PDU sent by sender
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+
+    md.initialize(
+        direction,
+        txn->getClass(),  // transmission mode (Class 1 or 2)
+        m_manager->getLocalEidParam(),  // source EID
+        txn->m_history->seq_num,  // transaction sequence number
+        txn->m_history->peer_eid,  // destination EID
+        txn->m_fsize,  // file size
+        txn->m_history->fnames.src_filename.toChar(),  // source filename
+        txn->m_history->fnames.dst_filename.toChar(),  // destination filename
+        Cfdp::CHECKSUM_TYPE_MODULAR,  // checksum type
+        closureRequested  // closure requested flag
+    );
+
+    // Allocate buffer
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, md.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        // Serialize to buffer
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            // Failed to serialize, return the buffer
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            // Send the PDU
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
+        }
     }
-    else
-    {
-        md = &ph->int_header.md;
 
-        FW_ASSERT((txn->m_state == CF_TxnState_S1) || (txn->m_state == CF_TxnState_S2), txn->m_state);
-
-        md->size = txn->m_fsize;
-
-        /* Set closure requested flag based on transaction class */
-        /* Class 1: closure not requested (0), Class 2: closure requested (1) */
-        md->close_req = (txn->m_state == CF_TxnState_S2) ? 1 : 0;
-
-        // Set checksum type
-        // TODO BPC: Probably need to set this based on a config
-        md->checksum_type = 0;
-
-        /* at this point, need to append filenames into md packet */
-        /* this does not actually copy here - that is done during encode */
-        // TODO BPC: Convert these to Fw::String
-        md->source_filename.length = static_cast<U8>(txn->m_history->fnames.src_filename.length());
-        md->source_filename.data_ptr = txn->m_history->fnames.src_filename.toChar();
-        md->dest_filename.length = static_cast<U8>(txn->m_history->fnames.dst_filename.length());
-        md->dest_filename.data_ptr = txn->m_history->fnames.dst_filename.toChar();
-
-        CF_CFDP_EncodeMd(ph->penc, md);
-        this->setPduLength(ph);
-        m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
-    }
-
-    return sret;
+    return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu& fdPdu)
 {
-    /* NOTE: SendFd does not need a call to CF_CFDP_MsgOutGet, as the caller already has it */
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    /* this should check if any encoding error occurred */
+    Cfdp::Pdu pdu;
+    pdu.asFileDataPdu() = fdPdu;
 
-    /* update PDU length */
-    this->setPduLength(ph);
-    m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, fdPdu.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
+        }
+    }
 
-    return ret;
+    return status;
 }
 
 void CfdpEngine::appendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid)
@@ -395,48 +410,62 @@ void CfdpEngine::appendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tl
 
 Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
 {
-    CF_Logical_PduBuffer_t *ph =
-        this->constructPduHeader(txn, CF_CFDP_FileDirective_EOF, m_manager->getLocalEidParam(),
-                                   txn->m_history->peer_eid, 0, txn->m_history->seq_num, false);
-    CF_Logical_PduEof_t *eof;
-    Cfdp::Status::T         ret = Cfdp::Status::SUCCESS;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    if (!ph)
-    {
-        ret = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
-    }
-    else
-    {
-        eof = &ph->int_header.eof;
+    // Create and initialize EOF PDU
+    Cfdp::Pdu pdu;
+    Cfdp::Pdu::EofPdu& eof = pdu.asEofPdu();
 
-        eof->cc   = CF_TxnStatus_To_ConditionCode(txn->m_history->txn_stat);
-        eof->crc  = txn->m_crc.getValue();
-        eof->size = txn->m_fsize;
+    // Direction is toward receiver for EOF sent by sender
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+    Cfdp::ConditionCode conditionCode = CF_TxnStatus_To_ConditionCode(txn->m_history->txn_stat);
 
-        if (eof->cc != CF_CFDP_ConditionCode_NO_ERROR)
-        {
-            this->appendTlv(&eof->tlv_list, CF_CFDP_TLV_TYPE_ENTITY_ID,  m_manager->getLocalEidParam());
+    eof.initialize(
+        direction,
+        txn->getClass(),  // transmission mode
+        m_manager->getLocalEidParam(),  // source EID
+        txn->m_history->seq_num,  // transaction sequence number
+        txn->m_history->peer_eid,  // destination EID
+        conditionCode,  // condition code
+        txn->m_crc.getValue(),  // checksum
+        txn->m_fsize  // file size
+    );
+
+    // TODO: Add TLV support to Pdu classes for error conditions
+    // if (conditionCode != CF_CFDP_ConditionCode_NO_ERROR) {
+    //     appendTlv(...);
+    // }
+
+    // Allocate buffer
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, eof.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        // Serialize to buffer
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            // Failed to serialize, return the buffer
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            // Send the PDU
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
-
-        CF_CFDP_EncodeEof(ph->penc, eof);
-        this->setPduLength(ph);
-        m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
     }
 
-    return ret;
+    return status;
 }
 
 Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
                              CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn)
 {
-    CF_Logical_PduBuffer_t *ph;
-    CF_Logical_PduAck_t *   ack;
-    Cfdp::Status::T            ret = Cfdp::Status::SUCCESS;
-    CfdpEntityId           src_eid;
-    CfdpEntityId           dst_eid;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
     FW_ASSERT((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN), dir_code);
 
+    // Determine source and destination EIDs based on transaction direction
+    CfdpEntityId src_eid;
+    CfdpEntityId dst_eid;
     if (txn->getHistory()->dir == CF_Direction_TX)
     {
         src_eid = m_manager->getLocalEidParam();
@@ -448,90 +477,115 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t
         dst_eid = m_manager->getLocalEidParam();
     }
 
-    ph = this->constructPduHeader(txn, CF_CFDP_FileDirective_ACK, src_eid, dst_eid,
-                                    (dir_code == CF_CFDP_FileDirective_EOF), tsn, false);
-    if (!ph)
-    {
-        ret = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
+    // Create and initialize ACK PDU
+    Cfdp::Pdu pdu;
+    Cfdp::Pdu::AckPdu& ack = pdu.asAckPdu();
+
+    // Direction: toward sender for EOF ACK, toward receiver for FIN ACK
+    Cfdp::Direction direction = (dir_code == CF_CFDP_FileDirective_EOF) ?
+                                 Cfdp::DIRECTION_TOWARD_SENDER : Cfdp::DIRECTION_TOWARD_RECEIVER;
+
+    ack.initialize(
+        direction,
+        txn->getClass(),  // transmission mode
+        src_eid,  // source EID
+        tsn,  // transaction sequence number
+        dst_eid,  // destination EID
+        dir_code,  // directive being acknowledged
+        1,  // directive subtype code (always 1)
+        cc,  // condition code
+        ts  // transaction status
+    );
+
+    // Allocate buffer
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, ack.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        // Serialize to buffer
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            // Failed to serialize, return the buffer
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            // Send the PDU
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
+        }
     }
-    else
-    {
-        ack = &ph->int_header.ack;
 
-        ack->ack_directive_code = dir_code;
-        ack->ack_subtype_code   = 1; /* looks like always 1 if not extended features */
-        ack->cc                 = cc;
-        ack->txn_status         = ts;
-
-        CF_CFDP_EncodeAck(ph->penc, ack);
-        this->setPduLength(ph);
-        m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
-    }
-
-    return ret;
+    return status;
 }
 
 Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                              CF_CFDP_ConditionCode_t cc)
 {
-    CF_Logical_PduBuffer_t *ph =
-        this->constructPduHeader(txn, CF_CFDP_FileDirective_FIN, txn->m_history->peer_eid,
-                                   m_manager->getLocalEidParam(), 1, txn->m_history->seq_num, false);
-    CF_Logical_PduFin_t *fin;
-    Cfdp::Status::T         ret = Cfdp::Status::SUCCESS;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    if (!ph)
-    {
-        ret = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
-    }
-    else
-    {
-        fin = &ph->int_header.fin;
+    // Create and initialize FIN PDU
+    Cfdp::Pdu pdu;
+    Cfdp::Pdu::FinPdu& fin = pdu.asFinPdu();
 
-        fin->cc            = cc;
-        fin->delivery_code = dc;
-        fin->file_status   = fs;
+    // Direction is toward sender for FIN sent by receiver
+    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
 
-        if (cc != CF_CFDP_ConditionCode_NO_ERROR)
-        {
-            this->appendTlv(&fin->tlv_list, CF_CFDP_TLV_TYPE_ENTITY_ID, m_manager->getLocalEidParam());
+    fin.initialize(
+        direction,
+        txn->getClass(),  // transmission mode
+        txn->m_history->peer_eid,  // source EID (receiver)
+        txn->m_history->seq_num,  // transaction sequence number
+        m_manager->getLocalEidParam(),  // destination EID (sender)
+        cc,  // condition code
+        dc,  // delivery code
+        fs  // file status
+    );
+
+    // TODO: Add TLV support to Pdu classes for error conditions
+    // if (cc != CF_CFDP_ConditionCode_NO_ERROR) {
+    //     appendTlv(...);
+    // }
+
+    // Allocate buffer
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, fin.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        // Serialize to buffer
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            // Failed to serialize, return the buffer
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            // Send the PDU
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
-
-        CF_CFDP_EncodeFin(ph->penc, fin);
-        this->setPduLength(ph);
-        m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
     }
 
-    return ret;
+    return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu)
 {
-    CF_Logical_PduNak_t *nak;
-    Cfdp::Status::T         ret = Cfdp::Status::SUCCESS;
+    Fw::Buffer buffer;
+    Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    if (!ph)
-    {
-        ret = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
-    }
-    else
-    {
-        Cfdp::Class::T tx_class = txn->getClass();
-        FW_ASSERT(tx_class == Cfdp::Class::CLASS_2, tx_class);
+    // Verify this is a Class 2 transaction (NAK only used in Class 2)
+    Cfdp::Class::T tx_class = txn->getClass();
+    FW_ASSERT(tx_class == Cfdp::Class::CLASS_2, tx_class);
 
-        nak = &ph->int_header.nak;
+    Cfdp::Pdu pdu;
+    pdu.asNakPdu() = nakPdu;
 
-        /*
-         * NOTE: the caller should have already initialized all the fields.
-         * This does not need to add anything more to the NAK here
-         */
-
-        CF_CFDP_EncodeNak(ph->penc, nak);
-        this->setPduLength(ph);
-        m_manager->sendPduBuffer(txn->getChannelId(), ph, ph->penc->base);
+    status = m_manager->getPduBuffer(buffer, *txn->m_chan, nakPdu.getBufferSize());
+    if (status == Cfdp::Status::SUCCESS) {
+        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            m_manager->sendPduBuffer(*txn->m_chan, buffer);
+        }
     }
 
-    return ret;
+    return status;
 }
 
 Cfdp::Status::T CfdpEngine::recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
