@@ -58,20 +58,20 @@ void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 
 void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 {
-  CF_Logical_PduBuffer_t pdu;
-  CF_DecoderState_t decoder;
-
   // There is a direct mapping between port number and channel index
   FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
   FW_ASSERT(portNum >= 0, portNum);
 
-  // This input port handler replicates the receive behavior in CF_CFDP_ReceiveMessage in cf_cfdp_sbintf.c
-  pdu.pdec = &decoder;
-  CF_CFDP_DecodeStart(pdu.pdec, fwBuffer.getData(), &pdu, fwBuffer.getSize());
+  // Decode PDU using Pdu class
+  Cfdp::Pdu pdu;
+  Fw::SerializeStatus status = pdu.fromBuffer(fwBuffer);
 
-  // Identify and dispatch this PDU
-  // There is a direct mapping from port number to channel ID
-  this->m_engine->receivePdu(static_cast<U8>(portNum), &pdu);
+  if (status == Fw::FW_SERIALIZE_OK) {
+    // Identify and dispatch this PDU
+    // There is a direct mapping from port number to channel ID
+    this->m_engine->receivePdu(static_cast<U8>(portNum), pdu);
+  }
+  // TODO BPC: else: PDU decode failed - log event or increment counter
 
   // Return buffer
   this->dataInReturn_out(portNum, fwBuffer);
@@ -252,7 +252,7 @@ Cfdp::Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& chan
 
     // Check if we have reached the maximum number of output PDUs for this cycle
     U32 max_pdus = getMaxOutgoingPdusPerCycleParam(channel.getChannelId());
-    if (chan.getOutgoingCounter() >= max_pdus)
+    if (channel.getOutgoingCounter() >= max_pdus)
     {
         status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
     }
@@ -262,7 +262,7 @@ Cfdp::Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& chan
         // Check the allocation was successful based on size
         if(buffer.getSize() == size)
         {
-            chan.incrementOutgoingCounter();
+            channel.incrementOutgoingCounter();
             status = Cfdp::Status::SUCCESS;
         }
         else 

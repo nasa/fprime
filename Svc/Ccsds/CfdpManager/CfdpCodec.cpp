@@ -660,7 +660,7 @@ void CF_CFDP_DecodeFileDirectiveHeader(CF_DecoderState_t *state, CF_Logical_PduF
     if (peh != NULL)
     {
         CF_Codec_Load_U8(&packet_val, &(peh->directive_code));
-        pfdir->directive_code = static_cast<CF_CFDP_FileDirective_t>(packet_val);
+        pfdir->directive_code = static_cast<Cfdp::FileDirective>(packet_val);
     }
 }
 

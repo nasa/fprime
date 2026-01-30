@@ -807,7 +807,8 @@ void CfdpManagerTester::testFinPdu() {
     this->clearHistory();
 
     // Invoke receiver to emit FIN PDU using refactored API
-    Cfdp::Status::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus, testConditionCode);
+    Cfdp::Status::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus,
+                                                          static_cast<Cfdp::ConditionCode>(testConditionCode));
     ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendFin failed";
 
     // Verify PDU was sent through dataOut port

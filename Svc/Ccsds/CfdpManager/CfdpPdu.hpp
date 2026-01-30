@@ -205,24 +205,6 @@ typedef enum
 } CF_CFDP_TlvType_t;
 
 /**
- * @brief Values for "directive_code" within CF_CFDP_PduFileDirectiveHeader_t
- *
- * Defined per table 5-4 of CCSDS 727.0-B-5
- */
-typedef enum
-{
-    CF_CFDP_FileDirective_INVALID_MIN = 0, /**< \brief Minimum used to limit range */
-    CF_CFDP_FileDirective_EOF         = 4,
-    CF_CFDP_FileDirective_FIN         = 5,
-    CF_CFDP_FileDirective_ACK         = 6,
-    CF_CFDP_FileDirective_METADATA    = 7,
-    CF_CFDP_FileDirective_NAK         = 8,
-    CF_CFDP_FileDirective_PROMPT      = 9,
-    CF_CFDP_FileDirective_KEEP_ALIVE  = 12,
-    CF_CFDP_FileDirective_INVALID_MAX = 13, /**< \brief Maximum used to limit range */
-} CF_CFDP_FileDirective_t;
-
-/**
  * @brief Values for "acknowledgment transfer status"
  *
  * This enum is pertinent to the ACK PDU type, defines the

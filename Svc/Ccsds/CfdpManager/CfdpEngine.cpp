@@ -38,6 +38,7 @@
 #include <string.h>
 
 #include <Os/FileSystem.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
@@ -151,31 +152,31 @@ void CfdpEngine::armInactTimer(CfdpTransaction *txn)
     txn->m_inactivity_timer.setTimer(timerDuration);
 }
 
-void CfdpEngine::dispatchRecv(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::dispatchRecv(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     // Dispatch based on transaction state
     switch (txn->m_state)
     {
         case CF_TxnState_INIT:
-            this->recvInit(txn, ph);
+            this->recvInit(txn, pdu);
             break;
         case CF_TxnState_R1:
-            txn->r1Recv(ph);
+            txn->r1Recv(pdu);
             break;
         case CF_TxnState_S1:
-            txn->s1Recv(ph);
+            txn->s1Recv(pdu);
             break;
         case CF_TxnState_R2:
-            txn->r2Recv(ph);
+            txn->r2Recv(pdu);
             break;
         case CF_TxnState_S2:
-            txn->s2Recv(ph);
+            txn->s2Recv(pdu);
             break;
         case CF_TxnState_DROP:
-            this->recvDrop(txn, ph);
+            this->recvDrop(txn, pdu);
             break;
         case CF_TxnState_HOLD:
-            this->recvHold(txn, ph);
+            this->recvHold(txn, pdu);
             break;
         default:
             // Invalid or undefined state
@@ -217,92 +218,6 @@ void CfdpEngine::setPduLength(CF_Logical_PduBuffer_t *ph)
     }
 
     CF_CFDP_EncodeHeaderFinalSize(ph->penc, &ph->pdu_header);
-}
-
-CF_Logical_PduBuffer_t * CfdpEngine::constructPduHeader(const CfdpTransaction *txn, CF_CFDP_FileDirective_t directive_code,
-                                                   CfdpEntityId src_eid, CfdpEntityId dst_eid, bool towards_sender,
-                                                   CfdpTransactionSeq tsn, bool silent)
-{
-    /* directive_code == 0 if file data */
-    CF_Logical_PduBuffer_t *ph = NULL;
-    CF_Logical_PduHeader_t *hdr;
-    U8* msgPtr = NULL;
-    U8 eid_len;
-    Cfdp::Status::T status;
-    CF_EncoderState *encoder = NULL;;
-
-    FW_ASSERT(txn != NULL);
-    FW_ASSERT(txn->m_chan != NULL);
-
-    // This is where a message buffer is requested
-    status = m_manager->getPduBuffer(ph, msgPtr, encoder, *txn->m_chan, sizeof(CF_Logical_PduBuffer_t));
-    if (status == Cfdp::Status::SUCCESS)
-    {
-        FW_ASSERT(ph != NULL);
-        FW_ASSERT(msgPtr != NULL);
-        FW_ASSERT(encoder != NULL);
-
-        // TODO BPC: This was previously called as part of CF_CFDP_MsgOutGet()
-        // Call it here to attach the storage returned by cfdpGetMessageBuffer() to the encoder
-        ph->penc = encoder;
-        CF_CFDP_EncodeStart(ph->penc, msgPtr, ph, CF_MAX_PDU_SIZE);
-
-        hdr = &ph->pdu_header;
-
-        hdr->version   = 1;
-        hdr->pdu_type  = (directive_code == 0);     /* set to '1' for file data PDU, '0' for a directive PDU */
-        hdr->direction = (towards_sender != false); /* set to '1' for toward sender, '0' for toward receiver */
-        hdr->txm_mode  = (txn->getClass() == Cfdp::Class::CLASS_1); /* set to '1' for class 1 data, '0' for class 2 */
-
-        /* choose the larger of the two EIDs to determine size */
-        if (src_eid > dst_eid)
-        {
-            eid_len = CF_CFDP_GetValueEncodedSize(src_eid);
-        }
-        else
-        {
-            eid_len = CF_CFDP_GetValueEncodedSize(dst_eid);
-        }
-
-        /*
-         * This struct holds the "real" length - when assembled into the final packet
-         * this is encoded as 1 less than this value
-         */
-        hdr->eid_length     = eid_len;
-        hdr->txn_seq_length = CF_CFDP_GetValueEncodedSize(tsn);
-
-        hdr->source_eid      = src_eid;
-        hdr->destination_eid = dst_eid;
-        hdr->sequence_num    = tsn;
-
-        /*
-         * encode the known parts so far.  total_size field cannot be
-         * included yet because its value is not known, but the basic
-         * encoding of the other stuff needs to be done so the position
-         * of any data fields can be determined.
-         */
-        CF_CFDP_EncodeHeaderWithoutSize(ph->penc, hdr);
-
-        /* If directive code is zero, the PDU is a file data PDU which has no directive code field.
-         * So only set if non-zero, otherwise it will write a 0 to a byte in a file data PDU where we
-         * don't necessarily want a 0. */
-        if (directive_code)
-        {
-            /* set values which can be determined at this time */
-            ph->fdirective.directive_code = directive_code;
-
-            CF_CFDP_EncodeFileDirectiveHeader(ph->penc, &ph->fdirective);
-        }
-    }
-    else if (status == Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR)
-    {
-        if (!silent)
-        {
-            // TODO BPC: send event here
-        }
-    }
-
-    return ph;
 }
 
 Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
@@ -419,7 +334,7 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
 
     // Direction is toward receiver for EOF sent by sender
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
-    Cfdp::ConditionCode conditionCode = CF_TxnStatus_To_ConditionCode(txn->m_history->txn_stat);
+    Cfdp::ConditionCode conditionCode = static_cast<Cfdp::ConditionCode>(CF_TxnStatus_To_ConditionCode(txn->m_history->txn_stat));
 
     eof.initialize(
         direction,
@@ -455,13 +370,13 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
     return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t ts, CF_CFDP_FileDirective_t dir_code,
-                             CF_CFDP_ConditionCode_t cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn)
+Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts, Cfdp::FileDirective dir_code,
+                             Cfdp::ConditionCode cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn)
 {
     Fw::Buffer buffer;
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    FW_ASSERT((dir_code == CF_CFDP_FileDirective_EOF) || (dir_code == CF_CFDP_FileDirective_FIN), dir_code);
+    FW_ASSERT((dir_code == Cfdp::FILE_DIRECTIVE_END_OF_FILE) || (dir_code == Cfdp::FILE_DIRECTIVE_FIN), dir_code);
 
     // Determine source and destination EIDs based on transaction direction
     CfdpEntityId src_eid;
@@ -482,7 +397,7 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t
     Cfdp::Pdu::AckPdu& ack = pdu.asAckPdu();
 
     // Direction: toward sender for EOF ACK, toward receiver for FIN ACK
-    Cfdp::Direction direction = (dir_code == CF_CFDP_FileDirective_EOF) ?
+    Cfdp::Direction direction = (dir_code == Cfdp::FILE_DIRECTIVE_END_OF_FILE) ?
                                  Cfdp::DIRECTION_TOWARD_SENDER : Cfdp::DIRECTION_TOWARD_RECEIVER;
 
     ack.initialize(
@@ -516,7 +431,7 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, CF_CFDP_AckTxnStatus_t
 }
 
 Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
-                             CF_CFDP_ConditionCode_t cc)
+                             Cfdp::ConditionCode cc)
 {
     Fw::Buffer buffer;
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
@@ -535,8 +450,8 @@ Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCod
         txn->m_history->seq_num,  // transaction sequence number
         m_manager->getLocalEidParam(),  // destination EID (sender)
         cc,  // condition code
-        dc,  // delivery code
-        fs  // file status
+        static_cast<Cfdp::FinDeliveryCode>(dc),  // delivery code
+        static_cast<Cfdp::FinFileStatus>(fs)  // file status
     );
 
     // TODO: Add TLV support to Pdu classes for error conditions
@@ -642,93 +557,77 @@ Cfdp::Status::T CfdpEngine::recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
     return ret;
 }
 
-Cfdp::Status::T CfdpEngine::recvMd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    const CF_Logical_PduMd_t *md = &ph->int_header.md;
-    Cfdp::Status::T lvRet;
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
 
-    CF_CFDP_DecodeMd(ph->pdec, &ph->int_header.md);
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_MD_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: metadata packet too short: %lu bytes received",
-        //                   (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-        ret = Cfdp::Status::PDU_METADATA_ERROR;
-    }
-    else
-    {
-        /* store the expected file size in transaction */
-        txn->m_fsize = md->size;
+    // Extract metadata PDU
+    const Cfdp::Pdu::MetadataPdu& md = pdu.asMetadataPdu();
 
-        /*
-         * store the filenames in transaction.
-         *
-         * NOTE: The "copyStringFromLV()" now knows that the data is supposed to be a C string,
-         * and ensures that the output content is properly terminated, so this only needs to check that
-         * it worked.
-         */
-        lvRet = this->copyStringFromLV(txn->m_history->fnames.src_filename, &md->source_filename);
-        if (lvRet != Cfdp::Status::SUCCESS)
+    /* store the expected file size in transaction */
+    txn->m_fsize = md.getFileSize();
+
+    /* store the filenames in transaction */
+    const char* srcFilename = md.getSourceFilename();
+    const char* dstFilename = md.getDestFilename();
+
+    if (srcFilename != nullptr)
+    {
+        FwSizeType srcLen = Fw::StringUtils::string_length(srcFilename, CF_FILENAME_MAX_LEN);
+        if (srcLen > 0 && srcLen < CF_FILENAME_MAX_LEN)
         {
-            // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: metadata PDU rejected due to invalid length in source filename of 0x%02x",
-            //                   md->source_filename.length);
-            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-            ret = Cfdp::Status::PDU_METADATA_ERROR;
+            txn->m_history->fnames.src_filename = srcFilename;
         }
         else
         {
-            lvRet = this->copyStringFromLV(txn->m_history->fnames.dst_filename, &md->dest_filename);
-            if (lvRet != Cfdp::Status::SUCCESS)
-            {
-                // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: metadata PDU rejected due to invalid length in dest filename of 0x%02x",
-                //                   md->dest_filename.length);
-                // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-                ret = Cfdp::Status::PDU_METADATA_ERROR;
-            }
-            else
-            {
-                // CFE_EVS_SendEvent(CF_PDU_MD_RECVD_INF_EID, CFE_EVS_EventType_INFORMATION,
-                //                   "CF: md received for source: %s, dest: %s", txn->m_history->fnames.src_filename,
-                //                   txn->m_history->fnames.dst_filename);
-            }
+            // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF: metadata PDU rejected due to invalid source filename length");
+            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
+            ret = Cfdp::Status::PDU_METADATA_ERROR;
         }
+    }
+    else
+    {
+        ret = Cfdp::Status::PDU_METADATA_ERROR;
+    }
+
+    if (ret == Cfdp::Status::SUCCESS && dstFilename != nullptr)
+    {
+        FwSizeType dstLen = Fw::StringUtils::string_length(dstFilename, CF_FILENAME_MAX_LEN);
+        if (dstLen > 0 && dstLen < CF_FILENAME_MAX_LEN)
+        {
+            txn->m_history->fnames.dst_filename = dstFilename;
+            // CFE_EVS_SendEvent(CF_PDU_MD_RECVD_INF_EID, CFE_EVS_EventType_INFORMATION,
+            //                   "CF: md received for source: %s, dest: %s", txn->m_history->fnames.src_filename,
+            //                   txn->m_history->fnames.dst_filename);
+        }
+        else
+        {
+            // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF: metadata PDU rejected due to invalid dest filename length");
+            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
+            ret = Cfdp::Status::PDU_METADATA_ERROR;
+        }
+    }
+    else if (ret == Cfdp::Status::SUCCESS)
+    {
+        ret = Cfdp::Status::PDU_METADATA_ERROR;
     }
 
     return ret;
 }
 
-Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
 
-    CF_CFDP_DecodeFileDataHeader(ph->pdec, ph->pdu_header.segment_meta_flag, &ph->int_header.fd);
+    // Extract header
+    const Cfdp::Pdu::Header& header = pdu.asHeader();
+    // Note: FileDataPdu contents would be extracted here when file data handling is implemented
+    // const Cfdp::Pdu::FileDataPdu& fd = pdu.asFileDataPdu();
 
-    /* if the CRC flag is set, need to deduct the size of the CRC from the data - always 32 bits */
-    if (CF_CODEC_IS_OK(ph->pdec) && ph->pdu_header.crc_flag)
-    {
-        if (ph->int_header.fd.data_len < sizeof(CF_CFDP_U32_t))
-        {
-            CF_CODEC_SET_DONE(ph->pdec);
-        }
-        else
-        {
-            ph->int_header.fd.data_len -= sizeof(CF_CFDP_U32_t);
-        }
-    }
-
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_FD_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: filedata PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        this->setTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
-        // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-        ret = Cfdp::Status::SHORT_PDU_ERROR;
-    }
-    else if (ph->pdu_header.segment_meta_flag)
+    // Check for segment metadata flag (not currently supported)
+    if (header.hasSegmentMetadata())
     {
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
         // CFE_EVS_SendEvent(CF_PDU_FD_UNSUPPORTED_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -741,79 +640,40 @@ Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, CF_Logical_PduBuffer_t 
     return ret;
 }
 
-Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
-    CF_CFDP_DecodeEof(ph->pdec, &ph->int_header.eof);
-
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_EOF_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: EOF PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        ret = Cfdp::Status::SHORT_PDU_ERROR;
-    }
-
-    return ret;
+    // EOF PDU has been validated during fromBuffer()
+    // Data is accessible via pdu.asEofPdu() by callers
+    return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvAck(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvAck(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
-    CF_CFDP_DecodeAck(ph->pdec, &ph->int_header.ack);
-
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_ACK_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: ACK PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        ret = Cfdp::Status::SHORT_PDU_ERROR;
-    }
-
-    /* nothing to do for this one, as all fields are bytes */
-    return ret;
+    // ACK PDU has been validated during fromBuffer()
+    // Data is accessible via pdu.asAckPdu() by callers
+    return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
-    CF_CFDP_DecodeFin(ph->pdec, &ph->int_header.fin);
-
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_FIN_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: FIN PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        ret = Cfdp::Status::SHORT_PDU_ERROR;
-    }
-
-    /* NOTE: right now we don't care about the fault location */
-    /* nothing to do for this one. All fields are bytes */
-    return ret;
+    // FIN PDU has been validated during fromBuffer()
+    // Data is accessible via pdu.asFinPdu() by callers
+    return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvNak(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+Cfdp::Status::T CfdpEngine::recvNak(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
-    CF_CFDP_DecodeNak(ph->pdec, &ph->int_header.nak);
-
-    if (!CF_CODEC_IS_OK(ph->pdec))
-    {
-        // CFE_EVS_SendEvent(CF_PDU_NAK_SHORT_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: NAK PDU too short: %lu bytes received", (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-        ret = Cfdp::Status::SHORT_PDU_ERROR;
-    }
-
-    return ret;
+    // NAK PDU has been validated during fromBuffer()
+    // Data is accessible via pdu.asNakPdu() by callers
+    return Cfdp::Status::SUCCESS;
 }
 
-void CfdpEngine::recvDrop(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::recvDrop(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.dropped;
 }
 
-void CfdpEngine::recvHold(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     /* anything received in this state is considered spurious */
     // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.spurious;
@@ -831,28 +691,37 @@ void CfdpEngine::recvHold(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
      */
 
     /* currently the only thing we will re-ack is the FIN. */
-    if (ph->fdirective.directive_code == CF_CFDP_FileDirective_FIN)
+    if (pdu.getDirectiveCode() == Cfdp::FILE_DIRECTIVE_FIN)
     {
-        if (!this->recvFin(txn, ph))
+        const Cfdp::Pdu::FinPdu& fin = pdu.asFinPdu();
+        const Cfdp::Pdu::Header& header = pdu.asHeader();
+
+        if (this->recvFin(txn, pdu) != Cfdp::Status::SUCCESS)
         {
-            this->sendAck(txn, CF_CFDP_AckTxnStatus_TERMINATED, CF_CFDP_FileDirective_FIN, ph->int_header.fin.cc,
-                            ph->pdu_header.destination_eid, ph->pdu_header.sequence_num);
+            this->sendAck(txn, Cfdp::ACK_TXN_STATUS_TERMINATED, Cfdp::FILE_DIRECTIVE_FIN, fin.getConditionCode(),
+                            header.getDestEid(), header.getTransactionSeq());
         }
     }
 }
 
-void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    CF_Logical_PduFileDirectiveHeader_t *fdh;
-    int                                  status;
+    Cfdp::Status::T status;
+
+    // Extract header information
+    const Cfdp::Pdu::Header& header = pdu.asHeader();
+    CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
+    CfdpEntityId sourceEid = header.getSourceEid();
+    Cfdp::Pdu::Type pduType = header.getType();
+    Cfdp::Class::T txmMode = header.getTxmMode();
 
     /* only RX transactions dare tread here */
-    txn->m_history->seq_num = ph->pdu_header.sequence_num;
+    txn->m_history->seq_num = transactionSeq;
 
     /* peer_eid is always the remote partner. src_eid is always the transaction source.
      * in this case, they are the same */
-    txn->m_history->peer_eid = ph->pdu_header.source_eid;
-    txn->m_history->src_eid  = ph->pdu_header.source_eid;
+    txn->m_history->peer_eid = sourceEid;
+    txn->m_history->src_eid  = sourceEid;
 
     /* all RX transactions will need a chunk list to track file segments */
     if (txn->m_chunks == NULL)
@@ -863,9 +732,9 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
     {
         // CFE_EVS_SendEvent(CF_CFDP_NO_CHUNKLIST_AVAIL_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: cannot get chunklist -- abandoning transaction %u\n",
-        //                  (unsigned int)ph->pdu_header.sequence_num);
+        //                  (unsigned int)transactionSeq);
     }
-    else if (ph->pdu_header.pdu_type)
+    else if (pduType == Cfdp::Pdu::T_FILE_DATA)
     {
         /* file data PDU */
         /* being idle and receiving a file data PDU means that no active transaction knew
@@ -873,7 +742,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
 
         /* if class 2, switch into R2 state and let it handle */
         /* don't forget to bind the transaction */
-        if (ph->pdu_header.txm_mode)
+        if (txmMode == Cfdp::Class::CLASS_1)
         {
             /* R1, can't do anything without metadata first */
             txn->m_state = CF_TxnState_DROP; /* drop all incoming */
@@ -885,23 +754,23 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
             txn->m_state = CF_TxnState_R2;
             txn->m_txn_class = Cfdp::Class::CLASS_2;
             txn->rInit();
-            this->dispatchRecv(txn, ph); /* re-dispatch to enter r2 */
+            this->dispatchRecv(txn, pdu); /* re-dispatch to enter r2 */
         }
     }
     else
     {
-        fdh = &ph->fdirective;
-
         /* file directive PDU, but we are in an idle state. It only makes sense right now to accept metadata PDU. */
-        switch (fdh->directive_code)
+        Cfdp::FileDirective directiveCode = pdu.getDirectiveCode();
+
+        switch (directiveCode)
         {
-            case CF_CFDP_FileDirective_METADATA:
-                status = this->recvMd(txn, ph);
+            case Cfdp::FILE_DIRECTIVE_METADATA:
+                status = this->recvMd(txn, pdu);
                 if (!status)
                 {
                     /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
-                    txn->m_state            = ph->pdu_header.txm_mode ? CF_TxnState_R1 : CF_TxnState_R2;
-                    txn->m_txn_class        = ph->pdu_header.txm_mode ? Cfdp::Class::CLASS_1 : Cfdp::Class::CLASS_2;
+                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
+                    txn->m_txn_class = txmMode;
                     txn->m_flags.rx.md_recv = true;
                     txn->rInit(); /* initialize R */
                 }
@@ -915,7 +784,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
                 break;
             default:
                 // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: unhandled file directive code 0x%02x in idle state", fdh->directive_code);
+                //                   "CF: unhandled file directive code 0x%02x in idle state", directiveCode);
                 // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
                 break;
         }
@@ -928,57 +797,59 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, CF_Logical_PduBuffer_t *ph)
     }
 }
 
-void CfdpEngine::receivePdu(U8 chan_id, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::receivePdu(U8 chan_id, const Cfdp::Pdu& pdu)
 {
     CfdpTransaction *txn = NULL;
     CfdpChannel *chan = NULL;
 
     FW_ASSERT(chan_id < CF_NUM_CHANNELS, chan_id, CF_NUM_CHANNELS);
-    FW_ASSERT(ph != NULL);
 
     chan = m_channels[chan_id];
     FW_ASSERT(chan != NULL);
 
-    Cfdp::Status::T recv_status = this->recvPh(chan_id, ph);
-    if (recv_status == Cfdp::Status::SUCCESS)
+    // Extract header information from PDU
+    const Cfdp::Pdu::Header& header = pdu.asHeader();
+    CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
+    CfdpEntityId sourceEid = header.getSourceEid();
+    CfdpEntityId destEid = header.getDestEid();
+
+    // PDU validation is already done in fromBuffer(), so proceed with dispatch
+    /* got a valid PDU -- look it up by sequence number */
+    txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
+
+    if (txn == NULL)
     {
-        /* got a valid PDU -- look it up by sequence number */
-        txn = chan->findTransactionBySequenceNumber(ph->pdu_header.sequence_num, ph->pdu_header.source_eid);
-
-        if (txn == NULL)
+        /* if no match found, then it must be the case that we would be the destination entity id, so verify it
+            */
+        if (destEid == this->m_manager->getLocalEidParam())
         {
-            /* if no match found, then it must be the case that we would be the destination entity id, so verify it
-                */
-            if (ph->pdu_header.destination_eid == this->m_manager->getLocalEidParam())
+            /* we didn't find a match, so assign it to a transaction */
+            /* assume this is initiating an RX transaction, as TX transactions are only commanded */
+            txn = this->startRxTransaction(chan->getChannelId());
+            if (txn == NULL)
             {
-                /* we didn't find a match, so assign it to a transaction */
-                /* assume this is initiating an RX transaction, as TX transactions are only commanded */
-                txn = this->startRxTransaction(chan->getChannelId());
-                if (txn == NULL)
-                {
-                    // CFE_EVS_SendEvent(
-                    //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
-                    //     (unsigned long)ph->pdu_header.source_eid, (unsigned long)ph->pdu_header.sequence_num);
-                }
+                // CFE_EVS_SendEvent(
+                //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
+                //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
+                //     (unsigned long)sourceEid, (unsigned long)transactionSeq);
             }
-            else
-            {
-                // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: dropping packet for invalid destination eid 0x%lx",
-                //                   (unsigned long)ph->pdu_header.destination_eid);
-            }
-        }
-
-        if (txn != NULL)
-        {
-            /* found one! Send it to the transaction state processor */
-            this->dispatchRecv(txn, ph);
         }
         else
         {
-            // TODO BPC: Add throttled EVR
+            // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF: dropping packet for invalid destination eid 0x%lx",
+            //                   (unsigned long)destEid);
         }
+    }
+
+    if (txn != NULL)
+    {
+        /* found one! Send it to the transaction state processor */
+        this->dispatchRecv(txn, pdu);
+    }
+    else
+    {
+        // TODO BPC: Add throttled EVR
     }
 }
 

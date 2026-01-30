@@ -50,6 +50,7 @@
 #include <config/CfdpTransactionSeqAliasAc.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -129,7 +130,7 @@ typedef struct CF_Logical_PduHeader
  */
 typedef struct CF_Logical_PduFileDirectiveHeader
 {
-    CF_CFDP_FileDirective_t directive_code;
+    Cfdp::FileDirective directive_code;
 } CF_Logical_PduFileDirectiveHeader_t;
 
 /**

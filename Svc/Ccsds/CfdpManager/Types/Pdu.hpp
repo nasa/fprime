@@ -232,6 +232,9 @@ union Pdu {
         //! Get the large file flag
         LargeFileFlag getLargeFileFlag() const { return this->m_largeFileFlag; }
 
+        //! Check if segment metadata is present
+        bool hasSegmentMetadata() const { return this->m_segmentMetadataFlag != 0; }
+
         //! Set the large file flag (used for testing and configuration)
         void setLargeFileFlag(LargeFileFlag flag) { this->m_largeFileFlag = flag; }
     };
@@ -304,6 +307,9 @@ union Pdu {
 
         //! Get closure requested flag
         U8 getClosureRequested() const { return this->m_closureRequested; }
+
+        //! Get directive code
+        FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_METADATA; }
 
       private:
         //! Initialize this MetadataPdu from a SerialBuffer
@@ -423,6 +429,9 @@ union Pdu {
         //! Get file size
         CfdpFileSize getFileSize() const { return this->m_fileSize; }
 
+        //! Get directive code
+        FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_END_OF_FILE; }
+
       private:
         //! Initialize this EofPdu from a SerialBuffer
         Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
@@ -479,6 +488,9 @@ union Pdu {
 
         //! Get file status
         FinFileStatus getFileStatus() const { return this->m_fileStatus; }
+
+        //! Get directive code
+        FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_FIN; }
 
       private:
         //! Initialize this FinPdu from a SerialBuffer
@@ -619,6 +631,9 @@ union Pdu {
         //! Clear all segment requests
         void clearSegments();
 
+        //! Get directive code
+        FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_NAK; }
+
       private:
         //! Initialize this NakPdu from a SerialBuffer
         Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
@@ -647,6 +662,11 @@ union Pdu {
     //!
     const Header& asHeader() const;
 
+    //! Get the directive code for this PDU
+    //! \return The directive code, or FILE_DIRECTIVE_INVALID_MAX for file data PDUs
+    //!
+    FileDirective getDirectiveCode() const;
+
     //! Get this as a MetadataPdu
     //!
     const MetadataPdu& asMetadataPdu() const;
@@ -670,6 +690,30 @@ union Pdu {
     //! Get this as a NakPdu
     //!
     const NakPdu& asNakPdu() const;
+
+    //! Get this as a MetadataPdu (mutable, sets type)
+    //!
+    MetadataPdu& asMetadataPdu();
+
+    //! Get this as a FileDataPdu (mutable, sets type)
+    //!
+    FileDataPdu& asFileDataPdu();
+
+    //! Get this as an EofPdu (mutable, sets type)
+    //!
+    EofPdu& asEofPdu();
+
+    //! Get this as a FinPdu (mutable, sets type)
+    //!
+    FinPdu& asFinPdu();
+
+    //! Get this as an AckPdu (mutable, sets type)
+    //!
+    AckPdu& asAckPdu();
+
+    //! Get this as a NakPdu (mutable, sets type)
+    //!
+    NakPdu& asNakPdu();
 
     //! Initialize this with a MetadataPdu
     //!
