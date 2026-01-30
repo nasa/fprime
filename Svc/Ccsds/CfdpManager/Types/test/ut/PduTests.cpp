@@ -1065,6 +1065,586 @@ TEST_F(PduTest, NakBufferSizeWithSegments) {
     EXPECT_EQ(baseSizeNoSegments + 16, sizeWithTwoSegments);  // 4 * sizeof(CfdpFileSize) = 16
 }
 
+// ======================================================================
+// TLV Tests
+// ======================================================================
+
+TEST_F(PduTest, TlvCreateWithEntityId) {
+    // Test creating TLV with entity ID
+    Tlv tlv;
+    const CfdpEntityId testEid = 42;
+
+    tlv.initialize(testEid);
+
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, tlv.getType());
+    EXPECT_EQ(sizeof(CfdpEntityId), tlv.getData().getLength());
+    EXPECT_EQ(testEid, tlv.getData().getEntityId());
+}
+
+TEST_F(PduTest, TlvCreateWithRawData) {
+    // Test creating TLV with raw data
+    Tlv tlv;
+    const U8 testData[] = {0x01, 0x02, 0x03, 0x04, 0x05};
+    const U8 testDataLen = sizeof(testData);
+
+    tlv.initialize(TLV_TYPE_MESSAGE_TO_USER, testData, testDataLen);
+
+    EXPECT_EQ(TLV_TYPE_MESSAGE_TO_USER, tlv.getType());
+    EXPECT_EQ(testDataLen, tlv.getData().getLength());
+    EXPECT_EQ(0, memcmp(testData, tlv.getData().getData(), testDataLen));
+}
+
+TEST_F(PduTest, TlvEncodedSize) {
+    // Test TLV encoded size calculation
+    Tlv tlv;
+    const U8 testData[] = {0xAA, 0xBB, 0xCC};
+
+    tlv.initialize(TLV_TYPE_FLOW_LABEL, testData, sizeof(testData));
+
+    // Type(1) + Length(1) + Data(3) = 5
+    EXPECT_EQ(5U, tlv.getEncodedSize());
+}
+
+TEST_F(PduTest, TlvEncodeDecodeEntityId) {
+    // Test encoding and decoding entity ID TLV
+    Tlv txTlv;
+    const CfdpEntityId testEid = 123;
+    txTlv.initialize(testEid);
+
+    U8 buffer[256];
+    Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
+
+    // Encode
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txTlv.toSerialBuffer(serialBuffer));
+
+    // Decode
+    serialBuffer.resetSer();
+    serialBuffer.fill();
+    Tlv rxTlv;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxTlv.fromSerialBuffer(serialBuffer));
+
+    // Verify
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxTlv.getType());
+    EXPECT_EQ(testEid, rxTlv.getData().getEntityId());
+}
+
+TEST_F(PduTest, TlvEncodeDecodeRawData) {
+    // Test encoding and decoding raw data TLV
+    Tlv txTlv;
+    const U8 testData[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    txTlv.initialize(TLV_TYPE_MESSAGE_TO_USER, testData, sizeof(testData));
+
+    U8 buffer[256];
+    Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
+
+    // Encode
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txTlv.toSerialBuffer(serialBuffer));
+
+    // Decode
+    serialBuffer.resetSer();
+    serialBuffer.fill();
+    Tlv rxTlv;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxTlv.fromSerialBuffer(serialBuffer));
+
+    // Verify
+    EXPECT_EQ(TLV_TYPE_MESSAGE_TO_USER, rxTlv.getType());
+    EXPECT_EQ(sizeof(testData), rxTlv.getData().getLength());
+    EXPECT_EQ(0, memcmp(testData, rxTlv.getData().getData(), sizeof(testData)));
+}
+
+TEST_F(PduTest, TlvEncodeDecodeMaxData) {
+    // Test TLV with maximum data length (255 bytes)
+    Tlv txTlv;
+    U8 testData[255];
+    for (U16 i = 0; i < 255; i++) {
+        testData[i] = static_cast<U8>(i);
+    }
+    txTlv.initialize(TLV_TYPE_MESSAGE_TO_USER, testData, 255);
+
+    U8 buffer[512];
+    Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
+
+    // Encode
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txTlv.toSerialBuffer(serialBuffer));
+
+    // Decode
+    serialBuffer.resetSer();
+    serialBuffer.fill();
+    Tlv rxTlv;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxTlv.fromSerialBuffer(serialBuffer));
+
+    // Verify
+    EXPECT_EQ(255, rxTlv.getData().getLength());
+    EXPECT_EQ(0, memcmp(testData, rxTlv.getData().getData(), 255));
+}
+
+// ======================================================================
+// TlvList Tests
+// ======================================================================
+
+TEST_F(PduTest, TlvListAppendUpToMax) {
+    // Test appending TLVs up to maximum (4)
+    TlvList list;
+
+    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+        Tlv tlv;
+        tlv.initialize(static_cast<CfdpEntityId>(100 + i));
+        ASSERT_TRUE(list.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
+    }
+
+    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+}
+
+TEST_F(PduTest, TlvListRejectWhenFull) {
+    // Test that appending fails when list is full
+    TlvList list;
+
+    // Fill the list
+    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+        Tlv tlv;
+        tlv.initialize(static_cast<CfdpEntityId>(i));
+        ASSERT_TRUE(list.appendTlv(tlv));
+    }
+
+    // Try to add one more - should fail
+    Tlv extraTlv;
+    extraTlv.initialize(999);
+    EXPECT_FALSE(list.appendTlv(extraTlv));
+    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+}
+
+TEST_F(PduTest, TlvListClear) {
+    // Test clearing TLV list
+    TlvList list;
+
+    // Add some TLVs
+    for (U8 i = 0; i < 3; i++) {
+        Tlv tlv;
+        tlv.initialize(static_cast<CfdpEntityId>(i));
+        ASSERT_TRUE(list.appendTlv(tlv));
+    }
+    EXPECT_EQ(3, list.getNumTlv());
+
+    // Clear and verify
+    list.clear();
+    EXPECT_EQ(0, list.getNumTlv());
+
+    // Should be able to add new TLVs
+    Tlv tlv;
+    tlv.initialize(100);
+    ASSERT_TRUE(list.appendTlv(tlv));
+    EXPECT_EQ(1, list.getNumTlv());
+}
+
+TEST_F(PduTest, TlvListEncodedSize) {
+    // Test TLV list encoded size calculation
+    TlvList list;
+
+    // Add TLVs of different sizes
+    Tlv tlv1;
+    tlv1.initialize(42);  // Entity ID TLV
+    ASSERT_TRUE(list.appendTlv(tlv1));
+
+    const U8 data[] = {0x01, 0x02, 0x03};
+    Tlv tlv2;
+    tlv2.initialize(TLV_TYPE_MESSAGE_TO_USER, data, sizeof(data));
+    ASSERT_TRUE(list.appendTlv(tlv2));
+
+    U32 expectedSize = tlv1.getEncodedSize() + tlv2.getEncodedSize();
+    EXPECT_EQ(expectedSize, list.getEncodedSize());
+}
+
+TEST_F(PduTest, TlvListEncodeDecode) {
+    // Test encoding and decoding TLV list
+    TlvList txList;
+
+    // Add multiple TLVs
+    Tlv tlv1;
+    tlv1.initialize(123);
+    ASSERT_TRUE(txList.appendTlv(tlv1));
+
+    const U8 data2[] = {0xAA, 0xBB};
+    Tlv tlv2;
+    tlv2.initialize(TLV_TYPE_MESSAGE_TO_USER, data2, sizeof(data2));
+    ASSERT_TRUE(txList.appendTlv(tlv2));
+
+    const U8 data3[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    Tlv tlv3;
+    tlv3.initialize(TLV_TYPE_FLOW_LABEL, data3, sizeof(data3));
+    ASSERT_TRUE(txList.appendTlv(tlv3));
+
+    U8 buffer[512];
+    Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
+
+    // Encode
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txList.toSerialBuffer(serialBuffer));
+    U32 encodedSize = static_cast<U32>(serialBuffer.getSize());
+
+    // Decode
+    Fw::SerialBuffer decodeBuffer(buffer, encodedSize);
+    decodeBuffer.fill();
+    TlvList rxList;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxList.fromSerialBuffer(decodeBuffer));
+
+    // Verify
+    EXPECT_EQ(3, rxList.getNumTlv());
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxList.getTlv(0).getType());
+    EXPECT_EQ(123, rxList.getTlv(0).getData().getEntityId());
+    EXPECT_EQ(TLV_TYPE_MESSAGE_TO_USER, rxList.getTlv(1).getType());
+    EXPECT_EQ(TLV_TYPE_FLOW_LABEL, rxList.getTlv(2).getType());
+}
+
+// ======================================================================
+// EOF PDU with TLV Tests
+// ======================================================================
+
+TEST_F(PduTest, EofWithNoTlvs) {
+    // Verify existing EOF tests work with TLV support (backward compatible)
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
+
+    EXPECT_EQ(0, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(0, rxPdu.getNumTlv());
+}
+
+TEST_F(PduTest, EofWithOneTlv) {
+    // Test EOF PDU with one TLV
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0, 0);
+
+    // Add entity ID TLV
+    Tlv tlv;
+    tlv.initialize(42);
+    ASSERT_TRUE(txPdu.appendTlv(tlv));
+    EXPECT_EQ(1, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
+    EXPECT_EQ(1, rxPdu.getNumTlv());
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
+    EXPECT_EQ(42, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
+}
+
+TEST_F(PduTest, EofWithMultipleTlvs) {
+    // Test EOF PDU with multiple TLVs
+    Pdu::EofPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION, 0xABCDEF, 2048);
+
+    // Add entity ID TLV
+    Tlv tlv1;
+    tlv1.initialize(123);
+    ASSERT_TRUE(txPdu.appendTlv(tlv1));
+
+    // Add message to user TLV
+    const U8 message[] = "Error: File rejected";
+    Tlv tlv2;
+    tlv2.initialize(TLV_TYPE_MESSAGE_TO_USER, message, sizeof(message) - 1);
+    ASSERT_TRUE(txPdu.appendTlv(tlv2));
+
+    EXPECT_EQ(2, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(2, rxPdu.getNumTlv());
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
+    EXPECT_EQ(TLV_TYPE_MESSAGE_TO_USER, rxPdu.getTlvList().getTlv(1).getType());
+}
+
+TEST_F(PduTest, EofTlvBufferSize) {
+    // Verify buffer size calculation includes TLVs
+    Pdu::EofPdu pdu1, pdu2;
+    pdu1.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+    pdu2.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+
+    U32 sizeWithoutTlv = pdu1.getBufferSize();
+
+    // Add TLV to second PDU
+    Tlv tlv;
+    tlv.initialize(42);
+    ASSERT_TRUE(pdu2.appendTlv(tlv));
+
+    U32 sizeWithTlv = pdu2.getBufferSize();
+    EXPECT_EQ(sizeWithoutTlv + tlv.getEncodedSize(), sizeWithTlv);
+}
+
+TEST_F(PduTest, EofTlvRoundTripComplete) {
+    // Comprehensive round-trip test with TLVs
+    Pdu::EofPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
+    const CfdpEntityId sourceEid = 10;
+    const CfdpTransactionSeq transactionSeq = 20;
+    const CfdpEntityId destEid = 30;
+    const ConditionCode conditionCode = CONDITION_CODE_FILE_SIZE_ERROR;
+    const U32 checksum = 0xDEADBEEF;
+    const CfdpFileSize fileSize = 8192;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    conditionCode, checksum, fileSize);
+
+    // Add TLVs
+    Tlv tlv1;
+    tlv1.initialize(sourceEid);
+    ASSERT_TRUE(txPdu.appendTlv(tlv1));
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Decode
+    Pdu::EofPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header
+    EXPECT_EQ(direction, rxPdu.asHeader().getDirection());
+    EXPECT_EQ(txmMode, rxPdu.asHeader().getTxmMode());
+    EXPECT_EQ(sourceEid, rxPdu.asHeader().getSourceEid());
+    EXPECT_EQ(transactionSeq, rxPdu.asHeader().getTransactionSeq());
+    EXPECT_EQ(destEid, rxPdu.asHeader().getDestEid());
+
+    // Verify EOF fields
+    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(checksum, rxPdu.getChecksum());
+    EXPECT_EQ(fileSize, rxPdu.getFileSize());
+
+    // Verify TLVs
+    EXPECT_EQ(1, rxPdu.getNumTlv());
+    EXPECT_EQ(sourceEid, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
+}
+
+// ======================================================================
+// FIN PDU with TLV Tests
+// ======================================================================
+
+TEST_F(PduTest, FinWithNoTlvs) {
+    // Verify existing FIN tests work with TLV support (backward compatible)
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+
+    EXPECT_EQ(0, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+    EXPECT_EQ(0, rxPdu.getNumTlv());
+}
+
+TEST_F(PduTest, FinWithOneTlv) {
+    // Test FIN PDU with one TLV
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
+
+    // Add entity ID TLV
+    Tlv tlv;
+    tlv.initialize(99);
+    ASSERT_TRUE(txPdu.appendTlv(tlv));
+    EXPECT_EQ(1, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
+    EXPECT_EQ(FIN_DELIVERY_CODE_INCOMPLETE, rxPdu.getDeliveryCode());
+    EXPECT_EQ(FIN_FILE_STATUS_DISCARDED, rxPdu.getFileStatus());
+    EXPECT_EQ(1, rxPdu.getNumTlv());
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
+    EXPECT_EQ(99, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
+}
+
+TEST_F(PduTest, FinWithMultipleTlvs) {
+    // Test FIN PDU with multiple TLVs
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
+
+    // Add entity ID TLV
+    Tlv tlv1;
+    tlv1.initialize(456);
+    ASSERT_TRUE(txPdu.appendTlv(tlv1));
+
+    // Add message to user TLV
+    const U8 message[] = "Transaction failed";
+    Tlv tlv2;
+    tlv2.initialize(TLV_TYPE_MESSAGE_TO_USER, message, sizeof(message) - 1);
+    ASSERT_TRUE(txPdu.appendTlv(tlv2));
+
+    // Add flow label TLV
+    const U8 flowLabel[] = {0x01, 0x02};
+    Tlv tlv3;
+    tlv3.initialize(TLV_TYPE_FLOW_LABEL, flowLabel, sizeof(flowLabel));
+    ASSERT_TRUE(txPdu.appendTlv(tlv3));
+
+    EXPECT_EQ(3, txPdu.getNumTlv());
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Verify round-trip
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(3, rxPdu.getNumTlv());
+    EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
+    EXPECT_EQ(TLV_TYPE_MESSAGE_TO_USER, rxPdu.getTlvList().getTlv(1).getType());
+    EXPECT_EQ(TLV_TYPE_FLOW_LABEL, rxPdu.getTlvList().getTlv(2).getType());
+}
+
+TEST_F(PduTest, FinTlvBufferSize) {
+    // Verify buffer size calculation includes TLVs
+    Pdu::FinPdu pdu1, pdu2;
+    pdu1.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+    pdu2.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+
+    U32 sizeWithoutTlv = pdu1.getBufferSize();
+
+    // Add TLV to second PDU
+    Tlv tlv;
+    tlv.initialize(789);
+    ASSERT_TRUE(pdu2.appendTlv(tlv));
+
+    U32 sizeWithTlv = pdu2.getBufferSize();
+    EXPECT_EQ(sizeWithoutTlv + tlv.getEncodedSize(), sizeWithTlv);
+}
+
+TEST_F(PduTest, FinTlvRoundTripComplete) {
+    // Comprehensive round-trip test with TLVs
+    Pdu::FinPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
+    const CfdpEntityId sourceEid = 50;
+    const CfdpTransactionSeq transactionSeq = 100;
+    const CfdpEntityId destEid = 75;
+    const ConditionCode conditionCode = CONDITION_CODE_INACTIVITY_DETECTED;
+    const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_INCOMPLETE;
+    const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    conditionCode, deliveryCode, fileStatus);
+
+    // Add TLVs
+    Tlv tlv1;
+    tlv1.initialize(destEid);
+    ASSERT_TRUE(txPdu.appendTlv(tlv1));
+
+    const U8 msg[] = "Timeout";
+    Tlv tlv2;
+    tlv2.initialize(TLV_TYPE_MESSAGE_TO_USER, msg, sizeof(msg) - 1);
+    ASSERT_TRUE(txPdu.appendTlv(tlv2));
+
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Decode
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    // Verify header
+    EXPECT_EQ(direction, rxPdu.asHeader().getDirection());
+    EXPECT_EQ(txmMode, rxPdu.asHeader().getTxmMode());
+    EXPECT_EQ(sourceEid, rxPdu.asHeader().getSourceEid());
+    EXPECT_EQ(transactionSeq, rxPdu.asHeader().getTransactionSeq());
+    EXPECT_EQ(destEid, rxPdu.asHeader().getDestEid());
+
+    // Verify FIN fields
+    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode());
+    EXPECT_EQ(fileStatus, rxPdu.getFileStatus());
+
+    // Verify TLVs
+    EXPECT_EQ(2, rxPdu.getNumTlv());
+    EXPECT_EQ(destEid, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
+    EXPECT_EQ(0, memcmp(msg, rxPdu.getTlvList().getTlv(1).getData().getData(), sizeof(msg) - 1));
+}
+
+TEST_F(PduTest, FinWithMaxTlvs) {
+    // Test FIN PDU with maximum number of TLVs (4)
+    Pdu::FinPdu txPdu;
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+
+    // Add 4 TLVs
+    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+        Tlv tlv;
+        tlv.initialize(static_cast<CfdpEntityId>(100 + i));
+        ASSERT_TRUE(txPdu.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
+    }
+    EXPECT_EQ(CFDP_MAX_TLV, txPdu.getNumTlv());
+
+    // Try to add one more - should fail
+    Tlv extraTlv;
+    extraTlv.initialize(999);
+    EXPECT_FALSE(txPdu.appendTlv(extraTlv));
+
+    // Verify round-trip with 4 TLVs
+    U8 buffer[512];
+    Fw::Buffer txBuffer(buffer, sizeof(buffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    Pdu::FinPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.fromBuffer(rxBuffer));
+
+    EXPECT_EQ(CFDP_MAX_TLV, rxPdu.getNumTlv());
+    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+        EXPECT_EQ(100 + i, rxPdu.getTlvList().getTlv(i).getData().getEntityId());
+    }
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

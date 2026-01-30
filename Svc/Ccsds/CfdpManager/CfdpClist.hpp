@@ -109,18 +109,12 @@ using CListTraverseCallback = std::function<CF_CListTraverse_Status_t(CF_CListNo
 /************************************************************************/
 /** @brief Initialize a clist node.
  *
- * @par Assumptions, External Events, and Notes:
- *       node must not be NULL.
- *
  * @param node  Pointer to node structure to be initialized
  */
 void CF_CList_InitNode(CF_CListNode_t *node);
 
 /************************************************************************/
 /** @brief Insert the given node into the front of a list.
- *
- * @par Assumptions, External Events, and Notes:
- *       head must not be NULL, node must not be NULL.
  *
  * @param head  Pointer to head of list to insert into
  * @param node  Pointer to node to insert
@@ -130,9 +124,6 @@ void CF_CList_InsertFront(CF_CListNode_t **head, CF_CListNode_t *node);
 /************************************************************************/
 /** @brief Insert the given node into the back of a list.
  *
- * @par Assumptions, External Events, and Notes:
- *       head must not be NULL, node must not be NULL.
- *
  * @param head  Pointer to head of list to insert into
  * @param node  Pointer to node to insert
  */
@@ -140,9 +131,6 @@ void CF_CList_InsertBack(CF_CListNode_t **head, CF_CListNode_t *node);
 
 /************************************************************************/
 /** @brief Remove the given node from the list.
- *
- * @par Assumptions, External Events, and Notes:
- *       head must not be NULL, node must not be NULL.
  *
  * @param head  Pointer to head of list to remove from
  * @param node  Pointer to node to remove
@@ -152,22 +140,15 @@ void CF_CList_Remove(CF_CListNode_t **head, CF_CListNode_t *node);
 /************************************************************************/
 /** @brief Remove the first node from a list and return it.
  *
- * @par Assumptions, External Events, and Notes:
- *       head must not be NULL.
- *
  * @param head  Pointer to head of list to remove from
  *
  * @returns The first node (now removed) in the list
  * @retval  NULL if list was empty.
- *
  */
 CF_CListNode_t *CF_CList_Pop(CF_CListNode_t **head);
 
 /************************************************************************/
 /** @brief Insert the given node into the last after the given start node.
- *
- * @par Assumptions, External Events, and Notes:
- *       head must not be NULL, node must not be NULL.
  *
  * @param head  Pointer to head of list to remove from
  * @param start Pointer to node to insert
@@ -177,9 +158,6 @@ void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CList
 
 /************************************************************************/
 /** @brief Traverse the entire list, calling the given function on all nodes.
- *
- * @par Assumptions, External Events, and Notes:
- *       start may be NULL, fn must be a valid function, context may be NULL.
  *
  * @note on traversal it's ok to delete the current node, but do not delete
  * other nodes in the same list!!
@@ -193,9 +171,6 @@ void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context);
 /************************************************************************/
 /** @brief Traverse the entire list, calling the given function on all nodes (modern C++ version).
  *
- * @par Assumptions, External Events, and Notes:
- *       start may be NULL, callback must be valid, context may be NULL.
- *
  * @note on traversal it's ok to delete the current node, but do not delete
  * other nodes in the same list!!
  *
@@ -207,9 +182,6 @@ void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callb
 
 /************************************************************************/
 /** @brief Reverse list traversal, starting from end, calling given function on all nodes.
- *
- * @par Assumptions, External Events, and Notes:
- *       end may be NULL. fn must be a valid function, context may be NULL.
  *
  * @note traverse_R will work backwards from the parameter's prev, and end on param
  *

@@ -79,30 +79,22 @@ typedef struct CF_Traverse_PriorityArg
 /************************************************************************/
 /** @brief List traversal function to check if the desired sequence number matches.
  *
- * @par Assumptions, External Events, and Notes:
- *       context must not be NULL. node must not be NULL.
- *
  * @param node         Pointer to node currently being traversed
  * @param context   Pointer to state object passed through from initial call
  *
  * @retval 1 when it's found, which terminates list traversal
  * @retval 0 when it isn't found, which causes list traversal to continue
- *
  */
 CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
 
 /************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
  *
- * @par Assumptions, External Events, and Notes:
- *       node must not be NULL. context must not be NULL.
- *
  * @param node    Node being currently traversed
  * @param context Pointer to CF_Traverse_PriorityArg_t object indicating the priority to search for
  *
  * @retval CF_CLIST_EXIT when it's found, which terminates list traversal
  * @retval CF_CLIST_CONT when it isn't found, which causes list traversal to continue
- *
  */
 CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
 
@@ -113,9 +105,6 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
  * other error conditions for which CFDP will not send FIN/ACK/EOF
  * and thus there is no corresponding condition code.
  *
- * @par Assumptions, External Events, and Notes:
- *        Not all transaction status codes directly correlate to a CFDP CC
- *
  * @param txn_stat   Transaction status
  *
  * @returns CFDP protocol condition code
@@ -125,10 +114,9 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
 /************************************************************************/
 /** @brief Check if the internal transaction status represents an error
  *
- * @par Assumptions, External Events, and Notes:
- *       Transaction status is a superset of condition codes, and includes
- *       other error conditions for which CFDP will not send FIN/ACK/EOF
- *       and thus there is no corresponding condition code.
+ * Transaction status is a superset of condition codes, and includes
+ * other error conditions for which CFDP will not send FIN/ACK/EOF
+ * and thus there is no corresponding condition code.
  *
  * @param txn_stat   Transaction status
  *

@@ -269,12 +269,12 @@ bool CfdpChunkList::combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
     return ret;
 }
 
-int CfdpChunkList::combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
+bool CfdpChunkList::combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
 {
     CF_Chunk_t* prev;
     CfdpFileSize prev_end;
     CfdpFileSize chunk_end;
-    int ret = 0;
+    bool ret = false;
 
     FW_ASSERT(i <= m_maxChunks, i, m_maxChunks);
 
@@ -294,7 +294,7 @@ int CfdpChunkList::combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
                 /* Combine with previous chunk */
                 prev->size = chunk_end - prev->offset;
             }
-            ret = 1;
+            ret = true;
         }
     }
     return ret;
@@ -304,10 +304,10 @@ void CfdpChunkList::insert(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
 {
     CF_ChunkIdx_t smallest_i;
     CF_Chunk_t* smallest_c;
-    int n = combineNext(i, chunk);
-    int combined;
+    bool next = combineNext(i, chunk);
+    bool combined;
 
-    if (n)
+    if (next)
     {
         combined = combinePrevious(i, &m_chunks[i]);
         if (combined)

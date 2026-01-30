@@ -214,9 +214,6 @@ class CfdpEngine {
      * we can still associate those PDUs with this transaction/seq_num and
      * appropriately handle them as dupes/spurious deliveries.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction object
      * @param keep_history Whether the transaction info should be preserved in history
      */
@@ -227,9 +224,6 @@ class CfdpEngine {
      *
      * This records the status in the history block but does not set FIN flag
      * or take any other protocol/state machine actions.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
      *
      * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
@@ -257,65 +251,69 @@ class CfdpEngine {
     void armInactTimer(CfdpTransaction *txn);
 
     /**
-     * @brief Build a metadata PDU for transmit
+     * @brief Create, encode, and send a Metadata PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Creates a MetadataPdu object, initializes it with transaction parameters,
+     * requests a buffer from CfdpManager, serializes the PDU into the buffer,
+     * and sends it via the output port.
      *
      * @param txn  Pointer to the transaction object
      *
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendMd(CfdpTransaction *txn);
 
     /**
-     * @brief Send a previously-assembled filedata PDU for transmit
+     * @brief Encode and send a File Data PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Accepts a FileDataPdu object that has been initialized by the caller,
+     * requests a buffer from CfdpManager, serializes the PDU into the buffer,
+     * and sends it via the output port.
      *
-     * @param txn  Pointer to the transaction object
-     * @param ph   Pointer to logical PDU buffer content
-     *
-     * @note Unlike other "send" routines, the file data PDU must be acquired and
-     * filled by the caller prior to invoking this routine.  This routine only
-     * sends the PDU that was previously allocated and assembled.  As such, the
-     * typical failure possibilities do not apply to this call.
+     * @param txn    Pointer to the transaction object
+     * @param fdPdu  Reference to initialized FileDataPdu object
      *
      * @returns Cfdp::Status::T status code
-     * @retval Cfdp::Status::SUCCESS on success. (error checks not yet implemented)
+     * @retval Cfdp::Status::SUCCESS on success.
+     * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu& fdPdu);
 
     /**
-     * @brief Build an EOF PDU for transmit
+     * @brief Create, encode, and send an EOF (End of File) PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Creates an EofPdu object, initializes it with transaction parameters
+     * including file size and checksum, requests a buffer from CfdpManager,
+     * serializes the PDU into the buffer, and sends it via the output port.
      *
      * @param txn  Pointer to the transaction object
      *
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendEof(CfdpTransaction *txn);
 
     /**
-     * @brief Build an ACK PDU for transmit
+     * @brief Create, encode, and send an ACK (Acknowledgment) PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Creates an AckPdu object, initializes it with the specified parameters,
+     * requests a buffer from CfdpManager, serializes the PDU into the buffer,
+     * and sends it via the output port.
      *
-     * @note CF_CFDP_SendAck() takes a CfdpTransactionSeq instead of getting it from transaction history because
-     * of the special case where a FIN-ACK must be sent for an unknown transaction. It's better for
-     * long term maintenance to not build an incomplete CF_History_t for it.
+     * @note This function takes explicit peer_eid and tsn parameters instead of
+     * getting them from transaction history because of the special case where a
+     * FIN-ACK must be sent for an unknown transaction. It's better for long term
+     * maintenance to not build an incomplete CF_History_t for it.
      *
      * @param txn       Pointer to the transaction object
      * @param ts        Transaction ACK status
-     * @param dir_code  File directive code being ACK'ed
+     * @param dir_code  File directive code being ACK'ed (EOF or FIN)
      * @param cc        Condition code of transaction
      * @param peer_eid  Remote entity ID
      * @param tsn       Transaction sequence number
@@ -323,15 +321,17 @@ class CfdpEngine {
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts, Cfdp::FileDirective dir_code,
                           Cfdp::ConditionCode cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
 
     /**
-     * @brief Build a FIN PDU for transmit
+     * @brief Create, encode, and send a FIN (Finished) PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Creates a FinPdu object, initializes it with the specified delivery code,
+     * file status, and condition code, requests a buffer from CfdpManager,
+     * serializes the PDU into the buffer, and sends it via the output port.
      *
      * @param txn  Pointer to the transaction object
      * @param dc   Final delivery status code (complete or incomplete)
@@ -341,27 +341,27 @@ class CfdpEngine {
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
                           Cfdp::ConditionCode cc);
 
     /**
-     * @brief Send a previously-assembled NAK PDU for transmit
+     * @brief Encode and send a NAK (Negative Acknowledgment) PDU
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * Accepts a NakPdu object that has been initialized by the caller with the
+     * requested file segments, requests a buffer from CfdpManager, serializes
+     * the PDU into the buffer, and sends it via the output port.
      *
-     * @param txn  Pointer to the transaction object
-     * @param ph   Pointer to logical PDU buffer content
+     * @note Transaction must be Class 2 (NAK only used in Class 2).
      *
-     * @note Unlike other "send" routines, the NAK PDU must be acquired and
-     * filled by the caller prior to invoking this routine.  This routine only
-     * encodes and sends the previously-assembled PDU buffer.  As such, the
-     * typical failure possibilities do not apply to this call.
+     * @param txn     Pointer to the transaction object
+     * @param nakPdu  Reference to initialized NakPdu object
      *
      * @returns Cfdp::Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
+     * @retval Cfdp::Status::ERROR if serialization fails.
      */
     Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu);
 
@@ -369,11 +369,7 @@ class CfdpEngine {
      * @brief Handle receipt of metadata PDU
      *
      * This should only be invoked for buffers that have been identified
-     * as a metadata PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *       PDU validation already done in MetadataPdu::fromBuffer
+     * as a metadata PDU. PDU validation already done in MetadataPdu::fromBuffer.
      *
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
@@ -386,11 +382,8 @@ class CfdpEngine {
      * This should only be invoked for buffers that have been identified
      * as a file data PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The file data PDU
      *
      * @returns integer status code
      * @retval Cfdp::Status::SUCCESS on success
@@ -405,11 +398,8 @@ class CfdpEngine {
      * This should only be invoked for buffers that have been identified
      * as an end of file PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The EOF PDU
      *
      * @returns integer status code
      * @retval Cfdp::Status::SUCCESS on success
@@ -423,11 +413,8 @@ class CfdpEngine {
      * This should only be invoked for buffers that have been identified
      * as an acknowledgment PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The ACK PDU
      *
      * @returns integer status code
      * @retval Cfdp::Status::SUCCESS on success
@@ -441,11 +428,8 @@ class CfdpEngine {
      * This should only be invoked for buffers that have been identified
      * as a final PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The FIN PDU
      *
      * @returns integer status code
      * @retval Cfdp::Status::SUCCESS on success
@@ -459,11 +443,8 @@ class CfdpEngine {
      * This should only be invoked for buffers that have been identified
      * as a negative/non-acknowledgment PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The NAK PDU
      *
      * @returns integer status code
      * @retval Cfdp::Status::SUCCESS on success
@@ -535,18 +516,12 @@ class CfdpEngine {
     /**
      * @brief Send an end of transaction packet
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn  Pointer to the transaction object
      */
     void sendEotPkt(CfdpTransaction *txn);
 
     /**
      * @brief Cancels a transaction
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
      *
      * @param txn  Pointer to the transaction state
      */
@@ -574,51 +549,39 @@ class CfdpEngine {
     /**
      * @brief Receive state function to ignore a packet
      *
-     * @par Description
-     *       This function signature must match all receive state functions.
-     *       The parameter txn is ignored here.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * This function signature must match all receive state functions.
+     * The parameter txn is ignored here.
      *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The PDU being received
      */
     void recvDrop(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
 
     /**
      * @brief Receive state function during holdover period
      *
-     * @par Description
-     *       This function signature must match all receive state functions.
-     *       Handles any possible spurious PDUs that might come in after the
-     *       transaction is considered done.  This can happen if ACKs were
-     *       lost in transmission causing the sender to retransmit PDUs even
-     *       though we already completed the transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * This function signature must match all receive state functions.
+     * Handles any possible spurious PDUs that might come in after the
+     * transaction is considered done.  This can happen if ACKs were
+     * lost in transmission causing the sender to retransmit PDUs even
+     * though we already completed the transaction.
      *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The PDU being received
      */
     void recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
 
     /**
      * @brief Receive state function to process new rx transaction
      *
-     * @par Description
-     *       An idle transaction has never had message processing performed on it.
-     *       Typically, the first packet received for a transaction would be
-     *       the metadata PDU. There's a special case for R2 where the metadata
-     *       PDU could be missed, and filedata comes in instead. In that case,
-     *       an R2 transaction must still be started.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL. There must be a received message.
+     * An idle transaction has never had message processing performed on it.
+     * Typically, the first packet received for a transaction would be
+     * the metadata PDU. There's a special case for R2 where the metadata
+     * PDU could be missed, and filedata comes in instead. In that case,
+     * an R2 transaction must still be started.
      *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The PDU being received
      */
     void recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
 
@@ -628,13 +591,10 @@ class CfdpEngine {
      * @brief Dispatch received packet to its handler
      *
      * This dispatches the PDU to the appropriate handler
-     * based on the transaction state
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be null. It must be an initialized transaction.
+     * based on the transaction state.
      *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
+     * @param pdu  The PDU being received
      */
     void dispatchRecv(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
 
@@ -642,8 +602,6 @@ class CfdpEngine {
 
     /**
      * @brief Check if source file came from polling directory
-     *
-     * @par Assumptions, External Events, and Notes:
      *
      * @param src_file Source file path to check
      * @param chan_num Channel number
@@ -656,8 +614,6 @@ class CfdpEngine {
      * @brief Remove/Move file after transaction
      *
      * This helper is used to handle "not keep" file option after a transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
      *
      * @param txn  Pointer to the transaction object
      */

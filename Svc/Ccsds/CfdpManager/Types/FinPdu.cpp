@@ -25,6 +25,9 @@ void Pdu::FinPdu::initialize(Direction direction,
     this->m_conditionCode = conditionCode;
     this->m_deliveryCode = deliveryCode;
     this->m_fileStatus = fileStatus;
+
+    // Clear TLV list
+    this->m_tlvList.clear();
 }
 
 U32 Pdu::FinPdu::getBufferSize() const {
@@ -33,6 +36,9 @@ U32 Pdu::FinPdu::getBufferSize() const {
     // Directive code: 1 byte
     // Flags: 1 byte (condition code, delivery code, file status all packed)
     size += sizeof(U8) + sizeof(U8);
+
+    // Add TLV size
+    size += this->m_tlvList.getEncodedSize();
 
     return size;
 }
@@ -118,6 +124,12 @@ Fw::SerializeStatus Pdu::FinPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
+    // Serialize TLVs (if any)
+    status = this->m_tlvList.toSerialBuffer(serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -145,6 +157,12 @@ Fw::SerializeStatus Pdu::FinPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     this->m_conditionCode = static_cast<ConditionCode>(conditionCodeVal);
     this->m_deliveryCode = static_cast<FinDeliveryCode>(deliveryCodeVal);
     this->m_fileStatus = static_cast<FinFileStatus>(fileStatusVal);
+
+    // Deserialize TLVs (consumes rest of buffer)
+    status = this->m_tlvList.fromSerialBuffer(serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
 
     return Fw::FW_SERIALIZE_OK;
 }

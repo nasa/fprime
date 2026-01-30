@@ -254,9 +254,9 @@ class CfdpChunkList {
      *
      * @param i      Index of the current chunk
      * @param chunk  Chunk data to attempt combining
-     * @returns 1 if chunks were combined, 0 otherwise
+     * @returns true if chunks were combined, false otherwise
      */
-    int combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+    bool combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
 
     /**
      * @brief Insert a chunk, potentially combining with neighbors

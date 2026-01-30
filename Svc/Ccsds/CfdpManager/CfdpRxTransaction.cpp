@@ -619,7 +619,7 @@ Cfdp::Status::T CfdpTransaction::rSubstateRecvEof(const Cfdp::Pdu& pdu) {
 }
 
 void CfdpTransaction::r1SubstateRecvEof(const Cfdp::Pdu& pdu) {
-    int ret = this->rSubstateRecvEof(pdu);
+    Cfdp::Status::T ret = this->rSubstateRecvEof(pdu);
     U32 crc;
 
     /* this function is only entered for PDUs identified as EOF type */
@@ -643,7 +643,7 @@ void CfdpTransaction::r1SubstateRecvEof(const Cfdp::Pdu& pdu) {
 }
 
 void CfdpTransaction::r2SubstateRecvEof(const Cfdp::Pdu& pdu) {
-    int ret;
+    Cfdp::Status::T ret;
 
     if (!this->m_flags.rx.eof_recv)
     {
@@ -693,7 +693,7 @@ void CfdpTransaction::r2SubstateRecvEof(const Cfdp::Pdu& pdu) {
 }
 
 void CfdpTransaction::r1SubstateRecvFileData(const Cfdp::Pdu& pdu) {
-    int ret;
+    Cfdp::Status::T ret;
 
     /* got file data PDU? */
     ret = this->m_engine->recvFd(this, pdu);
@@ -717,7 +717,7 @@ void CfdpTransaction::r1SubstateRecvFileData(const Cfdp::Pdu& pdu) {
 }
 
 void CfdpTransaction::r2SubstateRecvFileData(const Cfdp::Pdu& pdu) {
-    int ret;
+    Cfdp::Status::T ret;
 
     // If CRC calculation has started (file reopened in READ mode), ignore late FileData PDUs.
     // This can happen if retransmitted FileData arrives after EOF was received and CRC began.

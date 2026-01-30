@@ -25,6 +25,9 @@ void Pdu::EofPdu::initialize(Direction direction,
     this->m_conditionCode = conditionCode;
     this->m_checksum = checksum;
     this->m_fileSize = fileSize;
+
+    // Clear TLV list
+    this->m_tlvList.clear();
 }
 
 U32 Pdu::EofPdu::getBufferSize() const {
@@ -35,6 +38,10 @@ U32 Pdu::EofPdu::getBufferSize() const {
     // Checksum: 4 bytes (U32)
     // File size: sizeof(CfdpFileSize) bytes
     size += sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+
+    // Add TLV size
+    size += this->m_tlvList.getEncodedSize();
+
     return size;
 }
 
@@ -123,6 +130,12 @@ Fw::SerializeStatus Pdu::EofPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
         return status;
     }
 
+    // Serialize TLVs (if any)
+    status = this->m_tlvList.toSerialBuffer(serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -147,6 +160,12 @@ Fw::SerializeStatus Pdu::EofPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
 
     // File size
     status = serialBuffer.deserializeTo(this->m_fileSize);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Deserialize TLVs (consumes rest of buffer)
+    status = this->m_tlvList.fromSerialBuffer(serialBuffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

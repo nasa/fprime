@@ -189,22 +189,6 @@ typedef struct CF_CFDP_tlv
 } CF_CFDP_tlv_t;
 
 /**
- * @brief Values for "type" field of TLV structure
- *
- * Defined per section 5.4 of CCSDS 727.0-B-5
- */
-typedef enum
-{
-    CF_CFDP_TLV_TYPE_FILESTORE_REQUEST      = 0,
-    CF_CFDP_TLV_TYPE_FILESTORE_RESPONSE     = 1,
-    CF_CFDP_TLV_TYPE_MESSAGE_TO_USER        = 2,
-    CF_CFDP_TLV_TYPE_FAULT_HANDLER_OVERRIDE = 4,
-    CF_CFDP_TLV_TYPE_FLOW_LABEL             = 5,
-    CF_CFDP_TLV_TYPE_ENTITY_ID              = 6,
-    CF_CFDP_TLV_TYPE_INVALID_MAX            = 7
-} CF_CFDP_TlvType_t;
-
-/**
  * @brief Values for "acknowledgment transfer status"
  *
  * This enum is pertinent to the ACK PDU type, defines the

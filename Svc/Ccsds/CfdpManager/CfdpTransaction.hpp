@@ -258,65 +258,42 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S1 receive PDU processing.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param ph Pointer to the PDU information
+     * @param pdu The PDU to process
      */
     void s1Recv(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief S2 receive PDU processing.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     * @param ph Pointer to the PDU information
+     * @param pdu The PDU to process
      */
     void s2Recv(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief S1 dispatch function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void s1Tx();
 
     /************************************************************************/
     /** @brief S2 dispatch function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void s2Tx();
 
     /************************************************************************/
     /** @brief Perform acknowledgement timer tick (time-based) processing for S transactions.
      *
-     * @par Description
-     *       This is invoked as part of overall timer tick processing if the transaction
-     *       has some sort of acknowledgement pending from the remote.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * This is invoked as part of overall timer tick processing if the transaction
+     * has some sort of acknowledgement pending from the remote.
      */
     void sAckTimerTick();
 
     /************************************************************************/
     /** @brief Perform tick (time-based) processing for S transactions.
      *
-     * @par Description
-     *       This function is called on every transaction by the engine on
-     *       every CF wakeup. This is where flags are checked to send EOF or
-     *       FIN-ACK. If nothing else is sent, it checks to see if a NAK
-     *       retransmit must occur.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. cont is unused, so may be NULL.
+     * This function is called on every transaction by the engine on
+     * every CF wakeup. This is where flags are checked to send EOF or
+     * FIN-ACK. If nothing else is sent, it checks to see if a NAK
+     * retransmit must occur.
      *
      * @param cont Unused, exists for compatibility with tick processor
      */
@@ -325,13 +302,9 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Perform NAK response for TX transactions
      *
-     * @par Description
-     *       This function is called at tick processing time to send pending
-     *       NAK responses. It indicates "cont" is 1 if there are more responses
-     *       left to send.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. cont must not be NULL.
+     * This function is called at tick processing time to send pending
+     * NAK responses. It indicates "cont" is 1 if there are more responses
+     * left to send.
      *
      * @param cont Set to 1 if a NAK was generated
      */
@@ -339,87 +312,54 @@ class CfdpTransaction {
 
     /************************************************************************/
     /** @brief Cancel an S transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void sCancel();
 
     /************************************************************************/
     /** @brief Sends an EOF for S1.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void s1SubstateSendEof();
 
     /************************************************************************/
     /** @brief Triggers tick processing to send an EOF and wait for EOF-ACK for S2
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void s2SubstateSendEof();
 
     /************************************************************************/
     /** @brief Standard state function to send the next file data PDU for active transaction.
      *
-     * @par Description
-     *       During the transfer of active transaction file data PDUs, the file
-     *       offset is saved. This function sends the next chunk of data. If
-     *       the file offset equals the file size, then transition to the EOF
-     *       state.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * During the transfer of active transaction file data PDUs, the file
+     * offset is saved. This function sends the next chunk of data. If
+     * the file offset equals the file size, then transition to the EOF
+     * state.
      */
     void sSubstateSendFileData();
 
     /************************************************************************/
     /** @brief Send filedata handling for S2.
      *
-     * @par Description
-     *       S2 will either respond to a NAK by sending retransmits, or in
-     *       absence of a NAK, it will send more of the original file data.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * S2 will either respond to a NAK by sending retransmits, or in
+     * absence of a NAK, it will send more of the original file data.
      */
     void s2SubstateSendFileData();
 
     /************************************************************************/
     /** @brief Send metadata PDU.
      *
-     * @par Description
-     *       Construct and send a metadata PDU. This function determines the
-     *       size of the file to put in the metadata PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * Construct and send a metadata PDU. This function determines the
+     * size of the file to put in the metadata PDU.
      */
     void sSubstateSendMetadata();
 
     /************************************************************************/
     /** @brief A FIN was received before file complete, so abandon the transaction.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
-     *
-     * @param ph Pointer to the PDU information
+     * @param pdu The PDU to process
      */
     void s2EarlyFin(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief S2 received FIN, so set flag to send FIN-ACK.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
      *
      * @param ph Pointer to the PDU information
      */
@@ -428,13 +368,9 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S2 NAK PDU received handling.
      *
-     * @par Description
-     *       Stores the segment requests from the NAK packet in the chunks
-     *       structure. These can be used to generate re-transmit filedata
-     *       PDUs.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * Stores the segment requests from the NAK packet in the chunks
+     * structure. These can be used to generate re-transmit filedata
+     * PDUs.
      *
      * @param ph Pointer to the PDU information
      */
@@ -443,9 +379,6 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S2 NAK handling but with arming the NAK timer.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
-     *
      * @param ph Pointer to the PDU information
      */
     void s2NakArm(const Cfdp::Pdu& pdu);
@@ -453,11 +386,7 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S2 received ACK PDU.
      *
-     * @par Description
-     *       Handles reception of an ACK PDU
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * Handles reception of an ACK PDU
      *
      * @param ph Pointer to the PDU information
      */
@@ -474,13 +403,9 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Send an EOF PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval SEND_PDU_ERROR if an error occurred while building the packet.
-     *
      */
     Cfdp::Status::T sSendEof();
 
@@ -498,18 +423,12 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief R1 receive PDU processing.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      * @param ph Pointer to the PDU information
      */
     void r1Recv(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief R2 receive PDU processing.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
      *
      * @param ph Pointer to the PDU information
      */
@@ -518,57 +437,36 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Perform acknowledgement timer tick (time-based) processing for R transactions.
      *
-     * @par Description
-     *       This is invoked as part of overall timer tick processing if the transaction
-     *       has some sort of acknowledgement pending from the remote.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * This is invoked as part of overall timer tick processing if the transaction
+     * has some sort of acknowledgement pending from the remote.
      */
     void rAckTimerTick();
 
     /************************************************************************/
     /** @brief Perform tick (time-based) processing for R transactions.
      *
-     * @par Description
-     *       This function is called on every transaction by the engine on
-     *       every CF wakeup. This is where flags are checked to send ACK,
-     *       NAK, and FIN. It checks for inactivity timer and processes the
-     *       ACK timer. The ACK timer is what triggers re-sends of PDUs
-     *       that require acknowledgment.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. cont is unused, so may be NULL
+     * This function is called on every transaction by the engine on
+     * every CF wakeup. This is where flags are checked to send ACK,
+     * NAK, and FIN. It checks for inactivity timer and processes the
+     * ACK timer. The ACK timer is what triggers re-sends of PDUs
+     * that require acknowledgment.
      *
      * @param cont Ignored/Unused
-     *
      */
     void rTick(int *cont);
 
     /************************************************************************/
     /** @brief Cancel an R transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void rCancel();
 
     /************************************************************************/
     /** @brief Initialize a transaction structure for R.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void rInit();
 
     /************************************************************************/
     /** @brief Helper function to store transaction status code and set send_fin flag.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
      *
      * @param txn_stat Status Code value to set within transaction
      */
@@ -577,38 +475,23 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief CFDP R1 transaction reset function.
      *
-     * @par Description
-     *       All R transactions use this call to indicate the transaction
-     *       state can be returned to the system. While this function currently
-     *       only calls CF_CFDP_ResetTransaction(), it is here as a placeholder.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * All R transactions use this call to indicate the transaction
+     * state can be returned to the system. While this function currently
+     * only calls CF_CFDP_ResetTransaction(), it is here as a placeholder.
      */
     void r1Reset();
 
     /************************************************************************/
     /** @brief CFDP R2 transaction reset function.
      *
-     * @par Description
-     *       Handles reset logic for R2, then calls R1 reset logic.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
+     * Handles reset logic for R2, then calls R1 reset logic.
      */
     void r2Reset();
 
     /************************************************************************/
     /** @brief Checks that the transaction file's CRC matches expected.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     *
      * @retval Cfdp::Status::SUCCESS on CRC match, otherwise Cfdp::Status::CFDP_ERROR.
-     *
      *
      * @param expected_crc Expected CRC
      */
@@ -617,17 +500,13 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Checks R2 transaction state for transaction completion status.
      *
-     * @par Description
-     *       This function is called anywhere there's a desire to know if the
-     *       transaction has completed. It may trigger other actions by setting
-     *       flags to be handled during tick processing. In order for a
-     *       transaction to be complete, it must have had its meta-data PDU
-     *       received, the EOF must have been received, and there must be
-     *       no gaps in the file. EOF is not checked in this function, because
-     *       it's only called from functions after EOF is received.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * This function is called anywhere there's a desire to know if the
+     * transaction has completed. It may trigger other actions by setting
+     * flags to be handled during tick processing. In order for a
+     * transaction to be complete, it must have had its meta-data PDU
+     * received, the EOF must have been received, and there must be
+     * no gaps in the file. EOF is not checked in this function, because
+     * it's only called from functions after EOF is received.
      *
      * @param ok_to_send_nak If set to 0, suppress sending of a NAK packet
      */
@@ -640,13 +519,9 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Dispatch function for received PDUs on receive-file transactions
      *
-     * @par Description
-     *       Receive file transactions primarily only react/respond to received PDUs.
-     *       This function dispatches to the appropriate handler based on the
-     *       transaction substate and PDU type.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * Receive file transactions primarily only react/respond to received PDUs.
+     * This function dispatches to the appropriate handler based on the
+     * transaction substate and PDU type.
      *
      * @param ph        PDU Buffer
      * @param dispatch  Dispatch table for file directive PDUs
@@ -659,12 +534,8 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Dispatch function for received PDUs on send-file transactions
      *
-     * @par Description
-     *       Send file transactions also react/respond to received PDUs.
-     *       Note that a file data PDU is not expected here.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * Send file transactions also react/respond to received PDUs.
+     * Note that a file data PDU is not expected here.
      *
      * @param ph        PDU Buffer
      * @param dispatch  Dispatch table for file directive PDUs
@@ -675,13 +546,9 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Dispatch function to send/generate PDUs on send-file transactions
      *
-     * @par Description
-     *       Send file transactions generate PDUs each cycle based on the
-     *       transaction state. This does not have an existing PDU buffer at
-     *       the time of dispatch, but one may be generated by the invoked function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * Send file transactions generate PDUs each cycle based on the
+     * transaction state. This does not have an existing PDU buffer at
+     * the time of dispatch, but one may be generated by the invoked function.
      *
      * @param dispatch  State-based dispatch table
      */
@@ -690,12 +557,8 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Top-level Dispatch function to send a PDU based on current state
      *
-     * @par Description
-     *       This does not have an existing PDU buffer at the time of dispatch,
-     *       but one may be generated by the invoked function.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * This does not have an existing PDU buffer at the time of dispatch,
+     * but one may be generated by the invoked function.
      *
      * @param dispatch  Transaction State-based Dispatch table
      */
@@ -705,12 +568,7 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Process a filedata PDU on a transaction.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
-     *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
-     *
      *
      * @param ph Pointer to the PDU information
      */
@@ -719,17 +577,11 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Processing receive EOF common functionality for R1/R2.
      *
-     * @par Description
-     *       This function is used for both R1 and R2 EOF receive. It calls
-     *       the unmarshaling function and then checks known transaction
-     *       data against the PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
-     *
+     * This function is used for both R1 and R2 EOF receive. It calls
+     * the unmarshaling function and then checks known transaction
+     * data against the PDU.
      *
      * @retval Cfdp::Status::SUCCESS on success. Returns anything else on error.
-     *
      *
      * @param ph Pointer to the PDU information
      */
@@ -738,40 +590,26 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Process receive EOF for R1.
      *
-     * @par Description
-     *       Only need to confirm CRC for R1.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * Only need to confirm CRC for R1.
      *
      * @param ph Pointer to the PDU information
-     *
      */
     void r1SubstateRecvEof(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief Process receive EOF for R2.
      *
-     * @par Description
-     *       For R2, need to trigger the send of EOF-ACK and then call the
-     *       check complete function which will either send NAK or FIN.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * For R2, need to trigger the send of EOF-ACK and then call the
+     * check complete function which will either send NAK or FIN.
      *
      * @param ph Pointer to the PDU information
-     *
      */
     void r2SubstateRecvEof(const Cfdp::Pdu& pdu);
 
     /************************************************************************/
     /** @brief Process received file data for R1.
      *
-     * @par Description
-     *       For R1, only need to digest the CRC.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * For R1, only need to digest the CRC.
      *
      * @param ph Pointer to the PDU information
      */
@@ -780,15 +618,11 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Process received file data for R2.
      *
-     * @par Description
-     *       For R2, the CRC is checked after the whole file is received
-     *       since there may be gaps. Instead, insert file received range
-     *       data into chunks. Once NAK has been received, this function
-     *       always checks for completion. This function also re-arms
-     *       the ACK timer.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * For R2, the CRC is checked after the whole file is received
+     * since there may be gaps. Instead, insert file received range
+     * data into chunks. Once NAK has been received, this function
+     * always checks for completion. This function also re-arms
+     * the ACK timer.
      *
      * @param ph Pointer to the PDU information
      */
@@ -797,12 +631,8 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Loads a single NAK segment request.
      *
-     * @par Description
-     *       This is a callback function used with CfdpChunkList::computeGaps().
-     *       For each gap found, this function adds a segment request to the NAK PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       chunk must not be NULL, nak must not be NULL.
+     * This is a callback function used with CfdpChunkList::computeGaps().
+     * For each gap found, this function adds a segment request to the NAK PDU.
      *
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
@@ -812,64 +642,46 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
      *
-     * @par Description
-     *       NAK PDU is sent when there are gaps in the received data. The
-     *       chunks class tracks this and generates the NAK PDU by calculating
-     *       gaps internally and calling r2GapCompute(). There is a special
-     *       case where if a metadata PDU has not been received, then a NAK
-     *       packet will be sent to request another.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
+     * NAK PDU is sent when there are gaps in the received data. The
+     * chunks class tracks this and generates the NAK PDU by calculating
+     * gaps internally and calling r2GapCompute(). There is a special
+     * case where if a metadata PDU has not been received, then a NAK
+     * packet will be sent to request another.
      *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
-     *
      */
     Cfdp::Status::T rSubstateSendNak();
 
     /************************************************************************/
     /** @brief Calculate up to the configured amount of bytes of CRC.
      *
-     * @par Description
-     *       The configuration table has a number of bytes to calculate per
-     *       transaction per wakeup. At each wakeup, the file is read and
-     *       this number of bytes are calculated. This function will set
-     *       the checksum error condition code if the final CRC does not match.
+     * The configuration table has a number of bytes to calculate per
+     * transaction per wakeup. At each wakeup, the file is read and
+     * this number of bytes are calculated. This function will set
+     * the checksum error condition code if the final CRC does not match.
      *
      * @par PTFO
      *       Increase throughput by consuming all CRC bytes per wakeup in
      *       transaction-order. This would require a change to the meaning
      *       of the value in the configuration table.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      * @retval Cfdp::Status::SUCCESS on completion.
      * @retval Cfdp::Status::CFDP_ERROR on non-completion.
-     *
      */
     Cfdp::Status::T r2CalcCrcChunk();
 
     /************************************************************************/
     /** @brief Send a FIN PDU.
      *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
-     *
      */
     Cfdp::Status::T r2SubstateSendFin();
 
     /************************************************************************/
     /** @brief Process receive FIN-ACK PDU.
      *
-     * @par Description
-     *       This is the end of an R2 transaction. Simply reset the transaction
-     *       state.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * This is the end of an R2 transaction. Simply reset the transaction
+     * state.
      *
      * @param ph Pointer to the PDU information
      */
@@ -878,15 +690,11 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief Process receive metadata PDU for R2.
      *
-     * @par Description
-     *       It's possible that metadata PDU was missed in cf_cfdp.c, or that
-     *       it was re-sent. This function checks if it was already processed,
-     *       and if not, handles it. If there was a temp file opened due to
-     *       missed metadata PDU, it will move the file to the correct
-     *       destination according to the metadata PDU.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance. ph must not be NULL.
+     * It's possible that metadata PDU was missed in cf_cfdp.c, or that
+     * it was re-sent. This function checks if it was already processed,
+     * and if not, handles it. If there was a temp file opened due to
+     * missed metadata PDU, it will move the file to the correct
+     * destination according to the metadata PDU.
      *
      * @param ph Pointer to the PDU information
      */
@@ -894,10 +702,6 @@ class CfdpTransaction {
 
     /************************************************************************/
     /** @brief Sends an inactivity timer expired event to EVS.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Operates on this transaction instance.
-     *
      */
     void rSendInactivityEvent();
 

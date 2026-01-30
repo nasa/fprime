@@ -272,10 +272,12 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
         txn->m_fsize  // file size
     );
 
-    // TODO: Add TLV support to Pdu classes for error conditions
-    // if (conditionCode != CF_CFDP_ConditionCode_NO_ERROR) {
-    //     appendTlv(...);
-    // }
+    // Add entity ID TLV on error conditions (optional per CCSDS spec)
+    if (conditionCode != Cfdp::CONDITION_CODE_NO_ERROR) {
+        Cfdp::Tlv tlv;
+        tlv.initialize(m_manager->getLocalEidParam());  // Local entity ID
+        eof.appendTlv(tlv);
+    }
 
     // Allocate buffer
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, eof.getBufferSize());
@@ -379,10 +381,12 @@ Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCod
         static_cast<Cfdp::FinFileStatus>(fs)  // file status
     );
 
-    // TODO: Add TLV support to Pdu classes for error conditions
-    // if (cc != CF_CFDP_ConditionCode_NO_ERROR) {
-    //     appendTlv(...);
-    // }
+    // Add entity ID TLV on error conditions (optional per CCSDS spec)
+    if (cc != Cfdp::CONDITION_CODE_NO_ERROR) {
+        Cfdp::Tlv tlv;
+        tlv.initialize(m_manager->getLocalEidParam());  // Local entity ID
+        fin.appendTlv(tlv);
+    }
 
     // Allocate buffer
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, fin.getBufferSize());
@@ -472,6 +476,20 @@ Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     // EOF PDU has been validated during fromBuffer()
     // Data is accessible via pdu.asEofPdu() by callers
+
+    // Process TLVs if present
+    const Cfdp::Pdu::EofPdu& eofPdu = pdu.asEofPdu();
+    const Cfdp::TlvList& tlvList = eofPdu.getTlvList();
+    for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
+        const Cfdp::Tlv& tlv = tlvList.getTlv(i);
+        if (tlv.getType() == Cfdp::TLV_TYPE_ENTITY_ID) {
+            // Entity ID TLV present - could validate entity ID matches expected
+            // Future enhancement: Add validation or logging
+            // TODO BPC: What does GSW what to do with these if anything
+        }
+        // Other TLV types can be processed here in the future
+    }
+
     return Cfdp::Status::SUCCESS;
 }
 
@@ -486,6 +504,20 @@ Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
     // FIN PDU has been validated during fromBuffer()
     // Data is accessible via pdu.asFinPdu() by callers
+
+    // Process TLVs if present
+    const Cfdp::Pdu::FinPdu& finPdu = pdu.asFinPdu();
+    const Cfdp::TlvList& tlvList = finPdu.getTlvList();
+    for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
+        const Cfdp::Tlv& tlv = tlvList.getTlv(i);
+        if (tlv.getType() == Cfdp::TLV_TYPE_ENTITY_ID) {
+            // Entity ID TLV present - could validate entity ID matches expected
+            // Future enhancement: Add validation or logging
+            // TODO BPC: What does GSW what to do with these if anything
+        }
+        // Other TLV types can be processed here in the future
+    }
+
     return Cfdp::Status::SUCCESS;
 }
 

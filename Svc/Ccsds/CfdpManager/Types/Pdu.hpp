@@ -110,6 +110,105 @@ enum LargeFileFlag : U8 {
     LARGE_FILE_64_BIT = 1   // 64-bit file size
 };
 
+// CFDP TLV Types
+// Blue Book section 5.4, table 5-3
+enum TlvType : U8 {
+    TLV_TYPE_FILESTORE_REQUEST = 0,       // Filestore request
+    TLV_TYPE_FILESTORE_RESPONSE = 1,      // Filestore response
+    TLV_TYPE_MESSAGE_TO_USER = 2,         // Message to user
+    TLV_TYPE_FAULT_HANDLER_OVERRIDE = 4,  // Fault handler override
+    TLV_TYPE_FLOW_LABEL = 5,              // Flow label
+    TLV_TYPE_ENTITY_ID = 6                // Entity ID
+};
+
+//! TLV data storage
+class TlvData {
+  private:
+    union {
+        CfdpEntityId m_eid;      // Valid when type=ENTITY_ID
+        U8 m_rawData[256];       // Valid for other types (max 255 bytes + null term)
+    };
+    U8 m_dataLength;             // Actual length of data
+
+  public:
+    TlvData();
+
+    // Set entity ID (for TLV type 6)
+    void setEntityId(CfdpEntityId eid);
+
+    // Set raw data (for other TLV types)
+    void setData(const U8* data, U8 length);
+
+    // Get entity ID
+    CfdpEntityId getEntityId() const;
+
+    // Get raw data pointer
+    const U8* getData() const;
+
+    // Get data length
+    U8 getLength() const;
+};
+
+//! Single TLV entry
+class Tlv {
+  private:
+    TlvType m_type;
+    TlvData m_data;
+
+  public:
+    Tlv();
+
+    // Initialize with entity ID
+    void initialize(CfdpEntityId eid);
+
+    // Initialize with raw data
+    void initialize(TlvType type, const U8* data, U8 length);
+
+    // Getters
+    TlvType getType() const;
+    const TlvData& getData() const;
+
+    // Compute encoded size
+    U32 getEncodedSize() const;
+
+    // Encode to SerialBuffer
+    Fw::SerializeStatus toSerialBuffer(Fw::SerialBuffer& serialBuffer) const;
+
+    // Decode from SerialBuffer
+    Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
+};
+
+//! List of TLVs
+class TlvList {
+  private:
+    U8 m_numTlv;
+    Tlv m_tlvs[CFDP_MAX_TLV];
+
+  public:
+    TlvList();
+
+    // Add a TLV (returns false if list is full)
+    bool appendTlv(const Tlv& tlv);
+
+    // Clear all TLVs
+    void clear();
+
+    // Get number of TLVs
+    U8 getNumTlv() const;
+
+    // Get TLV at index
+    const Tlv& getTlv(U8 index) const;
+
+    // Compute total encoded size of all TLVs
+    U32 getEncodedSize() const;
+
+    // Encode all TLVs to SerialBuffer
+    Fw::SerializeStatus toSerialBuffer(Fw::SerialBuffer& serialBuffer) const;
+
+    // Decode all TLVs from SerialBuffer (reads until buffer exhausted)
+    Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
+};
+
 //! \class Pdu
 //!
 union Pdu {
@@ -394,6 +493,9 @@ union Pdu {
         //! File size
         CfdpFileSize m_fileSize;
 
+        //! TLV list (optional)
+        TlvList m_tlvList;
+
       public:
         //! Initialize an EOF PDU
         void initialize(Direction direction,
@@ -429,6 +531,16 @@ union Pdu {
         //! Get directive code
         FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_END_OF_FILE; }
 
+        //! Add a TLV to this EOF PDU
+        //! @return true if added successfully, false if list is full
+        bool appendTlv(const Tlv& tlv) { return this->m_tlvList.appendTlv(tlv); }
+
+        //! Get TLV list
+        const TlvList& getTlvList() const { return this->m_tlvList; }
+
+        //! Get number of TLVs
+        U8 getNumTlv() const { return this->m_tlvList.getNumTlv(); }
+
       private:
         //! Initialize this EofPdu from a SerialBuffer
         Fw::SerializeStatus fromSerialBuffer(Fw::SerialBuffer& serialBuffer);
@@ -453,6 +565,9 @@ union Pdu {
 
         //! File status
         FinFileStatus m_fileStatus;
+
+        //! TLV list (optional)
+        TlvList m_tlvList;
 
       public:
         //! Initialize a Finished PDU
@@ -488,6 +603,16 @@ union Pdu {
 
         //! Get directive code
         FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_FIN; }
+
+        //! Add a TLV to this FIN PDU
+        //! @return true if added successfully, false if list is full
+        bool appendTlv(const Tlv& tlv) { return this->m_tlvList.appendTlv(tlv); }
+
+        //! Get TLV list
+        const TlvList& getTlvList() const { return this->m_tlvList; }
+
+        //! Get number of TLVs
+        U8 getNumTlv() const { return this->m_tlvList.getNumTlv(); }
 
       private:
         //! Initialize this FinPdu from a SerialBuffer

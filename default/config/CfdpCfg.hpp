@@ -182,6 +182,35 @@ typedef U32 CfdpFileSize;
 #define CF_NAK_MAX_SEGMENTS (58)
 
 /**
+ *  @brief Maximum TLVs (Type-Length-Value) per PDU
+ *
+ *  @par Description:
+ *       Maximum number of TLV (Type-Length-Value) tuples that can be
+ *       included in a single CFDP PDU. TLVs are optional metadata fields
+ *       used in EOF and FIN PDUs to convey diagnostic information.
+ *
+ *       Per CCSDS 727.0-B-5 section 5.4, TLVs are variable-length fields
+ *       that encode information such as entity IDs, fault handler overrides,
+ *       or messages to the user. The most common use is the Entity ID TLV
+ *       (type 6), automatically added to EOF and FIN PDUs on error conditions
+ *       to aid in debugging.
+ *
+ *       This value sets an upper bound on TLV storage per PDU to prevent
+ *       unbounded memory growth. The limit of 4 is based on NASA's cFS CF
+ *       implementation and is sufficient for typical CFDP operations:
+ *       - 1 for Entity ID TLV
+ *       - 3 additional for filestore requests/responses or messages
+ *
+ *  @par Limits:
+ *       Must be > 0.
+ *       Larger values consume more memory per PDU but allow more metadata.
+ *
+ *  @reference
+ *       CCSDS 727.0-B-5, section 5.4, table 5-3
+ */
+#define CFDP_MAX_TLV (4)
+
+/**
  *  @brief Max number of polling directories per channel.
  *
  *  @par Description:

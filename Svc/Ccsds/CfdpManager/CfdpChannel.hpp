@@ -108,9 +108,6 @@ class CfdpChannel {
     /**
      * @brief Find an unused transaction on this channel
      *
-     * @par Assumptions, External Events, and Notes:
-     *       None.
-     *
      * @param direction Intended direction of data flow (TX or RX)
      *
      * @returns Pointer to a free transaction
@@ -121,12 +118,8 @@ class CfdpChannel {
     /**
      * @brief Finds an active transaction by sequence number
      *
-     * @par Description
-     *       This function traverses the active rx, pending, txa, and txw
-     *       transaction queues and looks for the requested transaction.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       None.
+     * This function traverses the active rx, pending, txa, and txw
+     * transaction queues and looks for the requested transaction.
      *
      * @param transaction_sequence_number  Sequence number to find
      * @param src_eid                      Entity ID associated with sequence number
@@ -140,9 +133,6 @@ class CfdpChannel {
     /**
      * @brief Traverses all transactions on all active queues and performs an operation on them
      *
-     * @par Assumptions, External Events, and Notes:
-     *       fn must be a valid function. context must not be NULL.
-     *
      * @param fn      Callback to invoke for all traversed transactions
      * @param context Opaque object to pass to all callbacks
      *
@@ -153,12 +143,8 @@ class CfdpChannel {
     /**
      * @brief Returns a history structure back to its unused state
      *
-     * @par Description
-     *       There's nothing to do currently other than remove the history
-     *       from its current queue and put it back on Cfdp::QueueId::HIST_FREE.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       history must not be NULL.
+     * There's nothing to do currently other than remove the history
+     * from its current queue and put it back on Cfdp::QueueId::HIST_FREE.
      *
      * @param history Pointer to the history entry
      */
@@ -206,9 +192,6 @@ class CfdpChannel {
 
     /**
      * @brief Decrement the command TX counter for this channel
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       Counter must be greater than zero
      */
     void decrementCmdTxCounter();
 
@@ -306,18 +289,14 @@ class CfdpChannel {
     /**
      * @brief Free a transaction from the queue it's on
      *
-     * @par Description
-     *       NOTE: this leaves the transaction in a bad state,
-     *       so it must be followed by placing the transaction on
-     *       another queue. Need this function because the path of
-     *       freeing a transaction (returning to default state)
-     *       means that it must be removed from the current queue
-     *       otherwise if the structure is zero'd out the queue
-     *       will become corrupted due to other nodes on the queue
-     *       pointing to an invalid node
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * NOTE: this leaves the transaction in a bad state,
+     * so it must be followed by placing the transaction on
+     * another queue. Need this function because the path of
+     * freeing a transaction (returning to default state)
+     * means that it must be removed from the current queue
+     * otherwise if the structure is zero'd out the queue
+     * will become corrupted due to other nodes on the queue
+     * pointing to an invalid node
      *
      * @param txn Pointer to the transaction object
      */
@@ -326,9 +305,6 @@ class CfdpChannel {
     /**
      * @brief Move a transaction from one queue to another
      *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
-     *
      * @param txn   Pointer to the transaction object
      * @param queue Index of destination queue
      */
@@ -336,9 +312,6 @@ class CfdpChannel {
 
     /**
      * @brief Frees and resets a transaction and returns it for later use
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
      *
      * @param txn Pointer to the transaction object
      */
@@ -354,9 +327,8 @@ class CfdpChannel {
      * transaction, these PDUs will not be identifiable, and no longer associable
      * to this transaction.
      *
-     * @par Assumptions, External Events, and Notes:
-     *     It is imperative that nothing uses the txn struct after this call,
-     *     as it will now be invalid.  This is effectively like free().
+     * It is imperative that nothing uses the txn struct after this call,
+     * as it will now be invalid.  This is effectively like free().
      *
      * @param txn  Pointer to the transaction object
      */
@@ -365,14 +337,10 @@ class CfdpChannel {
     /**
      * @brief Insert a transaction into a priority sorted transaction queue
      *
-     * @par Description
-     *       This function works by walking the queue in reverse to find a
-     *       transaction with a higher priority than the given transaction.
-     *       The given transaction is then inserted after that one, since it
-     *       would be the next lower priority.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       txn must not be NULL.
+     * This function works by walking the queue in reverse to find a
+     * transaction with a higher priority than the given transaction.
+     * The given transaction is then inserted after that one, since it
+     * would be the next lower priority.
      *
      * @param txn   Pointer to the transaction object
      * @param queue Index of queue to insert into
