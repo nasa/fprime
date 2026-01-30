@@ -1,8 +1,8 @@
 # Svc::Ccsds::AosFramer
 
-The `Svc::Ccsds::AosFramer` is an implementation of the [FramerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [AOS Space Data Link Protocol](https://ccsds.org/Pubs/732x0b4.pdf).
+The `Svc::Ccsds::AosFramer` is an implementation of the [FramerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [AOS Space Data Link Protocol](https://ccsds.org/wp-content/uploads/gravity_forms/5-448e85c647331d9cbaf66c096458bdd5/2025/10/732x0b5ec1.pdf).
 
-It receives payload data (such as a Space Packet or Encapsulation Packet) on input and produces a AOS frame on its output port as a result. Please refer to the CCSDS [AOS specification (CCSDS 732.0-B-4)](https://ccsds.org/Pubs/732x0b4.pdf) for details on the frame format and protocol.
+It receives payload data (such as a Space Packet or Encapsulation Packet) on input and produces a AOS frame on its output port as a result. Please refer to the CCSDS [AOS specification (CCSDS 732.0-B-5)](https://ccsds.org/wp-content/uploads/gravity_forms/5-448e85c647331d9cbaf66c096458bdd5/2025/10/732x0b5ec1.pdf) for details on the frame format and protocol.
 
 The `Svc::Ccsds::AosFramer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into AOS frames.
 
