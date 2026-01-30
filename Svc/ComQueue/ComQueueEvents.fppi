@@ -8,16 +8,9 @@ format "The {} queue at index {} overflowed"
 
 @ Queue priority changed event
 event QueuePriorityChanged(
-    queueIndex: U32 @< Index of the queue
+    queueType: QueueType @< The Queue data type
+    indexType: FwIndexType @< The index of the queue (within the supplied type) that was modified
     newPriority: U32 @< New priority value
 ) \
 severity activity high \
-format "Queue {} priority changed to {}"
-
-@ Invalid queue index error
-event InvalidQueueIndex(
-    queueIndex: U32 @< Invalid queue index
-    maxIndex: U32 @< Maximum valid index
-) \
-severity warning high \
-format "Invalid queue index {} (max: {})"
+format "{} {} priority changed to {}"

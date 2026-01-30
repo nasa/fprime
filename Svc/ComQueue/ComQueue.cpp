@@ -221,8 +221,14 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
 
 void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
     // Acquire the queue that we need to drain
-    FwIndexType queueIndex =
-        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
+    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+
+    // Validate queue index
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     this->drainQueue(queueIndex);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -234,23 +240,34 @@ void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 queueIndex, U32 newPriority) {
+void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                             U32 cmdSeq,
+                                             Svc::QueueType queueType,
+                                             FwIndexType index,
+                                             U32 newPriority) {
+    // Acquire the queue we are reprioritizing
+    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+
     // Validate queue index
-    if (queueIndex >= TOTAL_PORT_COUNT) {
-        this->log_WARNING_HI_InvalidQueueIndex(queueIndex, TOTAL_PORT_COUNT - 1);
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
 
     // Validate priority range
     if (newPriority >= TOTAL_PORT_COUNT) {
-        this->log_WARNING_HI_InvalidQueueIndex(newPriority, TOTAL_PORT_COUNT - 1);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
 
-    // Update priority in the prioritized list
-    m_prioritizedList[queueIndex].priority = static_cast<FwIndexType>(newPriority);
+    // Find our queue in the prioritized list & update the priority
+    for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
+        // If the port based index matches, then update
+        if (m_prioritizedList[prioIndex].index == queueIndex) {
+            m_prioritizedList[prioIndex].priority = static_cast<FwIndexType>(newPriority);
+            break;  // Since we shouldn't find more than one queue at this port index
+        }
+    }
 
     // Re-sort the prioritized list to maintain priority ordering
     // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
@@ -270,7 +287,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U3
     }
 
     // Emit event for successful priority change
-    this->log_ACTIVITY_HI_QueuePriorityChanged(queueIndex, newPriority);
+    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, queueIndex, newPriority);
 
     // Send command response
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -430,5 +447,10 @@ void ComQueue::processQueue() {
         this->m_prioritizedList[priorityIndex] = this->m_prioritizedList[priorityIndex - 1];
         this->m_prioritizedList[priorityIndex - 1] = temp;
     }
+}
+
+FwIndexType ComQueue::getUnifiedQueueIndex(Svc::QueueType queueType, FwIndexType index) {
+    // Acquire the queue that we need to drain
+    return (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
 }
 }  // end namespace Svc

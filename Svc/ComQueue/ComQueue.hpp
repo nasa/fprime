@@ -91,7 +91,7 @@ class ComQueue final : public ComQueueComponentBase {
         FwIndexType priority;                   //!< Priority of the queue
         Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
         Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode
-        FwIndexType index;                      //!< Index of this queue in the prioritized list
+        FwIndexType index;                      //!< Index of this queue in m_queues
         FwSizeType msgSize;                     //!< Message size of messages in this queue
     };
 
@@ -172,11 +172,13 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Handler for SET_QUEUE_PRIORITY command
     //!
-    void SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                       U32 cmdSeq,           //!< The command sequence number
-                                       U32 queueIndex,       //!< Index of the queue to modify
-                                       U32 newPriority       //!< New priority value for the queue
-                                       ) override;
+    void SET_QUEUE_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,       //!< The opcode
+        U32 cmdSeq,                //!< The command sequence number
+        Svc::QueueType queueType,  //!< The Queue data type
+        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
+        U32 newPriority            //!< New priority value for the queue
+        ) override;
 
     //! Handler implementation for command FLUSH_QUEUE
     //!
@@ -236,6 +238,9 @@ class ComQueue final : public ComQueueComponentBase {
     //! Process the queues to select the next priority message
     //!
     void processQueue();
+
+    //! Convert Queue Type & Index into single queueIndex
+    FwIndexType getUnifiedQueueIndex(Svc::QueueType queueType, FwIndexType index);
 
   private:
     // ----------------------------------------------------------------------
