@@ -1,6 +1,7 @@
-import os
 import json
-from fprime_gds.executables.data_product_writer import DataProductWriter
+from pathlib import Path
+
+from fprime_gds.common.dp.decoder import DataProductDecoder
 
 
 def test_dp_send(fprime_test_api):
@@ -21,11 +22,11 @@ def test_dp_send(fprime_test_api):
     dp_file_path = file_result.get_display_text().split().pop()
     # Verify that the file exists
     # Assumes that we are running the test from the Ref directory
-    assert os.path.isfile(dp_file_path)
+    assert Path(dp_file_path).is_file()
 
 
 def test_dp_decode(fprime_test_api):
-    """Test that we can decode DPs on the ground via fprime_dp_writer"""
+    """Test that we can decode DPs on the ground via DataProductDecoder (`fprime-dp decode`)"""
 
     # Run Dp command to send a data product
     fprime_test_api.send_and_assert_command("Ref.dpDemo.Dp", ["IMMEDIATE", 1])
@@ -36,24 +37,24 @@ def test_dp_decode(fprime_test_api):
     dp_file_path = file_result.get_display_text().split().pop()
     # Verify that the file exists
     # Assumes that we are running the test from the Ref directory
-    assert os.path.isfile(dp_file_path)
-    # Decode DP with fprime-dp-writer tool
-    json_dict = fprime_test_api.dictionaries.dictionary_path
-    decoded_file_name = os.path.basename(dp_file_path).replace(".fdp", ".json")
-    DataProductWriter(json_dict, dp_file_path).process()
-    assert os.path.isfile(decoded_file_name)
-    with open("./DpDemo/test/int/dp_ref_output.json", "r") as ref_file, open(
+    assert Path(dp_file_path).is_file(), "Dp file not downlinked correctly"
+    # Decode DP file
+    decoded_file_name = Path(dp_file_path).name.replace(".fdp", ".json")
+    DataProductDecoder(
+        fprime_test_api.dictionaries, dp_file_path, decoded_file_name
+    ).process()
+    assert Path(decoded_file_name).is_file(), "Decoded file not created"
+
+    # Open both reference JSON and output JSON and compare
+    with open(Path(__file__).parent / "dp_ref_output.json", "r") as ref_file, open(
         decoded_file_name, "r"
     ) as output_file:
         ref_json = json.load(ref_file)
         output_json = json.load(output_file)
-        # Remove fields that we expect to be different
-        exclude = ["Seconds", "USeconds", "TimeBase", "Context", "headerHash"]
-        assert len(ref_json) > 0 and len(output_json) > 0
-        for f in exclude:
-            assert isinstance(ref_json[0], dict) and isinstance(output_json[0], dict)
-            assert f in ref_json[0] and f in output_json[0]
-            ref_json[0].pop(f)
-            output_json[0].pop(f)
-        # Check that the JSON strings are the same
-        assert json.dumps(ref_json) == json.dumps(output_json)
+        # Exclude Time and Checksum header fields since the timestamp will change every time
+        ref_json["Header"].pop("Time")
+        output_json["Header"].pop("Time")
+        ref_json["Header"].pop("Checksum")
+        output_json["Header"].pop("Checksum")
+        # Every other fields in Header and Data should be exactly the same
+        assert ref_json == output_json
