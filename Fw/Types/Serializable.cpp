@@ -352,7 +352,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(I16& val, Endianness mode) {
-    U16 unsignVal;
+    U16 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
         val = static_cast<I16>(unsignVal);
@@ -394,7 +394,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(I32& val, Endianness mode) {
-    U32 unsignVal;
+    U32 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
         val = static_cast<I32>(unsignVal);
@@ -501,7 +501,7 @@ SerializeStatus LinearBufferBase::deserializeTo(void*& val, Endianness mode) {
 
 SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
     // deserialize as 64-bit int to handle endianness
-    U32 tempVal;
+    U32 tempVal = 0;
     SerializeStatus stat = this->deserializeTo(tempVal, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -525,7 +525,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
     FW_ASSERT(this->getBuffAddr());
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
-        FwSizeStoreType storedLength;
+        FwSizeStoreType storedLength = 0;
 
         SerializeStatus stat = this->deserializeTo(storedLength, endianMode);
 
@@ -563,7 +563,7 @@ SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endiannes
     FW_ASSERT(val.getBuffAddr());
     SerializeStatus stat = FW_SERIALIZE_OK;
 
-    FwSizeStoreType storedLength;
+    FwSizeStoreType storedLength = 0;
 
     stat = this->deserializeTo(storedLength, mode);
 
