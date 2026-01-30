@@ -64,7 +64,7 @@ class Queue {
                const QueueOverflowMode overflow_mode = QUEUE_DROP_NEWEST);
 
     /**
-     * \brief pushes a fixed-size message onto the the queue
+     * \brief pushes a fixed-size message onto the queue
      *
      * Pushes a fixed-size message onto the queue. This performs a copy of the data onto the queue so the user is free
      * to dispose the message data as soon as the call returns. Note: message is required to be of the size message_size
