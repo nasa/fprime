@@ -36,14 +36,6 @@ module Svc {
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop
 
-      @ Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
-      @ downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-      async command FLUSH_QUEUE(queueType: QueueType @< The Queue data type
-                                indexType: FwIndexType @< The index of the queue (within the supplied type) to flush
-                               )
-      @ Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
-      @ ownership return will be returned via the bufferReturnOut port.
-      async command FLUSH_ALL_QUEUES()
       # ----------------------------------------------------------------------
       # Special ports
       # ----------------------------------------------------------------------
@@ -69,62 +61,8 @@ module Svc {
       @ Port for emitting telemetry
       telemetry port Tlm
 
-      @ Command receive port
-      command recv port CmdDisp
-
-      @ Command registration port
-      command reg port CmdReg
-
-      @ Command response port
-      command resp port CmdStatus
-
-      # ----------------------------------------------------------------------
-      # Commands
-      # ----------------------------------------------------------------------
-
-      @ Set the priority of a specific queue at runtime
-      async command SET_QUEUE_PRIORITY(
-                                        queueIndex: U32 @< Index of the queue to modify
-                                        newPriority: U32 @< New priority value for the queue
-                                      ) \
-        opcode 0x00
-
-      # ----------------------------------------------------------------------
-      # Events
-      # ----------------------------------------------------------------------
-
-      @ Queue overflow event
-      event QueueOverflow(
-            queueType: QueueType @< The Queue data type
-            index: U32 @< index of overflowed queue
-       ) \
-        severity warning high \
-        format "The {} queue at index {} overflowed"
-
-      @ Queue priority changed event
-      event QueuePriorityChanged(
-            queueIndex: U32 @< Index of the queue
-            newPriority: U32 @< New priority value
-       ) \
-        severity activity high \
-        format "Queue {} priority changed to {}"
-
-      @ Invalid queue index error
-      event InvalidQueueIndex(
-            queueIndex: U32 @< Invalid queue index
-            maxIndex: U32 @< Maximum valid index
-       ) \
-        severity warning high \
-        format "Invalid queue index {} (max: {})"
-
-      # ----------------------------------------------------------------------
-      # Telemetry
-      # ----------------------------------------------------------------------
-
-      @ Depth of queues of Fw::ComBuffer type
-      telemetry comQueueDepth: ComQueueDepth id 0
-
-      @ Depth of queues of Fw::Buffer type
-      telemetry buffQueueDepth: BuffQueueDepth id 1
+      include "ComQueueCommands.fppi"
+      include "ComQueueEvents.fppi"
+      include "ComQueueTelemetry.fppi"
     }
 }

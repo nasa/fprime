@@ -88,9 +88,9 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 QueueMetadata& entry = this->m_prioritizedList[currentPriorityIndex];
                 entry.priority = queueConfig.entries[entryIndex].priority;
                 entry.depth = queueConfig.entries[entryIndex].depth;
-                entry.index = entryIndex;
                 entry.mode = queueConfig.entries[entryIndex].mode;
                 entry.overflowMode = queueConfig.entries[entryIndex].overflowMode;
+                entry.index = entryIndex;
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
@@ -123,8 +123,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         if (allocationSize > 0) {
             this->m_queues[this->m_prioritizedList[i].index].setup(
                 reinterpret_cast<U8*>(this->m_allocation) + allocationOffset, allocationSize,
-                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize,
-                this->m_prioritizedList[i].mode, this->m_prioritizedList[i].overflowMode);
+                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize, this->m_prioritizedList[i].mode,
+                this->m_prioritizedList[i].overflowMode);
         }
         allocationOffset += allocationSize;
     }
@@ -132,26 +132,6 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset),
               static_cast<FwAssertArgType>(totalAllocation));
 }
-
-// ----------------------------------------------------------------------
-// Handler implementations for commands
-// ----------------------------------------------------------------------
-
-void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
-    // Acquire the queue that we need to drain
-    FwIndexType queueIndex =
-        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
-    this->drainQueue(queueIndex);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
-void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
-        this->drainQueue(i);
-    }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -236,8 +216,23 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
 }
 
 // ----------------------------------------------------------------------
-// Command handler implementations
+// Handler implementations for commands
 // ----------------------------------------------------------------------
+
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+    // Acquire the queue that we need to drain
+    FwIndexType queueIndex =
+        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
+    this->drainQueue(queueIndex);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
+        this->drainQueue(i);
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
 
 void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 queueIndex, U32 newPriority) {
     // Validate queue index

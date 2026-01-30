@@ -89,10 +89,10 @@ class ComQueue final : public ComQueueComponentBase {
     struct QueueMetadata {
         FwSizeType depth;                       //!< Depth of the queue in messages
         FwIndexType priority;                   //!< Priority of the queue
-        FwIndexType index;                      //!< Index of this queue in the prioritized list
-        FwSizeType msgSize;                     //!< Message size of messages in this queue
         Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
         Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode
+        FwIndexType index;                      //!< Index of this queue in the prioritized list
+        FwSizeType msgSize;                     //!< Message size of messages in this queue
     };
 
     /**
@@ -129,29 +129,6 @@ class ComQueue final : public ComQueueComponentBase {
     //! Deallocate resources and cleanup ComQueue
     //!
     void cleanup();
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handler implementations for commands
-    // ----------------------------------------------------------------------
-
-    //! Handler implementation for command FLUSH_QUEUE
-    //!
-    //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
-    //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
-                                U32 cmdSeq,                //!< The command sequence number
-                                Svc::QueueType queueType,  //!< The Queue data type
-                                FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
-                                ) override;
-
-    //! Handler implementation for command FLUSH_ALL_QUEUES
-    //!
-    //! Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
-    //! ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                     U32 cmdSeq            //!< The command sequence number
-                                     ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -200,6 +177,24 @@ class ComQueue final : public ComQueueComponentBase {
                                        U32 queueIndex,       //!< Index of the queue to modify
                                        U32 newPriority       //!< New priority value for the queue
                                        ) override;
+
+    //! Handler implementation for command FLUSH_QUEUE
+    //!
+    //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
+    //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                U32 cmdSeq,                //!< The command sequence number
+                                Svc::QueueType queueType,  //!< The Queue data type
+                                FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
+                                ) override;
+
+    //! Handler implementation for command FLUSH_ALL_QUEUES
+    //!
+    //! Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring
+    //! ownership return will be returned via the bufferReturnOut port.
+    void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq            //!< The command sequence number
+                                     ) override;
 
     // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
