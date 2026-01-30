@@ -42,7 +42,6 @@ class FormatTest : public ::testing::Test {
 
     std::stringstream actual;
     std::stringstream expected;
-
 };
 
 TEST_F(FormatTest, Bool) {
