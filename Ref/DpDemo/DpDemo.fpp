@@ -2,6 +2,8 @@ module Ref {
     @ DP Demo
     active component DpDemo {
 
+        constant stringSize = 80
+
         enum ColorEnum {
             RED
             GREEN
@@ -13,7 +15,7 @@ module Ref {
             ASYNC
         }
 
-        type StringAlias = string
+        type StringAlias = string size stringSize
         type BoolAlias = bool
         type I32Alias = I32
         type F64Alias = F64
@@ -25,7 +27,7 @@ module Ref {
         array U32Array = [5] U32
 
         @ Array of strings
-        array StringArray = [2] string
+        array StringArray = [2] string size stringSize
 
         @ Array of array of strings
         array ArrayOfStringArray = [3] StringArray
@@ -43,14 +45,14 @@ module Ref {
         }
 
         struct StructWithStringMembers {
-            stringMember: string,
+            stringMember: string size stringSize,
             stringArrayMember: StringArray
         }
 
         struct StructWithEverything {
             integerMember: I32Alias,
             floatMember: F32,
-            stringMember: string,
+            stringMember: string size stringSize,
             booleanMember: bool,
             enumMember: ColorEnum,
             arrayMemberU32: [2] U32Array,
@@ -188,7 +190,7 @@ module Ref {
         product record EnumArrayRecord: EnumArray id 9
 
         @ Data product record - string array record
-        product record StringArrayRecord: string array id 10
+        product record StringArrayRecord: string size stringSize array id 10
 
         @ Data product record - array record (structs)
         product record StructArrayRecord: StructWithStringMembers array id 11
