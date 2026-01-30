@@ -16,7 +16,6 @@ register_fprime_library(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpEngine.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpCodec.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpChunk.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpClist.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpUtils.cpp"

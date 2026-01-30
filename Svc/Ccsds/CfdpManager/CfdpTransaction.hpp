@@ -39,7 +39,6 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 
 namespace Svc {

@@ -256,19 +256,16 @@ union Pdu {
         //! File size
         CfdpFileSize m_fileSize;
 
-        //! Source filename length
-        U8 m_sourceFilenameLength;
-
         //! Source filename
-        const char* m_sourceFilename;
-
-        //! Destination filename length
-        U8 m_destFilenameLength;
+        Fw::String m_sourceFilename;
 
         //! Destination filename
-        const char* m_destFilename;
+        Fw::String m_destFilename;
 
       public:
+        //! Constructor
+        MetadataPdu() : m_sourceFilename(""), m_destFilename("") {}
+
         //! Initialize a Metadata PDU
         void initialize(Direction direction,
                        Cfdp::Class::T txmMode,
@@ -276,8 +273,8 @@ union Pdu {
                        CfdpTransactionSeq transactionSeq,
                        CfdpEntityId destEid,
                        CfdpFileSize fileSize,
-                       const char* sourceFilename,
-                       const char* destFilename,
+                       const Fw::String& sourceFilename,
+                       const Fw::String& destFilename,
                        ChecksumType checksumType,
                        U8 closureRequested);
 
@@ -297,10 +294,10 @@ union Pdu {
         CfdpFileSize getFileSize() const { return this->m_fileSize; }
 
         //! Get the source filename
-        const char* getSourceFilename() const { return this->m_sourceFilename; }
+        const Fw::String& getSourceFilename() const { return this->m_sourceFilename; }
 
         //! Get the destination filename
-        const char* getDestFilename() const { return this->m_destFilename; }
+        const Fw::String& getDestFilename() const { return this->m_destFilename; }
 
         //! Get checksum type
         ChecksumType getChecksumType() const { return this->m_checksumType; }
@@ -644,10 +641,16 @@ union Pdu {
 
   public:
     // ----------------------------------------------------------------------
-    // Constructor
+    // Constructor/Destructor
     // ----------------------------------------------------------------------
 
-    Pdu() { this->m_header.m_type = T_NONE; }
+    Pdu() : m_metadataPdu() { this->m_header.m_type = T_NONE; }
+
+    ~Pdu() {
+        // Explicitly destroy the active union member
+        // Since we always construct m_metadataPdu, always destroy it
+        this->m_metadataPdu.~MetadataPdu();
+    }
 
   public:
     // ----------------------------------------------------------------------

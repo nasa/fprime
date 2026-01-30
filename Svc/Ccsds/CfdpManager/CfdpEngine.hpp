@@ -74,36 +74,6 @@ typedef struct CF_CFDP_Tick_args
 // TODO: These will be replaced by Pdu classes in a future refactoring
 //
 
-/********************************************************************************/
-/**
- * @brief Initiate the process of encoding a new PDU to send
- *
- * This resets the encoder and PDU buffer to initial values, and prepares for encoding a new PDU
- * for sending to a remote entity.
- *
- * TODO BPC: I have removed the encap_hdr_size argument as the F' port of CFDP is NOT encapsulating PDUs
- *
- * @param penc           Encoder state structure, will be reset/initialized by this call to point to msgbuf.
- * @param msgbuf         Pointer to encapsulation message, in this case a CFE software bus message
- * @param ph             Pointer to logical PDU buffer content, will be cleared to all zero by this call
- * @param total_size     Allocated size of msgbuf encapsulation structure (encoding cannot exceed this)
- */
-void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size);
-
-/********************************************************************************/
-/**
- * @brief Initiate the process of decoding a received PDU
- *
- * This resets the decoder and PDU buffer to initial values, and prepares for decoding a new PDU
- * that was received from a remote entity.
- *
- * @param pdec           Decoder state structure, will be reset/initialized by this call to point to msgbuf.
- * @param msgbuf         Pointer to encapsulation message, in this case a CFE software bus message
- * @param ph             Pointer to logical PDU buffer content, will be cleared to all zero by this call
- * @param total_size     Total size of msgbuf encapsulation structure (decoding cannot exceed this)
- */
-void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size);
-
 /**
  * @brief CFDP Protocol Engine
  *
@@ -396,22 +366,19 @@ class CfdpEngine {
     Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu);
 
     /**
-     * @brief Unpack a metadata PDU from a received message
+     * @brief Handle receipt of metadata PDU
      *
      * This should only be invoked for buffers that have been identified
      * as a metadata PDU.
      *
      * @par Assumptions, External Events, and Notes:
      *       txn must not be NULL.
+     *       PDU validation already done in MetadataPdu::fromBuffer
      *
      * @param txn  Pointer to the transaction state
-     * @param ph   The logical PDU buffer being received
-     *
-     * @returns integer status code
-     * @retval Cfdp::Status::SUCCESS on success
-     * @retval Cfdp::Status::PDU_METADATA_ERROR on error
+     * @param pdu  The metadata PDU
      */
-    Cfdp::Status::T recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -602,50 +569,7 @@ class CfdpEngine {
 
     // PDU Operations - Send
 
-    /**
-     * @brief Appends a single TLV value to the logical PDU data
-     *
-     * This function implements common functionality between SendEof and SendFin
-     * which append a TLV value specifying the faulting entity ID.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       ptlv_list must not be NULL.
-     *       Only CF_CFDP_TLV_TYPE_ENTITY_ID type is currently implemented
-     *
-     * @param ptlv_list TLV list from current PDU buffer.
-     * @param tlv_type  Type of TLV to append.  Currently must be CF_CFDP_TLV_TYPE_ENTITY_ID.
-     * @param local_eid Local entity ID to append
-     */
-    void appendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid);
-
-    /**
-     * @brief Set the PDU length field in the PDU header
-     *
-     * @param ph Pointer to logical PDU buffer
-     */
-    void setPduLength(CF_Logical_PduBuffer_t *ph);
-
     // PDU Operations - Receive
-
-    /**
-     * @brief Interpret common PDU header and file directive header
-     *
-     * @par Description
-     *       This interprets the common PDU header and the file directive header
-     *       (if applicable) and populates the logical PDU buffer.
-     *
-     * @par Assumptions, External Events, and Notes:
-     *       A new message has been received.
-     *
-     * @param chan_num The channel number for statistics purposes
-     * @param ph       The logical PDU buffer being received
-     *
-     * @returns integer status code
-     * @retval Cfdp::Status::SUCCESS on success
-     * @retval Cfdp::Status::ERROR for general errors
-     * @retval Cfdp::Status::SHORT_PDU_ERROR if PDU too short
-     */
-    Cfdp::Status::T recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph);
 
     /**
      * @brief Receive state function to ignore a packet
@@ -738,17 +662,6 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      */
     void handleNotKeepFile(CfdpTransaction *txn);
-
-    // Utilities
-
-    /**
-     * @brief Copy a string from a logical value (LV) structure
-     *
-     * @param out     Output F' string
-     * @param src_lv  Source LV structure
-     * @returns Cfdp::Status::SUCCESS on success, ERROR if length is zero or invalid
-     */
-    Cfdp::Status::T copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t *src_lv);
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

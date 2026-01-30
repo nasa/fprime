@@ -121,13 +121,13 @@ void CfdpManagerTester::verifyMetadataPdu(
         << "Closure requested mismatch for class " << static_cast<int>(expectedClass);
 
     // Validate source filename
-    const char* rxSrcFilename = metadataPdu.getSourceFilename();
+    const char* rxSrcFilename = metadataPdu.getSourceFilename().toChar();
     ASSERT_NE(nullptr, rxSrcFilename) << "Source filename is null";
     FwSizeType srcLen = strlen(expectedSourceFilename);
     EXPECT_EQ(0, memcmp(rxSrcFilename, expectedSourceFilename, srcLen)) << "Source filename mismatch";
 
     // Validate destination filename
-    const char* rxDstFilename = metadataPdu.getDestFilename();
+    const char* rxDstFilename = metadataPdu.getDestFilename().toChar();
     ASSERT_NE(nullptr, rxDstFilename) << "Destination filename is null";
     FwSizeType dstLen = strlen(expectedDestFilename);
     EXPECT_EQ(0, memcmp(rxDstFilename, expectedDestFilename, dstLen)) << "Destination filename mismatch";
@@ -381,7 +381,7 @@ void CfdpManagerTester::sendMetadataPdu(
     );
 
     // Allocate buffer for PDU
-    U32 pduSize = metadataPdu.bufferSize();
+    U32 pduSize = metadataPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
@@ -416,7 +416,7 @@ void CfdpManagerTester::sendFileDataPdu(
     );
 
     // Allocate buffer for PDU
-    U32 pduSize = fileDataPdu.bufferSize();
+    U32 pduSize = fileDataPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
@@ -451,7 +451,7 @@ void CfdpManagerTester::sendEofPdu(
     );
 
     // Allocate buffer for PDU
-    U32 pduSize = eofPdu.bufferSize();
+    U32 pduSize = eofPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
@@ -485,7 +485,7 @@ void CfdpManagerTester::sendFinPdu(
     );
 
     // Allocate buffer for PDU
-    U32 pduSize = finPdu.bufferSize();
+    U32 pduSize = finPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
     pduBuffer.setSize(pduSize);
 
@@ -522,7 +522,7 @@ void CfdpManagerTester::sendAckPdu(
     );
 
     // Allocate buffer for PDU
-    U32 pduSize = ackPdu.bufferSize();
+    U32 pduSize = ackPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
     pduBuffer.setSize(pduSize);
 
@@ -566,7 +566,7 @@ void CfdpManagerTester::sendNakPdu(
     }
 
     // Allocate buffer for PDU
-    U32 pduSize = nakPdu.bufferSize();
+    U32 pduSize = nakPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
@@ -855,9 +855,9 @@ void CfdpManagerTester::testAckPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup test parameters for ACK PDU
-    const CF_CFDP_AckTxnStatus_t testTransactionStatus = CF_CFDP_AckTxnStatus_ACTIVE;
-    const CF_CFDP_FileDirective_t testDirectiveCode = CF_CFDP_FileDirective_EOF;
-    const CF_CFDP_ConditionCode_t testConditionCode = CF_CFDP_ConditionCode_NO_ERROR;
+    const Cfdp::AckTxnStatus testTransactionStatus = Cfdp::ACK_TXN_STATUS_ACTIVE;
+    const Cfdp::FileDirective testDirectiveCode = Cfdp::FILE_DIRECTIVE_END_OF_FILE;
+    const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
 
     // Clear port history before test
     this->clearHistory();
@@ -920,13 +920,16 @@ void CfdpManagerTester::testNakPdu() {
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
     const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
     const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
+    
+    // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
+    // requesting retransmission of missing data
 
     nakPdu.initialize(
         direction,
         Cfdp::Class::CLASS_2,              // Class 2 (acknowledged mode)
-        testPeerId,                         // source EID (sender/peer)
+        component.getLocalEidParam(),       // source EID (receiver/local)
         testSequenceId,                     // transaction sequence number
-        component.getLocalEidParam(),       // destination EID (receiver/local)
+        testPeerId,                         // destination EID (sender/peer)
         testScopeStart,                     // scope start
         testScopeEnd                        // scope end
     );
@@ -955,8 +958,6 @@ void CfdpManagerTester::testNakPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Verify NAK PDU
-    // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
-    // requesting retransmission of missing data
 
     // Define expected segment requests
     Cfdp::Pdu::SegmentRequest expectedSegments[3];

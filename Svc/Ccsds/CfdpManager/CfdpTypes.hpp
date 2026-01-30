@@ -38,6 +38,9 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <config/CfdpCfg.hpp>
+#include <config/CfdpEntityIdAliasAc.hpp>
+#include <config/CfdpTransactionSeqAliasAc.hpp>
+#include <config/CfdpFileSizeAliasAc.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
@@ -46,7 +49,6 @@
 #include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpCodec.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>

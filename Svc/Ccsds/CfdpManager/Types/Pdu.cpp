@@ -59,28 +59,41 @@ Fw::SerializeStatus Pdu::fromBuffer(const Fw::Buffer& buffer) {
     // Based on header type, deserialize the specific PDU
     switch (this->m_header.m_type) {
         case T_METADATA:
-            return this->m_metadataPdu.fromBuffer(buffer);
+            status = this->m_metadataPdu.fromBuffer(buffer);
+            if(status != Fw::FW_SERIALIZE_OK)
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_IDLE_MD_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF: got invalid PDU -- abandoning");
+                // ++CF_AppData.hk.Payload.channel_hk[portNum].counters.recv.error;
+            }
+            break;
 
         case T_FILE_DATA:
-            return this->m_fileDataPdu.fromBuffer(buffer);
+            status = this->m_fileDataPdu.fromBuffer(buffer);
+            break;
 
         case T_EOF:
-            return this->m_eofPdu.fromBuffer(buffer);
-
+            status = this->m_eofPdu.fromBuffer(buffer);
+            break;
+            
         case T_FIN:
-            return this->m_finPdu.fromBuffer(buffer);
-
+            status = this->m_finPdu.fromBuffer(buffer);
+            break;
+            
         case T_ACK:
-            return this->m_ackPdu.fromBuffer(buffer);
-
+            status = this->m_ackPdu.fromBuffer(buffer);
+            break;
+            
         case T_NAK:
-            return this->m_nakPdu.fromBuffer(buffer);
+            status = this->m_nakPdu.fromBuffer(buffer);
+            break;
 
         default:
             // Unknown PDU type
             // Don't assert on unknown data from the ground
-            return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+            status = Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
+    return status;
 }
 
 Fw::SerializeStatus Pdu::toBuffer(Fw::Buffer& buffer) const {
@@ -119,15 +132,15 @@ const Pdu::Header& Pdu::asHeader() const {
 FileDirective Pdu::getDirectiveCode() const {
     switch (this->m_header.m_type) {
         case T_METADATA:
-            return this->m_metadataPdu.getDirectiveCode();
+            return FILE_DIRECTIVE_METADATA;
         case T_EOF:
-            return this->m_eofPdu.getDirectiveCode();
+            return FILE_DIRECTIVE_END_OF_FILE;
         case T_FIN:
-            return this->m_finPdu.getDirectiveCode();
+            return FILE_DIRECTIVE_FIN;
         case T_ACK:
-            return this->m_ackPdu.getDirectiveCode();
+            return FILE_DIRECTIVE_ACK;
         case T_NAK:
-            return this->m_nakPdu.getDirectiveCode();
+            return FILE_DIRECTIVE_NAK;
         case T_FILE_DATA:
             // File data PDU - not a directive
             return FILE_DIRECTIVE_INVALID_MAX;

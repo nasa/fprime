@@ -1000,7 +1000,6 @@ void CfdpTransaction::r2RecvFinAck(const Cfdp::Pdu& pdu) {
 
 void CfdpTransaction::r2RecvMd(const Cfdp::Pdu& pdu) {
     Fw::String fname;
-    Cfdp::Status::T status;
     Os::File::Status fileStatus;
     Os::FileSystem::Status fileSysStatus;
     bool success = true;
@@ -1014,78 +1013,69 @@ void CfdpTransaction::r2RecvMd(const Cfdp::Pdu& pdu) {
          * the md PDU */
         fname = this->m_history->fnames.dst_filename;
 
-        status = this->m_engine->recvMd(this, pdu);
-        if (status == Cfdp::Status::SUCCESS)
+        // PDU validation already done during deserialization
+        this->m_engine->recvMd(this, pdu);
+
+        /* successfully obtained md PDU */
+        if (this->m_flags.rx.eof_recv)
         {
-            /* successfully obtained md PDU */
-            if (this->m_flags.rx.eof_recv)
+            /* EOF was received, so check that md and EOF sizes match */
+            if (this->m_state_data.receive.r2.eof_size != this->m_fsize)
             {
-                /* EOF was received, so check that md and EOF sizes match */
-                if (this->m_state_data.receive.r2.eof_size != this->m_fsize)
+                // CFE_EVS_SendEvent(CF_CFDP_R_EOF_MD_SIZE_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF R%d(%lu:%lu): EOF/md size mismatch md: %lu, EOF: %lu",
+                //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+                //                   (unsigned long)this->m_history->seq_num, (unsigned long)this->m_fsize,
+                //                   (unsigned long)this->m_state_data.receive.r2.eof_size);
+                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
+                this->r2SetFinTxnStatus(CF_TxnStatus_FILE_SIZE_ERROR);
+                success = false;
+            }
+        }
+
+        if (success)
+        {
+            /* close and rename file */
+            this->m_fd.close();
+
+            fileSysStatus = Os::FileSystem::moveFile(fname.toChar(),
+                                                     this->m_history->fnames.dst_filename.toChar());
+            if (fileSysStatus != Os::FileSystem::OP_OK)
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_R_RENAME_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF R%d(%lu:%lu): failed to rename file in R2, error=%ld",
+                //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+                //                   (unsigned long)this->m_history->seq_num, (long)fileSysStatus);
+                // this->m_fd = OS_OBJECT_ID_UNDEFINED;
+                this->r2SetFinTxnStatus(CF_TxnStatus_FILESTORE_REJECTION);
+                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_rename;
+                success = false;
+            }
+            else
+            {
+                 // TODO BPC: flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
+                 // File was succesfully renamed, open for writing
+                fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
+                if (fileStatus != Os::File::OP_OK)
                 {
-                    // CFE_EVS_SendEvent(CF_CFDP_R_EOF_MD_SIZE_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //                   "CF R%d(%lu:%lu): EOF/md size mismatch md: %lu, EOF: %lu",
+                    // CFE_EVS_SendEvent(CF_CFDP_R_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //                   "CF R%d(%lu:%lu): failed to open renamed file in R2, error=%ld",
                     //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-                    //                   (unsigned long)this->m_history->seq_num, (unsigned long)this->m_fsize,
-                    //                   (unsigned long)this->m_state_data.receive.r2.eof_size);
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
-                    this->r2SetFinTxnStatus(CF_TxnStatus_FILE_SIZE_ERROR);
+                    //                   (unsigned long)this->m_history->seq_num, (long)fileStatus);
+                    this->r2SetFinTxnStatus(CF_TxnStatus_FILESTORE_REJECTION);
+                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
+                    // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
                     success = false;
                 }
             }
 
             if (success)
             {
-                /* close and rename file */
-                this->m_fd.close();
-
-                fileSysStatus = Os::FileSystem::moveFile(fname.toChar(),
-                                                         this->m_history->fnames.dst_filename.toChar());
-                if (fileSysStatus != Os::FileSystem::OP_OK)
-                {
-                    // CFE_EVS_SendEvent(CF_CFDP_R_RENAME_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //                   "CF R%d(%lu:%lu): failed to rename file in R2, error=%ld",
-                    //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-                    //                   (unsigned long)this->m_history->seq_num, (long)status);
-                    // this->m_fd = OS_OBJECT_ID_UNDEFINED;
-                    this->r2SetFinTxnStatus(CF_TxnStatus_FILESTORE_REJECTION);
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_rename;
-                    success = false;
-                }
-                else
-                {
-                     // TODO BPC: flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
-                     // File was succesfully renamed, open for writing
-                    fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
-                    if (fileStatus != Os::File::OP_OK)
-                    {
-                        // CFE_EVS_SendEvent(CF_CFDP_R_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
-                        //                   "CF R%d(%lu:%lu): failed to open renamed file in R2, error=%ld",
-                        //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-                        //                   (unsigned long)this->m_history->seq_num, (long)ret);
-                        this->r2SetFinTxnStatus(CF_TxnStatus_FILESTORE_REJECTION);
-                        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
-                        // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
-                        success = false;
-                    }
-                }
-
-                if (success)
-                {
-                    this->m_state_data.receive.cached_pos      = 0; /* reset psn due to open */
-                    this->m_flags.rx.md_recv                   = true;
-                    this->m_state_data.receive.r2.acknak_count = 0; /* in case part of NAK */
-                    this->r2Complete(true);                 /* check for completion now that md is received */
-                }
+                this->m_state_data.receive.cached_pos      = 0; /* reset psn due to open */
+                this->m_flags.rx.md_recv                   = true;
+                this->m_state_data.receive.r2.acknak_count = 0; /* in case part of NAK */
+                this->r2Complete(true);                 /* check for completion now that md is received */
             }
-        }
-        else
-        {
-            // CFE_EVS_SendEvent(CF_CFDP_R_PDU_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF R%d(%lu:%lu): invalid md received",
-            //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
-            /* do nothing here, since it will be NAK'd again later */
         }
     }
 }

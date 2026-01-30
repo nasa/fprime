@@ -35,7 +35,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
+#include <config/CfdpFileSizeAliasAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 
 namespace Svc {

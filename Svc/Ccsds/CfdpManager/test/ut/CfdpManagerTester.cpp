@@ -260,7 +260,7 @@ void CfdpManagerTester::completeClass2Handshake(
         component.getLocalEidParam(),
         destEid,
         expectedSeqNum,
-        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_EOF),
+        Cfdp::FILE_DIRECTIVE_END_OF_FILE,
         0,
         Cfdp::CONDITION_CODE_NO_ERROR,
         Cfdp::ACK_TXN_STATUS_ACTIVE
@@ -306,7 +306,7 @@ void CfdpManagerTester::verifyFinAckPdu(
                  sourceEid,
                  destEid,
                  expectedSeqNum,
-                 static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_FIN),
+                 Cfdp::FILE_DIRECTIVE_FIN,
                  1,
                  Cfdp::CONDITION_CODE_NO_ERROR,
                  Cfdp::ACK_TXN_STATUS_TERMINATED
@@ -760,7 +760,7 @@ void CfdpManagerTester::testClass2RxNominal() {
         TEST_GROUND_EID,
         component.getLocalEidParam(),
         transactionSeq,
-        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_EOF),
+        Cfdp::FILE_DIRECTIVE_END_OF_FILE,
         1,
         Cfdp::CONDITION_CODE_NO_ERROR,
         Cfdp::ACK_TXN_STATUS_ACTIVE
@@ -808,7 +808,7 @@ void CfdpManagerTester::testClass2RxNominal() {
         TEST_GROUND_EID,                      
         component.getLocalEidParam(),       
         transactionSeq,
-        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_FIN),
+        Cfdp::FILE_DIRECTIVE_FIN,
         1,
         Cfdp::CONDITION_CODE_NO_ERROR,
         Cfdp::ACK_TXN_STATUS_TERMINATED
@@ -925,7 +925,7 @@ void CfdpManagerTester::testClass2RxNack() {
         TEST_GROUND_EID,
         component.getLocalEidParam(),
         transactionSeq,
-        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_EOF),
+        Cfdp::FILE_DIRECTIVE_END_OF_FILE,
         1,
         Cfdp::CONDITION_CODE_NO_ERROR,
         Cfdp::ACK_TXN_STATUS_ACTIVE
@@ -1039,7 +1039,7 @@ void CfdpManagerTester::testClass2RxNack() {
         TEST_GROUND_EID,
         component.getLocalEidParam(),
         transactionSeq,
-        static_cast<Cfdp::FileDirective>(CF_CFDP_FileDirective_FIN),
+        Cfdp::FILE_DIRECTIVE_FIN,
         1,
         Cfdp::CONDITION_CODE_NO_ERROR,
         Cfdp::ACK_TXN_STATUS_TERMINATED

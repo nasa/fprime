@@ -45,38 +45,10 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpLogicalPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
-
-void CF_CFDP_EncodeStart(CF_EncoderState_t *penc, U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size)
-{
-    // TODO BPC: Current thought is to rework the encore to include a buffer reference
-    /* Clear the PDU buffer structure to start */
-    memset(ph, 0, sizeof(*ph));
-
-    /* attach encoder object to PDU buffer which is inside in an Fw::Buffer */
-    // TODO BPC: msgbuf should be passed in as the Fw::Buffer
-    penc->base = msgbuf;
-    ph->penc   = penc;
-
-    CF_CFDP_CodecReset(&penc->codec_state, total_size);
-}
-
-void CF_CFDP_DecodeStart(CF_DecoderState_t *pdec, const U8 *msgbuf, CF_Logical_PduBuffer_t *ph, size_t total_size)
-{
-    /* Clear the PDU buffer structure to start */
-    memset(ph, 0, sizeof(*ph));
-
-    /* attach decoder object to PDU buffer which is inside in an Fw::Buffer */
-    // TODO BPC: msgbuf should be passed in as the Fw::Buffer
-    pdec->base = msgbuf;
-    ph->pdec   = pdec;
-
-    CF_CFDP_CodecReset(&pdec->codec_state, total_size);
-}
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -204,22 +176,6 @@ void CfdpEngine::dispatchTx(CfdpTransaction *txn)
     txn->txStateDispatch(&state_fns);
 }
 
-void CfdpEngine::setPduLength(CF_Logical_PduBuffer_t *ph)
-{
-    U16 final_pos;
-
-    /* final position of the encoder state should reflect the entire PDU length */
-    final_pos = static_cast<U16>(CF_CODEC_GET_POSITION(ph->penc));
-
-    if (final_pos >= ph->pdu_header.header_encoded_length)
-    {
-        /* the value that goes into the packet is length _after_ header */
-        ph->pdu_header.data_encoded_length = final_pos - ph->pdu_header.header_encoded_length;
-    }
-
-    CF_CFDP_EncodeHeaderFinalSize(ph->penc, &ph->pdu_header);
-}
-
 Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
 {
     Fw::Buffer buffer;
@@ -246,8 +202,8 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
         txn->m_history->seq_num,  // transaction sequence number
         txn->m_history->peer_eid,  // destination EID
         txn->m_fsize,  // file size
-        txn->m_history->fnames.src_filename.toChar(),  // source filename
-        txn->m_history->fnames.dst_filename.toChar(),  // destination filename
+        txn->m_history->fnames.src_filename,  // source filename
+        txn->m_history->fnames.dst_filename,  // destination filename
         Cfdp::CHECKSUM_TYPE_MODULAR,  // checksum type
         closureRequested  // closure requested flag
     );
@@ -290,37 +246,6 @@ Cfdp::Status::T CfdpEngine::sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu&
     }
 
     return status;
-}
-
-void CfdpEngine::appendTlv(CF_Logical_TlvList_t *ptlv_list, CF_CFDP_TlvType_t tlv_type, CfdpEntityId local_eid)
-{
-    CF_Logical_Tlv_t *ptlv;
-
-    if (ptlv_list->num_tlv < CF_PDU_MAX_TLV)
-    {
-        ptlv = &ptlv_list->tlv[ptlv_list->num_tlv];
-        ++ptlv_list->num_tlv;
-    }
-    else
-    {
-        ptlv = NULL;
-    }
-
-    if (ptlv)
-    {
-        ptlv->type = tlv_type;
-
-        if (tlv_type == CF_CFDP_TLV_TYPE_ENTITY_ID)
-        {
-            ptlv->data.eid = local_eid;
-            ptlv->length   = CF_CFDP_GetValueEncodedSize(ptlv->data.eid);
-        }
-        else
-        {
-            ptlv->data.data_ptr = NULL;
-            ptlv->length        = 0;
-        }
-    }
 }
 
 Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
@@ -503,118 +428,21 @@ Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nak
     return status;
 }
 
-Cfdp::Status::T CfdpEngine::recvPh(U8 chan_num, CF_Logical_PduBuffer_t *ph)
+void CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
-    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
-    /*
-     * If the source eid, destination eid, or sequence number fields
-     * are larger than the sizes configured in the cf platform config
-     * file, then reject the PDU.
-     */
-    if (CF_CFDP_DecodeHeader(ph->pdec, &ph->pdu_header) != Cfdp::Status::SUCCESS)
-    {
-        // CFE_EVS_SendEvent(CF_PDU_TRUNCATION_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: PDU rejected due to EID/seq number field truncation");
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
-        ret = Cfdp::Status::ERROR;
-    }
-    /*
-     * The "large file" flag is not supported by this implementation yet.
-     * This means file sizes and offsets will be 64 bits, so codec routines
-     * will need to be updated to understand this.  OSAL also doesn't support
-     * 64-bit file access yet.
-     */
-    else if (CF_CODEC_IS_OK(ph->pdec) && ph->pdu_header.large_flag)
-    {
-        // CFE_EVS_SendEvent(CF_PDU_LARGE_FILE_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: PDU with large file bit received (unsupported)");
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
-        ret = Cfdp::Status::ERROR;
-    }
-    else
-    {
-        if (CF_CODEC_IS_OK(ph->pdec) && ph->pdu_header.pdu_type == 0)
-        {
-            CF_CFDP_DecodeFileDirectiveHeader(ph->pdec, &ph->fdirective);
-        }
-
-        if (!CF_CODEC_IS_OK(ph->pdec))
-        {
-            // CFE_EVS_SendEvent(CF_PDU_SHORT_HEADER_ERR_EID, CFE_EVS_EventType_ERROR, "CF: PDU too short (%lu received)",
-            //                   (unsigned long)CF_CODEC_GET_SIZE(ph->pdec));
-            // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
-            ret = Cfdp::Status::SHORT_PDU_ERROR;
-        }
-        else
-        {
-            /* PDU is ok, so continue processing */
-            // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.pdu;
-        }
-    }
-
-    return ret;
-}
-
-Cfdp::Status::T CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
-{
-    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-
     // Extract metadata PDU
     const Cfdp::Pdu::MetadataPdu& md = pdu.asMetadataPdu();
 
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 
-    /* store the filenames in transaction */
-    const char* srcFilename = md.getSourceFilename();
-    const char* dstFilename = md.getDestFilename();
+    /* store the filenames in transaction - validation already done during deserialization */
+    txn->m_history->fnames.src_filename = md.getSourceFilename();
+    txn->m_history->fnames.dst_filename = md.getDestFilename();
 
-    if (srcFilename != nullptr)
-    {
-        FwSizeType srcLen = Fw::StringUtils::string_length(srcFilename, CF_FILENAME_MAX_LEN);
-        if (srcLen > 0 && srcLen < CF_FILENAME_MAX_LEN)
-        {
-            txn->m_history->fnames.src_filename = srcFilename;
-        }
-        else
-        {
-            // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: metadata PDU rejected due to invalid source filename length");
-            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-            ret = Cfdp::Status::PDU_METADATA_ERROR;
-        }
-    }
-    else
-    {
-        ret = Cfdp::Status::PDU_METADATA_ERROR;
-    }
-
-    if (ret == Cfdp::Status::SUCCESS && dstFilename != nullptr)
-    {
-        FwSizeType dstLen = Fw::StringUtils::string_length(dstFilename, CF_FILENAME_MAX_LEN);
-        if (dstLen > 0 && dstLen < CF_FILENAME_MAX_LEN)
-        {
-            txn->m_history->fnames.dst_filename = dstFilename;
-            // CFE_EVS_SendEvent(CF_PDU_MD_RECVD_INF_EID, CFE_EVS_EventType_INFORMATION,
-            //                   "CF: md received for source: %s, dest: %s", txn->m_history->fnames.src_filename,
-            //                   txn->m_history->fnames.dst_filename);
-        }
-        else
-        {
-            // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: metadata PDU rejected due to invalid dest filename length");
-            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-            ret = Cfdp::Status::PDU_METADATA_ERROR;
-        }
-    }
-    else if (ret == Cfdp::Status::SUCCESS)
-    {
-        ret = Cfdp::Status::PDU_METADATA_ERROR;
-    }
-
-    return ret;
+    // CFE_EVS_SendEvent(CF_PDU_MD_RECVD_INF_EID, CFE_EVS_EventType_INFORMATION,
+    //                   "CF: md received for source: %s, dest: %s", txn->m_history->fnames.src_filename.toChar(),
+    //                   txn->m_history->fnames.dst_filename.toChar());
 }
 
 Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
@@ -706,8 +534,6 @@ void CfdpEngine::recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 
 void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
 {
-    Cfdp::Status::T status;
-
     // Extract header information
     const Cfdp::Pdu::Header& header = pdu.asHeader();
     CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
@@ -765,22 +591,14 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
         switch (directiveCode)
         {
             case Cfdp::FILE_DIRECTIVE_METADATA:
-                status = this->recvMd(txn, pdu);
-                if (!status)
-                {
-                    /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
-                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
-                    txn->m_txn_class = txmMode;
-                    txn->m_flags.rx.md_recv = true;
-                    txn->rInit(); /* initialize R */
-                }
-                else
-                {
-                    // CFE_EVS_SendEvent(CF_CFDP_IDLE_MD_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //                   "CF: got invalid md PDU -- abandoning transaction");
-                    // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-                    /* leave state as idle, which will reset below */
-                }
+                // PDU validation already done during deserialization
+                this->recvMd(txn, pdu);
+
+                /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
+                txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
+                txn->m_txn_class = txmMode;
+                txn->m_flags.rx.md_recv = true;
+                txn->rInit(); /* initialize R */
                 break;
             default:
                 // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -1221,27 +1039,6 @@ void CfdpEngine::sendEotPkt(CfdpTransaction *txn)
     //     CFE_SB_TimeStampMsg(CFE_MSG_PTR(EotPktPtr->TelemetryHeader));
     //     CFE_SB_TransmitBuffer(BufPtr, true);
     // }
-}
-
-Cfdp::Status::T CfdpEngine::copyStringFromLV(Fw::String& out, const CF_Logical_Lv_t* src_lv)
-{
-    if (src_lv->length > 0)
-    {
-        // Determine max copy length based on string capacity
-        const FwSizeType maxCopy =
-            (src_lv->length < out.getCapacity() - 1) ? src_lv->length : out.getCapacity() - 1;
-
-        char tmp[FileNameStringSize]; // Max size for CFDP file names
-        std::memcpy(tmp, src_lv->data_ptr, maxCopy);
-        tmp[maxCopy] = '\0';
-
-        out = tmp;
-        return Cfdp::Status::SUCCESS;
-    }
-
-    // LV length is zero or invalid: clear the output
-    out = "";
-    return Cfdp::Status::ERROR;
 }
 
 void CfdpEngine::cancelTransaction(CfdpTransaction *txn)

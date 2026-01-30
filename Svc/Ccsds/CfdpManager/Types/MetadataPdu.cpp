@@ -19,26 +19,23 @@ void Pdu::MetadataPdu::initialize(Direction direction,
                                    CfdpTransactionSeq transactionSeq,
                                    CfdpEntityId destEid,
                                    CfdpFileSize fileSize,
-                                   const char* sourceFilename,
-                                   const char* destFilename,
+                                   const Fw::String& sourceFilename,
+                                   const Fw::String& destFilename,
                                    ChecksumType checksumType,
                                    U8 closureRequested) {
     this->m_header.initialize(T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_fileSize = fileSize;
-    this->m_sourceFilename = sourceFilename;
 
     // Enforce CF_FILENAME_MAX_LEN for source filename
-    FwSizeType srcLen = Fw::StringUtils::string_length(sourceFilename, CF_FILENAME_MAX_LEN);
-    FW_ASSERT(srcLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(srcLen));
-    this->m_sourceFilenameLength = static_cast<U8>(srcLen);
-
-    this->m_destFilename = destFilename;
+    FwSizeType srcLen = sourceFilename.length();
+    FW_ASSERT(srcLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(srcLen), CF_FILENAME_MAX_LEN);
+    this->m_sourceFilename = sourceFilename;
 
     // Enforce CF_FILENAME_MAX_LEN for destination filename
-    FwSizeType dstLen = Fw::StringUtils::string_length(destFilename, CF_FILENAME_MAX_LEN);
-    FW_ASSERT(dstLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(dstLen));
-    this->m_destFilenameLength = static_cast<U8>(dstLen);
+    FwSizeType dstLen = destFilename.length();
+    FW_ASSERT(dstLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(dstLen), CF_FILENAME_MAX_LEN);
+    this->m_destFilename = destFilename;
 
     this->m_checksumType = checksumType;
     this->m_closureRequested = closureRequested;
@@ -53,10 +50,10 @@ U32 Pdu::MetadataPdu::getBufferSize() const {
     size += sizeof(U8) + sizeof(U8) + sizeof(CfdpFileSize);
 
     // Source filename LV: length(1) + value(n)
-    size += 1 + this->m_sourceFilenameLength;
+    size += 1 + static_cast<U32>(this->m_sourceFilename.length());
 
     // Dest filename LV: length(1) + value(n)
-    size += 1 + this->m_destFilenameLength;
+    size += 1 + static_cast<U32>(this->m_destFilename.length());
 
     return size;
 }
@@ -147,27 +144,29 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
     }
 
     // Source filename LV
-    status = serialBuffer.serializeFrom(this->m_sourceFilenameLength);
+    U8 sourceFilenameLength = static_cast<U8>(this->m_sourceFilename.length());
+    status = serialBuffer.serializeFrom(sourceFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     status = serialBuffer.pushBytes(
-        reinterpret_cast<const U8*>(this->m_sourceFilename),
-        this->m_sourceFilenameLength);
+        reinterpret_cast<const U8*>(this->m_sourceFilename.toChar()),
+        sourceFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     // Destination filename LV
-    status = serialBuffer.serializeFrom(this->m_destFilenameLength);
+    U8 destFilenameLength = static_cast<U8>(this->m_destFilename.length());
+    status = serialBuffer.serializeFrom(destFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     status = serialBuffer.pushBytes(
-        reinterpret_cast<const U8*>(this->m_destFilename),
-        this->m_destFilenameLength);
+        reinterpret_cast<const U8*>(this->m_destFilename.toChar()),
+        destFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -198,40 +197,70 @@ Fw::SerializeStatus Pdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialB
     }
 
     // Source filename LV
-    status = serialBuffer.deserializeTo(this->m_sourceFilenameLength);
+    U8 sourceFilenameLength;
+    status = serialBuffer.deserializeTo(sourceFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     // Validate filename length against CF_FILENAME_MAX_LEN
-    FW_ASSERT(this->m_sourceFilenameLength <= CF_FILENAME_MAX_LEN,
-              static_cast<FwAssertArgType>(this->m_sourceFilenameLength));
+    if (sourceFilenameLength > CF_FILENAME_MAX_LEN) {
+        // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                   "CF: metadata PDU rejected due to invalid source filename length of 0x%02x", sourceFilenameLength);
+        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
 
-    // Point to the filename data in the buffer (zero-copy)
-    const U8* addrLeft = serialBuffer.getBuffAddrLeft();
-    U8 bytes[CF_FILENAME_MAX_LEN];  // Temporary buffer for validation
-    status = serialBuffer.popBytes(bytes, this->m_sourceFilenameLength);
+    // Validate filename is not empty
+    if (sourceFilenameLength == 0) {
+        // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                   "CF: metadata PDU rejected due to empty source filename");
+        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
+    // Read filename into temporary buffer
+    char sourceFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
+    status = serialBuffer.popBytes(reinterpret_cast<U8*>(sourceFilenameBuffer), sourceFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    this->m_sourceFilename = reinterpret_cast<const char*>(addrLeft);
+    // Null-terminate before assigning to Fw::String
+    sourceFilenameBuffer[sourceFilenameLength] = '\0';
+    this->m_sourceFilename = sourceFilenameBuffer;
 
     // Destination filename LV
-    status = serialBuffer.deserializeTo(this->m_destFilenameLength);
+    U8 destFilenameLength;
+    status = serialBuffer.deserializeTo(destFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
     // Validate filename length against CF_FILENAME_MAX_LEN
-    FW_ASSERT(this->m_destFilenameLength <= CF_FILENAME_MAX_LEN,
-              static_cast<FwAssertArgType>(this->m_destFilenameLength));
+    if (destFilenameLength > CF_FILENAME_MAX_LEN) {
+        // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                   "CF: metadata PDU rejected due to invalid dest filename length of 0x%02x", destFilenameLength);
+        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
 
-    addrLeft = serialBuffer.getBuffAddrLeft();
-    status = serialBuffer.popBytes(bytes, this->m_destFilenameLength);
+    // Validate filename is not empty
+    if (destFilenameLength == 0) {
+        // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                   "CF: metadata PDU rejected due to empty dest filename");
+        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
+    // Read filename into temporary buffer
+    char destFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
+    status = serialBuffer.popBytes(reinterpret_cast<U8*>(destFilenameBuffer), destFilenameLength);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    this->m_destFilename = reinterpret_cast<const char*>(addrLeft);
+    // Null-terminate before assigning to Fw::String
+    destFilenameBuffer[destFilenameLength] = '\0';
+    this->m_destFilename = destFilenameBuffer;
 
     return Fw::FW_SERIALIZE_OK;
 }
