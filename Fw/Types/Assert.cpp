@@ -106,15 +106,15 @@ void AssertHook::deregisterHook() {
 }
 
 // Default handler of SwAssert functions
-FW_SWASSERT_NORETURN void defaultSwAssert(FILE_NAME_ARG file,
-                                          FwSizeType lineNo,
-                                          FwSizeType numArgs,
-                                          FwAssertArgType arg1,
-                                          FwAssertArgType arg2,
-                                          FwAssertArgType arg3,
-                                          FwAssertArgType arg4,
-                                          FwAssertArgType arg5,
-                                          FwAssertArgType arg6) {
+FW_ASSERT_NORETURN void defaultSwAssert(FILE_NAME_ARG file,
+                                        FwSizeType lineNo,
+                                        FwSizeType numArgs,
+                                        FwAssertArgType arg1,
+                                        FwAssertArgType arg2,
+                                        FwAssertArgType arg3,
+                                        FwAssertArgType arg4,
+                                        FwAssertArgType arg5,
+                                        FwAssertArgType arg6) {
     if (nullptr == s_assertHook) {
         CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
         defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, assertMsg,
