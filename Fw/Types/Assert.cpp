@@ -4,6 +4,7 @@
 #include <Fw/Types/format.hpp>
 #include <cassert>
 #include <cstdio>
+#include <cstdlib>
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_FwSizeType ""
@@ -105,15 +106,15 @@ void AssertHook::deregisterHook() {
 }
 
 // Default handler of SwAssert functions
-I8 defaultSwAssert(FILE_NAME_ARG file,
-                   FwSizeType lineNo,
-                   FwSizeType numArgs,
-                   FwAssertArgType arg1,
-                   FwAssertArgType arg2,
-                   FwAssertArgType arg3,
-                   FwAssertArgType arg4,
-                   FwAssertArgType arg5,
-                   FwAssertArgType arg6) {
+FW_SWASSERT_NORETURN void defaultSwAssert(FILE_NAME_ARG file,
+                                          FwSizeType lineNo,
+                                          FwSizeType numArgs,
+                                          FwAssertArgType arg1,
+                                          FwAssertArgType arg2,
+                                          FwAssertArgType arg3,
+                                          FwAssertArgType arg4,
+                                          FwAssertArgType arg5,
+                                          FwAssertArgType arg6) {
     if (nullptr == s_assertHook) {
         CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
         defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, assertMsg,
@@ -124,23 +125,37 @@ I8 defaultSwAssert(FILE_NAME_ARG file,
         s_assertHook->reportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
         s_assertHook->doAssert();
     }
-    return 0;
+#if FW_ASSERTIONS_ALWAYS_ABORT
+    abort();
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
+    defaultSwAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
+    defaultSwAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
+    defaultSwAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
+    defaultSwAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file,
@@ -149,7 +164,10 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg3,
             FwAssertArgType arg4,
             FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
+    defaultSwAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file,
@@ -159,7 +177,10 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg4,
             FwAssertArgType arg5,
             FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
+    defaultSwAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 
 I8 SwAssert(FILE_NAME_ARG file,
@@ -170,7 +191,10 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg5,
             FwAssertArgType arg6,
             FwSizeType lineNo) {
-    return defaultSwAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
+    defaultSwAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
+#if !FW_ASSERTIONS_ALWAYS_ABORT
+    return 0;
+#endif
 }
 }  // namespace Fw
 

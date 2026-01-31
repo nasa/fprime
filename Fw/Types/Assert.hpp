@@ -49,17 +49,21 @@
 #define FW_ASSERT_NO_OVERFLOW(value, T) \
     FW_ASSERT((value) <= std::numeric_limits<T>::max(), static_cast<FwAssertArgType>(value))
 
+#if FW_ASSERTIONS_ALWAYS_ABORT
+#define FW_SWASSERT_NORETURN __attribute__((noreturn))
+#endif
+
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the
 // program. This breaks static analysis depending on assertions, since the analyzer has to assume the assertion will
 // return. When supported, annotate assertion functions as noreturn when statically analyzing.
-#ifndef CLANG_ANALYZER_NORETURN
+#ifndef FW_SWASSERT_NORETURN
 #ifndef __has_feature
 #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 #if __has_feature(attribute_analyzer_noreturn)
-#define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
+#define FW_SWASSERT_NORETURN __attribute__((analyzer_noreturn))
 #else
-#define CLANG_ANALYZER_NORETURN
+#define FW_SWASSERT_NORETURN
 #endif
 #endif
 
@@ -79,23 +83,23 @@
 
 namespace Fw {
 //! Assert with no arguments
-I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with one argument
-I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with two arguments
 I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+            FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with three arguments
 I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+            FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with four arguments
 I8 SwAssert(FILE_NAME_ARG file,
@@ -103,7 +107,7 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
             FwAssertArgType arg4,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+            FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with five arguments
 I8 SwAssert(FILE_NAME_ARG file,
@@ -112,7 +116,7 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg3,
             FwAssertArgType arg4,
             FwAssertArgType arg5,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+            FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 
 //! Assert with six arguments
 I8 SwAssert(FILE_NAME_ARG file,
@@ -122,7 +126,7 @@ I8 SwAssert(FILE_NAME_ARG file,
             FwAssertArgType arg4,
             FwAssertArgType arg5,
             FwAssertArgType arg6,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+            FwSizeType lineNo) NOINLINE FW_SWASSERT_NORETURN;
 }  // namespace Fw
 
 // Base class for declaring an assert hook
