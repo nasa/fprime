@@ -27,7 +27,8 @@ extern "C" {
 // Define max length of assert string
 // Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE FwAssertTextSize  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE \
+    FwAssertTextSize  //!< Size of string used to store assert description  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 //// Configuration validation checks ////

@@ -136,6 +136,7 @@ TEST(InterfaceUninitialized, SendBuffer) {
 
     Os::QueueInterface::Status status = queue.send(buffer, priority, Os::QueueInterface::BlockingType::BLOCKING);
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
+    queue.teardown();
 }
 
 TEST(InterfaceUninitialized, ReceivePointer) {
@@ -148,6 +149,7 @@ TEST(InterfaceUninitialized, ReceivePointer) {
     Os::QueueInterface::Status status =
         queue.receive(storage, sizeof storage, Os::QueueInterface::BlockingType::NONBLOCKING, size, priority);
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
+    queue.teardown();
 }
 
 TEST(InterfaceUninitialized, ReceiveBuffer) {
@@ -160,18 +162,21 @@ TEST(InterfaceUninitialized, ReceiveBuffer) {
 
     Os::QueueInterface::Status status = queue.receive(buffer, Os::QueueInterface::BlockingType::NONBLOCKING, priority);
     ASSERT_EQ(Os::QueueInterface::Status::UNINITIALIZED, status);
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, CreateInvalidDepth) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    ASSERT_DEATH_IF_SUPPORTED(queue.create(name, 0, 10), "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.create(0, name, 0, 10), "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, CreateInvalidSize) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    ASSERT_DEATH_IF_SUPPORTED(queue.create(name, 10, 0), "Assert:.*Queue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(queue.create(0, name, 10, 0), "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, SendPointerNull) {
@@ -181,6 +186,7 @@ TEST(InterfaceInvalid, SendPointerNull) {
     const FwQueuePriorityType priority = 127;
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, Os::QueueInterface::BlockingType::BLOCKING),
                               "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, SendInvalidEnum) {
@@ -191,6 +197,7 @@ TEST(InterfaceInvalid, SendInvalidEnum) {
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, blockingType), "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, ReceivePointerNull) {
@@ -201,6 +208,7 @@ TEST(InterfaceInvalid, ReceivePointerNull) {
     ASSERT_DEATH_IF_SUPPORTED(
         queue.receive(nullptr, size, Os::QueueInterface::BlockingType::NONBLOCKING, size, priority),
         "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(InterfaceInvalid, ReceiveInvalidEnum) {
@@ -211,6 +219,7 @@ TEST(InterfaceInvalid, ReceiveInvalidEnum) {
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
     ASSERT_DEATH_IF_SUPPORTED(queue.receive(nullptr, size, blockingType, size, priority), "Assert:.*Queue\\.cpp");
+    queue.teardown();
 }
 
 TEST(BasicRules, Create) {

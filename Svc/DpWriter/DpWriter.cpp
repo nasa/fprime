@@ -88,8 +88,12 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
         fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(), containerId, timeTag.getSeconds(),
                         timeTag.getUSeconds());
     }
-    FwSizeType fileSize = 0;
+    // Calculate and populate the file data checksum
+    if (status == Fw::Success::SUCCESS) {
+        container.updateDataHash();
+    }
     // Write the file
+    FwSizeType fileSize = 0;
     if (status == Fw::Success::SUCCESS) {
         status = this->writeFile(container, fileName, fileSize);
     }

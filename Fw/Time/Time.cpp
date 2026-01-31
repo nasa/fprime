@@ -52,29 +52,29 @@ Time& Time::operator=(const Time& other) {
 }
 
 bool Time::operator==(const Time& other) const {
-    return (Time::compare(*this, other) == EQ);
+    return (Time::compare(*this, other) == TimeComparison::EQ);
 }
 
 bool Time::operator!=(const Time& other) const {
-    return (Time::compare(*this, other) != EQ);
+    return (Time::compare(*this, other) != TimeComparison::EQ);
 }
 
 bool Time::operator>(const Time& other) const {
-    return (Time::compare(*this, other) == GT);
+    return (Time::compare(*this, other) == TimeComparison::GT);
 }
 
 bool Time::operator<(const Time& other) const {
-    return (Time::compare(*this, other) == LT);
+    return (Time::compare(*this, other) == TimeComparison::LT);
 }
 
 bool Time::operator>=(const Time& other) const {
-    Time::Comparison c = Time::compare(*this, other);
-    return ((GT == c) or (EQ == c));
+    TimeComparison c = Time::compare(*this, other);
+    return ((TimeComparison::GT == c) or (TimeComparison::EQ == c));
 }
 
 bool Time::operator<=(const Time& other) const {
-    Time::Comparison c = Time::compare(*this, other);
-    return ((LT == c) or (EQ == c));
+    TimeComparison c = Time::compare(*this, other);
+    return ((TimeComparison::LT == c) or (TimeComparison::EQ == c));
 }
 
 SerializeStatus Time::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
@@ -106,9 +106,9 @@ Time Time ::zero(TimeBase timeBase) {
     return time;
 }
 
-Time::Comparison Time ::compare(const Time& time1, const Time& time2) {
+TimeComparison Time ::compare(const Time& time1, const Time& time2) {
     if (time1.getTimeBase() != time2.getTimeBase()) {
-        return INCOMPARABLE;
+        return TimeComparison::INCOMPARABLE;
     }
 
     // Do not compare time context
@@ -119,15 +119,15 @@ Time::Comparison Time ::compare(const Time& time1, const Time& time2) {
     const U32 us2 = time2.getUSeconds();
 
     if (s1 < s2) {
-        return LT;
+        return TimeComparison::LT;
     } else if (s1 > s2) {
-        return GT;
+        return TimeComparison::GT;
     } else if (us1 < us2) {
-        return LT;
+        return TimeComparison::LT;
     } else if (us1 > us2) {
-        return GT;
+        return TimeComparison::GT;
     } else {
-        return EQ;
+        return TimeComparison::EQ;
     }
 }
 

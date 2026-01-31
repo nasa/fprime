@@ -39,16 +39,20 @@ FileDownlink ::FileDownlink(const char* const name)
       m_curEntry(),
       m_cntxId(0) {}
 
-void FileDownlink ::configure(U32 timeout, U32 cooldown, U32 cycleTime, U32 fileQueueDepth) {
-    this->m_timeout = timeout;
+void FileDownlink ::configure(U32 cooldown, U32 cycleTime, U32 fileQueueDepth) {
     this->m_cooldown = cooldown;
     this->m_cycleTime = cycleTime;
     this->m_configured = true;
 
     Os::Queue::Status stat =
-        m_fileQueue.create(Os::QueueString("fileDownlinkQueue"), static_cast<FwSizeType>(fileQueueDepth),
-                           static_cast<FwSizeType>(sizeof(struct FileEntry)));
+        m_fileQueue.create(this->getInstance(), Os::QueueString("fileDownlinkQueue"),
+                           static_cast<FwSizeType>(fileQueueDepth), static_cast<FwSizeType>(sizeof(struct FileEntry)));
     FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
+}
+
+void FileDownlink ::deinit() {
+    this->m_fileQueue.teardown();
+    FileDownlinkComponentBase::deinit();
 }
 
 void FileDownlink ::preamble() {
@@ -88,16 +92,7 @@ void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {
             break;
         }
         case Mode::WAIT: {
-            // If current timeout is too-high and we are waiting for a packet, issue a timeout
-            if (this->m_curTimer >= this->m_timeout) {
-                this->m_curTimer = 0;
-                this->log_WARNING_HI_DownlinkTimeout(this->m_file.getSourceName(), this->m_file.getDestName());
-                this->enterCooldown();
-                this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
-                                                                          : SendFileStatus::STATUS_ERROR);
-            } else {  // Otherwise update the current counter
-                this->m_curTimer += m_cycleTime;
-            }
+            this->m_curTimer += m_cycleTime;
             break;
         }
         default:

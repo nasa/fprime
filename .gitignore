@@ -4,6 +4,8 @@ build-artifacts/
 gtest/
 docs-cache/
 CMakePresets.json
+/DpTest*/
+/Testing/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
@@ -30,6 +32,7 @@ Dict
 
 **/coverage/
 *.gcov
+lcov.info
 !**/test/ut/output/*.gcov
 GTestBase.*
 TesterBase.*
@@ -59,6 +62,7 @@ test_harness/.autotools
 core
 
 *.swp4
+*dpState.dat
 
 *AppDictionary.xml
 *TopologyAppID.csv

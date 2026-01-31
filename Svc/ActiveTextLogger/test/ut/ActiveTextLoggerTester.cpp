@@ -23,7 +23,9 @@ ActiveTextLoggerTester ::ActiveTextLoggerTester()
     this->connectPorts();
 }
 
-ActiveTextLoggerTester ::~ActiveTextLoggerTester() {}
+ActiveTextLoggerTester ::~ActiveTextLoggerTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

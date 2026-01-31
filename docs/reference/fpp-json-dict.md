@@ -1394,4 +1394,5 @@ The following framework definitions are required by the dictionary and will alwa
 | `Fw.DpState` | [Enum type definition](#enumeration-type-definition)| `typeDefinitions` | The data product state | |
 | `Fw.DpCfg.ProcType` | [Enum type definition](#enumeration-type-definition)| `typeDefinitions` | A bit mask for selecting the type of processing to perform on a container before writing it to disk. |
 | `Fw.DpCfg.CONTAINER_USER_DATA_SIZE` | [Constant Definition](#constants)| `constants` | The size in bytes of the user-configurable data in the container packet header |
+| `FW_FIXED_LENGTH_STRING_SIZE` | [Constant Definition](#constants)| `constants` | Configuration for Fw::String |
 

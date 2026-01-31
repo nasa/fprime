@@ -82,6 +82,11 @@ PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path,
     const FwSizeType free_blocks = static_cast<FwSizeType>(fsStat.f_bfree);
     const FwSizeType total_blocks = static_cast<FwSizeType>(fsStat.f_blocks);
 
+    // Guard against divide-by-zero if filesystem reports invalid block size
+    if (block_size == 0) {
+        return OTHER_ERROR;
+    }
+
     // Check for overflow in multiplication
     if (free_blocks > (std::numeric_limits<FwSizeType>::max() / block_size) ||
         total_blocks > (std::numeric_limits<FwSizeType>::max() / block_size)) {

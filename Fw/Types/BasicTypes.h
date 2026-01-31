@@ -47,42 +47,42 @@ extern "C" {
 /*----------------------------------------------------------------------------*/
 /* Type definitions:     I8, U8, I16, U16, ..., I64, U64, F32, and F64        */
 /*----------------------------------------------------------------------------*/
-typedef int8_t I8;  //!< 8-bit signed integer
-#define PRI_I8 PRIi8
+typedef int8_t I8;    //!< 8-bit signed integer
+#define PRI_I8 PRIi8  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
-typedef uint8_t U8;  //!< 8-bit unsigned integer
-#define PRI_U8 PRIu8
+typedef uint8_t U8;   //!< 8-bit unsigned integer
+#define PRI_U8 PRIu8  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
-typedef U8 BYTE;  //!< byte type
-#define PRI_BYTE PRIu8
+typedef U8 BYTE;        //!< byte type
+#define PRI_BYTE PRIu8  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
 typedef char CHAR;
-#define PRI_CHAR "c"
+#define PRI_CHAR "c"  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
 #if FW_HAS_16_BIT
-typedef int16_t I16;  //!< 16-bit signed integer
-#define PRI_I16 PRIi16
-typedef uint16_t U16;  //!< 16-bit unsigned integer
-#define PRI_U16 PRIu16
+typedef int16_t I16;    //!< 16-bit signed integer
+#define PRI_I16 PRIi16  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
+typedef uint16_t U16;   //!< 16-bit unsigned integer
+#define PRI_U16 PRIu16  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 #if FW_HAS_32_BIT
-typedef int32_t I32;  //!< 32-bit signed integer
-#define PRI_I32 PRIi32
-typedef uint32_t U32;  //!< 32-bit unsigned integer
-#define PRI_U32 PRIu32
+typedef int32_t I32;    //!< 32-bit signed integer
+#define PRI_I32 PRIi32  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
+typedef uint32_t U32;   //!< 32-bit unsigned integer
+#define PRI_U32 PRIu32  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 #if FW_HAS_64_BIT
-typedef int64_t I64;  //!< 64-bit signed integer
-#define PRI_I64 PRIi64
-typedef uint64_t U64;  //!< 64-bit unsigned integer
-#define PRI_U64 PRIu64
+typedef int64_t I64;    //!< 64-bit signed integer
+#define PRI_I64 PRIi64  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
+typedef uint64_t U64;   //!< 64-bit unsigned integer
+#define PRI_U64 PRIu64  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
-typedef float F32;  //!< 32-bit floating point
-#define PRI_F64 "lf"
-typedef double F64;  //!< 64-bit floating point (double). Required for compiler-supplied double promotion.
+typedef float F32;    //!< 32-bit floating point
+#define PRI_F64 "lf"  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
+typedef double F64;   //!< 64-bit floating point (double). Required for compiler-supplied double promotion.
 
 /*----------------------------------------------------------------------------*/
 /* Useful macro definitions                                                   */
@@ -91,13 +91,13 @@ typedef double F64;  //!< 64-bit floating point (double). Required for compiler-
 #define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))                 //!< MAX macro
 #define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))                 //!< MIN macro
 
-#define FW_NO_ASSERT 1  //!< Asserts turned off
+#define FW_NO_ASSERT (1)  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
-    2  //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
-#define FW_FILENAME_ASSERT 3  //!< Uses the file path in the assert - image stores filenames
+    (2)  //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
+#define FW_FILENAME_ASSERT (3)  //!< Uses the file path in the assert - image stores filenames
 #define FW_RELATIVE_PATH_ASSERT \
-    4  //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path
-       //!< to be set on the compile command line
+    (4)  //!< Uses a relative file path (within fprime/fprime library) for assert.
+         //!< Requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
 
 #ifdef __cplusplus
 }

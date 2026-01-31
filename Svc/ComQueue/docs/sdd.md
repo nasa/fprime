@@ -33,6 +33,8 @@ Queued messages from the highest priority source port are serviced first and a r
 | SVC-COMQUEUE-008 | `Svc::ComQueue` shall implement a round robin approach to balance between ports of the same priority.                                   | Allows projects to balance between a set of queues of similar priority. | Unit Test           |
 | SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                           | Prevents a flood of queue overflow events.                              | Unit test           | 
 | SVC-COMQUEUE-010 | `Svc::ComQueue` shall return ownership of incoming buffers once they have been enqueued.                                                | Memory management                                                       | Unit test           | 
+| SVC-COMQUEUE-011 | `Svc::ComQueue` shall provide a command to flush queued items.      | Queue management              | Unit test           | 
+
 
 ## 4. Design
 The diagram below shows the `Svc::ComQueue` component.
@@ -138,15 +140,23 @@ The `run` port handler does the following:
 |----------------|---------------------------------------------------------------------------------|
 | QueueOverflow  | WARNING_HI event triggered when a queue can no longer hold the incoming message |
 
-### 4.8 Helper Functions
+### 4.8 Commands
 
-#### 4.8.1 sendComBuffer
+| Name             | Description                                                                                     |
+|------------------|-------------------------------------------------------------------------------------------------|
+| FLUSH_QUEUE      | Flushes all queued items from the specified queue type and index, returning ownership of any buffers.      |
+| FLUSH_ALL_QUEUES | Flushes all queued items from all queues, returning ownership of any buffers. |
+
+
+### 4.9 Helper Functions
+
+#### 4.9.1 sendComBuffer
 Stores the com buffer message, sends the com buffer message on the output port, and then sets the send state to waiting.
 
-#### 4.8.2 sendBuffer
+#### 4.9.2 sendBuffer
 Stores the buffer message, sends the buffer message on the output port, and then sets the send state to waiting.
 
-#### 4.8.3 processQueue
+#### 4.9.3 processQueue
 In a bounded loop that is constrained by the total size of the queue that contains both 
 buffer and com buffer data, do:
 

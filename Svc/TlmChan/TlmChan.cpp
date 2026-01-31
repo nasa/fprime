@@ -93,14 +93,14 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
     }
 
     if (activeEntry && inactiveEntry) {
-        Fw::Time::Comparison cmp = Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate);
+        Fw::TimeComparison cmp = Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate);
         // two entries. grab the one with the most recent time tag
-        if (cmp == Fw::Time::Comparison::GT) {
+        if (cmp == Fw::TimeComparison::GT) {
             // inactive entry is more recent
             val = inactiveEntry->buffer;
             timeTag = inactiveEntry->lastUpdate;
             return Fw::TlmValid::VALID;
-        } else if (cmp != Fw::Time::Comparison::INCOMPARABLE) {
+        } else if (cmp != Fw::TimeComparison::INCOMPARABLE) {
             // active entry is more recent, or they are equal
             val = activeEntry->buffer;
             timeTag = activeEntry->lastUpdate;

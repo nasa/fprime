@@ -76,15 +76,17 @@ struct AllocateDirective {
     $size: Fpy.StackSizeType
 }
 
-@ pops some bytes off the stack and puts them in lvar array
-struct StoreConstOffsetDirective {
-    lvarOffset: Fpy.StackSizeType
+@ stores a value to a local variable at a compile-time-known offset relative to the current stack frame
+struct StoreRelConstOffsetDirective {
+    @ signed byte offset relative to stack_frame_start
+    lvarOffset: Fpy.SignedStackSizeType
     $size: Fpy.StackSizeType
 }
 
-@ gets bytes from lvar array and pushes them to stack
-struct LoadDirective {
-    lvarOffset: Fpy.StackSizeType
+@ loads a value from a local variable at a compile-time-known offset relative to the current stack frame
+struct LoadRelDirective {
+    @ signed byte offset relative to stack_frame_start
+    lvarOffset: Fpy.SignedStackSizeType
     $size: Fpy.StackSizeType
 }
 
@@ -146,10 +148,44 @@ struct PeekDirective {
     _empty: U8
 }
 
-@ stores bytes from the top of the stack into a memory location, determined by the stack
-struct StoreDirective {
-    # pops an Fpy.StackSizeType offset off of stack
+@ stores a value to a local variable at a runtime-determined offset relative to the current stack frame
+struct StoreRelDirective {
+    # pops a SignedStackSizeType lvar_offset off of stack
     @ size of data to pop off stack
+    $size: Fpy.StackSizeType
+}
+
+@ performs a function call
+struct CallDirective {
+    # pops a U32 target directive index off stack
+    _empty: U8
+}
+
+@ returns from a function call
+struct ReturnDirective {
+    @ size of return value in bytes, 0 for void functions
+    returnValSize: Fpy.StackSizeType
+    @ total size of function arguments in bytes
+    callArgsSize: Fpy.StackSizeType
+}
+
+@ loads a value from an absolute address in the stack (for global variables)
+struct LoadAbsDirective {
+    @ absolute byte offset from the start of the stack
+    globalOffset: Fpy.StackSizeType
+    $size: Fpy.StackSizeType
+}
+
+@ stores a value to an absolute address in the stack (for global variables), offset from stack
+struct StoreAbsDirective {
+    # pops an Fpy.StackSizeType global_offset off of stack
+    $size: Fpy.StackSizeType
+}
+
+@ stores a value to an absolute address in the stack (for global variables), const offset
+struct StoreAbsConstOffsetDirective {
+    @ absolute byte offset from the start of the stack
+    globalOffset: Fpy.StackSizeType
     $size: Fpy.StackSizeType
 }
 
@@ -177,9 +213,9 @@ internal port directive_exit(directive: ExitDirective) priority 6 assert
 
 internal port directive_allocate(directive: AllocateDirective) priority 6 assert
 
-internal port directive_storeConstOffset(directive: StoreConstOffsetDirective) priority 6 assert
+internal port directive_storeRelConstOffset(directive: StoreRelConstOffsetDirective) priority 6 assert
 
-internal port directive_load(directive: LoadDirective) priority 6 assert
+internal port directive_loadRel(directive: LoadRelDirective) priority 6 assert
 
 internal port directive_pushVal(directive: PushValDirective) priority 6 assert
 
@@ -199,4 +235,14 @@ internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
 internal port directive_peek(directive: PeekDirective) priority 6 assert
 
-internal port directive_store(directive: StoreDirective) priority 6 assert
+internal port directive_storeRel(directive: StoreRelDirective) priority 6 assert
+
+internal port directive_call(directive: CallDirective) priority 6 assert
+
+internal port directive_return(directive: ReturnDirective) priority 6 assert
+
+internal port directive_loadAbs(directive: LoadAbsDirective) priority 6 assert
+
+internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
+
+internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert

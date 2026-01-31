@@ -482,14 +482,8 @@ void FpySequencer::updateDebugTelemetryStruct() {
 }
 
 void FpySequencer::parametersLoaded() {
-    Fw::ParamValid valid;
-    // check for coding errors--all prms should have a default
-    this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-              static_cast<FwAssertArgType>(valid.e));
-    this->paramGet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(valid);
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-              static_cast<FwAssertArgType>(valid.e));
+    parameterUpdated(PARAMID_STATEMENT_TIMEOUT_SECS);
+    parameterUpdated(PARAMID_FLAG_DEFAULT_EXIT_ON_CMD_FAIL);
 }
 
 void FpySequencer::parameterUpdated(FwPrmIdType id) {
@@ -507,6 +501,9 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
             FW_ASSERT(0, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
         }
     }
+
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
 }
 
 bool FpySequencer::isRunningState(State state) {

@@ -20,7 +20,9 @@ namespace SmInstanceState {
 BasicGuardTester ::BasicGuardTester(const char* const compName)
     : BasicGuardComponentBase(compName), m_smStateBasicGuard_action_a_history(), m_smStateBasicGuard_guard_g() {}
 
-BasicGuardTester ::~BasicGuardTester() {}
+BasicGuardTester ::~BasicGuardTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

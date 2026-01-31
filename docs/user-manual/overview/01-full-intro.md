@@ -12,7 +12,7 @@ more complete "story". This document contains the following sections:
 
 ## The Origins of F´
 
-F´ is an embedded systems framework developed build to meet certain goals expanded upon below.
+F´ is an embedded systems framework developed to meet certain goals expanded upon below.
 These goals make it particularly well suited for small embedded missions (and projects) that need
 reliable components and infrastructure provided by the framework in
 order to minimize development cost, schedule, or effort. These missions

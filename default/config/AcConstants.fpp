@@ -59,12 +59,3 @@ constant FwAssertTextSize = 256
 @ the constants FW_ASSERT_TEXT_SIZE and FW_LOG_STRING_MAX_SIZE, set
 @ in FpConfig.h.
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
-
-# ----------------------------------------------------------------------
-# Hub connections. Connections on all deployments should mirror these settings.
-# ----------------------------------------------------------------------
-
-constant GenericHubInputPorts = 10
-constant GenericHubOutputPorts = 10
-constant GenericHubInputBuffers = 10
-constant GenericHubOutputBuffers = 10

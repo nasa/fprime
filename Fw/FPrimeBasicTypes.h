@@ -55,7 +55,7 @@ extern "C" {
 
 // Backwards naming compatibility.
 typedef FwSizeStoreType FwBuffSizeType;
-#define PRI_FwBuffSizeType PRI_FwSizeStoreType
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
 #ifdef __cplusplus
 }

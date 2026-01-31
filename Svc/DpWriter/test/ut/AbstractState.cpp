@@ -65,8 +65,6 @@ Fw::Buffer AbstractState::getDpBuffer() {
     for (FwSizeType i = 0; i <= dataSize; i++) {
         dataPtr[i] = static_cast<U8>(STest::Pick::any());
     }
-    // Update the data hash
-    container.updateDataHash();
     // Return the buffer
     return buffer;
 }

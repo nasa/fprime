@@ -23,7 +23,9 @@ BasicGuardStringTester ::BasicGuardStringTester(const char* const compName)
       m_smStateBasicGuardString_action_a_history(),
       m_smStateBasicGuardString_guard_g() {}
 
-BasicGuardStringTester ::~BasicGuardStringTester() {}
+BasicGuardStringTester ::~BasicGuardStringTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

@@ -6,6 +6,7 @@ ACTIVERATEGROUPTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
+afile
 aleem
 ALLEXTERNALS
 alphanums
@@ -18,7 +19,6 @@ arduino
 ARef
 argcomplete
 ARGN
-binaryfile
 ARINC
 arpa
 ASize
@@ -28,6 +28,7 @@ autocode
 autocoded
 autocoders
 autocoding
+autorun
 AYYYY
 baremetal
 batchmode
@@ -36,13 +37,16 @@ bfree
 BHn
 bibtex
 Bies
+binaryfile
 BINDIR
 bitmaps
 bitshifts
 bitwidth
 bocchino
 boolt
+BSB
 bsd
+BSDI
 bst
 BUFFERALLOCATE
 BUFFERALLOCATIONFAILED
@@ -57,6 +61,7 @@ bugprone
 buildstep
 BYTEDRV
 calcu
+CALCULATECRC
 callergraph
 callgraph
 Campuzano
@@ -93,6 +98,7 @@ cmdseq
 cmdsequencer
 cntx
 CODEFILE
+CODESONAR
 COLORSTYLE
 colorwheel
 COMBUFFER
@@ -107,6 +113,7 @@ COMMANDDISPATCHERIMPLCFG
 COMPACKET
 COMPACKETQUEUEIN
 COMQUEUE
+COMRETRY
 COMSPLITTER
 COMSTUB
 constexpr
@@ -218,6 +225,7 @@ evt
 externalproject
 FAKELOGGER
 fbuild
+FDISP
 fdp
 featherm
 fecf
@@ -228,6 +236,8 @@ ffff
 Ffs
 fge
 fgt
+FILEDISPATCHER
+FILEDISPATCHERCFG
 FILEDOWNLINK
 FILEDOWNLINKCFG
 FILEHANDLING
@@ -395,6 +405,7 @@ lvar
 LVL
 lxml
 MACROFILE
+MACROSTART
 makefiles
 MAKEFLAGS
 makeindex
@@ -512,6 +523,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+PREPROC
 prescaler
 prioritization
 PRIORITYQUEUE
@@ -605,6 +617,7 @@ sfregoso
 sge
 SGN
 sgt
+shahab
 SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
@@ -628,6 +641,7 @@ spdx
 spi
 spidev
 spsc
+sqa
 srandom
 SRCS
 sreddy
@@ -648,7 +662,7 @@ strnlen
 subgrouping
 subhist
 subhistory
-subseconds
+subsecond
 subtopology
 suppr
 suseconds
@@ -715,12 +729,14 @@ uge
 uitofp
 UML
 umod
+unconfigured
 UNEXP
 unistd
 UNITTESTASSERT
 unittests
 useconds
 usecs
+valdaarhun
 valgrind
 vbai
 VCA

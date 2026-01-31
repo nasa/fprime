@@ -102,7 +102,7 @@ result = fprime_test_api.assert_telemetry(3)
 result = fprime_test_api.assert_telemetry("Counter", 8)
 
 # awaits and asserts a "Counter" update was received
-result = fprime_test_api.assert_telemetry("Counter", start="END", timeout=5)
+result = fprime_test_api.assert_telemetry("Counter", start="NOW", timeout=5)
 
 # asserts a count of exactly 7 "Counter" updates exist in the current history
 results = fprime_test_api.assert_telemetry_count(7, "Counter")
@@ -166,7 +166,7 @@ result = fprime_test_api.assert_event(0x01)
 result = fprime_test_api.assert_event("CommandReceived", [0x01])
 
 # awaits and asserts on a single "CommandReceived" event
-result = fprime_test_api.assert_event("CommandReceived", start="END", timeout=5)
+result = fprime_test_api.assert_event("CommandReceived", start="NOW", timeout=5)
 
 # asserts that exactly 7 of any event are in the history
 results = fprime_test_api.assert_event_count(7)
@@ -453,7 +453,7 @@ So, if count search is awaiting zero items, it will exit immediately and claim s
 
 ```python
 # incorrect, this will exit as the search found 0 items and was looking for 0 items
-fprime_test_api.assert_telemetry_count(0, start="END", timeout=5)
+fprime_test_api.assert_telemetry_count(0, start="NOW", timeout=5)
 ```
 
 If the user wants to assert that none of a certain type of object were received in the future scope, they should wait for items to accumulate then assert on existing scope.
@@ -478,12 +478,12 @@ Because searches allow the user to define the [existing and future scope to sear
 # setting timeout to zero on await functions w/o a start, results in no scope
 fprime_test_api.await_telemetry_count(5, timeout=0)
 
-# setting start to END on assert functions w/o a timeout, results in no scope
-fprime_test_api.assert_telemetry_count(5, start="END")
+# setting start to NOW on assert functions w/o a timeout, results in no scope
+fprime_test_api.assert_telemetry_count(5, start="NOW")
 
-# setting start to END and timeout to zero on any search, results in no scope
-fprime_test_api.assert_telemetry_count(5, start="END", timeout=0)
-fprime_test_api.await_telemetry_count(5, start="END", timeout=0)
+# setting start to NOW and timeout to zero on any search, results in no scope
+fprime_test_api.assert_telemetry_count(5, start="NOW", timeout=0)
+fprime_test_api.await_telemetry_count(5, start="NOW", timeout=0)
 ```
 
 ### Interpreting predicates correctly

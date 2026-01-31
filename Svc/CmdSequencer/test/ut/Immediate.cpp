@@ -43,6 +43,14 @@ void CmdSequencerTester ::AutoByPort() {
     this->parameterizedAutoByPort(file, numCommands, bound);
 }
 
+void CmdSequencerTester ::AutoByFileDispatcherPort() {
+    const U32 numRecords = 5;
+    const U32 numCommands = numRecords;
+    const U32 bound = numCommands;
+    SequenceFiles::ImmediateFile file(numRecords, this->format);
+    this->parameterizedAutoByFileDispatchPort(file, numCommands, bound);
+}
+
 void CmdSequencerTester ::Cancel() {
     const U32 numRecords = 5;
     const U32 numCommands = numRecords;

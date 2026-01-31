@@ -27,7 +27,7 @@ struct Tester {
   public:
     //! Constructor
     Tester() = default;
-    virtual ~Tester() = default;
+    virtual ~Tester() { queue.teardown(); };
 
     struct QueueMessage {
         U8 data[QUEUE_MESSAGE_SIZE_UPPER_BOUND];

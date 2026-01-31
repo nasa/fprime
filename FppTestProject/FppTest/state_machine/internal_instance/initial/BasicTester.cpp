@@ -19,7 +19,9 @@ namespace SmInstanceInitial {
 BasicTester::BasicTester(const char* const compName)
     : BasicComponentBase(compName), m_basic1_action_a_history(), m_smInitialBasic1_action_a_history() {}
 
-BasicTester::~BasicTester() {}
+BasicTester::~BasicTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports

@@ -21,7 +21,9 @@ ComAggregatorTester ::ComAggregatorTester()
     this->connectPorts();
 }
 
-ComAggregatorTester ::~ComAggregatorTester() {}
+ComAggregatorTester ::~ComAggregatorTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

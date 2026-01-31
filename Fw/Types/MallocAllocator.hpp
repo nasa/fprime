@@ -33,7 +33,7 @@ class MallocAllocator : public MemAllocator {
     //! Allocate memory using malloc(). The identifier is unused and memory is never recoverable.
     //! malloc() guarantees alignment for any type and so does this allocator. It will not respect smaller alignments.
     //!
-    //! \param identifier the memory segment identifier (not used)
+    //! \param identifier the allocating entity identifier (not used)
     //! \param size the requested size (not changed)
     //! \param recoverable - flag to indicate the memory could be recoverable (always set to false)
     //! \param alignment - alignment requirement for the allocation. Default: maximum alignment defined by C++.

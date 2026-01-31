@@ -22,7 +22,9 @@ BasicStringTester ::BasicStringTester(const char* const compName)
       m_smStateBasicString_action_a_history(),
       m_smStateBasicString_action_b_history() {}
 
-BasicStringTester ::~BasicStringTester() {}
+BasicStringTester ::~BasicStringTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

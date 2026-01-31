@@ -18,7 +18,9 @@ DpManagerTester ::DpManagerTester()
     this->connectPorts();
 }
 
-DpManagerTester ::~DpManagerTester() {}
+DpManagerTester ::~DpManagerTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports

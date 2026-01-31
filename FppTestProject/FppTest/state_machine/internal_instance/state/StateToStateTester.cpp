@@ -19,7 +19,9 @@ namespace SmInstanceState {
 StateToStateTester::StateToStateTester(const char* const compName)
     : StateToStateComponentBase(compName), m_smStateStateToState_actionHistory() {}
 
-StateToStateTester::~StateToStateTester() {}
+StateToStateTester::~StateToStateTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

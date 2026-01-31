@@ -17,10 +17,9 @@
 #include "Os/Generic/Types/MaxHeap.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include "Fw/Types/Assert.hpp"
-
 #include <cstdio>
-#include <new>
+#include "Fw/LanguageHelpers.hpp"
+#include "Fw/Types/Assert.hpp"
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)
@@ -30,7 +29,6 @@
 namespace Types {
 
 MaxHeap::MaxHeap() {
-    // Initialize the heap:
     this->m_capacity = 0;
     this->m_heap = nullptr;
     this->m_size = 0;
@@ -38,20 +36,30 @@ MaxHeap::MaxHeap() {
 }
 
 MaxHeap::~MaxHeap() {
-    delete[] this->m_heap;
     this->m_heap = nullptr;
 }
 
-bool MaxHeap::create(FwSizeType capacity) {
+void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
     FW_ASSERT(this->m_heap == nullptr);
+    FW_ASSERT(heap_allocation.size >= (capacity * sizeof(Node)), static_cast<FwAssertArgType>(capacity),
+              static_cast<FwAssertArgType>(heap_allocation.size));
+    FW_ASSERT(heap_allocation.bytes != nullptr);
     // Loop bounds will overflow if capacity set to the max allowable value
     FW_ASSERT(capacity < std::numeric_limits<FwSizeType>::max());
-    this->m_heap = new (std::nothrow) Node[capacity];
-    if (nullptr == this->m_heap) {
-        return false;
-    }
+    this->m_heap = Fw::arrayPlacementNew<Node>(heap_allocation, capacity);
     this->m_capacity = capacity;
-    return true;
+}
+
+void MaxHeap::teardown() {
+    // Only destroy the heap if it is still allocated
+    if (this->m_heap != nullptr) {
+        Fw::arrayPlacementDestruct<Node>(this->m_heap, this->m_capacity);
+    }
+    // Reset the capacity and heap so that the provider of memory
+    this->m_capacity = 0;
+    this->m_heap = nullptr;
+    this->m_size = 0;
+    this->m_order = 0;
 }
 
 bool MaxHeap::push(FwQueuePriorityType value, FwSizeType id) {

@@ -5,41 +5,37 @@
 
 #define DEPTH 5
 #define DATA_SIZE 3
+#define BIG 100000
 
 TEST(Nominal, Creation) {
-    bool ret;
+    alignas(Types::MaxHeap::ALIGNMENT) U8 heap_allocation[Types::MaxHeap::ELEMENT_SIZE * BIG];
     {
         Types::MaxHeap heap;
-        ret = heap.create(0);
-        ASSERT_TRUE(ret);
+        heap.create(0, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
     }
     {
         Types::MaxHeap heap;
-        ret = heap.create(1000000);
-        ASSERT_TRUE(ret);
+        heap.create(BIG, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
     }
     {
         Types::MaxHeap heap;
-        ret = heap.create(1);
-        ASSERT_TRUE(ret);
+        heap.create(1, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
     }
     {
         Types::MaxHeap heap;
-        ret = heap.create(DEPTH);
-        ASSERT_TRUE(ret);
+        heap.create(DEPTH, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
     }
     {
         Types::MaxHeap heap;
-        ret = heap.create(DEPTH);
-        ASSERT_TRUE(ret);
+        heap.create(DEPTH, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
     }
 }
 
 TEST(Nominal, Empty) {
     bool ret;
+    alignas(Types::MaxHeap::ALIGNMENT) U8 heap_allocation[Types::MaxHeap::ELEMENT_SIZE * DEPTH];
     Types::MaxHeap heap;
-    ret = heap.create(DEPTH);
-    ASSERT_TRUE(ret);
+    heap.create(DEPTH, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
 
     FwQueuePriorityType value;
     FwSizeType id = 0;
@@ -59,9 +55,9 @@ TEST(Nominal, Empty) {
 TEST(Nominal, PushPop) {
     printf("Creating heap.\n");
     bool ret;
+    alignas(Types::MaxHeap::ALIGNMENT) U8 heap_allocation[Types::MaxHeap::ELEMENT_SIZE * DEPTH];
     Types::MaxHeap heap;
-    ret = heap.create(DEPTH);
-    ASSERT_TRUE(ret);
+    heap.create(DEPTH, Fw::ByteArray(heap_allocation, sizeof(heap_allocation)));
 
     FwQueuePriorityType value;
     FwSizeType size;
