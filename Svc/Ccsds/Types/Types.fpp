@@ -8,6 +8,12 @@ module Ccsds {
         TC_INVALID_LENGTH = 2
         TC_INVALID_VCID = 3
         TC_INVALID_CRC = 4
+        AOS_INVALID_SCID = 5      @< CCSDS 732.0-B-5: Spacecraft ID mismatch (4.1.2.2)
+        AOS_INVALID_LENGTH = 6    @< CCSDS 732.0-B-5: Frame length insufficient
+        AOS_INVALID_VCID = 7      @< CCSDS 732.0-B-5: Virtual Channel ID mismatch (4.1.2.3)
+        AOS_INVALID_CRC = 8       @< CCSDS 732.0-B-5: Frame Error Control Field CRC mismatch (4.1.6)
+        AOS_INVALID_VERSION = 9   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
+        AOS_INVALID_EPP = 10      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
     }
 
     # ------------------------------------------------
@@ -98,18 +104,74 @@ module Ccsds {
             @< 1 bit replay flag | 1 bit VC frame count cycle flag | 2 most significant bits of spacecraft ID | 4 bits VC frame count cycle
     }
 
-    @ Offsets for serializing individual sub-fields in AOS headers
+    @ Offsets and masks for (de)serializing individual sub-fields in AOS headers
+    @ Per CCSDS 732.0-B-5 Section 4.1.2
     module AOSHeaderSubfields {
-        # globalVcId offsets
+        # globalVcId offsets and masks (16 bits)
         constant frameVersionOffset = 14
         constant spacecraftIdLsbOffset = 6
         constant virtualChannelIdOffset = 0
+        constant frameVersionMask = 0xC000      @< 0b1100000000000000 - bits [15:14]
+        constant spacecraftIdLsbMask = 0x3FC0   @< 0b0011111111000000 - bits [13:6]
+        constant virtualChannelIdMask = 0x003F  @< 0b0000000000111111 - bits [5:0]
 
-        # signaling field offsets
+        # signaling field offsets and masks (lower 8 bits of frameCountAndSignaling)
         constant vcFrameCountOffset = 8
         constant replayFlagOffset = 7
         constant cycleCountFlagOffset = 6
         constant spacecraftIdMsbOffset = 4
+        constant vcFrameCountCycleOffset = 0
+        constant replayFlagMask = 0x80          @< 0b10000000 - bit [7]
+        constant cycleCountFlagMask = 0x40      @< 0b01000000 - bit [6]
+        constant spacecraftIdMsbMask = 0x30     @< 0b00110000 - bits [5:4]
+        constant vcFrameCountCycleMask = 0x0F   @< 0b00001111 - bits [3:0]
+
+        # VC Frame Count (24 bits)
+        constant vcFrameCountMask = 0x00FFFFFF  @< 24 bits of frame count
+
+        # Expected Frame Version per CCSDS 732.0-B-5 Section 4.1.2.2.2
+        constant expectedFrameVersion = 1       @< AOS uses '01' binary = 1
+    }
+
+    @ Masks and special values for M_PDU First Header Pointer
+    @ Per CCSDS 732.0-B-5 Section 4.1.4.2.2
+    module MPDUSubfields {
+        constant firstHeaderPointerMask = 0x07FF  @< 0b0000011111111111 - bits [10:0]
+        constant reservedMask = 0xF800            @< 0b1111100000000000 - bits [15:11]
+
+        # Special First Header Pointer values per CCSDS 732.0-B-5 Section 4.1.4.2.2.4
+        constant FHP_NO_PACKET_START = 0x07FE     @< No packet starts in this frame
+        constant FHP_IDLE_DATA_ONLY = 0x07FF      @< Frame contains only idle data
+    }
+
+    @ Constants for Encapsulation Packet Protocol per CCSDS 133.1-B-3
+    module EPPSubfields {
+        # First octet masks (8 bits)
+        constant packetVersionMask = 0xE0         @< 0b11100000 - bits [7:5]
+        constant packetTypeMask = 0x10            @< 0b00010000 - bit [4]
+        constant protocolIdMask = 0x0F            @< 0b00001111 - bits [3:0] (encapsulation packet)
+        constant lengthOfLengthMask = 0x0F        @< 0b00001111 - bits [3:0] (idle packet)
+
+        constant packetVersionOffset = 5
+        constant packetTypeOffset = 4
+
+        # Expected values per CCSDS 133.1-B-3
+        constant expectedPacketVersion = 7        @< EPP uses '111' binary = 7
+
+        # Packet Types per CCSDS 133.1-B-3 Section 4.1.3
+        constant typeEncapsulation = 0            @< Encapsulation Packet (data)
+        constant typeEncapsulationIdle = 1        @< Encapsulation Idle Packet
+
+        # Protocol IDs for encapsulation packets per CCSDS 133.1-B-3 Section 4.2.1
+        constant protocolExtended = 0x00          @< Extended Protocol ID
+        constant protocolIPv4Extension = 0x02     @< Internet Protocol Extension (IPv4/IPv6)
+        constant protocolMissionSpecific = 0x07   @< Mission-specific
+
+        # Length of Length values for idle packets per CCSDS 133.1-B-3 Section 4.1.3.2
+        constant lol1Octet = 0x01                 @< 1 octet length field
+        constant lol2Octets = 0x02                @< 2 octet length field
+        constant lol4Octets = 0x04                @< 4 octet length field
+        constant lol8Octets = 0x08                @< 8 octet length field
     }
 
     @ Describes the header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) multiplex protocol data unit (M_PDU)
