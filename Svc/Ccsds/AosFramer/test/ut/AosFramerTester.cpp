@@ -226,8 +226,9 @@ void AosFramerTester ::testLongPacket() {
             // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
             const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
             const U16 ideDataEndOffset = frameSize - AOSTrailer::SERIALIZED_SIZE;
-            const U16 startOfIdleSPP = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
-            const U16 startOfIdleData = startOfIdleSPP + SpacePacketHeader::SERIALIZED_SIZE;
+            const U16 startOfIdleSPP =
+                static_cast<U16>(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer);
+            const U16 startOfIdleData = static_cast<U16>(startOfIdleSPP + SpacePacketHeader::SERIALIZED_SIZE);
 
             // Check the SPP header
             SpacePacketHeader spp;
@@ -242,7 +243,7 @@ void AosFramerTester ::testLongPacket() {
             ASSERT_EQ(spp.get_packetSequenceControl(), 0x3 << SpacePacketSubfields::SeqFlagsOffset);
 
             // Token == SPP's payload length - 1
-            const U16 expectedLengthToken = ideDataEndOffset - startOfIdleData - 1;
+            const U16 expectedLengthToken = static_cast<U16>(ideDataEndOffset - startOfIdleData - 1);
             ASSERT_EQ(spp.get_packetDataLength(), expectedLengthToken);
 
             // Check the Idle SPP payload
@@ -386,7 +387,7 @@ void AosFramerTester ::testShortPackets() {
     }
 
     // Using U32 so I can unwind the addition of U16 max
-    U32 payloadStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer;
+    U32 payloadStart = static_cast<U32>(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer);
     U32 payloadStop = payloadStart + sizeof(bufferData);
 
     for (U32 offset = payloadStart; offset < payloadStop; offset++) {
@@ -409,15 +410,15 @@ void AosFramerTester ::testShortPackets() {
 
 U8 AosFramerTester::getFrameTfVn(U8* frameData) {
     // Most 2 bits of 1st octet
-    return static_cast<U8>(frameData[0] & 0xC0) >> 6;
+    return static_cast<U8>((frameData[0] & 0xC0) >> 6U);
 }
 
 U16 AosFramerTester::getFrameScId(U8* frameData) {
     U16 scid = 0;
 
-    scid |= static_cast<U16>(frameData[1] >> 6);
-    scid |= static_cast<U16>((frameData[0] & 0x3F) << 2);
-    scid |= static_cast<U16>((frameData[5] & 0x30) << (8 - 4));
+    scid |= static_cast<U16>(frameData[1] >> 6U);
+    scid |= static_cast<U16>((frameData[0] & 0x3F) << 2U);
+    scid |= static_cast<U16>((frameData[5] & 0x30) << (8U - 4U));
 
     return scid;
 }
@@ -431,14 +432,14 @@ U32 AosFramerTester::getFrameVcCount(U8* frameData) {
     // 3 octets at 3rd octet
     U32 vc_count = 0;
 
-    vc_count |= static_cast<U32>(frameData[2]) << 16;
-    vc_count |= static_cast<U32>(frameData[3]) << 8;
-    vc_count |= static_cast<U32>(frameData[4]) << 0;
+    vc_count |= static_cast<U32>(frameData[2] << 16U);
+    vc_count |= static_cast<U32>(frameData[3] << 8U);
+    vc_count |= static_cast<U32>(frameData[4] << 0U);
 
     // VC Frame Count Cycle in use flag
     if (frameData[5] & 0x40) {
         // Lowest 4 bits of 6th octet
-        vc_count |= static_cast<U32>(frameData[5] & 0x0F) << 24;
+        vc_count |= static_cast<U32>((frameData[5] & 0x0F) << 24U);
     }
 
     return vc_count;
@@ -448,8 +449,8 @@ U16 AosFramerTester::getFramePacketPointer(U8* frameData) {
     // 2 octets at 7th octet
     U16 offset = 0;
 
-    offset |= static_cast<U16>(frameData[6] << 8);
-    offset |= static_cast<U16>(frameData[7] << 0);
+    offset |= static_cast<U16>(frameData[6] << 8U);
+    offset |= static_cast<U16>(frameData[7] << 0U);
 
     return offset;
 }
