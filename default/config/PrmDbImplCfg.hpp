@@ -13,9 +13,8 @@ namespace {
 
 enum {
     PRMDB_NUM_DB_ENTRIES = 25,     // !< Number of entries in the parameter database
-    PRMDB_ENTRY_DELIMITER = 0xA5,  // !< Byte value that should precede each parameter in file; sanity check against
+    PRMDB_ENTRY_DELIMITER = 0xA5   // !< Byte value that should precede each parameter in file; sanity check against
                                    // file integrity. Should match ground system.
-    PRMDB_CRC_BUFFER_SIZE = 128    // !< Size of buffer
 };
 
 }
