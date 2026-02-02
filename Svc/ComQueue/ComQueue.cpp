@@ -451,6 +451,6 @@ void ComQueue::processQueue() {
 
 FwIndexType ComQueue::getQueueNum(Svc::QueueType queueType, FwIndexType portNum) {
     // Acquire the queue that we need to drain
-    return static_cast<FwIndexType>(portNum + (queueType == QueueType::COM_QUEUE) ? COM_PORT_COUNT : 0);
+    return static_cast<FwIndexType>(portNum + ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
 }
 }  // end namespace Svc
