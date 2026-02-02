@@ -163,7 +163,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              Svc::QueueType queueType,
                                              FwIndexType index,
                                              U32 newPriority) {
-    // Acquire the queue we are reprioritizing
+    // Acquire the queue we are to reprioritize
     FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
 
     // Validate queue index
@@ -319,12 +319,15 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
             this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
             this->m_throttle[queueNum] = true;
         }
+    }
 
+    // Check if the buffer was accepted or must be returned
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
         rvStatus = false;
     }
     // When the component is already in READY state process the queue to send out the next available message immediately

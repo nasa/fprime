@@ -600,8 +600,9 @@ void ComQueueTester ::testDropOldestMode() {
     invoke_to_comPacketQueueIn(0, comBuffer3, 0);
     dispatchAll();
 
-    // No overflow event should be emitted (DROP_OLDEST succeeds)
-    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+    // Verify overflow event was emitted
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::COM_QUEUE, 0);
 
     // Dequeue and verify we have messages 2 and 3 (oldest was dropped)
     emitOneAndCheck(0, data2, BUFFER_LENGTH);
@@ -652,8 +653,9 @@ void ComQueueTester ::testLIFOWithDropOldest() {
     invoke_to_comPacketQueueIn(0, comBuffer3, 0);
     dispatchAll();
 
-    // No overflow event (DROP_OLDEST succeeds)
-    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+    // Verify overflow event was emitted
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::COM_QUEUE, 0);
 
     // Dequeue in LIFO order from remaining messages: 3, 2
     emitOneAndCheck(0, data3, BUFFER_LENGTH);
@@ -816,8 +818,9 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     invoke_to_bufferQueueIn(0, buffer3);
     dispatchAll();
 
-    // No overflow event (DROP_OLDEST succeeds)
-    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+    // Verify overflow event was emitted
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::BUFFER_QUEUE, 0);
 
     // Dequeue and verify we have buffers 2 and 3
     emitOneAndCheck(0, data2, BUFFER_LENGTH);
