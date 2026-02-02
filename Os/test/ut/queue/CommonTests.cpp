@@ -20,7 +20,9 @@ U64 Tester::QueueMessage::order_counter = 0;
 PriorityCompare const Tester::QueueMessageComparer::HELPER = PriorityCompare();
 
 Tester::Tester() {
+#if FW_QUEUE_REGISTRATION
     Os::Queue::setRegistry(this);
+#endif
 }
 
 Os::QueueInterface::Status Tester::shadow_create(FwSizeType depth, FwSizeType messageSize) {
@@ -237,7 +239,9 @@ TEST(BasicRules, Create) {
     create_rule.action(tester);
     // Repetitive create
     create_rule.action(tester);
-    EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
+#if FW_QUEUE_REGISTRATION
+ EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
+#endif
 }
 
 TEST(BasicRules, Send) {
