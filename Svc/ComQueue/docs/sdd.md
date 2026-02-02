@@ -143,10 +143,11 @@ The `run` port handler does the following:
 
 ### 4.8 Commands
 
-| Name             | Description                                                                                     |
-|------------------|-------------------------------------------------------------------------------------------------|
-| FLUSH_QUEUE      | Flushes all queued items from the specified queue type and index, returning ownership of any buffers.      |
-| FLUSH_ALL_QUEUES | Flushes all queued items from all queues, returning ownership of any buffers. |
+| Name               | Description                                                                                           |
+|--------------------|-------------------------------------------------------------------------------------------------------|
+| FLUSH_QUEUE        | Flushes all queued items from the specified queue type and index, returning ownership of any buffers. |
+| FLUSH_ALL_QUEUES   | Flushes all queued items from all queues, returning ownership of any buffers.                         |
+| SET_QUEUE_PRIORITY | Changes a queue's priority and re-sorts all queues                           |
 
 
 ### 4.9 Helper Functions
@@ -158,13 +159,25 @@ Stores the com buffer message, sends the com buffer message on the output port, 
 Stores the buffer message, sends the buffer message on the output port, and then sets the send state to waiting.
 
 #### 4.9.3 processQueue
-In a bounded loop that is constrained by the total size of the queue that contains both 
+In a bounded loop that is constrained by the total size of the queue that contains both
 buffer and com buffer data, do:
 
-   1. Check if there are any items on the queue, and continue with the loop if there are none. 
+   1. Check if there are any items on the queue, and continue with the loop if there are none.
    2. Store the entry point of the queue based on the index of the array that contains the prioritized data.
    3. Compare the entry index with the value of the size of the queue that contains com buffer data.
       1. If it is less than the size value, then invoke the sendComBuffer function.
-      2. If it is greater than the size value, then invoke the sendBuffer function. 
+      2. If it is greater than the size value, then invoke the sendBuffer function.
    4. Break out of the loop, but enter a new loop that starts at the next entry and linearly swap the remaining items in
 the prioritized list.
+
+#### 4.9.4 enqueue
+
+Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`.
+
+#### 4.9.5 drainQueue
+
+Pops all messages out of the queue at queueIndex, `index`.
+
+#### 4.9.6 getQueueNum
+
+Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one.
