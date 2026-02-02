@@ -241,7 +241,7 @@ class ComQueue final : public ComQueueComponentBase {
     void processQueue();
 
     //! Convert Queue Type & Index into single queueIndex
-    FwIndexType getUnifiedQueueIndex(Svc::QueueType queueType, FwIndexType index);
+    FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
 
   private:
     // ----------------------------------------------------------------------

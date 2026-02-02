@@ -136,9 +136,10 @@ The `run` port handler does the following:
 
 ### 4.7 Events
 
-| Name           | Description                                                                     |
-|----------------|---------------------------------------------------------------------------------|
-| QueueOverflow  | WARNING_HI event triggered when a queue can no longer hold the incoming message |
+| Name                  | Description                                                        |
+|-----------------------|--------------------------------------------------------------------|
+| QueueOverflow         | WARNING_HI event triggered when a queue discards data              |
+| QueuePriorityChanged  | ACTIVITY_HI event triggered when a user changes a queue's priority |
 
 ### 4.8 Commands
 

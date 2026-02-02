@@ -139,7 +139,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 
 void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
     // Acquire the queue that we need to drain
-    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+    FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
     // Validate queue index
     if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
@@ -164,7 +164,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              FwIndexType index,
                                              U32 newPriority) {
     // Acquire the queue we are to reprioritize
-    FwIndexType queueIndex = this->getUnifiedQueueIndex(queueType, index);
+    FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
     // Validate queue index
     if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
@@ -315,7 +315,6 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
               static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
     const FwIndexType portNum =
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
-    bool rvStatus = true;
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
@@ -326,16 +325,13 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         }
     }
 
-    // Check if the buffer was accepted or must be returned
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
-        rvStatus = false;
-    }
     // When the component is already in READY state process the queue to send out the next available message immediately
     if (this->m_state == READY) {
         this->processQueue();
     }
 
-    return rvStatus;
+    // Check if the buffer was accepted or must be returned
+    return status != Fw::FW_SERIALIZE_NO_ROOM_LEFT;
 }
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
@@ -453,8 +449,8 @@ void ComQueue::processQueue() {
     }
 }
 
-FwIndexType ComQueue::getUnifiedQueueIndex(Svc::QueueType queueType, FwIndexType index) {
+FwIndexType ComQueue::getQueueNum(Svc::QueueType queueType, FwIndexType portNum) {
     // Acquire the queue that we need to drain
-    return (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
+    return static_cast<FwIndexType>(portNum + (queueType == QueueType::COM_QUEUE) ? COM_PORT_COUNT : 0);
 }
 }  // end namespace Svc
