@@ -1,8 +1,11 @@
 # F´ On Baremetal and Multi-Core Systems
 
-F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user through some
-of the caveats and delicacies of such systems. It includes
+F´ supports use on baremetal, multi-core, and even multi-device systems. This guide provides technical details and advanced topics for these deployment scenarios.
 
+> [!NOTE]
+> For practical implementation guidance and the standard baremetal pattern, see the [Baremetal Pattern](../design-patterns/baremetal.md) design pattern document. This document focuses on advanced topics and technical details.
+
+**Contents:**
 - [Baremetal Systems](#baremetal-systems)
     - [The Joy of Passive Components](#the-joy-of-passive-components)
     - [Choosing an Execution Context](#choosing-an-execution-context)
@@ -13,10 +16,9 @@ of the caveats and delicacies of such systems. It includes
 
 ## Baremetal Systems
 
-A baremetal system is a system that does not run an Operating System to support the F´ software. Thus, the F´ software
-must provide for basic services such as filesystems, thread schedulers, etc, to run.  Since F´ was originally run on
-systems that provide these services, a number of precautions must be taken when designing F´systems for baremetal
-platforms.
+A baremetal system is a system that does not run an Operating System to support the F´ software. Thus, the F´ software must provide for basic services such as filesystems, thread schedulers, etc, to run. Since F´ was originally run on systems that provide these services, a number of precautions must be taken when designing F´ systems for baremetal platforms.
+
+For an overview of the baremetal pattern and implementation guidance, see the [Baremetal Pattern](../design-patterns/baremetal.md) design pattern document.
 
 ### The Joy of Passive Components
 
@@ -33,12 +35,9 @@ of that delegated execution context comes next.
 
 ### Choosing an Execution Context
 
-Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to
-run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some
-components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
-driven by [rate groups](../design-patterns/rate-group.md). Designing the system this way ensures that all execution is derived from
-one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group
-driver at a set rate.  All calls needed will execute during a sweep through the rate groups and their derived rates.
+Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all driven by [rate groups](../design-patterns/rate-group.md). Designing the system this way ensures that all execution is derived from one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group driver at a set rate. All calls needed will execute during a sweep through the rate groups and their derived rates.
+
+For the standard baremetal architecture using passive rate groups, see the [Baremetal Pattern](../design-patterns/baremetal.md#architecture).
 
 > [!NOTE]
 > Other options exist (see [Thread Virtualization](#thread-virtualization) below).
@@ -63,7 +62,9 @@ signal, calculating elapsed time by the reading of clock registers, using timing
 by a timer-driven interrupt service routine (ISR).
 
 > [!NOTE]
-> ISRs are complex items and should be studied in detail before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate groups.
+> ISRs are complex items and should be studied in detail before going this route. Notably, the ISR should not execute the rate group directly, but rather should set a flag or queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate groups.
+
+For practical implementation suggestions including timer-driven execution, see [Implementation Suggestions](../design-patterns/baremetal.md#implementation-suggestions).
 
 ## Multi-Core and Multi-Device Systems
 
@@ -83,10 +84,9 @@ across these deployments to look like a single F´ deployment, users are advised
 > [!NOTE]
 > This is an experimental technology with respect to F´. Care to understand its implementation should be taken before using it in a production/flight context.
 
-Some systems, even baremetal systems, require the use of **Active Components**.  Many of the `Svc` components are by
-design active components. It is impractical to assume that all projects can, at the moment of conception, discard all
-use of the framework provided **Active Components**.  Thus F´ was augmented with the ability to virtualize threading, such
-that projects could use these components during development as they migrate to a fully passive-component system.
+Some systems, even baremetal systems, require the use of **Active Components**. Many of the `Svc` components are by design active components. It is impractical to assume that all projects can, at the moment of conception, discard all use of the framework provided **Active Components**. Thus F´ was augmented with the ability to virtualize threading, such that projects could use these components during development as they migrate to a fully passive-component system.
+
+The standard baremetal pattern uses only passive components. Thread virtualization is an advanced alternative approach when active components are needed.
 
 To activate this feature see: [Configuring F´](configuring-fprime.md). Continue reading for all the fancy details of
 how this system is designed.  TODO: put a link to the thread scheduler API documentation.
