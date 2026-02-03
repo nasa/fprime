@@ -160,7 +160,7 @@ class ComQueue final : public ComQueueComponentBase {
         U32 cmdSeq,                //!< The command sequence number
         Svc::QueueType queueType,  //!< The Queue data type
         FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
-        U32 newPriority            //!< New priority value for the queue
+        FwIndexType newPriority    //!< New priority value for the queue
         ) override;
 
   private:

@@ -162,7 +162,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
                                              Svc::QueueType queueType,
                                              FwIndexType index,
-                                             U32 newPriority) {
+                                             FwIndexType newPriority) {
     // Acquire the queue we are to reprioritize
     FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
@@ -320,7 +320,7 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
-            this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
+            this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;
         }
     }
