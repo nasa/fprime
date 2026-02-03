@@ -4,7 +4,8 @@
 // \brief  cpp file for CFDP PDU Header
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduHeader.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
@@ -12,7 +13,7 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void Pdu::Header::initialize(Type type,
+void PduHeader::initialize(PduTypeEnum type,
                               Direction direction,
                               Cfdp::Class::T txmMode,
                               CfdpEntityId sourceEid,
@@ -34,7 +35,7 @@ void Pdu::Header::initialize(Type type,
 }
 
 // Helper function to calculate minimum bytes needed to encode a value
-U8 Pdu::Header::getValueEncodedSize(U64 value) {
+U8 PduHeader::getValueEncodedSize(U64 value) {
     U8  minSize;
     U64 limit = 0x100;
 
@@ -46,7 +47,7 @@ U8 Pdu::Header::getValueEncodedSize(U64 value) {
 }
 
 // Helper function to encode an integer in variable-length format
-static Fw::SerializeStatus encodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U64 value, U8 encodeSize) {
+static Fw::SerializeStatus encodeIntegerInSize(Fw::SerialBufferBase& serialBuffer, U64 value, U8 encodeSize) {
     // Encode from MSB to LSB (big-endian)
     for (U8 i = 0; i < encodeSize; ++i) {
         U8 shift = static_cast<U8>((encodeSize - 1 - i) * 8);
@@ -60,7 +61,7 @@ static Fw::SerializeStatus encodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U
 }
 
 // Helper function to decode an integer from variable-length format
-static U64 decodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U8 decodeSize, Fw::SerializeStatus& status) {
+static U64 decodeIntegerInSize(Fw::SerialBufferBase& serialBuffer, U8 decodeSize, Fw::SerializeStatus& status) {
     U64 value = 0;
 
     // Decode from MSB to LSB (big-endian)
@@ -76,7 +77,7 @@ static U64 decodeIntegerInSize(Fw::SerialBuffer& serialBuffer, U8 decodeSize, Fw
     return value;
 }
 
-U32 Pdu::Header::getBufferSize() const {
+U32 PduHeader::getBufferSize() const {
     // Fixed portion: flags(1) + length(2) + eidTsnLengths(1) = 4 bytes
     U32 size = 4;
 
@@ -92,7 +93,7 @@ U32 Pdu::Header::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus Pdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
     Fw::SerializeStatus status;
 
     // Variable-size entity IDs and transaction sequence number based on actual values
@@ -161,7 +162,7 @@ Fw::SerializeStatus Pdu::Header::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
     Fw::SerializeStatus status;
 
     // Byte 0: flags
@@ -226,6 +227,63 @@ Fw::SerializeStatus Pdu::Header::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     }
 
     return Fw::FW_SERIALIZE_OK;
+}
+
+PduTypeEnum peekPduType(const Fw::Buffer& buffer) {
+    PduTypeEnum pduTypeEnum;
+
+    // Check minimum size for a PDU header
+    if (buffer.getSize() < PduHeader::MIN_HEADERSIZE) {
+        return T_NONE;
+    }
+
+    const U8* data = buffer.getData();
+    FW_ASSERT(data != nullptr);
+
+    // Byte 0: flags
+    // Bit 4 is PDU type: 0 = FILE_DATA, 1 = FILE_DIRECTIVE
+    U8 flags = data[0];
+    PduType pduType = static_cast<PduType>((flags >> 4) & 0x01);
+
+    if (pduType == PDU_TYPE_FILE_DATA) {
+        pduTypeEnum = T_FILE_DATA;
+    }
+    else
+    {
+        // For directive PDUs, we need to read the directive code
+        // Parse byte 3 to get EID and TSN lengths
+        U8 eidTsnLengths = data[3];
+        U8 eidSize = ((eidTsnLengths >> 4) & 0x07) + 1;  // Bits 6-4: EID length - 1
+        U8 tsnSize = (eidTsnLengths & 0x07) + 1;         // Bits 2-0: TSN length - 1
+
+        // Calculate offset to directive code: 4 (fixed header) + eidSize + tsnSize + eidSize
+        U32 directiveCodeOffset = 4 + (2 * eidSize) + tsnSize;
+
+        // Read directive code
+        U8 directiveCode = data[directiveCodeOffset];
+
+        // Map directive code to PduTypeEnum
+        switch (directiveCode) {
+            case FILE_DIRECTIVE_METADATA:
+                pduTypeEnum = T_METADATA;
+                break;
+            case FILE_DIRECTIVE_END_OF_FILE:
+                pduTypeEnum = T_EOF;
+                break;
+            case FILE_DIRECTIVE_FIN:
+                pduTypeEnum = T_FIN;
+                break;
+            case FILE_DIRECTIVE_ACK:
+                pduTypeEnum = T_ACK;
+                break;
+            case FILE_DIRECTIVE_NAK:
+                pduTypeEnum = T_NAK;
+                break;
+            default:
+                pduTypeEnum = T_NONE;  // Unknown directive code
+        }
+    }
+    return pduTypeEnum;
 }
 
 }  // namespace Cfdp

@@ -46,7 +46,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -125,31 +125,31 @@ void CfdpEngine::armInactTimer(CfdpTransaction *txn)
     txn->m_inactivity_timer.setTimer(timerDuration);
 }
 
-void CfdpEngine::dispatchRecv(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+void CfdpEngine::dispatchRecv(CfdpTransaction *txn, const Fw::Buffer& buffer)
 {
     // Dispatch based on transaction state
     switch (txn->m_state)
     {
         case CF_TxnState_INIT:
-            this->recvInit(txn, pdu);
+            this->recvInit(txn, buffer);
             break;
         case CF_TxnState_R1:
-            txn->r1Recv(pdu);
+            txn->r1Recv(buffer);
             break;
         case CF_TxnState_S1:
-            txn->s1Recv(pdu);
+            txn->s1Recv(buffer);
             break;
         case CF_TxnState_R2:
-            txn->r2Recv(pdu);
+            txn->r2Recv(buffer);
             break;
         case CF_TxnState_S2:
-            txn->s2Recv(pdu);
+            txn->s2Recv(buffer);
             break;
         case CF_TxnState_DROP:
-            this->recvDrop(txn, pdu);
+            this->recvDrop(txn, buffer);
             break;
         case CF_TxnState_HOLD:
-            this->recvHold(txn, pdu);
+            this->recvHold(txn, buffer);
             break;
         default:
             // Invalid or undefined state
@@ -186,8 +186,7 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
     FW_ASSERT(txn->m_chan != NULL);
 
     // Create and initialize Metadata PDU
-    Cfdp::Pdu pdu;
-    Cfdp::Pdu::MetadataPdu& md = pdu.asMetadataPdu();
+    Cfdp::MetadataPdu md;
 
     // Set closure requested flag based on transaction class
     // Class 1: closure not requested (0), Class 2: closure requested (1)
@@ -213,12 +212,16 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, md.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = md.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
             // Failed to serialize, return the buffer
+            m_manager->log_WARNING_LO_FailMetadataPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
@@ -227,21 +230,23 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
     return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu& fdPdu)
+Cfdp::Status::T CfdpEngine::sendFd(CfdpTransaction *txn, Cfdp::FileDataPdu& fdPdu)
 {
     Fw::Buffer buffer;
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    Cfdp::Pdu pdu;
-    pdu.asFileDataPdu() = fdPdu;
-
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, fdPdu.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        // Serialize to buffer
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = fdPdu.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
+            m_manager->log_WARNING_LO_FailFileDataPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
     }
@@ -255,8 +260,7 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
     // Create and initialize EOF PDU
-    Cfdp::Pdu pdu;
-    Cfdp::Pdu::EofPdu& eof = pdu.asEofPdu();
+    Cfdp::EofPdu eof;
 
     // Direction is toward receiver for EOF sent by sender
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
@@ -284,12 +288,16 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, eof.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = eof.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
             // Failed to serialize, return the buffer
+            m_manager->log_WARNING_LO_FailEofPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
@@ -321,8 +329,7 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts,
     }
 
     // Create and initialize ACK PDU
-    Cfdp::Pdu pdu;
-    Cfdp::Pdu::AckPdu& ack = pdu.asAckPdu();
+    Cfdp::AckPdu ack;
 
     // Direction: toward sender for EOF ACK, toward receiver for FIN ACK
     Cfdp::Direction direction = (dir_code == Cfdp::FILE_DIRECTIVE_END_OF_FILE) ?
@@ -344,12 +351,16 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts,
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, ack.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = ack.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
             // Failed to serialize, return the buffer
+            m_manager->log_WARNING_LO_FailAckPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
@@ -365,8 +376,7 @@ Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCod
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
     // Create and initialize FIN PDU
-    Cfdp::Pdu pdu;
-    Cfdp::Pdu::FinPdu& fin = pdu.asFinPdu();
+    Cfdp::FinPdu fin;
 
     // Direction is toward sender for FIN sent by receiver
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
@@ -393,12 +403,16 @@ Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCod
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, fin.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = fin.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
             // Failed to serialize, return the buffer
+            m_manager->log_WARNING_LO_FailFinPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
@@ -407,7 +421,7 @@ Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCod
     return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu)
+Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::NakPdu& nakPdu)
 {
     Fw::Buffer buffer;
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
@@ -416,16 +430,18 @@ Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nak
     Cfdp::Class::T tx_class = txn->getClass();
     FW_ASSERT(tx_class == Cfdp::Class::CLASS_2, tx_class);
 
-    Cfdp::Pdu pdu;
-    pdu.asNakPdu() = nakPdu;
-
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, nakPdu.getBufferSize());
     if (status == Cfdp::Status::SUCCESS) {
-        Fw::SerializeStatus serStatus = pdu.toBuffer(buffer);
+        // Serialize to buffer
+        Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+        Fw::SerializeStatus serStatus = nakPdu.serializeTo(sb);
         if (serStatus != Fw::FW_SERIALIZE_OK) {
+            m_manager->log_WARNING_LO_FailNakPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
+            // Update buffer size to actual serialized size
+            buffer.setSize(sb.getSize());
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
         }
     }
@@ -433,11 +449,8 @@ Cfdp::Status::T CfdpEngine::sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nak
     return status;
 }
 
-void CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+void CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::MetadataPdu& md)
 {
-    // Extract metadata PDU
-    const Cfdp::Pdu::MetadataPdu& md = pdu.asMetadataPdu();
-
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 
@@ -450,14 +463,12 @@ void CfdpEngine::recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
     //                   txn->m_history->fnames.dst_filename.toChar());
 }
 
-Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::FileDataPdu& fd)
 {
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
 
     // Extract header
-    const Cfdp::Pdu::Header& header = pdu.asHeader();
-    // Note: FileDataPdu contents would be extracted here when file data handling is implemented
-    // const Cfdp::Pdu::FileDataPdu& fd = pdu.asFileDataPdu();
+    const Cfdp::PduHeader& header = fd.asHeader();
 
     // Check for segment metadata flag (not currently supported)
     if (header.hasSegmentMetadata())
@@ -473,13 +484,11 @@ Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
     return ret;
 }
 
-Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, const Cfdp::EofPdu& eofPdu)
 {
     // EOF PDU has been validated during fromBuffer()
-    // Data is accessible via pdu.asEofPdu() by callers
 
     // Process TLVs if present
-    const Cfdp::Pdu::EofPdu& eofPdu = pdu.asEofPdu();
     const Cfdp::TlvList& tlvList = eofPdu.getTlvList();
     for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
         const Cfdp::Tlv& tlv = tlvList.getTlv(i);
@@ -494,20 +503,17 @@ Cfdp::Status::T CfdpEngine::recvEof(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
     return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvAck(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+Cfdp::Status::T CfdpEngine::recvAck(CfdpTransaction *txn, const Cfdp::AckPdu& pdu)
 {
     // ACK PDU has been validated during fromBuffer()
-    // Data is accessible via pdu.asAckPdu() by callers
     return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, const Cfdp::FinPdu& finPdu)
 {
     // FIN PDU has been validated during fromBuffer()
-    // Data is accessible via pdu.asFinPdu() by callers
 
     // Process TLVs if present
-    const Cfdp::Pdu::FinPdu& finPdu = pdu.asFinPdu();
     const Cfdp::TlvList& tlvList = finPdu.getTlvList();
     for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
         const Cfdp::Tlv& tlv = tlvList.getTlv(i);
@@ -522,19 +528,19 @@ Cfdp::Status::T CfdpEngine::recvFin(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
     return Cfdp::Status::SUCCESS;
 }
 
-Cfdp::Status::T CfdpEngine::recvNak(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+Cfdp::Status::T CfdpEngine::recvNak(CfdpTransaction *txn, const Cfdp::NakPdu& pdu)
 {
     // NAK PDU has been validated during fromBuffer()
-    // Data is accessible via pdu.asNakPdu() by callers
     return Cfdp::Status::SUCCESS;
 }
 
-void CfdpEngine::recvDrop(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+void CfdpEngine::recvDrop(CfdpTransaction *txn, const Fw::Buffer& buffer)
 {
     // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.dropped;
+    (void)buffer;  // Unused - we're just dropping the PDU
 }
 
-void CfdpEngine::recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+void CfdpEngine::recvHold(CfdpTransaction *txn, const Fw::Buffer& buffer)
 {
     /* anything received in this state is considered spurious */
     // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.spurious;
@@ -552,26 +558,26 @@ void CfdpEngine::recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
      */
 
     /* currently the only thing we will re-ack is the FIN. */
-    if (pdu.getDirectiveCode() == Cfdp::FILE_DIRECTIVE_FIN)
-    {
-        const Cfdp::Pdu::FinPdu& fin = pdu.asFinPdu();
-        const Cfdp::Pdu::Header& header = pdu.asHeader();
-
-        if (this->recvFin(txn, pdu) != Cfdp::Status::SUCCESS)
-        {
-            this->sendAck(txn, Cfdp::ACK_TXN_STATUS_TERMINATED, Cfdp::FILE_DIRECTIVE_FIN, fin.getConditionCode(),
-                            header.getDestEid(), header.getTransactionSeq());
-        }
-    }
+    // TODO: Deserialization will be centralized in receivePdu
+    // This function will be updated to accept concrete PDU type
+    (void)buffer;
 }
 
-void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
+void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
 {
-    // Extract header information
-    const Cfdp::Pdu::Header& header = pdu.asHeader();
+    // First parse header to get transaction information
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+
+    Cfdp::PduHeader header;
+    Fw::SerializeStatus status = header.fromSerialBuffer(sb);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
+        return;
+    }
+
     CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
     CfdpEntityId sourceEid = header.getSourceEid();
-    Cfdp::Pdu::Type pduType = header.getType();
     Cfdp::Class::T txmMode = header.getTxmMode();
 
     /* only RX transactions dare tread here */
@@ -593,51 +599,55 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
         //                   "CF: cannot get chunklist -- abandoning transaction %u\n",
         //                  (unsigned int)transactionSeq);
     }
-    else if (pduType == Cfdp::Pdu::T_FILE_DATA)
-    {
-        /* file data PDU */
-        /* being idle and receiving a file data PDU means that no active transaction knew
-         * about the transaction in progress, so most likely PDUs were missed. */
-
-        /* if class 2, switch into R2 state and let it handle */
-        /* don't forget to bind the transaction */
-        if (txmMode == Cfdp::Class::CLASS_1)
-        {
-            /* R1, can't do anything without metadata first */
-            txn->m_state = CF_TxnState_DROP; /* drop all incoming */
-            /* use inactivity timer to ultimately free the state */
-        }
-        else
-        {
-            /* R2 can handle missing metadata, so go ahead and create a temp file */
-            txn->m_state = CF_TxnState_R2;
-            txn->m_txn_class = Cfdp::Class::CLASS_2;
-            txn->rInit();
-            this->dispatchRecv(txn, pdu); /* re-dispatch to enter r2 */
-        }
-    }
     else
     {
-        /* file directive PDU, but we are in an idle state. It only makes sense right now to accept metadata PDU. */
-        Cfdp::FileDirective directiveCode = pdu.getDirectiveCode();
-
-        switch (directiveCode)
+        // Find handler based on PDU type
+        Cfdp::PduTypeEnum pduType = header.getType();
+        if (pduType == Cfdp::T_FILE_DATA)
         {
-            case Cfdp::FILE_DIRECTIVE_METADATA:
-                // PDU validation already done during deserialization
-                this->recvMd(txn, pdu);
+            /* file data PDU */
+            /* being idle and receiving a file data PDU means that no active transaction knew
+             * about the transaction in progress, so most likely PDUs were missed. */
+
+            if (txmMode == Cfdp::Class::CLASS_1)
+            {
+                /* R1, can't do anything without metadata first */
+                txn->m_state = CF_TxnState_DROP; /* drop all incoming */
+                /* use inactivity timer to ultimately free the state */
+            }
+            else
+            {
+                /* R2 can handle missing metadata, so go ahead and create a temp file */
+                txn->m_state = CF_TxnState_R2;
+                txn->m_txn_class = Cfdp::Class::CLASS_2;
+                txn->rInit();
+                this->dispatchRecv(txn, buffer); /* re-dispatch to enter r2 */
+            }
+        }
+        else if (pduType == Cfdp::T_METADATA)
+        {
+            /* file directive PDU with metadata - this is the expected case for starting a new RX transaction */
+            Cfdp::MetadataPdu md;
+            Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
+            sb2.setBuffLen(buffer.getSize());
+
+            if (md.deserializeFrom(sb2) == Fw::FW_SERIALIZE_OK)
+            {
+                this->recvMd(txn, md);
 
                 /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
                 txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
                 txn->m_txn_class = txmMode;
                 txn->m_flags.rx.md_recv = true;
                 txn->rInit(); /* initialize R */
-                break;
-            default:
-                // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: unhandled file directive code 0x%02x in idle state", directiveCode);
-                // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-                break;
+            }
+        }
+        else
+        {
+            // Unexpected PDU type in init state
+            // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF: unhandled PDU type in idle state");
+            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
         }
     }
 
@@ -648,7 +658,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu)
     }
 }
 
-void CfdpEngine::receivePdu(U8 chan_id, const Cfdp::Pdu& pdu)
+void CfdpEngine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 {
     CfdpTransaction *txn = NULL;
     CfdpChannel *chan = NULL;
@@ -658,14 +668,24 @@ void CfdpEngine::receivePdu(U8 chan_id, const Cfdp::Pdu& pdu)
     chan = m_channels[chan_id];
     FW_ASSERT(chan != NULL);
 
-    // Extract header information from PDU
-    const Cfdp::Pdu::Header& header = pdu.asHeader();
+    // Parse the header to get transaction routing info
+    // Avoid full PDU deserialization here to defer it until the appropriate handler
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+
+    Cfdp::PduHeader header;
+    Fw::SerializeStatus status = header.fromSerialBuffer(sb);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        // Invalid PDU header, drop packet
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(chan_id, static_cast<I32>(status));
+        return;
+    }
+
     CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
     CfdpEntityId sourceEid = header.getSourceEid();
     CfdpEntityId destEid = header.getDestEid();
 
-    // PDU validation is already done in fromBuffer(), so proceed with dispatch
-    /* got a valid PDU -- look it up by sequence number */
+    // Look up transaction by sequence number
     txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
 
     if (txn == NULL)
@@ -696,7 +716,7 @@ void CfdpEngine::receivePdu(U8 chan_id, const Cfdp::Pdu& pdu)
     if (txn != NULL)
     {
         /* found one! Send it to the transaction state processor */
-        this->dispatchRecv(txn, pdu);
+        this->dispatchRecv(txn, buffer);
     }
     else
     {

@@ -16,8 +16,13 @@ namespace Ccsds {
 // Forward declarations
 class CfdpEngine;
 class CfdpChannel;
+class CfdpTransaction;
 
 class CfdpManager final : public CfdpManagerComponentBase {
+  // Give access to protected functions for EVRs and Telemetry
+  friend class CfdpEngine;
+  friend class CfdpTransaction;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

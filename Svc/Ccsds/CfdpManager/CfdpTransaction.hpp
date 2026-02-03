@@ -42,7 +42,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -75,10 +75,10 @@ typedef void (CfdpTransaction::*CF_CFDP_StateSendFunc_t)();
  * used on the receive side where a PDU buffer is associated with the activity, which is then
  * interpreted by the handler being invoked.
  *
- * @param[inout] ph The PDU buffer currently being received/processed
- * @note This is a member function pointer - invoke with: (txn->*fn)(ph)
+ * @param[inout] buffer The buffer containing the PDU currently being received/processed
+ * @note This is a member function pointer - invoke with: (txn->*fn)(buffer)
  */
-typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(const Cfdp::Pdu& pdu);
+typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(const Fw::Buffer& buffer);
 
 /**
  * @brief A table of transmit handler functions based on transaction state
@@ -261,16 +261,16 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S1 receive PDU processing.
      *
-     * @param pdu The PDU to process
+     * @param buffer The buffer containing the PDU to process
      */
-    void s1Recv(const Cfdp::Pdu& pdu);
+    void s1Recv(const Fw::Buffer& buffer);
 
     /************************************************************************/
     /** @brief S2 receive PDU processing.
      *
-     * @param pdu The PDU to process
+     * @param buffer The buffer containing the PDU to process
      */
-    void s2Recv(const Cfdp::Pdu& pdu);
+    void s2Recv(const Fw::Buffer& buffer);
 
     /************************************************************************/
     /** @brief S1 dispatch function.
@@ -359,14 +359,14 @@ class CfdpTransaction {
      *
      * @param pdu The PDU to process
      */
-    void s2EarlyFin(const Cfdp::Pdu& pdu);
+    void s2EarlyFin(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief S2 received FIN, so set flag to send FIN-ACK.
      *
      * @param ph Pointer to the PDU information
      */
-    void s2Fin(const Cfdp::Pdu& pdu);
+    void s2Fin(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief S2 NAK PDU received handling.
@@ -377,14 +377,14 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void s2Nak(const Cfdp::Pdu& pdu);
+    void s2Nak(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief S2 NAK handling but with arming the NAK timer.
      *
      * @param ph Pointer to the PDU information
      */
-    void s2NakArm(const Cfdp::Pdu& pdu);
+    void s2NakArm(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief S2 received ACK PDU.
@@ -393,7 +393,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void s2EofAck(const Cfdp::Pdu& pdu);
+    void s2EofAck(const Fw::Buffer& pdu);
 
   private:
     /***********************************************************************
@@ -426,16 +426,16 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief R1 receive PDU processing.
      *
-     * @param ph Pointer to the PDU information
+     * @param buffer The buffer containing the PDU to process
      */
-    void r1Recv(const Cfdp::Pdu& pdu);
+    void r1Recv(const Fw::Buffer& buffer);
 
     /************************************************************************/
     /** @brief R2 receive PDU processing.
      *
-     * @param ph Pointer to the PDU information
+     * @param buffer The buffer containing the PDU to process
      */
-    void r2Recv(const Cfdp::Pdu& pdu);
+    void r2Recv(const Fw::Buffer& buffer);
 
     /************************************************************************/
     /** @brief Perform acknowledgement timer tick (time-based) processing for R transactions.
@@ -526,11 +526,11 @@ class CfdpTransaction {
      * This function dispatches to the appropriate handler based on the
      * transaction substate and PDU type.
      *
-     * @param ph        PDU Buffer
+     * @param buffer    Buffer containing the PDU to dispatch
      * @param dispatch  Dispatch table for file directive PDUs
      * @param fd_fn     Function to handle file data PDUs
      */
-    void rDispatchRecv(const Cfdp::Pdu& pdu,
+    void rDispatchRecv(const Fw::Buffer& buffer,
                        const CF_CFDP_R_SubstateDispatchTable_t *dispatch,
                        CF_CFDP_StateRecvFunc_t fd_fn);
 
@@ -540,10 +540,10 @@ class CfdpTransaction {
      * Send file transactions also react/respond to received PDUs.
      * Note that a file data PDU is not expected here.
      *
-     * @param ph        PDU Buffer
+     * @param buffer    Buffer containing the PDU to dispatch
      * @param dispatch  Dispatch table for file directive PDUs
      */
-    void sDispatchRecv(const Cfdp::Pdu& pdu,
+    void sDispatchRecv(const Fw::Buffer& buffer,
                        const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch);
 
     /************************************************************************/
@@ -575,7 +575,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    Cfdp::Status::T rProcessFd(const Cfdp::Pdu& pdu);
+    Cfdp::Status::T rProcessFd(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Processing receive EOF common functionality for R1/R2.
@@ -588,7 +588,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    Cfdp::Status::T rSubstateRecvEof(const Cfdp::Pdu& pdu);
+    Cfdp::Status::T rSubstateRecvEof(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process receive EOF for R1.
@@ -597,7 +597,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r1SubstateRecvEof(const Cfdp::Pdu& pdu);
+    void r1SubstateRecvEof(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process receive EOF for R2.
@@ -607,7 +607,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r2SubstateRecvEof(const Cfdp::Pdu& pdu);
+    void r2SubstateRecvEof(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process received file data for R1.
@@ -616,7 +616,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r1SubstateRecvFileData(const Cfdp::Pdu& pdu);
+    void r1SubstateRecvFileData(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process received file data for R2.
@@ -629,7 +629,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r2SubstateRecvFileData(const Cfdp::Pdu& pdu);
+    void r2SubstateRecvFileData(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Loads a single NAK segment request.
@@ -640,7 +640,7 @@ class CfdpTransaction {
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CF_Chunk_t *chunk, Cfdp::Pdu::NakPdu& nak);
+    void r2GapCompute(const CF_Chunk_t *chunk, Cfdp::NakPdu& nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
@@ -688,7 +688,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r2RecvFinAck(const Cfdp::Pdu& pdu);
+    void r2RecvFinAck(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process receive metadata PDU for R2.
@@ -701,7 +701,7 @@ class CfdpTransaction {
      *
      * @param ph Pointer to the PDU information
      */
-    void r2RecvMd(const Cfdp::Pdu& pdu);
+    void r2RecvMd(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Sends an inactivity timer expired event to EVS.

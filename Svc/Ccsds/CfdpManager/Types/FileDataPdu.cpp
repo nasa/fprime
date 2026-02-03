@@ -4,14 +4,15 @@
 // \brief  cpp file for CFDP File Data PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <config/CfdpCfg.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void Pdu::FileDataPdu::initialize(Direction direction,
+void FileDataPdu::initialize(Direction direction,
                                    Cfdp::Class::T txmMode,
                                    CfdpEntityId sourceEid,
                                    CfdpTransactionSeq transactionSeq,
@@ -27,7 +28,7 @@ void Pdu::FileDataPdu::initialize(Direction direction,
     this->m_data = data;
 }
 
-U32 Pdu::FileDataPdu::getBufferSize() const {
+U32 FileDataPdu::getBufferSize() const {
     U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
@@ -41,7 +42,7 @@ U32 Pdu::FileDataPdu::getBufferSize() const {
     return size;
 }
 
-U32 Pdu::FileDataPdu::getMaxFileDataSize() {
+U32 FileDataPdu::getMaxFileDataSize() {
     U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
@@ -54,7 +55,7 @@ U32 Pdu::FileDataPdu::getMaxFileDataSize() {
     return CF_MAX_PDU_SIZE - size;
 }
 
-Fw::SerializeStatus Pdu::FileDataPdu::toBuffer(Fw::Buffer& buffer) const {
+Fw::SerializeStatus FileDataPdu::toBuffer(Fw::Buffer& buffer) const {
     Fw::SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
     Fw::SerializeStatus status = this->toSerialBuffer(serialBuffer);
     if (status == Fw::FW_SERIALIZE_OK) {
@@ -63,7 +64,7 @@ Fw::SerializeStatus Pdu::FileDataPdu::toBuffer(Fw::Buffer& buffer) const {
     return status;
 }
 
-Fw::SerializeStatus Pdu::FileDataPdu::fromBuffer(const Fw::Buffer& buffer) {
+Fw::SerializeStatus FileDataPdu::fromBuffer(const Fw::Buffer& buffer) {
     // Create SerialBuffer from Buffer
     Fw::SerialBuffer serialBuffer(const_cast<Fw::Buffer&>(buffer).getData(),
                                   const_cast<Fw::Buffer&>(buffer).getSize());
@@ -87,14 +88,14 @@ Fw::SerializeStatus Pdu::FileDataPdu::fromBuffer(const Fw::Buffer& buffer) {
     return this->fromSerialBuffer(serialBuffer);
 }
 
-Fw::SerializeStatus Pdu::FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     FW_ASSERT(this->m_header.m_type == T_FILE_DATA);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
 
     // Update header with data length
-    Header headerCopy = this->m_header;
+    PduHeader headerCopy = this->m_header;
     headerCopy.setPduDataLength(static_cast<U16>(dataLength));
 
     // Serialize header
@@ -128,7 +129,7 @@ Fw::SerializeStatus Pdu::FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus Pdu::FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_FILE_DATA);
 
     // Deserialize offset - size depends on large file flag
@@ -159,6 +160,34 @@ Fw::SerializeStatus Pdu::FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialB
     }
 
     return Fw::FW_SERIALIZE_OK;
+}
+
+Fw::SerializeStatus FileDataPdu::serializeTo(Fw::SerialBufferBase& buffer,
+                                               Fw::Endianness mode) const {
+    // Cast to SerialBuffer and delegate to toSerialBuffer
+    Fw::SerialBuffer* serialBuffer = dynamic_cast<Fw::SerialBuffer*>(&buffer);
+    if (serialBuffer == nullptr) {
+        return Fw::FW_SERIALIZE_FORMAT_ERROR;
+    }
+    return this->toSerialBuffer(*serialBuffer);
+}
+
+Fw::SerializeStatus FileDataPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
+                                                   Fw::Endianness mode) {
+    // Cast to SerialBuffer and delegate to fromSerialBuffer
+    Fw::SerialBuffer* serialBuffer = dynamic_cast<Fw::SerialBuffer*>(&buffer);
+    if (serialBuffer == nullptr) {
+        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
+
+    // Deserialize header first
+    Fw::SerializeStatus status = this->m_header.fromSerialBuffer(*serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Deserialize the file data body
+    return this->fromSerialBuffer(*serialBuffer);
 }
 
 }  // namespace Cfdp

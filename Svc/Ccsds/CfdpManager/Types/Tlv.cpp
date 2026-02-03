@@ -4,7 +4,7 @@
 // \brief  cpp file for CFDP TLV (Type-Length-Value) classes
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Tlv.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
 
@@ -79,7 +79,7 @@ U32 Tlv::getEncodedSize() const {
     return 2 + this->m_data.getLength();
 }
 
-Fw::SerializeStatus Tlv::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus Tlv::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
     Fw::SerializeStatus status;
 
     // Serialize type byte
@@ -117,7 +117,7 @@ Fw::SerializeStatus Tlv::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus Tlv::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus Tlv::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
     Fw::SerializeStatus status;
 
     // Deserialize type byte
@@ -198,7 +198,7 @@ U32 TlvList::getEncodedSize() const {
     return size;
 }
 
-Fw::SerializeStatus TlvList::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus TlvList::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
     Fw::SerializeStatus status;
 
     // Encode all TLVs
@@ -212,7 +212,7 @@ Fw::SerializeStatus TlvList::toSerialBuffer(Fw::SerialBuffer& serialBuffer) cons
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus TlvList::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus TlvList::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
     Fw::SerializeStatus status;
 
     // Clear existing TLVs

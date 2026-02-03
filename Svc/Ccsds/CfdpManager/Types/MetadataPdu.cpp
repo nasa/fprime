@@ -4,7 +4,7 @@
 // \brief  cpp file for CFDP Metadata PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <config/CfdpCfg.hpp>
@@ -13,7 +13,7 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void Pdu::MetadataPdu::initialize(Direction direction,
+void MetadataPdu::initialize(Direction direction,
                                    Cfdp::Class::T txmMode,
                                    CfdpEntityId sourceEid,
                                    CfdpTransactionSeq transactionSeq,
@@ -41,7 +41,7 @@ void Pdu::MetadataPdu::initialize(Direction direction,
     this->m_closureRequested = closureRequested;
 }
 
-U32 Pdu::MetadataPdu::getBufferSize() const {
+U32 MetadataPdu::getBufferSize() const {
     U32 size = this->m_header.getBufferSize();
 
     // Directive code: 1 byte
@@ -58,23 +58,21 @@ U32 Pdu::MetadataPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus Pdu::MetadataPdu::toBuffer(Fw::Buffer& buffer) const {
-    Fw::SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
-    Fw::SerializeStatus status = this->toSerialBuffer(serialBuffer);
-    if (status == Fw::FW_SERIALIZE_OK) {
-        buffer.setSize(serialBuffer.getSize());
-    }
-    return status;
+Fw::SerializeStatus MetadataPdu::serializeTo(Fw::SerialBufferBase& buffer,
+                                               Fw::Endianness mode) const {
+    return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus Pdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
-    // Create SerialBuffer from Buffer
-    Fw::SerialBuffer serialBuffer(const_cast<Fw::Buffer&>(buffer).getData(),
-                                  const_cast<Fw::Buffer&>(buffer).getSize());
-    serialBuffer.fill();
+Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
+                                                   Fw::Endianness mode) {
+    // Mark buffer as full for deserialization by setting buffer length to capacity
+    Fw::SerializeStatus status = buffer.setBuffLen(buffer.getCapacity());
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
 
     // Deserialize header first
-    Fw::SerializeStatus status = this->m_header.fromSerialBuffer(serialBuffer);
+    status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -86,7 +84,7 @@ Fw::SerializeStatus Pdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
 
     // Validate directive code
     U8 directiveCode;
-    status = serialBuffer.deserializeTo(directiveCode);
+    status = buffer.deserializeTo(directiveCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -98,17 +96,17 @@ Fw::SerializeStatus Pdu::MetadataPdu::fromBuffer(const Fw::Buffer& buffer) {
     this->m_header.m_type = T_METADATA;
 
     // Deserialize the metadata body
-    return this->fromSerialBuffer(serialBuffer);
+    return this->fromSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
+Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
 
     // Update header with data length
-    Header headerCopy = this->m_header;
+    PduHeader headerCopy = this->m_header;
     headerCopy.setPduDataLength(static_cast<U16>(dataLength));
 
     // Serialize header
@@ -150,9 +148,11 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
         return status;
     }
 
-    status = serialBuffer.pushBytes(
+    // Serialize source filename bytes without length prefix
+    status = serialBuffer.serializeFrom(
         reinterpret_cast<const U8*>(this->m_sourceFilename.toChar()),
-        sourceFilenameLength);
+        sourceFilenameLength,
+        Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -164,9 +164,11 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
         return status;
     }
 
-    status = serialBuffer.pushBytes(
+    // Serialize dest filename bytes without length prefix
+    status = serialBuffer.serializeFrom(
         reinterpret_cast<const U8*>(this->m_destFilename.toChar()),
-        destFilenameLength);
+        destFilenameLength,
+        Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -174,7 +176,7 @@ Fw::SerializeStatus Pdu::MetadataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuf
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus Pdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
+Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_METADATA);
 
     // Directive code already read by union wrapper
@@ -221,7 +223,8 @@ Fw::SerializeStatus Pdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialB
 
     // Read filename into temporary buffer
     char sourceFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
-    status = serialBuffer.popBytes(reinterpret_cast<U8*>(sourceFilenameBuffer), sourceFilenameLength);
+    FwSizeType actualLength = sourceFilenameLength;
+    status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(sourceFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -254,7 +257,8 @@ Fw::SerializeStatus Pdu::MetadataPdu::fromSerialBuffer(Fw::SerialBuffer& serialB
 
     // Read filename into temporary buffer
     char destFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
-    status = serialBuffer.popBytes(reinterpret_cast<U8*>(destFilenameBuffer), destFilenameLength);
+    actualLength = destFilenameLength;
+    status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(destFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

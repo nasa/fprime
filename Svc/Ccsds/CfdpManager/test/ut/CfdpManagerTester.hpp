@@ -10,7 +10,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 
@@ -218,7 +218,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpFileSize expectedScopeStart,
         CfdpFileSize expectedScopeEnd,
         U8 expectedNumSegments,
-        const Cfdp::Pdu::SegmentRequest* expectedSegments
+        const Cfdp::SegmentRequest* expectedSegments
     );
 
     //! Helper to find transaction by sequence number
@@ -348,7 +348,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpFileSize scopeStart,
         CfdpFileSize scopeEnd,
         U8 numSegments,
-        const Cfdp::Pdu::SegmentRequest* segments
+        const Cfdp::SegmentRequest* segments
     );
 
   public:

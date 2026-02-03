@@ -14,7 +14,6 @@ register_fprime_library(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/Pdu.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/PduHeader.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/MetadataPdu.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileDataPdu.cpp"

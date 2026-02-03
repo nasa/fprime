@@ -11,7 +11,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
@@ -98,13 +98,15 @@ void CfdpManagerTester::verifyMetadataPdu(
     Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::MetadataPdu metadataPdu;
-    Fw::SerializeStatus status = metadataPdu.fromBuffer(pduBuffer);
+    Cfdp::MetadataPdu metadataPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = metadataPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize Metadata PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = metadataPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_METADATA, header.getType()) << "Expected T_METADATA type";
+    const Cfdp::PduHeader& header = metadataPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_METADATA, header.getType()) << "Expected T_METADATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -144,13 +146,15 @@ void CfdpManagerTester::verifyFileDataPdu(
     Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::FileDataPdu fileDataPdu;
-    Fw::SerializeStatus status = fileDataPdu.fromBuffer(pduBuffer);
+    Cfdp::FileDataPdu fileDataPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = fileDataPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize File Data PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = fileDataPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
+    const Cfdp::PduHeader& header = fileDataPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -200,13 +204,15 @@ void CfdpManagerTester::verifyEofPdu(
     const char* sourceFilename
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::EofPdu eofPdu;
-    Fw::SerializeStatus status = eofPdu.fromBuffer(pduBuffer);
+    Cfdp::EofPdu eofPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = eofPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize EOF PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = eofPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_EOF, header.getType()) << "Expected T_EOF type";
+    const Cfdp::PduHeader& header = eofPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_EOF, header.getType()) << "Expected T_EOF type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     // Note: Can be either acknowledged or unacknowledged depending on class
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -257,13 +263,15 @@ void CfdpManagerTester::verifyFinPdu(
     Cfdp::FinFileStatus expectedFileStatus
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::FinPdu finPdu;
-    Fw::SerializeStatus status = finPdu.fromBuffer(pduBuffer);
+    Cfdp::FinPdu finPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = finPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize FIN PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = finPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_FIN, header.getType()) << "Expected T_FIN type";
+    const Cfdp::PduHeader& header = finPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_FIN, header.getType()) << "Expected T_FIN type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -287,13 +295,15 @@ void CfdpManagerTester::verifyAckPdu(
     Cfdp::AckTxnStatus expectedTransactionStatus
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::AckPdu ackPdu;
-    Fw::SerializeStatus status = ackPdu.fromBuffer(pduBuffer);
+    Cfdp::AckPdu ackPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = ackPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize ACK PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = ackPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_ACK, header.getType()) << "Expected T_ACK type";
+    const Cfdp::PduHeader& header = ackPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_ACK, header.getType()) << "Expected T_ACK type";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -314,16 +324,18 @@ void CfdpManagerTester::verifyNakPdu(
     CfdpFileSize expectedScopeStart,
     CfdpFileSize expectedScopeEnd,
     U8 expectedNumSegments,
-    const Cfdp::Pdu::SegmentRequest* expectedSegments
+    const Cfdp::SegmentRequest* expectedSegments
 ) {
     // Deserialize PDU
-    Cfdp::Pdu::NakPdu nakPdu;
-    Fw::SerializeStatus status = nakPdu.fromBuffer(pduBuffer);
+    Cfdp::NakPdu nakPdu;
+    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
+    sb.setBuffLen(pduBuffer.getSize());
+    Fw::SerializeStatus status = nakPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize NAK PDU";
 
     // Validate header fields
-    const Cfdp::Pdu::Header& header = nakPdu.asHeader();
-    EXPECT_EQ(Cfdp::Pdu::T_NAK, header.getType()) << "Expected T_NAK type";
+    const Cfdp::PduHeader& header = nakPdu.asHeader();
+    EXPECT_EQ(Cfdp::T_NAK, header.getType()) << "Expected T_NAK type";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -366,7 +378,7 @@ void CfdpManagerTester::sendMetadataPdu(
     U8 closureRequested
 ) {
     // Create and initialize Metadata PDU
-    Cfdp::Pdu::MetadataPdu metadataPdu;
+    Cfdp::MetadataPdu metadataPdu;
     metadataPdu.initialize(
         Cfdp::DIRECTION_TOWARD_RECEIVER,
         txmMode,
@@ -385,8 +397,10 @@ void CfdpManagerTester::sendMetadataPdu(
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = metadataPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = metadataPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize Metadata PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -403,7 +417,7 @@ void CfdpManagerTester::sendFileDataPdu(
     Cfdp::Class::T txmMode
 ) {
     // Create and initialize File Data PDU
-    Cfdp::Pdu::FileDataPdu fileDataPdu;
+    Cfdp::FileDataPdu fileDataPdu;
     fileDataPdu.initialize(
         Cfdp::DIRECTION_TOWARD_RECEIVER,
         txmMode,
@@ -420,8 +434,10 @@ void CfdpManagerTester::sendFileDataPdu(
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = fileDataPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = fileDataPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize File Data PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -438,7 +454,7 @@ void CfdpManagerTester::sendEofPdu(
     Cfdp::Class::T txmMode
 ) {
     // Create and initialize EOF PDU
-    Cfdp::Pdu::EofPdu eofPdu;
+    Cfdp::EofPdu eofPdu;
     eofPdu.initialize(
         Cfdp::DIRECTION_TOWARD_RECEIVER,
         txmMode,
@@ -455,8 +471,10 @@ void CfdpManagerTester::sendEofPdu(
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = eofPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = eofPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize EOF PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -472,7 +490,7 @@ void CfdpManagerTester::sendFinPdu(
     Cfdp::FinFileStatus fileStatus
 ) {
     // Create and initialize FIN PDU
-    Cfdp::Pdu::FinPdu finPdu;
+    Cfdp::FinPdu finPdu;
     finPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
         Cfdp::Class::CLASS_2,  // FIN is only used in Class 2
@@ -487,11 +505,12 @@ void CfdpManagerTester::sendFinPdu(
     // Allocate buffer for PDU
     U32 pduSize = finPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
-    pduBuffer.setSize(pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = finPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = finPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize FIN PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -508,7 +527,7 @@ void CfdpManagerTester::sendAckPdu(
     Cfdp::AckTxnStatus transactionStatus
 ) {
     // Create and initialize ACK PDU
-    Cfdp::Pdu::AckPdu ackPdu;
+    Cfdp::AckPdu ackPdu;
     ackPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
         Cfdp::Class::CLASS_2,  // ACK is only used in Class 2
@@ -524,11 +543,12 @@ void CfdpManagerTester::sendAckPdu(
     // Allocate buffer for PDU
     U32 pduSize = ackPdu.getBufferSize();
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
-    pduBuffer.setSize(pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = ackPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = ackPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize ACK PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -542,10 +562,10 @@ void CfdpManagerTester::sendNakPdu(
     CfdpFileSize scopeStart,
     CfdpFileSize scopeEnd,
     U8 numSegments,
-    const Cfdp::Pdu::SegmentRequest* segments
+    const Cfdp::SegmentRequest* segments
 ) {
     // Create and initialize NAK PDU
-    Cfdp::Pdu::NakPdu nakPdu;
+    Cfdp::NakPdu nakPdu;
     nakPdu.initialize(
         Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
         Cfdp::Class::CLASS_2,  // NAK is only used in Class 2
@@ -570,8 +590,10 @@ void CfdpManagerTester::sendNakPdu(
     Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
 
     // Serialize PDU to buffer
-    Fw::SerializeStatus status = nakPdu.toBuffer(pduBuffer);
+    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    Fw::SerializeStatus status = nakPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize NAK PDU";
+    pduBuffer.setSize(sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -677,7 +699,7 @@ void CfdpManagerTester::testFileDataPdu() {
     ASSERT_EQ(readSize, bytesRead) << "Failed to read test data from file";
 
     // Create File Data PDU with test data
-    Cfdp::Pdu::FileDataPdu fdPdu;
+    Cfdp::FileDataPdu fdPdu;
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
 
     fdPdu.initialize(
@@ -916,7 +938,7 @@ void CfdpManagerTester::testNakPdu() {
     this->clearHistory();
 
     // Create and initialize NAK PDU
-    Cfdp::Pdu::NakPdu nakPdu;
+    Cfdp::NakPdu nakPdu;
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
     const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
     const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
@@ -960,7 +982,7 @@ void CfdpManagerTester::testNakPdu() {
     // Verify NAK PDU
 
     // Define expected segment requests
-    Cfdp::Pdu::SegmentRequest expectedSegments[3];
+    Cfdp::SegmentRequest expectedSegments[3];
     expectedSegments[0].offsetStart = 512;
     expectedSegments[0].offsetEnd = 1024;
     expectedSegments[1].offsetStart = 2048;

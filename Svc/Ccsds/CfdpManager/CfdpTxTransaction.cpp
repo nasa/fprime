@@ -77,13 +77,13 @@ CF_CFDP_FileDirectiveDispatchTable_t makeFileDirectiveTable(
 // TX State Machine - Public Methods
 // ======================================================================
 
-void CfdpTransaction::s1Recv(const Cfdp::Pdu& pdu) {
+void CfdpTransaction::s1Recv(const Fw::Buffer& buffer) {
     /* s1 doesn't need to receive anything */
     static const CF_CFDP_S_SubstateRecvDispatchTable_t substate_fns = {{NULL}};
-    this->sDispatchRecv(pdu, &substate_fns);
+    this->sDispatchRecv(buffer, &substate_fns);
 }
 
-void CfdpTransaction::s2Recv(const Cfdp::Pdu& pdu) {
+void CfdpTransaction::s2Recv(const Fw::Buffer& buffer) {
     static const CF_CFDP_FileDirectiveDispatchTable_t s2_meta =
         makeFileDirectiveTable(
             &CfdpTransaction::s2EarlyFin,
@@ -114,7 +114,7 @@ void CfdpTransaction::s2Recv(const Cfdp::Pdu& pdu) {
         }
     };
 
-    this->sDispatchRecv(pdu, &substate_fns);
+    this->sDispatchRecv(buffer, &substate_fns);
 }
 
 void CfdpTransaction::initTxFile(Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority)
@@ -361,7 +361,7 @@ Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 
     U8 fileDataBuffer[CF_MAX_PDU_SIZE];
 
     // Create File Data PDU
-    Cfdp::Pdu::FileDataPdu fdPdu;
+    Cfdp::FileDataPdu fdPdu;
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
 
     // Calculate maximum data size we can send, accounting for PDU overhead
@@ -601,7 +601,7 @@ Cfdp::Status::T CfdpTransaction::sSendFinAck() {
     return ret;
 }
 
-void CfdpTransaction::s2EarlyFin(const Cfdp::Pdu& pdu) {
+void CfdpTransaction::s2EarlyFin(const Fw::Buffer& buffer) {
     /* received early fin, so just cancel */
     // CFE_EVS_SendEvent(CF_CFDP_S_EARLY_FIN_ERR_EID, CFE_EVS_EventType_ERROR,
     //                   "CF S%d(%lu:%lu): got early FIN -- cancelling", (this->m_state == CF_TxnState_S2),
@@ -611,17 +611,28 @@ void CfdpTransaction::s2EarlyFin(const Cfdp::Pdu& pdu) {
     this->m_state_data.send.sub_state = CF_TxSubState_CLOSEOUT_SYNC;
 
     /* otherwise do normal fin processing */
-    this->s2Fin(pdu);
+    this->s2Fin(buffer);
 }
 
-void CfdpTransaction::s2Fin(const Cfdp::Pdu& pdu) {
-    if (!this->m_engine->recvFin(this, pdu))
+void CfdpTransaction::s2Fin(const Fw::Buffer& buffer) {
+    // Deserialize FIN PDU from buffer
+    Cfdp::FinPdu fin;
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+
+    Fw::SerializeStatus deserStatus = fin.deserializeFrom(sb);
+    if (deserStatus != Fw::FW_SERIALIZE_OK) {
+        // Bad FIN PDU
+        this->m_cfdpManager->log_WARNING_LO_FailFinPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
+        return;
+    }
+
+    if (!this->m_engine->recvFin(this, fin))
     {
         /* set the CC only on the first time we get the FIN.  If this is a dupe
          * then re-ack but otherwise ignore it */
         if (!this->m_flags.tx.fin_recv)
         {
-            const Cfdp::Pdu::FinPdu& fin = pdu.asFinPdu();
 
             this->m_flags.tx.fin_recv               = true;
             this->m_state_data.send.s2.fin_cc       = static_cast<CF_CFDP_ConditionCode_t>(fin.getConditionCode());
@@ -639,20 +650,34 @@ void CfdpTransaction::s2Fin(const Cfdp::Pdu& pdu) {
     }
 }
 
-void CfdpTransaction::s2Nak(const Cfdp::Pdu& pdu) {
+void CfdpTransaction::s2Nak(const Fw::Buffer& buffer) {
     U8 counter;
     U8 bad_sr;
 
     bad_sr = 0;
 
-    /* this function is only invoked for NAK PDU types */
-    const Cfdp::Pdu::NakPdu& nak = pdu.asNakPdu();
+    // Deserialize NAK PDU from buffer
+    Cfdp::NakPdu nak;
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
 
-    if (this->m_engine->recvNak(this, pdu) == Cfdp::Status::SUCCESS && nak.getNumSegments() > 0)
+    Fw::SerializeStatus deserStatus = nak.deserializeFrom(sb);
+    if (deserStatus != Fw::FW_SERIALIZE_OK) {
+        // Bad NAK PDU
+        this->m_cfdpManager->log_WARNING_LO_FailNakPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
+        // CFE_EVS_SendEvent(CF_CFDP_S_PDU_NAK_ERR_EID, CFE_EVS_EventType_ERROR,
+        //                   "CF S%d(%lu:%lu): received invalid NAK PDU", (this->m_state == CF_TxnState_S2),
+        //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
+        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+        return;
+    }
+
+    /* this function is only invoked for NAK PDU types */
+    if (this->m_engine->recvNak(this, nak) == Cfdp::Status::SUCCESS && nak.getNumSegments() > 0)
     {
         for (counter = 0; counter < nak.getNumSegments(); ++counter)
         {
-            const Cfdp::Pdu::SegmentRequest& sr = nak.getSegment(counter);
+            const Cfdp::SegmentRequest& sr = nak.getSegment(counter);
 
             if (sr.offsetStart == 0 && sr.offsetEnd == 0)
             {
@@ -698,15 +723,25 @@ void CfdpTransaction::s2Nak(const Cfdp::Pdu& pdu) {
     }
 }
 
-void CfdpTransaction::s2NakArm(const Cfdp::Pdu& pdu) {
+void CfdpTransaction::s2NakArm(const Fw::Buffer& buffer) {
     this->m_engine->armAckTimer(this);
-    this->s2Nak(pdu);
+    this->s2Nak(buffer);
 }
 
-void CfdpTransaction::s2EofAck(const Cfdp::Pdu& pdu) {
-    const Cfdp::Pdu::AckPdu& ack = pdu.asAckPdu();
+void CfdpTransaction::s2EofAck(const Fw::Buffer& buffer) {
+    // Deserialize ACK PDU from buffer
+    Cfdp::AckPdu ack;
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
 
-    if (!this->m_engine->recvAck(this, pdu) &&
+    Fw::SerializeStatus deserStatus = ack.deserializeFrom(sb);
+    if (deserStatus != Fw::FW_SERIALIZE_OK) {
+        // Bad ACK PDU
+        this->m_cfdpManager->log_WARNING_LO_FailAckPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
+        return;
+    }
+
+    if (!this->m_engine->recvAck(this, ack) &&
         ack.getDirectiveCode() == Cfdp::FILE_DIRECTIVE_END_OF_FILE)
     {
         this->m_flags.tx.eof_ack_recv           = true;
@@ -725,7 +760,7 @@ void CfdpTransaction::s2EofAck(const Cfdp::Pdu& pdu) {
 // Dispatch Methods (ported from cf_cfdp_dispatch.c)
 // ======================================================================
 
-void CfdpTransaction::sDispatchRecv(const Cfdp::Pdu& pdu,
+void CfdpTransaction::sDispatchRecv(const Fw::Buffer& buffer,
                                     const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch)
 {
     const CF_CFDP_FileDirectiveDispatchTable_t *substate_tbl;
@@ -734,37 +769,53 @@ void CfdpTransaction::sDispatchRecv(const Cfdp::Pdu& pdu,
     FW_ASSERT(this->m_state_data.send.sub_state < CF_TxSubState_NUM_STATES,
               this->m_state_data.send.sub_state, CF_TxSubState_NUM_STATES);
 
-    // Extract PDU type from header
-    const Cfdp::Pdu::Header& header = pdu.asHeader();
-    Cfdp::Pdu::Type pduType = header.getType();
-    Cfdp::FileDirective directiveCode = pdu.getDirectiveCode();
+    // Peek at PDU type from buffer
+    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
 
     /* send state, so we only care about file directive PDU */
     selected_handler = NULL;
 
-    if (pduType == Cfdp::Pdu::T_FILE_DATA)
+    if (pduType == Cfdp::T_FILE_DATA)
     {
         // CFE_EVS_SendEvent(CF_CFDP_S_NON_FD_PDU_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF S%d(%lu:%lu): received non-file directive PDU", (this->m_state == CF_TxnState_S2),
         //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
     }
-    else if (directiveCode < Cfdp::FILE_DIRECTIVE_INVALID_MAX)
+    else if (pduType != Cfdp::T_NONE)
     {
-        /* This should be silent (no event) if no handler is defined in the table */
-        substate_tbl = dispatch->substate[this->m_state_data.send.sub_state];
-        if (substate_tbl != NULL)
+        // It's a directive PDU - parse header to get directive code
+        Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+        sb.setBuffLen(buffer.getSize());
+
+        Cfdp::PduHeader header;
+        if (header.fromSerialBuffer(sb) == Fw::FW_SERIALIZE_OK)
         {
-            selected_handler = substate_tbl->fdirective[directiveCode];
+            // Read directive code (first byte after header for directive PDUs)
+            U8 directiveCodeByte;
+            if (sb.deserializeTo(directiveCodeByte) == Fw::FW_SERIALIZE_OK)
+            {
+                Cfdp::FileDirective directiveCode = static_cast<Cfdp::FileDirective>(directiveCodeByte);
+
+                if (directiveCode < Cfdp::FILE_DIRECTIVE_INVALID_MAX)
+                {
+                    /* This should be silent (no event) if no handler is defined in the table */
+                    substate_tbl = dispatch->substate[this->m_state_data.send.sub_state];
+                    if (substate_tbl != NULL)
+                    {
+                        selected_handler = substate_tbl->fdirective[directiveCode];
+                    }
+                }
+                else
+                {
+                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
+                    // CFE_EVS_SendEvent(CF_CFDP_S_DC_INV_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //                   "CF S%d(%lu:%lu): received PDU with invalid directive code %d for sub-state %d",
+                    //                   (this->m_state == CF_TxnState_S2), (unsigned long)this->m_history->src_eid,
+                    //                   (unsigned long)this->m_history->seq_num, directiveCode,
+                    //                   this->m_state_data.send.sub_state);
+                }
+            }
         }
-    }
-    else
-    {
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
-        // CFE_EVS_SendEvent(CF_CFDP_S_DC_INV_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF S%d(%lu:%lu): received PDU with invalid directive code %d for sub-state %d",
-        //                   (this->m_state == CF_TxnState_S2), (unsigned long)this->m_history->src_eid,
-        //                   (unsigned long)this->m_history->seq_num, directiveCode,
-        //                   this->m_state_data.send.sub_state);
     }
 
     /* check that there's a valid function pointer. If there isn't,
@@ -775,7 +826,7 @@ void CfdpTransaction::sDispatchRecv(const Cfdp::Pdu& pdu,
      * ignore the received packet and keep chugging along. */
     if (selected_handler)
     {
-        (this->*selected_handler)(pdu);
+        (this->*selected_handler)(buffer);
     }
 }
 

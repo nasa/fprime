@@ -62,16 +62,9 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
   FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
   FW_ASSERT(portNum >= 0, portNum);
 
-  // Decode PDU using Pdu class
-  Cfdp::Pdu pdu;
-  Fw::SerializeStatus status = pdu.fromBuffer(fwBuffer);
-
-  if (status == Fw::FW_SERIALIZE_OK) {
-    // Identify and dispatch this PDU
-    // There is a direct mapping from port number to channel ID
-    this->m_engine->receivePdu(static_cast<U8>(portNum), pdu);
-  }
-  // TODO BPC: else: PDU decode failed - log event or increment counter
+  // Pass buffer directly to receivePdu - it will peek at type and deserialize as needed
+  // There is a direct mapping from port number to channel ID
+  this->m_engine->receivePdu(static_cast<U8>(portNum), fwBuffer);
 
   // Return buffer
   this->dataInReturn_out(portNum, fwBuffer);

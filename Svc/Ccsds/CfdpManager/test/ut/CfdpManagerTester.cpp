@@ -525,7 +525,7 @@ void CfdpManagerTester::testClass2TxNack() {
     this->m_pduCopyCount = 0;
 
     // Send NAK requesting retransmission of PDUs 2 and 5
-    Cfdp::Pdu::SegmentRequest segments[2];
+    Cfdp::SegmentRequest segments[2];
     segments[0].offsetStart = dataPerPdu;
     segments[0].offsetEnd = 2 * dataPerPdu;
     segments[1].offsetStart = 4 * dataPerPdu;
@@ -558,8 +558,10 @@ void CfdpManagerTester::testClass2TxNack() {
         if (this->fromPortHistory_dataOut->size() > 0) {
             FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
             Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
-            Cfdp::Pdu::EofPdu eofPdu;
-            if (eofPdu.fromBuffer(lastPdu) == Fw::FW_SERIALIZE_OK) {
+            Cfdp::EofPdu eofPdu;
+            Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
+            sb.setBuffLen(lastPdu.getSize());
+            if (eofPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
                 foundSecondEof = true;
                 secondEofIndex = lastIndex;
             }
@@ -778,8 +780,10 @@ void CfdpManagerTester::testClass2RxNominal() {
         if (this->fromPortHistory_dataOut->size() > 1) {
             FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
             Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
-            Cfdp::Pdu::FinPdu finPdu;
-            if (finPdu.fromBuffer(lastPdu) == Fw::FW_SERIALIZE_OK) {
+            Cfdp::FinPdu finPdu;
+            Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
+            sb.setBuffLen(lastPdu.getSize());
+            if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
                 foundFin = true;
                 finIndex = lastIndex;
             }
@@ -943,8 +947,10 @@ void CfdpManagerTester::testClass2RxNack() {
         if (this->fromPortHistory_dataOut->size() > pduCountAfterTick) {
             FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
             Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
-            Cfdp::Pdu::NakPdu nakPdu;
-            if (nakPdu.fromBuffer(lastPdu) == Fw::FW_SERIALIZE_OK) {
+            Cfdp::NakPdu nakPdu;
+            Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
+            sb.setBuffLen(lastPdu.getSize());
+            if (nakPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
                 foundNak = true;
                 nakIndex = lastIndex;
             }
@@ -957,7 +963,7 @@ void CfdpManagerTester::testClass2RxNack() {
     Fw::Buffer nakPduBuffer = this->getSentPduBuffer(nakIndex);
 
     // Verify NAK PDU requests missing segments 1, 2, and 4
-    Cfdp::Pdu::SegmentRequest expectedSegments[3];
+    Cfdp::SegmentRequest expectedSegments[3];
     expectedSegments[0].offsetStart = 1 * dataPerPdu;
     expectedSegments[0].offsetEnd = 3 * dataPerPdu;  // Covers PDUs 1 and 2
     expectedSegments[1].offsetStart = 4 * dataPerPdu;
@@ -1009,8 +1015,10 @@ void CfdpManagerTester::testClass2RxNack() {
         if (this->fromPortHistory_dataOut->size() > pduCountBeforeRetransmit) {
             FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
             Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
-            Cfdp::Pdu::FinPdu finPdu;
-            if (finPdu.fromBuffer(lastPdu) == Fw::FW_SERIALIZE_OK) {
+            Cfdp::FinPdu finPdu;
+            Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
+            sb.setBuffLen(lastPdu.getSize());
+            if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
                 foundFin = true;
                 finIndex = lastIndex;
             }

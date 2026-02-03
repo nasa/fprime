@@ -38,6 +38,7 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
 namespace Svc {
@@ -125,9 +126,9 @@ class CfdpEngine {
      * @brief Receive and process a PDU
      *
      * @param chan_id Channel ID receiving the PDU
-     * @param pdu     Reference to decoded PDU
+     * @param buffer  Buffer containing the PDU to decode and process
      */
-    void receivePdu(U8 chan_id, const Cfdp::Pdu& pdu);
+    void receivePdu(U8 chan_id, const Fw::Buffer& buffer);
 
     /**
      * @brief Begin transmit of a file
@@ -282,7 +283,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendFd(CfdpTransaction *txn, Cfdp::Pdu::FileDataPdu& fdPdu);
+    Cfdp::Status::T sendFd(CfdpTransaction *txn, Cfdp::FileDataPdu& fdPdu);
 
     /**
      * @brief Create, encode, and send an EOF (End of File) PDU
@@ -364,7 +365,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::Pdu::NakPdu& nakPdu);
+    Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::NakPdu& nakPdu);
 
     /**
      * @brief Handle receipt of metadata PDU
@@ -375,7 +376,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
      */
-    void recvMd(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void recvMd(CfdpTransaction *txn, const Cfdp::MetadataPdu& pdu);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -391,7 +392,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::ERROR for general errors
      * @retval Cfdp::Status::SHORT_PDU_ERROR PDU too short
      */
-    Cfdp::Status::T recvFd(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    Cfdp::Status::T recvFd(CfdpTransaction *txn, const Cfdp::FileDataPdu& pdu);
 
     /**
      * @brief Unpack an EOF PDU from a received message
@@ -406,7 +407,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvEof(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    Cfdp::Status::T recvEof(CfdpTransaction *txn, const Cfdp::EofPdu& pdu);
 
     /**
      * @brief Unpack an ACK PDU from a received message
@@ -421,7 +422,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvAck(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    Cfdp::Status::T recvAck(CfdpTransaction *txn, const Cfdp::AckPdu& pdu);
 
     /**
      * @brief Unpack an FIN PDU from a received message
@@ -436,7 +437,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvFin(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    Cfdp::Status::T recvFin(CfdpTransaction *txn, const Cfdp::FinPdu& pdu);
 
     /**
      * @brief Unpack a NAK PDU from a received message
@@ -451,7 +452,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvNak(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    Cfdp::Status::T recvNak(CfdpTransaction *txn, const Cfdp::NakPdu& pdu);
 
     /**
      * @brief Initiate a file transfer transaction
@@ -556,7 +557,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param pdu  The PDU being received
      */
-    void recvDrop(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void recvDrop(CfdpTransaction *txn, const Fw::Buffer& buffer);
 
     /**
      * @brief Receive state function during holdover period
@@ -567,10 +568,10 @@ class CfdpEngine {
      * lost in transmission causing the sender to retransmit PDUs even
      * though we already completed the transaction.
      *
-     * @param txn  Pointer to the transaction state
-     * @param pdu  The PDU being received
+     * @param txn    Pointer to the transaction state
+     * @param buffer Buffer containing the PDU to process
      */
-    void recvHold(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void recvHold(CfdpTransaction *txn, const Fw::Buffer& buffer);
 
     /**
      * @brief Receive state function to process new rx transaction
@@ -581,10 +582,10 @@ class CfdpEngine {
      * PDU could be missed, and filedata comes in instead. In that case,
      * an R2 transaction must still be started.
      *
-     * @param txn  Pointer to the transaction state
-     * @param pdu  The PDU being received
+     * @param txn    Pointer to the transaction state
+     * @param buffer Buffer containing the PDU to process
      */
-    void recvInit(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer);
 
     // Dispatch
 
@@ -594,10 +595,10 @@ class CfdpEngine {
      * This dispatches the PDU to the appropriate handler
      * based on the transaction state.
      *
-     * @param txn  Pointer to the transaction state
-     * @param pdu  The PDU being received
+     * @param txn    Pointer to the transaction state
+     * @param buffer Buffer containing the PDU to dispatch
      */
-    void dispatchRecv(CfdpTransaction *txn, const Cfdp::Pdu& pdu);
+    void dispatchRecv(CfdpTransaction *txn, const Fw::Buffer& buffer);
 
     // Channel Processing
 
