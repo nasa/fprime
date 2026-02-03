@@ -531,8 +531,7 @@ void CfdpTransaction::r2Complete(int ok_to_send_nak) {
 // ======================================================================
 
 Cfdp::Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
-    Os::File::Status status;
-    Cfdp::Status::T ret;
+    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
 
     /* this function is only entered for data PDUs */
     // Deserialize FileData PDU from buffer
@@ -543,10 +542,8 @@ Cfdp::Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
     Fw::SerializeStatus deserStatus = fd.deserializeFrom(sb);
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->m_cfdpManager->log_WARNING_LO_FailFileDataPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
-        return Cfdp::Status::ERROR;
+        ret = Cfdp::Status::ERROR;
     }
-
-    ret = Cfdp::Status::SUCCESS;
 
     /*
      * NOTE: The decode routine should have left a direct pointer to the data and actual data length
@@ -558,26 +555,29 @@ Cfdp::Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
     U16 dataSize = fd.getDataSize();
     const U8* dataPtr = fd.getData();
 
-    // TODO BPC: get rid of pdu->offset in favor of Os::File::position()
-    if (this->m_state_data.receive.cached_pos != offset)
-    {
-        status = this->m_fd.seek(offset, Os::File::SeekType::ABSOLUTE);
-        if (status != Os::File::OP_OK)
+    // Seek to file offset if needed
+    if (ret == Cfdp::Status::SUCCESS) {
+        if (this->m_state_data.receive.cached_pos != offset)
         {
-            // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF R%d(%lu:%lu): failed to seek offset %ld, got %ld", (this->m_state == CF_TxnState_R2),
-            //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
-            //                   (long)pdu->offset, (long)fret);
-            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
-            ret = Cfdp::Status::ERROR; /* connection will reset in caller */
+            Os::File::Status status = this->m_fd.seek(offset, Os::File::SeekType::ABSOLUTE);
+            if (status != Os::File::OP_OK)
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_FD_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF R%d(%lu:%lu): failed to seek offset %ld, got %ld", (this->m_state == CF_TxnState_R2),
+                //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
+                //                   (long)pdu->offset, (long)fret);
+                this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
+                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
+                ret = Cfdp::Status::ERROR;
+            }
         }
     }
 
-    if (ret != Cfdp::Status::ERROR)
+    // Write file data
+    if (ret == Cfdp::Status::SUCCESS)
     {
         FwSizeType write_size = dataSize;
-        status = this->m_fd.write(dataPtr, write_size, Os::File::WaitType::WAIT);
+        Os::File::Status status = this->m_fd.write(dataPtr, write_size, Os::File::WaitType::WAIT);
         if (status != Os::File::OP_OK)
         {
             // CFE_EVS_SendEvent(CF_CFDP_R_WRITE_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -586,7 +586,7 @@ Cfdp::Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
             //                   (long)pdu->data_len, (long)fret);
             this->m_engine->setTxnStatus(this, CF_TxnStatus_FILESTORE_REJECTION);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_write;
-            ret = Cfdp::Status::ERROR; /* connection will reset in caller */
+            ret = Cfdp::Status::ERROR;
         }
         else
         {
@@ -609,32 +609,35 @@ Cfdp::Status::T CfdpTransaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
     Fw::SerializeStatus deserStatus = eof.deserializeFrom(sb);
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->m_cfdpManager->log_WARNING_LO_FailEofPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
-        return Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
-    }
-
-    if (!this->m_engine->recvEof(this, eof))
-    {
-        /* this function is only entered for PDUs identified as EOF type */
-
-        /* only check size if MD received, otherwise it's still OK */
-        if (this->m_flags.rx.md_recv && (eof.getFileSize() != this->m_fsize))
-        {
-            // CFE_EVS_SendEvent(CF_CFDP_R_SIZE_MISMATCH_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF R%d(%lu:%lu): EOF file size mismatch: got %lu expected %lu",
-            //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num, (unsigned long)eof->size,
-            //                   (unsigned long)this->m_fsize);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
-            ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
-        }
-    }
-    else
-    {
-        // CFE_EVS_SendEvent(CF_CFDP_R_PDU_EOF_ERR_EID, CFE_EVS_EventType_ERROR, "CF R%d(%lu:%lu): invalid EOF packet",
-        //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-        //                   (unsigned long)this->m_history->seq_num);
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
         ret = Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
+    }
+
+    if (ret == Cfdp::Status::SUCCESS)
+    {
+        if (!this->m_engine->recvEof(this, eof))
+        {
+            /* this function is only entered for PDUs identified as EOF type */
+
+            /* only check size if MD received, otherwise it's still OK */
+            if (this->m_flags.rx.md_recv && (eof.getFileSize() != this->m_fsize))
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_R_SIZE_MISMATCH_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF R%d(%lu:%lu): EOF file size mismatch: got %lu expected %lu",
+                //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+                //                   (unsigned long)this->m_history->seq_num, (unsigned long)eof->size,
+                //                   (unsigned long)this->m_fsize);
+                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
+                ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
+            }
+        }
+        else
+        {
+            // CFE_EVS_SendEvent(CF_CFDP_R_PDU_EOF_ERR_EID, CFE_EVS_EventType_ERROR, "CF R%d(%lu:%lu): invalid EOF packet",
+            //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+            //                   (unsigned long)this->m_history->seq_num);
+            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+            ret = Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
+        }
     }
 
     return ret;
@@ -878,14 +881,14 @@ Cfdp::Status::T CfdpTransaction::rSubstateSendNak() {
         if (!gapCount) {
             // No gaps left, file reception is complete
             this->m_flags.rx.complete = true;
-            return Cfdp::Status::SUCCESS;
-        }
-
-        // Gaps are present, send the NAK PDU
-        status = this->m_engine->sendNak(this, nakPdu);
-        if (status == Cfdp::Status::SUCCESS) {
-            this->m_flags.rx.fd_nak_sent = true;
-            // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.nak_segment_requests += gapCount;
+            status = Cfdp::Status::SUCCESS;
+        } else {
+            // Gaps are present, send the NAK PDU
+            status = this->m_engine->sendNak(this, nakPdu);
+            if (status == Cfdp::Status::SUCCESS) {
+                this->m_flags.rx.fd_nak_sent = true;
+                // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.nak_segment_requests += gapCount;
+            }
         }
     } else {
         // Need to send NAK to request metadata PDU again
@@ -915,108 +918,117 @@ Cfdp::Status::T CfdpTransaction::r2CalcCrcChunk() {
     size_t want_offs_size;
     FwSizeType read_size;
     Os::File::Status fileStatus;
-    Cfdp::Status::T ret;
-    bool success = true;
+    Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
     U32 rx_crc_calc_bytes_per_wakeup = 0;
 
     memset(buf, 0, sizeof(buf));
 
     count_bytes = 0;
-    ret         = Cfdp::Status::ERROR;
 
-    if (this->m_state_data.receive.r2.rx_crc_calc_bytes == 0)
-    {
-        this->m_crc = CFDP::Checksum(0);
-
-        // For Class 2 RX, the file was opened in WRITE mode for receiving FileData PDUs.
-        // Now we need to READ it for CRC calculation. Close and reopen in READ mode.
-        if (this->m_fd.isOpen())
+    // Open file for CRC calculation if needed
+    if (ret == Cfdp::Status::SUCCESS) {
+        if (this->m_state_data.receive.r2.rx_crc_calc_bytes == 0)
         {
-            this->m_fd.close();
-        }
+            this->m_crc = CFDP::Checksum(0);
 
-        fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
-        if (fileStatus != Os::File::OP_OK)
-        {
-            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
-            return Cfdp::Status::ERROR;
-        }
+            // For Class 2 RX, the file was opened in WRITE mode for receiving FileData PDUs.
+            // Now we need to READ it for CRC calculation. Close and reopen in READ mode.
+            if (this->m_fd.isOpen())
+            {
+                this->m_fd.close();
+            }
 
-        // Reset cached position since we just reopened the file
-        this->m_state_data.receive.cached_pos = 0;
-    }
-
-    rx_crc_calc_bytes_per_wakeup = this->m_cfdpManager->getRxCrcCalcBytesPerWakeupParam();
-
-    while ((count_bytes < rx_crc_calc_bytes_per_wakeup) &&
-           (this->m_state_data.receive.r2.rx_crc_calc_bytes < this->m_fsize))
-    {
-        want_offs_size = this->m_state_data.receive.r2.rx_crc_calc_bytes + sizeof(buf);
-
-        if (want_offs_size > this->m_fsize)
-        {
-            read_size = this->m_fsize - this->m_state_data.receive.r2.rx_crc_calc_bytes;
-        }
-        else
-        {
-            read_size = sizeof(buf);
-        }
-
-        if (this->m_state_data.receive.cached_pos != this->m_state_data.receive.r2.rx_crc_calc_bytes)
-        {
-            fileStatus = this->m_fd.seek(this->m_state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
+            fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
             if (fileStatus != Os::File::OP_OK)
             {
-                // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_CRC_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF R%d(%lu:%lu): failed to seek offset %lu, got %ld", (this->m_state == CF_TxnState_R2),
-                //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
-                //                   (unsigned long)this->m_state_data.receive.r2.rx_crc_calc_bytes, (long)fret);
-                // this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
-                success = false;
-                break;
+                this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
+                ret = Cfdp::Status::ERROR;
+            } else {
+                // Reset cached position since we just reopened the file
+                this->m_state_data.receive.cached_pos = 0;
             }
         }
-
-        fileStatus = this->m_fd.read(buf, read_size, Os::File::WaitType::WAIT);
-        if (fileStatus != Os::File::OP_OK)
-        {
-            // CFE_EVS_SendEvent(CF_CFDP_R_READ_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF R%d(%lu:%lu): failed to read file expected %lu, got %ld",
-            //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num, (unsigned long)read_size, (long)fret);
-            this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_read;
-            success = false;
-            break;
-        }
-
-        this->m_crc.update(buf, this->m_state_data.receive.r2.rx_crc_calc_bytes, static_cast<U32>(read_size));
-        this->m_state_data.receive.r2.rx_crc_calc_bytes += static_cast<U32>(read_size);
-        this->m_state_data.receive.cached_pos = this->m_state_data.receive.r2.rx_crc_calc_bytes;
-        count_bytes += read_size;
     }
 
-    if (success && this->m_state_data.receive.r2.rx_crc_calc_bytes == this->m_fsize)
-    {
-        /* all bytes calculated, so now check */
-        if (this->rCheckCrc(this->m_state_data.receive.r2.eof_crc) == Cfdp::Status::SUCCESS)
+    // Process file in chunks
+    if (ret == Cfdp::Status::SUCCESS) {
+        rx_crc_calc_bytes_per_wakeup = this->m_cfdpManager->getRxCrcCalcBytesPerWakeupParam();
+
+        while ((ret == Cfdp::Status::SUCCESS) &&
+               (count_bytes < rx_crc_calc_bytes_per_wakeup) &&
+               (this->m_state_data.receive.r2.rx_crc_calc_bytes < this->m_fsize))
         {
-            /* CRC matched! We are happy */
-            this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+            want_offs_size = this->m_state_data.receive.r2.rx_crc_calc_bytes + sizeof(buf);
 
-            /* set FIN PDU status */
-            this->m_state_data.receive.r2.dc = CF_CFDP_FinDeliveryCode_COMPLETE;
-            this->m_state_data.receive.r2.fs = CF_CFDP_FinFileStatus_RETAINED;
+            if (want_offs_size > this->m_fsize)
+            {
+                read_size = this->m_fsize - this->m_state_data.receive.r2.rx_crc_calc_bytes;
+            }
+            else
+            {
+                read_size = sizeof(buf);
+            }
+
+            if (this->m_state_data.receive.cached_pos != this->m_state_data.receive.r2.rx_crc_calc_bytes)
+            {
+                fileStatus = this->m_fd.seek(this->m_state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
+                if (fileStatus != Os::File::OP_OK)
+                {
+                    // CFE_EVS_SendEvent(CF_CFDP_R_SEEK_CRC_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //                   "CF R%d(%lu:%lu): failed to seek offset %lu, got %ld", (this->m_state == CF_TxnState_R2),
+                    //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
+                    //                   (unsigned long)this->m_state_data.receive.r2.rx_crc_calc_bytes, (long)fret);
+                    // this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
+                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
+                    ret = Cfdp::Status::ERROR;
+                }
+            }
+
+            if (ret == Cfdp::Status::SUCCESS) {
+                fileStatus = this->m_fd.read(buf, read_size, Os::File::WaitType::WAIT);
+                if (fileStatus != Os::File::OP_OK)
+                {
+                    // CFE_EVS_SendEvent(CF_CFDP_R_READ_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //                   "CF R%d(%lu:%lu): failed to read file expected %lu, got %ld",
+                    //                   (this->m_state == CF_TxnState_R2), (unsigned long)this->m_history->src_eid,
+                    //                   (unsigned long)this->m_history->seq_num, (unsigned long)read_size, (long)fret);
+                    this->m_engine->setTxnStatus(this, CF_TxnStatus_FILE_SIZE_ERROR);
+                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_read;
+                    ret = Cfdp::Status::ERROR;
+                } else {
+                    this->m_crc.update(buf, this->m_state_data.receive.r2.rx_crc_calc_bytes, static_cast<U32>(read_size));
+                    this->m_state_data.receive.r2.rx_crc_calc_bytes += static_cast<U32>(read_size);
+                    this->m_state_data.receive.cached_pos = this->m_state_data.receive.r2.rx_crc_calc_bytes;
+                    count_bytes += read_size;
+                }
+            }
         }
-        else
+    }
+
+    // Check final CRC if all bytes processed
+    if (ret == Cfdp::Status::SUCCESS) {
+        if (this->m_state_data.receive.r2.rx_crc_calc_bytes == this->m_fsize)
         {
-            this->r2SetFinTxnStatus(CF_TxnStatus_FILE_CHECKSUM_FAILURE);
+            /* all bytes calculated, so now check */
+            if (this->rCheckCrc(this->m_state_data.receive.r2.eof_crc) == Cfdp::Status::SUCCESS)
+            {
+                /* CRC matched! We are happy */
+                this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+
+                /* set FIN PDU status */
+                this->m_state_data.receive.r2.dc = CF_CFDP_FinDeliveryCode_COMPLETE;
+                this->m_state_data.receive.r2.fs = CF_CFDP_FinFileStatus_RETAINED;
+            }
+            else
+            {
+                this->r2SetFinTxnStatus(CF_TxnStatus_FILE_CHECKSUM_FAILURE);
+            }
+
+            this->m_flags.com.crc_calc = true;
+        } else {
+            // Not all bytes processed yet, return ERROR to signal need to continue
+            ret = Cfdp::Status::ERROR;
         }
-
-        this->m_flags.com.crc_calc = true;
-
-        ret = Cfdp::Status::SUCCESS;
     }
 
     return ret;

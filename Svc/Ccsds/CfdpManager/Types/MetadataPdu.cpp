@@ -65,14 +65,8 @@ Fw::SerializeStatus MetadataPdu::serializeTo(Fw::SerialBufferBase& buffer,
 
 Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
                                                    Fw::Endianness mode) {
-    // Mark buffer as full for deserialization by setting buffer length to capacity
-    Fw::SerializeStatus status = buffer.setBuffLen(buffer.getCapacity());
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return status;
-    }
-
     // Deserialize header first
-    status = this->m_header.fromSerialBuffer(buffer);
+    Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

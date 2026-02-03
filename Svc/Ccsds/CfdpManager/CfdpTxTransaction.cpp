@@ -378,34 +378,41 @@ Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 
     }
 
     // Seek to file offset if needed
-    if (this->m_state_data.send.cached_pos != foffs) {
-        Os::File::Status fileStatus = this->m_fd.seek(foffs, Os::File::SeekType::ABSOLUTE);
-        if (fileStatus != Os::File::OP_OK) {
-            return Cfdp::Status::ERROR;
+    FwSizeType actual_bytes = max_data_bytes;
+    if (status == Cfdp::Status::SUCCESS) {
+        if (this->m_state_data.send.cached_pos != foffs) {
+            Os::File::Status fileStatus = this->m_fd.seek(foffs, Os::File::SeekType::ABSOLUTE);
+            if (fileStatus != Os::File::OP_OK) {
+                status = Cfdp::Status::ERROR;
+            }
         }
     }
 
     // Read file data
-    FwSizeType actual_bytes = max_data_bytes;
-    Os::File::Status fileStatus = this->m_fd.read(fileDataBuffer, actual_bytes, Os::File::WaitType::WAIT);
-    if (fileStatus != Os::File::OP_OK) {
-        return Cfdp::Status::ERROR;
+    if (status == Cfdp::Status::SUCCESS) {
+        Os::File::Status fileStatus = this->m_fd.read(fileDataBuffer, actual_bytes, Os::File::WaitType::WAIT);
+        if (fileStatus != Os::File::OP_OK) {
+            status = Cfdp::Status::ERROR;
+        }
     }
 
-    fdPdu.initialize(
-        direction,
-        this->getClass(),  // transmission mode
-        this->m_cfdpManager->getLocalEidParam(),  // source EID
-        this->m_history->seq_num,  // transaction sequence number
-        this->m_history->peer_eid,  // destination EID
-        foffs,  // file offset
-        static_cast<U16>(actual_bytes),  // data size
-        fileDataBuffer  // data pointer
-    );
+    // Initialize and send PDU
+    if (status == Cfdp::Status::SUCCESS) {
+        fdPdu.initialize(
+            direction,
+            this->getClass(),  // transmission mode
+            this->m_cfdpManager->getLocalEidParam(),  // source EID
+            this->m_history->seq_num,  // transaction sequence number
+            this->m_history->peer_eid,  // destination EID
+            foffs,  // file offset
+            static_cast<U16>(actual_bytes),  // data size
+            fileDataBuffer  // data pointer
+        );
 
-    // Send the PDU
-    status = this->m_engine->sendFd(this, fdPdu);
+        status = this->m_engine->sendFd(this, fdPdu);
+    }
 
+    // Update state and CRC
     if (status == Cfdp::Status::SUCCESS) {
         this->m_state_data.send.cached_pos += static_cast<U32>(actual_bytes);
 

@@ -558,103 +558,131 @@ void CfdpEngine::recvHold(CfdpTransaction *txn, const Fw::Buffer& buffer)
      */
 
     /* currently the only thing we will re-ack is the FIN. */
-    // TODO: Deserialization will be centralized in receivePdu
-    // This function will be updated to accept concrete PDU type
-    (void)buffer;
+
+    // Use peekPduType to determine the PDU type
+    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+
+    // Check if this is a FIN PDU for a Class 2 transaction
+    if (pduType == Cfdp::T_FIN &&
+        txn->getClass() == Cfdp::Class::CLASS_2) {
+
+        // Deserialize FIN PDU
+        Cfdp::FinPdu fin;
+        Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
+        sb2.setBuffLen(buffer.getSize());
+
+        Fw::SerializeStatus deserStatus = fin.deserializeFrom(sb2);
+        if (deserStatus == Fw::FW_SERIALIZE_OK) {
+            // Re-send the FIN-ACK
+            this->sendAck(txn, Cfdp::ACK_TXN_STATUS_TERMINATED,
+                         Cfdp::FILE_DIRECTIVE_FIN,
+                         fin.getConditionCode(),
+                         txn->m_history->peer_eid,
+                         txn->m_history->seq_num);
+        }
+        // Note: Deserialization errors are silently ignored in hold state
+        // as we're just trying to be helpful by re-acking FIN if we can
+    }
 }
 
 void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
 {
+    // Use peekPduType to determine the PDU type before deserializing
+    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+
     // First parse header to get transaction information
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
     Cfdp::PduHeader header;
     Fw::SerializeStatus status = header.fromSerialBuffer(sb);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
-        return;
-    }
 
-    CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
-    CfdpEntityId sourceEid = header.getSourceEid();
-    Cfdp::Class::T txmMode = header.getTxmMode();
+    if (status == Fw::FW_SERIALIZE_OK) {
+        CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
+        CfdpEntityId sourceEid = header.getSourceEid();
+        Cfdp::Class::T txmMode = header.getTxmMode();
 
-    /* only RX transactions dare tread here */
-    txn->m_history->seq_num = transactionSeq;
+        /* only RX transactions dare tread here */
+        txn->m_history->seq_num = transactionSeq;
 
-    /* peer_eid is always the remote partner. src_eid is always the transaction source.
-     * in this case, they are the same */
-    txn->m_history->peer_eid = sourceEid;
-    txn->m_history->src_eid  = sourceEid;
+        /* peer_eid is always the remote partner. src_eid is always the transaction source.
+         * in this case, they are the same */
+        txn->m_history->peer_eid = sourceEid;
+        txn->m_history->src_eid  = sourceEid;
 
-    /* all RX transactions will need a chunk list to track file segments */
-    if (txn->m_chunks == NULL)
-    {
-        txn->m_chunks = txn->m_chan->findUnusedChunks(CF_Direction_RX);
-    }
-    if (txn->m_chunks == NULL)
-    {
-        // CFE_EVS_SendEvent(CF_CFDP_NO_CHUNKLIST_AVAIL_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: cannot get chunklist -- abandoning transaction %u\n",
-        //                  (unsigned int)transactionSeq);
-    }
-    else
-    {
-        // Find handler based on PDU type
-        Cfdp::PduTypeEnum pduType = header.getType();
-        if (pduType == Cfdp::T_FILE_DATA)
+        /* all RX transactions will need a chunk list to track file segments */
+        if (txn->m_chunks == NULL)
         {
-            /* file data PDU */
-            /* being idle and receiving a file data PDU means that no active transaction knew
-             * about the transaction in progress, so most likely PDUs were missed. */
-
-            if (txmMode == Cfdp::Class::CLASS_1)
-            {
-                /* R1, can't do anything without metadata first */
-                txn->m_state = CF_TxnState_DROP; /* drop all incoming */
-                /* use inactivity timer to ultimately free the state */
-            }
-            else
-            {
-                /* R2 can handle missing metadata, so go ahead and create a temp file */
-                txn->m_state = CF_TxnState_R2;
-                txn->m_txn_class = Cfdp::Class::CLASS_2;
-                txn->rInit();
-                this->dispatchRecv(txn, buffer); /* re-dispatch to enter r2 */
-            }
+            txn->m_chunks = txn->m_chan->findUnusedChunks(CF_Direction_RX);
         }
-        else if (pduType == Cfdp::T_METADATA)
+        if (txn->m_chunks == NULL)
         {
-            /* file directive PDU with metadata - this is the expected case for starting a new RX transaction */
-            Cfdp::MetadataPdu md;
-            Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
-            sb2.setBuffLen(buffer.getSize());
-
-            if (md.deserializeFrom(sb2) == Fw::FW_SERIALIZE_OK)
-            {
-                this->recvMd(txn, md);
-
-                /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
-                txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
-                txn->m_txn_class = txmMode;
-                txn->m_flags.rx.md_recv = true;
-                txn->rInit(); /* initialize R */
-            }
+            // CFE_EVS_SendEvent(CF_CFDP_NO_CHUNKLIST_AVAIL_EID, CFE_EVS_EventType_ERROR,
+            //                   "CF: cannot get chunklist -- abandoning transaction %u\n",
+            //                  (unsigned int)transactionSeq);
         }
         else
         {
-            // Unexpected PDU type in init state
-            // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: unhandled PDU type in idle state");
-            // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
-        }
-    }
+            if (pduType == Cfdp::T_FILE_DATA)
+            {
+                /* file data PDU */
+                /* being idle and receiving a file data PDU means that no active transaction knew
+                 * about the transaction in progress, so most likely PDUs were missed. */
 
-    if (txn->m_state == CF_TxnState_INIT)
-    {
-        /* state was not changed, so free the transaction */
-        this->finishTransaction(txn, false);
+                if (txmMode == Cfdp::Class::CLASS_1)
+                {
+                    /* R1, can't do anything without metadata first */
+                    txn->m_state = CF_TxnState_DROP; /* drop all incoming */
+                    /* use inactivity timer to ultimately free the state */
+                }
+                else
+                {
+                    /* R2 can handle missing metadata, so go ahead and create a temp file */
+                    txn->m_state = CF_TxnState_R2;
+                    txn->m_txn_class = Cfdp::Class::CLASS_2;
+                    txn->rInit();
+                    this->dispatchRecv(txn, buffer); /* re-dispatch to enter r2 */
+                }
+            }
+            else if (pduType == Cfdp::T_METADATA)
+            {
+                /* file directive PDU with metadata - this is the expected case for starting a new RX transaction */
+                Cfdp::MetadataPdu md;
+                Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
+                sb2.setBuffLen(buffer.getSize());
+
+                Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
+                if (deserStatus == Fw::FW_SERIALIZE_OK)
+                {
+                    this->recvMd(txn, md);
+
+                    /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
+                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
+                    txn->m_txn_class = txmMode;
+                    txn->m_flags.rx.md_recv = true;
+                    txn->rInit(); /* initialize R */
+                }
+                else
+                {
+                    m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(), static_cast<I32>(deserStatus));
+                }
+            }
+            else
+            {
+                // Unexpected PDU type in init state
+                // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF: unhandled PDU type in idle state");
+                // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
+            }
+        }
+
+        if (txn->m_state == CF_TxnState_INIT)
+        {
+            /* state was not changed, so free the transaction */
+            this->finishTransaction(txn, false);
+        }
+    } else {
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
     }
 }
 
@@ -675,52 +703,52 @@ void CfdpEngine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
     Cfdp::PduHeader header;
     Fw::SerializeStatus status = header.fromSerialBuffer(sb);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        // Invalid PDU header, drop packet
-        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(chan_id, static_cast<I32>(status));
-        return;
-    }
 
-    CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
-    CfdpEntityId sourceEid = header.getSourceEid();
-    CfdpEntityId destEid = header.getDestEid();
+    if (status == Fw::FW_SERIALIZE_OK) {
+        CfdpTransactionSeq transactionSeq = header.getTransactionSeq();
+        CfdpEntityId sourceEid = header.getSourceEid();
+        CfdpEntityId destEid = header.getDestEid();
 
-    // Look up transaction by sequence number
-    txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
+        // Look up transaction by sequence number
+        txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
 
-    if (txn == NULL)
-    {
-        /* if no match found, then it must be the case that we would be the destination entity id, so verify it
-            */
-        if (destEid == this->m_manager->getLocalEidParam())
+        if (txn == NULL)
         {
-            /* we didn't find a match, so assign it to a transaction */
-            /* assume this is initiating an RX transaction, as TX transactions are only commanded */
-            txn = this->startRxTransaction(chan->getChannelId());
-            if (txn == NULL)
+            /* if no match found, then it must be the case that we would be the destination entity id, so verify it
+                */
+            if (destEid == this->m_manager->getLocalEidParam())
             {
-                // CFE_EVS_SendEvent(
-                //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
-                //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
-                //     (unsigned long)sourceEid, (unsigned long)transactionSeq);
+                /* we didn't find a match, so assign it to a transaction */
+                /* assume this is initiating an RX transaction, as TX transactions are only commanded */
+                txn = this->startRxTransaction(chan->getChannelId());
+                if (txn == NULL)
+                {
+                    // CFE_EVS_SendEvent(
+                    //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
+                    //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
+                    //     (unsigned long)sourceEid, (unsigned long)transactionSeq);
+                }
             }
+            else
+            {
+                // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
+                //                   "CF: dropping packet for invalid destination eid 0x%lx",
+                //                   (unsigned long)destEid);
+            }
+        }
+
+        if (txn != NULL)
+        {
+            /* found one! Send it to the transaction state processor */
+            this->dispatchRecv(txn, buffer);
         }
         else
         {
-            // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: dropping packet for invalid destination eid 0x%lx",
-            //                   (unsigned long)destEid);
+            // TODO BPC: Add throttled EVR
         }
-    }
-
-    if (txn != NULL)
-    {
-        /* found one! Send it to the transaction state processor */
-        this->dispatchRecv(txn, buffer);
-    }
-    else
-    {
-        // TODO BPC: Add throttled EVR
+    } else {
+        // Invalid PDU header, drop packet
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(chan_id, static_cast<I32>(status));
     }
 }
 
@@ -866,6 +894,7 @@ Cfdp::Status::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw
 {
     int i;
     CF_Playback_t *pb;
+    Cfdp::Status::T status;
 
     // Loop through the channel's playback directories to find an open slot
     for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
@@ -880,13 +909,14 @@ Cfdp::Status::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw
     if (i == CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN)
     {
         // CFE_EVS_SendEvent(CF_CFDP_DIR_SLOT_ERR_EID, CFE_EVS_EventType_ERROR, "CF: no playback dir slot available");
-        return Cfdp::Status::ERROR;
+        status = Cfdp::Status::ERROR;
     }
     else
     {
-        return this->playbackDirInitiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
+        status = this->playbackDirInitiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
     }
 
+    return status;
 }
 
 Cfdp::Status::T CfdpEngine::startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, const Fw::String& dstDir,

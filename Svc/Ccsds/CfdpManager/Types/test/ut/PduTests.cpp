@@ -201,6 +201,54 @@ TEST_F(PduTest, MetadataLongFilenames) {
     txBuffer.setSize(sb_txBuffer.getSize());
 }
 
+TEST_F(PduTest, MetadataDeserializeFrom) {
+    // Test that MetadataPdu::deserializeFrom() works correctly
+    MetadataPdu txPdu;
+    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
+    const CfdpEntityId sourceEid = 100;
+    const CfdpTransactionSeq transactionSeq = 200;
+    const CfdpEntityId destEid = 300;
+    const CfdpFileSize fileSize = 2048;
+    const char* sourceFilename = "/ground/test_source.bin";
+    const char* destFilename = "test/ut/output/test_dest.bin";
+    const U8 closureRequested = 1;
+
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
+                    fileSize, sourceFilename, destFilename, CHECKSUM_TYPE_MODULAR, closureRequested);
+
+    // Serialize to buffer
+    U8 buffer1[512];
+    Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
+    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
+    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_GT(txBuffer.getSize(), 0U);
+
+    // Deserialize from buffer using deserializeFrom()
+    MetadataPdu rxPdu;
+    const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
+    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
+    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+
+    // Verify header fields
+    const PduHeader& header = rxPdu.asHeader();
+    EXPECT_EQ(T_METADATA, header.getType());
+    EXPECT_EQ(direction, header.getDirection());
+    EXPECT_EQ(txmMode, header.getTxmMode());
+    EXPECT_EQ(sourceEid, header.getSourceEid());
+    EXPECT_EQ(transactionSeq, header.getTransactionSeq());
+    EXPECT_EQ(destEid, header.getDestEid());
+
+    // Verify metadata fields
+    EXPECT_EQ(fileSize, rxPdu.getFileSize());
+    EXPECT_STREQ(sourceFilename, rxPdu.getSourceFilename().toChar());
+    EXPECT_STREQ(destFilename, rxPdu.getDestFilename().toChar());
+    EXPECT_EQ(closureRequested, rxPdu.getClosureRequested());
+    EXPECT_EQ(CHECKSUM_TYPE_MODULAR, rxPdu.getChecksumType());
+}
+
 // ======================================================================
 // File Data PDU Tests
 // ======================================================================

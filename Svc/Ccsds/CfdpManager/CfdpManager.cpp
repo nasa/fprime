@@ -62,8 +62,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
   FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
   FW_ASSERT(portNum >= 0, portNum);
 
-  // Pass buffer directly to receivePdu - it will peek at type and deserialize as needed
-  // There is a direct mapping from port number to channel ID
+  // Pass buffer to the engine to deserialize
   this->m_engine->receivePdu(static_cast<U8>(portNum), fwBuffer);
 
   // Return buffer

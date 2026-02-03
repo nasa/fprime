@@ -554,8 +554,8 @@ class CfdpEngine {
      * This function signature must match all receive state functions.
      * The parameter txn is ignored here.
      *
-     * @param txn  Pointer to the transaction state
-     * @param pdu  The PDU being received
+     * @param txn    Pointer to the transaction state
+     * @param buffer Buffer containing the PDU to process
      */
     void recvDrop(CfdpTransaction *txn, const Fw::Buffer& buffer);
 

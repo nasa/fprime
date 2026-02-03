@@ -364,7 +364,7 @@ class CfdpTransaction {
     /************************************************************************/
     /** @brief S2 received FIN, so set flag to send FIN-ACK.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the FIN PDU to process
      */
     void s2Fin(const Fw::Buffer& pdu);
 
@@ -375,14 +375,14 @@ class CfdpTransaction {
      * structure. These can be used to generate re-transmit filedata
      * PDUs.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the NAK PDU to process
      */
     void s2Nak(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief S2 NAK handling but with arming the NAK timer.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the NAK PDU to process
      */
     void s2NakArm(const Fw::Buffer& pdu);
 
@@ -391,7 +391,7 @@ class CfdpTransaction {
      *
      * Handles reception of an ACK PDU
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the ACK PDU to process
      */
     void s2EofAck(const Fw::Buffer& pdu);
 
@@ -573,7 +573,7 @@ class CfdpTransaction {
      *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the file data PDU to process
      */
     Cfdp::Status::T rProcessFd(const Fw::Buffer& pdu);
 
@@ -586,7 +586,7 @@ class CfdpTransaction {
      *
      * @retval Cfdp::Status::SUCCESS on success. Returns anything else on error.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the EOF PDU to process
      */
     Cfdp::Status::T rSubstateRecvEof(const Fw::Buffer& pdu);
 
@@ -595,7 +595,7 @@ class CfdpTransaction {
      *
      * Only need to confirm CRC for R1.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the EOF PDU to process
      */
     void r1SubstateRecvEof(const Fw::Buffer& pdu);
 
@@ -605,7 +605,7 @@ class CfdpTransaction {
      * For R2, need to trigger the send of EOF-ACK and then call the
      * check complete function which will either send NAK or FIN.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the EOF PDU to process
      */
     void r2SubstateRecvEof(const Fw::Buffer& pdu);
 
@@ -614,7 +614,7 @@ class CfdpTransaction {
      *
      * For R1, only need to digest the CRC.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the file data PDU to process
      */
     void r1SubstateRecvFileData(const Fw::Buffer& pdu);
 
@@ -627,7 +627,7 @@ class CfdpTransaction {
      * always checks for completion. This function also re-arms
      * the ACK timer.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the file data PDU to process
      */
     void r2SubstateRecvFileData(const Fw::Buffer& pdu);
 
@@ -686,7 +686,7 @@ class CfdpTransaction {
      * This is the end of an R2 transaction. Simply reset the transaction
      * state.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the ACK PDU to process
      */
     void r2RecvFinAck(const Fw::Buffer& pdu);
 
@@ -699,7 +699,7 @@ class CfdpTransaction {
      * missed metadata PDU, it will move the file to the correct
      * destination according to the metadata PDU.
      *
-     * @param ph Pointer to the PDU information
+     * @param pdu Buffer containing the metadata PDU to process
      */
     void r2RecvMd(const Fw::Buffer& pdu);
 
