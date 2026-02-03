@@ -22,7 +22,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 class ComQueue final : public ComQueueComponentBase {
-    // Added to enable easy testing of queue reprioritization
+    // Added to enable easy testing of set queue priority command
     friend class ComQueueTester;
 
     //! State of the currently transmitted buffer
