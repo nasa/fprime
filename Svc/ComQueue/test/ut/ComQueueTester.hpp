@@ -101,7 +101,11 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testSetQueuePriorityInvalidIndex();
 
+    void testSetQueuePriorityNegativeIndex();
+
     void testSetQueuePriorityInvalidPriority();
+
+    void testSetQueuePriorityNegativePriority();
 
   private:
     // ----------------------------------------------------------------------

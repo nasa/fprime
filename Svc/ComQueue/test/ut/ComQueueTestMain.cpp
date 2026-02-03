@@ -99,9 +99,19 @@ TEST(Commands, SetQueuePriorityInvalidIndex) {
     tester.testSetQueuePriorityInvalidIndex();
 }
 
+TEST(Commands, SetQueuePriorityNegativeIndex) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityNegativeIndex();
+}
+
 TEST(Commands, SetQueuePriorityInvalidPriority) {
     Svc::ComQueueTester tester;
     tester.testSetQueuePriorityInvalidPriority();
+}
+
+TEST(Commands, SetQueuePriorityNegativePriority) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityNegativePriority();
 }
 
 int main(int argc, char** argv) {

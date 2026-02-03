@@ -841,6 +841,10 @@ void ComQueueTester::testSetQueuePriorityCommand() {
     // Configure the component
     configure();
 
+    for (FwIndexType queueIndex = 0; queueIndex < 3; queueIndex++) {
+        ASSERT_EQ(queueIndex, this->component.m_prioritizedList[queueIndex].index);
+    }
+
     // Send the SET_QUEUE_PRIORITY command for queue 0, setting priority to 2
     // Priority must be < TOTAL_PORT_COUNT, so we use a small value that's guaranteed to be valid
     const FwIndexType newPriority = 2;
@@ -854,6 +858,14 @@ void ComQueueTester::testSetQueuePriorityCommand() {
     // Verify the event was emitted
     ASSERT_EVENTS_QueuePriorityChanged_SIZE(1);
     ASSERT_EVENTS_QueuePriorityChanged(0, Svc::QueueType::COM_QUEUE, 0, newPriority);
+
+    // Ensure the prioritizedList is sorted (monotonic)
+    FwIndexType currentPriority = 0;
+
+    for (FwIndexType queueIndex = 0; queueIndex < 3; queueIndex++) {
+        ASSERT_LE(currentPriority, this->component.m_prioritizedList[queueIndex].priority);
+        currentPriority = this->component.m_prioritizedList[queueIndex].priority;
+    }
 
     component.cleanup();
 }
@@ -877,6 +889,25 @@ void ComQueueTester::testSetQueuePriorityInvalidIndex() {
     component.cleanup();
 }
 
+void ComQueueTester::testSetQueuePriorityNegativeIndex() {
+    // Configure the component
+    configure();
+
+    // Send command with invalid queue index (beyond TOTAL_PORT_COUNT)
+    const FwIndexType invalidIndex = -1;
+    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, invalidIndex, 1);
+    this->component.doDispatch();
+
+    // Verify command response was VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Verify no priority changed event was emitted
+    ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+
+    component.cleanup();
+}
+
 void ComQueueTester::testSetQueuePriorityInvalidPriority() {
     // Configure the component
     configure();
@@ -884,6 +915,25 @@ void ComQueueTester::testSetQueuePriorityInvalidPriority() {
     // Send command with invalid priority value (beyond TOTAL_PORT_COUNT)
     const FwIndexType invalidPriority = ComQueue::TOTAL_PORT_COUNT + 1;
     this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::BUFFER_QUEUE, 0, invalidPriority);
+    this->component.doDispatch();
+
+    // Verify command response was VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Verify no priority changed event was emitted
+    ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+
+    component.cleanup();
+}
+
+void ComQueueTester::testSetQueuePriorityNegativePriority() {
+    // Configure the component
+    configure();
+
+    // Send command with invalid priority value (< 0)
+    const FwIndexType invalidPriority = -1;
+    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, 0, invalidPriority);
     this->component.doDispatch();
 
     // Verify command response was VALIDATION_ERROR
