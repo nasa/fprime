@@ -182,7 +182,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
     for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
         // If the port based index matches, then update
         if (m_prioritizedList[prioIndex].index == queueIndex) {
-            m_prioritizedList[prioIndex].priority = static_cast<FwIndexType>(newPriority);
+            m_prioritizedList[prioIndex].priority = newPriority;
             break;  // Since we shouldn't find more than one queue at this port index
         }
     }
@@ -196,10 +196,6 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                 QueueMetadata temp = m_prioritizedList[j];
                 m_prioritizedList[j] = m_prioritizedList[j + 1];
                 m_prioritizedList[j + 1] = temp;
-
-                // Update indices to match new positions
-                m_prioritizedList[j].index = j;
-                m_prioritizedList[j + 1].index = j + 1;
             }
         }
     }
