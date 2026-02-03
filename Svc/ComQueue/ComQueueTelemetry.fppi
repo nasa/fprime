@@ -2,4 +2,4 @@
 telemetry comQueueDepth: ComQueueDepth id 0
 
 @ Depth of queues of Fw::Buffer type
-      telemetry buffQueueDepth: BuffQueueDepth id 1
+telemetry buffQueueDepth: BuffQueueDepth id 1

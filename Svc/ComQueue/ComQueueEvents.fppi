@@ -1,7 +1,7 @@
 @ Queue overflow event
 event QueueOverflow(
     queueType: QueueType @< The Queue data type
-    index: U32 @< index of overflowed queue
+    index: FwIndexType @< index of overflowed queue
 ) \
 severity warning high \
 format "The {} queue at index {} overflowed"
@@ -10,7 +10,7 @@ format "The {} queue at index {} overflowed"
 event QueuePriorityChanged(
     queueType: QueueType @< The Queue data type
     indexType: FwIndexType @< The index of the queue (within the supplied type) that was modified
-    newPriority: U32 @< New priority value
+    newPriority: FwIndexType @< New priority value
 ) \
 severity activity high \
 format "{} {} priority changed to {}"

@@ -12,6 +12,6 @@ async command FLUSH_ALL_QUEUES()
 async command SET_QUEUE_PRIORITY(
                                 queueType: QueueType @< The Queue data type
                                 indexType: FwIndexType @< The index of the queue (within the supplied type) to modify
-                                newPriority: U32 @< New priority value for the queue
+                                newPririty: FwIndexType @< New priority value for the queue
                                 )
 
