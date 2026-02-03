@@ -324,7 +324,6 @@ void MyDriver::run_handler(FwIndexType portNum, U32 context) {
 
 - [Application-Manager-Driver Pattern](app-man-drv.md) - General device driver architecture
 - [How-To: Develop a Device Driver](../../how-to/develop-device-driver.md) - Complete implementation guide
-- [Baremetal Pattern](baremetal.md) - ISRs in baremetal systems
 - [F´ on Baremetal and Multi-Core Systems](../framework/baremetal-multicore.md) - ISR considerations for baremetal
 
 ## Conclusion
