@@ -843,7 +843,7 @@ void ComQueueTester::testSetQueuePriorityCommand() {
 
     // Send the SET_QUEUE_PRIORITY command for queue 0, setting priority to 2
     // Priority must be < TOTAL_PORT_COUNT, so we use a small value that's guaranteed to be valid
-    const U32 newPriority = 2;
+    const FwIndexType newPriority = 2;
     this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, 0, newPriority);
     this->component.doDispatch();
 
@@ -863,7 +863,7 @@ void ComQueueTester::testSetQueuePriorityInvalidIndex() {
     configure();
 
     // Send command with invalid queue index (beyond TOTAL_PORT_COUNT)
-    const U32 invalidIndex = ComQueue::TOTAL_PORT_COUNT + 1;
+    const FwIndexType invalidIndex = ComQueue::TOTAL_PORT_COUNT + 1;
     this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, invalidIndex, 1);
     this->component.doDispatch();
 
@@ -882,7 +882,7 @@ void ComQueueTester::testSetQueuePriorityInvalidPriority() {
     configure();
 
     // Send command with invalid priority value (beyond TOTAL_PORT_COUNT)
-    const U32 invalidPriority = ComQueue::TOTAL_PORT_COUNT + 1;
+    const FwIndexType invalidPriority = ComQueue::TOTAL_PORT_COUNT + 1;
     this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::BUFFER_QUEUE, 0, invalidPriority);
     this->component.doDispatch();
 

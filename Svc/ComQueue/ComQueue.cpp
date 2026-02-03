@@ -173,7 +173,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
     }
 
     // Validate priority range
-    if (newPriority >= TOTAL_PORT_COUNT) {
+    if (newPriority < 0 || newPriority >= TOTAL_PORT_COUNT) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
