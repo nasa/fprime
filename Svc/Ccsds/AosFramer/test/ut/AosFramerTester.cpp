@@ -388,7 +388,7 @@ void AosFramerTester ::testShortPackets() {
 
     // Using U32 so I can unwind the addition of U16 max
     U32 payloadStart = static_cast<U32>(AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + outFramePointer);
-    U32 payloadStop = payloadStart + sizeof(bufferData);
+    U32 payloadStop = static_cast<U32>(payloadStart + sizeof(bufferData));
 
     for (U32 offset = payloadStart; offset < payloadStop; offset++) {
         ASSERT_EQ(outBuffer.getData()[offset], static_cast<U8>(payloadInd++))
@@ -416,30 +416,30 @@ U8 AosFramerTester::getFrameTfVn(U8* frameData) {
 U16 AosFramerTester::getFrameScId(U8* frameData) {
     U16 scid = 0;
 
-    scid |= static_cast<U16>(frameData[1] >> 6U);
-    scid |= static_cast<U16>((frameData[0] & 0x3F) << 2U);
-    scid |= static_cast<U16>((frameData[5] & 0x30) << (8U - 4U));
+    scid |= static_cast<U16>(frameData[1U] >> 6U);
+    scid |= static_cast<U16>((frameData[0U] & 0x3FU) << 2U);
+    scid |= static_cast<U16>((frameData[5U] & 0x30U) << (8U - 4U));
 
     return scid;
 }
 
 U8 AosFramerTester::getFrameVcId(U8* frameData) {
     // Least 6 bits of 2nd octet
-    return static_cast<U8>(frameData[1] & 0x3F);
+    return static_cast<U8>(frameData[1U] & 0x3FU);
 }
 
 U32 AosFramerTester::getFrameVcCount(U8* frameData) {
     // 3 octets at 3rd octet
     U32 vc_count = 0;
 
-    vc_count |= static_cast<U32>(frameData[2] << 16U);
-    vc_count |= static_cast<U32>(frameData[3] << 8U);
-    vc_count |= static_cast<U32>(frameData[4] << 0U);
+    vc_count |= static_cast<U32>(frameData[2U] << 16U);
+    vc_count |= static_cast<U32>(frameData[3U] << 8U);
+    vc_count |= static_cast<U32>(frameData[4U] << 0U);
 
     // VC Frame Count Cycle in use flag
-    if (frameData[5] & 0x40) {
+    if (frameData[5U] & 0x40U) {
         // Lowest 4 bits of 6th octet
-        vc_count |= static_cast<U32>((frameData[5] & 0x0F) << 24U);
+        vc_count |= static_cast<U32>((frameData[5] & 0x0FU) << 24U);
     }
 
     return vc_count;
@@ -449,8 +449,8 @@ U16 AosFramerTester::getFramePacketPointer(U8* frameData) {
     // 2 octets at 7th octet
     U16 offset = 0;
 
-    offset |= static_cast<U16>(frameData[6] << 8U);
-    offset |= static_cast<U16>(frameData[7] << 0U);
+    offset |= static_cast<U16>(frameData[6U] << 8U);
+    offset |= static_cast<U16>(frameData[7U] << 0U);
 
     return offset;
 }
