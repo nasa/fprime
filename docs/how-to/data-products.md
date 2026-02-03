@@ -40,6 +40,9 @@ A typical system using data products includes:
 
 The producer itself is intentionally simple: it requests a container, fills it with records, and sends it off.  To model a producer, we need to define the following for the component:
 
+> [!TIP]
+> Most design work happens in your component's `.fpp` file where you define types, records, containers, and ports. Implementation happens in your component's `.cpp` file where you allocate, fill, and send containers.
+
 - Define types
 - Product records
 - Product containers
@@ -52,7 +55,7 @@ A **record** is the smallest unit of data stored in a data product container. A 
 In our example, our record uses a FPP modeled struct containing a time tag and value:
 
 ```fpp
-struct SinusoidRecordType {
+struct SinusoidDataType {
   timeTag: Fw.TimeValue
   value: F32
 }
@@ -63,11 +66,15 @@ struct SinusoidRecordType {
 
 ### Declare Product Records
 
-Each record type that may appear in a container must be declared as a **product record**.  These records must have a record name (e.g. SineRecord) and a type (e.g. SinusoidRecordType). Each record must also have a unique numeric ID within the component this can be explicit or implicit (auto-assigned).
+Each record type that may appear in a container must be declared as a **product record**.  These records must have a record name (e.g. `SineRecord`) and a type (e.g. `SinusoidDataType`). Each record must also have a unique numeric ID within the component this can be explicit or implicit (auto-assigned).
 
-```fpp
-product record SineRecord: SinusoidRecordType id 0
-product record CosineRecord: SinusoidRecordType id 1
+```python
+active component Producer {
+    # [ ... other code ... ]
+
+    product record SineRecord: SinusoidDataType id 0
+    product record CosineRecord: SinusoidDataType id 1
+}
 ```
 
 > [!NOTE]
@@ -120,7 +127,8 @@ This creates a simple internal flow:
 
 Containers are of the type `DpContainer` in the component's base class, which derives from `Fw::Container`. Users typically instantiate the container in their header as a member variable.
 
-```
+```cpp
+// In Component.hpp
 DpContainer m_container; //! Tracked container state
 ```
 
@@ -131,15 +139,14 @@ This member variable can be filled by container allocation calls, and set via co
 
 ### Compute Container Size
 
-Container allocation requires an explicit data size, which includes the record overhead and data type size. Users should request a container with sufficient size to hold (id + data) for the maximum records possible before the container is "ready".
+Container allocation requires an explicit data size (think: just like an `Fw::Buffer` allocation). When serializing records into a container, the record ID is also serialized (of size `sizeof(FwDpIdType)`). Therefore, for precise allocation, users must compute the size of all records to be stored in the container, including record IDs.
 
 Our example intends to store `RECORD_COUNT` sine and cosine records per container:
 
 ```cpp
-containerSize =
-  RECORD_COUNT *
-  (SinusoidRecordType::SERIALIZED_SIZE + sizeof(FwDpIdType)) *
-  2; // For both sine and cosine records
+containerSize = 2 * RECORD_COUNT * // times two for both sine and cosine records
+        // each record needs space for data size + size of record ID
+        (SinusoidDataType::SERIALIZED_SIZE + sizeof(FwDpIdType))
 ```
 
 > [!CAUTION]
@@ -162,24 +169,24 @@ Records must be serialized into the container payload. This is done by instantia
 In our example, we create and serialize sine and cosine records as follows:
 
 ```cpp
-SinusoidRecordType sineRecord, cosineRecord;
+SinusoidDataType sineRecord, cosineRecord;
 
 sineRecord.timeTag = ...;
 sineRecord.value = ...;
 cosineRecord.timeTag = ...;
 cosineRecord.value = ...;
 
-this->serializeRecord_SineRecord(this->m_container, sineRecord);
-this->serializeRecord_CosineRecord(this->m_container, cosineRecord);
+this->m_container.serializeRecord_SineRecord(sineRecord);
+this->m_container.serializeRecord_CosineRecord(cosineRecord);
 ```
 
 
 ### Send the Container
 
-Once the container is “full” (by count, size, time, or other policy) it should be sent using the autocoded helper generated from the FPP model of the form `this->dpSend_<ContainerName>`. In our example, this becomes:
+Once the container is "full" (by count, size, time, or other policy) it should be sent using the autocoded `dpSend` method. In our example, this becomes:
 
 ```cpp
-this->dpSend_SinusoidContainer(this->m_container);
+this->dpSend(this->m_container);
 ```
 
 > [!WARNING]
