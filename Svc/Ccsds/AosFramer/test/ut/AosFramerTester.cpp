@@ -416,9 +416,9 @@ U8 AosFramerTester::getFrameTfVn(U8* frameData) {
 U16 AosFramerTester::getFrameScId(U8* frameData) {
     U16 scid = 0;
 
-    scid |= static_cast<U16>(frameData[1U] >> 6U);
-    scid |= static_cast<U16>((frameData[0U] & 0x3FU) << 2U);
-    scid |= static_cast<U16>((frameData[5U] & 0x30U) << (8U - 4U));
+    scid |= static_cast<U16>((frameData[1] >> 6U) & 0x0003);
+    scid |= static_cast<U16>((frameData[0] << 2U) & 0x00FC);
+    scid |= static_cast<U16>((frameData[5] << 4U) & 0x0300);
 
     return scid;
 }
@@ -449,8 +449,8 @@ U16 AosFramerTester::getFramePacketPointer(U8* frameData) {
     // 2 octets at 7th octet
     U16 offset = 0;
 
-    offset |= static_cast<U16>(frameData[6U] << 8U);
-    offset |= static_cast<U16>(frameData[7U] << 0U);
+    offset |= static_cast<U16>((frameData[6] << 8U) & 0xFF00);
+    offset |= static_cast<U16>((frameData[7] << 0U) & 0x00FF);
 
     return offset;
 }
