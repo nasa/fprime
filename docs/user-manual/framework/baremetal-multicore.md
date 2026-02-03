@@ -63,7 +63,7 @@ signal, calculating elapsed time by the reading of clock registers, using timing
 by a timer-driven interrupt service routine (ISR).
 
 > [!NOTE]
-> ISRs are complex items and should be studied in detail before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate groups.
+> ISRs are complex items and should be studied in detail before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate groups. See also the [ISR-Based Device Driver Pattern](../design-patterns/isr-driver.md) for more information about ISRs and F´.
 
 ## Multi-Core and Multi-Device Systems
 
