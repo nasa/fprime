@@ -172,7 +172,9 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     header.set_frameCountAndSignaling(frameCountAndSignaling);
 
     // Perform the modulo at serialization time makes vc cycle count easier to make optional
-    currentVc.virtualFrameCount++;  // U28 intended to wrap around (modulo 268,435,456)
+    currentVc.virtualFrameCount++;  // U24 base Frame Count
+                                    // Extended by 4 bit VC Cycle Count
+                                    // intended to wrap around (modulo 268,435,456)
 
     // -----------------------------------------------
     // Write Header
