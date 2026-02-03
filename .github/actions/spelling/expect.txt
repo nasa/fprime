@@ -97,6 +97,7 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
+CNTL
 cntx
 CODEFILE
 CODESONAR
@@ -590,6 +591,7 @@ Rizvi
 ROOTDIR
 rpi
 rptr
+rtems
 SAlias
 sanitizers
 sats

@@ -1,6 +1,6 @@
 # ISR Device Driver Pattern
 
-The ISR-based device driver pattern enables F´ components to interface with hardware devices that use Interrupt Service Routines (ISRs) for event-driven communication. This pattern is common in embedded RTOSes (VxWorks, RTEMS, Integrity, FreeRTOS) and baremetal systems where hardware interrupts signal data availability or device state changes.
+The ISR-based device driver pattern enables F´ components to interface with hardware devices that use Interrupt Service Routines (ISRs) for event-driven communication. This pattern is common in embedded RTOS's (VxWorks, RTEMS, Integrity, FreeRTOS) and baremetal systems where hardware interrupts signal data availability or device state changes.
 
 > [!NOTE]
 > This document focuses on the ISR-based driver pattern. For general device driver architecture, see the [Application-Manager-Driver Pattern](app-man-drv.md). For a complete how-to guide on implementing device drivers, see [How-To: Develop a Device Driver](../../how-to/develop-device-driver.md).
