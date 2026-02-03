@@ -158,9 +158,6 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     U32 frameCountAndSignaling = static_cast<U32>((currentVc.virtualFrameCount & 0x00FFFFFFU)
                                                   << static_cast<FwSizeType>(AOSHeaderSubfields::vcFrameCountOffset));
 
-    // Replay Flag (4.1.2.5.2)
-    frameCountAndSignaling |= static_cast<U32>(context.get_replayFlag() << AOSHeaderSubfields::replayFlagOffset);
-
     // Virtual Channel Frame Count Cycle Use Flag (4.1.2.5.3)
     frameCountAndSignaling |= static_cast<U32>(1 << AOSHeaderSubfields::cycleCountFlagOffset);
 
@@ -341,7 +338,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     }
 }
 
-void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, FwSizeType length) {
+void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, U16 length) {
     // APID to use for this Idle Packet
     constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
 

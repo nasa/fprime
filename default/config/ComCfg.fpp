@@ -50,8 +50,7 @@ module ComCfg {
         pvn: Pvn                    @< Packet Version Number (CCSDS SPP vs EPP)
         apid: Apid                  @< 11 bits APID in CCSDS
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
-        vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS
-        replayFlag: bool            @< AOS bool for realtime vs replay (passed directly into the frame)
+        vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
         sendNow: bool               @< Flag to AOS Framer that the Frame this packet goes into should be sent ASAP
 
     } default {
@@ -59,8 +58,7 @@ module ComCfg {
         pvn = Pvn.SPACE_PACKET_PROTOCOL
         apid = Apid.FW_PACKET_UNKNOWN
         sequenceCount = 0
-        vcId = 0
-        replayFlag = false
+        vcId = 1
         sendNow = false
     }
 
