@@ -112,7 +112,7 @@ Minimize resource usage by:
 
 ### Choose an Execution Context
 
-Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all driven by [rate groups](rate-group.md). Designing the system this way ensures that all execution is derived from one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group driver at a set rate. All calls needed will execute during a sweep through the rate groups and their derived rates.
+Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all driven by [rate groups](../design-patterns/rate-group.md). Designing the system this way ensures that all execution is derived from one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group driver at a set rate. All calls needed will execute during a sweep through the rate groups and their derived rates.
 
 > [!NOTE]
 > Other options exist (see [Thread Virtualization](#thread-virtualization) below).
@@ -221,7 +221,7 @@ while (true) {
 
 - [`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference): a reference implementation of a baremetal F´ application
 - [`fprime-baremetal`](https://github.com/fprime-community/fprime-baremetal): a support package for baremetal F´
-- [Multi-Core Applications in F´](../framework/multi-core-applications.md): guide for multi-core F´ deployments
+- [F´ on Multi-Core Systems](./run-multi-core.md): guide for multi-core F´ deployments
 
 ## Conclusion
 

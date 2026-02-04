@@ -286,6 +286,7 @@ getty
 ghprb
 gitmodules
 gmock
+GNC
 Gnd
 gnueabihf
 googletest
