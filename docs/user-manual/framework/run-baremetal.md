@@ -2,9 +2,6 @@
 
 The baremetal pattern enables F´ applications to run on processors without an operating system. This pattern is designed for resource-constrained environments where traditional OS features like threads and message queues are unavailable.
 
-> [!NOTE]
-> This document focuses on the practical implementation pattern for baremetal F´ applications. For multi-core systems, see [Multi-Core Applications in F´](../framework/multi-core-applications.md).
-
 ## What is Baremetal?
 
 "Baremetal" is defined as a processor/application that does not run with an operating system. In baremetal environments:
@@ -98,7 +95,7 @@ When implementing a baremetal F´ application, consider the following:
 
 ### Component Organization
 
-Develop components based on the [RateGroup pattern](rate-group.md):
+Develop components based on the [Rate Group pattern](../design-patterns/rate-group.md):
 
 - Have it driven by a hardware timer at the necessary rate
 - Use PassiveRateGroup to drive a set of components (including F´ core components)

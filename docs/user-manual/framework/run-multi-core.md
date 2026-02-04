@@ -294,7 +294,7 @@ flowchart LR
 
 **Implementation notes:**
 
-- Requires hypervisor support (e.g., Xen, KVM, proprietary hypervisors)
+- Requires hypervisor support
 - Communication typically uses shared memory or hypervisor-provided channels
 - Strong isolation between partitions
 - More complex setup and configuration
