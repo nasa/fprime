@@ -55,7 +55,7 @@ interface is defined in `Os/Task.hpp` as part of the `Arguments` class used when
 ```
 
 The default behavior is to let the OS dynamically assign the thread to cores. The `cpuAffinity` parameter is delegated to the operating
-system implementation, which handles the platform-specific details of core affinity. For example, the Posix OSAL implementation delegates to the `pthread_attr_setaffinity_np` function [here]((https://github.com/nasa/fprime/blob/5e1a22edce86133957dfeb54a31ac135b42bb92b/Os/Posix/Task.cpp#L108-L127)).
+system implementation, which handles the platform-specific details of core affinity. For example, the Posix OSAL implementation delegates to the `pthread_attr_setaffinity_np` function (see [source]((https://github.com/nasa/fprime/blob/5e1a22edce86133957dfeb54a31ac135b42bb92b/Os/Posix/Task.cpp#L108-L127))).
 
 ### Important Considerations
 
@@ -132,9 +132,9 @@ A mixed pattern of pinning some threads and allowing the OS to select for others
 - Allow background processing threads to float across remaining cores
 - Pin I/O threads to cores that handle related interrupts
 
-### Data Sharing and Re-entrancy
+### Data Sharing and Reentrancy
 
-Users need to be aware of data-sharing and re-entrancy issues when designing multi-core applications. Proper
+Users need to be aware of data-sharing and reentrancy issues when designing multi-core applications. Proper
 synchronization mechanisms must be used to protect shared resources.
 
 **Key considerations:**
