@@ -311,6 +311,6 @@ separate processors rather than partitions or processes on the same processor.
 
 ## Related Topics
 
-- [Baremetal Pattern](../design-patterns/baremetal.md) - Design pattern for baremetal F´ applications
+- [F´ on Baremetal Systems](run-baremetal.md) - Design pattern for baremetal F´ applications
 - [Hub Pattern](../design-patterns/hub-pattern.md) - Design pattern for connecting deployments
 - [Configuring F´](configuring-fprime.md) - General F´ configuration options
