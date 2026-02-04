@@ -22,8 +22,8 @@ on:
       ci_config_file:
         required: true
         type: string
-      run_unit_tests:
-        description: "Run an additional job in parallel to run unit tests."
+      run_int:
+        description: "Run an additional job in parallel to run integration tests."
         required: false
         type: boolean
         default: true
@@ -65,6 +65,7 @@ jobs:
           name: archive.tar.gz
           path: ./archive.tar.gz
   integration-tests:
+    if: ${{ inputs.run_int }}
     needs: build
     name: "Integration Tests"
     runs-on: ${{ inputs.runs_on_int }}

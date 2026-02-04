@@ -32,5 +32,5 @@ jobs:
         target_repository: fprime-community/fprime-zephyr-reference
         target_ref: ${{ needs.get-branch.outputs.target-branch }}
         ci_config_file: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
-        run_unit_tests: false # FIXME: temporary disable until we work around hardware issues
+        run_int: false # FIXME: temporary disable until we work around hardware issues
 
