@@ -92,7 +92,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param peerId Peer entity ID
     //! @return Pointer to configured transaction (owned by component)
     CfdpTransaction* setupTestTransaction(
-        CF_TxnState_t state,
+        CfdpTxnState state,
         U8 channelId,
         const char* srcFilename,
         const char* dstFilename,
@@ -423,7 +423,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         CfdpEntityId destEid,
         Cfdp::Class cfdpClass,
         U8 priority,
-        CF_TxnState_t expectedState,
+        CfdpTxnState expectedState,
         TransactionSetup& setup
     );
 
@@ -436,7 +436,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Cfdp::Class::T cfdpClass,
         U32 fileSize,
         U32 transactionSeq,
-        CF_TxnState_t expectedState,
+        CfdpTxnState expectedState,
         TransactionSetup& setup
     );
 
@@ -498,11 +498,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     CfdpManager component;
 
     //! Reusable buffer for allocation handler
-    U8 m_internalDataBuffer[CF_MAX_PDU_SIZE];
+    U8 m_internalDataBuffer[CFDP_MAX_PDU_SIZE];
 
     //! Storage for PDU copies (to avoid buffer reuse issues)
     static constexpr FwSizeType MAX_PDU_COPIES = 100;
-    U8 m_pduCopyStorage[MAX_PDU_COPIES][CF_MAX_PDU_SIZE];
+    U8 m_pduCopyStorage[MAX_PDU_COPIES][CFDP_MAX_PDU_SIZE];
     FwSizeType m_pduCopyCount;
 };
 

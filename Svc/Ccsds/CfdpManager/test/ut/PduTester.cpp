@@ -29,7 +29,7 @@ namespace Ccsds {
 // ----------------------------------------------------------------------
 
 CfdpTransaction* CfdpManagerTester::setupTestTransaction(
-    CF_TxnState_t state,
+    CfdpTxnState state,
     U8 channelId,
     const char* srcFilename,
     const char* dstFilename,
@@ -42,7 +42,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     FW_ASSERT(chan != nullptr);
 
     CfdpTransaction* txn = chan->getTransaction(0);  // Use first transaction for channel
-    CF_History_t* history = chan->getHistory(0);     // Use first history for channel
+    CfdpHistory* history = chan->getHistory(0);     // Use first history for channel
 
     // Initialize transaction state
     txn->m_state = state;
@@ -53,7 +53,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
-    if ((state == CF_TxnState_S2) || (state == CF_TxnState_R2)) {
+    if ((state == CFDP_TXN_STATE_S2) || (state == CFDP_TXN_STATE_R2)) {
         txn->m_txn_class = Cfdp::Class::CLASS_2;
     } else {
         txn->m_txn_class = Cfdp::Class::CLASS_1;
@@ -64,7 +64,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     history->seq_num = sequenceId;
     history->fnames.src_filename = Fw::String(srcFilename);
     history->fnames.dst_filename = Fw::String(dstFilename);
-    history->dir = CF_Direction_TX;
+    history->dir = CFDP_DIRECTION_TX;
 
     return txn;
 }
@@ -577,7 +577,7 @@ void CfdpManagerTester::sendNakPdu(
     );
 
     // Verify segment count does not exceed maximum
-    ASSERT_LE(numSegments, CF_NAK_MAX_SEGMENTS) << "Number of segments exceeds CF_NAK_MAX_SEGMENTS";
+    ASSERT_LE(numSegments, CFDP_NAK_MAX_SEGMENTS) << "Number of segments exceeds CFDP_NAK_MAX_SEGMENTS";
 
     // Add segment requests if provided
     for (U8 i = 0; i < numSegments; i++) {
@@ -619,7 +619,7 @@ void CfdpManagerTester::testMetaDataPdu() {
     const U32 testPeerId = 100;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_S1,  // Sender, class 1
+        CFDP_TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
         dstFile,
@@ -669,7 +669,7 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_S1,  // Sender, class 1
+        CFDP_TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
         dstFile,
@@ -745,7 +745,7 @@ void CfdpManagerTester::testEofPdu() {
     const U32 testPeerId = 150;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_S2,  // Sender, class 2 (acknowledged mode)
+        CFDP_TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -810,7 +810,7 @@ void CfdpManagerTester::testFinPdu() {
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -821,9 +821,9 @@ void CfdpManagerTester::testFinPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file reception complete
-    const CF_CFDP_ConditionCode_t testConditionCode = CF_CFDP_ConditionCode_NO_ERROR;
-    const CF_CFDP_FinDeliveryCode_t testDeliveryCode = CF_CFDP_FinDeliveryCode_COMPLETE;
-    const CF_CFDP_FinFileStatus_t testFileStatus = CF_CFDP_FinFileStatus_RETAINED;
+    const CfdpConditionCode testConditionCode = CFDP_CONDITION_CODE_NO_ERROR;
+    const CfdpFinDeliveryCode testDeliveryCode = CFDP_FIN_DELIVERY_CODE_COMPLETE;
+    const CfdpFinFileStatus testFileStatus = CFDP_FIN_FILE_STATUS_RETAINED;
 
     // Clear port history before test
     this->clearHistory();
@@ -866,7 +866,7 @@ void CfdpManagerTester::testAckPdu() {
     const U32 testPeerId = 175;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -924,7 +924,7 @@ void CfdpManagerTester::testNakPdu() {
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CF_TxnState_R2,  // Receiver, class 2 (acknowledged mode)
+        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,

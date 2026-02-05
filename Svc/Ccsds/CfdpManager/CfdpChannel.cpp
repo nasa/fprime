@@ -101,16 +101,16 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     U32 chunk_mem_offset = 0;
     U32 total_chunks_needed;
 
-    // Chunk configuration arrays (extract from config)
-    static const int CFDP_DIR_MAX_CHUNKS[CFDP_DIRECTION_NUM][CFDP_NUM_CHANNELS] = {
-        CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
-        CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION
-    };
+    // Initialize chunk configuration for this channel
+    const U32 rxChunksPerChannel[] = CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION;
+    const U32 txChunksPerChannel[] = CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION;
+    m_dirMaxChunks[CFDP_DIRECTION_RX] = rxChunksPerChannel[m_channelId];
+    m_dirMaxChunks[CFDP_DIRECTION_TX] = txChunksPerChannel[m_channelId];
 
     // Calculate total chunks needed for this channel
     total_chunks_needed = 0;
     for (k = 0; k < CFDP_DIRECTION_NUM; ++k) {
-        total_chunks_needed += CFDP_DIR_MAX_CHUNKS[k][m_channelId] * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
+        total_chunks_needed += m_dirMaxChunks[k] * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
     }
 
     // Allocate arrays
@@ -141,8 +141,8 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
             list_head = this->getChunkListHead(static_cast<U8>(k));
 
             // Use placement new to construct CfdpChunkWrapper with the new class-based interface
-            new (cw) CfdpChunkWrapper(static_cast<CfdpChunkIdx>(CFDP_DIR_MAX_CHUNKS[k][m_channelId]), &m_chunkMem[chunk_mem_offset]);
-            chunk_mem_offset += CFDP_DIR_MAX_CHUNKS[k][m_channelId];
+            new (cw) CfdpChunkWrapper(static_cast<CfdpChunkIdx>(m_dirMaxChunks[k]), &m_chunkMem[chunk_mem_offset]);
+            chunk_mem_offset += m_dirMaxChunks[k];
             CfdpCListInitNode(&cw->cl_node);
             CfdpCListInsertBack(list_head, &cw->cl_node);
         }

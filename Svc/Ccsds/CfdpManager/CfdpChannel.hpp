@@ -452,6 +452,8 @@ class CfdpChannel {
     CfdpChunkWrapper* m_chunks;                //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * CFDP_DIRECTION_NUM
     CfdpChunk* m_chunkMem;                     //!< Chunk memory backing store
 
+    U32 m_dirMaxChunks[CFDP_DIRECTION_NUM];    //!< Max chunks per direction (RX/TX) for this channel
+
     // Friend declarations for testing
     friend class CfdpManagerTester;
 };
