@@ -184,7 +184,7 @@ TEST_F(PduTest, MetadataEmptyFilenames) {
 
 TEST_F(PduTest, MetadataLongFilenames) {
     MetadataPdu pdu;
-    // Test with maximum allowed filename length (CF_FILENAME_MAX_LEN = 200)
+    // Test with maximum allowed filename length (CFDP_FILENAME_MAX_LEN = 200)
     const char* longSrc = "/very/long/path/to/source/file/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bin";
     const char* longDst = "/another/very/long/path/to/destination/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.dat";
 
@@ -1202,7 +1202,7 @@ TEST_F(PduTest, NakWithMaxSegments) {
     txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, scopeStart, scopeEnd);
 
-    // Add 58 segments (CF_NAK_MAX_SEGMENTS)
+    // Add 58 segments (CFDP_NAK_MAX_SEGMENTS)
     for (U8 i = 0; i < 58; i++) {
         CfdpFileSize start = i * 1000;
         CfdpFileSize end = start + 500;

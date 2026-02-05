@@ -66,27 +66,27 @@ class CfdpEngine;
 class CfdpTransaction;
 
 /**
- * @brief Maximum possible number of transactions that may exist on a single CF channel
+ * @brief Maximum possible number of transactions that may exist on a single CFDP channel
  */
 #define CFDP_NUM_TRANSACTIONS_PER_CHANNEL                                                \
-    (CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CF_MAX_SIMULTANEOUS_RX +               \
-     ((CF_MAX_POLLING_DIR_PER_CHAN + CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) * \
-      CF_NUM_TRANSACTIONS_PER_PLAYBACK))
+    (CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CFDP_MAX_SIMULTANEOUS_RX +               \
+     ((CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) * \
+      CFDP_NUM_TRANSACTIONS_PER_PLAYBACK))
 
 /**
- * @brief Maximum possible number of transactions that may exist in the CF application
+ * @brief Maximum possible number of transactions that may exist in the CFDP implementation
  */
-#define CFDP_NUM_TRANSACTIONS (CF_NUM_CHANNELS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
+#define CFDP_NUM_TRANSACTIONS (CFDP_NUM_CHANNELS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
 
 /**
- * @brief Maximum possible number of history entries that may exist in the CF application
+ * @brief Maximum possible number of history entries that may exist in the CFDP implementation
  */
-#define CFDP_NUM_HISTORIES (CF_NUM_CHANNELS * CF_NUM_HISTORIES_PER_CHANNEL)
+#define CFDP_NUM_HISTORIES (CFDP_NUM_CHANNELS * CFDP_NUM_HISTORIES_PER_CHANNEL)
 
 /**
- * @brief Maximum possible number of chunk entries that may exist in the CF application
+ * @brief Maximum possible number of chunk entries that may exist in the CFDP implementation
  */
-#define CFDP_NUM_CHUNKS_ALL_CHANNELS (CF_TOTAL_CHUNKS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
+#define CFDP_NUM_CHUNKS_ALL_CHANNELS (CFDP_TOTAL_CHUNKS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
 
 /**
  * @brief High-level state of a transaction
@@ -201,9 +201,9 @@ struct CfdpTxnFilenames
 };
 
 /**
- * @brief CF History entry
+ * @brief CFDP History entry
  *
- * Records CF app operations for future reference
+ * Records CFDP operations for future reference
  */
 struct CfdpHistory
 {
@@ -238,9 +238,9 @@ struct CfdpChunkWrapper
 };
 
 /**
- * @brief CF Playback entry
+ * @brief CFDP Playback entry
  *
- * Keeps the state of CF playback requests
+ * Keeps the state of CFDP playback requests
  */
 struct CfdpPlayback
 {
@@ -261,7 +261,7 @@ struct CfdpPlayback
 /**
  * \brief Directory poll entry
  *
- * Keeps the state of CF directory polling
+ * Keeps the state of CFDP directory polling
  */
 struct CfdpPollDir
 {
@@ -391,7 +391,7 @@ union CfdpStateData
 
 
 /**
- * @brief Callback function type for use with CF_TraverseAllTransactions()
+ * @brief Callback function type for use with CfdpChannel::traverseAllTransactions()
  *
  * @param txn Pointer to current transaction being traversed
  * @param context Opaque object passed from initial call

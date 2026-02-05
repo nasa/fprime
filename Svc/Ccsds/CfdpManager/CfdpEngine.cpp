@@ -60,7 +60,7 @@ CfdpEngine::CfdpEngine(CfdpManager* manager) :
     m_seqNum(0)
 {
     // TODO BPC: Should we intialize CfdpEngine here or wait for the init() function?
-    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
     {
         m_channels[i] = nullptr;
     }
@@ -68,7 +68,7 @@ CfdpEngine::CfdpEngine(CfdpManager* manager) :
 
 CfdpEngine::~CfdpEngine()
 {
-    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
     {
         if (m_channels[i] != nullptr)
         {
@@ -85,7 +85,7 @@ CfdpEngine::~CfdpEngine()
 void CfdpEngine::init()
 {
     // Create all channels
-    for (U8 i = 0; i < CF_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
     {
         m_channels[i] = new CfdpChannel(this, i, this->m_manager);
         FW_ASSERT(m_channels[i] != nullptr);
@@ -105,7 +105,7 @@ void CfdpEngine::armInactTimer(CfdpTransaction *txn)
     U32 timerDuration = 0;
 
     /* select timeout based on the state */
-    if (CF_CFDP_GetTxnStatus(txn) == CF_CFDP_AckTxnStatus_ACTIVE)
+    if (CfdpGetTxnStatus(txn) == CFDP_ACK_TXN_STATUS_ACTIVE)
     {
         /* in an active transaction, we expect traffic so use the normal inactivity timer */
         timerDuration = txn->m_cfdpManager->getInactivityTimerParam(txn->m_chan_num);
@@ -130,25 +130,25 @@ void CfdpEngine::dispatchRecv(CfdpTransaction *txn, const Fw::Buffer& buffer)
     // Dispatch based on transaction state
     switch (txn->m_state)
     {
-        case CF_TxnState_INIT:
+        case CFDP_TXN_STATE_INIT:
             this->recvInit(txn, buffer);
             break;
-        case CF_TxnState_R1:
+        case CFDP_TXN_STATE_R1:
             txn->r1Recv(buffer);
             break;
-        case CF_TxnState_S1:
+        case CFDP_TXN_STATE_S1:
             txn->s1Recv(buffer);
             break;
-        case CF_TxnState_R2:
+        case CFDP_TXN_STATE_R2:
             txn->r2Recv(buffer);
             break;
-        case CF_TxnState_S2:
+        case CFDP_TXN_STATE_S2:
             txn->s2Recv(buffer);
             break;
-        case CF_TxnState_DROP:
+        case CFDP_TXN_STATE_DROP:
             this->recvDrop(txn, buffer);
             break;
-        case CF_TxnState_HOLD:
+        case CFDP_TXN_STATE_HOLD:
             this->recvHold(txn, buffer);
             break;
         default:
@@ -161,16 +161,16 @@ void CfdpEngine::dispatchRecv(CfdpTransaction *txn, const Fw::Buffer& buffer)
 
 void CfdpEngine::dispatchTx(CfdpTransaction *txn)
 {
-    static const CF_CFDP_TxnSendDispatchTable_t state_fns = {
+    static const CfdpTxnSendDispatchTable state_fns = {
         {
-            nullptr, // CF_TxnState_UNDEF
-            nullptr, // CF_TxnState_INIT
-            nullptr, // CF_TxnState_R1
-            &CfdpTransaction::s1Tx, // CF_TxnState_S1
-            nullptr, // CF_TxnState_R2
-            &CfdpTransaction::s2Tx, // CF_TxnState_S2
-            nullptr, // CF_TxnState_DROP
-            nullptr // CF_TxnState_HOLD
+            nullptr, // CFDP_TXN_STATE_UNDEF
+            nullptr, // CFDP_TXN_STATE_INIT
+            nullptr, // CFDP_TXN_STATE_R1
+            &CfdpTransaction::s1Tx, // CFDP_TXN_STATE_S1
+            nullptr, // CFDP_TXN_STATE_R2
+            &CfdpTransaction::s2Tx, // CFDP_TXN_STATE_S2
+            nullptr, // CFDP_TXN_STATE_DROP
+            nullptr // CFDP_TXN_STATE_HOLD
         }
     };
 
@@ -182,7 +182,7 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
     Fw::Buffer buffer;
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
 
-    FW_ASSERT((txn->m_state == CF_TxnState_S1) || (txn->m_state == CF_TxnState_S2), txn->m_state);
+    FW_ASSERT((txn->m_state == CFDP_TXN_STATE_S1) || (txn->m_state == CFDP_TXN_STATE_S2), txn->m_state);
     FW_ASSERT(txn->m_chan != NULL);
 
     // Create and initialize Metadata PDU
@@ -190,7 +190,7 @@ Cfdp::Status::T CfdpEngine::sendMd(CfdpTransaction *txn)
 
     // Set closure requested flag based on transaction class
     // Class 1: closure not requested (0), Class 2: closure requested (1)
-    U8 closureRequested = (txn->m_state == CF_TxnState_S2) ? 1 : 0;
+    U8 closureRequested = (txn->m_state == CFDP_TXN_STATE_S2) ? 1 : 0;
 
     // Direction is toward receiver for metadata PDU sent by sender
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
@@ -264,7 +264,7 @@ Cfdp::Status::T CfdpEngine::sendEof(CfdpTransaction *txn)
 
     // Direction is toward receiver for EOF sent by sender
     Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
-    Cfdp::ConditionCode conditionCode = static_cast<Cfdp::ConditionCode>(CF_TxnStatus_To_ConditionCode(txn->m_history->txn_stat));
+    Cfdp::ConditionCode conditionCode = static_cast<Cfdp::ConditionCode>(CfdpTxnStatusToConditionCode(txn->m_history->txn_stat));
 
     eof.initialize(
         direction,
@@ -317,7 +317,7 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts,
     // Determine source and destination EIDs based on transaction direction
     CfdpEntityId src_eid;
     CfdpEntityId dst_eid;
-    if (txn->getHistory()->dir == CF_Direction_TX)
+    if (txn->getHistory()->dir == CFDP_DIRECTION_TX)
     {
         src_eid = m_manager->getLocalEidParam();
         dst_eid = peer_eid;
@@ -369,7 +369,7 @@ Cfdp::Status::T CfdpEngine::sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts,
     return status;
 }
 
-Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+Cfdp::Status::T CfdpEngine::sendFin(CfdpTransaction *txn, CfdpFinDeliveryCode dc, CfdpFinFileStatus fs,
                              Cfdp::ConditionCode cc)
 {
     Fw::Buffer buffer;
@@ -476,7 +476,7 @@ Cfdp::Status::T CfdpEngine::recvFd(CfdpTransaction *txn, const Cfdp::FileDataPdu
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
         // CFE_EVS_SendEvent(CF_PDU_FD_UNSUPPORTED_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: filedata PDU with segment metadata received");
-        this->setTxnStatus(txn, CF_TxnStatus_PROTOCOL_ERROR);
+        this->setTxnStatus(txn, CFDP_TXN_STATUS_PROTOCOL_ERROR);
         // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
         ret = Cfdp::Status::ERROR;
     }
@@ -613,7 +613,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
         /* all RX transactions will need a chunk list to track file segments */
         if (txn->m_chunks == NULL)
         {
-            txn->m_chunks = txn->m_chan->findUnusedChunks(CF_Direction_RX);
+            txn->m_chunks = txn->m_chan->findUnusedChunks(CFDP_DIRECTION_RX);
         }
         if (txn->m_chunks == NULL)
         {
@@ -632,13 +632,13 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
                 if (txmMode == Cfdp::Class::CLASS_1)
                 {
                     /* R1, can't do anything without metadata first */
-                    txn->m_state = CF_TxnState_DROP; /* drop all incoming */
+                    txn->m_state = CFDP_TXN_STATE_DROP; /* drop all incoming */
                     /* use inactivity timer to ultimately free the state */
                 }
                 else
                 {
                     /* R2 can handle missing metadata, so go ahead and create a temp file */
-                    txn->m_state = CF_TxnState_R2;
+                    txn->m_state = CFDP_TXN_STATE_R2;
                     txn->m_txn_class = Cfdp::Class::CLASS_2;
                     txn->rInit();
                     this->dispatchRecv(txn, buffer); /* re-dispatch to enter r2 */
@@ -657,7 +657,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
                     this->recvMd(txn, md);
 
                     /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
-                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CF_TxnState_R1 : CF_TxnState_R2;
+                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? CFDP_TXN_STATE_R1 : CFDP_TXN_STATE_R2;
                     txn->m_txn_class = txmMode;
                     txn->m_flags.rx.md_recv = true;
                     txn->rInit(); /* initialize R */
@@ -676,7 +676,7 @@ void CfdpEngine::recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer)
             }
         }
 
-        if (txn->m_state == CF_TxnState_INIT)
+        if (txn->m_state == CFDP_TXN_STATE_INIT)
         {
             /* state was not changed, so free the transaction */
             this->finishTransaction(txn, false);
@@ -691,7 +691,7 @@ void CfdpEngine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
     CfdpTransaction *txn = NULL;
     CfdpChannel *chan = NULL;
 
-    FW_ASSERT(chan_id < CF_NUM_CHANNELS, chan_id, CF_NUM_CHANNELS);
+    FW_ASSERT(chan_id < CFDP_NUM_CHANNELS, chan_id, CFDP_NUM_CHANNELS);
 
     chan = m_channels[chan_id];
     FW_ASSERT(chan != NULL);
@@ -755,7 +755,7 @@ void CfdpEngine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
 void CfdpEngine::setChannelFlowState(U8 channelId, Cfdp::Flow::T flowState)
 {
-    FW_ASSERT(channelId <= CF_NUM_CHANNELS, channelId, CF_NUM_CHANNELS);
+    FW_ASSERT(channelId <= CFDP_NUM_CHANNELS, channelId, CFDP_NUM_CHANNELS);
     m_channels[channelId]->setFlowState(flowState);
 }
 
@@ -764,8 +764,8 @@ void CfdpEngine::txFileInitiate(CfdpTransaction *txn, Cfdp::Class::T cfdp_class,
 {
     // CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
     //                   "CF: start class %d tx of file %lu:%.*s -> %lu:%.*s", cfdp_class + 1,
-    //                   (unsigned long)m_manager->getLocalEidParam(), CF_FILENAME_MAX_LEN,
-    //                   txn->m_history->fnames.src_filename, (unsigned long)dest_id, CF_FILENAME_MAX_LEN,
+    //                   (unsigned long)m_manager->getLocalEidParam(), CFDP_FILENAME_MAX_LEN,
+    //                   txn->m_history->fnames.src_filename, (unsigned long)dest_id, CFDP_FILENAME_MAX_LEN,
     //                   txn->m_history->fnames.dst_filename);
 
     txn->initTxFile(cfdp_class, keep, chan, priority);
@@ -788,14 +788,14 @@ Cfdp::Status::T CfdpEngine::txFile(const Fw::String& src_filename, const Fw::Str
     CfdpTransaction *txn;
     CfdpChannel* chan = nullptr;
 
-    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
+    FW_ASSERT(chan_num < CFDP_NUM_CHANNELS, chan_num, CFDP_NUM_CHANNELS);
     chan = m_channels[chan_num];
 
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
 
-    if (chan->getNumCmdTx() < CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN)
+    if (chan->getNumCmdTx() < CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN)
     {
-        txn = chan->findUnusedTransaction(CF_Direction_TX);
+        txn = chan->findUnusedTransaction(CFDP_DIRECTION_TX);
     }
     else
     {
@@ -828,25 +828,25 @@ CfdpTransaction *CfdpEngine::startRxTransaction(U8 chan_num)
     CfdpChannel *chan = nullptr;
     CfdpTransaction *txn;
     
-    FW_ASSERT(chan_num < CF_NUM_CHANNELS, chan_num, CF_NUM_CHANNELS);
+    FW_ASSERT(chan_num < CFDP_NUM_CHANNELS, chan_num, CFDP_NUM_CHANNELS);
     chan = m_channels[chan_num];
 
     // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[Cfdp::QueueId::RX] < CF_MAX_SIMULTANEOUS_RX)
     // {
-    //     txn = chan->findUnusedTransaction(CF_Direction_RX);
+    //     txn = chan->findUnusedTransaction(CFDP_DIRECTION_RX);
     // }
     // else
     // {
     //     txn = NULL;
     // }
     // TODO BPC: Do I need to limit receive transactions?
-    txn = chan->findUnusedTransaction(CF_Direction_RX);
+    txn = chan->findUnusedTransaction(CFDP_DIRECTION_RX);
 
     if (txn != NULL)
     {
         /* set default FIN status */
-        txn->m_state_data.receive.r2.dc = CF_CFDP_FinDeliveryCode_INCOMPLETE;
-        txn->m_state_data.receive.r2.fs = CF_CFDP_FinFileStatus_DISCARDED;
+        txn->m_state_data.receive.r2.dc = CFDP_FIN_DELIVERY_CODE_INCOMPLETE;
+        txn->m_state_data.receive.r2.fs = CFDP_FIN_FILE_STATUS_DISCARDED;
 
         txn->m_flags.com.q_index = Cfdp::QueueId::RX;
         chan->insertBackInQueue(static_cast<Cfdp::QueueId::T>(txn->m_flags.com.q_index), &txn->m_cl_node);
@@ -855,7 +855,7 @@ CfdpTransaction *CfdpEngine::startRxTransaction(U8 chan_num)
     return txn;
 }
 
-Cfdp::Status::T CfdpEngine::playbackDirInitiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
+Cfdp::Status::T CfdpEngine::playbackDirInitiate(CfdpPlayback *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
                                            Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority,
                                            CfdpEntityId dest_id)
 {
@@ -893,11 +893,11 @@ Cfdp::Status::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw
                                   Cfdp::Keep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id)
 {
     int i;
-    CF_Playback_t *pb;
+    CfdpPlayback *pb;
     Cfdp::Status::T status;
 
     // Loop through the channel's playback directories to find an open slot
-    for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
+    for (i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
         pb = m_channels[chan]->getPlayback(i);
         if (!pb->busy)
@@ -906,7 +906,7 @@ Cfdp::Status::T CfdpEngine::playbackDir(const Fw::String& src_filename, const Fw
         }
     }
 
-    if (i == CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN)
+    if (i == CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN)
     {
         // CFE_EVS_SendEvent(CF_CFDP_DIR_SLOT_ERR_EID, CFE_EVS_EventType_ERROR, "CF: no playback dir slot available");
         status = Cfdp::Status::ERROR;
@@ -924,10 +924,10 @@ Cfdp::Status::T CfdpEngine::startPollDir(U8 chanId, U8 pollId, const Fw::String&
                                      U32 intervalSec)
 {
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
-    CF_PollDir_t* pd = NULL;
+    CfdpPollDir* pd = NULL;
 
-    FW_ASSERT(chanId < CF_NUM_CHANNELS, chanId, CF_NUM_CHANNELS);
-    FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
+    FW_ASSERT(chanId < CFDP_NUM_CHANNELS, chanId, CFDP_NUM_CHANNELS);
+    FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
 
     // First check if the poll directory is already in use
     pd = m_channels[chanId]->getPollDir(pollId);
@@ -957,10 +957,10 @@ Cfdp::Status::T CfdpEngine::startPollDir(U8 chanId, U8 pollId, const Fw::String&
 Cfdp::Status::T CfdpEngine::stopPollDir(U8 chanId, U8 pollId)
 {
     Cfdp::Status::T status = Cfdp::Status::SUCCESS;
-    CF_PollDir_t* pd = NULL;
+    CfdpPollDir* pd = NULL;
 
-    FW_ASSERT(chanId < CF_NUM_CHANNELS, chanId, CF_NUM_CHANNELS);
-    FW_ASSERT(pollId < CF_MAX_POLLING_DIR_PER_CHAN, pollId, CF_MAX_POLLING_DIR_PER_CHAN);
+    FW_ASSERT(chanId < CFDP_NUM_CHANNELS, chanId, CFDP_NUM_CHANNELS);
+    FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
 
     // Check if the poll directory is in use
     pd = m_channels[chanId]->getPollDir(pollId);
@@ -991,7 +991,7 @@ void CfdpEngine::cycle(void)
 {
     int i;
 
-    for (i = 0; i < CF_NUM_CHANNELS; ++i)
+    for (i = 0; i < CFDP_NUM_CHANNELS; ++i)
     {
         CfdpChannel* chan = m_channels[i];
         FW_ASSERT(chan != nullptr);
@@ -1056,7 +1056,7 @@ void CfdpEngine::finishTransaction(CfdpTransaction *txn, bool keep_history)
         this->sendEotPkt(txn);
 
         /* extra bookkeeping for tx direction only */
-        if (txn->m_history->dir == CF_Direction_TX && txn->m_flags.tx.cmd_tx)
+        if (txn->m_history->dir == CFDP_DIRECTION_TX && txn->m_flags.tx.cmd_tx)
         {
             txn->m_chan->decrementCmdTxCounter();
         }
@@ -1074,13 +1074,13 @@ void CfdpEngine::finishTransaction(CfdpTransaction *txn, bool keep_history)
     txn->m_chan->clearCurrentIfMatch(txn);
 
     /* Put this transaction into the holdover state, inactivity timer will recycle it */
-    txn->m_state = CF_TxnState_HOLD;
+    txn->m_state = CFDP_TXN_STATE_HOLD;
     this->armInactTimer(txn);
 }
 
-void CfdpEngine::setTxnStatus(CfdpTransaction *txn, CF_TxnStatus_t txn_stat)
+void CfdpEngine::setTxnStatus(CfdpTransaction *txn, CfdpTxnStatus txn_stat)
 {
-    if (!CF_TxnStatus_IsError(txn->m_history->txn_stat))
+    if (!CfdpTxnStatusIsError(txn->m_history->txn_stat))
     {
         txn->m_history->txn_stat = txn_stat;
     }
@@ -1126,18 +1126,18 @@ void CfdpEngine::sendEotPkt(CfdpTransaction *txn)
 
 void CfdpEngine::cancelTransaction(CfdpTransaction *txn)
 {
-    void (CfdpTransaction::*fns[CF_Direction_NUM])() = {nullptr};
+    void (CfdpTransaction::*fns[CFDP_DIRECTION_NUM])() = {nullptr};
 
-    fns[CF_Direction_RX] = &CfdpTransaction::rCancel;
-    fns[CF_Direction_TX] = &CfdpTransaction::sCancel;
+    fns[CFDP_DIRECTION_RX] = &CfdpTransaction::rCancel;
+    fns[CFDP_DIRECTION_TX] = &CfdpTransaction::sCancel;
 
     if (!txn->m_flags.com.canceled)
     {
         txn->m_flags.com.canceled = true;
-        this->setTxnStatus(txn, CF_TxnStatus_CANCEL_REQUEST_RECEIVED);
+        this->setTxnStatus(txn, CFDP_TXN_STATUS_CANCEL_REQUEST_RECEIVED);
 
         /* this should always be true, just confirming before indexing into array */
-        if (txn->m_history->dir < CF_Direction_NUM)
+        if (txn->m_history->dir < CFDP_DIRECTION_NUM)
         {
             (txn->*fns[txn->m_history->dir])();
         }
@@ -1147,8 +1147,8 @@ void CfdpEngine::cancelTransaction(CfdpTransaction *txn)
 bool CfdpEngine::isPollingDir(const char *src_file, U8 chan_num)
 {
     bool return_code = false;
-    char src_dir[CF_FILENAME_MAX_LEN] = "\0";
-    CF_PollDir_t * pd;
+    char src_dir[CFDP_FILENAME_MAX_LEN] = "\0";
+    CfdpPollDir * pd;
     int i;
 
     const char* last_slash = strrchr(src_file, '/');
@@ -1157,7 +1157,7 @@ bool CfdpEngine::isPollingDir(const char *src_file, U8 chan_num)
         strncpy(src_dir, src_file, last_slash - src_file);
     }
 
-    for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
+    for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = m_channels[chan_num]->getPollDir(i);
         if (strcmp(src_dir, pd->srcDir.toChar()) == 0)
@@ -1177,9 +1177,9 @@ void CfdpEngine::handleNotKeepFile(CfdpTransaction *txn)
     Fw::String moveDir;
 
     /* Sender */
-    if (txn->getHistory()->dir == CF_Direction_TX)
+    if (txn->getHistory()->dir == CFDP_DIRECTION_TX)
     {
-        if (!CF_TxnStatus_IsError(txn->getHistory()->txn_stat))
+        if (!CfdpTxnStatusIsError(txn->getHistory()->txn_stat))
         {
             /* If move directory is defined attempt move */
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());

@@ -7,7 +7,7 @@
 // adapted for use within the F-Prime (F') framework:
 // - cf_cfdp_pdu.h (CFDP PDU structure definitions per CCSDS 727.0-B-5)
 //
-// The structures and enumerations defined in this file with a CF_CFDP
+// The structures and enumerations defined in this file with a Cfdp
 // prefix are defined according to the CCSDS CFDP specification (727.0-B-5).
 // These values must match the specification for that structure/field, they are
 // not locally changeable.
@@ -54,16 +54,6 @@ namespace Svc {
 namespace Ccsds {
 
 /**
- * @brief Maximum encoded size of a CFDP PDU header
- *
- * Per the blue book, the size of the Entity ID and Sequence Number may be up to 8 bytes.
- * CF is configurable in what it can accept and transmit, which may be smaller than what
- * the blue book permits.
- */
-#define CFDP_MAX_HEADER_SIZE \
-    (sizeof(CfdpPduHeader) + (3 * sizeof(CfdpU64))) /* 8 bytes for each variable item */
-
-/**
  * @brief Minimum encoded size of a CFDP PDU header
  *
  * Per the blue book, the size of the Entity ID and Sequence Number must be at least 1 byte.
@@ -74,7 +64,7 @@ namespace Ccsds {
 /**
  * @brief Maximum encoded size of a CFDP PDU that this implementation can accept
  *
- * This definition reflects the current configuration of the CF application.
+ * This definition reflects the current configuration of the CFDP implementation.
  * Note that this is based on the size of the native representation of Entity ID and
  * sequence number.  Although the bitwise representations of these items are
  * different in the encoded packets vs. the native representation, the basic size
@@ -141,7 +131,7 @@ struct CfdpU64
  *
  * @note this contains variable length data for the EID+TSN, which is _not_ included
  * in this definition.  As a result, the sizeof(CfdpPduHeader) reflects only the
- * size of the fixed fields.  Use CF_HeaderSize() to get the actual size of this structure.
+ * size of the fixed fields.  The actual size includes the variable length fields.
  */
 struct CfdpPduHeader
 {
@@ -348,13 +338,13 @@ struct CfdpPduFileDataHeader
  * PDU file data content typedef for limit checking outgoing_file_chunk_size
  * table value and set parameter command.
  *
- * This definition allows for the largest data block possible, as CF_MAX_PDU_SIZE -
+ * This definition allows for the largest data block possible, as CFDP_MAX_PDU_SIZE -
  * the minimum possible header size.  In practice the outgoing file chunk size is limited by
  * whichever is smaller; the remaining data, remaining space in the packet, and outgoing_file_chunk_size.
  */
 struct CfdpPduFileDataContent
 {
-    U8 data[CF_MAX_PDU_SIZE - sizeof(CfdpPduFileDataHeader) - CFDP_MIN_HEADER_SIZE];
+    U8 data[CFDP_MAX_PDU_SIZE - sizeof(CfdpPduFileDataHeader) - CFDP_MIN_HEADER_SIZE];
 };
 
 }  // namespace Ccsds

@@ -201,10 +201,10 @@ class CfdpTransaction {
     /**
      * @brief Static callback for finding transaction by sequence number
      *
-     * C-style callback for list traversal. Used with CF_CList_Traverse.
+     * C-style callback for list traversal. Used with CfdpCListTraverse.
      *
      * @param node    List node pointer
-     * @param context Pointer to CF_Traverse_TransSeqArg_t
+     * @param context Pointer to CfdpTraverseTransSeqArg
      * @return Traversal status (CONTINUE or EXIT)
      */
     static CfdpCListTraverseStatus findBySequenceNumberCallback(CfdpCListNode *node, void *context);
@@ -212,10 +212,10 @@ class CfdpTransaction {
     /**
      * @brief Static callback for priority search
      *
-     * C-style callback for list traversal. Used with CF_CList_Traverse_R.
+     * C-style callback for list traversal. Used with CfdpCListTraverseR.
      *
      * @param node    List node pointer
-     * @param context Pointer to CF_Traverse_PriorityArg_t
+     * @param context Pointer to CfdpTraversePriorityArg
      * @return Traversal status (CONTINUE or EXIT)
      */
     static CfdpCListTraverseStatus prioritySearchCallback(CfdpCListNode *node, void *context);
@@ -294,7 +294,7 @@ class CfdpTransaction {
     /** @brief Perform tick (time-based) processing for S transactions.
      *
      * This function is called on every transaction by the engine on
-     * every CF wakeup. This is where flags are checked to send EOF or
+     * every CFDP wakeup. This is where flags are checked to send EOF or
      * FIN-ACK. If nothing else is sent, it checks to see if a NAK
      * retransmit must occur.
      *
@@ -449,7 +449,7 @@ class CfdpTransaction {
     /** @brief Perform tick (time-based) processing for R transactions.
      *
      * This function is called on every transaction by the engine on
-     * every CF wakeup. This is where flags are checked to send ACK,
+     * every CFDP wakeup. This is where flags are checked to send ACK,
      * NAK, and FIN. It checks for inactivity timer and processes the
      * ACK timer. The ACK timer is what triggers re-sends of PDUs
      * that require acknowledgment.
@@ -480,7 +480,7 @@ class CfdpTransaction {
      *
      * All R transactions use this call to indicate the transaction
      * state can be returned to the system. While this function currently
-     * only calls CF_CFDP_ResetTransaction(), it is here as a placeholder.
+     * only calls the transaction reset logic, it is here as a placeholder.
      */
     void r1Reset();
 

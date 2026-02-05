@@ -52,14 +52,14 @@ void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 {
     // dataReturnIn is the allocated buffer coming back from the dataOut call
     // Port mapping is the same from bufferAllocate -> dataOut -> dataReturnIn -> bufferDeallocate
-    FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
+    FW_ASSERT(portNum < CFDP_NUM_CHANNELS, portNum, CFDP_NUM_CHANNELS);
     this->bufferDeallocate_out(portNum, data);
 }
 
 void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 {
   // There is a direct mapping between port number and channel index
-  FW_ASSERT(portNum < CF_NUM_CHANNELS, portNum, CF_NUM_CHANNELS);
+  FW_ASSERT(portNum < CFDP_NUM_CHANNELS, portNum, CFDP_NUM_CHANNELS);
   FW_ASSERT(portNum >= 0, portNum);
 
   // Pass buffer to the engine to deserialize
@@ -277,9 +277,9 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex)
 
 Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 {
-    if(pollIndex >= CF_MAX_POLLING_DIR_PER_CHAN)
+    if(pollIndex >= CFDP_MAX_POLLING_DIR_PER_CHAN)
     {
-        this->log_WARNING_LO_InvalidChannelPoll(pollIndex, CF_MAX_POLLING_DIR_PER_CHAN);
+        this->log_WARNING_LO_InvalidChannelPoll(pollIndex, CFDP_MAX_POLLING_DIR_PER_CHAN);
         return Fw::CmdResponse::VALIDATION_ERROR;
     }
     else
@@ -355,7 +355,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -371,7 +371,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -387,7 +387,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -403,7 +403,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -419,7 +419,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -435,7 +435,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
     
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
     
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first
@@ -451,7 +451,7 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
   {
     Fw::ParamValid valid;
 
-    FW_ASSERT(channelIndex < CF_NUM_CHANNELS, channelIndex, CF_NUM_CHANNELS);
+    FW_ASSERT(channelIndex < CFDP_NUM_CHANNELS, channelIndex, CFDP_NUM_CHANNELS);
 
     // Check for coding errors as all CFDP parameters must have a default
     // Get the array first

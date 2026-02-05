@@ -137,8 +137,8 @@ class CfdpEngine {
      * @param dst        Remote filename
      * @param cfdp_class Whether to perform a class 1 or class 2 transfer
      * @param keep       Whether to keep or delete the local file after completion
-     * @param chan_num   CF channel number to use
-     * @param priority   CF priority level
+     * @param chan_num   CFDP channel number to use
+     * @param priority   CFDP priority level
      * @param dest_id    Entity ID of remote receiver
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
@@ -153,8 +153,8 @@ class CfdpEngine {
      * @param dst        Remote directory
      * @param cfdp_class Whether to perform a class 1 or class 2 transfer
      * @param keep       Whether to keep or delete the local file after completion
-     * @param chan       CF channel number to use
-     * @param priority   CF priority level
+     * @param chan       CFDP channel number to use
+     * @param priority   CFDP priority level
      * @param dest_id    Entity ID of remote receiver
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
@@ -170,7 +170,7 @@ class CfdpEngine {
      * @param srcDir      Local directory
      * @param dstDir      Remote directory
      * @param cfdp_class  Whether to perform a class 1 or class 2 transfer
-     * @param priority    CF priority level
+     * @param priority    CFDP priority level
      * @param destEid     Entity ID of remote receiver
      * @param intervalSec Time between directory playbacks in seconds
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
@@ -311,7 +311,7 @@ class CfdpEngine {
      * @note This function takes explicit peer_eid and tsn parameters instead of
      * getting them from transaction history because of the special case where a
      * FIN-ACK must be sent for an unknown transaction. It's better for long term
-     * maintenance to not build an incomplete CF_History_t for it.
+     * maintenance to not build an incomplete CfdpHistory for it.
      *
      * @param txn       Pointer to the transaction object
      * @param ts        Transaction ACK status
@@ -460,7 +460,7 @@ class CfdpEngine {
      * @param txn          Pointer to the transaction state
      * @param cfdp_class   Set to class 1 or class 2
      * @param keep         Whether to keep the local file
-     * @param chan         CF channel number
+     * @param chan         CFDP channel number
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      */
@@ -475,7 +475,7 @@ class CfdpEngine {
      * @param dst_filename Destination filename
      * @param cfdp_class   Set to class 1 or class 2
      * @param keep         Whether to keep the local file
-     * @param chan         CF channel number
+     * @param chan         CFDP channel number
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      * @returns SUCCESS if initiated, error otherwise
@@ -501,7 +501,7 @@ class CfdpEngine {
     CfdpManager* m_manager;       
 
     //! Channel data structures
-    CfdpChannel* m_channels[CF_NUM_CHANNELS];
+    CfdpChannel* m_channels[CFDP_NUM_CHANNELS];
 
     //! Sequence number tracker for outgoing transactions
     CfdpTransactionSeq m_seqNum;
@@ -539,7 +539,7 @@ class CfdpEngine {
      *
      * If there is no capacity for another RX transaction, this returns NULL.
      *
-     * @param chan_num  CF channel number
+     * @param chan_num  CFDP channel number
      * @returns Pointer to new transaction
      */
     CfdpTransaction* startRxTransaction(U8 chan_num);

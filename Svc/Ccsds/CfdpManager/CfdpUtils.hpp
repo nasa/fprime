@@ -55,9 +55,9 @@ struct CfdpTraverseTransSeqArg
 };
 
 /**
- * @brief Argument structure for use with CF_TraverseAllTransactions()
+ * @brief Argument structure for use with CfdpChannel::traverseAllTransactions()
  *
- * This basically allows for running a CF_Traverse on several lists at once
+ * This basically allows for running a traversal on several lists at once
  */
 struct CfdpTraverseAllArg
 {
@@ -67,13 +67,13 @@ struct CfdpTraverseAllArg
 };
 
 /**
- * @brief Argument structure for use with CF_CList_Traverse_R()
+ * @brief Argument structure for use with CfdpCListTraverseR()
  *
  * This is for searching for transactions of a specific priority
  */
 struct CfdpTraversePriorityArg
 {
-    CfdpTransaction *txn; /**< \brief OUT: holds value of transaction with which to call CF_CList_InsertAfter on */
+    CfdpTransaction *txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
     U8             priority; /**< \brief seeking this priority */
 };
 

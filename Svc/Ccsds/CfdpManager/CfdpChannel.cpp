@@ -70,12 +70,12 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     }
 
     // Initialize command/history lists
-    for (U32 i = 0; i < CF_Direction_NUM; i++) {
+    for (U32 i = 0; i < CFDP_DIRECTION_NUM; i++) {
         m_cs[i] = nullptr;
     }
 
     // Initialize poll directory playback state
-    for (U32 i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; i++) {
+    for (U32 i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; i++) {
         m_polldir[i].pb.busy = false;
         m_polldir[i].pb.diropen = false;
         m_polldir[i].pb.counted = false;
@@ -84,7 +84,7 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     }
 
     // Initialize playback structures
-    for (U32 i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; i++) {
+    for (U32 i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; i++) {
         m_playback[i].busy = false;
         m_playback[i].diropen = false;
         m_playback[i].counted = false;
@@ -94,40 +94,40 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
 
     // Allocate and initialize per-channel resources
     U32 j, k;
-    CF_History_t* history;
+    CfdpHistory* history;
     CfdpTransaction* txn;
-    CF_ChunkWrapper_t* cw;
-    CF_CListNode_t** list_head;
+    CfdpChunkWrapper* cw;
+    CfdpCListNode** list_head;
     U32 chunk_mem_offset = 0;
     U32 total_chunks_needed;
 
     // Chunk configuration arrays (extract from config)
-    static const int CF_DIR_MAX_CHUNKS[CF_Direction_NUM][CF_NUM_CHANNELS] = {
-        CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
-        CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION
+    static const int CFDP_DIR_MAX_CHUNKS[CFDP_DIRECTION_NUM][CFDP_NUM_CHANNELS] = {
+        CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION,
+        CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION
     };
 
     // Calculate total chunks needed for this channel
     total_chunks_needed = 0;
-    for (k = 0; k < CF_Direction_NUM; ++k) {
-        total_chunks_needed += CF_DIR_MAX_CHUNKS[k][m_channelId] * CF_NUM_TRANSACTIONS_PER_CHANNEL;
+    for (k = 0; k < CFDP_DIRECTION_NUM; ++k) {
+        total_chunks_needed += CFDP_DIR_MAX_CHUNKS[k][m_channelId] * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
     }
 
     // Allocate arrays
     // Use operator new for raw memory (for types requiring placement new with constructor params)
     m_transactions = static_cast<CfdpTransaction*>(
-        ::operator new(CF_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(CfdpTransaction))
+        ::operator new(CFDP_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(CfdpTransaction))
     );
-    m_chunks = static_cast<CF_ChunkWrapper_t*>(
-        ::operator new((CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM) * sizeof(CF_ChunkWrapper_t))
+    m_chunks = static_cast<CfdpChunkWrapper*>(
+        ::operator new((CFDP_NUM_TRANSACTIONS_PER_CHANNEL * CFDP_DIRECTION_NUM) * sizeof(CfdpChunkWrapper))
     );
     // Regular new for simple types
-    m_histories = new CF_History_t[CF_NUM_HISTORIES_PER_CHANNEL];
-    m_chunkMem = new CF_Chunk_t[total_chunks_needed];
+    m_histories = new CfdpHistory[CFDP_NUM_HISTORIES_PER_CHANNEL];
+    m_chunkMem = new CfdpChunk[total_chunks_needed];
 
     // Initialize transactions using placement new with parameterized constructor
     cw = m_chunks;
-    for (j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j)
+    for (j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j)
     {
         // Construct transaction in-place with parameterized constructor
         txn = new (&m_transactions[j]) CfdpTransaction(this, m_channelId, m_engine, m_cfdpManager);
@@ -136,25 +136,25 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
         this->freeTransaction(txn);
 
         // Initialize chunk wrappers for this transaction (TX and RX)
-        for (k = 0; k < CF_Direction_NUM; ++k, ++cw)
+        for (k = 0; k < CFDP_DIRECTION_NUM; ++k, ++cw)
         {
             list_head = this->getChunkListHead(static_cast<U8>(k));
 
-            // Use placement new to construct CF_ChunkWrapper with the new class-based interface
-            new (cw) CF_ChunkWrapper_t(CF_DIR_MAX_CHUNKS[k][m_channelId], &m_chunkMem[chunk_mem_offset]);
-            chunk_mem_offset += CF_DIR_MAX_CHUNKS[k][m_channelId];
-            CF_CList_InitNode(&cw->cl_node);
-            CF_CList_InsertBack(list_head, &cw->cl_node);
+            // Use placement new to construct CfdpChunkWrapper with the new class-based interface
+            new (cw) CfdpChunkWrapper(static_cast<CfdpChunkIdx>(CFDP_DIR_MAX_CHUNKS[k][m_channelId]), &m_chunkMem[chunk_mem_offset]);
+            chunk_mem_offset += CFDP_DIR_MAX_CHUNKS[k][m_channelId];
+            CfdpCListInitNode(&cw->cl_node);
+            CfdpCListInsertBack(list_head, &cw->cl_node);
         }
     }
 
     // Initialize histories
-    for (j = 0; j < CF_NUM_HISTORIES_PER_CHANNEL; ++j)
+    for (j = 0; j < CFDP_NUM_HISTORIES_PER_CHANNEL; ++j)
     {
         history = &m_histories[j];
         // Zero-initialize using aggregate initialization
         *history = {};
-        CF_CList_InitNode(&history->cl_node);
+        CfdpCListInitNode(&history->cl_node);
         this->insertBackInQueue(Cfdp::QueueId::HIST_FREE, &history->cl_node);
     }
 }
@@ -164,7 +164,7 @@ CfdpChannel::~CfdpChannel()
     // Free dynamically allocated resources
     if (m_transactions != nullptr) {
         // Manually call destructors since we used placement new
-        for (U32 j = 0; j < CF_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
+        for (U32 j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
             m_transactions[j].~CfdpTransaction();
         }
         // Free raw memory allocated with operator new
@@ -177,8 +177,8 @@ CfdpChannel::~CfdpChannel()
     }
     if (m_chunks != nullptr) {
         // Manually call destructors since we used placement new
-        for (U32 j = 0; j < (CF_NUM_TRANSACTIONS_PER_CHANNEL * CF_Direction_NUM); ++j) {
-            m_chunks[j].~CF_ChunkWrapper_t();
+        for (U32 j = 0; j < (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * CFDP_DIRECTION_NUM); ++j) {
+            m_chunks[j].~CfdpChunkWrapper();
         }
         // Free raw memory allocated with operator new
         ::operator delete(m_chunks);
@@ -197,7 +197,7 @@ CfdpChannel::~CfdpChannel()
 void CfdpChannel::cycleTx()
 {
     CfdpTransaction* txn;
-    CF_CFDP_CycleTx_args_t args;
+    CfdpCycleTxArgs args;
 
     if (m_cfdpManager->getDequeueEnabledParam(m_channelId))
     {
@@ -215,8 +215,8 @@ void CfdpChannel::cycleTx()
             while (true)
             {
                 /* Attempt to run something on TXA */
-                CF_CList_Traverse(m_qs[Cfdp::QueueId::TXA],
-                                  [this](CF_CListNode_t* node, void* context) -> CF_CListTraverse_Status_t {
+                CfdpCListTraverse(m_qs[Cfdp::QueueId::TXA],
+                                  [this](CfdpCListNode* node, void* context) -> CfdpCListTraverseStatus {
                                       return this->cycleTxFirstActive(node, context);
                                   },
                                   &args);
@@ -235,7 +235,7 @@ void CfdpChannel::cycleTx()
                 {
                     if (txn->m_chunks == NULL)
                     {
-                        txn->m_chunks = this->findUnusedChunks(CF_Direction_TX);
+                        txn->m_chunks = this->findUnusedChunks(CFDP_DIRECTION_TX);
                     }
                     if (txn->m_chunks == NULL)
                     {
@@ -259,21 +259,21 @@ void CfdpChannel::tickTransactions()
 {
     bool reset = true;
 
-    void (CfdpTransaction::*fns[CF_TickType_NUM_TYPES])(int*) = {&CfdpTransaction::rTick, &CfdpTransaction::sTick,
+    void (CfdpTransaction::*fns[CFDP_TICK_TYPE_NUM_TYPES])(int*) = {&CfdpTransaction::rTick, &CfdpTransaction::sTick,
                                                                   &CfdpTransaction::sTickNak};
-    int qs[CF_TickType_NUM_TYPES]                              = {Cfdp::QueueId::RX, Cfdp::QueueId::TXW, Cfdp::QueueId::TXW};
+    int qs[CFDP_TICK_TYPE_NUM_TYPES]                              = {Cfdp::QueueId::RX, Cfdp::QueueId::TXW, Cfdp::QueueId::TXW};
 
-    FW_ASSERT(m_tickType < CF_TickType_NUM_TYPES, m_tickType);
+    FW_ASSERT(m_tickType < CFDP_TICK_TYPE_NUM_TYPES, m_tickType);
 
-    for (; m_tickType < CF_TickType_NUM_TYPES; ++m_tickType)
+    for (; m_tickType < CFDP_TICK_TYPE_NUM_TYPES; ++m_tickType)
     {
-        CF_CFDP_Tick_args_t args = {this, fns[m_tickType], 0, 0};
+        CfdpTickArgs args = {this, fns[m_tickType], 0, 0};
 
         do
         {
             args.cont = 0;
-            CF_CList_Traverse(m_qs[qs[m_tickType]],
-                              [this](CF_CListNode_t* node, void* context) -> CF_CListTraverse_Status_t {
+            CfdpCListTraverse(m_qs[qs[m_tickType]],
+                              [this](CfdpCListNode* node, void* context) -> CfdpCListTraverseStatus {
                                   return this->doTick(node, context);
                               },
                               &args);
@@ -296,7 +296,7 @@ void CfdpChannel::tickTransactions()
                  *
                  * New file data on TXA
                  */
-                if (m_tickType != CF_TickType_TXW_NAK)
+                if (m_tickType != CFDP_TICK_TYPE_TXW_NAK)
                 {
                     reset = false;
                 }
@@ -314,16 +314,16 @@ void CfdpChannel::tickTransactions()
 
     if (reset)
     {
-        m_tickType = CF_TickType_RX; /* reset tick type */
+        m_tickType = CFDP_TICK_TYPE_RX; /* reset tick type */
     }
 }
 
 void CfdpChannel::processPlaybackDirectories()
 {
-    int i;
+    U32 i;
     // const int chan_index = (m_channel - m_engine->m_engineData.channels);
 
-    for (i = 0; i < CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
+    for (i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
         this->processPlaybackDirectory(&m_playback[i]);
         // this->updatePollPbCounted(&m_playback[i], m_playback[i].busy,
@@ -333,13 +333,13 @@ void CfdpChannel::processPlaybackDirectories()
 
 void CfdpChannel::processPollingDirectories()
 {
-    CF_PollDir_t* pd;
+    CfdpPollDir* pd;
     U32 i;
     // TODO BPC: count_check is only used for telemetry
     // I32 count_check;
     Cfdp::Status::T status;
 
-    for (i = 0; i < CF_MAX_POLLING_DIR_PER_CHAN; ++i)
+    for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = &m_polldir[i];
         // count_check = 0;
@@ -362,7 +362,7 @@ void CfdpChannel::processPollingDirectories()
                     if (status != Cfdp::Status::SUCCESS)
                     {
                         /* error occurred in playback directory, so reset the timer */
-                        /* an event is sent in CF_CFDP_PlaybackDir_Initiate so there is no reason to
+                        /* an event is sent when initiating playback directory so there is no reason to
                          * to have another here */
                         pd->intervalTimer.setTimer(pd->intervalSec);
                     }
@@ -389,9 +389,9 @@ void CfdpChannel::processPollingDirectories()
 // Transaction Management
 // ----------------------------------------------------------------------
 
-CfdpTransaction* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
+CfdpTransaction* CfdpChannel::findUnusedTransaction(CfdpDirection direction)
 {
-    CF_CListNode_t*  node;
+    CfdpCListNode*  node;
     CfdpTransaction* txn;
     Cfdp::QueueId::T q_index; /* initialized below in if */
 
@@ -414,18 +414,18 @@ CfdpTransaction* CfdpChannel::findUnusedTransaction(CF_Direction_t direction)
             q_index = Cfdp::QueueId::HIST;
         }
 
-        txn->m_history = container_of_cpp(m_qs[q_index], &CF_History_t::cl_node);
+        txn->m_history = container_of_cpp(m_qs[q_index], &CfdpHistory::cl_node);
 
         this->removeFromQueue(q_index, &txn->m_history->cl_node);
 
         /* Indicate that this was freshly pulled from the free list */
         /* notably this state is distinguishable from items still on the free list */
-        txn->m_state        = CF_TxnState_INIT;
+        txn->m_state        = CFDP_TXN_STATE_INIT;
         txn->m_history->dir = direction;
         txn->m_chan         = this;  /* Set channel pointer */
 
         /* Re-initialize the linked list node to clear stale pointers from FREE list */
-        CF_CList_InitNode(&txn->m_cl_node);
+        CfdpCListInitNode(&txn->m_cl_node);
     }
     else
     {
@@ -442,14 +442,14 @@ CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSeq
      * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
      *
      * Let's put Cfdp::QueueId::RX up front, because most RX packets will be file data PDUs */
-    CF_Traverse_TransSeqArg_t ctx    = {transaction_sequence_number, src_eid, NULL};
-    CF_CListNode_t*          ptrs[] = {m_qs[Cfdp::QueueId::RX], m_qs[Cfdp::QueueId::PEND], m_qs[Cfdp::QueueId::TXA],
+    CfdpTraverseTransSeqArg ctx    = {transaction_sequence_number, src_eid, NULL};
+    CfdpCListNode*          ptrs[] = {m_qs[Cfdp::QueueId::RX], m_qs[Cfdp::QueueId::PEND], m_qs[Cfdp::QueueId::TXA],
                               m_qs[Cfdp::QueueId::TXW]};
     CfdpTransaction*        ret = NULL;
 
-    for (CF_CListNode_t* head : ptrs)
+    for (CfdpCListNode* head : ptrs)
     {
-        CF_CList_Traverse(head, CfdpTransaction::findBySequenceNumberCallback, &ctx);
+        CfdpCListTraverse(head, CfdpTransaction::findBySequenceNumberCallback, &ctx);
         if (ctx.txn)
         {
             ret = ctx.txn;
@@ -460,17 +460,17 @@ CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(CfdpTransactionSeq
     return ret;
 }
 
-I32 CfdpChannel::traverseAllTransactions(CF_TraverseAllTransactions_fn_t fn, void* context)
+I32 CfdpChannel::traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, void* context)
 {
-    CF_TraverseAll_Arg_t args = {fn, context, 0};
+    CfdpTraverseAllArg args = {fn, context, 0};
     for (I32 queueidx = Cfdp::QueueId::PEND; queueidx <= Cfdp::QueueId::RX; ++queueidx)
     {
-        CF_CList_Traverse(m_qs[queueidx],
-                          [&args](CF_CListNode_t* node, void*) -> CF_CListTraverse_Status_t {
+        CfdpCListTraverse(m_qs[queueidx],
+                          [&args](CfdpCListNode* node, void*) -> CfdpCListTraverseStatus {
                               CfdpTransaction* txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
                               args.fn(txn, args.context);
                               ++args.counter;
-                              return CF_CLIST_CONT;
+                              return CFDP_CLIST_TRAVERSE_CONTINUE;
                           },
                           nullptr);
     }
@@ -478,7 +478,7 @@ I32 CfdpChannel::traverseAllTransactions(CF_TraverseAllTransactions_fn_t fn, voi
     return args.counter;
 }
 
-void CfdpChannel::resetHistory(CF_History_t* history)
+void CfdpChannel::resetHistory(CfdpHistory* history)
 {
     this->removeFromQueue(Cfdp::QueueId::HIST, &history->cl_node);
     this->insertBackInQueue(Cfdp::QueueId::HIST_FREE, &history->cl_node);
@@ -491,7 +491,7 @@ void CfdpChannel::resetHistory(CF_History_t* history)
 void CfdpChannel::dequeueTransaction(CfdpTransaction* txn)
 {
     FW_ASSERT(txn);
-    CF_CList_Remove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
+    CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
     // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
@@ -499,10 +499,10 @@ void CfdpChannel::dequeueTransaction(CfdpTransaction* txn)
 void CfdpChannel::moveTransaction(CfdpTransaction* txn, Cfdp::QueueId::T queue)
 {
     FW_ASSERT(txn);
-    CF_CList_Remove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
+    CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
     // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
-    CF_CList_InsertBack(&m_qs[queue], &txn->m_cl_node);
+    CfdpCListInsertBack(&m_qs[queue], &txn->m_cl_node);
     txn->m_flags.com.q_index = queue;
     // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
@@ -513,13 +513,13 @@ void CfdpChannel::freeTransaction(CfdpTransaction* txn)
     txn->reset();
 
     // Initialize the linked list node for the FREE queue
-    CF_CList_InitNode(&txn->m_cl_node);
+    CfdpCListInitNode(&txn->m_cl_node);
     this->insertBackInQueue(Cfdp::QueueId::FREE, &txn->m_cl_node);
 }
 
 void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
 {
-    CF_CListNode_t **chunklist_head;
+    CfdpCListNode **chunklist_head;
     Cfdp::QueueId::T    hist_destq;
 
     /* File should have been closed by the state machine, but if
@@ -541,7 +541,7 @@ void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
             chunklist_head = this->getChunkListHead(txn->m_history->dir);
             if (chunklist_head != NULL)
             {
-                CF_CList_InsertBack(chunklist_head, &txn->m_chunks->cl_node);
+                CfdpCListInsertBack(chunklist_head, &txn->m_chunks->cl_node);
                 txn->m_chunks = NULL;
             }
         }
@@ -560,7 +560,7 @@ void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
     }
 
     /* this wipes it and puts it back onto the list to be found by
-     * CF_FindUnusedTransaction().  Need to preserve the chan_num
+     * CfdpChannel::findUnusedTransaction().  Need to preserve the chan_num
      * and keep it associated with this channel, though. */
     this->freeTransaction(txn);
 }
@@ -581,8 +581,8 @@ void CfdpChannel::insertSortPrio(CfdpTransaction* txn, Cfdp::QueueId::T queue)
     }
     else
     {
-        CF_Traverse_PriorityArg_t arg = {NULL, txn->getPriority()};
-        CF_CList_Traverse_R(m_qs[queue], CfdpTransaction::prioritySearchCallback, &arg);
+        CfdpTraversePriorityArg arg = {NULL, txn->getPriority()};
+        CfdpCListTraverseR(m_qs[queue], CfdpTransaction::prioritySearchCallback, &arg);
         if (arg.txn)
         {
             this->insertAfterInQueue(queue, &arg.txn->m_cl_node, &txn->m_cl_node);
@@ -623,11 +623,11 @@ void CfdpChannel::clearCurrentIfMatch(CfdpTransaction* txn)
 // Resource Management
 // ----------------------------------------------------------------------
 
-CF_CListNode_t** CfdpChannel::getChunkListHead(U8 direction)
+CfdpCListNode** CfdpChannel::getChunkListHead(U8 direction)
 {
-    CF_CListNode_t** result;
+    CfdpCListNode** result;
 
-    if (direction < CF_Direction_NUM)
+    if (direction < CFDP_DIRECTION_NUM)
     {
         result = &m_cs[direction];
     }
@@ -639,11 +639,11 @@ CF_CListNode_t** CfdpChannel::getChunkListHead(U8 direction)
     return result;
 }
 
-CF_ChunkWrapper_t* CfdpChannel::findUnusedChunks(CF_Direction_t dir)
+CfdpChunkWrapper* CfdpChannel::findUnusedChunks(CfdpDirection dir)
 {
-    CF_ChunkWrapper_t* ret = NULL;
-    CF_CListNode_t* node;
-    CF_CListNode_t** chunklist_head;
+    CfdpChunkWrapper* ret = NULL;
+    CfdpCListNode* node;
+    CfdpCListNode** chunklist_head;
 
     chunklist_head = this->getChunkListHead(dir);
 
@@ -652,10 +652,10 @@ CF_ChunkWrapper_t* CfdpChannel::findUnusedChunks(CF_Direction_t dir)
 
     if (*chunklist_head != NULL)
     {
-        node = CF_CList_Pop(chunklist_head);
+        node = CfdpCListPop(chunklist_head);
         if (node != NULL)
         {
-            ret = container_of_cpp(node, &CF_ChunkWrapper_t::cl_node);
+            ret = container_of_cpp(node, &CfdpChunkWrapper::cl_node);
         }
     }
 
@@ -666,7 +666,7 @@ CF_ChunkWrapper_t* CfdpChannel::findUnusedChunks(CF_Direction_t dir)
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
+void CfdpChannel::processPlaybackDirectory(CfdpPlayback* pb)
 {
     CfdpTransaction* txn;
     char path[CfdpManagerMaxFileSize];
@@ -676,7 +676,7 @@ void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
 
     memset(&path, 0, sizeof(path));
 
-    while (pb->diropen && (pb->num_ts < CF_NUM_TRANSACTIONS_PER_PLAYBACK))
+    while (pb->diropen && (pb->num_ts < CFDP_NUM_TRANSACTIONS_PER_PLAYBACK))
     {
         if (pb->pending_file[0] == 0)
         {
@@ -701,7 +701,7 @@ void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
         }
         else
         {
-            txn = this->findUnusedTransaction(CF_Direction_TX);
+            txn = this->findUnusedTransaction(CFDP_DIRECTION_TX);
             if (txn == NULL)
             {
                 /* while not expected this can certainly happen, because
@@ -737,7 +737,7 @@ void CfdpChannel::processPlaybackDirectory(CF_Playback_t* pb)
     }
 }
 
-void CfdpChannel::updatePollPbCounted(CF_Playback_t* pb, int up, U8* counter)
+void CfdpChannel::updatePollPbCounted(CfdpPlayback* pb, int up, U8* counter)
 {
     if (pb->counted != up)
     {
@@ -756,15 +756,15 @@ void CfdpChannel::updatePollPbCounted(CF_Playback_t* pb, int up, U8* counter)
     }
 }
 
-CF_CListTraverse_Status_t CfdpChannel::cycleTxFirstActive(CF_CListNode_t* node, void* context)
+CfdpCListTraverseStatus CfdpChannel::cycleTxFirstActive(CfdpCListNode* node, void* context)
 {
-    CF_CFDP_CycleTx_args_t*  args = static_cast<CF_CFDP_CycleTx_args_t*>(context);
+    CfdpCycleTxArgs*  args = static_cast<CfdpCycleTxArgs*>(context);
     CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
-    CF_CListTraverse_Status_t ret  = CF_CLIST_EXIT; /* default option is exit traversal */
+    CfdpCListTraverseStatus ret  = CFDP_CLIST_TRAVERSE_EXIT; /* default option is exit traversal */
 
     if (txn->m_flags.com.suspended)
     {
-        ret = CF_CLIST_CONT; /* suspended, so move on to next */
+        ret = CFDP_CLIST_TRAVERSE_CONTINUE; /* suspended, so move on to next */
     }
     else
     {
@@ -784,10 +784,10 @@ CF_CListTraverse_Status_t CfdpChannel::cycleTxFirstActive(CF_CListNode_t* node, 
     return ret;
 }
 
-CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* context)
+CfdpCListTraverseStatus CfdpChannel::doTick(CfdpCListNode* node, void* context)
 {
-    CF_CListTraverse_Status_t ret  = CF_CLIST_CONT; /* CF_CLIST_CONT means don't tick one, keep looking for cur */
-    CF_CFDP_Tick_args_t*     args = static_cast<CF_CFDP_Tick_args_t*>(context);
+    CfdpCListTraverseStatus ret  = CFDP_CLIST_TRAVERSE_CONTINUE; /* CFDP_CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for cur */
+    CfdpTickArgs*     args = static_cast<CfdpTickArgs*>(context);
     CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     if (!this->m_cur || (this->m_cur == txn))
     {
@@ -803,7 +803,7 @@ CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* contex
          *     so there is no need to check it here */
         if (this->m_cur)
         {
-            ret              = CF_CLIST_EXIT;
+            ret              = CFDP_CLIST_TRAVERSE_EXIT;
             args->early_exit = true;
         }
     }
@@ -813,13 +813,13 @@ CF_CListTraverse_Status_t CfdpChannel::doTick(CF_CListNode_t* node, void* contex
 
 CfdpTransaction* CfdpChannel::getTransaction(U32 index)
 {
-    FW_ASSERT(index < CF_NUM_TRANSACTIONS_PER_CHANNEL);
+    FW_ASSERT(index < CFDP_NUM_TRANSACTIONS_PER_CHANNEL);
     return &m_transactions[index];
 }
 
-CF_History_t* CfdpChannel::getHistory(U32 index)
+CfdpHistory* CfdpChannel::getHistory(U32 index)
 {
-    FW_ASSERT(index < CF_NUM_HISTORIES_PER_CHANNEL);
+    FW_ASSERT(index < CFDP_NUM_HISTORIES_PER_CHANNEL);
     return &m_histories[index];
 }
 

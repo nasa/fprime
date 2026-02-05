@@ -32,7 +32,7 @@ class NakPdu : public PduBase {
     //! Number of segment requests
     U8 m_numSegments;
 
-    //! Segment requests array (max CF_NAK_MAX_SEGMENTS = 58)
+    //! Segment requests array (max CFDP_NAK_MAX_SEGMENTS = 58)
     SegmentRequest m_segments[58];
 
   public:

@@ -22,7 +22,7 @@ namespace Ccsds {
  * 
  * BPC TODO: replace with CfdpManagerNumChannels
  */
-#define CF_NUM_CHANNELS (2)
+#define CFDP_NUM_CHANNELS (2)
 
 /**
  *  @brief Type for logical file size / file offset values used by CFDP
@@ -55,17 +55,17 @@ typedef U32 CfdpFileSize;
  *
  * Class 2 CFDP deals with NAK, so received data must be tracked for receivers in order to generate
  * the NAK. The sender must also keep track of NAK requests and send new file data PDUs as a result.
- * (array size must be CF_NUM_CHANNELS)
- * CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks per transaction
- * CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks to keep track
+ * (array size must be CFDP_NUM_CHANNELS)
+ * CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks per transaction
+ * CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks to keep track
  * of NAK requests from the receiver per transaction
  *
  *  @par Limits:
  *
  */
-#define CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION \
+#define CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION \
     {                                            \
-        CF_NAK_MAX_SEGMENTS, CF_NAK_MAX_SEGMENTS \
+        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
     }
 
 /**
@@ -77,9 +77,9 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION \
+#define CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION \
     {                                            \
-        CF_NAK_MAX_SEGMENTS, CF_NAK_MAX_SEGMENTS \
+        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
     }
 
 /**
@@ -91,7 +91,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
+#define CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
 
 /**
  *  @brief Max number of simultaneous file receives.
@@ -102,7 +102,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_MAX_SIMULTANEOUS_RX (5)
+#define CFDP_MAX_SIMULTANEOUS_RX (5)
 
 /* definitions that affect execution */
 
@@ -115,7 +115,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN (2)
+#define CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN (2)
 
 /**
  *  @brief Number of histories per channel
@@ -126,7 +126,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *       65536 is the current max.
  */
-#define CF_NUM_HISTORIES_PER_CHANNEL (256)
+#define CFDP_NUM_HISTORIES_PER_CHANNEL (256)
 
 /**
  *  @brief Number of transactions per playback directory.
@@ -138,7 +138,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_NUM_TRANSACTIONS_PER_PLAYBACK (5)
+#define CFDP_NUM_TRANSACTIONS_PER_PLAYBACK (5)
 
 /**
  *  @brief R2 CRC calc chunk size
@@ -152,21 +152,21 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_R2_CRC_CHUNK_SIZE (1024)
+#define CFDP_R2_CRC_CHUNK_SIZE (1024)
 
 /**
  *  @brief Total number of chunks (tx, rx, all channels)
  *
  *  @par Description:
- *       Must be equal to the sum of all values input in CF_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION
- *       and CF_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION.
+ *       Must be equal to the sum of all values input in CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION
+ *       and CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION.
  *
  *  @par Limits:
  *
  */
-/* CF_TOTAL_CHUNKS must be equal to the total number of chunks per rx/tx transactions per channel */
-/* (in other words, the summation of all elements in CF_CHANNEL_NUM_R/TX_CHUNKS_PER_TRANSACTION */
-#define CF_TOTAL_CHUNKS (CF_NAK_MAX_SEGMENTS * 4)
+/* CFDP_TOTAL_CHUNKS must be equal to the total number of chunks per rx/tx transactions per channel */
+/* (in other words, the summation of all elements in CFDP_CHANNEL_NUM_R/TX_CHUNKS_PER_TRANSACTION */
+#define CFDP_TOTAL_CHUNKS (CFDP_NAK_MAX_SEGMENTS * 4)
 
 /**
  *  @brief Max NAK segments supported in a NAK PDU
@@ -179,7 +179,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_NAK_MAX_SEGMENTS (58)
+#define CFDP_NAK_MAX_SEGMENTS (58)
 
 /**
  *  @brief Maximum TLVs (Type-Length-Value) per PDU
@@ -220,7 +220,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_MAX_POLLING_DIR_PER_CHAN (5)
+#define CFDP_MAX_POLLING_DIR_PER_CHAN (5)
 
 /**
  *  @brief Max PDU size.
@@ -241,7 +241,7 @@ typedef U32 CfdpFileSize;
  *       CCSDS packet size limits on the system.
  *
  */
-#define CF_MAX_PDU_SIZE (512)
+#define CFDP_MAX_PDU_SIZE (512)
 
 /**
  *  @brief Maximum file name length.
@@ -249,7 +249,7 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_FILENAME_MAX_NAME FileNameStringSize
+#define CFDP_FILENAME_MAX_NAME FileNameStringSize
 
 /**
  *  @brief Max filename and path length.
@@ -257,21 +257,21 @@ typedef U32 CfdpFileSize;
  *  @par Limits:
  *
  */
-#define CF_FILENAME_MAX_LEN FileNameStringSize
+#define CFDP_FILENAME_MAX_LEN FileNameStringSize
 
 /**
  * @brief Macro type for Entity id that is used in printf style formatting
  * 
  * @note This must match the size of CfdpEntityId as defined in CfdpCfg.fpp
  */
-#define CF_PRI_ENTITY_ID PRIu32
+#define CFDP_PRI_ENTITY_ID PRIu32
 
 /**
  * @brief Macro type for transaction seqeunces that is used in printf style formatting
  * 
  * @note This must match the size of CfdpTransactionSeq as defined in CfdpCfg.fpp
  */
-#define CF_PRI_TRANSACTION_SEQ PRIu32
+#define CFDP_PRI_TRANSACTION_SEQ PRIu32
 
 }  // namespace Svc
 }  // namespace Ccsds

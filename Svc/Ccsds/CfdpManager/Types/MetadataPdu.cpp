@@ -27,14 +27,14 @@ void MetadataPdu::initialize(Direction direction,
 
     this->m_fileSize = fileSize;
 
-    // Enforce CF_FILENAME_MAX_LEN for source filename
+    // Enforce CFDP_FILENAME_MAX_LEN for source filename
     FwSizeType srcLen = sourceFilename.length();
-    FW_ASSERT(srcLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(srcLen), CF_FILENAME_MAX_LEN);
+    FW_ASSERT(srcLen <= CFDP_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(srcLen), CFDP_FILENAME_MAX_LEN);
     this->m_sourceFilename = sourceFilename;
 
-    // Enforce CF_FILENAME_MAX_LEN for destination filename
+    // Enforce CFDP_FILENAME_MAX_LEN for destination filename
     FwSizeType dstLen = destFilename.length();
-    FW_ASSERT(dstLen <= CF_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(dstLen), CF_FILENAME_MAX_LEN);
+    FW_ASSERT(dstLen <= CFDP_FILENAME_MAX_LEN, static_cast<FwAssertArgType>(dstLen), CFDP_FILENAME_MAX_LEN);
     this->m_destFilename = destFilename;
 
     this->m_checksumType = checksumType;
@@ -199,8 +199,8 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
         return status;
     }
 
-    // Validate filename length against CF_FILENAME_MAX_LEN
-    if (sourceFilenameLength > CF_FILENAME_MAX_LEN) {
+    // Validate filename length against CFDP_FILENAME_MAX_LEN
+    if (sourceFilenameLength > CFDP_FILENAME_MAX_LEN) {
         // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: metadata PDU rejected due to invalid source filename length of 0x%02x", sourceFilenameLength);
         // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
@@ -216,7 +216,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char sourceFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
+    char sourceFilenameBuffer[CFDP_FILENAME_MAX_LEN + 1];
     FwSizeType actualLength = sourceFilenameLength;
     status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(sourceFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -233,8 +233,8 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
         return status;
     }
 
-    // Validate filename length against CF_FILENAME_MAX_LEN
-    if (destFilenameLength > CF_FILENAME_MAX_LEN) {
+    // Validate filename length against CFDP_FILENAME_MAX_LEN
+    if (destFilenameLength > CFDP_FILENAME_MAX_LEN) {
         // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
         //                   "CF: metadata PDU rejected due to invalid dest filename length of 0x%02x", destFilenameLength);
         // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
@@ -250,7 +250,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char destFilenameBuffer[CF_FILENAME_MAX_LEN + 1];
+    char destFilenameBuffer[CFDP_FILENAME_MAX_LEN + 1];
     actualLength = destFilenameLength;
     status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(destFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {

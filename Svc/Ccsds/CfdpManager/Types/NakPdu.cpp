@@ -27,7 +27,7 @@ void NakPdu::initialize(Direction direction,
 }
 
 bool NakPdu::addSegment(CfdpFileSize offsetStart, CfdpFileSize offsetEnd) {
-    if (this->m_numSegments >= CF_NAK_MAX_SEGMENTS) {
+    if (this->m_numSegments >= CFDP_NAK_MAX_SEGMENTS) {
         return false;
     }
     this->m_segments[this->m_numSegments].offsetStart = offsetStart;
@@ -166,8 +166,8 @@ Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer)
     this->m_numSegments = static_cast<U8>(numSegsCalculated);
 
     // Limit to max segments
-    if (this->m_numSegments > CF_NAK_MAX_SEGMENTS) {
-        this->m_numSegments = CF_NAK_MAX_SEGMENTS;
+    if (this->m_numSegments > CFDP_NAK_MAX_SEGMENTS) {
+        this->m_numSegments = CFDP_NAK_MAX_SEGMENTS;
     }
 
     // Deserialize segment requests
