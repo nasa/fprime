@@ -41,6 +41,8 @@ ComQueue ::ComQueue(const char* const compName)
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
     }
+
+    static_assert(TOTAL_PORT_COUNT >= 1, "ComQueue must have more than one port");
 }
 
 ComQueue ::~ComQueue() {}
