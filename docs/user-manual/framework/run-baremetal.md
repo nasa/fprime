@@ -10,26 +10,21 @@ The baremetal pattern enables F´ applications to run on processors without an o
 - Resources are usually constrained (RAM, storage)
 - There is one point of entry
 - Interrupt service routines (ISR) can be used
-- Examples include Arduino and STM32 microcontrollers
 
 ## F´ and Baremetal
 
-F´ does not require an operating system. Applications can be written entirely as a set of passive components with one Timer component driving the entire application through passive rate groups.
+F´ does not require an operating system. Applications can be written entirely as a set of passive components with one Timer component driving the entire application through passive rate groups. However, using many of the standard F´ components (e.g. `active` components) do require operating system abstraction (OSAL) support. 
 
-The baremetal pattern provides a solution that allows F´ core components to be used in baremetal deployments while adapting to the constraints of the environment.
+The baremetal pattern provides a solution that allows F´ core components to be used in baremetal deployments while adapting to the constraints of the environment.  It provides information on how to support baremetal with components written for complete OSAL adaptations.
 
 ### The Joy of Passive Components
 
-First and foremost, baremetal F´ systems should avoid using **Active Components** at all costs because these components
-require quasi-asynchronous execution contexts in which to run. i.e. they need threads such that they can execute in
-"parallel" with each other.
+First and foremost, baremetal F´ systems should avoid using **Active Components** where possible because these components require quasi-asynchronous execution contexts in which to run. i.e. they need threads such that they can execute in "parallel" with each other. This means using `passive` or `queued` components driven by rate groups or cycled on the main thread.
 
 > [!NOTE]
 > If you **must** use **Active Components** you should thoroughly review the [Thread Virtualization](#thread-virtualization) section of this document
 
-If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
-synchronous and the execution context would be entirely delegated to every component. A discussion of the source
-of that delegated execution context comes next.
+If your system can be entirely defined by `passive` and `queued` components then implicitly every port **invocation** would be eventually run in a synchronous call and the execution context would be entirely delegated to every component. Thus the need for a thread scheduler would dissappear. A discussion of the source of that delegated execution context comes next.
 
 ### Architecture
 
@@ -45,6 +40,8 @@ graph LR
 
 The timer driver invokes the passive rate group at a fixed rate, which then drives the execution of all connected components. Since there are no threads or queues, all components use sync ports and execute synchronously when called.
 
+> [!TIP]
+> Typically in baremetal systems `queued` component messages are dispatched via a rate-group with a bounded maximum of message dispatches per invocation.
 
 ## Baremetal Features
 
@@ -59,8 +56,8 @@ Key characteristics:
 - Emulates OS features like threads
 - Provides compatibility with the F´ OSAL model
 
-> [!NOTE]
-> If you need to use active components in a baremetal environment, see [Thread Virtualization](#thread-virtualization) for an experimental approach using protothreading.
+> [!CAUTION]
+> Users requiring thread emulation should read [Thread Virtualization](#thread-virtualization) for an experimental approach using protothreading.
 
 ### MicroFs
 
@@ -69,7 +66,7 @@ MicroFs provides an in-memory basic file system for components that need file ac
 - Provides basic file system operations
 - Stores files in RAM
 - Only persists as long as the processor is powered
-- For less constrained environments with flash storage, users can write or use their own file system
+- For less constrained environments with flash storage, users can write or use their own file system or wrap a third-party library
 
 ## Configuration and Tuning
 
@@ -112,15 +109,15 @@ Minimize resource usage by:
 
 ### Choose an Execution Context
 
-Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all driven by [rate groups](../design-patterns/rate-group.md). Designing the system this way ensures that all execution is derived from one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group driver at a set rate. All calls needed will execute during a sweep through the rate groups and their derived rates.
+Ensuring that some call invokes all of the **Components** that compose the F´ system is key to running a baremetal system. Otherwise, some components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all driven by [rate groups](../design-patterns/rate-group.md). Additionally, users could call components from the main thread.
+
+Designing the system this way ensures that all execution is derived from one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group driver at a set rate. All calls needed will execute during a sweep through the rate groups and their derived rates.
 
 > [!NOTE]
-> Other options exist (see [Thread Virtualization](#thread-virtualization) below).
+> Other options exist (see [Thread Virtualization](#thread-virtualization) below), however; these methods **still** require a context to run in.
 
 Although a full discussion of supplying execution context to the rate group driver is outside the scope of this
-documentation, here are a few tips. First, F´ execution should be primarily derived from the main
-program loop. i.e. embedded software typically looks like the following and the loop-forever `execute();` action should
-trigger the rate group driver at a set interval.
+documentation, here are a few tips. i.e. embedded software typically looks like the following and the loop-forever `execute();` action should trigger the rate group driver at a set interval.
 
 ```C
 // Run once setup
@@ -128,7 +125,7 @@ setup();
 
 // Do this forever
 while (true) {
-   execute();
+   execute(); // Cycle rate groups, and or thread virtualization here.
 }
 ```
 
@@ -142,7 +139,7 @@ by a timer-driven interrupt service routine (ISR).
 ## Thread Virtualization
 
 > [!NOTE]
-> This is an experimental technology with respect to F´. Care to understand its implementation should be taken before using it in a production/flight context.
+> This is a specialized technology with respect to F´. Care to understand its implementation should be taken before using it in a production/flight context.
 
 Some systems, even baremetal systems, require the use of **Active Components**. Many of the `Svc` components are by design active components. It is impractical to assume that all projects can, at the moment of conception, discard all use of the framework provided **Active Components**. Thus F´ was augmented with the ability to virtualize threading, such that projects could use these components during development as they migrate to a fully passive-component system.
 
@@ -159,6 +156,9 @@ When using the thread virtualization technology, care should be taken with custo
 3. The function shall perform "one slice" of the thread and then return
 
 Failure to comply with these requirements will cause the thread virtualization technology to fail, and the F´ application to lock up or otherwise behave erratically.
+
+> [!TIP]
+> The F´ active component implementation already obeys these requirements. Users need to obey these expectations w.r.t user defined threads.
 
 ### How It Works
 
