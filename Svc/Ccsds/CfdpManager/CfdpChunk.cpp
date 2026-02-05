@@ -47,7 +47,7 @@ namespace Ccsds {
 // CfdpChunkList Class Implementation
 // ======================================================================
 
-CfdpChunkList::CfdpChunkList(CF_ChunkIdx_t maxChunks, CF_Chunk_t* chunkMem)
+CfdpChunkList::CfdpChunkList(CfdpChunkIdx maxChunks, CfdpChunk* chunkMem)
     : m_count(0), m_maxChunks(maxChunks), m_chunks(chunkMem)
 {
     FW_ASSERT(maxChunks > 0);
@@ -63,8 +63,8 @@ void CfdpChunkList::reset()
 
 void CfdpChunkList::add(CfdpFileSize offset, CfdpFileSize size)
 {
-    const CF_Chunk_t chunk = {offset, size};
-    const CF_ChunkIdx_t i = findInsertPosition(&chunk);
+    const CfdpChunk chunk = {offset, size};
+    const CfdpChunkIdx i = findInsertPosition(&chunk);
 
     /* PTFO: files won't be so big we need to gracefully handle overflow,
      * and in that case the user should change everything in chunks
@@ -74,14 +74,14 @@ void CfdpChunkList::add(CfdpFileSize offset, CfdpFileSize size)
     insert(i, &chunk);
 }
 
-const CF_Chunk_t* CfdpChunkList::getFirstChunk() const
+const CfdpChunk* CfdpChunkList::getFirstChunk() const
 {
     return m_count ? &m_chunks[0] : nullptr;
 }
 
 void CfdpChunkList::removeFromFirst(CfdpFileSize size)
 {
-    CF_Chunk_t* chunk = &m_chunks[0]; /* front is always 0 */
+    CfdpChunk* chunk = &m_chunks[0]; /* front is always 0 */
 
     if (size > chunk->size)
     {
@@ -99,17 +99,17 @@ void CfdpChunkList::removeFromFirst(CfdpFileSize size)
     }
 }
 
-U32 CfdpChunkList::computeGaps(CF_ChunkIdx_t maxGaps,
+U32 CfdpChunkList::computeGaps(CfdpChunkIdx maxGaps,
                                 CfdpFileSize total,
                                 CfdpFileSize start,
-                                const GapComputeCallback& callback,
+                                const CfdpGapComputeCallback& callback,
                                 void* opaque) const
 {
     U32 ret = 0;
-    CF_ChunkIdx_t i = 0;
+    CfdpChunkIdx i = 0;
     CfdpFileSize next_off;
     CfdpFileSize gap_start;
-    CF_Chunk_t chunk;
+    CfdpChunk chunk;
 
     FW_ASSERT(total); /* does it make sense to have a 0 byte file? */
     FW_ASSERT(start < total, start, total);
@@ -167,7 +167,7 @@ U32 CfdpChunkList::computeGaps(CF_ChunkIdx_t maxGaps,
     return ret;
 }
 
-void CfdpChunkList::insertChunk(CF_ChunkIdx_t index, const CF_Chunk_t* chunk)
+void CfdpChunkList::insertChunk(CfdpChunkIdx index, const CfdpChunk* chunk)
 {
     FW_ASSERT(m_count < m_maxChunks, m_count, m_maxChunks);
     FW_ASSERT(index <= m_count, index, m_count);
@@ -182,7 +182,7 @@ void CfdpChunkList::insertChunk(CF_ChunkIdx_t index, const CF_Chunk_t* chunk)
     ++m_count;
 }
 
-void CfdpChunkList::eraseChunk(CF_ChunkIdx_t index)
+void CfdpChunkList::eraseChunk(CfdpChunkIdx index)
 {
     FW_ASSERT(m_count > 0);
     FW_ASSERT(index < m_count, index, m_count);
@@ -193,7 +193,7 @@ void CfdpChunkList::eraseChunk(CF_ChunkIdx_t index)
     --m_count;
 }
 
-void CfdpChunkList::eraseRange(CF_ChunkIdx_t start, CF_ChunkIdx_t end)
+void CfdpChunkList::eraseRange(CfdpChunkIdx start, CfdpChunkIdx end)
 {
     /* Sanity check */
     FW_ASSERT(end <= m_count, end, m_count);
@@ -201,16 +201,16 @@ void CfdpChunkList::eraseRange(CF_ChunkIdx_t start, CF_ChunkIdx_t end)
     if (start < end)
     {
         memmove(&m_chunks[start], &m_chunks[end], sizeof(*m_chunks) * (m_count - end));
-        m_count -= (end - start);
+        m_count -= static_cast<CfdpChunkIdx>(end - start);
     }
 }
 
-CF_ChunkIdx_t CfdpChunkList::findInsertPosition(const CF_Chunk_t* chunk)
+CfdpChunkIdx CfdpChunkList::findInsertPosition(const CfdpChunk* chunk)
 {
-    CF_ChunkIdx_t first = 0;
-    CF_ChunkIdx_t i;
-    CF_ChunkIdx_t count = m_count;
-    CF_ChunkIdx_t step;
+    CfdpChunkIdx first = 0;
+    CfdpChunkIdx i;
+    CfdpChunkIdx count = m_count;
+    CfdpChunkIdx step;
 
     while (count > 0)
     {
@@ -220,7 +220,7 @@ CF_ChunkIdx_t CfdpChunkList::findInsertPosition(const CF_Chunk_t* chunk)
         if (m_chunks[i].offset < chunk->offset)
         {
             first = i + 1;
-            count -= step + 1;
+            count -= static_cast<CfdpChunkIdx>(step + 1);
         }
         else
         {
@@ -231,9 +231,9 @@ CF_ChunkIdx_t CfdpChunkList::findInsertPosition(const CF_Chunk_t* chunk)
     return first;
 }
 
-bool CfdpChunkList::combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
+bool CfdpChunkList::combineNext(CfdpChunkIdx i, const CfdpChunk* chunk)
 {
-    CF_ChunkIdx_t combined_i = i;
+    CfdpChunkIdx combined_i = i;
     bool ret = false;
     CfdpFileSize chunk_end = chunk->offset + chunk->size;
 
@@ -255,7 +255,7 @@ bool CfdpChunkList::combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
     {
         /* End is the max of last combined chunk end or new chunk end */
         chunk_end =
-            CF_Chunk_MAX(m_chunks[combined_i - 1].offset + m_chunks[combined_i - 1].size, chunk_end);
+            CfdpChunkMax(m_chunks[combined_i - 1].offset + m_chunks[combined_i - 1].size, chunk_end);
 
         /* Use current slot as combined entry */
         m_chunks[i].size = chunk_end - chunk->offset;
@@ -269,9 +269,9 @@ bool CfdpChunkList::combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
     return ret;
 }
 
-bool CfdpChunkList::combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
+bool CfdpChunkList::combinePrevious(CfdpChunkIdx i, const CfdpChunk* chunk)
 {
-    CF_Chunk_t* prev;
+    CfdpChunk* prev;
     CfdpFileSize prev_end;
     CfdpFileSize chunk_end;
     bool ret = false;
@@ -300,10 +300,10 @@ bool CfdpChunkList::combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
     return ret;
 }
 
-void CfdpChunkList::insert(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
+void CfdpChunkList::insert(CfdpChunkIdx i, const CfdpChunk* chunk)
 {
-    CF_ChunkIdx_t smallest_i;
-    CF_Chunk_t* smallest_c;
+    CfdpChunkIdx smallest_i;
+    CfdpChunk* smallest_c;
     bool next = combineNext(i, chunk);
     bool combined;
 
@@ -338,10 +338,10 @@ void CfdpChunkList::insert(CF_ChunkIdx_t i, const CF_Chunk_t* chunk)
     }
 }
 
-CF_ChunkIdx_t CfdpChunkList::findSmallestSize() const
+CfdpChunkIdx CfdpChunkList::findSmallestSize() const
 {
-    CF_ChunkIdx_t i;
-    CF_ChunkIdx_t smallest = 0;
+    CfdpChunkIdx i;
+    CfdpChunkIdx smallest = 0;
 
     for (i = 1; i < m_count; ++i)
     {

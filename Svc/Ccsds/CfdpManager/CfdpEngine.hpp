@@ -54,22 +54,22 @@ namespace Ccsds {
 /**
  * @brief Structure for use with the CfdpChannel::cycleTx() function
  */
-typedef struct CF_CFDP_CycleTx_args
+struct CfdpCycleTxArgs
 {
     CfdpChannel *chan;    /**< \brief channel object */
     int          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
-} CF_CFDP_CycleTx_args_t;
+};
 
 /**
  * @brief Structure for use with the CfdpChannel::doTick() function
  */
-typedef struct CF_CFDP_Tick_args
+struct CfdpTickArgs
 {
     CfdpChannel *chan;                                /**< \brief channel object */
     void (CfdpTransaction::*fn)(int *);               /**< \brief member function pointer */
     bool early_exit;                                  /**< \brief early exit result */
     int  cont;                                        /**< \brief if 1, then re-traverse the list */
-} CF_CFDP_Tick_args_t;
+};
 
 //
 // Codec functions - these remain as free functions for now
@@ -230,7 +230,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
      */
-    void setTxnStatus(CfdpTransaction *txn, CF_TxnStatus_t txn_stat);
+    void setTxnStatus(CfdpTransaction *txn, CfdpTxnStatus txn_stat);
 
     /**
      * @brief Arm the ACK timer for a transaction
@@ -345,7 +345,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendFin(CfdpTransaction *txn, CF_CFDP_FinDeliveryCode_t dc, CF_CFDP_FinFileStatus_t fs,
+    Cfdp::Status::T sendFin(CfdpTransaction *txn, CfdpFinDeliveryCode dc, CfdpFinFileStatus fs,
                           Cfdp::ConditionCode cc);
 
     /**
@@ -480,7 +480,7 @@ class CfdpEngine {
      * @param dest_id      Destination entity ID
      * @returns SUCCESS if initiated, error otherwise
      */
-    Cfdp::Status::T playbackDirInitiate(CF_Playback_t *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
+    Cfdp::Status::T playbackDirInitiate(CfdpPlayback *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
                                       Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
 
     /**

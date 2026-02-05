@@ -66,7 +66,7 @@ class CfdpManager;
  *
  * @note This is a member function pointer - invoke with: (txn->*fn)()
  */
-typedef void (CfdpTransaction::*CF_CFDP_StateSendFunc_t)();
+using CfdpStateSendFunc = void (CfdpTransaction::*)();
 
 /**
  * @brief A member function pointer for dispatching actions to a handler, with existing PDU data
@@ -78,7 +78,7 @@ typedef void (CfdpTransaction::*CF_CFDP_StateSendFunc_t)();
  * @param[inout] buffer The buffer containing the PDU currently being received/processed
  * @note This is a member function pointer - invoke with: (txn->*fn)(buffer)
  */
-typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(const Fw::Buffer& buffer);
+using CfdpStateRecvFunc = void (CfdpTransaction::*)(const Fw::Buffer& buffer);
 
 /**
  * @brief A table of transmit handler functions based on transaction state
@@ -87,10 +87,10 @@ typedef void (CfdpTransaction::*CF_CFDP_StateRecvFunc_t)(const Fw::Buffer& buffe
  * Each possible state has a corresponding function pointer in the table to implement
  * the PDU transmit action(s) associated with that state.
  */
-typedef struct
+struct CfdpTxnSendDispatchTable
 {
-    CF_CFDP_StateSendFunc_t tx[CF_TxnState_INVALID]; /**< \brief Transmit handler function */
-} CF_CFDP_TxnSendDispatchTable_t;
+    CfdpStateSendFunc tx[CFDP_TXN_STATE_INVALID]; /**< \brief Transmit handler function */
+};
 
 /**
  * @brief A table of receive handler functions based on transaction state
@@ -99,11 +99,11 @@ typedef struct
  * Each possible state has a corresponding function pointer in the table to implement
  * the PDU receive action(s) associated with that state.
  */
-typedef struct
+struct CfdpTxnRecvDispatchTable
 {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    CF_CFDP_StateRecvFunc_t rx[CF_TxnState_INVALID];
-} CF_CFDP_TxnRecvDispatchTable_t;
+    CfdpStateRecvFunc rx[CFDP_TXN_STATE_INVALID];
+};
 
 /**
  * @brief A table of receive handler functions based on file directive code
@@ -112,11 +112,11 @@ typedef struct
  * than file data - this provides a table to branch to a different handler
  * function depending on the value of the file directive code.
  */
-typedef struct
+struct CfdpFileDirectiveDispatchTable
 {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    CF_CFDP_StateRecvFunc_t fdirective[Cfdp::FILE_DIRECTIVE_INVALID_MAX];
-} CF_CFDP_FileDirectiveDispatchTable_t;
+    CfdpStateRecvFunc fdirective[Cfdp::FILE_DIRECTIVE_INVALID_MAX];
+};
 
 /**
  * @brief A dispatch table for receive file transactions, receive side
@@ -124,10 +124,10 @@ typedef struct
  * This is used for "receive file" transactions upon receipt of a directive PDU.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-typedef struct
+struct CfdpRSubstateDispatchTable
 {
-    const CF_CFDP_FileDirectiveDispatchTable_t *state[CF_RxSubState_NUM_STATES];
-} CF_CFDP_R_SubstateDispatchTable_t;
+    const CfdpFileDirectiveDispatchTable *state[CFDP_RX_SUB_STATE_NUM_STATES];
+};
 
 /**
  * @brief A dispatch table for send file transactions, receive side
@@ -135,10 +135,10 @@ typedef struct
  * This is used for "send file" transactions upon receipt of a directive PDU.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-typedef struct
+struct CfdpSSubstateRecvDispatchTable
 {
-    const CF_CFDP_FileDirectiveDispatchTable_t *substate[CF_TxSubState_NUM_STATES];
-} CF_CFDP_S_SubstateRecvDispatchTable_t;
+    const CfdpFileDirectiveDispatchTable *substate[CFDP_TX_SUB_STATE_NUM_STATES];
+};
 
 /**
  * @brief A dispatch table for send file transactions, transmit side
@@ -146,10 +146,10 @@ typedef struct
  * This is used for "send file" transactions to generate the next PDU to be sent.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-typedef struct
+struct CfdpSSubstateSendDispatchTable
 {
-    CF_CFDP_StateSendFunc_t substate[CF_TxSubState_NUM_STATES];
-} CF_CFDP_S_SubstateSendDispatchTable_t;
+    CfdpStateSendFunc substate[CFDP_TX_SUB_STATE_NUM_STATES];
+};
 
 /**
  * @brief CFDP Transaction state machine class
@@ -207,7 +207,7 @@ class CfdpTransaction {
      * @param context Pointer to CF_Traverse_TransSeqArg_t
      * @return Traversal status (CONTINUE or EXIT)
      */
-    static CF_CListTraverse_Status_t findBySequenceNumberCallback(CF_CListNode_t *node, void *context);
+    static CfdpCListTraverseStatus findBySequenceNumberCallback(CfdpCListNode *node, void *context);
 
     /**
      * @brief Static callback for priority search
@@ -218,7 +218,7 @@ class CfdpTransaction {
      * @param context Pointer to CF_Traverse_PriorityArg_t
      * @return Traversal status (CONTINUE or EXIT)
      */
-    static CF_CListTraverse_Status_t prioritySearchCallback(CF_CListNode_t *node, void *context);
+    static CfdpCListTraverseStatus prioritySearchCallback(CfdpCListNode *node, void *context);
 
     // ----------------------------------------------------------------------
     // Accessors
@@ -228,7 +228,7 @@ class CfdpTransaction {
      * @brief Get transaction history
      * @return Pointer to history structure
      */
-    CF_History_t* getHistory() const { return m_history; }
+    CfdpHistory* getHistory() const { return m_history; }
 
     /**
      * @brief Get transaction priority
@@ -252,7 +252,7 @@ class CfdpTransaction {
      * @brief Get transaction state
      * @return Transaction state
      */
-    CF_TxnState_t getState() const { return m_state; }
+    CfdpTxnState getState() const { return m_state; }
 
     // ----------------------------------------------------------------------
     // TX State Machine - Implemented in CfdpTxTransaction.cpp
@@ -473,7 +473,7 @@ class CfdpTransaction {
      *
      * @param txn_stat Status Code value to set within transaction
      */
-    void r2SetFinTxnStatus(CF_TxnStatus_t txn_stat);
+    void r2SetFinTxnStatus(CfdpTxnStatus txn_stat);
 
     /************************************************************************/
     /** @brief CFDP R1 transaction reset function.
@@ -531,8 +531,8 @@ class CfdpTransaction {
      * @param fd_fn     Function to handle file data PDUs
      */
     void rDispatchRecv(const Fw::Buffer& buffer,
-                       const CF_CFDP_R_SubstateDispatchTable_t *dispatch,
-                       CF_CFDP_StateRecvFunc_t fd_fn);
+                       const CfdpRSubstateDispatchTable *dispatch,
+                       CfdpStateRecvFunc fd_fn);
 
     /************************************************************************/
     /** @brief Dispatch function for received PDUs on send-file transactions
@@ -544,7 +544,7 @@ class CfdpTransaction {
      * @param dispatch  Dispatch table for file directive PDUs
      */
     void sDispatchRecv(const Fw::Buffer& buffer,
-                       const CF_CFDP_S_SubstateRecvDispatchTable_t *dispatch);
+                       const CfdpSSubstateRecvDispatchTable *dispatch);
 
     /************************************************************************/
     /** @brief Dispatch function to send/generate PDUs on send-file transactions
@@ -555,7 +555,7 @@ class CfdpTransaction {
      *
      * @param dispatch  State-based dispatch table
      */
-    void sDispatchTransmit(const CF_CFDP_S_SubstateSendDispatchTable_t *dispatch);
+    void sDispatchTransmit(const CfdpSSubstateSendDispatchTable *dispatch);
 
     /************************************************************************/
     /** @brief Top-level Dispatch function to send a PDU based on current state
@@ -565,7 +565,7 @@ class CfdpTransaction {
      *
      * @param dispatch  Transaction State-based Dispatch table
      */
-    void txStateDispatch(const CF_CFDP_TxnSendDispatchTable_t *dispatch);
+    void txStateDispatch(const CfdpTxnSendDispatchTable *dispatch);
 
   private:
     /************************************************************************/
@@ -640,7 +640,7 @@ class CfdpTransaction {
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CF_Chunk_t *chunk, Cfdp::NakPdu& nak);
+    void r2GapCompute(const CfdpChunk *chunk, Cfdp::NakPdu& nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
@@ -718,7 +718,7 @@ class CfdpTransaction {
      *
      * Each engine is commanded to do something, which is the overall state.
      */
-    CF_TxnState_t m_state;
+    CfdpTxnState m_state;
 
     /**
      * @brief Transaction class (CLASS_1 or CLASS_2)
@@ -732,14 +732,14 @@ class CfdpTransaction {
      *
      * Holds active filenames and possibly other info.
      */
-    CF_History_t* m_history;
+    CfdpHistory* m_history;
 
     /**
      * @brief Pointer to chunk wrapper
      *
      * For gap tracking, only used on class 2.
      */
-    CF_ChunkWrapper_t* m_chunks;
+    CfdpChunkWrapper* m_chunks;
 
     /**
      * @brief Inactivity timer
@@ -797,19 +797,19 @@ class CfdpTransaction {
      *
      * For connection to a CList (intrusive linked list).
      */
-    CF_CListNode_t m_cl_node;
+    CfdpCListNode m_cl_node;
 
     /**
      * @brief Pointer to playback entry
      *
      * NULL if transaction does not belong to a playback.
      */
-    CF_Playback_t* m_pb;
+    CfdpPlayback* m_pb;
 
     /**
      * @brief State-specific data (TX or RX)
      */
-    CF_StateData_t m_state_data;
+    CfdpStateData m_state_data;
 
     /**
      * @brief State flags (TX or RX)
@@ -820,7 +820,7 @@ class CfdpTransaction {
      * way allows 2 bytes to cover all possible flags. Please ignore the
      * duplicate declarations of the "all" flags.
      */
-    CF_StateFlags_t m_flags;
+    CfdpStateFlags m_flags;
 
     /**
      * @brief Reference to the wrapper F' component

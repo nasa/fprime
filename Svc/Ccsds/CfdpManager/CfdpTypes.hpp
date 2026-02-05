@@ -68,7 +68,7 @@ class CfdpTransaction;
 /**
  * @brief Maximum possible number of transactions that may exist on a single CF channel
  */
-#define CF_NUM_TRANSACTIONS_PER_CHANNEL                                                \
+#define CFDP_NUM_TRANSACTIONS_PER_CHANNEL                                                \
     (CF_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CF_MAX_SIMULTANEOUS_RX +               \
      ((CF_MAX_POLLING_DIR_PER_CHAN + CF_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) * \
       CF_NUM_TRANSACTIONS_PER_PLAYBACK))
@@ -76,68 +76,68 @@ class CfdpTransaction;
 /**
  * @brief Maximum possible number of transactions that may exist in the CF application
  */
-#define CF_NUM_TRANSACTIONS (CF_NUM_CHANNELS * CF_NUM_TRANSACTIONS_PER_CHANNEL)
+#define CFDP_NUM_TRANSACTIONS (CF_NUM_CHANNELS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
 
 /**
  * @brief Maximum possible number of history entries that may exist in the CF application
  */
-#define CF_NUM_HISTORIES (CF_NUM_CHANNELS * CF_NUM_HISTORIES_PER_CHANNEL)
+#define CFDP_NUM_HISTORIES (CF_NUM_CHANNELS * CF_NUM_HISTORIES_PER_CHANNEL)
 
 /**
  * @brief Maximum possible number of chunk entries that may exist in the CF application
  */
-#define CF_NUM_CHUNKS_ALL_CHANNELS (CF_TOTAL_CHUNKS * CF_NUM_TRANSACTIONS_PER_CHANNEL)
+#define CFDP_NUM_CHUNKS_ALL_CHANNELS (CF_TOTAL_CHUNKS * CFDP_NUM_TRANSACTIONS_PER_CHANNEL)
 
 /**
  * @brief High-level state of a transaction
  */
-typedef enum
+enum CfdpTxnState : U8
 {
-    CF_TxnState_UNDEF   = 0, /**< \brief State assigned to an unused object on the free list */
-    CF_TxnState_INIT    = 1, /**< \brief State assigned to a newly allocated transaction object */
-    CF_TxnState_R1      = 2, /**< \brief Receive file as class 1 */
-    CF_TxnState_S1      = 3, /**< \brief Send file as class 1 */
-    CF_TxnState_R2      = 4, /**< \brief Receive file as class 2 */
-    CF_TxnState_S2      = 5, /**< \brief Send file as class 2 */
-    CF_TxnState_DROP    = 6, /**< \brief State where all PDUs are dropped */
-    CF_TxnState_HOLD    = 7, /**< \brief State assigned to a transaction after freeing it */
-    CF_TxnState_INVALID = 8  /**< \brief Marker value for the highest possible state number */
-} CF_TxnState_t;
+    CFDP_TXN_STATE_UNDEF   = 0, /**< \brief State assigned to an unused object on the free list */
+    CFDP_TXN_STATE_INIT    = 1, /**< \brief State assigned to a newly allocated transaction object */
+    CFDP_TXN_STATE_R1      = 2, /**< \brief Receive file as class 1 */
+    CFDP_TXN_STATE_S1      = 3, /**< \brief Send file as class 1 */
+    CFDP_TXN_STATE_R2      = 4, /**< \brief Receive file as class 2 */
+    CFDP_TXN_STATE_S2      = 5, /**< \brief Send file as class 2 */
+    CFDP_TXN_STATE_DROP    = 6, /**< \brief State where all PDUs are dropped */
+    CFDP_TXN_STATE_HOLD    = 7, /**< \brief State assigned to a transaction after freeing it */
+    CFDP_TXN_STATE_INVALID = 8  /**< \brief Marker value for the highest possible state number */
+};
 
 /**
  * @brief Sub-state of a send file transaction
  */
-typedef enum
+enum CfdpTxSubState : U8
 {
-    CF_TxSubState_METADATA      = 0, /**< sending the initial MD directive */
-    CF_TxSubState_FILEDATA      = 1, /**< sending file data PDUs */
-    CF_TxSubState_EOF           = 2, /**< sending the EOF directive */
-    CF_TxSubState_CLOSEOUT_SYNC = 3, /**< pending final acks from remote */
-    CF_TxSubState_NUM_STATES    = 4
-} CF_TxSubState_t;
+    CFDP_TX_SUB_STATE_METADATA      = 0, /**< sending the initial MD directive */
+    CFDP_TX_SUB_STATE_FILEDATA      = 1, /**< sending file data PDUs */
+    CFDP_TX_SUB_STATE_EOF           = 2, /**< sending the EOF directive */
+    CFDP_TX_SUB_STATE_CLOSEOUT_SYNC = 3, /**< pending final acks from remote */
+    CFDP_TX_SUB_STATE_NUM_STATES    = 4
+};
 
 /**
  * @brief Sub-state of a receive file transaction
  */
-typedef enum
+enum CfdpRxSubState : U8
 {
-    CF_RxSubState_FILEDATA      = 0, /**< receive file data PDUs */
-    CF_RxSubState_EOF           = 1, /**< got EOF directive */
-    CF_RxSubState_CLOSEOUT_SYNC = 2, /**< pending final acks from remote */
-    CF_RxSubState_NUM_STATES    = 3
-} CF_RxSubState_t;
+    CFDP_RX_SUB_STATE_FILEDATA      = 0, /**< receive file data PDUs */
+    CFDP_RX_SUB_STATE_EOF           = 1, /**< got EOF directive */
+    CFDP_RX_SUB_STATE_CLOSEOUT_SYNC = 2, /**< pending final acks from remote */
+    CFDP_RX_SUB_STATE_NUM_STATES    = 3
+};
 
 /**
  * @brief Direction identifier
  *
  * Differentiates between send and receive history entries
  */
-typedef enum
+enum CfdpDirection : U8
 {
-    CF_Direction_RX  = 0,
-    CF_Direction_TX  = 1,
-    CF_Direction_NUM = 2,
-} CF_Direction_t;
+    CFDP_DIRECTION_RX  = 0,
+    CFDP_DIRECTION_TX  = 1,
+    CFDP_DIRECTION_NUM = 2,
+};
 
 /**
  * @brief Values for Transaction Status code
@@ -152,41 +152,41 @@ typedef enum
  * codes defined in the blue book, but can be translated to one
  * of those codes for the purposes of FIN/ACK/EOF PDUs.
  */
-typedef enum
+enum CfdpTxnStatus : I32
 {
     /**
      * The undefined status is a placeholder for new transactions before a value is set.
      */
-    CF_TxnStatus_UNDEFINED = -1,
+    CFDP_TXN_STATUS_UNDEFINED = -1,
 
     /* Status codes 0-15 share the same values/meanings as the CFDP condition code (CC) */
-    CF_TxnStatus_NO_ERROR                  = CF_CFDP_ConditionCode_NO_ERROR,
-    CF_TxnStatus_POS_ACK_LIMIT_REACHED     = CF_CFDP_ConditionCode_POS_ACK_LIMIT_REACHED,
-    CF_TxnStatus_KEEP_ALIVE_LIMIT_REACHED  = CF_CFDP_ConditionCode_KEEP_ALIVE_LIMIT_REACHED,
-    CF_TxnStatus_INVALID_TRANSMISSION_MODE = CF_CFDP_ConditionCode_INVALID_TRANSMISSION_MODE,
-    CF_TxnStatus_FILESTORE_REJECTION       = CF_CFDP_ConditionCode_FILESTORE_REJECTION,
-    CF_TxnStatus_FILE_CHECKSUM_FAILURE     = CF_CFDP_ConditionCode_FILE_CHECKSUM_FAILURE,
-    CF_TxnStatus_FILE_SIZE_ERROR           = CF_CFDP_ConditionCode_FILE_SIZE_ERROR,
-    CF_TxnStatus_NAK_LIMIT_REACHED         = CF_CFDP_ConditionCode_NAK_LIMIT_REACHED,
-    CF_TxnStatus_INACTIVITY_DETECTED       = CF_CFDP_ConditionCode_INACTIVITY_DETECTED,
-    CF_TxnStatus_INVALID_FILE_STRUCTURE    = CF_CFDP_ConditionCode_INVALID_FILE_STRUCTURE,
-    CF_TxnStatus_CHECK_LIMIT_REACHED       = CF_CFDP_ConditionCode_CHECK_LIMIT_REACHED,
-    CF_TxnStatus_UNSUPPORTED_CHECKSUM_TYPE = CF_CFDP_ConditionCode_UNSUPPORTED_CHECKSUM_TYPE,
-    CF_TxnStatus_SUSPEND_REQUEST_RECEIVED  = CF_CFDP_ConditionCode_SUSPEND_REQUEST_RECEIVED,
-    CF_TxnStatus_CANCEL_REQUEST_RECEIVED   = CF_CFDP_ConditionCode_CANCEL_REQUEST_RECEIVED,
+    CFDP_TXN_STATUS_NO_ERROR                  = CFDP_CONDITION_CODE_NO_ERROR,
+    CFDP_TXN_STATUS_POS_ACK_LIMIT_REACHED     = CFDP_CONDITION_CODE_POS_ACK_LIMIT_REACHED,
+    CFDP_TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED  = CFDP_CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED,
+    CFDP_TXN_STATUS_INVALID_TRANSMISSION_MODE = CFDP_CONDITION_CODE_INVALID_TRANSMISSION_MODE,
+    CFDP_TXN_STATUS_FILESTORE_REJECTION       = CFDP_CONDITION_CODE_FILESTORE_REJECTION,
+    CFDP_TXN_STATUS_FILE_CHECKSUM_FAILURE     = CFDP_CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+    CFDP_TXN_STATUS_FILE_SIZE_ERROR           = CFDP_CONDITION_CODE_FILE_SIZE_ERROR,
+    CFDP_TXN_STATUS_NAK_LIMIT_REACHED         = CFDP_CONDITION_CODE_NAK_LIMIT_REACHED,
+    CFDP_TXN_STATUS_INACTIVITY_DETECTED       = CFDP_CONDITION_CODE_INACTIVITY_DETECTED,
+    CFDP_TXN_STATUS_INVALID_FILE_STRUCTURE    = CFDP_CONDITION_CODE_INVALID_FILE_STRUCTURE,
+    CFDP_TXN_STATUS_CHECK_LIMIT_REACHED       = CFDP_CONDITION_CODE_CHECK_LIMIT_REACHED,
+    CFDP_TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE = CFDP_CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE,
+    CFDP_TXN_STATUS_SUSPEND_REQUEST_RECEIVED  = CFDP_CONDITION_CODE_SUSPEND_REQUEST_RECEIVED,
+    CFDP_TXN_STATUS_CANCEL_REQUEST_RECEIVED   = CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED,
 
     /* Additional status codes for items not representable in a CFDP CC, these can be set in
      * transactions that did not make it to the point of sending FIN/EOF. */
-    CF_TxnStatus_PROTOCOL_ERROR     = 16,
-    CF_TxnStatus_ACK_LIMIT_NO_FIN   = 17,
-    CF_TxnStatus_ACK_LIMIT_NO_EOF   = 18,
-    CF_TxnStatus_NAK_RESPONSE_ERROR = 19,
-    CF_TxnStatus_SEND_EOF_FAILURE   = 20,
-    CF_TxnStatus_EARLY_FIN          = 21,
+    CFDP_TXN_STATUS_PROTOCOL_ERROR     = 16,
+    CFDP_TXN_STATUS_ACK_LIMIT_NO_FIN   = 17,
+    CFDP_TXN_STATUS_ACK_LIMIT_NO_EOF   = 18,
+    CFDP_TXN_STATUS_NAK_RESPONSE_ERROR = 19,
+    CFDP_TXN_STATUS_SEND_EOF_FAILURE   = 20,
+    CFDP_TXN_STATUS_EARLY_FIN          = 21,
 
     /* keep last */
-    CF_TxnStatus_MAX = 22
-} CF_TxnStatus_t;
+    CFDP_TXN_STATUS_MAX = 22
+};
 
 /**
  * @brief Cache of source and destination filename
@@ -194,27 +194,27 @@ typedef enum
  * This pairs a source and destination file name together
  * to be retained for future reference in the transaction/history
  */
-typedef struct CF_TxnFilenames
+struct CfdpTxnFilenames
 {
     Fw::String src_filename;
     Fw::String dst_filename;
-} CfdpTxnFilenames;
+};
 
 /**
  * @brief CF History entry
  *
  * Records CF app operations for future reference
  */
-typedef struct CF_History
+struct CfdpHistory
 {
     CfdpTxnFilenames fnames;   /**< \brief file names associated with this history entry */
-    CF_CListNode_t cl_node;  /**< \brief for connection to a CList */
-    CF_Direction_t dir;      /**< \brief direction of this history entry */
-    CF_TxnStatus_t txn_stat; /**< \brief final status of operation */
+    CfdpCListNode cl_node;  /**< \brief for connection to a CList */
+    CfdpDirection dir;      /**< \brief direction of this history entry */
+    CfdpTxnStatus txn_stat; /**< \brief final status of operation */
     CfdpEntityId src_eid;  /**< \brief the source eid of the transaction */
     CfdpEntityId peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
     CfdpTransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
-} CF_History_t;
+};
 
 /**
  * @brief Wrapper around a CfdpChunkList object
@@ -222,10 +222,10 @@ typedef struct CF_History
  * This allows a CfdpChunkList to be stored within a CList data storage structure.
  * The wrapper is pooled by CfdpChannel for reuse across transactions.
  */
-typedef struct CF_ChunkWrapper
+struct CfdpChunkWrapper
 {
     CfdpChunkList chunks;   //!< Chunk list for gap tracking
-    CF_CListNode_t cl_node; //!< Circular list node for pooling
+    CfdpCListNode cl_node; //!< Circular list node for pooling
 
     /**
      * @brief Constructor for initializing the chunk list
@@ -233,16 +233,16 @@ typedef struct CF_ChunkWrapper
      * @param maxChunks Maximum number of chunks this list can hold
      * @param chunkMem Pointer to pre-allocated chunk memory
      */
-    CF_ChunkWrapper(CF_ChunkIdx_t maxChunks, CF_Chunk_t* chunkMem)
+    CfdpChunkWrapper(CfdpChunkIdx maxChunks, CfdpChunk* chunkMem)
         : chunks(maxChunks, chunkMem), cl_node{} {}
-} CF_ChunkWrapper_t;
+};
 
 /**
  * @brief CF Playback entry
  *
  * Keeps the state of CF playback requests
  */
-typedef struct CF_Playback
+struct CfdpPlayback
 {
     Os::Directory dir;
     Cfdp::Class::T cfdp_class;
@@ -256,16 +256,16 @@ typedef struct CF_Playback
     bool diropen;
     Cfdp::Keep::T keep;
     bool counted;
-} CF_Playback_t;
+};
 
 /**
  * \brief Directory poll entry
- * 
+ *
  * Keeps the state of CF directory polling
  */
-typedef struct CF_PollDir
+struct CfdpPollDir
 {
-    CF_Playback_t pb; /**< \brief State of the currrent playback requests */
+    CfdpPlayback pb; /**< \brief State of the currrent playback requests */
     CfdpTimer intervalTimer; /**< \brief Timer object used to poll the directory */
 
     U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */
@@ -278,57 +278,57 @@ typedef struct CF_PollDir
     Fw::String dstDir; /**< \brief path to destination dir */
 
     Fw::Enabled enabled; /**< \brief Enabled flag */
-} CF_PollDir_t;
+};
 
 /**
  * @brief Data specific to a class 2 send file transaction
  */
-typedef struct CF_TxS2_Data
+struct CfdpTxS2Data
 {
     U8 fin_cc; /**< \brief remember the cc in the received FIN PDU to echo in eof-fin */
     U8 acknak_count;
-} CF_TxS2_Data_t;
+};
 
 /**
  * @brief Data specific to a send file transaction
  */
-typedef struct CF_TxState_Data
+struct CfdpTxStateData
 {
-    CF_TxSubState_t sub_state;
+    CfdpTxSubState sub_state;
     CfdpFileSize cached_pos;
 
-    CF_TxS2_Data_t s2;
-} CF_TxState_Data_t;
+    CfdpTxS2Data s2;
+};
 
 /**
  * @brief Data specific to a class 2 receive file transaction
  */
-typedef struct CF_RxS2_Data
+struct CfdpRxS2Data
 {
     U32                    eof_crc;
     CfdpFileSize           eof_size;
     CfdpFileSize           rx_crc_calc_bytes;
-    CF_CFDP_FinDeliveryCode_t dc;
-    CF_CFDP_FinFileStatus_t   fs;
+    CfdpFinDeliveryCode dc;
+    CfdpFinFileStatus   fs;
     U8                     eof_cc; /**< \brief remember the cc in the received EOF PDU to echo in eof-ack */
     U8                     acknak_count;
-} CF_RxS2_Data_t;
+};
 
 /**
  * @brief Data specific to a receive file transaction
  */
-typedef struct CF_RxState_Data
+struct CfdpRxStateData
 {
-    CF_RxSubState_t sub_state;
+    CfdpRxSubState sub_state;
     CfdpFileSize cached_pos;
 
-    CF_RxS2_Data_t r2;
-} CF_RxState_Data_t;
+    CfdpRxS2Data r2;
+};
 
 /**
  * @brief Data that applies to all types of transactions
  */
-typedef struct CF_Flags_Common
+struct CfdpFlagsCommon
 {
     U8 q_index; /**< \brief Q index this is in */
     bool  ack_timer_armed;
@@ -337,14 +337,14 @@ typedef struct CF_Flags_Common
     bool  crc_calc;
     bool  inactivity_fired; /**< \brief set whenever the inactivity timeout expires */
     bool  keep_history;     /**< \brief whether history should be preserved during recycle */
-} CF_Flags_Common_t;
+};
 
 /**
  * @brief Flags that apply to receive transactions
  */
-typedef struct CF_Flags_Rx
+struct CfdpFlagsRx
 {
-    CF_Flags_Common_t com;
+    CfdpFlagsCommon com;
 
     bool md_recv; /**< \brief md received for r state */
     bool eof_recv;
@@ -353,14 +353,14 @@ typedef struct CF_Flags_Rx
     bool send_eof_ack;
     bool complete;    /**< \brief r2 */
     bool fd_nak_sent; /**< \brief latches that at least one NAK has been sent for file data */
-} CF_Flags_Rx_t;
+};
 
 /**
  * @brief Flags that apply to send transactions
  */
-typedef struct CF_Flags_Tx
+struct CfdpFlagsTx
 {
-    CF_Flags_Common_t com;
+    CfdpFlagsCommon com;
 
     bool md_need_send;
     bool send_eof;
@@ -368,26 +368,26 @@ typedef struct CF_Flags_Tx
     bool fin_recv;
     bool send_fin_ack;
     bool cmd_tx; /**< \brief indicates transaction is commanded (ground) tx */
-} CF_Flags_Tx_t;
+};
 
 /**
  * @brief Summary of all possible transaction flags (tx and rx)
  */
-typedef union CF_StateFlags
+union CfdpStateFlags
 {
-    CF_Flags_Common_t com; /**< \brief applies to all transactions */
-    CF_Flags_Rx_t     rx;  /**< \brief applies to only receive file transactions */
-    CF_Flags_Tx_t     tx;  /**< \brief applies to only send file transactions */
-} CF_StateFlags_t;
+    CfdpFlagsCommon com; /**< \brief applies to all transactions */
+    CfdpFlagsRx     rx;  /**< \brief applies to only receive file transactions */
+    CfdpFlagsTx     tx;  /**< \brief applies to only send file transactions */
+};
 
 /**
  * @brief Summary of all possible transaction state information (tx and rx)
  */
-typedef union CF_StateData
+union CfdpStateData
 {
-    CF_TxState_Data_t send;    /**< \brief applies to only send file transactions */
-    CF_RxState_Data_t receive; /**< \brief applies to only receive file transactions */
-} CF_StateData_t;
+    CfdpTxStateData send;    /**< \brief applies to only send file transactions */
+    CfdpRxStateData receive; /**< \brief applies to only receive file transactions */
+};
 
 
 /**
@@ -396,18 +396,18 @@ typedef union CF_StateData
  * @param txn Pointer to current transaction being traversed
  * @param context Opaque object passed from initial call
  */
-using CF_TraverseAllTransactions_fn_t = std::function<void(CfdpTransaction *txn, void *context)>;
+using CfdpTraverseAllTransactionsFunc = std::function<void(CfdpTransaction *txn, void *context)>;
 
 /**
  * @brief Identifies the type of timer tick being processed
  */
-typedef enum
+enum CfdpTickType : U8
 {
-    CF_TickType_RX,
-    CF_TickType_TXW_NORM,
-    CF_TickType_TXW_NAK,
-    CF_TickType_NUM_TYPES
-} CF_TickType_t;
+    CFDP_TICK_TYPE_RX,
+    CFDP_TICK_TYPE_TXW_NORM,
+    CFDP_TICK_TYPE_TXW_NAK,
+    CFDP_TICK_TYPE_NUM_TYPES
+};
 
 }  // namespace Ccsds
 }  // namespace Svc

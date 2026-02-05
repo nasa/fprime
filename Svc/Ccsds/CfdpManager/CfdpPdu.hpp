@@ -60,16 +60,16 @@ namespace Ccsds {
  * CF is configurable in what it can accept and transmit, which may be smaller than what
  * the blue book permits.
  */
-#define CF_CFDP_MAX_HEADER_SIZE \
-    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_U64_t))) /* 8 bytes for each variable item */
+#define CFDP_MAX_HEADER_SIZE \
+    (sizeof(CfdpPduHeader) + (3 * sizeof(CfdpU64))) /* 8 bytes for each variable item */
 
 /**
  * @brief Minimum encoded size of a CFDP PDU header
  *
  * Per the blue book, the size of the Entity ID and Sequence Number must be at least 1 byte.
  */
-#define CF_CFDP_MIN_HEADER_SIZE \
-    (sizeof(CF_CFDP_PduHeader_t) + (3 * sizeof(CF_CFDP_U8_t))) /* 1 byte for each variable item */
+#define CFDP_MIN_HEADER_SIZE \
+    (sizeof(CfdpPduHeader) + (3 * sizeof(CfdpU8))) /* 1 byte for each variable item */
 
 /**
  * @brief Maximum encoded size of a CFDP PDU that this implementation can accept
@@ -81,7 +81,7 @@ namespace Ccsds {
  * still correlates (e.g. if it takes 4 bytes natively, it will be encoded into
  * 4 bytes).
  */
-#define CF_APP_MAX_HEADER_SIZE (sizeof(CF_CFDP_PduHeader_t) + sizeof(CfdpTransactionSeq) + (3 * sizeof(CfdpEntityId)))
+#define CFDP_APP_MAX_HEADER_SIZE (sizeof(CfdpPduHeader) + sizeof(CfdpTransactionSeq) + (3 * sizeof(CfdpEntityId)))
 
 /*
  * CFDP PDU data types are based on wrapper structs which
@@ -101,34 +101,34 @@ namespace Ccsds {
 /**
  * @brief Encoded 8-bit value in the CFDP PDU
  */
-typedef struct
+struct CfdpU8
 {
     U8 octets[1];
-} CF_CFDP_U8_t;
+};
 
 /**
  * @brief Encoded 16-bit value in the CFDP PDU
  */
-typedef struct
+struct CfdpU16
 {
     U8 octets[2];
-} CF_CFDP_U16_t;
+};
 
 /**
  * @brief Encoded 32-bit value in the CFDP PDU
  */
-typedef struct
+struct CfdpU32
 {
     U8 octets[4];
-} CF_CFDP_U32_t;
+};
 
 /**
  * @brief Encoded 64-bit value in the CFDP PDU
  */
-typedef struct
+struct CfdpU64
 {
     U8 octets[8];
-} CF_CFDP_U64_t;
+};
 
 /**
  * @brief Structure representing base CFDP PDU header
@@ -140,27 +140,27 @@ typedef struct
  * Defined per section 5.1 of CCSDS 727.0-B-5
  *
  * @note this contains variable length data for the EID+TSN, which is _not_ included
- * in this definition.  As a result, the sizeof(CF_CFDP_PduHeader_t) reflects only the
+ * in this definition.  As a result, the sizeof(CfdpPduHeader) reflects only the
  * size of the fixed fields.  Use CF_HeaderSize() to get the actual size of this structure.
  */
-typedef struct CF_CFDP_PduHeader
+struct CfdpPduHeader
 {
-    CF_CFDP_U8_t  flags;           /**< \brief Flags indicating the PDU type, direction, mode, etc */
-    CF_CFDP_U16_t length;          /**< \brief Length of the entire PDU, in octets */
-    CF_CFDP_U8_t  eid_tsn_lengths; /**< \brief Lengths of the EID+TSN data (bitfields) */
+    CfdpU8  flags;           /**< \brief Flags indicating the PDU type, direction, mode, etc */
+    CfdpU16 length;          /**< \brief Length of the entire PDU, in octets */
+    CfdpU8  eid_tsn_lengths; /**< \brief Lengths of the EID+TSN data (bitfields) */
 
     /* variable-length data goes here - it is at least 3 additional bytes */
-} CF_CFDP_PduHeader_t;
+};
 
 /**
  * @brief Structure representing CFDP File Directive Header
  *
  * Defined per section 5.2 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduFileDirectiveHeader
+struct CfdpPduFileDirectiveHeader
 {
-    CF_CFDP_U8_t directive_code;
-} CF_CFDP_PduFileDirectiveHeader_t;
+    CfdpU8 directive_code;
+};
 
 /**
  * @brief Structure representing CFDP LV Object format
@@ -170,10 +170,10 @@ typedef struct CF_CFDP_PduFileDirectiveHeader
  *
  * Defined per table 5-2 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_lv
+struct CfdpLv
 {
-    CF_CFDP_U8_t length; /**< \brief Length of data field */
-} CF_CFDP_lv_t;
+    CfdpU8 length; /**< \brief Length of data field */
+};
 
 /**
  * @brief Structure representing CFDP TLV Object format
@@ -183,11 +183,11 @@ typedef struct CF_CFDP_lv
  *
  * Defined per table 5-3 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_tlv
+struct CfdpTlv
 {
-    CF_CFDP_U8_t type;   /**< \brief Nature of data field */
-    CF_CFDP_U8_t length; /**< \brief Length of data field */
-} CF_CFDP_tlv_t;
+    CfdpU8 type;   /**< \brief Nature of data field */
+    CfdpU8 length; /**< \brief Length of data field */
+};
 
 /**
  * @brief Values for "acknowledgment transfer status"
@@ -197,14 +197,14 @@ typedef struct CF_CFDP_tlv
  *
  * Defined per section 5.2.4 / table 5-8 of CCSDS 727.0-B-5
  */
-typedef enum
+enum CfdpAckTxnStatus : U8
 {
-    CF_CFDP_AckTxnStatus_UNDEFINED    = 0,
-    CF_CFDP_AckTxnStatus_ACTIVE       = 1,
-    CF_CFDP_AckTxnStatus_TERMINATED   = 2,
-    CF_CFDP_AckTxnStatus_UNRECOGNIZED = 3,
-    CF_CFDP_AckTxnStatus_INVALID      = 4,
-} CF_CFDP_AckTxnStatus_t;
+    CFDP_ACK_TXN_STATUS_UNDEFINED    = 0,
+    CFDP_ACK_TXN_STATUS_ACTIVE       = 1,
+    CFDP_ACK_TXN_STATUS_TERMINATED   = 2,
+    CFDP_ACK_TXN_STATUS_UNRECOGNIZED = 3,
+    CFDP_ACK_TXN_STATUS_INVALID      = 4,
+};
 
 /**
  * @brief Values for "finished delivery code"
@@ -214,12 +214,12 @@ typedef enum
  *
  * Defined per section 5.2.3 / table 5-7 of CCSDS 727.0-B-5
  */
-typedef enum
+enum CfdpFinDeliveryCode : U8
 {
-    CF_CFDP_FinDeliveryCode_COMPLETE   = 0,
-    CF_CFDP_FinDeliveryCode_INCOMPLETE = 1,
-    CF_CFDP_FinDeliveryCode_INVALID    = 2,
-} CF_CFDP_FinDeliveryCode_t;
+    CFDP_FIN_DELIVERY_CODE_COMPLETE   = 0,
+    CFDP_FIN_DELIVERY_CODE_INCOMPLETE = 1,
+    CFDP_FIN_DELIVERY_CODE_INVALID    = 2,
+};
 
 /**
  * @brief Values for "finished file status"
@@ -229,14 +229,14 @@ typedef enum
  *
  * Defined per section 5.2.3 / table 5-7 of CCSDS 727.0-B-5
  */
-typedef enum
+enum CfdpFinFileStatus : U8
 {
-    CF_CFDP_FinFileStatus_DISCARDED           = 0,
-    CF_CFDP_FinFileStatus_DISCARDED_FILESTORE = 1,
-    CF_CFDP_FinFileStatus_RETAINED            = 2,
-    CF_CFDP_FinFileStatus_UNREPORTED          = 3,
-    CF_CFDP_FinFileStatus_INVALID             = 4,
-} CF_CFDP_FinFileStatus_t;
+    CFDP_FIN_FILE_STATUS_DISCARDED           = 0,
+    CFDP_FIN_FILE_STATUS_DISCARDED_FILESTORE = 1,
+    CFDP_FIN_FILE_STATUS_RETAINED            = 2,
+    CFDP_FIN_FILE_STATUS_UNREPORTED          = 3,
+    CFDP_FIN_FILE_STATUS_INVALID             = 4,
+};
 
 /**
  * @brief Values for "condition code"
@@ -246,102 +246,102 @@ typedef enum
  *
  * Defined per table 5-5 of CCSDS 727.0-B-5
  */
-typedef enum
+enum CfdpConditionCode : U8
 {
-    CF_CFDP_ConditionCode_NO_ERROR                  = 0,
-    CF_CFDP_ConditionCode_POS_ACK_LIMIT_REACHED     = 1,
-    CF_CFDP_ConditionCode_KEEP_ALIVE_LIMIT_REACHED  = 2,
-    CF_CFDP_ConditionCode_INVALID_TRANSMISSION_MODE = 3,
-    CF_CFDP_ConditionCode_FILESTORE_REJECTION       = 4,
-    CF_CFDP_ConditionCode_FILE_CHECKSUM_FAILURE     = 5,
-    CF_CFDP_ConditionCode_FILE_SIZE_ERROR           = 6,
-    CF_CFDP_ConditionCode_NAK_LIMIT_REACHED         = 7,
-    CF_CFDP_ConditionCode_INACTIVITY_DETECTED       = 8,
-    CF_CFDP_ConditionCode_INVALID_FILE_STRUCTURE    = 9,
-    CF_CFDP_ConditionCode_CHECK_LIMIT_REACHED       = 10,
-    CF_CFDP_ConditionCode_UNSUPPORTED_CHECKSUM_TYPE = 11,
-    CF_CFDP_ConditionCode_SUSPEND_REQUEST_RECEIVED  = 14,
-    CF_CFDP_ConditionCode_CANCEL_REQUEST_RECEIVED   = 15,
-} CF_CFDP_ConditionCode_t;
+    CFDP_CONDITION_CODE_NO_ERROR                  = 0,
+    CFDP_CONDITION_CODE_POS_ACK_LIMIT_REACHED     = 1,
+    CFDP_CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED  = 2,
+    CFDP_CONDITION_CODE_INVALID_TRANSMISSION_MODE = 3,
+    CFDP_CONDITION_CODE_FILESTORE_REJECTION       = 4,
+    CFDP_CONDITION_CODE_FILE_CHECKSUM_FAILURE     = 5,
+    CFDP_CONDITION_CODE_FILE_SIZE_ERROR           = 6,
+    CFDP_CONDITION_CODE_NAK_LIMIT_REACHED         = 7,
+    CFDP_CONDITION_CODE_INACTIVITY_DETECTED       = 8,
+    CFDP_CONDITION_CODE_INVALID_FILE_STRUCTURE    = 9,
+    CFDP_CONDITION_CODE_CHECK_LIMIT_REACHED       = 10,
+    CFDP_CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE = 11,
+    CFDP_CONDITION_CODE_SUSPEND_REQUEST_RECEIVED  = 14,
+    CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED   = 15,
+};
 
 /**
  * @brief Structure representing CFDP End of file PDU
  *
  * Defined per section 5.2.2 / table 5-6 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduEof
+struct CfdpPduEof
 {
-    CF_CFDP_U8_t  cc;
-    CF_CFDP_U32_t crc;
-    CF_CFDP_U32_t size;
-} CF_CFDP_PduEof_t;
+    CfdpU8  cc;
+    CfdpU32 crc;
+    CfdpU32 size;
+};
 
 /**
  * @brief Structure representing CFDP Finished PDU
  *
  * Defined per section 5.2.3 / table 5-7 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduFin
+struct CfdpPduFin
 {
-    CF_CFDP_U8_t flags;
-} CF_CFDP_PduFin_t;
+    CfdpU8 flags;
+};
 
 /**
  * @brief Structure representing CFDP Acknowledge PDU
  *
  * Defined per section 5.2.4 / table 5-8 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduAck
+struct CfdpPduAck
 {
-    CF_CFDP_U8_t directive_and_subtype_code;
-    CF_CFDP_U8_t cc_and_transaction_status;
-} CF_CFDP_PduAck_t;
+    CfdpU8 directive_and_subtype_code;
+    CfdpU8 cc_and_transaction_status;
+};
 
 /**
  * @brief Structure representing CFDP Segment Request
  *
  * Defined per section 5.2.6 / table 5-11 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_SegmentRequest
+struct CfdpSegmentRequest
 {
-    CF_CFDP_U32_t offset_start;
-    CF_CFDP_U32_t offset_end;
-} CF_CFDP_SegmentRequest_t;
+    CfdpU32 offset_start;
+    CfdpU32 offset_end;
+};
 
 /**
  * @brief Structure representing CFDP Non-Acknowledge PDU
  *
  * Defined per section 5.2.6 / table 5-10 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduNak
+struct CfdpPduNak
 {
-    CF_CFDP_U32_t scope_start;
-    CF_CFDP_U32_t scope_end;
-} CF_CFDP_PduNak_t;
+    CfdpU32 scope_start;
+    CfdpU32 scope_end;
+};
 
 /**
  * @brief Structure representing CFDP Metadata PDU
  *
  * Defined per section 5.2.5 / table 5-9 of CCSDS 727.0-B-5
  */
-typedef struct CF_CFDP_PduMd
+struct CfdpPduMd
 {
-    CF_CFDP_U8_t  segmentation_control;
-    CF_CFDP_U32_t size;
-} CF_CFDP_PduMd_t;
+    CfdpU8  segmentation_control;
+    CfdpU32 size;
+};
 
 /**
  * @brief PDU file data header
  */
-typedef struct CF_CFDP_PduFileDataHeader
+struct CfdpPduFileDataHeader
 {
     /**
      * NOTE: while this is the only fixed/required field in the data PDU, it may
      * have segment metadata prior to this, depending on how the fields in the
      * base header are set
      */
-    CF_CFDP_U32_t offset;
-} CF_CFDP_PduFileDataHeader_t;
+    CfdpU32 offset;
+};
 
 /**
  * @brief
@@ -352,10 +352,10 @@ typedef struct CF_CFDP_PduFileDataHeader
  * the minimum possible header size.  In practice the outgoing file chunk size is limited by
  * whichever is smaller; the remaining data, remaining space in the packet, and outgoing_file_chunk_size.
  */
-typedef struct CF_CFDP_PduFileDataContent
+struct CfdpPduFileDataContent
 {
-    U8 data[CF_MAX_PDU_SIZE - sizeof(CF_CFDP_PduFileDataHeader_t) - CF_CFDP_MIN_HEADER_SIZE];
-} CF_CFDP_PduFileDataContent_t;
+    U8 data[CF_MAX_PDU_SIZE - sizeof(CfdpPduFileDataHeader) - CFDP_MIN_HEADER_SIZE];
+};
 
 }  // namespace Ccsds
 }  // namespace Svc

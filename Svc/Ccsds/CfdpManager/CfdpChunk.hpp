@@ -42,16 +42,16 @@
 namespace Svc {
 namespace Ccsds {
 
-typedef U32 CF_ChunkIdx_t;
+using CfdpChunkIdx = U16;
 
 /**
  * @brief Pairs an offset with a size to identify a specific piece of a file
  */
-typedef struct CF_Chunk
+struct CfdpChunk
 {
     CfdpFileSize offset; /**< \brief The start offset of the chunk within the file */
     CfdpFileSize size;   /**< \brief The size of the chunk */
-} CF_Chunk_t;
+};
 
 /**
  * @brief Selects the larger of the two passed-in offsets
@@ -60,7 +60,7 @@ typedef struct CF_Chunk
  * @param b Second chunk offset
  * @return the larger CfdpFileSize value
  */
-static inline CfdpFileSize CF_Chunk_MAX(CfdpFileSize a, CfdpFileSize b)
+static inline CfdpFileSize CfdpChunkMax(CfdpFileSize a, CfdpFileSize b)
 {
     if (a > b)
     {
@@ -78,7 +78,7 @@ static inline CfdpFileSize CF_Chunk_MAX(CfdpFileSize a, CfdpFileSize b)
  * std::function-based callback used by CfdpChunkList::computeGaps().
  * The callback receives the gap chunk and an opaque context pointer.
  */
-using GapComputeCallback = std::function<void(const CF_Chunk_t* chunk, void* opaque)>;
+using CfdpGapComputeCallback = std::function<void(const CfdpChunk* chunk, void* opaque)>;
 
 /**
  * @brief C++ class encapsulation of CFDP chunk list operations
@@ -103,11 +103,11 @@ class CfdpChunkList {
      * @brief Constructor - initializes chunk list with pre-allocated memory
      *
      * @param maxChunks  Maximum number of chunks this list can hold
-     * @param chunkMem   Pointer to pre-allocated array of CF_Chunk_t objects
+     * @param chunkMem   Pointer to pre-allocated array of CfdpChunk objects
      *
      * @note The class does NOT take ownership of chunkMem; memory is externally managed
      */
-    CfdpChunkList(CF_ChunkIdx_t maxChunks, CF_Chunk_t* chunkMem);
+    CfdpChunkList(CfdpChunkIdx maxChunks, CfdpChunk* chunkMem);
 
     // ----------------------------------------------------------------------
     // Public Interface
@@ -143,7 +143,7 @@ class CfdpChunkList {
      * @returns Pointer to the first chunk
      * @retval  nullptr if the list is empty
      */
-    const CF_Chunk_t* getFirstChunk() const;
+    const CfdpChunk* getFirstChunk() const;
 
     /**
      * @brief Remove a specified size from the first chunk
@@ -173,23 +173,23 @@ class CfdpChunkList {
      *
      * @returns Number of gaps computed (may be less than maxGaps if fewer gaps exist)
      */
-    U32 computeGaps(CF_ChunkIdx_t maxGaps,
+    U32 computeGaps(CfdpChunkIdx maxGaps,
                     CfdpFileSize total,
                     CfdpFileSize start,
-                    const GapComputeCallback& callback,
+                    const CfdpGapComputeCallback& callback,
                     void* opaque) const;
 
     /**
      * @brief Get the current number of chunks in the list
      * @returns Current chunk count
      */
-    CF_ChunkIdx_t getCount() const { return m_count; }
+    CfdpChunkIdx getCount() const { return m_count; }
 
     /**
      * @brief Get the maximum number of chunks this list can hold
      * @returns Maximum chunk capacity
      */
-    CF_ChunkIdx_t getMaxChunks() const { return m_maxChunks; }
+    CfdpChunkIdx getMaxChunks() const { return m_maxChunks; }
 
   private:
     // ----------------------------------------------------------------------
@@ -205,7 +205,7 @@ class CfdpChunkList {
      * @param index  Index position to insert at
      * @param chunk  Chunk data to insert
      */
-    void insertChunk(CF_ChunkIdx_t index, const CF_Chunk_t* chunk);
+    void insertChunk(CfdpChunkIdx index, const CfdpChunk* chunk);
 
     /**
      * @brief Erase a single chunk at the given index
@@ -214,7 +214,7 @@ class CfdpChunkList {
      *
      * @param index  Index of chunk to erase
      */
-    void eraseChunk(CF_ChunkIdx_t index);
+    void eraseChunk(CfdpChunkIdx index);
 
     /**
      * @brief Erase a range of chunks
@@ -225,7 +225,7 @@ class CfdpChunkList {
      * @param start  Starting index (inclusive)
      * @param end    Ending index (exclusive)
      */
-    void eraseRange(CF_ChunkIdx_t start, CF_ChunkIdx_t end);
+    void eraseRange(CfdpChunkIdx start, CfdpChunkIdx end);
 
     /**
      * @brief Find where a chunk should be inserted to maintain sorted order
@@ -235,7 +235,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to find insertion point for
      * @returns Index where chunk should be inserted
      */
-    CF_ChunkIdx_t findInsertPosition(const CF_Chunk_t* chunk);
+    CfdpChunkIdx findInsertPosition(const CfdpChunk* chunk);
 
     /**
      * @brief Attempt to combine chunk with the next chunk
@@ -246,7 +246,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to attempt combining
      * @returns true if chunks were combined, false otherwise
      */
-    bool combineNext(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+    bool combineNext(CfdpChunkIdx i, const CfdpChunk* chunk);
 
     /**
      * @brief Attempt to combine chunk with the previous chunk
@@ -257,7 +257,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to attempt combining
      * @returns true if chunks were combined, false otherwise
      */
-    bool combinePrevious(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+    bool combinePrevious(CfdpChunkIdx i, const CfdpChunk* chunk);
 
     /**
      * @brief Insert a chunk, potentially combining with neighbors
@@ -267,7 +267,7 @@ class CfdpChunkList {
      * @param i      Position to insert at
      * @param chunk  Chunk data to insert
      */
-    void insert(CF_ChunkIdx_t i, const CF_Chunk_t* chunk);
+    void insert(CfdpChunkIdx i, const CfdpChunk* chunk);
 
     /**
      * @brief Find the index of the chunk with the smallest size
@@ -276,16 +276,16 @@ class CfdpChunkList {
      *
      * @returns Index of the smallest chunk, or 0 if list is empty
      */
-    CF_ChunkIdx_t findSmallestSize() const;
+    CfdpChunkIdx findSmallestSize() const;
 
   private:
     // ----------------------------------------------------------------------
     // Private Member Variables
     // ----------------------------------------------------------------------
 
-    CF_ChunkIdx_t m_count;       //!< Current number of chunks in the list
-    CF_ChunkIdx_t m_maxChunks;   //!< Maximum number of chunks allowed
-    CF_Chunk_t* m_chunks;        //!< Pointer to pre-allocated chunk array (not owned)
+    CfdpChunkIdx m_count;       //!< Current number of chunks in the list
+    CfdpChunkIdx m_maxChunks;   //!< Maximum number of chunks allowed
+    CfdpChunk* m_chunks;        //!< Pointer to pre-allocated chunk array (not owned)
 };
 
 }  // namespace Ccsds

@@ -47,35 +47,35 @@ namespace Ccsds {
  * This identifies a specific transaction sequence number and entity ID
  * The transaction pointer is set by the implementation
  */
-typedef struct CF_Traverse_TransSeqArg
+struct CfdpTraverseTransSeqArg
 {
     CfdpTransactionSeq transaction_sequence_number;
     CfdpEntityId       src_eid;
     CfdpTransaction *  txn; /**< \brief output transaction pointer */
-} CF_Traverse_TransSeqArg_t;
+};
 
 /**
  * @brief Argument structure for use with CF_TraverseAllTransactions()
  *
  * This basically allows for running a CF_Traverse on several lists at once
  */
-typedef struct CF_TraverseAll_Arg
+struct CfdpTraverseAllArg
 {
-    CF_TraverseAllTransactions_fn_t fn;      /**< \brief internal callback to use for each CList_Traverse */
+    CfdpTraverseAllTransactionsFunc fn;      /**< \brief internal callback to use for each CList_Traverse */
     void *                          context; /**< \brief opaque object to pass to internal callback */
     I32                           counter; /**< \brief Running tally of all nodes traversed from all lists */
-} CF_TraverseAll_Arg_t;
+};
 
 /**
  * @brief Argument structure for use with CF_CList_Traverse_R()
  *
  * This is for searching for transactions of a specific priority
  */
-typedef struct CF_Traverse_PriorityArg
+struct CfdpTraversePriorityArg
 {
     CfdpTransaction *txn; /**< \brief OUT: holds value of transaction with which to call CF_CList_InsertAfter on */
     U8             priority; /**< \brief seeking this priority */
-} CF_Traverse_PriorityArg_t;
+};
 
 /************************************************************************/
 /** @brief List traversal function to check if the desired sequence number matches.
@@ -86,18 +86,18 @@ typedef struct CF_Traverse_PriorityArg
  * @retval 1 when it's found, which terminates list traversal
  * @retval 0 when it isn't found, which causes list traversal to continue
  */
-CF_CListTraverse_Status_t CF_FindTransactionBySequenceNumber_Impl(CF_CListNode_t *node, void *context);
+CfdpCListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CfdpCListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
  *
  * @param node    Node being currently traversed
- * @param context Pointer to CF_Traverse_PriorityArg_t object indicating the priority to search for
+ * @param context Pointer to CfdpTraversePriorityArg object indicating the priority to search for
  *
- * @retval CF_CLIST_EXIT when it's found, which terminates list traversal
- * @retval CF_CLIST_CONT when it isn't found, which causes list traversal to continue
+ * @retval CFDP_CLIST_EXIT when it's found, which terminates list traversal
+ * @retval CFDP_CLIST_CONT when it isn't found, which causes list traversal to continue
  */
-CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
+CfdpCListTraverseStatus CfdpPrioSearch(CfdpCListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Converts the internal transaction status to a CFDP condition code
@@ -110,7 +110,7 @@ CF_CListTraverse_Status_t CF_PrioSearch(CF_CListNode_t *node, void *context);
  *
  * @returns CFDP protocol condition code
  */
-CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
+CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Check if the internal transaction status represents an error
@@ -125,7 +125,7 @@ CF_CFDP_ConditionCode_t CF_TxnStatus_To_ConditionCode(CF_TxnStatus_t txn_stat);
  * @retval true if an error has occurred during the transaction
  * @retval false if no error has occurred during the transaction yet
  */
-bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat);
+bool CfdpTxnStatusIsError(CfdpTxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Gets the status of this transaction
@@ -134,9 +134,9 @@ bool CF_TxnStatus_IsError(CF_TxnStatus_t txn_stat);
  * (By definition if it has a txn object then it is not UNRECOGNIZED)
  *
  * @param txn   Transaction
- * @returns CF_CFDP_AckTxnStatus_t value corresponding to transaction
+ * @returns CfdpAckTxnStatus value corresponding to transaction
  */
-CF_CFDP_AckTxnStatus_t CF_CFDP_GetTxnStatus(CfdpTransaction *txn);
+CfdpAckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn);
 
 }  // namespace Ccsds
 }  // namespace Svc

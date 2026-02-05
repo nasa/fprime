@@ -38,15 +38,15 @@
 namespace Svc {
 namespace Ccsds {
 
-void CF_CList_InitNode(CF_CListNode_t *node)
+void CfdpCListInitNode(CfdpCListNode *node)
 {
     node->next = node;
     node->prev = node;
 }
 
-void CF_CList_InsertFront(CF_CListNode_t **head, CF_CListNode_t *node)
+void CfdpCListInsertFront(CfdpCListNode **head, CfdpCListNode *node)
 {
-    CF_CListNode_t *last;
+    CfdpCListNode *last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -67,9 +67,9 @@ void CF_CList_InsertFront(CF_CListNode_t **head, CF_CListNode_t *node)
     *head = node;
 }
 
-void CF_CList_InsertBack(CF_CListNode_t **head, CF_CListNode_t *node)
+void CfdpCListInsertBack(CfdpCListNode **head, CfdpCListNode *node)
 {
-    CF_CListNode_t *last;
+    CfdpCListNode *last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -91,22 +91,22 @@ void CF_CList_InsertBack(CF_CListNode_t **head, CF_CListNode_t *node)
     }
 }
 
-CF_CListNode_t *CF_CList_Pop(CF_CListNode_t **head)
+CfdpCListNode *CfdpCListPop(CfdpCListNode **head)
 {
-    CF_CListNode_t *ret;
+    CfdpCListNode *ret;
 
     FW_ASSERT(head);
 
     ret = *head;
     if (ret)
     {
-        CF_CList_Remove(head, ret);
+        CfdpCListRemove(head, ret);
     }
 
     return ret;
 }
 
-void CF_CList_Remove(CF_CListNode_t **head, CF_CListNode_t *node)
+void CfdpCListRemove(CfdpCListNode **head, CfdpCListNode *node)
 {
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -132,10 +132,10 @@ void CF_CList_Remove(CF_CListNode_t **head, CF_CListNode_t *node)
         node->prev->next = node->next;
     }
 
-    CF_CList_InitNode(node);
+    CfdpCListInitNode(node);
 }
 
-void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CListNode_t *after)
+void CfdpCListInsertAfter(CfdpCListNode **head, CfdpCListNode *start, CfdpCListNode *after)
 {
     /* calling insert_after with nothing to insert after (no head) makes no sense */
     FW_ASSERT(head);
@@ -150,11 +150,11 @@ void CF_CList_InsertAfter(CF_CListNode_t **head, CF_CListNode_t *start, CF_CList
     after->next->prev = after;
 }
 
-void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
+void CfdpCListTraverse(CfdpCListNode *start, CfdpCListFunc fn, void *context)
 {
-    CF_CListNode_t *node = start;
-    CF_CListNode_t *node_next;
-    bool            last = false;
+    CfdpCListNode *node = start;
+    CfdpCListNode *node_next;
+    bool           last = false;
 
     if (node)
     {
@@ -166,7 +166,7 @@ void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
             {
                 last = true;
             }
-            if (!CF_CListTraverse_Status_IS_CONTINUE(fn(node, context)))
+            if (!CfdpCListTraverseStatusIsContinue(fn(node, context)))
             {
                 break;
             }
@@ -184,11 +184,11 @@ void CF_CList_Traverse(CF_CListNode_t *start, CF_CListFn_t fn, void *context)
     }
 }
 
-void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callback, void *context)
+void CfdpCListTraverse(CfdpCListNode *start, const CfdpCListTraverseCallback& callback, void *context)
 {
-    CF_CListNode_t *node = start;
-    CF_CListNode_t *node_next;
-    bool            last = false;
+    CfdpCListNode *node = start;
+    CfdpCListNode *node_next;
+    bool           last = false;
 
     if (node)
     {
@@ -200,7 +200,7 @@ void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callb
             {
                 last = true;
             }
-            if (!CF_CListTraverse_Status_IS_CONTINUE(callback(node, context)))
+            if (!CfdpCListTraverseStatusIsContinue(callback(node, context)))
             {
                 break;
             }
@@ -218,13 +218,13 @@ void CF_CList_Traverse(CF_CListNode_t *start, const CListTraverseCallback& callb
     }
 }
 
-void CF_CList_Traverse_R(CF_CListNode_t *end, CF_CListFn_t fn, void *context)
+void CfdpCListTraverseR(CfdpCListNode *end, CfdpCListFunc fn, void *context)
 {
     if (end)
     {
-        CF_CListNode_t *node = end->prev;
-        CF_CListNode_t *node_next;
-        bool            last = false;
+        CfdpCListNode *node = end->prev;
+        CfdpCListNode *node_next;
+        bool           last = false;
 
         if (node)
         {
@@ -239,7 +239,7 @@ void CF_CList_Traverse_R(CF_CListNode_t *end, CF_CListFn_t fn, void *context)
                     last = true;
                 }
 
-                if (!CF_CListTraverse_Status_IS_CONTINUE(fn(node, context)))
+                if (!CfdpCListTraverseStatusIsContinue(fn(node, context)))
                 {
                     break;
                 }
