@@ -20,7 +20,7 @@ contexts to run simultaneously. There are two main architectural approaches for 
 
 ### SMP (Symmetric Multi-Core)
 
-One operating system manages all cores as a compute resource. The OS provides APIs to "pin" a thread to a particular
+SMP is where one operating system manages all cores as a compute resource. The OS provides APIs to "pin" a thread to a particular
 core, or to allow the OS to dynamically assign threads based on loading.
 
 In an SMP system:
@@ -32,7 +32,7 @@ In an SMP system:
 
 ### AMP (Asymmetric Multi-Core)
 
-More than one operating system runs, with a subset of cores assigned to each OS. This is usually managed by a
+AMP is where more than one operating system runs, with a subset of cores assigned to each OS. This is usually managed by a
 hypervisor that partitions the cores among different OS instances.
 
 In an AMP system:
