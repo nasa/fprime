@@ -77,6 +77,10 @@ bool Time::operator<=(const Time& other) const {
     return ((TimeComparison::LT == c) or (TimeComparison::EQ == c));
 }
 
+TimeValue Time::asTimeValue() const {
+    return this->m_val;
+}
+
 SerializeStatus Time::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->m_val.serializeTo(buffer, mode);
 }

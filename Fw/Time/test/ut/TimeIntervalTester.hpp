@@ -21,6 +21,7 @@ class TimeIntervalTester {
     void test_TimeIntervalCompareStaticTest();
     void test_TimeIntervalAdditionTest();
     void test_TimeIntervalSubtractionTest();
+    void test_TimeIntervalToTimeIntervalValue();
 };
 }  // namespace Fw
 

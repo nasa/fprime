@@ -44,7 +44,7 @@ void Hash ::init() {
 
 void Hash ::update(const void* const data, FwSizeType len) {
     FW_ASSERT(data);
-    char c;
+    char c = 0;
     for (FwSizeType index = 0; index < len; index++) {
         c = static_cast<const char*>(data)[index];
         this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));

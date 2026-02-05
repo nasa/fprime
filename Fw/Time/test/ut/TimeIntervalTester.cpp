@@ -129,4 +129,18 @@ void TimeIntervalTester::test_TimeIntervalSubtractionTest() {
     ASSERT_EQ(result4.getUSeconds(), 0);
 }
 
+void TimeIntervalTester::test_TimeIntervalToTimeIntervalValue() {
+    U32 seconds = 5;
+    U32 useconds = 500000;
+    Fw::TimeInterval time_interval(seconds, useconds);
+
+    Fw::TimeIntervalValue time_interval_value = time_interval.asTimeIntervalValue();
+
+    // Alter the original
+    time_interval.set(0, 0);
+
+    ASSERT_EQ(time_interval_value.get_seconds(), seconds);
+    ASSERT_EQ(time_interval_value.get_useconds(), useconds);
+}
+
 }  // namespace Fw

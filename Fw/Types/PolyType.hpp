@@ -11,79 +11,79 @@ namespace Fw {
 class PolyType : public Serializable {
   public:
     PolyType(U8 val);             //!< U8 constructor
-    operator U8();                //!< U8 cast operator
-    void get(U8& val);            //!< U8 accessor
-    bool isU8();                  //!< U8 checker
+    operator U8() const;          //!< U8 cast operator
+    void get(U8& val) const;      //!< U8 accessor
+    bool isU8() const;            //!< U8 checker
     PolyType& operator=(U8 val);  //!< U8 operator=
 
     PolyType(I8 val);             //!< I8 constructor
-    operator I8();                //!< I8 cast operator
-    void get(I8& val);            //!< I8 accessor
-    bool isI8();                  //!< I8 checker
+    operator I8() const;          //!< I8 cast operator
+    void get(I8& val) const;      //!< I8 accessor
+    bool isI8() const;            //!< I8 checker
     PolyType& operator=(I8 val);  //!< I8 operator=
 
 #if FW_HAS_16_BIT
     PolyType(U16 val);             //!< U16 constructor
-    operator U16();                //!< U16 cast operator
-    void get(U16& val);            //!< U16 accessor
-    bool isU16();                  //!< U16 checker
+    operator U16() const;          //!< U16 cast operator
+    void get(U16& val) const;      //!< U16 accessor
+    bool isU16() const;            //!< U16 checker
     PolyType& operator=(U16 val);  //!< I8 operator=
 
     PolyType(I16 val);             //!< I16 constructor
-    operator I16();                //!< I16 cast operator
-    void get(I16& val);            //!< I16 accessor
-    bool isI16();                  //!< I16 checker
+    operator I16() const;          //!< I16 cast operator
+    void get(I16& val) const;      //!< I16 accessor
+    bool isI16() const;            //!< I16 checker
     PolyType& operator=(I16 val);  //!< I16 operator=
 #endif
 #if FW_HAS_32_BIT
     PolyType(U32 val);             //!< U32 constructor
-    operator U32();                //!< U32 cast operator
-    void get(U32& val);            //!< U32 accessor
-    bool isU32();                  //!< U32 checker
+    operator U32() const;          //!< U32 cast operator
+    void get(U32& val) const;      //!< U32 accessor
+    bool isU32() const;            //!< U32 checker
     PolyType& operator=(U32 val);  //!< U32 operator=
 
     PolyType(I32 val);             //!< I32 constructor
-    operator I32();                //!< I32 cast operator
-    void get(I32& val);            //!< I32 accessor
-    bool isI32();                  //!< I32 checker
+    operator I32() const;          //!< I32 cast operator
+    void get(I32& val) const;      //!< I32 accessor
+    bool isI32() const;            //!< I32 checker
     PolyType& operator=(I32 val);  //!< I32 operator=
 #endif
 #if FW_HAS_64_BIT
     PolyType(U64 val);             //!< U64 constructor
-    operator U64();                //!< U64 cast operator
-    void get(U64& val);            //!< U64 accessor
-    bool isU64();                  //!< U64 checker
+    operator U64() const;          //!< U64 cast operator
+    void get(U64& val) const;      //!< U64 accessor
+    bool isU64() const;            //!< U64 checker
     PolyType& operator=(U64 val);  //!< U64 operator=
 
     PolyType(I64 val);             //!< I64 constructor
-    operator I64();                //!< I64 cast operator
-    void get(I64& val);            //!< I64 accessor
-    bool isI64();                  //!< I64 checker
+    operator I64() const;          //!< I64 cast operator
+    void get(I64& val) const;      //!< I64 accessor
+    bool isI64() const;            //!< I64 checker
     PolyType& operator=(I64 val);  //!< I64 operator=
 #endif
 
     PolyType(F64 val);             //!< F64 constructor
-    operator F64();                //!< F64 cast operator
-    void get(F64& val);            //!< F64 accessor
-    bool isF64();                  //!< F64 checker
+    operator F64() const;          //!< F64 cast operator
+    void get(F64& val) const;      //!< F64 accessor
+    bool isF64() const;            //!< F64 checker
     PolyType& operator=(F64 val);  //!< F64 operator=
 
     PolyType(F32 val);             //!< F32 constructor
-    operator F32();                //!< F32 cast operator
-    void get(F32& val);            //!< F32 accessor
-    bool isF32();                  //!< F32 checker
+    operator F32() const;          //!< F32 cast operator
+    void get(F32& val) const;      //!< F32 accessor
+    bool isF32() const;            //!< F32 checker
     PolyType& operator=(F32 val);  //!< F32 operator=
 
     PolyType(bool val);             //!< bool constructor
-    operator bool();                //!< bool cast operator
-    void get(bool& val);            //!< bool accessor
-    bool isBool();                  //!< bool checker
+    operator bool() const;          //!< bool cast operator
+    void get(bool& val) const;      //!< bool accessor
+    bool isBool() const;            //!< bool checker
     PolyType& operator=(bool val);  //!< bool operator=
 
     PolyType(void* val);             //!< void* constructor.
-    operator void*();                //!< void* cast operator
-    void get(void*& val);            //!< void* accessor
-    bool isPtr();                    //!< void* checker
+    operator void*() const;          //!< void* cast operator
+    void get(void*& val) const;      //!< void* accessor
+    bool isPtr() const;              //!< void* checker
     PolyType& operator=(void* val);  //!< void* operator=
 
     PolyType();                          //!< default constructor

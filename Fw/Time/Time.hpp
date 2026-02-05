@@ -49,6 +49,10 @@ class Time : public Serializable {
     bool operator<=(const Time& other) const;
     Time& operator=(const Time& other);
 
+    //! \brief get the underlying TimeValue
+    //! \return the TimeValue representation of this Time as a copy
+    TimeValue asTimeValue() const;
+
     // Static methods:
     //! The type of a comparison result
 
