@@ -43,9 +43,8 @@ TEST(CircularBufferTests, RandomCircularTests) {
     Types::TrimBadRule trimBad("trimBad");
 
     // Setup a list of rules to choose from
-    STest::Rule<MockTypes::CircularState>* rules[] = {&randomize, &serializeOk, &serializeOverflow, &peekOk,
-                                                      &peekBad,   &rotateOk,    &rotateBad,        &trimOk,
-                                                      &trimBad};
+    STest::Rule<MockTypes::CircularState>* rules[] = {
+        &randomize, &serializeOk, &serializeOverflow, &peekOk, &peekBad, &rotateOk, &rotateBad, &trimOk, &trimBad};
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<MockTypes::CircularState> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
