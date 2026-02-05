@@ -412,7 +412,7 @@ class CfdpTransaction {
      */
     Cfdp::Status::T sSendEof();
 
-    Cfdp::Status::T sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed);
+    Cfdp::Status::T sSendFileData(CfdpFileSize foffs, CfdpFileSize bytes_to_read, U8 calc_crc, CfdpFileSize* bytes_processed);
 
     Cfdp::Status::T sCheckAndRespondNak(bool* nakProcessed);
 

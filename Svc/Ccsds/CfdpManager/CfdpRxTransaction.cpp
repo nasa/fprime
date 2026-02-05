@@ -590,7 +590,7 @@ Cfdp::Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
         }
         else
         {
-            this->m_state_data.receive.cached_pos = static_cast<U32>(dataSize) + offset;
+            this->m_state_data.receive.cached_pos = static_cast<CfdpFileSize>(dataSize) + offset;
             // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.file_data_bytes += pdu->data_len;
         }
     }
@@ -914,12 +914,12 @@ Cfdp::Status::T CfdpTransaction::rSubstateSendNak() {
 
 Cfdp::Status::T CfdpTransaction::r2CalcCrcChunk() {
     U8 buf[CF_R2_CRC_CHUNK_SIZE];
-    size_t count_bytes;
-    size_t want_offs_size;
+    CfdpFileSize count_bytes;
+    CfdpFileSize want_offs_size;
     FwSizeType read_size;
     Os::File::Status fileStatus;
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-    U32 rx_crc_calc_bytes_per_wakeup = 0;
+    CfdpFileSize rx_crc_calc_bytes_per_wakeup = 0;
 
     memset(buf, 0, sizeof(buf));
 
@@ -997,9 +997,9 @@ Cfdp::Status::T CfdpTransaction::r2CalcCrcChunk() {
                     ret = Cfdp::Status::ERROR;
                 } else {
                     this->m_crc.update(buf, this->m_state_data.receive.r2.rx_crc_calc_bytes, static_cast<U32>(read_size));
-                    this->m_state_data.receive.r2.rx_crc_calc_bytes += static_cast<U32>(read_size);
+                    this->m_state_data.receive.r2.rx_crc_calc_bytes += static_cast<CfdpFileSize>(read_size);
                     this->m_state_data.receive.cached_pos = this->m_state_data.receive.r2.rx_crc_calc_bytes;
-                    count_bytes += read_size;
+                    count_bytes += static_cast<CfdpFileSize>(read_size);
                 }
             }
         }

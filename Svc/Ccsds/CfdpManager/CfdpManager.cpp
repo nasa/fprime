@@ -70,6 +70,68 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 }
 
 // ----------------------------------------------------------------------
+// Port calls that are invoked by the CFDP engine
+// These functions are analogous to the functions in cf_cfdp_sbintf.*
+// However these functions were not directly migrated due to the
+// architectural differences between F' and cFE
+// ----------------------------------------------------------------------
+
+Cfdp::Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
+                                           FwSizeType size)
+{
+    Cfdp::Status::T status = Cfdp::Status::ERROR;
+    FwIndexType portNum;
+
+    // There is a direct mapping between channel index and port number
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
+
+    // Check if we have reached the maximum number of output PDUs for this cycle
+    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(channel.getChannelId());
+    if (channel.getOutgoingCounter() >= max_pdus)
+    {
+        status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
+    }
+    else
+    {
+        buffer = this->bufferAllocate_out(portNum, size);
+        // Check the allocation was successful based on size
+        if(buffer.getSize() == size)
+        {
+            channel.incrementOutgoingCounter();
+            status = Cfdp::Status::SUCCESS;
+        }
+        else
+        {
+            this->log_WARNING_LO_BuffersExuasted();
+            status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
+        }
+    }
+    return status;
+}
+
+void CfdpManager ::returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
+{
+    FwIndexType portNum;
+
+    // There is a direct mapping between channel index and port number
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
+
+    // Was unable to succesfully populate the PDU buffer, return it
+    this->bufferDeallocate_out(portNum, pduBuffer);
+}
+
+void CfdpManager ::sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
+{
+    FwIndexType portNum;
+
+    // There is a direct mapping between channel index and port number
+    portNum = static_cast<FwIndexType>(channel.getChannelId());
+
+    // Full send
+    this->dataOut_out(portNum, pduBuffer);
+}
+
+// ----------------------------------------------------------------------
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
@@ -149,7 +211,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
         this->log_ACTIVITY_LO_PollDirInitiatied(sourceDirectory);
     }
     else
-    { 
+    {
         // Failure EVR was already emitted
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
@@ -224,68 +286,6 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
     {
       return Fw::CmdResponse::OK;
     }
-}
-
-// ----------------------------------------------------------------------
-// Port calls that are invoked by the CFDP engine
-// These functions are analogous to the functions in cf_cfdp_sbintf.*
-// However these functions were not directly migrated due to the
-// architectural differences between F' and cFE
-// ----------------------------------------------------------------------
-
-Cfdp::Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
-                                           FwSizeType size)
-{
-    Cfdp::Status::T status = Cfdp::Status::ERROR;
-    FwIndexType portNum;
-
-    // There is a direct mapping between channel index and port number
-    portNum = static_cast<FwIndexType>(channel.getChannelId());
-
-    // Check if we have reached the maximum number of output PDUs for this cycle
-    U32 max_pdus = getMaxOutgoingPdusPerCycleParam(channel.getChannelId());
-    if (channel.getOutgoingCounter() >= max_pdus)
-    {
-        status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
-    }
-    else
-    {
-        buffer = this->bufferAllocate_out(portNum, size);
-        // Check the allocation was successful based on size
-        if(buffer.getSize() == size)
-        {
-            channel.incrementOutgoingCounter();
-            status = Cfdp::Status::SUCCESS;
-        }
-        else 
-        {
-            this->log_WARNING_LO_BuffersExuasted();
-            status = Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
-        }
-    }
-    return status;
-}
-
-void CfdpManager ::returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
-{
-    FwIndexType portNum;
-    
-    // There is a direct mapping between channel index and port number
-    portNum = static_cast<FwIndexType>(channel.getChannelId());
-
-    // Was unable to succesfully populate the PDU buffer, return it
-    this->bufferDeallocate_out(portNum, pduBuffer);
-}
-
-void CfdpManager ::sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
-{
-    FwIndexType portNum;
-    
-    // There is a direct mapping between channel index and port number
-    portNum = static_cast<FwIndexType>(channel.getChannelId());
-    
-    // Full send
-    this->dataOut_out(portNum, pduBuffer);
 }
 
   // ----------------------------------------------------------------------

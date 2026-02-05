@@ -295,7 +295,7 @@ typedef struct CF_TxS2_Data
 typedef struct CF_TxState_Data
 {
     CF_TxSubState_t sub_state;
-    U32          cached_pos;
+    CfdpFileSize cached_pos;
 
     CF_TxS2_Data_t s2;
 } CF_TxState_Data_t;
@@ -306,8 +306,8 @@ typedef struct CF_TxState_Data
 typedef struct CF_RxS2_Data
 {
     U32                    eof_crc;
-    U32                    eof_size;
-    U32                    rx_crc_calc_bytes;
+    CfdpFileSize           eof_size;
+    CfdpFileSize           rx_crc_calc_bytes;
     CF_CFDP_FinDeliveryCode_t dc;
     CF_CFDP_FinFileStatus_t   fs;
     U8                     eof_cc; /**< \brief remember the cc in the received EOF PDU to echo in eof-ack */
@@ -320,7 +320,7 @@ typedef struct CF_RxS2_Data
 typedef struct CF_RxState_Data
 {
     CF_RxSubState_t sub_state;
-    U32          cached_pos;
+    CfdpFileSize cached_pos;
 
     CF_RxS2_Data_t r2;
 } CF_RxState_Data_t;

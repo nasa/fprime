@@ -19,6 +19,7 @@ class CfdpChannel;
 class CfdpTransaction;
 
 class CfdpManager final : public CfdpManagerComponentBase {
+  friend class CfdpManagerTester;
   // Give access to protected functions for EVRs and Telemetry
   friend class CfdpEngine;
   friend class CfdpTransaction;
@@ -36,6 +37,10 @@ class CfdpManager final : public CfdpManagerComponentBase {
     ~CfdpManager();
 
     //! Configure CFDP engine
+    //!
+    //! Initializes the CFDP engine and allocates all memory resources needed
+    //! for CFDP operations including transactions, chunks, and histories.
+    //! Must be called once after construction and before any CFDP operations.
     void configure(void);
 
   public:
@@ -46,30 +51,34 @@ class CfdpManager final : public CfdpManagerComponentBase {
   // differences between F' and cFE
   // ----------------------------------------------------------------------
 
-  // Equivelent of CF_CFDP_MsgOutGet
+  //! Get a buffer for constructing an outgoing CFDP PDU
+  //!
+  //! Allocates a buffer from the downstream component for building a PDU.
+  //! Checks against the maximum number of PDUs allowed per cycle.
+  //! Equivalent to CF_CFDP_MsgOutGet in cFS.
+  //!
+  //! \param buffer [out] Buffer object to be populated with allocated memory
+  //! \param channel [in] Channel to allocate buffer for
+  //! \param size [in] Size of buffer needed in bytes
+  //! \return Status::SUCCESS if buffer allocated, Status::SEND_PDU_NO_BUF_AVAIL_ERROR otherwise
   Cfdp::Status::T getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
                              FwSizeType size);
-  // Not sure there is an equivelent
-  void returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
-  // Equivelent of CF_CFDP_Send
-  void sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
 
-  public:
-  // ----------------------------------------------------------------------
-  // Parameter helpers used by the CFDP engine
-  // ----------------------------------------------------------------------
-  CfdpEntityId getLocalEidParam(void);
-  U32 getOutgoingFileChunkSizeParam(void);
-  U32 getRxCrcCalcBytesPerWakeupParam(void);
-  Fw::String getTmpDirParam(void);
-  Fw::String getFailDirParam(void);
-  U8 getAckLimitParam(U8 channelIndex);
-  U8 getNackLimitParam(U8 channelIndex);
-  U32 getAckTimerParam(U8 channelIndex);
-  U32 getInactivityTimerParam(U8 channelIndex);
-  Fw::Enabled getDequeueEnabledParam(U8 channelIndex);
-  Fw::String getMoveDirParam(U8 channelIndex);
-  U32 getMaxOutgoingPdusPerCycleParam(U8 channelIndex);
+  //! Return an unused PDU buffer
+  //!
+  //! Deallocates a buffer that was obtained but not sent (e.g., due to error).
+  //!
+  //! \param channel [in] Channel that owns the buffer
+  //! \param pduBuffer [in] Buffer to return/deallocate
+  void returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
+
+  //! Send a PDU buffer via output port
+  //!
+  //! Transmits a fully constructed PDU buffer via the dataOut port.
+  //!
+  //! \param channel [in] Channel to send on
+  //! \param pduBuffer [in] Buffer containing the PDU to send
+  void sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
 
   private:
     // ----------------------------------------------------------------------
@@ -94,7 +103,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void dataIn_handler(FwIndexType portNum, //!< The port number
                         Fw::Buffer& fwBuffer //!< The buffer
     ) override;
-                        
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -179,14 +188,84 @@ class CfdpManager final : public CfdpManagerComponentBase {
     Fw::CmdResponse::T checkCommandChannelPollIndex(U8 pollIndex //!< The poll index to check
     );
 
+  public:
+  // ----------------------------------------------------------------------
+  // Parameter helpers used by the CFDP engine
+  // ----------------------------------------------------------------------
+
+  //! Get the local entity ID parameter
+  //!
+  //! \return The local CFDP entity ID
+  CfdpEntityId getLocalEidParam(void);
+
+  //! Get the outgoing file chunk size parameter
+  //!
+  //! \return Maximum size in bytes for file data segments in outgoing PDUs
+  U32 getOutgoingFileChunkSizeParam(void);
+
+  //! Get the RX CRC calculation bytes per wakeup parameter
+  //!
+  //! \return Number of bytes to process per cycle when calculating received file CRC
+  U32 getRxCrcCalcBytesPerWakeupParam(void);
+
+  //! Get the temporary directory parameter
+  //!
+  //! \return Path to temporary directory for in-progress file transfers
+  Fw::String getTmpDirParam(void);
+
+  //! Get the failure directory parameter
+  //!
+  //! \return Path to directory where failed transfers are moved
+  Fw::String getFailDirParam(void);
+
+  //! Get the ACK limit parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Maximum number of times to retry sending an ACK PDU
+  U8 getAckLimitParam(U8 channelIndex);
+
+  //! Get the NAK limit parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Maximum number of times to retry sending a NAK PDU
+  U8 getNackLimitParam(U8 channelIndex);
+
+  //! Get the ACK timer parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return ACK timeout value in seconds
+  U32 getAckTimerParam(U8 channelIndex);
+
+  //! Get the inactivity timer parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Inactivity timeout value in seconds
+  U32 getInactivityTimerParam(U8 channelIndex);
+
+  //! Get the dequeue enabled parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Whether the channel is enabled for dequeuing transactions
+  Fw::Enabled getDequeueEnabledParam(U8 channelIndex);
+
+  //! Get the move directory parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Path to directory where completed transfers are moved
+  Fw::String getMoveDirParam(U8 channelIndex);
+
+  //! Get the maximum outgoing PDUs per cycle parameter for a channel
+  //!
+  //! \param channelIndex [in] Index of the channel
+  //! \return Maximum number of PDUs that can be sent per engine cycle
+  U32 getMaxOutgoingPdusPerCycleParam(U8 channelIndex);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
     // CFDP Engine - owns all protocol state and operations
     CfdpEngine* m_engine;
-
-    friend class CfdpManagerTester;
 
 };
 

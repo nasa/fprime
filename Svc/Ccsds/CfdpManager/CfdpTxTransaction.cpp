@@ -351,7 +351,7 @@ void CfdpTransaction::s2SubstateSendEof() {
     this->m_engine->armAckTimer(this);
 }
 
-Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 calc_crc, U32* bytes_processed) {
+Cfdp::Status::T CfdpTransaction::sSendFileData(CfdpFileSize foffs, CfdpFileSize bytes_to_read, U8 calc_crc, CfdpFileSize* bytes_processed) {
     FW_ASSERT(bytes_processed != NULL);
     *bytes_processed = 0;
 
@@ -368,8 +368,8 @@ Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 
     U32 maxDataCapacity = fdPdu.getMaxFileDataSize();
 
     // Limited by: bytes_to_read, outgoing_file_chunk_size, and maxDataCapacity
-    U32 outgoing_file_chunk_size = this->m_cfdpManager->getOutgoingFileChunkSizeParam();
-    U32 max_data_bytes = bytes_to_read;
+    CfdpFileSize outgoing_file_chunk_size = this->m_cfdpManager->getOutgoingFileChunkSizeParam();
+    CfdpFileSize max_data_bytes = bytes_to_read;
     if (max_data_bytes > outgoing_file_chunk_size) {
         max_data_bytes = outgoing_file_chunk_size;
     }
@@ -414,7 +414,7 @@ Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 
 
     // Update state and CRC
     if (status == Cfdp::Status::SUCCESS) {
-        this->m_state_data.send.cached_pos += static_cast<U32>(actual_bytes);
+        this->m_state_data.send.cached_pos += static_cast<CfdpFileSize>(actual_bytes);
 
         FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), this->m_fsize);
 
@@ -429,7 +429,7 @@ Cfdp::Status::T CfdpTransaction::sSendFileData(U32 foffs, U32 bytes_to_read, U8 
 }
 
 void CfdpTransaction::sSubstateSendFileData() {
-    U32 bytes_processed = 0;
+    CfdpFileSize bytes_processed = 0;
     Cfdp::Status::T status = this->sSendFileData(this->m_foffs, (this->m_fsize - this->m_foffs), 1, &bytes_processed);
 
     if(status != Cfdp::Status::SUCCESS)
@@ -457,7 +457,7 @@ Cfdp::Status::T CfdpTransaction::sCheckAndRespondNak(bool* nakProcessed) {
     const CF_Chunk_t *chunk;
     Cfdp::Status::T sret;
     Cfdp::Status::T ret = Cfdp::Status::SUCCESS;
-    U32 bytes_processed = 0;
+    CfdpFileSize bytes_processed = 0;
 
     FW_ASSERT(nakProcessed != NULL);
     *nakProcessed = false;
