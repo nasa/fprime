@@ -24,7 +24,7 @@ First and foremost, baremetal F´ systems should avoid using **Active Components
 > [!NOTE]
 > If you **must** use **Active Components** you should thoroughly review the [Thread Virtualization](#thread-virtualization) section of this document
 
-If your system can be entirely defined by `passive` and `queued` components then implicitly every port **invocation** would be eventually run in a synchronous call and the execution context would be entirely delegated to every component. Thus the need for a thread scheduler would dissappear. A discussion of the source of that delegated execution context comes next.
+If your system can be entirely defined by `passive` and `queued` components then implicitly every port **invocation** would be eventually run in a synchronous call and the execution context would be entirely delegated to every component. Thus the need for a thread scheduler would disappear. A discussion of the source of that delegated execution context comes next.
 
 ### Architecture
 
