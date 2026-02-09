@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -21,7 +21,7 @@ CfdpManager ::CfdpManager(const char* const compName) :
     m_engine(nullptr)
 {
     // Create the CFDP engine
-    this->m_engine = new CfdpEngine(this);
+    this->m_engine = new Engine(this);
     FW_ASSERT(this->m_engine != nullptr);
 }
 
@@ -77,7 +77,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 // architectural differences between F' and cFE
 // ----------------------------------------------------------------------
 
-Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
+Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, Channel& channel,
                                            FwSizeType size)
 {
     Status::T status = Status::ERROR;
@@ -110,7 +110,7 @@ Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
     return status;
 }
 
-void CfdpManager ::returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
+void CfdpManager ::returnPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
 {
     FwIndexType portNum;
 
@@ -121,7 +121,7 @@ void CfdpManager ::returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
     this->bufferDeallocate_out(portNum, pduBuffer);
 }
 
-void CfdpManager ::sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer)
+void CfdpManager ::sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
 {
     FwIndexType portNum;
 

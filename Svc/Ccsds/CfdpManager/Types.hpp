@@ -47,10 +47,10 @@
 #include <Os/Directory.hpp>
 
 #include <CFDP/Checksum/Checksum.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpPdu.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
+#include <Svc/Ccsds/CfdpManager/Pdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
+#include <Svc/Ccsds/CfdpManager/Chunk.hpp>
+#include <Svc/Ccsds/CfdpManager/Timer.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
@@ -63,9 +63,9 @@ namespace Cfdp {
 
 // Forward declarations (classes in Cfdp namespace)
 class CfdpManager;
-class CfdpChannel;
-class CfdpEngine;
-class CfdpTransaction;
+class Channel;
+class Engine;
+class Transaction;
 
 /**
  * @brief Maximum possible number of transactions that may exist on a single CFDP channel
@@ -222,7 +222,7 @@ struct History
  * @brief Wrapper around a CfdpChunkList object
  *
  * This allows a CfdpChunkList to be stored within a CList data storage structure.
- * The wrapper is pooled by CfdpChannel for reuse across transactions.
+ * The wrapper is pooled by Channel for reuse across transactions.
  */
 struct CfdpChunkWrapper
 {
@@ -235,7 +235,7 @@ struct CfdpChunkWrapper
      * @param maxChunks Maximum number of chunks this list can hold
      * @param chunkMem Pointer to pre-allocated chunk memory
      */
-    CfdpChunkWrapper(ChunkIdx maxChunks, CfdpChunk* chunkMem)
+    CfdpChunkWrapper(ChunkIdx maxChunks, Chunk* chunkMem)
         : chunks(maxChunks, chunkMem), cl_node{} {}
 };
 
@@ -393,12 +393,12 @@ union CfdpStateData
 
 
 /**
- * @brief Callback function type for use with CfdpChannel::traverseAllTransactions()
+ * @brief Callback function type for use with Channel::traverseAllTransactions()
  *
  * @param txn Pointer to current transaction being traversed
  * @param context Opaque object passed from initial call
  */
-using CfdpTraverseAllTransactionsFunc = std::function<void(CfdpTransaction *txn, void *context)>;
+using CfdpTraverseAllTransactionsFunc = std::function<void(Transaction *txn, void *context)>;
 
 /**
  * @brief Identifies the type of timer tick being processed

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpTransaction.hpp
+// \title  Transaction.hpp
 // \brief  CFDP Transaction state machine class for TX and RX operations
 //
 // This file is a port of transaction state machine definitions from the following files
@@ -41,7 +41,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 namespace Svc {
@@ -50,9 +50,9 @@ namespace Cfdp {
 
 // Forward declarations
 class CfdpManager;
-class CfdpEngine;
-class CfdpChannel;
-class CfdpTransaction;
+class Engine;
+class Channel;
+class Transaction;
 
 // ======================================================================
 // Dispatch Table Type Definitions
@@ -67,7 +67,7 @@ class CfdpTransaction;
  *
  * @note This is a member function pointer - invoke with: (txn->*fn)()
  */
-using StateSendFunc = void (CfdpTransaction::*)();
+using StateSendFunc = void (Transaction::*)();
 
 /**
  * @brief A member function pointer for dispatching actions to a handler, with existing PDU data
@@ -79,7 +79,7 @@ using StateSendFunc = void (CfdpTransaction::*)();
  * @param[inout] buffer The buffer containing the PDU currently being received/processed
  * @note This is a member function pointer - invoke with: (txn->*fn)(buffer)
  */
-using StateRecvFunc = void (CfdpTransaction::*)(const Fw::Buffer& buffer);
+using StateRecvFunc = void (Transaction::*)(const Fw::Buffer& buffer);
 
 /**
  * @brief A table of transmit handler functions based on transaction state
@@ -160,9 +160,9 @@ struct SSubstateSendDispatchTable
  * - CfdpTxTransaction.cpp: TX (send) state machine implementation
  * - CfdpRxTransaction.cpp: RX (receive) state machine implementation
  */
-class CfdpTransaction {
-  friend class CfdpEngine;
-  friend class CfdpChannel;
+class Transaction {
+  friend class Engine;
+  friend class Channel;
   friend class CfdpManagerTester;
 
   public:
@@ -175,9 +175,9 @@ class CfdpTransaction {
     //! @param channelId Channel ID number
     //! @param engine Pointer to the CFDP engine
     //! @param manager Pointer to the CfdpManager component
-    CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine* engine, CfdpManager* manager);
+    Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpManager* manager);
 
-    ~CfdpTransaction();
+    ~Transaction();
 
     /**
      * @brief Reset transaction to default state
@@ -641,7 +641,7 @@ class CfdpTransaction {
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CfdpChunk *chunk, NakPdu& nak);
+    void r2GapCompute(const Chunk *chunk, NakPdu& nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
@@ -835,14 +835,14 @@ class CfdpTransaction {
      *
      * The channel this transaction belongs to.
      */
-    CfdpChannel* m_chan;
+    Channel* m_chan;
 
     /**
      * @brief Pointer to the CFDP engine
      *
      * The engine this transaction belongs to.
      */
-    CfdpEngine* m_engine;
+    Engine* m_engine;
 };
 
 }  // namespace Cfdp

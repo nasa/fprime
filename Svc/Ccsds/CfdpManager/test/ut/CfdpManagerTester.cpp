@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 
@@ -79,12 +79,12 @@ void CfdpManagerTester::from_dataOut_handler(
 // Transaction Test Helper Implementations
 // ----------------------------------------------------------------------
 
-CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, TransactionSeq seqNum) {
+Transaction* CfdpManagerTester::findTransaction(U8 chanNum, TransactionSeq seqNum) {
     // Grab requested channel
-    CfdpChannel* chan = component.m_engine->m_channels[chanNum];
+    Channel* chan = component.m_engine->m_channels[chanNum];
 
     // Search through all transaction queues (PEND, TXA, TXW, RX, FREE)
-    // Skip HIST and HIST_FREE as they contain History, not CfdpTransaction
+    // Skip HIST and HIST_FREE as they contain History, not Transaction
     for (U8 qIdx = 0; qIdx < Cfdp::QueueId::NUM; qIdx++) {
         // Skip history queues (HIST=4, HIST_FREE=5)
         if (qIdx == Cfdp::QueueId::HIST || qIdx == Cfdp::QueueId::HIST_FREE) {
@@ -99,7 +99,7 @@ CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, TransactionSeq s
         // Traverse circular linked list, stopping when we loop back to head
         CListNode* node = head;
         do {
-            CfdpTransaction* txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+            Transaction* txn = container_of_cpp(node, &Transaction::m_cl_node);
             if (txn->m_history && txn->m_history->seq_num == seqNum) {
                 return txn;
             }
@@ -244,7 +244,7 @@ void CfdpManagerTester::waitForTransactionRecycle(U8 channelId, U32 expectedSeqN
         this->component.doDispatch();
     }
 
-    CfdpTransaction* txn = findTransaction(channelId, expectedSeqNum);
+    Transaction* txn = findTransaction(channelId, expectedSeqNum);
     EXPECT_EQ(nullptr, txn) << "Transaction should be recycled after inactivity timeout";
 }
 
@@ -252,7 +252,7 @@ void CfdpManagerTester::completeClass2Handshake(
     U8 channelId,
     EntityId destEid,
     U32 expectedSeqNum,
-    CfdpTransaction* txn)
+    Transaction* txn)
 {
     // Send EOF-ACK
     this->sendAckPdu(

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpChannel.hpp
+// \title  Channel.hpp
 // \brief  CFDP Channel operations
 //
 // This file is a port of channel-specific functions from the following files
@@ -35,15 +35,15 @@
 
 #include <Fw/Types/Assert.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/Types.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 // Forward declarations
-class CfdpEngine;
-class CfdpTransaction;
+class Engine;
+class Transaction;
 
 /**
  * @brief CFDP Channel class
@@ -52,27 +52,27 @@ class CfdpTransaction;
  * Each channel manages its own set of transactions, playback directories,
  * and polling directories.
  */
-class CfdpChannel {
+class Channel {
   public:
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
 
     /**
-     * @brief Construct a CfdpChannel
+     * @brief Construct a Channel
      *
      * @param engine      Pointer to parent CFDP engine
      * @param channelId   Channel ID (index)
      * @param cfdpManager Pointer to parent CfdpManager component
      */
-    CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpManager);
+    Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager);
 
     /**
-     * @brief Destruct a CfdpChannel
+     * @brief Destruct a Channel
      *
      * Frees dynamically allocated resources (transactions, histories, chunks)
      */
-    ~CfdpChannel();
+    ~Channel();
 
     // ----------------------------------------------------------------------
     // Channel Processing
@@ -114,7 +114,7 @@ class CfdpChannel {
      * @returns Pointer to a free transaction
      * @retval  NULL if no free transactions available.
      */
-    CfdpTransaction* findUnusedTransaction(Direction direction);
+    Transaction* findUnusedTransaction(Direction direction);
 
     /**
      * @brief Finds an active transaction by sequence number
@@ -128,7 +128,7 @@ class CfdpChannel {
      * @returns Pointer to the given transaction if found
      * @retval  NULL if the transaction is not found
      */
-    CfdpTransaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
+    Transaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
                                                      EntityId src_eid);
 
     /**
@@ -201,7 +201,7 @@ class CfdpChannel {
      *
      * @param txn Transaction to check against current
      */
-    void clearCurrentIfMatch(CfdpTransaction* txn);
+    void clearCurrentIfMatch(Transaction* txn);
 
     /**
      * @brief Set the flow state for this channel
@@ -245,7 +245,7 @@ class CfdpChannel {
      * @param index Transaction index within this channel
      * @returns Pointer to transaction
      */
-    CfdpTransaction* getTransaction(U32 index);
+    Transaction* getTransaction(U32 index);
 
     /**
      * @brief Get a history by index (for testing)
@@ -301,7 +301,7 @@ class CfdpChannel {
      *
      * @param txn Pointer to the transaction object
      */
-    void dequeueTransaction(CfdpTransaction* txn);
+    void dequeueTransaction(Transaction* txn);
 
     /**
      * @brief Move a transaction from one queue to another
@@ -309,14 +309,14 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of destination queue
      */
-    void moveTransaction(CfdpTransaction* txn, QueueId::T queue);
+    void moveTransaction(Transaction* txn, QueueId::T queue);
 
     /**
      * @brief Frees and resets a transaction and returns it for later use
      *
      * @param txn Pointer to the transaction object
      */
-    void freeTransaction(CfdpTransaction* txn);
+    void freeTransaction(Transaction* txn);
 
     /**
      * @brief Recover resources associated with a transaction
@@ -333,7 +333,7 @@ class CfdpChannel {
      *
      * @param txn  Pointer to the transaction object
      */
-    void recycleTransaction(CfdpTransaction *txn);
+    void recycleTransaction(Transaction *txn);
 
     /**
      * @brief Insert a transaction into a priority sorted transaction queue
@@ -346,7 +346,7 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of queue to insert into
      */
-    void insertSortPrio(CfdpTransaction* txn, QueueId::T queue);
+    void insertSortPrio(Transaction* txn, QueueId::T queue);
 
     // ----------------------------------------------------------------------
     // Queue Management
@@ -428,7 +428,7 @@ class CfdpChannel {
     // Member variables
     // ----------------------------------------------------------------------
 
-    CfdpEngine* m_engine;    //!< Parent CFDP engine
+    Engine* m_engine;    //!< Parent CFDP engine
 
     CListNode* m_qs[QueueId::NUM];    //!< Transaction queues
     CListNode* m_cs[DIRECTION_NUM];    //!< Command/history lists
@@ -438,7 +438,7 @@ class CfdpChannel {
     Playback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
     CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
 
-    const CfdpTransaction* m_cur;              //!< Current transaction during channel cycle
+    const Transaction* m_cur;              //!< Current transaction during channel cycle
     CfdpManager* m_cfdpManager;                //!< Reference to F' component for parameters
 
     U8 m_tickType;                             //!< Type of tick being processed
@@ -447,11 +447,11 @@ class CfdpChannel {
     Flow::T m_flowState;                   //!< Channel flow state (normal/frozen)
     U32 m_outgoingCounter;                     //!< PDU throttling counter
 
-    // Per-channel resource arrays (dynamically allocated, moved from CfdpEngine)
-    CfdpTransaction* m_transactions;           //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
+    // Per-channel resource arrays (dynamically allocated, moved from Engine)
+    Transaction* m_transactions;           //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
     History* m_histories;                  //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
     CfdpChunkWrapper* m_chunks;                //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM
-    CfdpChunk* m_chunkMem;                     //!< Chunk memory backing store
+    Chunk* m_chunkMem;                     //!< Chunk memory backing store
 
     U32 m_dirMaxChunks[DIRECTION_NUM];    //!< Max chunks per direction (RX/TX) for this channel
 
@@ -463,17 +463,17 @@ class CfdpChannel {
 // Inline function implementations
 // ----------------------------------------------------------------------
 
-inline void CfdpChannel::removeFromQueue(QueueId::T queueidx, CListNode* node)
+inline void Channel::removeFromQueue(QueueId::T queueidx, CListNode* node)
 {
     CfdpCListRemove(&m_qs[queueidx], node);
 }
 
-inline void CfdpChannel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after)
+inline void Channel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after)
 {
     CfdpCListInsertAfter(&m_qs[queueidx], start, after);
 }
 
-inline void CfdpChannel::insertBackInQueue(QueueId::T queueidx, CListNode* node)
+inline void Channel::insertBackInQueue(QueueId::T queueidx, CListNode* node)
 {
     CfdpCListInsertBack(&m_qs[queueidx], node);
 }

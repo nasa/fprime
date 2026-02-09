@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpChannel.cpp
+// \title  Channel.cpp
 // \brief  CFDP Channel operations implementation
 //
 // This file is a port of channel-specific functions from the following files
@@ -36,9 +36,9 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -48,7 +48,7 @@ namespace Cfdp {
 // Construction
 // ----------------------------------------------------------------------
 
-CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpManager) :
+Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager) :
     m_engine(engine),
     m_numCmdTx(0),
     m_cur(nullptr),
@@ -96,7 +96,7 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     // Allocate and initialize per-channel resources
     U32 j, k;
     History* history;
-    CfdpTransaction* txn;
+    Transaction* txn;
     CfdpChunkWrapper* cw;
     CListNode** list_head;
     U32 chunk_mem_offset = 0;
@@ -116,22 +116,22 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
 
     // Allocate arrays
     // Use operator new for raw memory (for types requiring placement new with constructor params)
-    m_transactions = static_cast<CfdpTransaction*>(
-        ::operator new(CFDP_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(CfdpTransaction))
+    m_transactions = static_cast<Transaction*>(
+        ::operator new(CFDP_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(Transaction))
     );
     m_chunks = static_cast<CfdpChunkWrapper*>(
         ::operator new((CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM) * sizeof(CfdpChunkWrapper))
     );
     // Regular new for simple types
     m_histories = new History[CFDP_NUM_HISTORIES_PER_CHANNEL];
-    m_chunkMem = new CfdpChunk[total_chunks_needed];
+    m_chunkMem = new Chunk[total_chunks_needed];
 
     // Initialize transactions using placement new with parameterized constructor
     cw = m_chunks;
     for (j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j)
     {
         // Construct transaction in-place with parameterized constructor
-        txn = new (&m_transactions[j]) CfdpTransaction(this, m_channelId, m_engine, m_cfdpManager);
+        txn = new (&m_transactions[j]) Transaction(this, m_channelId, m_engine, m_cfdpManager);
 
         // Put transaction on free list
         this->freeTransaction(txn);
@@ -160,13 +160,13 @@ CfdpChannel::CfdpChannel(CfdpEngine* engine, U8 channelId, CfdpManager* cfdpMana
     }
 }
 
-CfdpChannel::~CfdpChannel()
+Channel::~Channel()
 {
     // Free dynamically allocated resources
     if (m_transactions != nullptr) {
         // Manually call destructors since we used placement new
         for (U32 j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
-            m_transactions[j].~CfdpTransaction();
+            m_transactions[j].~Transaction();
         }
         // Free raw memory allocated with operator new
         ::operator delete(m_transactions);
@@ -195,9 +195,9 @@ CfdpChannel::~CfdpChannel()
 // Channel Processing
 // ----------------------------------------------------------------------
 
-void CfdpChannel::cycleTx()
+void Channel::cycleTx()
 {
-    CfdpTransaction* txn;
+    Transaction* txn;
     CycleTxArgs args;
 
     if (m_cfdpManager->getDequeueEnabledParam(m_channelId))
@@ -228,7 +228,7 @@ void CfdpChannel::cycleTx()
                     break;
                 }
 
-                txn = container_of_cpp(m_qs[QueueId::PEND], &CfdpTransaction::m_cl_node);
+                txn = container_of_cpp(m_qs[QueueId::PEND], &Transaction::m_cl_node);
 
                 /* Class 2 transactions need a chunklist for NAK processing, get one now.
                  * Class 1 transactions don't need chunks since they don't support NAKs. */
@@ -256,12 +256,12 @@ void CfdpChannel::cycleTx()
     }
 }
 
-void CfdpChannel::tickTransactions()
+void Channel::tickTransactions()
 {
     bool reset = true;
 
-    void (CfdpTransaction::*fns[CFDP_TICK_TYPE_NUM_TYPES])(int*) = {&CfdpTransaction::rTick, &CfdpTransaction::sTick,
-                                                                  &CfdpTransaction::sTickNak};
+    void (Transaction::*fns[CFDP_TICK_TYPE_NUM_TYPES])(int*) = {&Transaction::rTick, &Transaction::sTick,
+                                                                  &Transaction::sTickNak};
     int qs[CFDP_TICK_TYPE_NUM_TYPES]                              = {QueueId::RX, QueueId::TXW, QueueId::TXW};
 
     FW_ASSERT(m_tickType < CFDP_TICK_TYPE_NUM_TYPES, m_tickType);
@@ -319,7 +319,7 @@ void CfdpChannel::tickTransactions()
     }
 }
 
-void CfdpChannel::processPlaybackDirectories()
+void Channel::processPlaybackDirectories()
 {
     U32 i;
     // const int chan_index = (m_channel - m_engine->m_engineData.channels);
@@ -332,7 +332,7 @@ void CfdpChannel::processPlaybackDirectories()
     }
 }
 
-void CfdpChannel::processPollingDirectories()
+void Channel::processPollingDirectories()
 {
     CfdpPollDir* pd;
     U32 i;
@@ -390,16 +390,16 @@ void CfdpChannel::processPollingDirectories()
 // Transaction Management
 // ----------------------------------------------------------------------
 
-CfdpTransaction* CfdpChannel::findUnusedTransaction(Direction direction)
+Transaction* Channel::findUnusedTransaction(Direction direction)
 {
     CListNode*  node;
-    CfdpTransaction* txn;
+    Transaction* txn;
     QueueId::T q_index; /* initialized below in if */
 
     if (m_qs[QueueId::FREE])
     {
         node = m_qs[QueueId::FREE];
-        txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+        txn = container_of_cpp(node, &Transaction::m_cl_node);
 
         this->removeFromQueue(QueueId::FREE, &txn->m_cl_node);
 
@@ -436,7 +436,7 @@ CfdpTransaction* CfdpChannel::findUnusedTransaction(Direction direction)
     return txn;
 }
 
-CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
+Transaction* Channel::findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
                                                                EntityId src_eid)
 {
     /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
@@ -446,11 +446,11 @@ CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(TransactionSeq tra
     CfdpTraverseTransSeqArg ctx    = {transaction_sequence_number, src_eid, NULL};
     CListNode*          ptrs[] = {m_qs[QueueId::RX], m_qs[QueueId::PEND], m_qs[QueueId::TXA],
                               m_qs[QueueId::TXW]};
-    CfdpTransaction*        ret = NULL;
+    Transaction*        ret = NULL;
 
     for (CListNode* head : ptrs)
     {
-        CfdpCListTraverse(head, CfdpTransaction::findBySequenceNumberCallback, &ctx);
+        CfdpCListTraverse(head, Transaction::findBySequenceNumberCallback, &ctx);
         if (ctx.txn)
         {
             ret = ctx.txn;
@@ -461,14 +461,14 @@ CfdpTransaction* CfdpChannel::findTransactionBySequenceNumber(TransactionSeq tra
     return ret;
 }
 
-I32 CfdpChannel::traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, void* context)
+I32 Channel::traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, void* context)
 {
     CfdpTraverseAllArg args = {fn, context, 0};
     for (I32 queueidx = QueueId::PEND; queueidx <= QueueId::RX; ++queueidx)
     {
         CfdpCListTraverse(m_qs[queueidx],
                           [&args](CListNode* node, void*) -> CListTraverseStatus {
-                              CfdpTransaction* txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+                              Transaction* txn = container_of_cpp(node, &Transaction::m_cl_node);
                               args.fn(txn, args.context);
                               ++args.counter;
                               return CLIST_TRAVERSE_CONTINUE;
@@ -479,7 +479,7 @@ I32 CfdpChannel::traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, voi
     return args.counter;
 }
 
-void CfdpChannel::resetHistory(History* history)
+void Channel::resetHistory(History* history)
 {
     this->removeFromQueue(QueueId::HIST, &history->cl_node);
     this->insertBackInQueue(QueueId::HIST_FREE, &history->cl_node);
@@ -489,7 +489,7 @@ void CfdpChannel::resetHistory(History* history)
 // Transaction Queue Management
 // ----------------------------------------------------------------------
 
-void CfdpChannel::dequeueTransaction(CfdpTransaction* txn)
+void Channel::dequeueTransaction(Transaction* txn)
 {
     FW_ASSERT(txn);
     CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
@@ -497,7 +497,7 @@ void CfdpChannel::dequeueTransaction(CfdpTransaction* txn)
     // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-void CfdpChannel::moveTransaction(CfdpTransaction* txn, QueueId::T queue)
+void Channel::moveTransaction(Transaction* txn, QueueId::T queue)
 {
     FW_ASSERT(txn);
     CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
@@ -508,7 +508,7 @@ void CfdpChannel::moveTransaction(CfdpTransaction* txn, QueueId::T queue)
     // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
 }
 
-void CfdpChannel::freeTransaction(CfdpTransaction* txn)
+void Channel::freeTransaction(Transaction* txn)
 {
     // Reset transaction to default state (preserves channel context)
     txn->reset();
@@ -518,7 +518,7 @@ void CfdpChannel::freeTransaction(CfdpTransaction* txn)
     this->insertBackInQueue(QueueId::FREE, &txn->m_cl_node);
 }
 
-void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
+void Channel::recycleTransaction(Transaction *txn)
 {
     CListNode **chunklist_head;
     QueueId::T    hist_destq;
@@ -561,12 +561,12 @@ void CfdpChannel::recycleTransaction(CfdpTransaction *txn)
     }
 
     /* this wipes it and puts it back onto the list to be found by
-     * CfdpChannel::findUnusedTransaction().  Need to preserve the chan_num
+     * Channel::findUnusedTransaction().  Need to preserve the chan_num
      * and keep it associated with this channel, though. */
     this->freeTransaction(txn);
 }
 
-void CfdpChannel::insertSortPrio(CfdpTransaction* txn, QueueId::T queue)
+void Channel::insertSortPrio(Transaction* txn, QueueId::T queue)
 {
     bool insert_back = false;
 
@@ -583,7 +583,7 @@ void CfdpChannel::insertSortPrio(CfdpTransaction* txn, QueueId::T queue)
     else
     {
         CfdpTraversePriorityArg arg = {NULL, txn->getPriority()};
-        CfdpCListTraverseR(m_qs[queue], CfdpTransaction::prioritySearchCallback, &arg);
+        CfdpCListTraverseR(m_qs[queue], Transaction::prioritySearchCallback, &arg);
         if (arg.txn)
         {
             this->insertAfterInQueue(queue, &arg.txn->m_cl_node, &txn->m_cl_node);
@@ -605,13 +605,13 @@ void CfdpChannel::insertSortPrio(CfdpTransaction* txn, QueueId::T queue)
 // Channel State Management
 // ----------------------------------------------------------------------
 
-void CfdpChannel::decrementCmdTxCounter()
+void Channel::decrementCmdTxCounter()
 {
     FW_ASSERT(m_numCmdTx); // sanity check
     --m_numCmdTx;
 }
 
-void CfdpChannel::clearCurrentIfMatch(CfdpTransaction* txn)
+void Channel::clearCurrentIfMatch(Transaction* txn)
 {
     // Done with this TX transaction
     if (this->m_cur == txn)
@@ -624,7 +624,7 @@ void CfdpChannel::clearCurrentIfMatch(CfdpTransaction* txn)
 // Resource Management
 // ----------------------------------------------------------------------
 
-CListNode** CfdpChannel::getChunkListHead(U8 direction)
+CListNode** Channel::getChunkListHead(U8 direction)
 {
     CListNode** result;
 
@@ -640,7 +640,7 @@ CListNode** CfdpChannel::getChunkListHead(U8 direction)
     return result;
 }
 
-CfdpChunkWrapper* CfdpChannel::findUnusedChunks(Direction dir)
+CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir)
 {
     CfdpChunkWrapper* ret = NULL;
     CListNode* node;
@@ -667,9 +667,9 @@ CfdpChunkWrapper* CfdpChannel::findUnusedChunks(Direction dir)
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void CfdpChannel::processPlaybackDirectory(Playback* pb)
+void Channel::processPlaybackDirectory(Playback* pb)
 {
-    CfdpTransaction* txn;
+    Transaction* txn;
     char path[CfdpManagerMaxFileSize];
     Os::Directory::Status status;
 
@@ -738,7 +738,7 @@ void CfdpChannel::processPlaybackDirectory(Playback* pb)
     }
 }
 
-void CfdpChannel::updatePollPbCounted(Playback* pb, int up, U8* counter)
+void Channel::updatePollPbCounted(Playback* pb, int up, U8* counter)
 {
     if (pb->counted != up)
     {
@@ -757,10 +757,10 @@ void CfdpChannel::updatePollPbCounted(Playback* pb, int up, U8* counter)
     }
 }
 
-CListTraverseStatus CfdpChannel::cycleTxFirstActive(CListNode* node, void* context)
+CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context)
 {
     CycleTxArgs*  args = static_cast<CycleTxArgs*>(context);
-    CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+    Transaction*        txn  = container_of_cpp(node, &Transaction::m_cl_node);
     CListTraverseStatus ret  = CLIST_TRAVERSE_EXIT; /* default option is exit traversal */
 
     if (txn->m_flags.com.suspended)
@@ -785,11 +785,11 @@ CListTraverseStatus CfdpChannel::cycleTxFirstActive(CListNode* node, void* conte
     return ret;
 }
 
-CListTraverseStatus CfdpChannel::doTick(CListNode* node, void* context)
+CListTraverseStatus Channel::doTick(CListNode* node, void* context)
 {
     CListTraverseStatus ret  = CLIST_TRAVERSE_CONTINUE; /* CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for cur */
     TickArgs*     args = static_cast<TickArgs*>(context);
-    CfdpTransaction*        txn  = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+    Transaction*        txn  = container_of_cpp(node, &Transaction::m_cl_node);
     if (!this->m_cur || (this->m_cur == txn))
     {
         /* found where we left off, so clear that and move on */
@@ -812,13 +812,13 @@ CListTraverseStatus CfdpChannel::doTick(CListNode* node, void* context)
     return ret; /* don't tick one, keep looking for cur */
 }
 
-CfdpTransaction* CfdpChannel::getTransaction(U32 index)
+Transaction* Channel::getTransaction(U32 index)
 {
     FW_ASSERT(index < CFDP_NUM_TRANSACTIONS_PER_CHANNEL);
     return &m_transactions[index];
 }
 
-History* CfdpChannel::getHistory(U32 index)
+History* Channel::getHistory(U32 index)
 {
     FW_ASSERT(index < CFDP_NUM_HISTORIES_PER_CHANNEL);
     return &m_histories[index];

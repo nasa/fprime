@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpClist.hpp
+// \title  Clist.hpp
 // \brief  CFDP circular list header file
 //
 // This file is a port of CFDP circular list from the following files

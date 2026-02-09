@@ -37,13 +37,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
+#include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Svc/Ccsds/CfdpManager/Chunk.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
+#include <Svc/Ccsds/CfdpManager/Timer.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -78,32 +78,32 @@ FileDirectiveDispatchTable makeFileDirectiveTable(
 // TX State Machine - Public Methods
 // ======================================================================
 
-void CfdpTransaction::s1Recv(const Fw::Buffer& buffer) {
+void Transaction::s1Recv(const Fw::Buffer& buffer) {
     /* s1 doesn't need to receive anything */
     static const SSubstateRecvDispatchTable substate_fns = {{NULL}};
     this->sDispatchRecv(buffer, &substate_fns);
 }
 
-void CfdpTransaction::s2Recv(const Fw::Buffer& buffer) {
+void Transaction::s2Recv(const Fw::Buffer& buffer) {
     static const FileDirectiveDispatchTable s2_meta =
         makeFileDirectiveTable(
-            &CfdpTransaction::s2EarlyFin,
+            &Transaction::s2EarlyFin,
             nullptr,
             nullptr
         );
 
     static const FileDirectiveDispatchTable s2_fd_or_eof =
         makeFileDirectiveTable(
-            &CfdpTransaction::s2EarlyFin,
+            &Transaction::s2EarlyFin,
             nullptr,
-            &CfdpTransaction::s2Nak
+            &Transaction::s2Nak
         );
 
     static const FileDirectiveDispatchTable s2_wait_ack =
         makeFileDirectiveTable(
-            &CfdpTransaction::s2Fin,
-            &CfdpTransaction::s2EofAck,
-            &CfdpTransaction::s2NakArm
+            &Transaction::s2Fin,
+            &Transaction::s2EofAck,
+            &Transaction::s2NakArm
         );
 
     static const SSubstateRecvDispatchTable substate_fns = {
@@ -118,7 +118,7 @@ void CfdpTransaction::s2Recv(const Fw::Buffer& buffer) {
     this->sDispatchRecv(buffer, &substate_fns);
 }
 
-void CfdpTransaction::initTxFile(Class::T cfdp_class, Keep::T keep, U8 chan, U8 priority)
+void Transaction::initTxFile(Class::T cfdp_class, Keep::T keep, U8 chan, U8 priority)
 {
     m_chan_num = chan;
     m_priority = priority;
@@ -128,29 +128,29 @@ void CfdpTransaction::initTxFile(Class::T cfdp_class, Keep::T keep, U8 chan, U8 
     m_state_data.send.sub_state = TX_SUB_STATE_METADATA;
 }
 
-void CfdpTransaction::s1Tx() {
+void Transaction::s1Tx() {
     static const SSubstateSendDispatchTable substate_fns = {{
-        &CfdpTransaction::sSubstateSendMetadata, // TX_SUB_STATE_METADATA
-        &CfdpTransaction::sSubstateSendFileData, // TX_SUB_STATE_FILEDATA
-        &CfdpTransaction::s1SubstateSendEof, // TX_SUB_STATE_EOF
+        &Transaction::sSubstateSendMetadata, // TX_SUB_STATE_METADATA
+        &Transaction::sSubstateSendFileData, // TX_SUB_STATE_FILEDATA
+        &Transaction::s1SubstateSendEof, // TX_SUB_STATE_EOF
         nullptr // TX_SUB_STATE_CLOSEOUT_SYNC
     }};
 
     this->sDispatchTransmit(&substate_fns);
 }
 
-void CfdpTransaction::s2Tx() {
+void Transaction::s2Tx() {
     static const SSubstateSendDispatchTable substate_fns = {{
-        &CfdpTransaction::sSubstateSendMetadata, // TX_SUB_STATE_METADATA
-        &CfdpTransaction::s2SubstateSendFileData, // TX_SUB_STATE_FILEDATA
-        &CfdpTransaction::s2SubstateSendEof, // TX_SUB_STATE_EOF
+        &Transaction::sSubstateSendMetadata, // TX_SUB_STATE_METADATA
+        &Transaction::s2SubstateSendFileData, // TX_SUB_STATE_FILEDATA
+        &Transaction::s2SubstateSendEof, // TX_SUB_STATE_EOF
         nullptr // TX_SUB_STATE_CLOSEOUT_SYNC
     }};
 
     this->sDispatchTransmit(&substate_fns);
 }
 
-void CfdpTransaction::sAckTimerTick() {
+void Transaction::sAckTimerTick() {
     U8 ack_limit = 0;
 
     /* note: the ack timer is only ever relevant on class 2 */
@@ -212,7 +212,7 @@ void CfdpTransaction::sAckTimerTick() {
     }
 }
 
-void CfdpTransaction::sTick(int *cont /* unused */) {
+void Transaction::sTick(int *cont /* unused */) {
     bool pending_send;
 
     pending_send = true; /* maybe; tbd, will be reset if not */
@@ -285,7 +285,7 @@ void CfdpTransaction::sTick(int *cont /* unused */) {
     }
 }
 
-void CfdpTransaction::sTickNak(int *cont) {
+void Transaction::sTickNak(int *cont) {
     bool nakProcessed = false;
     Status::T status;
 
@@ -300,7 +300,7 @@ void CfdpTransaction::sTickNak(int *cont) {
     }
 }
 
-void CfdpTransaction::sCancel() {
+void Transaction::sCancel() {
     if (this->m_state_data.send.sub_state < TX_SUB_STATE_EOF)
     {
         /* if state has not reached TX_SUB_STATE_EOF, then set it to TX_SUB_STATE_EOF now. */
@@ -312,7 +312,7 @@ void CfdpTransaction::sCancel() {
 // TX State Machine - Private Helper Methods
 // ======================================================================
 
-Status::T CfdpTransaction::sSendEof() {
+Status::T Transaction::sSendEof() {
     /* note the crc is "finalized" regardless of success or failure of the txn */
     /* this is OK as we still need to put some value into the EOF */
     if (!this->m_flags.com.crc_calc)
@@ -326,7 +326,7 @@ Status::T CfdpTransaction::sSendEof() {
     return this->m_engine->sendEof(this);
 }
 
-void CfdpTransaction::s1SubstateSendEof() {
+void Transaction::s1SubstateSendEof() {
     /* set the flag, the EOF is sent by the tick handler */
     this->m_flags.tx.send_eof = true;
 
@@ -337,7 +337,7 @@ void CfdpTransaction::s1SubstateSendEof() {
     this->m_engine->finishTransaction(this, true);
 }
 
-void CfdpTransaction::s2SubstateSendEof() {
+void Transaction::s2SubstateSendEof() {
     /* set the flag, the EOF is sent by the tick handler */
     this->m_flags.tx.send_eof = true;
 
@@ -352,7 +352,7 @@ void CfdpTransaction::s2SubstateSendEof() {
     this->m_engine->armAckTimer(this);
 }
 
-Status::T CfdpTransaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 calc_crc, FileSize* bytes_processed) {
+Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 calc_crc, FileSize* bytes_processed) {
     FW_ASSERT(bytes_processed != NULL);
     *bytes_processed = 0;
 
@@ -429,7 +429,7 @@ Status::T CfdpTransaction::sSendFileData(FileSize foffs, FileSize bytes_to_read,
     return status;
 }
 
-void CfdpTransaction::sSubstateSendFileData() {
+void Transaction::sSubstateSendFileData() {
     FileSize bytes_processed = 0;
     Status::T status = this->sSendFileData(this->m_foffs, (this->m_fsize - this->m_foffs), 1, &bytes_processed);
 
@@ -454,8 +454,8 @@ void CfdpTransaction::sSubstateSendFileData() {
     }
 }
 
-Status::T CfdpTransaction::sCheckAndRespondNak(bool* nakProcessed) {
-    const CfdpChunk *chunk;
+Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
+    const Chunk *chunk;
     Status::T sret;
     Status::T ret = Cfdp::Status::SUCCESS;
     FileSize bytes_processed = 0;
@@ -507,7 +507,7 @@ Status::T CfdpTransaction::sCheckAndRespondNak(bool* nakProcessed) {
     return ret;
 }
 
-void CfdpTransaction::s2SubstateSendFileData() {
+void Transaction::s2SubstateSendFileData() {
     Status::T status;
     bool nakProcessed = false;
 
@@ -530,7 +530,7 @@ void CfdpTransaction::s2SubstateSendFileData() {
     }
 }
 
-void CfdpTransaction::sSubstateSendMetadata() {
+void Transaction::sSubstateSendMetadata() {
     Status::T status;
     Os::File::Status fileStatus;
     bool success = true;
@@ -600,16 +600,16 @@ void CfdpTransaction::sSubstateSendMetadata() {
     /* don't need to reset the CRC since its taken care of by reset_cfdp() */
 }
 
-Status::T CfdpTransaction::sSendFinAck() {
+Status::T Transaction::sSendFinAck() {
     Status::T ret = this->m_engine->sendAck(this,
-                           static_cast<AckTxnStatus>(CfdpGetTxnStatus(this)),
+                           static_cast<AckTxnStatus>(GetTxnStatus(this)),
                            FILE_DIRECTIVE_FIN,
                            static_cast<ConditionCode>(this->m_state_data.send.s2.fin_cc),
                            this->m_history->peer_eid, this->m_history->seq_num);
     return ret;
 }
 
-void CfdpTransaction::s2EarlyFin(const Fw::Buffer& buffer) {
+void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     /* received early fin, so just cancel */
     // CFE_EVS_SendEvent(CFDP_S_EARLY_FIN_ERR_EID, CFE_EVS_EventType_ERROR,
     //                   "CF S%d(%lu:%lu): got early FIN -- cancelling", (this->m_state == TXN_STATE_S2),
@@ -622,7 +622,7 @@ void CfdpTransaction::s2EarlyFin(const Fw::Buffer& buffer) {
     this->s2Fin(buffer);
 }
 
-void CfdpTransaction::s2Fin(const Fw::Buffer& buffer) {
+void Transaction::s2Fin(const Fw::Buffer& buffer) {
     // Deserialize FIN PDU from buffer
     FinPdu fin;
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
@@ -658,7 +658,7 @@ void CfdpTransaction::s2Fin(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::s2Nak(const Fw::Buffer& buffer) {
+void Transaction::s2Nak(const Fw::Buffer& buffer) {
     U8 counter;
     U8 bad_sr;
 
@@ -731,12 +731,12 @@ void CfdpTransaction::s2Nak(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::s2NakArm(const Fw::Buffer& buffer) {
+void Transaction::s2NakArm(const Fw::Buffer& buffer) {
     this->m_engine->armAckTimer(this);
     this->s2Nak(buffer);
 }
 
-void CfdpTransaction::s2EofAck(const Fw::Buffer& buffer) {
+void Transaction::s2EofAck(const Fw::Buffer& buffer) {
     // Deserialize ACK PDU from buffer
     AckPdu ack;
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
@@ -768,7 +768,7 @@ void CfdpTransaction::s2EofAck(const Fw::Buffer& buffer) {
 // Dispatch Methods (ported from cf_cfdp_dispatch.c)
 // ======================================================================
 
-void CfdpTransaction::sDispatchRecv(const Fw::Buffer& buffer,
+void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
                                     const SSubstateRecvDispatchTable *dispatch)
 {
     const FileDirectiveDispatchTable *substate_tbl;
@@ -838,7 +838,7 @@ void CfdpTransaction::sDispatchRecv(const Fw::Buffer& buffer,
     }
 }
 
-void CfdpTransaction::sDispatchTransmit(const SSubstateSendDispatchTable *dispatch)
+void Transaction::sDispatchTransmit(const SSubstateSendDispatchTable *dispatch)
 {
     StateSendFunc selected_handler;
 
@@ -849,7 +849,7 @@ void CfdpTransaction::sDispatchTransmit(const SSubstateSendDispatchTable *dispat
     }
 }
 
-void CfdpTransaction::txStateDispatch(const TxnSendDispatchTable *dispatch)
+void Transaction::txStateDispatch(const TxnSendDispatchTable *dispatch)
 {
     StateSendFunc selected_handler;
 

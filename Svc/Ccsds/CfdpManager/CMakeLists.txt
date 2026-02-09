@@ -15,14 +15,14 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/CfdpManager.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpEngine.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpChunk.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpClist.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpUtils.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpTimer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpChannel.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpTxTransaction.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CfdpRxTransaction.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Engine.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Chunk.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Clist.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Utils.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Timer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Channel.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TxTransaction.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/RxTransaction.cpp"
     DEPENDS
         CFDP_Checksum
         Svc_Ccsds_CfdpManager_Types

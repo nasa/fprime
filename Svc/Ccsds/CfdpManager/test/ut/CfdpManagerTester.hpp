@@ -9,10 +9,10 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerGTestBase.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
+#include <Svc/Ccsds/CfdpManager/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -91,7 +91,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param sequenceId Transaction sequence number
     //! @param peerId Peer entity ID
     //! @return Pointer to configured transaction (owned by component)
-    CfdpTransaction* setupTestTransaction(
+    Transaction* setupTestTransaction(
         TxnState state,
         U8 channelId,
         const char* srcFilename,
@@ -225,7 +225,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param chanNum Channel number to search
     //! @param seqNum Transaction sequence number
     //! @return Pointer to transaction or nullptr if not found
-    CfdpTransaction* findTransaction(U8 chanNum, TransactionSeq seqNum);
+    Transaction* findTransaction(U8 chanNum, TransactionSeq seqNum);
 
     // ----------------------------------------------------------------------
     // PDU Uplink Helper Functions
@@ -405,7 +405,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Helper struct for transaction setup results
     struct TransactionSetup {
         U32 expectedSeqNum;
-        CfdpTransaction* txn;
+        Transaction* txn;
     };
 
     //! Create test file and verify size matches expected
@@ -448,7 +448,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U8 channelId,
         EntityId destEid,
         U32 expectedSeqNum,
-        CfdpTransaction* txn
+        Transaction* txn
     );
 
     //! Verify FIN-ACK PDU at given index

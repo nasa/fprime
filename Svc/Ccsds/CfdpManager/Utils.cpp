@@ -32,15 +32,15 @@
 //
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-AckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn)
+AckTxnStatus GetTxnStatus(Transaction *txn)
 {
     AckTxnStatus LocalStatus;
 
@@ -75,9 +75,9 @@ AckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn)
 }
 
 // Static member function - can access private members
-CListTraverseStatus CfdpTransaction::findBySequenceNumberCallback(CListNode *node, void *context)
+CListTraverseStatus Transaction::findBySequenceNumberCallback(CListNode *node, void *context)
 {
-    CfdpTransaction *txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+    Transaction *txn = container_of_cpp(node, &Transaction::m_cl_node);
     CListTraverseStatus ret = CLIST_TRAVERSE_CONTINUE;
     CfdpTraverseTransSeqArg* seqContext = static_cast<CfdpTraverseTransSeqArg*>(context);
 
@@ -92,9 +92,9 @@ CListTraverseStatus CfdpTransaction::findBySequenceNumberCallback(CListNode *nod
 }
 
 // Static member function - can access private members
-CListTraverseStatus CfdpTransaction::prioritySearchCallback(CListNode *node, void *context)
+CListTraverseStatus Transaction::prioritySearchCallback(CListNode *node, void *context)
 {
-    CfdpTransaction *         txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
+    Transaction *         txn = container_of_cpp(node, &Transaction::m_cl_node);
     CfdpTraversePriorityArg *arg = static_cast<CfdpTraversePriorityArg *>(context);
 
     if (txn->m_priority <= arg->priority)
@@ -111,17 +111,17 @@ CListTraverseStatus CfdpTransaction::prioritySearchCallback(CListNode *node, voi
 }
 
 // Legacy wrappers for backward compatibility
-CListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CListNode *node, void *context)
+CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode *node, void *context)
 {
-    return CfdpTransaction::findBySequenceNumberCallback(node, context);
+    return Transaction::findBySequenceNumberCallback(node, context);
 }
 
-CListTraverseStatus CfdpPrioSearch(CListNode *node, void *context)
+CListTraverseStatus PrioSearch(CListNode *node, void *context)
 {
-    return CfdpTransaction::prioritySearchCallback(node, context);
+    return Transaction::prioritySearchCallback(node, context);
 }
 
-bool CfdpTxnStatusIsError(TxnStatus txn_stat)
+bool TxnStatusIsError(TxnStatus txn_stat)
 {
     /* The value of TXN_STATUS_UNDEFINED (-1) indicates a transaction is in progress and no error
      * has occurred yet.  This will be set to TXN_STATUS_NO_ERROR (0) after successful completion
@@ -129,11 +129,11 @@ bool CfdpTxnStatusIsError(TxnStatus txn_stat)
     return (txn_stat > TXN_STATUS_NO_ERROR);
 }
 
-ConditionCode CfdpTxnStatusToConditionCode(TxnStatus txn_stat)
+ConditionCode TxnStatusToConditionCode(TxnStatus txn_stat)
 {
     ConditionCode result;
 
-    if (!CfdpTxnStatusIsError(txn_stat))
+    if (!TxnStatusIsError(txn_stat))
     {
         /* If no status has been set (TXN_STATUS_UNDEFINED), treat that as NO_ERROR for
          * the purpose of CFDP CC.  This can occur e.g. when sending ACK PDUs and no errors

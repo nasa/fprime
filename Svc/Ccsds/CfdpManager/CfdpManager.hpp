@@ -15,15 +15,15 @@ namespace Ccsds {
 namespace Cfdp {
 
 // Forward declarations
-class CfdpEngine;
-class CfdpChannel;
-class CfdpTransaction;
+class Engine;
+class Channel;
+class Transaction;
 
 class CfdpManager final : public CfdpManagerComponentBase {
   friend class CfdpManagerTester;
   // Give access to protected functions for EVRs and Telemetry
-  friend class CfdpEngine;
-  friend class CfdpTransaction;
+  friend class Engine;
+  friend class Transaction;
 
   public:
     // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //! \param channel [in] Channel to allocate buffer for
   //! \param size [in] Size of buffer needed in bytes
   //! \return Status::SUCCESS if buffer allocated, Status::SEND_PDU_NO_BUF_AVAIL_ERROR otherwise
-  Status::T getPduBuffer(Fw::Buffer& buffer, CfdpChannel& channel,
+  Status::T getPduBuffer(Fw::Buffer& buffer, Channel& channel,
                              FwSizeType size);
 
   //! Return an unused PDU buffer
@@ -71,7 +71,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //!
   //! \param channel [in] Channel that owns the buffer
   //! \param pduBuffer [in] Buffer to return/deallocate
-  void returnPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
+  void returnPduBuffer(Channel& channel, Fw::Buffer& pduBuffer);
 
   //! Send a PDU buffer via output port
   //!
@@ -79,7 +79,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //!
   //! \param channel [in] Channel to send on
   //! \param pduBuffer [in] Buffer containing the PDU to send
-  void sendPduBuffer(CfdpChannel& channel, Fw::Buffer& pduBuffer);
+  void sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer);
 
   private:
     // ----------------------------------------------------------------------
@@ -266,7 +266,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
     // CFDP Engine - owns all protocol state and operations
-    CfdpEngine* m_engine;
+    Engine* m_engine;
 
 };
 

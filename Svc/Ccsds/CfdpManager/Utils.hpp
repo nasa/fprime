@@ -36,7 +36,7 @@
 
 #include <Fw/Types/Assert.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -52,11 +52,11 @@ struct CfdpTraverseTransSeqArg
 {
     TransactionSeq transaction_sequence_number;
     EntityId       src_eid;
-    CfdpTransaction *  txn; /**< \brief output transaction pointer */
+    Transaction *  txn; /**< \brief output transaction pointer */
 };
 
 /**
- * @brief Argument structure for use with CfdpChannel::traverseAllTransactions()
+ * @brief Argument structure for use with Channel::traverseAllTransactions()
  *
  * This basically allows for running a traversal on several lists at once
  */
@@ -74,7 +74,7 @@ struct CfdpTraverseAllArg
  */
 struct CfdpTraversePriorityArg
 {
-    CfdpTransaction *txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
+    Transaction *txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
     U8             priority; /**< \brief seeking this priority */
 };
 
@@ -87,7 +87,7 @@ struct CfdpTraversePriorityArg
  * @retval 1 when it's found, which terminates list traversal
  * @retval 0 when it isn't found, which causes list traversal to continue
  */
-CListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CListNode *node, void *context);
+CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
@@ -98,7 +98,7 @@ CListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CListNode *node, voi
  * @retval CFDP_CLIST_EXIT when it's found, which terminates list traversal
  * @retval CFDP_CLIST_CONT when it isn't found, which causes list traversal to continue
  */
-CListTraverseStatus CfdpPrioSearch(CListNode *node, void *context);
+CListTraverseStatus PrioSearch(CListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Converts the internal transaction status to a CFDP condition code
@@ -111,7 +111,7 @@ CListTraverseStatus CfdpPrioSearch(CListNode *node, void *context);
  *
  * @returns CFDP protocol condition code
  */
-ConditionCode CfdpTxnStatusToConditionCode(TxnStatus txn_stat);
+ConditionCode TxnStatusToConditionCode(TxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Check if the internal transaction status represents an error
@@ -126,7 +126,7 @@ ConditionCode CfdpTxnStatusToConditionCode(TxnStatus txn_stat);
  * @retval true if an error has occurred during the transaction
  * @retval false if no error has occurred during the transaction yet
  */
-bool CfdpTxnStatusIsError(TxnStatus txn_stat);
+bool TxnStatusIsError(TxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Gets the status of this transaction
@@ -137,7 +137,7 @@ bool CfdpTxnStatusIsError(TxnStatus txn_stat);
  * @param txn   Transaction
  * @returns AckTxnStatus value corresponding to transaction
  */
-AckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn);
+AckTxnStatus GetTxnStatus(Transaction *txn);
 
 }  // namespace Cfdp
 }  // namespace Ccsds

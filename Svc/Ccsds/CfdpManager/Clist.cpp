@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpClist.cpp
+// \title  Clist.cpp
 // \brief  CFDP circular list definition source file
 //
 // This file is a port of the cf_clist.c file from the 
@@ -31,7 +31,7 @@
 //
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
 
 #include <Fw/Types/Assert.hpp>
 

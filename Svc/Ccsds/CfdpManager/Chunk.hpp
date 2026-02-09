@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpChunk.hpp
+// \title  Chunk.hpp
 // \brief  CFDP chunks (spare gap tracking) header file
 //
 // This file is a port of CFDP chunk/gap tracking from the following files
@@ -48,7 +48,7 @@ using ChunkIdx = U16;
 /**
  * @brief Pairs an offset with a size to identify a specific piece of a file
  */
-struct CfdpChunk
+struct Chunk
 {
     FileSize offset; /**< \brief The start offset of the chunk within the file */
     FileSize size;   /**< \brief The size of the chunk */
@@ -79,7 +79,7 @@ static inline FileSize CfdpChunkMax(FileSize a, FileSize b)
  * std::function-based callback used by CfdpChunkList::computeGaps().
  * The callback receives the gap chunk and an opaque context pointer.
  */
-using GapComputeCallback = std::function<void(const CfdpChunk* chunk, void* opaque)>;
+using GapComputeCallback = std::function<void(const Chunk* chunk, void* opaque)>;
 
 /**
  * @brief C++ class encapsulation of CFDP chunk list operations
@@ -87,7 +87,7 @@ using GapComputeCallback = std::function<void(const CfdpChunk* chunk, void* opaq
  * This class provides modern C++ encapsulation around the gap tracking functionality
  * previously implemented as C-style free functions. The class does not own the backing
  * memory for chunks; it takes a pointer to pre-allocated memory in the constructor,
- * preserving the existing memory pooling system managed by CfdpChannel.
+ * preserving the existing memory pooling system managed by Channel.
  *
  * The chunk list maintains file segments in offset-sorted order and provides operations
  * for adding segments, computing gaps, and managing the list. This is primarily used for:
@@ -104,11 +104,11 @@ class CfdpChunkList {
      * @brief Constructor - initializes chunk list with pre-allocated memory
      *
      * @param maxChunks  Maximum number of chunks this list can hold
-     * @param chunkMem   Pointer to pre-allocated array of CfdpChunk objects
+     * @param chunkMem   Pointer to pre-allocated array of Chunk objects
      *
      * @note The class does NOT take ownership of chunkMem; memory is externally managed
      */
-    CfdpChunkList(ChunkIdx maxChunks, CfdpChunk* chunkMem);
+    CfdpChunkList(ChunkIdx maxChunks, Chunk* chunkMem);
 
     // ----------------------------------------------------------------------
     // Public Interface
@@ -144,7 +144,7 @@ class CfdpChunkList {
      * @returns Pointer to the first chunk
      * @retval  nullptr if the list is empty
      */
-    const CfdpChunk* getFirstChunk() const;
+    const Chunk* getFirstChunk() const;
 
     /**
      * @brief Remove a specified size from the first chunk
@@ -206,7 +206,7 @@ class CfdpChunkList {
      * @param index  Index position to insert at
      * @param chunk  Chunk data to insert
      */
-    void insertChunk(ChunkIdx index, const CfdpChunk* chunk);
+    void insertChunk(ChunkIdx index, const Chunk* chunk);
 
     /**
      * @brief Erase a single chunk at the given index
@@ -236,7 +236,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to find insertion point for
      * @returns Index where chunk should be inserted
      */
-    ChunkIdx findInsertPosition(const CfdpChunk* chunk);
+    ChunkIdx findInsertPosition(const Chunk* chunk);
 
     /**
      * @brief Attempt to combine chunk with the next chunk
@@ -247,7 +247,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to attempt combining
      * @returns true if chunks were combined, false otherwise
      */
-    bool combineNext(ChunkIdx i, const CfdpChunk* chunk);
+    bool combineNext(ChunkIdx i, const Chunk* chunk);
 
     /**
      * @brief Attempt to combine chunk with the previous chunk
@@ -258,7 +258,7 @@ class CfdpChunkList {
      * @param chunk  Chunk data to attempt combining
      * @returns true if chunks were combined, false otherwise
      */
-    bool combinePrevious(ChunkIdx i, const CfdpChunk* chunk);
+    bool combinePrevious(ChunkIdx i, const Chunk* chunk);
 
     /**
      * @brief Insert a chunk, potentially combining with neighbors
@@ -268,7 +268,7 @@ class CfdpChunkList {
      * @param i      Position to insert at
      * @param chunk  Chunk data to insert
      */
-    void insert(ChunkIdx i, const CfdpChunk* chunk);
+    void insert(ChunkIdx i, const Chunk* chunk);
 
     /**
      * @brief Find the index of the chunk with the smallest size
@@ -286,7 +286,7 @@ class CfdpChunkList {
 
     ChunkIdx m_count;       //!< Current number of chunks in the list
     ChunkIdx m_maxChunks;   //!< Maximum number of chunks allowed
-    CfdpChunk* m_chunks;        //!< Pointer to pre-allocated chunk array (not owned)
+    Chunk* m_chunks;        //!< Pointer to pre-allocated chunk array (not owned)
 };
 
 }  // namespace Cfdp

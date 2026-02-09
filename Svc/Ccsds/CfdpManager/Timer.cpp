@@ -4,7 +4,7 @@
 // \brief  cpp file for the Timer class implementation
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
+#include <Svc/Ccsds/CfdpManager/Timer.hpp>
 
 #include <Fw/Types/Assert.hpp>
 

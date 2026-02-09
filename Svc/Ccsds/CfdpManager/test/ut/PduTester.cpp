@@ -8,9 +8,9 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
@@ -28,7 +28,7 @@ namespace Cfdp {
 // PDU Test Helper Implementations
 // ----------------------------------------------------------------------
 
-CfdpTransaction* CfdpManagerTester::setupTestTransaction(
+Transaction* CfdpManagerTester::setupTestTransaction(
     TxnState state,
     U8 channelId,
     const char* srcFilename,
@@ -38,10 +38,10 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     U32 peerId
 ) {
     // For white box testing, directly use the first transaction for the specified channel
-    CfdpChannel* chan = component.m_engine->m_channels[channelId];
+    Channel* chan = component.m_engine->m_channels[channelId];
     FW_ASSERT(chan != nullptr);
 
-    CfdpTransaction* txn = chan->getTransaction(0);  // Use first transaction for channel
+    Transaction* txn = chan->getTransaction(0);  // Use first transaction for channel
     Cfdp::History* history = chan->getHistory(0);     // Use first history for channel
 
     // Initialize transaction state
@@ -606,7 +606,7 @@ void CfdpManagerTester::sendNakPdu(
 void CfdpManagerTester::testMetaDataPdu() {
     // Test pattern:
     // 1. Setup transaction
-    // 2. Invoke CfdpEngine->sendMd()
+    // 2. Invoke Engine->sendMd()
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
@@ -618,7 +618,7 @@ void CfdpManagerTester::testMetaDataPdu() {
     const U32 testSequenceId = 98;
     const U32 testPeerId = 100;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
@@ -652,7 +652,7 @@ void CfdpManagerTester::testFileDataPdu() {
     // Test pattern:
     // 1. Setup transaction
     // 2. Read test file and construct File Data PDU
-    // 3. Invoke CfdpEngine->sendFd()
+    // 3. Invoke Engine->sendFd()
     // 4. Capture PDU from dataOut and validate
 
     // Test file configuration
@@ -668,7 +668,7 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testSequenceId = 42;
     const U32 testPeerId = 200;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
@@ -732,7 +732,7 @@ void CfdpManagerTester::testFileDataPdu() {
 void CfdpManagerTester::testEofPdu() {
     // Test pattern:
     // 1. Setup transaction
-    // 2. Invoke CfdpEngine->sendEof()
+    // 2. Invoke Engine->sendEof()
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
@@ -744,7 +744,7 @@ void CfdpManagerTester::testEofPdu() {
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -797,7 +797,7 @@ void CfdpManagerTester::testEofPdu() {
 void CfdpManagerTester::testFinPdu() {
     // Test pattern:
     // 1. Setup transaction
-    // 2. Invoke CfdpEngine->sendFin()
+    // 2. Invoke Engine->sendFin()
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
@@ -809,7 +809,7 @@ void CfdpManagerTester::testFinPdu() {
     const U32 testSequenceId = 77;
     const U32 testPeerId = 200;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -853,7 +853,7 @@ void CfdpManagerTester::testFinPdu() {
 void CfdpManagerTester::testAckPdu() {
     // Test pattern:
     // 1. Setup transaction
-    // 2. Invoke CfdpEngine->sendAck()
+    // 2. Invoke Engine->sendAck()
     // 3. Capture PDU from dataOut
     // 4. Deserialize and validate
 
@@ -865,7 +865,7 @@ void CfdpManagerTester::testAckPdu() {
     const U32 testSequenceId = 88;
     const U32 testPeerId = 175;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
@@ -912,7 +912,7 @@ void CfdpManagerTester::testNakPdu() {
     // Test pattern:
     // 1. Setup transaction
     // 2. Construct NAK PDU with scope_start and scope_end
-    // 3. Invoke CfdpEngine->sendNak()
+    // 3. Invoke Engine->sendNak()
     // 4. Capture PDU from dataOut and validate
 
     // Configure transaction for NAK PDU emission
@@ -923,7 +923,7 @@ void CfdpManagerTester::testNakPdu() {
     const U32 testSequenceId = 99;
     const U32 testPeerId = 200;
 
-    CfdpTransaction* txn = setupTestTransaction(
+    Transaction* txn = setupTestTransaction(
         TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,

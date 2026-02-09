@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpEngine.hpp
+// \title  Engine.hpp
 // \brief  CFDP Engine header
 //
 // This file is a port of CFDP engine definitions from the following files
@@ -36,8 +36,8 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpTypes.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
+#include <Svc/Ccsds/CfdpManager/Types.hpp>
+#include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
@@ -45,7 +45,7 @@ namespace Svc {
 namespace Ccsds {
     class CfdpManager;  // CfdpManager stays in Svc::Ccsds
     namespace Cfdp {
-        class CfdpChannel;  // CfdpChannel is in Svc::Ccsds::Cfdp
+        class Channel;  // Channel is in Svc::Ccsds::Cfdp
     }
 }
 }
@@ -55,21 +55,21 @@ namespace Ccsds {
 namespace Cfdp {
 
 /**
- * @brief Structure for use with the CfdpChannel::cycleTx() function
+ * @brief Structure for use with the Channel::cycleTx() function
  */
 struct CycleTxArgs
 {
-    CfdpChannel *chan;    /**< \brief channel object */
+    Channel *chan;    /**< \brief channel object */
     int          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
 };
 
 /**
- * @brief Structure for use with the CfdpChannel::doTick() function
+ * @brief Structure for use with the Channel::doTick() function
  */
 struct TickArgs
 {
-    CfdpChannel *chan;                                /**< \brief channel object */
-    void (CfdpTransaction::*fn)(int *);               /**< \brief member function pointer */
+    Channel *chan;                                /**< \brief channel object */
+    void (Transaction::*fn)(int *);               /**< \brief member function pointer */
     bool early_exit;                                  /**< \brief early exit result */
     int  cont;                                        /**< \brief if 1, then re-traverse the list */
 };
@@ -91,23 +91,23 @@ struct TickArgs
  * - Has access to CfdpManager's protected logging methods via manager_ pointer
  * - Private methods encapsulate all internal CFDP protocol logic
  */
-class CfdpEngine {
+class Engine {
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
     /**
-     * @brief Construct a new CfdpEngine object
+     * @brief Construct a new Engine object
      *
      * @param manager Pointer to parent CfdpManager component
      */
-    explicit CfdpEngine(CfdpManager* manager);
+    explicit Engine(CfdpManager* manager);
 
     /**
-     * @brief Destroy the CfdpEngine object
+     * @brief Destroy the Engine object
      */
-    ~CfdpEngine();
+    ~Engine();
 
     // ----------------------------------------------------------------------
     // Public interface
@@ -222,7 +222,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param keep_history Whether the transaction info should be preserved in history
      */
-    void finishTransaction(CfdpTransaction *txn, bool keep_history);
+    void finishTransaction(Transaction *txn, bool keep_history);
 
     /**
      * @brief Helper function to store transaction status code only
@@ -233,7 +233,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
      */
-    void setTxnStatus(CfdpTransaction *txn, TxnStatus txn_stat);
+    void setTxnStatus(Transaction *txn, TxnStatus txn_stat);
 
     /**
      * @brief Arm the ACK timer for a transaction
@@ -243,7 +243,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void armAckTimer(CfdpTransaction *txn);
+    void armAckTimer(Transaction *txn);
 
     /**
      * @brief Arm the inactivity timer for a transaction
@@ -253,7 +253,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void armInactTimer(CfdpTransaction *txn);
+    void armInactTimer(Transaction *txn);
 
     /**
      * @brief Create, encode, and send a Metadata PDU
@@ -269,7 +269,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendMd(CfdpTransaction *txn);
+    Status::T sendMd(Transaction *txn);
 
     /**
      * @brief Encode and send a File Data PDU
@@ -286,7 +286,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendFd(CfdpTransaction *txn, FileDataPdu& fdPdu);
+    Status::T sendFd(Transaction *txn, FileDataPdu& fdPdu);
 
     /**
      * @brief Create, encode, and send an EOF (End of File) PDU
@@ -302,7 +302,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendEof(CfdpTransaction *txn);
+    Status::T sendEof(Transaction *txn);
 
     /**
      * @brief Create, encode, and send an ACK (Acknowledgment) PDU
@@ -328,7 +328,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendAck(CfdpTransaction *txn, AckTxnStatus ts, FileDirective dir_code,
+    Status::T sendAck(Transaction *txn, AckTxnStatus ts, FileDirective dir_code,
                           ConditionCode cc, EntityId peer_eid, TransactionSeq tsn);
 
     /**
@@ -348,7 +348,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendFin(CfdpTransaction *txn, FinDeliveryCode dc, FinFileStatus fs,
+    Status::T sendFin(Transaction *txn, FinDeliveryCode dc, FinFileStatus fs,
                           ConditionCode cc);
 
     /**
@@ -368,7 +368,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Status::T sendNak(CfdpTransaction *txn, NakPdu& nakPdu);
+    Status::T sendNak(Transaction *txn, NakPdu& nakPdu);
 
     /**
      * @brief Handle receipt of metadata PDU
@@ -379,7 +379,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
      */
-    void recvMd(CfdpTransaction *txn, const MetadataPdu& pdu);
+    void recvMd(Transaction *txn, const MetadataPdu& pdu);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -395,7 +395,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::ERROR for general errors
      * @retval Cfdp::Status::SHORT_PDU_ERROR PDU too short
      */
-    Status::T recvFd(CfdpTransaction *txn, const FileDataPdu& pdu);
+    Status::T recvFd(Transaction *txn, const FileDataPdu& pdu);
 
     /**
      * @brief Unpack an EOF PDU from a received message
@@ -410,7 +410,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Status::T recvEof(CfdpTransaction *txn, const EofPdu& pdu);
+    Status::T recvEof(Transaction *txn, const EofPdu& pdu);
 
     /**
      * @brief Unpack an ACK PDU from a received message
@@ -425,7 +425,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Status::T recvAck(CfdpTransaction *txn, const AckPdu& pdu);
+    Status::T recvAck(Transaction *txn, const AckPdu& pdu);
 
     /**
      * @brief Unpack an FIN PDU from a received message
@@ -440,7 +440,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Status::T recvFin(CfdpTransaction *txn, const FinPdu& pdu);
+    Status::T recvFin(Transaction *txn, const FinPdu& pdu);
 
     /**
      * @brief Unpack a NAK PDU from a received message
@@ -455,7 +455,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Status::T recvNak(CfdpTransaction *txn, const NakPdu& pdu);
+    Status::T recvNak(Transaction *txn, const NakPdu& pdu);
 
     /**
      * @brief Initiate a file transfer transaction
@@ -467,7 +467,7 @@ class CfdpEngine {
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      */
-    void txFileInitiate(CfdpTransaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
+    void txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
                         U8 priority, EntityId dest_id);
 
     /**
@@ -489,11 +489,11 @@ class CfdpEngine {
     /**
      * @brief Dispatch TX state machine for a transaction
      *
-     * Called by CfdpChannel to drive the TX state machine for a transaction.
+     * Called by Channel to drive the TX state machine for a transaction.
      *
      * @param txn  Pointer to the transaction state
      */
-    void dispatchTx(CfdpTransaction *txn);
+    void dispatchTx(Transaction *txn);
 
   private:
     // ----------------------------------------------------------------------
@@ -504,12 +504,12 @@ class CfdpEngine {
     CfdpManager* m_manager;       
 
     //! Channel data structures
-    CfdpChannel* m_channels[CFDP_NUM_CHANNELS];
+    Channel* m_channels[CFDP_NUM_CHANNELS];
 
     //! Sequence number tracker for outgoing transactions
     TransactionSeq m_seqNum;
 
-    // Note: Transactions, histories, and chunks are now owned by each CfdpChannel
+    // Note: Transactions, histories, and chunks are now owned by each Channel
 
     // ----------------------------------------------------------------------
     // Private helper methods
@@ -523,14 +523,14 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void sendEotPkt(CfdpTransaction *txn);
+    void sendEotPkt(Transaction *txn);
 
     /**
      * @brief Cancels a transaction
      *
      * @param txn  Pointer to the transaction state
      */
-    void cancelTransaction(CfdpTransaction *txn);
+    void cancelTransaction(Transaction *txn);
 
     /**
      * @brief Helper function to start a new RX transaction
@@ -545,7 +545,7 @@ class CfdpEngine {
      * @param chan_num  CFDP channel number
      * @returns Pointer to new transaction
      */
-    CfdpTransaction* startRxTransaction(U8 chan_num);
+    Transaction* startRxTransaction(U8 chan_num);
 
     // PDU Operations - Send
 
@@ -560,7 +560,7 @@ class CfdpEngine {
      * @param txn    Pointer to the transaction state
      * @param buffer Buffer containing the PDU to process
      */
-    void recvDrop(CfdpTransaction *txn, const Fw::Buffer& buffer);
+    void recvDrop(Transaction *txn, const Fw::Buffer& buffer);
 
     /**
      * @brief Receive state function during holdover period
@@ -574,7 +574,7 @@ class CfdpEngine {
      * @param txn    Pointer to the transaction state
      * @param buffer Buffer containing the PDU to process
      */
-    void recvHold(CfdpTransaction *txn, const Fw::Buffer& buffer);
+    void recvHold(Transaction *txn, const Fw::Buffer& buffer);
 
     /**
      * @brief Receive state function to process new rx transaction
@@ -588,7 +588,7 @@ class CfdpEngine {
      * @param txn    Pointer to the transaction state
      * @param buffer Buffer containing the PDU to process
      */
-    void recvInit(CfdpTransaction *txn, const Fw::Buffer& buffer);
+    void recvInit(Transaction *txn, const Fw::Buffer& buffer);
 
     // Dispatch
 
@@ -601,7 +601,7 @@ class CfdpEngine {
      * @param txn    Pointer to the transaction state
      * @param buffer Buffer containing the PDU to dispatch
      */
-    void dispatchRecv(CfdpTransaction *txn, const Fw::Buffer& buffer);
+    void dispatchRecv(Transaction *txn, const Fw::Buffer& buffer);
 
     // Channel Processing
 
@@ -622,7 +622,7 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      */
-    void handleNotKeepFile(CfdpTransaction *txn);
+    void handleNotKeepFile(Transaction *txn);
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

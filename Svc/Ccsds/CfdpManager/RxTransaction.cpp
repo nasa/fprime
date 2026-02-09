@@ -40,12 +40,12 @@
 #include <Fw/Types/SuccessEnumAc.hpp>
 #include <Os/FileSystem.hpp>
 
-#include <Svc/Ccsds/CfdpManager/CfdpTransaction.hpp>
+#include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpEngine.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpUtils.hpp>
-#include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
+#include <Svc/Ccsds/CfdpManager/Chunk.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -55,7 +55,7 @@ namespace Cfdp {
 // Construction and Destruction
 // ======================================================================
 
-CfdpTransaction::CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine* engine, CfdpManager* manager) :
+Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpManager* manager) :
     m_state(TXN_STATE_UNDEF),
     m_txn_class(Cfdp::Class::CLASS_1),
     m_history(nullptr),
@@ -80,9 +80,9 @@ CfdpTransaction::CfdpTransaction(CfdpChannel* channel, U8 channelId, CfdpEngine*
     // All members initialized via member initializer list above
 }
 
-CfdpTransaction::~CfdpTransaction() { }
+Transaction::~Transaction() { }
 
-void CfdpTransaction::reset()
+void Transaction::reset()
 {
     // Reset transaction state to default values
     this->m_state = TXN_STATE_UNDEF;
@@ -120,14 +120,14 @@ void CfdpTransaction::reset()
 // RX State Machine - Public Methods
 // ======================================================================
 
-void CfdpTransaction::r1Recv(const Fw::Buffer& buffer) {
+void Transaction::r1Recv(const Fw::Buffer& buffer) {
     static const FileDirectiveDispatchTable r1_fdir_handlers = {
         {
             nullptr, /* CFDP_FileDirective_INVALID_MIN */
             nullptr, /* 1 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 2 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 3 is unused in the CFDP_FileDirective_t enum */
-            &CfdpTransaction::r1SubstateRecvEof, /* CFDP_FileDirective_EOF */
+            &Transaction::r1SubstateRecvEof, /* CFDP_FileDirective_EOF */
             nullptr, /* CFDP_FileDirective_FIN */
             nullptr, /* CFDP_FileDirective_ACK */
             nullptr, /* CFDP_FileDirective_METADATA */
@@ -147,20 +147,20 @@ void CfdpTransaction::r1Recv(const Fw::Buffer& buffer) {
         }
     };
 
-    this->rDispatchRecv(buffer, &substate_fns, &CfdpTransaction::r1SubstateRecvFileData);
+    this->rDispatchRecv(buffer, &substate_fns, &Transaction::r1SubstateRecvFileData);
 }
 
-void CfdpTransaction::r2Recv(const Fw::Buffer& buffer) {
+void Transaction::r2Recv(const Fw::Buffer& buffer) {
     static const FileDirectiveDispatchTable r2_fdir_handlers_normal = {
         {
             nullptr, /* CFDP_FileDirective_INVALID_MIN */
             nullptr, /* 1 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 2 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 3 is unused in the CFDP_FileDirective_t enum */
-            &CfdpTransaction::r2SubstateRecvEof, /* CFDP_FileDirective_EOF */
+            &Transaction::r2SubstateRecvEof, /* CFDP_FileDirective_EOF */
             nullptr, /* CFDP_FileDirective_FIN */
             nullptr, /* CFDP_FileDirective_ACK */
-            &CfdpTransaction::r2RecvMd, /* CFDP_FileDirective_METADATA */
+            &Transaction::r2RecvMd, /* CFDP_FileDirective_METADATA */
             nullptr, /* CFDP_FileDirective_NAK */
             nullptr, /* CFDP_FileDirective_PROMPT */
             nullptr, /* 10 is unused in the CFDP_FileDirective_t enum */
@@ -174,9 +174,9 @@ void CfdpTransaction::r2Recv(const Fw::Buffer& buffer) {
             nullptr, /* 1 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 2 is unused in the CFDP_FileDirective_t enum */
             nullptr, /* 3 is unused in the CFDP_FileDirective_t enum */
-            &CfdpTransaction::r2SubstateRecvEof, /* CFDP_FileDirective_EOF */
+            &Transaction::r2SubstateRecvEof, /* CFDP_FileDirective_EOF */
             nullptr, /* CFDP_FileDirective_FIN */
-            &CfdpTransaction::r2RecvFinAck, /* CFDP_FileDirective_ACK */
+            &Transaction::r2RecvFinAck, /* CFDP_FileDirective_ACK */
             nullptr, /* CFDP_FileDirective_METADATA */
             nullptr, /* CFDP_FileDirective_NAK */
             nullptr, /* CFDP_FileDirective_PROMPT */
@@ -194,10 +194,10 @@ void CfdpTransaction::r2Recv(const Fw::Buffer& buffer) {
         }
     };
 
-    this->rDispatchRecv(buffer, &substate_fns, &CfdpTransaction::r2SubstateRecvFileData);
+    this->rDispatchRecv(buffer, &substate_fns, &Transaction::r2SubstateRecvFileData);
 }
 
-void CfdpTransaction::rAckTimerTick() {
+void Transaction::rAckTimerTick() {
     U8 ack_limit = 0;
 
     /* note: the ack timer is only ever armed on class 2 */
@@ -252,7 +252,7 @@ void CfdpTransaction::rAckTimerTick() {
     }
 }
 
-void CfdpTransaction::rTick(int *cont /* unused */) {
+void Transaction::rTick(int *cont /* unused */) {
     /* Steven is not real happy with this function. There should be a better way to separate out
      * the logic by state so that it isn't a bunch of if statements for different flags
      */
@@ -344,7 +344,7 @@ void CfdpTransaction::rTick(int *cont /* unused */) {
     }
 }
 
-void CfdpTransaction::rCancel() {
+void Transaction::rCancel() {
     /* for cancel, only need to send FIN if R2 */
     if ((this->m_state == TXN_STATE_R2) && (this->m_state_data.receive.sub_state < RX_SUB_STATE_CLOSEOUT_SYNC))
     {
@@ -356,7 +356,7 @@ void CfdpTransaction::rCancel() {
     }
 }
 
-void CfdpTransaction::rInit() {
+void Transaction::rInit() {
     Os::File::Status status;
     Fw::String tmpDir;
     Fw::String dst;
@@ -411,19 +411,19 @@ void CfdpTransaction::rInit() {
     }
 }
 
-void CfdpTransaction::r2SetFinTxnStatus(TxnStatus txn_stat) {
+void Transaction::r2SetFinTxnStatus(TxnStatus txn_stat) {
     this->m_engine->setTxnStatus(this, txn_stat);
     this->m_flags.rx.send_fin = true;
 }
 
-void CfdpTransaction::r1Reset() {
+void Transaction::r1Reset() {
     this->m_engine->finishTransaction(this, true);
 }
 
-void CfdpTransaction::r2Reset() {
+void Transaction::r2Reset() {
     if ((this->m_state_data.receive.sub_state == RX_SUB_STATE_CLOSEOUT_SYNC) ||
         (this->m_state_data.receive.r2.eof_cc != CONDITION_CODE_NO_ERROR) ||
-        CfdpTxnStatusIsError(this->m_history->txn_stat) || this->m_flags.com.canceled)
+        TxnStatusIsError(this->m_history->txn_stat) || this->m_flags.com.canceled)
     {
         this->r1Reset(); /* it's done */
     }
@@ -434,7 +434,7 @@ void CfdpTransaction::r2Reset() {
     }
 }
 
-Status::T CfdpTransaction::rCheckCrc(U32 expected_crc) {
+Status::T Transaction::rCheckCrc(U32 expected_crc) {
     Status::T ret = Cfdp::Status::SUCCESS;
     U32 crc_result;
 
@@ -457,7 +457,7 @@ Status::T CfdpTransaction::rCheckCrc(U32 expected_crc) {
     return ret;
 }
 
-void CfdpTransaction::r2Complete(int ok_to_send_nak) {
+void Transaction::r2Complete(int ok_to_send_nak) {
     U32 ret;
     bool send_nak = false;
     bool send_fin = false;
@@ -465,7 +465,7 @@ void CfdpTransaction::r2Complete(int ok_to_send_nak) {
     /* checking if r2 is complete. Check NAK list, and send NAK if appropriate */
     /* if all data is present, then there will be no gaps in the chunk */
 
-    if (!CfdpTxnStatusIsError(this->m_history->txn_stat))
+    if (!TxnStatusIsError(this->m_history->txn_stat))
     {
         /* first, check if md is received. If not, send specialized NAK */
         if (!this->m_flags.rx.md_recv)
@@ -531,7 +531,7 @@ void CfdpTransaction::r2Complete(int ok_to_send_nak) {
 // RX State Machine - Private Helper Methods
 // ======================================================================
 
-Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
+Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     Status::T ret = Cfdp::Status::SUCCESS;
 
     /* this function is only entered for data PDUs */
@@ -599,7 +599,7 @@ Status::T CfdpTransaction::rProcessFd(const Fw::Buffer& buffer) {
     return ret;
 }
 
-Status::T CfdpTransaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
+Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
     Status::T ret = Cfdp::Status::SUCCESS;
 
     // Deserialize EOF PDU from buffer
@@ -644,7 +644,7 @@ Status::T CfdpTransaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
     return ret;
 }
 
-void CfdpTransaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
+void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
     // Deserialize EOF PDU from buffer
     EofPdu eof;
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
@@ -680,7 +680,7 @@ void CfdpTransaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
     this->r1Reset();
 }
 
-void CfdpTransaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
+void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
     Status::T ret;
 
     if (!this->m_flags.rx.eof_recv)
@@ -742,7 +742,7 @@ void CfdpTransaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::r1SubstateRecvFileData(const Fw::Buffer& buffer) {
+void Transaction::r1SubstateRecvFileData(const Fw::Buffer& buffer) {
     Status::T ret;
 
     // Deserialize FileData PDU from buffer
@@ -778,7 +778,7 @@ void CfdpTransaction::r1SubstateRecvFileData(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
+void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
     Status::T ret;
 
     // If CRC calculation has started (file reopened in READ mode), ignore late FileData PDUs.
@@ -834,7 +834,7 @@ void CfdpTransaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::r2GapCompute(const CfdpChunk *chunk, NakPdu& nak) {
+void Transaction::r2GapCompute(const Chunk *chunk, NakPdu& nak) {
     FW_ASSERT(chunk->size > 0, chunk->size);
 
     // Calculate segment offsets relative to scope start
@@ -845,7 +845,7 @@ void CfdpTransaction::r2GapCompute(const CfdpChunk *chunk, NakPdu& nak) {
     nak.addSegment(offsetStart, offsetEnd);
 }
 
-Status::T CfdpTransaction::rSubstateSendNak() {
+Status::T Transaction::rSubstateSendNak() {
     Status::T status = Cfdp::Status::SUCCESS;
 
     // Create and initialize NAK PDU
@@ -874,7 +874,7 @@ Status::T CfdpTransaction::rSubstateSendNak() {
             static_cast<ChunkIdx>(gapLimit),
             this->m_fsize,
             0,
-            [this, &nakPdu](const CfdpChunk* chunk, void* opaque) {
+            [this, &nakPdu](const Chunk* chunk, void* opaque) {
                 this->r2GapCompute(chunk, nakPdu);
             },
             nullptr);
@@ -913,7 +913,7 @@ Status::T CfdpTransaction::rSubstateSendNak() {
     return status;
 }
 
-Status::T CfdpTransaction::r2CalcCrcChunk() {
+Status::T Transaction::r2CalcCrcChunk() {
     U8 buf[CFDP_R2_CRC_CHUNK_SIZE];
     FileSize count_bytes;
     FileSize want_offs_size;
@@ -1035,11 +1035,11 @@ Status::T CfdpTransaction::r2CalcCrcChunk() {
     return ret;
 }
 
-Status::T CfdpTransaction::r2SubstateSendFin() {
+Status::T Transaction::r2SubstateSendFin() {
     Status::T sret;
     Status::T ret = Cfdp::Status::SUCCESS;
 
-    if (!CfdpTxnStatusIsError(this->m_history->txn_stat) && !this->m_flags.com.crc_calc)
+    if (!TxnStatusIsError(this->m_history->txn_stat) && !this->m_flags.com.crc_calc)
     {
         /* no error, and haven't checked CRC -- so start checking it */
         if (this->r2CalcCrcChunk())
@@ -1051,7 +1051,7 @@ Status::T CfdpTransaction::r2SubstateSendFin() {
     if (ret != Cfdp::Status::ERROR)
     {
         sret = this->m_engine->sendFin(this, this->m_state_data.receive.r2.dc, this->m_state_data.receive.r2.fs,
-                               static_cast<ConditionCode>(CfdpTxnStatusToConditionCode(this->m_history->txn_stat)));
+                               static_cast<ConditionCode>(TxnStatusToConditionCode(this->m_history->txn_stat)));
         /* CFDP_SendFin does not return SEND_PDU_ERROR */
         FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
         this->m_state_data.receive.sub_state =
@@ -1066,7 +1066,7 @@ Status::T CfdpTransaction::r2SubstateSendFin() {
     return ret;
 }
 
-void CfdpTransaction::r2RecvFinAck(const Fw::Buffer& buffer) {
+void Transaction::r2RecvFinAck(const Fw::Buffer& buffer) {
     // Deserialize ACK PDU from buffer
     AckPdu ack;
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
@@ -1097,7 +1097,7 @@ void CfdpTransaction::r2RecvFinAck(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::r2RecvMd(const Fw::Buffer& buffer) {
+void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
     Fw::String fname;
     Os::File::Status fileStatus;
     Os::FileSystem::Status fileSysStatus;
@@ -1191,7 +1191,7 @@ void CfdpTransaction::r2RecvMd(const Fw::Buffer& buffer) {
     }
 }
 
-void CfdpTransaction::rSendInactivityEvent() {
+void Transaction::rSendInactivityEvent() {
     // CFE_EVS_SendEvent(CFDP_R_INACT_TIMER_ERR_EID, CFE_EVS_EventType_ERROR,
     //                   "CF R%d(%lu:%lu): inactivity timer expired", (this->m_state == TXN_STATE_R2),
     //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
@@ -1202,7 +1202,7 @@ void CfdpTransaction::rSendInactivityEvent() {
 // Dispatch Methods
 // ======================================================================
 
-void CfdpTransaction::rDispatchRecv(const Fw::Buffer& buffer,
+void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
                                     const RSubstateDispatchTable *dispatch,
                                     StateRecvFunc fd_fn)
 {
@@ -1220,7 +1220,7 @@ void CfdpTransaction::rDispatchRecv(const Fw::Buffer& buffer,
     if (pduType == Cfdp::T_FILE_DATA)
     {
         /* For file data PDU, use the provided fd_fn */
-        if (!CfdpTxnStatusIsError(this->m_history->txn_stat))
+        if (!TxnStatusIsError(this->m_history->txn_stat))
         {
             selected_handler = fd_fn;
         }
