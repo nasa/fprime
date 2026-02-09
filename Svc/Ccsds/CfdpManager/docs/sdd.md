@@ -31,12 +31,49 @@ The F' implementation adds new components built specifically for the F' ecosyste
 For detailed attribution, licensing information, and a complete breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
 
 ## Class Diagram
-Add a class diagram here
 
-## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
+The CfdpManager component diagram shows the port organization by functional grouping:
+
+![CfdpManager Component Diagram](imgs/class_diagram.md)
+
+Ports are organized as follows:
+- **Top (System Ports)**: System health and scheduling - `run1Hz`, `pingIn`, `pingOut`
+- **Bottom (File Transfer Ports)**: Programmatic file send interface - `sendFile`, `fileComplete`
+- **Left (Uplink Ports)**: Receive CFDP PDUs from remote entities - `dataIn`, `dataInReturn`
+- **Right (Downlink Ports)**: Send CFDP PDUs to remote entities - `dataOut`, `dataReturnIn`, `bufferAllocate`, `bufferDeallocate`
+
+### Port Descriptions
+
+#### System Ports
+
+| Name | Type | Port Type | Description |
+|------|------|-----------|-------------|
+| run1Hz | async input | `Svc.Sched` | Scheduler port that must be invoked at 1 Hz to drive CFDP protocol timer logic, transaction processing, and state machine execution |
+| pingIn | async input | `Svc.Ping` | Health check input port for liveness monitoring |
+| pingOut | output | `Svc.Ping` | Health check output port for responding to pings |
+
+#### Downlink Ports
+
+| Name | Type | Port Type | Description |
+|------|------|-----------|-------------|
+| dataOut | output array[N] | `Fw.BufferSend` | Send encoded CFDP PDU data buffers to downstream components. One port (`N`) per CFDP channel. |
+| dataReturnIn | async input array[N] | `Svc.ComDataWithContext` | Receive buffers previously sent via `dataOut` after downstream processing is complete. One port per CFDP channel. |
+| bufferAllocate | output array[N] | `Fw.BufferGet` | Request allocation of buffers for constructing outgoing CFDP PDUs. One port (`N`) per CFDP channel. |
+| bufferDeallocate | output array[N] | `Fw.BufferSend` | Return/deallocate buffers that were allocated but not sent (e.g., due to errors). One port (`N`) per CFDP channel. |
+
+#### Uplink Ports
+
+| Name | Type | Port Type | Description |
+|------|------|-----------|-------------|
+| dataIn | async input array[N] | `Fw.BufferSend` | Receive incoming CFDP PDU data buffers from upstream components (e.g., frame deencapsulation, radio). One port (`N`) per CFDP channel. |
+| dataInReturn | output array[N] | `Fw.BufferSend` | Return buffers received via `dataIn` after PDU processing is complete. One port (`N`) per CFDP channel. |
+
+#### File Transfer Ports
+
+| Name | Type | Port Type | Description |
+|------|------|-----------|-------------|
+| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Returns transaction initialization status (OK, BUSY, ERROR). |
+| fileComplete | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `sendFile` port. Provides final transfer status. |
 
 ## Usage Examples
 Add usage examples here
