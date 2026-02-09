@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpTxTransaction.cpp
+// \title  TransactionTx.cpp
 // \brief  cpp file for CFDP TX Transaction state machine
 //
 // This file is a port of TX transaction state machine operations from the following files

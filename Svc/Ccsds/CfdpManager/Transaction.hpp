@@ -11,8 +11,8 @@
 //
 // This file contains the unified interface for CFDP transaction state
 // machines, encompassing both TX (send) and RX (receive) operations.
-// The implementation is split across CfdpTxTransaction.cpp and
-// CfdpRxTransaction.cpp for maintainability.
+// The implementation is split across TransactionTx.cpp and
+// TransactionRx.cpp for maintainability.
 //
 // ======================================================================
 //
@@ -157,8 +157,8 @@ struct SSubstateSendDispatchTable
  *
  * This class provides TX and RX state machine operations for CFDP transactions.
  * Implementation is split across multiple files for maintainability:
- * - CfdpTxTransaction.cpp: TX (send) state machine implementation
- * - CfdpRxTransaction.cpp: RX (receive) state machine implementation
+ * - TransactionTx.cpp: TX (send) state machine implementation
+ * - TransactionRx.cpp: RX (receive) state machine implementation
  */
 class Transaction {
   friend class Engine;
@@ -256,7 +256,7 @@ class Transaction {
     TxnState getState() const { return m_state; }
 
     // ----------------------------------------------------------------------
-    // TX State Machine - Implemented in CfdpTxTransaction.cpp
+    // TX State Machine - Implemented in TransactionTx.cpp
     // ----------------------------------------------------------------------
 
     /************************************************************************/
@@ -421,7 +421,7 @@ class Transaction {
 
   public:
     // ----------------------------------------------------------------------
-    // RX State Machine - Implemented in CfdpRxTransaction.cpp
+    // RX State Machine - Implemented in TransactionRx.cpp
     // ----------------------------------------------------------------------
 
     /************************************************************************/

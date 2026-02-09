@@ -16,18 +16,17 @@ Portions of this code are derived from the NASA Core Flight System (cFS) CFDP (C
 The following files are ports/adaptations from CF source code and retain the original NASA copyright:
 
 ### Core Engine & Transaction Management
-- `CfdpEngine.hpp` / `.cpp` - from `cf_cfdp.c` / `cf_cfdp.h`
-- `CfdpTransaction.hpp` - from `cf_cfdp_r.h` / `cf_cfdp_s.h` / `cf_cfdp_dispatch.h`
-- `CfdpTxTransaction.cpp` - from `cf_cfdp_s.c` / `cf_cfdp_dispatch.c`
-- `CfdpRxTransaction.cpp` - from `cf_cfdp_r.c` / `cf_cfdp_dispatch.c`
+- `Engine.hpp` / `.cpp` - from `cf_cfdp.c` / `cf_cfdp.h`
+- `Transaction.hpp` - from `cf_cfdp_r.h` / `cf_cfdp_s.h` / `cf_cfdp_dispatch.h`
+- `TransactionTx.cpp` - from `cf_cfdp_s.c` / `cf_cfdp_dispatch.c`
+- `TransactionRx.cpp` - from `cf_cfdp_r.c` / `cf_cfdp_dispatch.c`
 
 ### Data Structures & Utilities
-- `CfdpTypes.hpp` - from `cf_cfdp_types.h`
-- `CfdpUtils.hpp` / `.cpp` - from `cf_utils.h` / `cf_utils.c`
-- `CfdpChannel.hpp` / `.cpp` - from channel functions in `cf_cfdp.c` / `cf_utils.c`
-- `CfdpChunk.hpp` / `.cpp` - from `cf_chunks.h` / `cf_chunks.c`
-- `CfdpClist.hpp` / `.cpp` - from `cf_clist.h` / `cf_clist.c`
-- `CfdpPdu.hpp` - from `cf_cfdp_pdu.h`
+- `Types/Types.hpp` - from `cf_cfdp_types.h`
+- `Utils.hpp` / `.cpp` - from `cf_utils.h` / `cf_utils.c`
+- `Channel.hpp` / `.cpp` - from channel functions in `cf_cfdp.c` / `cf_utils.c`
+- `Chunk.hpp` / `.cpp` - from `cf_chunks.h` / `cf_chunks.c`
+- `Clist.hpp` / `.cpp` - from `cf_clist.h` / `cf_clist.c`
 
 Each of these files includes the full NASA copyright notice and Apache 2.0 license text in its header.
 
@@ -37,18 +36,18 @@ The following files are new implementations for F-Prime and do not contain CF-de
 
 ### Integration Layer
 - `CfdpManager.hpp` / `.cpp` - F-Prime component wrapper
-- `CfdpTimer.hpp` / `.cpp` - F-Prime timer implementation
+- `Timer.hpp` / `.cpp` - F-Prime timer implementation
 
 ### PDU Object-Oriented Implementation
 All files in the `Types/` directory are new F' serializable implementations based on the CFDP Blue Book specification (CCSDS 727.0-B-5):
-- `Types/Pdu.hpp` / `.cpp`
-- `Types/PduHeader.cpp`
-- `Types/MetadataPdu.cpp`
-- `Types/FileDataPdu.cpp`
-- `Types/EofPdu.cpp`
-- `Types/FinPdu.cpp`
-- `Types/AckPdu.cpp`
-- `Types/NakPdu.cpp`
+- `Types/PduBase.hpp` - Base class for all PDU types
+- `Types/PduHeader.hpp` / `.cpp` - PDU header encoding/decoding
+- `Types/MetadataPdu.hpp` / `.cpp` - Metadata PDU
+- `Types/FileDataPdu.hpp` / `.cpp` - File Data PDU
+- `Types/EofPdu.hpp` / `.cpp` - End of File PDU
+- `Types/FinPdu.hpp` / `.cpp` - Finished PDU
+- `Types/AckPdu.hpp` / `.cpp` - Acknowledge PDU
+- `Types/NakPdu.hpp` / `.cpp` - Negative Acknowledge PDU
 
 These files implement CFDP PDU encoding/decoding based on the specification rather than porting CF's C-style codec.
 

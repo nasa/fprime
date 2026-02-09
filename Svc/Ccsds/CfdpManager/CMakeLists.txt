@@ -21,8 +21,8 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/Utils.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Timer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Channel.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/TxTransaction.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/RxTransaction.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TransactionTx.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TransactionRx.cpp"
     DEPENDS
         CFDP_Checksum
         Svc_Ccsds_CfdpManager_Types

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpUtils.hpp
+// \title  Utils.hpp
 // \brief  CFDP utilities header
 //
 // This file is a port of CFDP utility functions from the following files

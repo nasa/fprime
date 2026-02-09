@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpRxTransaction.cpp
+// \title  TransactionRx.cpp
 // \brief  cpp file for CFDP RX Transaction state machine
 //
 // This file is a port of RX transaction state machine operations from the following files
