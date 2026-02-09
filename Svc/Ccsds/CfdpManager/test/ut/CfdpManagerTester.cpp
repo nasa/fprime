@@ -75,12 +75,12 @@ void CfdpManagerTester::from_dataOut_handler(
     }
 }
 
-void CfdpManagerTester::from_fileComplete_handler(
+void CfdpManagerTester::from_fileDoneOut_handler(
     FwIndexType portNum,
     const Svc::SendFileResponse& response
 ) {
     // Push to port history
-    CfdpManagerGTestBase::from_fileComplete_handler(portNum, response);
+    CfdpManagerGTestBase::from_fileDoneOut_handler(portNum, response);
 }
 
 // ----------------------------------------------------------------------
@@ -430,7 +430,7 @@ Svc::SendFileResponse CfdpManagerTester::invokeSendFilePort(
 ) {
     Fw::String source(srcFile);
     Fw::String dest(dstFile);
-    Svc::SendFileResponse response = this->invoke_to_sendFile(
+    Svc::SendFileResponse response = this->invoke_to_fileIn(
         0,                    // portNum
         source,              // sourceFileName
         dest,                // destFileName
@@ -862,14 +862,14 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(
     // Complete Class 2 handshake
     completeClass2Handshake(channelId, TEST_GROUND_EID, setup.expectedSeqNum, setup.txn);
 
-    // If port-initiated, verify fileComplete callback BEFORE clearing history
+    // If port-initiated, verify fileDoneOut callback BEFORE clearing history
     if (initType == INIT_BY_PORT) {
-        ASSERT_EQ(1u, this->fromPortHistory_fileComplete->size())
-            << "fileComplete port should be invoked once for port-initiated transfer";
+        ASSERT_EQ(1u, this->fromPortHistory_fileDoneOut->size())
+            << "fileDoneOut port should be invoked once for port-initiated transfer";
         Svc::SendFileResponse completionResp =
-            this->fromPortHistory_fileComplete->at(0).resp;
+            this->fromPortHistory_fileDoneOut->at(0).resp;
         ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, completionResp.get_status())
-            << "fileComplete should indicate success";
+            << "fileDoneOut should indicate success";
     }
 
     // Wait for transaction recycle

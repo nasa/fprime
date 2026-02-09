@@ -408,8 +408,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Fw::Buffer& fwBuffer
     ) override;
 
-    //! Handler for from_fileComplete - just push port history for testing
-    void from_fileComplete_handler(
+    //! Handler for from_fileDoneOut - just push port history for testing
+    void from_fileDoneOut_handler(
         FwIndexType portNum,
         const Svc::SendFileResponse& response
     ) override;

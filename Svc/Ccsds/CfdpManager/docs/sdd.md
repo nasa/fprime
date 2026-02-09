@@ -42,7 +42,7 @@ Ports are organized as follows:
 - **Top (System Ports)**: Scheduling and system health - `run1Hz`, `pingIn`, `pingOut`
 - **Left (Uplink Ports)**: Receive CFDP PDUs from remote entities - `dataIn`, `dataInReturn`
 - **Right (Downlink Ports)**: Send CFDP PDUs to remote entities - `dataOut`, `dataReturnIn`, `bufferAllocate`, `bufferDeallocate`
-- **Bottom (File Transfer Ports)**: Programmatic file send interface - `sendFile`, `fileComplete`
+- **Bottom (File Transfer Ports)**: Port-based file send interface - `fileIn`, `fileDoneOut`
 
 ### Port Descriptions
 
@@ -74,14 +74,50 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PORT_DEFAULT_CHANNEL` and `PORT_DEFAULT_DEST_ENTITY_ID`, (2) `cfdpClass` is hardcoded to `CLASS_2` , (3) `keep` is hardcoded to `KEEP`, (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
-| fileComplete | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `sendFile` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
+| fileIn | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PORT_DEFAULT_CHANNEL` and `PORT_DEFAULT_DEST_ENTITY_ID`, (2) `cfdpClass` is hardcoded to `CLASS_2` , (3) `keep` is hardcoded to `KEEP`, (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
+| fileDoneOut | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `fileIn` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
 
 ## Usage Examples
-Add usage examples here
 
-### Diagrams
-Add diagrams here
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#0b1d26",
+    "primaryColor": "#5b8f9e",
+    "primaryTextColor": "#ffffff",
+    "primaryBorderColor": "#5b8f9e",
+    "lineColor": "#cfd8dc",
+    "fontSize": "14px"
+  }
+}}%%
+
+flowchart LR
+  subgraph FprimeRouter
+    FprimeRouter_fileOut["fileOut<br/>0"]
+  end
+
+  subgraph CfdpManager
+    CfdpManager_dataIn["dataIn<br/>0"]
+    CfdpManager_dataOut["dataOut<br/>0"]
+    CfdpManager_sendFile["sendFile<br/>0"]
+    CfdpManager_fileDoneOut["fileDoneOut<br/>0"]
+  end
+
+  subgraph ComQueue
+    ComQueue_bufferQueueIn["bufferQueueIn<br/>0"]
+  end
+
+  subgraph DpCatalog
+    DpCatalog_fileOut["fileOut<br/>0"]
+    DpCatalog_fileDone["fileDone<br/>1"]
+  end
+
+  FprimeRouter_fileOut --> CfdpManager_dataIn
+  CfdpManager_dataOut --> ComQueue_bufferQueueIn
+  DpCatalog_fileOut --> CfdpManager_sendFile
+  CfdpManager_fileDoneOut --> DpCatalog_fileDone
+```
 
 ### Typical Usage
 And the typical usage of the component here

@@ -49,10 +49,10 @@ module Cfdp {
 
         # DP ports
         @ File send request port
-        guarded input port sendFile: Svc.SendFileRequest
+        guarded input port fileIn: Svc.SendFileRequest
 
         @ File send complete notification port
-        output port fileComplete: Svc.SendFileComplete
+        output port fileDoneOut: Svc.SendFileComplete
 
 
         ###############################################################################

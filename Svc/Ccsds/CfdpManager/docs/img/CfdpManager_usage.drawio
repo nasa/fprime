@@ -1,0 +1,103 @@
+<mxfile host="65bd71144e">
+    <diagram name="CfdpManager Usage" id="usage">
+        <mxGraphModel dx="1026" dy="433" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="9" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#43A047;" edge="1" parent="1" source="CfdpManager_fileDoneOut" target="DpCatalog_fileOut">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ComQueue_bufferQueueIn_label" value="bufferQueueIn" style="text;html=1;align=right;verticalAlign=middle;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="265" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="DpCatalog_fileDone_label" value="fileDone&lt;br&gt;1" style="text;html=1;align=center;verticalAlign=middle;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="95" y="565" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="conn1" value="" style="endArrow=classic;html=1;strokeColor=#8E24AA;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="FprimeRouter_fileOut" target="CfdpManager_dataIn" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="250" y="250" as="sourcePoint"/>
+                        <mxPoint x="300" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="conn2" value="" style="endArrow=classic;html=1;strokeColor=#e64a19;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="CfdpManager_dataOut" target="ComQueue_bufferQueueIn" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="560" y="260" as="sourcePoint"/>
+                        <mxPoint x="690" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#43A047;" edge="1" parent="1" source="DpCatalog_fileDone" target="CfdpManager_sendFile">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="50" y="200" width="210" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="FprimeRouter" value="&lt;br&gt;FprimeRouter" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=12;fontStyle=1;verticalAlign=top;fontColor=#000000;" parent="10" vertex="1">
+                    <mxGeometry width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="FprimeRouter_fileOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" parent="10" vertex="1">
+                    <mxGeometry x="150" y="45" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="FprimeRouter_fileOut_label" value="fileOut" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" parent="10" vertex="1">
+                    <mxGeometry x="160" y="65" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="295" y="200" width="270" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager" value="&lt;br&gt;CfdpManager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=12;fontStyle=1;verticalAlign=top;fontColor=#000000;" parent="11" vertex="1">
+                    <mxGeometry x="55" width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_dataIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8E24AA;" parent="11" vertex="1">
+                    <mxGeometry x="45" y="45" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_dataIn_label" value="dataIn" style="text;html=1;align=right;verticalAlign=middle;fontSize=9;" parent="11" vertex="1">
+                    <mxGeometry y="25" width="55" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_dataOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#e64a19;" parent="11" vertex="1">
+                    <mxGeometry x="205" y="45" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_dataOut_label" value="dataOut" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" parent="11" vertex="1">
+                    <mxGeometry x="215" y="25" width="55" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_sendFile" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43A047;" parent="11" vertex="1">
+                    <mxGeometry x="85" y="110" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_sendFile_label" value="fileIn" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" parent="11" vertex="1">
+                    <mxGeometry x="105" y="120" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_fileDoneOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43a047;" parent="11" vertex="1">
+                    <mxGeometry x="165" y="110" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="CfdpManager_fileDoneOut_label" value="fileDoneOut" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" parent="11" vertex="1">
+                    <mxGeometry x="185" y="120" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="330" y="367" width="170" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="DpCatalog" value="&lt;br&gt;DpCatalog" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=12;fontStyle=1;verticalAlign=top;fontColor=#000000;" parent="12" vertex="1">
+                    <mxGeometry x="30" y="20" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="DpCatalog_fileOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" parent="12" vertex="1">
+                    <mxGeometry x="130" y="9" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="DpCatalog_fileOut_label" value="fileOut" style="text;html=1;align=right;verticalAlign=middle;fontSize=9;" parent="12" vertex="1">
+                    <mxGeometry width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="DpCatalog_fileDone" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" parent="12" vertex="1">
+                    <mxGeometry x="50" y="9" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="fileDone" style="text;html=1;align=right;verticalAlign=middle;fontSize=9;" vertex="1" parent="12">
+                    <mxGeometry x="80" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="640" y="200" width="170" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="ComQueue" value="&lt;br&gt;ComQueue" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=12;fontStyle=1;verticalAlign=top;fontColor=#000000;" parent="13" vertex="1">
+                    <mxGeometry x="10" width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="ComQueue_bufferQueueIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" parent="13" vertex="1">
+                    <mxGeometry y="45" width="20" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

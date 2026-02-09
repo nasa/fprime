@@ -73,7 +73,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     this->dataInReturn_out(portNum, fwBuffer);
 }
 
-Svc::SendFileResponse CfdpManager ::sendFile_handler(
+Svc::SendFileResponse CfdpManager ::fileIn_handler(
     FwIndexType portNum,
     const Fw::StringBase& sourceFileName,
     const Fw::StringBase& destFileName,
@@ -204,7 +204,7 @@ void CfdpManager::sendFileComplete(Svc::SendFileStatus::T status)
     response.set_status(status);
     response.set_context(0);
 
-    this->fileComplete_out(0, response);
+    this->fileDoneOut_out(0, response);
 }
 
 // ----------------------------------------------------------------------

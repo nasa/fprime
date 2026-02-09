@@ -1,10 +1,10 @@
 <mxfile host="65bd71144e">
     <diagram name="CfdpManager" id="component">
-        <mxGraphModel dx="855" dy="361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="421" dy="361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="component" value="CfdpManager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=14;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="component" value="&lt;br&gt;CfdpManager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontSize=14;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
                     <mxGeometry x="275" y="250" width="300" height="250" as="geometry"/>
                 </mxCell>
                 <mxCell id="run1Hz" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#f9a825;" parent="1" vertex="1">
@@ -115,25 +115,25 @@
                         <mxPoint x="565" y="425" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="sendFile" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43a047;" parent="1" vertex="1">
+                <mxCell id="fileIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43a047;" parent="1" vertex="1">
                     <mxGeometry x="355" y="490" width="20" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="sendFile_label" value="sendFile" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;" parent="1" vertex="1">
+                <mxCell id="fileIn_label" value="fileIn" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;" parent="1" vertex="1">
                     <mxGeometry x="340" y="515" width="50" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="sendFile_arrow" value="" style="endArrow=classic;html=1;strokeColor=#43a047;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" target="sendFile" edge="1" source="sendFile">
+                <mxCell id="fileIn_arrow" value="" style="endArrow=classic;html=1;strokeColor=#43a047;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" target="fileIn" edge="1" source="fileIn">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="365" y="480" as="sourcePoint"/>
                         <mxPoint x="365" y="490" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="fileComplete" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43a047;" parent="1" vertex="1">
+                <mxCell id="fileDoneOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#43a047;" parent="1" vertex="1">
                     <mxGeometry x="475" y="490" width="20" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="fileComplete_label" value="fileComplete" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;" parent="1" vertex="1">
+                <mxCell id="fileDoneOut_label" value="fileDoneOut" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;" parent="1" vertex="1">
                     <mxGeometry x="450" y="515" width="70" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="fileComplete_arrow" value="" style="endArrow=classic;html=1;strokeColor=#43a047;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="fileComplete" edge="1" target="fileComplete">
+                <mxCell id="fileDoneOut_arrow" value="" style="endArrow=classic;html=1;strokeColor=#43a047;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="fileDoneOut" edge="1" target="fileDoneOut">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="510" y="510" as="sourcePoint"/>
                         <mxPoint x="485" y="480" as="targetPoint"/>

@@ -83,7 +83,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   //! Send file completion notification for port-initiated transfers
   //!
-  //! Invokes the fileComplete output port with the transaction status.
+  //! Invokes the fileDoneOut output port with the transaction status.
   //!
   //! \param status Transaction completion status
   void sendFileComplete(Svc::SendFileStatus::T status);
@@ -112,8 +112,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
                         Fw::Buffer& fwBuffer //!< The buffer
     ) override;
 
-    //! Handler for input port SendFile
-    Svc::SendFileResponse sendFile_handler(
+    //! Handler for input port fileIn
+    Svc::SendFileResponse fileIn_handler(
         FwIndexType portNum, //!< The port number
         const Fw::StringBase& sourceFileName, //!< Path of file to send
         const Fw::StringBase& destFileName, //!< Path to store file at destination
