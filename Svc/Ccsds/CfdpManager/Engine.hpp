@@ -74,11 +74,6 @@ struct TickArgs
     int  cont;                                        /**< \brief if 1, then re-traverse the list */
 };
 
-//
-// Codec functions - these remain as free functions for now
-// TODO: These will be replaced by Pdu classes in a future refactoring
-//
-
 /**
  * @brief CFDP Protocol Engine
  *

@@ -1164,7 +1164,6 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             }
             else
             {
-                 // TODO BPC: flags = OS_FILE_FLAG_NONE, access = OS_READ_WRITE
                  // File was succesfully renamed, open for writing
                 fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
                 if (fileStatus != Os::File::OP_OK)

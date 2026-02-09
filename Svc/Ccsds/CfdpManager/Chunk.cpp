@@ -67,9 +67,9 @@ void CfdpChunkList::add(FileSize offset, FileSize size)
     const Chunk chunk = {offset, size};
     const ChunkIdx i = findInsertPosition(&chunk);
 
-    /* PTFO: files won't be so big we need to gracefully handle overflow,
-     * and in that case the user should change everything in chunks
-     * to use 64-bit numbers */
+    // PTFO: files won't be so big we need to gracefully handle overflow,
+    // and in that case the user should change everything in chunks
+    // to use 64-bit numbers
     FW_ASSERT((offset + size) >= offset, offset, size);
 
     insert(i, &chunk);

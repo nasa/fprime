@@ -205,24 +205,24 @@ void Channel::cycleTx()
         args.chan = this;
         args.ran_one = 0;
 
-        /* loop through as long as there are pending transactions, and a message buffer to send their PDUs on */
+        // loop through as long as there are pending transactions, and a message buffer to send their PDUs on
 
-        /* NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
-         * PDUs that can be sent once we get to here */
+        // NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
+        // PDUs that can be sent once we get to here
         if (!this->m_cur)
-        { /* don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup */
+        { // don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup
 
             // TODO BPC: refactor all while loops
             while (true)
             {
-                /* Attempt to run something on TXA */
+                // Attempt to run something on TXA
                 CfdpCListTraverse(m_qs[QueueId::TXA],
                                   [this](CListNode* node, void* context) -> CListTraverseStatus {
                                       return this->cycleTxFirstActive(node, context);
                                   },
                                   &args);
 
-                /* Keep going until QueueId::PEND is empty or something is run */
+                // Keep going until QueueId::PEND is empty or something is run
                 if (args.ran_one || m_qs[QueueId::PEND] == NULL)
                 {
                     break;
@@ -230,8 +230,8 @@ void Channel::cycleTx()
 
                 txn = container_of_cpp(m_qs[QueueId::PEND], &Transaction::m_cl_node);
 
-                /* Class 2 transactions need a chunklist for NAK processing, get one now.
-                 * Class 1 transactions don't need chunks since they don't support NAKs. */
+                // Class 2 transactions need a chunklist for NAK processing, get one now.
+                // Class 1 transactions don't need chunks since they don't support NAKs.
                 if (txn->getClass() == Cfdp::Class::CLASS_2)
                 {
                     if (txn->m_chunks == NULL)
@@ -251,7 +251,7 @@ void Channel::cycleTx()
             }
         }
 
-        /* in case the loop exited due to no message buffers, clear it and start from the top next time */
+        // in case the loop exited due to no message buffers, clear it and start from the top next time
         this->m_cur = NULL;
     }
 }
@@ -281,22 +281,21 @@ void Channel::tickTransactions()
 
             if (args.early_exit)
             {
-                /* early exit means we ran out of available outgoing messages this wakeup.
-                 * If current tick type is NAK response, then reset tick type. It would be
-                 * bad to let NAK response starve out RX or TXW ticks on the next cycle.
-                 *
-                 * If RX ticks use up all available messages, then we pick up where we left
-                 * off on the next cycle. (This causes some RX tick counts to be missed,
-                 * but that's ok. Precise timing isn't required.)
-                 *
-                 * This scheme allows the following priority for use of outgoing messages:
-                 *
-                 * RX state messages
-                 * TXW state messages
-                 * NAK response (could be many)
-                 *
-                 * New file data on TXA
-                 */
+                // early exit means we ran out of available outgoing messages this wakeup.
+                // If current tick type is NAK response, then reset tick type. It would be
+                // bad to let NAK response starve out RX or TXW ticks on the next cycle.
+                //
+                // If RX ticks use up all available messages, then we pick up where we left
+                // off on the next cycle. (This causes some RX tick counts to be missed,
+                // but that's ok. Precise timing isn't required.)
+                //
+                // This scheme allows the following priority for use of outgoing messages:
+                //
+                // RX state messages
+                // TXW state messages
+                // NAK response (could be many)
+                //
+                // New file data on TXA
                 if (m_tickType != CFDP_TICK_TYPE_TXW_NAK)
                 {
                     reset = false;
@@ -315,7 +314,7 @@ void Channel::tickTransactions()
 
     if (reset)
     {
-        m_tickType = CFDP_TICK_TYPE_RX; /* reset tick type */
+        m_tickType = CFDP_TICK_TYPE_RX; // reset tick type
     }
 }
 
@@ -351,20 +350,20 @@ void Channel::processPollingDirectories()
             {
                 if ((pd->intervalTimer.getStatus() != Timer::Status::RUNNING) && (pd->intervalSec > 0))
                 {
-                    /* timer was not set, so set it now */
+                    // timer was not set, so set it now
                     pd->intervalTimer.setTimer(pd->intervalSec);
                 }
                 else if (pd->intervalTimer.getStatus() == Timer::Status::EXPIRED)
                 {
-                    /* the timer has expired */
+                    // the timer has expired
                     status = m_engine->playbackDirInitiate(&pd->pb, pd->srcDir, pd->dstDir, pd->cfdpClass,
                                                           Cfdp::Keep::DELETE, m_channelId, pd->priority,
                                                           pd->destEid);
                     if (status != Cfdp::Status::SUCCESS)
                     {
-                        /* error occurred in playback directory, so reset the timer */
-                        /* an event is sent when initiating playback directory so there is no reason to
-                         * to have another here */
+                        // error occurred in playback directory, so reset the timer
+                        // an event is sent when initiating playback directory so there is no reason to
+                        // to have another here
                         pd->intervalTimer.setTimer(pd->intervalSec);
                     }
                 }
@@ -375,7 +374,7 @@ void Channel::processPollingDirectories()
             }
             else
             {
-                /* playback is active, so step it */
+                // playback is active, so step it
                 this->processPlaybackDirectory(&pd->pb);
             }
 
@@ -394,7 +393,7 @@ Transaction* Channel::findUnusedTransaction(Direction direction)
 {
     CListNode*  node;
     Transaction* txn;
-    QueueId::T q_index; /* initialized below in if */
+    QueueId::T q_index; // initialized below in if
 
     if (m_qs[QueueId::FREE])
     {
@@ -403,14 +402,14 @@ Transaction* Channel::findUnusedTransaction(Direction direction)
 
         this->removeFromQueue(QueueId::FREE, &txn->m_cl_node);
 
-        /* now that a transaction is acquired, must also acquire a history slot to go along with it */
+        // now that a transaction is acquired, must also acquire a history slot to go along with it
         if (m_qs[QueueId::HIST_FREE])
         {
             q_index = QueueId::HIST_FREE;
         }
         else
         {
-            /* no free history, so take the oldest one from the channel's history queue */
+            // no free history, so take the oldest one from the channel's history queue
             FW_ASSERT(m_qs[QueueId::HIST]);
             q_index = QueueId::HIST;
         }
@@ -419,13 +418,13 @@ Transaction* Channel::findUnusedTransaction(Direction direction)
 
         this->removeFromQueue(q_index, &txn->m_history->cl_node);
 
-        /* Indicate that this was freshly pulled from the free list */
-        /* notably this state is distinguishable from items still on the free list */
+        // Indicate that this was freshly pulled from the free list
+        // notably this state is distinguishable from items still on the free list
         txn->m_state        = TXN_STATE_INIT;
         txn->m_history->dir = direction;
-        txn->m_chan         = this;  /* Set channel pointer */
+        txn->m_chan         = this;  // Set channel pointer
 
-        /* Re-initialize the linked list node to clear stale pointers from FREE list */
+        // Re-initialize the linked list node to clear stale pointers from FREE list
         CfdpCListInitNode(&txn->m_cl_node);
     }
     else
@@ -439,10 +438,10 @@ Transaction* Channel::findUnusedTransaction(Direction direction)
 Transaction* Channel::findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
                                                                EntityId src_eid)
 {
-    /* need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
-     * or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
-     *
-     * Let's put QueueId::RX up front, because most RX packets will be file data PDUs */
+    // need to find transaction by sequence number. It will either be the active transaction (front of Q_PEND),
+    // or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
+    //
+    // Let's put QueueId::RX up front, because most RX packets will be file data PDUs
     CfdpTraverseTransSeqArg ctx    = {transaction_sequence_number, src_eid, NULL};
     CListNode*          ptrs[] = {m_qs[QueueId::RX], m_qs[QueueId::PEND], m_qs[QueueId::TXA],
                               m_qs[QueueId::TXW]};
@@ -523,18 +522,18 @@ void Channel::recycleTransaction(Transaction *txn)
     CListNode **chunklist_head;
     QueueId::T    hist_destq;
 
-    /* File should have been closed by the state machine, but if
-     * it still hanging open at this point, close it now so its not leaked.
-     * This is not normal/expected so log it if this happens. */
+    // File should have been closed by the state machine, but if
+    // it still hanging open at this point, close it now so its not leaked.
+    // This is not normal/expected so log it if this happens.
     if (true == txn->m_fd.isOpen())
     {
         // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
         txn->m_fd.close();
     }
 
-    this->dequeueTransaction(txn); /* this makes it "float" (not in any queue) */
+    this->dequeueTransaction(txn); // this makes it "float" (not in any queue)
 
-    /* this should always be */
+    // this should always be
     if (txn->m_history != NULL)
     {
         if (txn->m_chunks != NULL)
@@ -549,7 +548,7 @@ void Channel::recycleTransaction(Transaction *txn)
 
         if (txn->m_flags.com.keep_history)
         {
-            /* move transaction history to history queue */
+            // move transaction history to history queue
             hist_destq = QueueId::HIST;
         }
         else
@@ -560,9 +559,9 @@ void Channel::recycleTransaction(Transaction *txn)
         txn->m_history = NULL;
     }
 
-    /* this wipes it and puts it back onto the list to be found by
-     * Channel::findUnusedTransaction().  Need to preserve the chan_num
-     * and keep it associated with this channel, though. */
+    // this wipes it and puts it back onto the list to be found by
+    // Channel::findUnusedTransaction().  Need to preserve the chan_num
+    // and keep it associated with this channel, though.
     this->freeTransaction(txn);
 }
 
@@ -572,12 +571,12 @@ void Channel::insertSortPrio(Transaction* txn, QueueId::T queue)
 
     FW_ASSERT(txn);
 
-    /* look for proper position on PEND queue for this transaction.
-     * This is a simple priority sort. */
+    // look for proper position on PEND queue for this transaction.
+    // This is a simple priority sort.
 
     if (!m_qs[queue])
     {
-        /* list is empty, so just insert */
+        // list is empty, so just insert
         insert_back = true;
     }
     else
@@ -648,7 +647,7 @@ CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir)
 
     chunklist_head = this->getChunkListHead(dir);
 
-    /* this should never be null */
+    // this should never be null
     FW_ASSERT(chunklist_head);
 
     if (*chunklist_head != NULL)
@@ -673,7 +672,7 @@ void Channel::processPlaybackDirectory(Playback* pb)
     char path[CfdpManagerMaxFileSize];
     Os::Directory::Status status;
 
-    /* either there's no transaction (first one) or the last one was finished, so check for a new one */
+    // either there's no transaction (first one) or the last one was finished, so check for a new one
 
     memset(&path, 0, sizeof(path));
 
@@ -705,9 +704,9 @@ void Channel::processPlaybackDirectory(Playback* pb)
             txn = this->findUnusedTransaction(DIRECTION_TX);
             if (txn == NULL)
             {
-                /* while not expected this can certainly happen, because
-                 * rx transactions consume in these as well. */
-                /* should not need to do anything special, will come back next tick */
+                // while not expected this can certainly happen, because
+                // rx transactions consume in these as well.
+                // should not need to do anything special, will come back next tick
                 break;
             }
 
@@ -726,14 +725,14 @@ void Channel::processPlaybackDirectory(Playback* pb)
             txn->m_pb = pb;
             ++pb->num_ts;
 
-            pb->pending_file[0] = 0; /* continue reading dir */
+            pb->pending_file[0] = 0; // continue reading dir
         }
     }
 
     if (!pb->diropen && !pb->num_ts)
     {
-        /* the directory has been exhausted, and there are no more active transactions
-         * for this playback -- so mark it as not busy */
+        // the directory has been exhausted, and there are no more active transactions
+        // for this playback -- so mark it as not busy
         pb->busy = false;
     }
 }
@@ -742,8 +741,8 @@ void Channel::updatePollPbCounted(Playback* pb, int up, U8* counter)
 {
     if (pb->counted != up)
     {
-        /* only handle on state change */
-        pb->counted = !!up; /* !! ensure 0 or 1, should be optimized out */
+        // only handle on state change
+        pb->counted = !!up; // !! ensure 0 or 1, should be optimized out
 
         if (up)
         {
@@ -751,7 +750,7 @@ void Channel::updatePollPbCounted(Playback* pb, int up, U8* counter)
         }
         else
         {
-            FW_ASSERT(*counter); /* sanity check it isn't zero */
+            FW_ASSERT(*counter); // sanity check it isn't zero
             --*counter;
         }
     }
@@ -761,19 +760,19 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context)
 {
     CycleTxArgs*  args = static_cast<CycleTxArgs*>(context);
     Transaction*        txn  = container_of_cpp(node, &Transaction::m_cl_node);
-    CListTraverseStatus ret  = CLIST_TRAVERSE_EXIT; /* default option is exit traversal */
+    CListTraverseStatus ret  = CLIST_TRAVERSE_EXIT; // default option is exit traversal
 
     if (txn->m_flags.com.suspended)
     {
-        ret = CLIST_TRAVERSE_CONTINUE; /* suspended, so move on to next */
+        ret = CLIST_TRAVERSE_CONTINUE; // suspended, so move on to next
     }
     else
     {
-        FW_ASSERT(txn->m_flags.com.q_index == QueueId::TXA); /* huh? */
+        FW_ASSERT(txn->m_flags.com.q_index == QueueId::TXA); // huh?
 
-        /* if no more messages, then chan->m_cur will be set.
-         * If the transaction sent the last filedata PDU and EOF, it will move itself
-         * off the active queue. Run until either of these occur. */
+        // if no more messages, then chan->m_cur will be set.
+        // If the transaction sent the last filedata PDU and EOF, it will move itself
+        // off the active queue. Run until either of these occur.
         while (!this->m_cur && txn->m_flags.com.q_index == QueueId::TXA)
         {
             m_engine->dispatchTx(txn);
@@ -787,21 +786,21 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context)
 
 CListTraverseStatus Channel::doTick(CListNode* node, void* context)
 {
-    CListTraverseStatus ret  = CLIST_TRAVERSE_CONTINUE; /* CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for cur */
+    CListTraverseStatus ret  = CLIST_TRAVERSE_CONTINUE; // CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for cur
     TickArgs*     args = static_cast<TickArgs*>(context);
     Transaction*        txn  = container_of_cpp(node, &Transaction::m_cl_node);
     if (!this->m_cur || (this->m_cur == txn))
     {
-        /* found where we left off, so clear that and move on */
+        // found where we left off, so clear that and move on
         this->m_cur = NULL;
         if (!txn->m_flags.com.suspended)
         {
             (txn->*args->fn)(&args->cont);
         }
 
-        /* if this->m_cur was set to not-NULL above, then exit early */
-        /* NOTE: if channel is frozen, then tick processing won't have been entered.
-         *     so there is no need to check it here */
+        // if this->m_cur was set to not-NULL above, then exit early
+        // NOTE: if channel is frozen, then tick processing won't have been entered.
+        //     so there is no need to check it here
         if (this->m_cur)
         {
             ret              = CLIST_TRAVERSE_EXIT;
@@ -809,7 +808,7 @@ CListTraverseStatus Channel::doTick(CListNode* node, void* context)
         }
     }
 
-    return ret; /* don't tick one, keep looking for cur */
+    return ret; // don't tick one, keep looking for cur
 }
 
 Transaction* Channel::getTransaction(U32 index)

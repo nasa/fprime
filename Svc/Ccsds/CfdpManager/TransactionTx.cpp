@@ -79,7 +79,7 @@ FileDirectiveDispatchTable makeFileDirectiveTable(
 // ======================================================================
 
 void Transaction::s1Recv(const Fw::Buffer& buffer) {
-    /* s1 doesn't need to receive anything */
+    // s1 doesn't need to receive anything
     static const SSubstateRecvDispatchTable substate_fns = {{NULL}};
     this->sDispatchRecv(buffer, &substate_fns);
 }
@@ -153,10 +153,10 @@ void Transaction::s2Tx() {
 void Transaction::sAckTimerTick() {
     U8 ack_limit = 0;
 
-    /* note: the ack timer is only ever relevant on class 2 */
+    // note: the ack timer is only ever relevant on class 2
     if (this->m_state != TXN_STATE_S2 || !this->m_flags.com.ack_timer_armed)
     {
-        /* nothing to do */
+        // nothing to do
         return;
     }
 
@@ -166,7 +166,7 @@ void Transaction::sAckTimerTick() {
     }
     else if (this->m_state_data.send.sub_state == TX_SUB_STATE_CLOSEOUT_SYNC)
     {
-        /* Check limit and handle if needed */
+        // Check limit and handle if needed
         ack_limit = this->m_cfdpManager->getAckLimitParam(this->m_chan_num);
         if (this->m_state_data.send.s2.acknak_count >= ack_limit)
         {
@@ -176,30 +176,30 @@ void Transaction::sAckTimerTick() {
             this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_EOF);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.ack_limit;
 
-            /* give up on this */
+            // give up on this
             this->m_engine->finishTransaction(this, true);
             this->m_flags.com.ack_timer_armed = false;
         }
         else
         {
-            /* Increment acknak counter */
+            // Increment acknak counter
             ++this->m_state_data.send.s2.acknak_count;
 
-            /* If the peer sent FIN that is an implicit EOF ack, it is not supposed
-             * to send it before EOF unless an error occurs, and either way we do not
-             * re-transmit anything after FIN unless we get another FIN */
+            // If the peer sent FIN that is an implicit EOF ack, it is not supposed
+            // to send it before EOF unless an error occurs, and either way we do not
+            // re-transmit anything after FIN unless we get another FIN
             if (!this->m_flags.tx.eof_ack_recv && !this->m_flags.tx.fin_recv)
             {
                 this->m_flags.tx.send_eof = true;
             }
             else
             {
-                /* no response is pending */
+                // no response is pending
                 this->m_flags.com.ack_timer_armed = false;
             }
         }
 
-        /* reset the ack timer if still waiting on something */
+        // reset the ack timer if still waiting on something
         if (this->m_flags.com.ack_timer_armed)
         {
             this->m_engine->armAckTimer(this);
@@ -207,7 +207,7 @@ void Transaction::sAckTimerTick() {
     }
     else
     {
-        /* if we are not waiting for anything, why is the ack timer armed? */
+        // if we are not waiting for anything, why is the ack timer armed?
         this->m_flags.com.ack_timer_armed = false;
     }
 }
@@ -215,10 +215,10 @@ void Transaction::sAckTimerTick() {
 void Transaction::sTick(int *cont /* unused */) {
     bool pending_send;
 
-    pending_send = true; /* maybe; tbd, will be reset if not */
+    pending_send = true; // maybe; tbd, will be reset if not
 
-    /* at each tick, various timers used by S are checked */
-    /* first, check inactivity timer */
+    // at each tick, various timers used by S are checked
+    // first, check inactivity timer
     if (!this->m_flags.com.inactivity_fired)
     {
         if (this->m_inactivity_timer.getStatus() == Timer::Status::RUNNING)
@@ -229,8 +229,8 @@ void Transaction::sTick(int *cont /* unused */) {
         {
             this->m_flags.com.inactivity_fired = true;
 
-            /* HOLD state is the normal path to recycle transaction objects, not an error */
-            /* inactivity is abnormal in any other state */
+            // HOLD state is the normal path to recycle transaction objects, not an error
+            // inactivity is abnormal in any other state
             if (this->m_state != TXN_STATE_HOLD && this->m_state == TXN_STATE_S2)
             {
                 // CFE_EVS_SendEvent(CFDP_S_INACT_TIMER_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -243,7 +243,7 @@ void Transaction::sTick(int *cont /* unused */) {
         }
     }
 
-    /* tx maintenance: possibly process send_eof, or send_fin_ack */
+    // tx maintenance: possibly process send_eof, or send_fin_ack
     if (this->m_flags.tx.send_eof)
     {
         if (this->sSendEof() == Cfdp::Status::SUCCESS)
@@ -263,24 +263,24 @@ void Transaction::sTick(int *cont /* unused */) {
         pending_send = false;
     }
 
-    /* if the inactivity timer ran out, then there is no sense
-     * pending for responses for anything.  Send out anything
-     * that we need to send (i.e. the EOF) just in case the sender
-     * is still listening to us but do not expect any future ACKs */
+    // if the inactivity timer ran out, then there is no sense
+    // pending for responses for anything.  Send out anything
+    // that we need to send (i.e. the EOF) just in case the sender
+    // is still listening to us but do not expect any future ACKs
     if (this->m_flags.com.inactivity_fired && !pending_send)
     {
-        /* the transaction is now recycleable - this means we will
-         * no longer have a record of this transaction seq.  If the sender
-         * wakes up or if the network delivers severely delayed PDUs at
-         * some future point, then they will be seen as spurious.  They
-         * will no longer be associable with this transaction at all */
+        // the transaction is now recycleable - this means we will
+        // no longer have a record of this transaction seq.  If the sender
+        // wakes up or if the network delivers severely delayed PDUs at
+        // some future point, then they will be seen as spurious.  They
+        // will no longer be associable with this transaction at all
         this->m_chan->recycleTransaction(this);
 
-        /* NOTE: this must be the last thing in here.  Do not use txn after this */
+        // NOTE: this must be the last thing in here.  Do not use txn after this
     }
     else
     {
-        /* transaction still valid so process the ACK timer, if relevant */
+        // transaction still valid so process the ACK timer, if relevant
         this->sAckTimerTick();
     }
 }
@@ -295,7 +295,7 @@ void Transaction::sTickNak(int *cont) {
         status = this->sCheckAndRespondNak(&nakProcessed);
         if ((status == Cfdp::Status::SUCCESS) && nakProcessed)
         {
-            *cont = 1; /* cause dispatcher to re-enter this wakeup */
+            *cont = 1; // cause dispatcher to re-enter this wakeup
         }
     }
 }
@@ -303,7 +303,7 @@ void Transaction::sTickNak(int *cont) {
 void Transaction::sCancel() {
     if (this->m_state_data.send.sub_state < TX_SUB_STATE_EOF)
     {
-        /* if state has not reached TX_SUB_STATE_EOF, then set it to TX_SUB_STATE_EOF now. */
+        // if state has not reached TX_SUB_STATE_EOF, then set it to TX_SUB_STATE_EOF now.
         this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
     }
 }
@@ -313,8 +313,8 @@ void Transaction::sCancel() {
 // ======================================================================
 
 Status::T Transaction::sSendEof() {
-    /* note the crc is "finalized" regardless of success or failure of the txn */
-    /* this is OK as we still need to put some value into the EOF */
+    // note the crc is "finalized" regardless of success or failure of the txn
+    // this is OK as we still need to put some value into the EOF
     if (!this->m_flags.com.crc_calc)
     {
         // The F' version does not have an equivelent finalize call as it
@@ -327,28 +327,28 @@ Status::T Transaction::sSendEof() {
 }
 
 void Transaction::s1SubstateSendEof() {
-    /* set the flag, the EOF is sent by the tick handler */
+    // set the flag, the EOF is sent by the tick handler
     this->m_flags.tx.send_eof = true;
 
-    /* In class 1 this is the end of normal operation */
-    /* NOTE: this is not always true, as class 1 can request an EOF ack.
-     * In this case we could change state to CLOSEOUT_SYNC instead and wait,
-     * but right now we do not request an EOF ack in S1 */
+    // In class 1 this is the end of normal operation
+    // NOTE: this is not always true, as class 1 can request an EOF ack.
+    // In this case we could change state to CLOSEOUT_SYNC instead and wait,
+    // but right now we do not request an EOF ack in S1
     this->m_engine->finishTransaction(this, true);
 }
 
 void Transaction::s2SubstateSendEof() {
-    /* set the flag, the EOF is sent by the tick handler */
+    // set the flag, the EOF is sent by the tick handler
     this->m_flags.tx.send_eof = true;
 
-    /* wait for remaining responses to close out the state machine */
+    // wait for remaining responses to close out the state machine
     this->m_state_data.send.sub_state = TX_SUB_STATE_CLOSEOUT_SYNC;
 
-    /* always move the transaction onto the wait queue now */
+    // always move the transaction onto the wait queue now
     this->m_chan->dequeueTransaction(this);
     this->m_chan->insertSortPrio(this, QueueId::TXW);
 
-    /* the ack timer is armed in class 2 only */
+    // the ack timer is armed in class 2 only
     this->m_engine->armAckTimer(this);
 }
 
@@ -435,7 +435,7 @@ void Transaction::sSubstateSendFileData() {
 
     if(status != Cfdp::Status::SUCCESS)
     {
-        /* IO error -- change state and send EOF */
+        // IO error -- change state and send EOF
         this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
         this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
     }
@@ -444,13 +444,13 @@ void Transaction::sSubstateSendFileData() {
         this->m_foffs += bytes_processed;
         if (this->m_foffs == this->m_fsize)
         {
-            /* file is done */
+            // file is done
             this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
         }
     }
     else
     {
-        /* don't care about other cases */
+        // don't care about other cases
     }
 }
 
@@ -471,7 +471,7 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
         sret = this->m_engine->sendMd(this);
         if (sret == Cfdp::Status::SEND_PDU_ERROR)
         {
-            ret = Cfdp::Status::ERROR; /* error occurred */
+            ret = Cfdp::Status::ERROR; // error occurred
         }
         else
         {
@@ -479,27 +479,27 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
             {
                 this->m_flags.tx.md_need_send = false;
             }
-            /* unless SEND_PDU_ERROR, return 1 to keep caller from sending file data */
-            *nakProcessed = true; /* nak processed, so don't send filedata */
+            // unless SEND_PDU_ERROR, return 1 to keep caller from sending file data
+            *nakProcessed = true; // nak processed, so don't send filedata
 
         }
     }
     else
     {
-        /* Get first chunk and process if available */
+        // Get first chunk and process if available
         chunk = this->m_chunks->chunks.getFirstChunk();
         if (chunk != nullptr)
         {
             ret = this->sSendFileData(chunk->offset, chunk->size, 0, &bytes_processed);
             if(ret != Cfdp::Status::SUCCESS)
             {
-                /* error occurred */
-                ret = Cfdp::Status::ERROR; /* error occurred */
+                // error occurred
+                ret = Cfdp::Status::ERROR; // error occurred
             }
             else if (bytes_processed > 0)
             {
                 this->m_chunks->chunks.removeFromFirst(bytes_processed);
-                *nakProcessed = true; /* nak processed, so caller doesn't send file data */
+                *nakProcessed = true; // nak processed, so caller doesn't send file data
             }
         }
     }
@@ -526,7 +526,7 @@ void Transaction::s2SubstateSendFileData() {
     }
     else
     {
-        /* NAK was processed, so do not send filedata */
+        // NAK was processed, so do not send filedata
     }
 }
 
@@ -597,7 +597,7 @@ void Transaction::sSubstateSendMetadata() {
         this->m_engine->finishTransaction(this, true);
     }
 
-    /* don't need to reset the CRC since its taken care of by reset_cfdp() */
+    // don't need to reset the CRC since its taken care of by reset_cfdp()
 }
 
 Status::T Transaction::sSendFinAck() {
@@ -610,7 +610,7 @@ Status::T Transaction::sSendFinAck() {
 }
 
 void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
-    /* received early fin, so just cancel */
+    // received early fin, so just cancel
     // CFE_EVS_SendEvent(CFDP_S_EARLY_FIN_ERR_EID, CFE_EVS_EventType_ERROR,
     //                   "CF S%d(%lu:%lu): got early FIN -- cancelling", (this->m_state == TXN_STATE_S2),
     //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
@@ -618,7 +618,7 @@ void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
 
     this->m_state_data.send.sub_state = TX_SUB_STATE_CLOSEOUT_SYNC;
 
-    /* otherwise do normal fin processing */
+    // otherwise do normal fin processing
     this->s2Fin(buffer);
 }
 
@@ -637,21 +637,21 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
 
     if (!this->m_engine->recvFin(this, fin))
     {
-        /* set the CC only on the first time we get the FIN.  If this is a dupe
-         * then re-ack but otherwise ignore it */
+        // set the CC only on the first time we get the FIN.  If this is a dupe
+        // then re-ack but otherwise ignore it
         if (!this->m_flags.tx.fin_recv)
         {
 
             this->m_flags.tx.fin_recv               = true;
             this->m_state_data.send.s2.fin_cc       = static_cast<ConditionCode>(fin.getConditionCode());
-            this->m_state_data.send.s2.acknak_count = 0; /* in case retransmits had occurred */
+            this->m_state_data.send.s2.acknak_count = 0; // in case retransmits had occurred
 
-            /* note this is a no-op unless the status was unset previously */
+            // note this is a no-op unless the status was unset previously
             this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(this->m_state_data.send.s2.fin_cc));
 
-            /* Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
-             * to send it until after the EOF+ACK.  So at this point we stop trying to send anything
-             * to the peer, regardless of whether we got every ACK we expected. */
+            // Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
+            // to send it until after the EOF+ACK.  So at this point we stop trying to send anything
+            // to the peer, regardless of whether we got every ACK we expected.
             this->m_engine->finishTransaction(this, true);
         }
         this->m_flags.tx.send_fin_ack = true;
@@ -680,7 +680,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
         return;
     }
 
-    /* this function is only invoked for NAK PDU types */
+    // this function is only invoked for NAK PDU types
     if (this->m_engine->recvNak(this, nak) == Cfdp::Status::SUCCESS && nak.getNumSegments() > 0)
     {
         for (counter = 0; counter < nak.getNumSegments(); ++counter)
@@ -689,7 +689,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
 
             if (sr.offsetStart == 0 && sr.offsetEnd == 0)
             {
-                /* need to re-send metadata PDU */
+                // need to re-send metadata PDU
                 this->m_flags.tx.md_need_send = true;
             }
             else
@@ -700,14 +700,14 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
                     continue;
                 }
 
-                /* overflow probably won't be an issue */
+                // overflow probably won't be an issue
                 if (sr.offsetEnd > this->m_fsize)
                 {
                     ++bad_sr;
                     continue;
                 }
 
-                /* insert gap data in chunks */
+                // insert gap data in chunks
                 this->m_chunks->chunks.add(sr.offsetStart, sr.offsetEnd - sr.offsetStart);
             }
         }
@@ -753,10 +753,10 @@ void Transaction::s2EofAck(const Fw::Buffer& buffer) {
         ack.getDirectiveCode() == FILE_DIRECTIVE_END_OF_FILE)
     {
         this->m_flags.tx.eof_ack_recv           = true;
-        this->m_flags.com.ack_timer_armed       = false; /* just wait for FIN now, nothing to re-send */
-        this->m_state_data.send.s2.acknak_count = 0;     /* in case EOF retransmits had occurred */
+        this->m_flags.com.ack_timer_armed       = false; // just wait for FIN now, nothing to re-send
+        this->m_state_data.send.s2.acknak_count = 0;     // in case EOF retransmits had occurred
 
-        /* if FIN was also received then we are done (these can come out of order) */
+        // if FIN was also received then we are done (these can come out of order)
         if (this->m_flags.tx.fin_recv)
         {
             this->m_engine->finishTransaction(this, true);
@@ -780,7 +780,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
     // Peek at PDU type from buffer
     Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
 
-    /* send state, so we only care about file directive PDU */
+    // send state, so we only care about file directive PDU
     selected_handler = NULL;
 
     if (pduType == Cfdp::T_FILE_DATA)
@@ -806,7 +806,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
 
                 if (directiveCode < FILE_DIRECTIVE_INVALID_MAX)
                 {
-                    /* This should be silent (no event) if no handler is defined in the table */
+                    // This should be silent (no event) if no handler is defined in the table
                     substate_tbl = dispatch->substate[this->m_state_data.send.sub_state];
                     if (substate_tbl != NULL)
                     {
@@ -826,12 +826,12 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
         }
     }
 
-    /* check that there's a valid function pointer. If there isn't,
-     * then silently ignore. We may want to discuss if it's worth
-     * shutting down the whole transaction if a PDU is received
-     * that doesn't make sense to be received (For example,
-     * class 1 CFDP receiving a NAK PDU) but for now, we silently
-     * ignore the received packet and keep chugging along. */
+    // check that there's a valid function pointer. If there isn't,
+    // then silently ignore. We may want to discuss if it's worth
+    // shutting down the whole transaction if a PDU is received
+    // that doesn't make sense to be received (For example,
+    // class 1 CFDP receiving a NAK PDU) but for now, we silently
+    // ignore the received packet and keep chugging along.
     if (selected_handler)
     {
         (this->*selected_handler)(buffer);

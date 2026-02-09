@@ -60,7 +60,6 @@ Engine::Engine(CfdpManager* manager) :
     m_manager(manager),
     m_seqNum(0)
 {
-    // TODO BPC: Should we intialize Engine here or wait for the init() function?
     for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
     {
         m_channels[i] = nullptr;
@@ -105,21 +104,21 @@ void Engine::armInactTimer(Transaction *txn)
 {
     U32 timerDuration = 0;
 
-    /* select timeout based on the state */
+    // select timeout based on the state
     if (GetTxnStatus(txn) == ACK_TXN_STATUS_ACTIVE)
     {
-        /* in an active transaction, we expect traffic so use the normal inactivity timer */
+        // in an active transaction, we expect traffic so use the normal inactivity timer
         timerDuration = txn->m_cfdpManager->getInactivityTimerParam(txn->m_chan_num);
     }
     else
     {
-        /* in an inactive transaction, we do NOT expect traffic, and this timer is now used
-         * just in case any late straggler PDUs dp get delivered.  In this case the
-         * time should be longer than the retransmit time (ack timer) but less than the full
-         * inactivity timer (because again, we are not expecting traffic, so waiting the full
-         * timeout would hold resources longer than needed).  Using double the ack timer should
-         * ensure that if the remote retransmitted anything, we will see it, and avoids adding
-         * another config option just for this. */
+        // in an inactive transaction, we do NOT expect traffic, and this timer is now used
+        // just in case any late straggler PDUs dp get delivered.  In this case the
+        // time should be longer than the retransmit time (ack timer) but less than the full
+        // inactivity timer (because again, we are not expecting traffic, so waiting the full
+        // timeout would hold resources longer than needed).  Using double the ack timer should
+        // ensure that if the remote retransmitted anything, we will see it, and avoids adding
+        // another config option just for this.
         timerDuration = txn->m_cfdpManager->getAckTimerParam(txn->m_chan_num) * 2;
     }
 
@@ -157,7 +156,7 @@ void Engine::dispatchRecv(Transaction *txn, const Fw::Buffer& buffer)
             break;
     }
 
-    this->armInactTimer(txn); /* whenever a packet was received by the other size, always arm its inactivity timer */
+    this->armInactTimer(txn); // whenever a packet was received by the other size, always arm its inactivity timer
 }
 
 void Engine::dispatchTx(Transaction *txn)
@@ -543,22 +542,22 @@ void Engine::recvDrop(Transaction *txn, const Fw::Buffer& buffer)
 
 void Engine::recvHold(Transaction *txn, const Fw::Buffer& buffer)
 {
-    /* anything received in this state is considered spurious */
+    // anything received in this state is considered spurious
     // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.spurious;
 
-    /*
-     * Normally we do not expect PDUs for a transaction in holdover, because
-     * from the local point of view it is completed and done.  But the reason
-     * for the holdover is because the remote side might not have gotten all
-     * the acks and could still be [re-]sending us PDUs for anything it does
-     * not know we got already.
-     *
-     * If an R2 sent FIN, it's possible that the peer missed the
-     * FIN-ACK and is sending another FIN. In that case we need to send
-     * another ACK.
-     */
+    //
+    // Normally we do not expect PDUs for a transaction in holdover, because
+    // from the local point of view it is completed and done.  But the reason
+    // for the holdover is because the remote side might not have gotten all
+    // the acks and could still be [re-]sending us PDUs for anything it does
+    // not know we got already.
+    //
+    // If an R2 sent FIN, it's possible that the peer missed the
+    // FIN-ACK and is sending another FIN. In that case we need to send
+    // another ACK.
+    //
 
-    /* currently the only thing we will re-ack is the FIN. */
+    // currently the only thing we will re-ack is the FIN.
 
     // Use peekPduType to determine the PDU type
     Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
@@ -603,15 +602,15 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
         EntityId sourceEid = header.getSourceEid();
         Class::T txmMode = header.getTxmMode();
 
-        /* only RX transactions dare tread here */
+        // only RX transactions dare tread here
         txn->m_history->seq_num = transactionSeq;
 
-        /* peer_eid is always the remote partner. src_eid is always the transaction source.
-         * in this case, they are the same */
+        // peer_eid is always the remote partner. src_eid is always the transaction source.
+        // in this case, they are the same
         txn->m_history->peer_eid = sourceEid;
         txn->m_history->src_eid  = sourceEid;
 
-        /* all RX transactions will need a chunk list to track file segments */
+        // all RX transactions will need a chunk list to track file segments
         if (txn->m_chunks == NULL)
         {
             txn->m_chunks = txn->m_chan->findUnusedChunks(DIRECTION_RX);
@@ -626,28 +625,28 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
         {
             if (pduType == Cfdp::T_FILE_DATA)
             {
-                /* file data PDU */
-                /* being idle and receiving a file data PDU means that no active transaction knew
-                 * about the transaction in progress, so most likely PDUs were missed. */
+                // file data PDU
+                // being idle and receiving a file data PDU means that no active transaction knew
+                // about the transaction in progress, so most likely PDUs were missed.
 
                 if (txmMode == Cfdp::Class::CLASS_1)
                 {
-                    /* R1, can't do anything without metadata first */
-                    txn->m_state = TXN_STATE_DROP; /* drop all incoming */
-                    /* use inactivity timer to ultimately free the state */
+                    // R1, can't do anything without metadata first
+                    txn->m_state = TXN_STATE_DROP; // drop all incoming
+                    // use inactivity timer to ultimately free the state
                 }
                 else
                 {
-                    /* R2 can handle missing metadata, so go ahead and create a temp file */
+                    // R2 can handle missing metadata, so go ahead and create a temp file
                     txn->m_state = TXN_STATE_R2;
                     txn->m_txn_class = Cfdp::Class::CLASS_2;
                     txn->rInit();
-                    this->dispatchRecv(txn, buffer); /* re-dispatch to enter r2 */
+                    this->dispatchRecv(txn, buffer); // re-dispatch to enter r2
                 }
             }
             else if (pduType == Cfdp::T_METADATA)
             {
-                /* file directive PDU with metadata - this is the expected case for starting a new RX transaction */
+                // file directive PDU with metadata - this is the expected case for starting a new RX transaction
                 MetadataPdu md;
                 Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
                 sb2.setBuffLen(buffer.getSize());
@@ -657,11 +656,11 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
                 {
                     this->recvMd(txn, md);
 
-                    /* NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path */
+                    // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path
                     txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? TXN_STATE_R1 : TXN_STATE_R2;
                     txn->m_txn_class = txmMode;
                     txn->m_flags.rx.md_recv = true;
-                    txn->rInit(); /* initialize R */
+                    txn->rInit(); // initialize R
                 }
                 else
                 {
@@ -679,7 +678,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
 
         if (txn->m_state == TXN_STATE_INIT)
         {
-            /* state was not changed, so free the transaction */
+            // state was not changed, so free the transaction
             this->finishTransaction(txn, false);
         }
     } else {
@@ -715,12 +714,11 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
         if (txn == NULL)
         {
-            /* if no match found, then it must be the case that we would be the destination entity id, so verify it
-                */
+            // if no match found, then it must be the case that we would be the destination entity id, so verify it
             if (destEid == this->m_manager->getLocalEidParam())
             {
-                /* we didn't find a match, so assign it to a transaction */
-                /* assume this is initiating an RX transaction, as TX transactions are only commanded */
+                // we didn't find a match, so assign it to a transaction
+                // assume this is initiating an RX transaction, as TX transactions are only commanded
                 txn = this->startRxTransaction(chan->getChannelId());
                 if (txn == NULL)
                 {
@@ -740,7 +738,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
         if (txn != NULL)
         {
-            /* found one! Send it to the transaction state processor */
+            // found one! Send it to the transaction state processor
             this->dispatchRecv(txn, buffer);
         }
         else
@@ -771,10 +769,10 @@ void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep,
 
     txn->initTxFile(cfdp_class, keep, chan, priority);
 
-    /* Increment sequence number for new transaction */
+    // Increment sequence number for new transaction
     ++this->m_seqNum;
 
-    /* Capture info for history */
+    // Capture info for history
     txn->m_history->seq_num  = this->m_seqNum;
     txn->m_history->src_eid  = m_manager->getLocalEidParam();
     txn->m_history->peer_eid = dest_id;
@@ -811,7 +809,7 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
     }
     else
     {
-        /* NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated */
+        // NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated
 
         txn->m_history->fnames.src_filename = src_filename;
         txn->m_history->fnames.dst_filename = dst_filename;
@@ -845,7 +843,7 @@ Transaction *Engine::startRxTransaction(U8 chan_num)
 
     if (txn != NULL)
     {
-        /* set default FIN status */
+        // set default FIN status
         txn->m_state_data.receive.r2.dc = FIN_DELIVERY_CODE_INCOMPLETE;
         txn->m_state_data.receive.r2.fs = FIN_FILE_STATUS_DISCARDED;
 
@@ -863,7 +861,7 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
     Status::T status = Cfdp::Status::SUCCESS;
     Os::Directory::Status dirStatus;
 
-    /* make sure the directory can be open */
+    // make sure the directory can be open
     dirStatus = pb->dir.open(src_filename.toChar(), Os::Directory::READ);
     if (dirStatus != Os::Directory::OP_OK)
     {
@@ -881,12 +879,12 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
         pb->dest_id    = dest_id;
         pb->cfdp_class = cfdp_class;
 
-        /* NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated */
+        // NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated
         pb->fnames.src_filename = src_filename;
         pb->fnames.dst_filename = dst_filename;
     }
 
-    /* the executor will start the transfer next cycle */
+    // the executor will start the transfer next cycle
     return status;
 }
 
@@ -1001,14 +999,14 @@ void Engine::cycle(void)
 
         if (chan->getFlowState() == Cfdp::Flow::NOT_FROZEN)
         {
-            /* handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
-             * this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
-             * PDUs. */
+            // handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
+            // this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
+            // PDUs.
 
-            /* cycle all transactions (tick) */
+            // cycle all transactions (tick)
             chan->tickTransactions();
 
-            /* cycle the current tx transaction */
+            // cycle the current tx transaction
             chan->cycleTx();
 
             chan->processPlaybackDirectories();
@@ -1026,16 +1024,16 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
         return;
     }
 
-    /* this should always be */
+    // this should always be
     FW_ASSERT(txn->m_chan != NULL);
 
-    /* If this was on the TXA queue (transmit side) then we need to move it out
-     * so the tick processor will stop trying to actively transmit something -
-     * it should move on to the next transaction.
-     *
-     * RX transactions can stay on the RX queue, that does not hurt anything
-     * because they are only triggered when a PDU comes in matching that seq_num
-     * (RX queue is not separated into A/W parts) */
+    // If this was on the TXA queue (transmit side) then we need to move it out
+    // so the tick processor will stop trying to actively transmit something -
+    // it should move on to the next transaction.
+    //
+    // RX transactions can stay on the RX queue, that does not hurt anything
+    // because they are only triggered when a PDU comes in matching that seq_num
+    // (RX queue is not separated into A/W parts)
     if (txn->m_flags.com.q_index == QueueId::TXA)
     {
         txn->m_chan->dequeueTransaction(txn);
@@ -1056,7 +1054,7 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
     {
         this->sendEotPkt(txn);
 
-        /* extra bookkeeping for tx direction only */
+        // extra bookkeeping for tx direction only
         if (txn->m_history->dir == DIRECTION_TX && txn->m_flags.tx.cmd_tx)
         {
             txn->m_chan->decrementCmdTxCounter();
@@ -1067,14 +1065,14 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
 
     if (txn->m_pb)
     {
-        /* a playback's transaction is now done, decrement the playback counter */
+        // a playback's transaction is now done, decrement the playback counter
         FW_ASSERT(txn->m_pb->num_ts);
         --txn->m_pb->num_ts;
     }
 
     txn->m_chan->clearCurrentIfMatch(txn);
 
-    /* Put this transaction into the holdover state, inactivity timer will recycle it */
+    // Put this transaction into the holdover state, inactivity timer will recycle it
     txn->m_state = TXN_STATE_HOLD;
     this->armInactTimer(txn);
 }
@@ -1137,7 +1135,7 @@ void Engine::cancelTransaction(Transaction *txn)
         txn->m_flags.com.canceled = true;
         this->setTxnStatus(txn, TXN_STATUS_CANCEL_REQUEST_RECEIVED);
 
-        /* this should always be true, just confirming before indexing into array */
+        // this should always be true, just confirming before indexing into array
         if (txn->m_history->dir < DIRECTION_NUM)
         {
             (txn->*fns[txn->m_history->dir])();
@@ -1177,12 +1175,12 @@ void Engine::handleNotKeepFile(Transaction *txn)
     Fw::String failDir;
     Fw::String moveDir;
 
-    /* Sender */
+    // Sender
     if (txn->getHistory()->dir == DIRECTION_TX)
     {
         if (!TxnStatusIsError(txn->getHistory()->txn_stat))
         {
-            /* If move directory is defined attempt move */
+            // If move directory is defined attempt move
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());
             if(moveDir.length() > 0)
             {
@@ -1197,10 +1195,10 @@ void Engine::handleNotKeepFile(Transaction *txn)
         }
         else
         {
-            /* file inside an polling directory */
+            // file inside an polling directory
             if (this->isPollingDir(txn->m_history->fnames.src_filename.toChar(), txn->getChannelId()))
             {
-                /* If fail directory is defined attempt move */
+                // If fail directory is defined attempt move
                 failDir = m_manager->getFailDirParam();
                 if(failDir.length() > 0)
                 {
@@ -1215,7 +1213,7 @@ void Engine::handleNotKeepFile(Transaction *txn)
             }
         }
     }
-    /* Not Sender */
+    // Not Sender
     else
     {
         fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());

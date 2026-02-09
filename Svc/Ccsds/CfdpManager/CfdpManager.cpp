@@ -20,9 +20,7 @@ CfdpManager ::CfdpManager(const char* const compName) :
     CfdpManagerComponentBase(compName),
     m_engine(nullptr)
 {
-    // Create the CFDP engine
-    this->m_engine = new Engine(this);
-    FW_ASSERT(this->m_engine != nullptr);
+
 }
 
 CfdpManager ::~CfdpManager() {
@@ -36,6 +34,9 @@ CfdpManager ::~CfdpManager() {
 void CfdpManager ::configure(void)
 {
     // TODO BPC: Do we need a mem allocator here?
+    // Create and initialize the CFDP engine
+    this->m_engine = new Engine(this);
+    FW_ASSERT(this->m_engine != nullptr);
     this->m_engine->init();
 }
 
@@ -46,6 +47,7 @@ void CfdpManager ::configure(void)
 void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
 {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
+    FW_ASSERT(this->m_engine != NULL);
     this->m_engine->cycle();
 }
 
@@ -59,15 +61,16 @@ void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 
 void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 {
-  // There is a direct mapping between port number and channel index
-  FW_ASSERT(portNum < CFDP_NUM_CHANNELS, portNum, CFDP_NUM_CHANNELS);
-  FW_ASSERT(portNum >= 0, portNum);
+    // There is a direct mapping between port number and channel index
+    FW_ASSERT(portNum < CFDP_NUM_CHANNELS, portNum, CFDP_NUM_CHANNELS);
+    FW_ASSERT(portNum >= 0, portNum);
 
-  // Pass buffer to the engine to deserialize
-  this->m_engine->receivePdu(static_cast<U8>(portNum), fwBuffer);
+    // Pass buffer to the engine to deserialize
+    FW_ASSERT(this->m_engine != NULL);
+    this->m_engine->receivePdu(static_cast<U8>(portNum), fwBuffer);
 
-  // Return buffer
-  this->dataInReturn_out(portNum, fwBuffer);
+    // Return buffer
+    this->dataInReturn_out(portNum, fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -145,6 +148,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
 
     // Check channel index is in range
     rspStatus = this->checkCommandChannelIndex(channelId);
+    FW_ASSERT(this->m_engine != NULL);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
         (Status::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
@@ -171,9 +175,9 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
+    FW_ASSERT(this->m_engine != NULL);
     // Check channel index is in range
     rspStatus = this->checkCommandChannelIndex(channelId);
-
     if ((rspStatus == Fw::CmdResponse::OK) &&
         (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
                                                              keep.e, channelId, priority, destId)))
@@ -198,6 +202,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
+    FW_ASSERT(this->m_engine != NULL);
     // Check channel index and poll index are in range
     rspStatus = this->checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
@@ -224,6 +229,7 @@ void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
+    FW_ASSERT(this->m_engine != NULL);
     // Check channel index and poll index are in range
     rspStatus = this->checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
@@ -247,6 +253,7 @@ void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
+    FW_ASSERT(this->m_engine != NULL);
     // Check channel index is in range
     rspStatus = checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
