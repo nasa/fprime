@@ -782,7 +782,7 @@ void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep,
 
 Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_filename,
                              Class::T cfdp_class, Keep::T keep, U8 chan_num,
-                             U8 priority, EntityId dest_id)
+                             U8 priority, EntityId dest_id, bool portInitiated)
 {
     Transaction *txn;
     Channel* chan = nullptr;
@@ -817,6 +817,9 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
 
         chan->incrementCmdTxCounter();
         txn->m_flags.tx.cmd_tx = true;
+
+        // Mark transaction as port-initiated if requested
+        txn->m_portInitiated = portInitiated;
     }
 
     return ret;
@@ -1058,6 +1061,28 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
         if (txn->m_history->dir == DIRECTION_TX && txn->m_flags.tx.cmd_tx)
         {
             txn->m_chan->decrementCmdTxCounter();
+        }
+
+        // Notify via port if this was a port-initiated transfer
+        if (txn->m_portInitiated)
+        {
+            Svc::SendFileResponse response;
+
+            // Map transaction status to SendFileStatus
+            if (TxnStatusIsError(txn->m_history->txn_stat))
+            {
+                response.set_status(Svc::SendFileStatus::STATUS_ERROR);
+            }
+            else
+            {
+                response.set_status(Svc::SendFileStatus::STATUS_OK);
+            }
+
+            // Context was set to portNum in SendFile_handler
+            response.set_context(0);
+
+            // Invoke the FileComplete output port
+            this->m_manager->FileComplete_out(0, response);
         }
 
         txn->m_flags.com.keep_history = keep_history;

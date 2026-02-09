@@ -105,6 +105,15 @@ class CfdpManager final : public CfdpManagerComponentBase {
                         Fw::Buffer& fwBuffer //!< The buffer
     ) override;
 
+    //! Handler for input port SendFile
+    Svc::SendFileResponse SendFile_handler(
+        FwIndexType portNum, //!< The port number
+        const Fw::StringBase& sourceFileName, //!< Path of file to send
+        const Fw::StringBase& destFileName, //!< Path to store file at destination
+        U32 offset, //!< Byte offset to start reading from
+        U32 length //!< Number of bytes to read (0 = entire file)
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands

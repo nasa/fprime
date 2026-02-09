@@ -37,6 +37,12 @@ module Cfdp {
 
         @ Port for deallocating buffers allocated for PDU data
         output port bufferDeallocate: [CfdpManagerNumChannels] Fw.BufferSend
+
+        @ File send request port
+        guarded input port SendFile: Svc.SendFileRequest
+
+        @ File send complete notification port
+        output port FileComplete: Svc.SendFileComplete
         
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

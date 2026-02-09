@@ -794,6 +794,14 @@ class Transaction {
     U8 m_priority;
 
     /**
+     * @brief Flag indicating if this transaction was initiated via port
+     *
+     * Set to true for port-initiated transfers so completion can be
+     * notified via the FileComplete output port.
+     */
+    bool m_portInitiated;
+
+    /**
      * @brief Circular list node
      *
      * For connection to a CList (intrusive linked list).

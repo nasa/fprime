@@ -73,6 +73,54 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     this->dataInReturn_out(portNum, fwBuffer);
 }
 
+Svc::SendFileResponse CfdpManager ::SendFile_handler(
+    FwIndexType portNum,
+    const Fw::StringBase& sourceFileName,
+    const Fw::StringBase& destFileName,
+    U32 offset,
+    U32 length)
+{
+    Svc::SendFileResponse response;
+    FW_ASSERT(this->m_engine != NULL);
+
+    // Get parameters for port-initiated transfers
+    Fw::ParamValid valid;
+    U8 channelId = this->paramGet_PORT_DEFAULT_CHANNEL(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    EntityId destEid = this->paramGet_PORT_DEFAULT_DEST_ENTITY_ID(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    // Use default values for port-initiated transfers
+    // - Class 2 (acknowledged) for reliability
+    // - Keep = KEEP (don't delete after transfer)
+    // - Priority = 0 (highest priority)
+    Class::T cfdpClass = Class::CLASS_2;
+    Keep::T keep = Keep::KEEP;
+    U8 priority = 0;
+
+    // Attempt to initiate the file transfer (mark as port-initiated)
+    Status::T status = this->m_engine->txFile(
+        sourceFileName, destFileName, cfdpClass, keep,
+        channelId, priority, destEid, true);
+
+    // Map CFDP status to SendFileStatus
+    if (status == Status::SUCCESS) {
+        response.set_status(Svc::SendFileStatus::STATUS_OK);
+        this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
+    } else {
+        response.set_status(Svc::SendFileStatus::STATUS_ERROR);
+        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+    }
+
+    // Set context to portNum so we can identify this transaction later
+    response.set_context(static_cast<U32>(portNum));
+
+    return response;
+}
+
 // ----------------------------------------------------------------------
 // Port calls that are invoked by the CFDP engine
 // These functions are analogous to the functions in cf_cfdp_sbintf.*

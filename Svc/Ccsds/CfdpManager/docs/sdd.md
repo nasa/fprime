@@ -25,7 +25,7 @@ The CfdpManager component provides an F' implementation of the CFDP protocol. Su
 
 The F' implementation adds new components built specifically for the F' ecosystem:
 - CfdpManager component wrapper: Integrates CFDP into F' architecture with standard port interfaces, commands, events, telemetry, and parameters
-- Object-oriented PDU encoding/decoding: Type-safe PDU classes based on F' [`Serializable`](../../../../Fw/Types/Serializable.hpp) interface for consistent serialization
+- Object-oriented PDU encoding/decoding: Type-safe PDU classes based on F' `Serializable` interface for consistent serialization
 - F' timer implementation: Uses F' time primitives for protocol timers
 
 For detailed attribution, licensing information, and a complete breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
