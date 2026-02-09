@@ -33,7 +33,7 @@ CfdpManager ::~CfdpManager() {
 
 void CfdpManager ::configure(void)
 {
-    // TODO BPC: Do we need a mem allocator here?
+    // TODO BPC: Update to use a mem allocator
     // Create and initialize the CFDP engine
     this->m_engine = new Engine(this);
     FW_ASSERT(this->m_engine != nullptr);
