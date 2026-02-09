@@ -163,6 +163,17 @@ enum Direction : U8
 };
 
 /**
+ * @brief Transaction initiation method
+ *
+ * Differentiates between command-initiated and port-initiated transactions
+ */
+enum TransactionInitType : U8
+{
+    INIT_BY_COMMAND = 0,  //!< Transaction initiated via command interface
+    INIT_BY_PORT    = 1   //!< Transaction initiated via port interface
+};
+
+/**
  * @brief Identifies the type of timer tick being processed
  */
 enum CfdpTickType : U8

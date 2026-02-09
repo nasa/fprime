@@ -78,6 +78,12 @@ TEST(Transaction, Class2RxNack) {
     delete tester;
 }
 
+TEST(Transaction, Class1TxPortBased) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testClass2TxPortBased();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

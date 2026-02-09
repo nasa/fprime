@@ -25,11 +25,11 @@ constexpr FwSizeType CfdpManagerTester::MAX_PDU_COPIES;
 // ----------------------------------------------------------------------
 
 CfdpManagerTester ::CfdpManagerTester()
-    : CfdpManagerGTestBase("CfdpManagerTester", CfdpManagerTester::MAX_HISTORY_SIZE),
+    : CfdpManagerGTestBase("CfdpManagerTester", MAX_HISTORY_SIZE),
       component("CfdpManager"),
       m_pduCopyCount(0) {
-    this->initComponents();
     this->connectPorts();
+    this->initComponents();
     this->component.loadParameters();
 
     // Configure CFDP engine after parameters are loaded
@@ -73,6 +73,14 @@ void CfdpManagerTester::from_dataOut_handler(
         // Call base class handler with the copy
         CfdpManagerTesterBase::from_dataOut_handler(portNum, copyBuffer);
     }
+}
+
+void CfdpManagerTester::from_fileComplete_handler(
+    FwIndexType portNum,
+    const Svc::SendFileResponse& response
+) {
+    // Push to port history
+    CfdpManagerGTestBase::from_fileComplete_handler(portNum, response);
 }
 
 // ----------------------------------------------------------------------
@@ -183,6 +191,39 @@ void CfdpManagerTester::setupTxTransaction(
     EXPECT_EQ(setup.expectedSeqNum, setup.txn->m_history->seq_num) << "History seq_num should match";
     EXPECT_EQ(component.getLocalEidParam(), setup.txn->m_history->src_eid) << "Source EID should match local EID";
     EXPECT_EQ(destEid, setup.txn->m_history->peer_eid) << "Peer EID should match dest EID";
+    EXPECT_STREQ(srcFile, setup.txn->m_history->fnames.src_filename.toChar()) << "Source filename should match";
+    EXPECT_STREQ(dstFile, setup.txn->m_history->fnames.dst_filename.toChar()) << "Destination filename should match";
+}
+
+void CfdpManagerTester::setupTxPortTransaction(
+    const char* srcFile,
+    const char* dstFile,
+    U8 channelId,
+    TxnState expectedState,
+    TransactionSetup& setup)
+{
+    // Initiate via port (synchronous - no dispatch needed)
+    Svc::SendFileResponse response = invokeSendFilePort(srcFile, dstFile);
+
+    ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, response.get_status())
+        << "Port-based file send should succeed";
+
+    // Find the transaction that was created (sequence numbers start at 1)
+    U32 expectedSeqNum = 1;
+    setup.txn = findTransaction(channelId, expectedSeqNum);
+    ASSERT_NE(nullptr, setup.txn) << "Transaction should exist after port invocation";
+    setup.expectedSeqNum = expectedSeqNum;
+
+    // Verify initial transaction state
+    ASSERT_EQ(expectedState, setup.txn->m_state) << "Should be in expected state";
+    ASSERT_EQ(INIT_BY_PORT, setup.txn->m_initType) << "Should be marked as port-initiated";
+    EXPECT_EQ(0, setup.txn->m_foffs) << "File offset should be 0 initially";
+    EXPECT_EQ(TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
+
+    // Verify transaction history
+    EXPECT_EQ(setup.expectedSeqNum, setup.txn->m_history->seq_num) << "History seq_num should match";
+    EXPECT_EQ(component.getLocalEidParam(), setup.txn->m_history->src_eid) << "Source EID should match local EID";
     EXPECT_STREQ(srcFile, setup.txn->m_history->fnames.src_filename.toChar()) << "Source filename should match";
     EXPECT_STREQ(dstFile, setup.txn->m_history->fnames.dst_filename.toChar()) << "Destination filename should match";
 }
@@ -376,24 +417,38 @@ void CfdpManagerTester::verifyReceivedFile(
 }
 
 // ----------------------------------------------------------------------
-// Transaction Test Implementations
+// Refactored Test Helper Implementations
 // ----------------------------------------------------------------------
 
-void CfdpManagerTester::testClass1TxNominal() {
-    // Test configuration
-    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
-    const FwSizeType expectedFileSize = dataPerPdu;  // Single PDU
-    const char* srcFile = "test/ut/output/test_class1_tx.bin";
-    const char* dstFile = "test/ut/output/test_class1_tx_dst.dat";
+Svc::SendFileResponse CfdpManagerTester::invokeSendFilePort(
+    const char* srcFile,
+    const char* dstFile
+) {
+    Fw::String source(srcFile);
+    Fw::String dest(dstFile);
+    Svc::SendFileResponse response = this->invoke_to_sendFile(
+        0,                    // portNum
+        source,              // sourceFileName
+        dest,                // destFileName
+        0,                   // offset (unused)
+        0                    // length (0 = entire file)
+    );
+    return response;
+}
 
+void CfdpManagerTester::sendAndVerifyClass1Tx(
+    const char* srcFile,
+    const char* dstFile,
+    FwSizeType expectedFileSize
+) {
     // Create and verify test file
     FwSizeType fileSize;
     createAndVerifyTestFile(srcFile, expectedFileSize, fileSize);
 
-    // Setup transaction and verify initial state
+    // Setup transaction and verify initial state (command-based only)
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                             Cfdp::Class::CLASS_1, TEST_PRIORITY, TXN_STATE_S1, setup);
+        Cfdp::Class::CLASS_1, TEST_PRIORITY, TXN_STATE_S1, setup);
 
     // Run first engine cycle - should send Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -407,7 +462,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(1);
     ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU should be sent";
     verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                     setup.expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::Class::CLASS_1);
+                      setup.expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::Class::CLASS_1);
 
     EXPECT_EQ(fileSize, setup.txn->m_foffs) << "Should have read entire file";
     EXPECT_EQ(TX_SUB_STATE_EOF, setup.txn->m_state_data.send.sub_state) << "Should progress to EOF sub-state";
@@ -425,6 +480,134 @@ void CfdpManagerTester::testClass1TxNominal() {
 
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
+}
+
+void CfdpManagerTester::sendAndVerifyClass2Tx(
+    TransactionInitType initType,
+    const char* srcFile,
+    const char* dstFile,
+    FwSizeType expectedFileSize,
+    bool simulateNak
+) {
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const U8 channelId = (initType == INIT_BY_COMMAND) ? TEST_CHANNEL_ID_1 : TEST_CHANNEL_ID_0;
+
+    // Create and verify test file
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, expectedFileSize, fileSize);
+
+    // Setup transaction
+    TransactionSetup setup;
+
+    if (initType == INIT_BY_COMMAND) {
+        setupTxTransaction(srcFile, dstFile, channelId, TEST_GROUND_EID,
+                           Cfdp::Class::CLASS_2, TEST_PRIORITY, TXN_STATE_S2, setup);
+    } else {
+        // Initiate via port
+        setupTxPortTransaction(srcFile, dstFile, channelId, TXN_STATE_S2, setup);
+    }
+
+    // Run engine cycle - Metadata + FileData PDUs
+    U8 numFileDataPdus = static_cast<U8>(fileSize / dataPerPdu);
+    if (fileSize % dataPerPdu != 0) {
+        numFileDataPdus++;
+    }
+
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_FROM_PORT_HISTORY_SIZE(1 + numFileDataPdus);
+
+    verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::Class::CLASS_2);
+    verifyMultipleFileDataPdus(1, numFileDataPdus, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
+
+    EXPECT_EQ(expectedFileSize, setup.txn->m_foffs);
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state);
+    EXPECT_TRUE(setup.txn->m_flags.tx.send_eof);
+
+    // Run cycle - EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    FwIndexType firstEofIndex = 1 + numFileDataPdus;
+    ASSERT_FROM_PORT_HISTORY_SIZE(firstEofIndex + 1);
+
+    Fw::Buffer firstEofPduBuffer = this->getSentPduBuffer(firstEofIndex);
+    ASSERT_GT(firstEofPduBuffer.getSize(), 0);
+    verifyEofPdu(firstEofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
+                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
+
+    EXPECT_FALSE(setup.txn->m_flags.tx.send_eof);
+
+    // Handle NAK if requested
+    if (simulateNak) {
+        // Clear history for retransmission
+        this->clearHistory();
+        this->m_pduCopyCount = 0;
+
+        // Send NAK requesting retransmission of PDUs 2 and 5
+        Cfdp::SegmentRequest segments[2];
+        segments[0].offsetStart = dataPerPdu;
+        segments[0].offsetEnd = 2 * dataPerPdu;
+        segments[1].offsetStart = 4 * dataPerPdu;
+        segments[1].offsetEnd = 5 * dataPerPdu;
+
+        this->sendNakPdu(channelId, component.getLocalEidParam(), TEST_GROUND_EID,
+                         setup.expectedSeqNum, 0, static_cast<FileSize>(expectedFileSize),
+                         2, segments);
+        this->component.doDispatch();
+
+        // Run cycles until second EOF
+        U32 maxCycles = 10;
+        bool foundSecondEof = false;
+
+        for (U32 cycle = 0; cycle < maxCycles && !foundSecondEof; ++cycle) {
+            this->invoke_to_run1Hz(0, 0);
+            this->component.doDispatch();
+
+            if (this->fromPortHistory_dataOut->size() > 0) {
+                FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
+                Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
+                Cfdp::EofPdu eofPdu;
+                Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
+                sb.setBuffLen(lastPdu.getSize());
+                if (eofPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
+                    foundSecondEof = true;
+                }
+            }
+        }
+
+        ASSERT_TRUE(foundSecondEof) << "Second EOF should be sent after NAK retransmission";
+    }
+
+    // Complete Class 2 handshake
+    completeClass2Handshake(channelId, TEST_GROUND_EID, setup.expectedSeqNum, setup.txn);
+
+    // If port-initiated, verify fileComplete callback BEFORE clearing history
+    if (initType == INIT_BY_PORT) {
+        ASSERT_EQ(1u, this->fromPortHistory_fileComplete->size())
+            << "fileComplete port should be invoked once for port-initiated transfer";
+        Svc::SendFileResponse completionResp =
+            this->fromPortHistory_fileComplete->at(0).resp;
+        ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, completionResp.get_status())
+            << "fileComplete should indicate success";
+    }
+
+    // Wait for transaction recycle
+    waitForTransactionRecycle(channelId, setup.expectedSeqNum);
+
+    // Clean up
+    cleanupTestFile(srcFile);
+}
+
+// ----------------------------------------------------------------------
+// Transaction Test Implementations
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::testClass1TxNominal() {
+    sendAndVerifyClass1Tx(
+        "test/ut/output/test_class1_tx.bin",
+        "test/ut/output/test_class1_tx_dst.dat",
+        component.getOutgoingFileChunkSizeParam()
+    );
 }
 
 void CfdpManagerTester::testClass2TxNominal() {
@@ -1069,6 +1252,21 @@ void CfdpManagerTester::testClass2RxNack() {
     // Cleanup test files
     cleanupTestFile(dstFile);
     cleanupTestFile(srcFile);
+}
+
+// ----------------------------------------------------------------------
+// Port-Based Transaction Tests
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::testClass2TxPortBased() {
+    // Port-initiated transfers use Class 2 for reliability
+    sendAndVerifyClass2Tx(
+        INIT_BY_PORT,
+        "test/ut/output/test_class1_tx_port.bin",
+        "test/ut/output/test_class1_tx_port_dst.dat",
+        component.getOutgoingFileChunkSizeParam(),
+        false  // No NAK simulation
+    );
 }
 
 }  // namespace Cfdp

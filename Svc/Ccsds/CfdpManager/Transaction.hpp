@@ -794,12 +794,12 @@ class Transaction {
     U8 m_priority;
 
     /**
-     * @brief Flag indicating if this transaction was initiated via port
+     * @brief Transaction initiation method
      *
-     * Set to true for port-initiated transfers so completion can be
-     * notified via the FileComplete output port.
+     * Indicates whether this transaction was initiated via command or port.
+     * Used to determine whether completion should be notified via FileComplete port.
      */
-    bool m_portInitiated;
+    TransactionInitType m_initType;
 
     /**
      * @brief Circular list node

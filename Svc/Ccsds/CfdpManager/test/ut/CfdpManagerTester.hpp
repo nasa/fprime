@@ -374,6 +374,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX file transfer with NAK retransmission
     void testClass2RxNack();
 
+    //! Test nominal Class 2 TX file transfer (port-based)
+    void testClass2TxPortBased();
+
+    //! Test Class 2 TX file transfer with NAK handling (port-based)
+    void testClass2TxPortBasedNack();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides
@@ -391,6 +397,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         Fw::Buffer& fwBuffer
     ) override;
 
+    //! Handler for from_fileComplete - just push port history for testing
+    void from_fileComplete_handler(
+        FwIndexType portNum,
+        const Svc::SendFileResponse& response
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Test helper functions
@@ -399,7 +411,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test configuration constants
     static constexpr U8 TEST_CHANNEL_ID_0 = 0;
     static constexpr U8 TEST_CHANNEL_ID_1 = 1;
-    static constexpr EntityId TEST_GROUND_EID = 10;
+    static constexpr EntityId TEST_GROUND_EID = 100;
     static constexpr U8 TEST_PRIORITY = 0;
 
     //! Helper struct for transaction setup results
@@ -415,7 +427,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         FwSizeType& actualFileSize
     );
 
-    //! Setup TX transaction and verify initial state
+    //! Setup TX transaction and verify initial state (command-based)
     void setupTxTransaction(
         const char* srcFile,
         const char* dstFile,
@@ -423,6 +435,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         EntityId destEid,
         Cfdp::Class cfdpClass,
         U8 priority,
+        TxnState expectedState,
+        TransactionSetup& setup
+    );
+
+    //! Setup TX transaction and verify initial state (port-based)
+    void setupTxPortTransaction(
+        const char* srcFile,
+        const char* dstFile,
+        U8 channelId,
         TxnState expectedState,
         TransactionSetup& setup
     );
@@ -449,6 +470,65 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         EntityId destEid,
         U32 expectedSeqNum,
         Transaction* txn
+    );
+
+    //! Initiate a file transfer via SendFile port
+    //! @param srcFile Source file path
+    //! @param dstFile Destination file path
+    //! @return SendFileResponse from port
+    Svc::SendFileResponse invokeSendFilePort(
+        const char* srcFile,
+        const char* dstFile
+    );
+
+    //! Send and verify a Class 1 TX transaction (command-based only)
+    //! @param srcFile Source file path
+    //! @param dstFile Destination file path
+    //! @param expectedFileSize Expected size of file to transfer
+    void sendAndVerifyClass1Tx(
+        const char* srcFile,
+        const char* dstFile,
+        FwSizeType expectedFileSize
+    );
+
+    //! Send and verify a Class 2 TX transaction
+    //! @param initType How to initiate the transaction (command or port)
+    //! @param srcFile Source file path
+    //! @param dstFile Destination file path
+    //! @param expectedFileSize Expected size of file to transfer
+    //! @param simulateNak If true, simulate NAK response (optional, default false)
+    void sendAndVerifyClass2Tx(
+        TransactionInitType initType,
+        const char* srcFile,
+        const char* dstFile,
+        FwSizeType expectedFileSize,
+        bool simulateNak = false
+    );
+
+    //! Receive and verify a Class 1 RX transaction
+    //! @param srcFile Local file to read test data from
+    //! @param dstFile Destination file path where received file will be written
+    //! @param groundSrcFile Source filename from ground perspective
+    //! @param expectedFileSize Expected size of file to receive
+    void sendAndVerifyClass1Rx(
+        const char* srcFile,
+        const char* dstFile,
+        const char* groundSrcFile,
+        FwSizeType expectedFileSize
+    );
+
+    //! Receive and verify a Class 2 RX transaction
+    //! @param srcFile Local file to read test data from
+    //! @param dstFile Destination file path where received file will be written
+    //! @param groundSrcFile Source filename from ground perspective
+    //! @param expectedFileSize Expected size of file to receive
+    //! @param simulateNak If true, simulate missing FileData to trigger NAK (optional, default false)
+    void sendAndVerifyClass2Rx(
+        const char* srcFile,
+        const char* dstFile,
+        const char* groundSrcFile,
+        FwSizeType expectedFileSize,
+        bool simulateNak = false
     );
 
     //! Verify FIN-ACK PDU at given index

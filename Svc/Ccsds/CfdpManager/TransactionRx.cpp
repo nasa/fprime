@@ -69,7 +69,7 @@ Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpMan
     m_keep(Cfdp::Keep::KEEP),
     m_chan_num(channelId),          // Initialize from parameter
     m_priority(0),
-    m_portInitiated(false),
+    m_initType(INIT_BY_COMMAND),
     m_cl_node{},
     m_pb(nullptr),
     m_state_data{},
@@ -92,7 +92,7 @@ void Transaction::reset()
     this->m_foffs = 0;
     this->m_keep = Cfdp::Keep::KEEP;
     this->m_priority = 0;
-    this->m_portInitiated = false;
+    this->m_initType = INIT_BY_COMMAND;
     this->m_crc = CFDP::Checksum(0);
     this->m_pb = nullptr;
 

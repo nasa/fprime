@@ -138,13 +138,13 @@ class Engine {
      * @param chan_num       CFDP channel number to use
      * @param priority       CFDP priority level
      * @param dest_id        Entity ID of remote receiver
-     * @param portInitiated  If true, marks transaction as port-initiated for completion notification
+     * @param initType       Transaction initiation method (command or port)
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
     Status::T txFile(const Fw::String& src, const Fw::String& dst,
                          Class::T cfdp_class, Keep::T keep,
                          U8 chan_num, U8 priority, EntityId dest_id,
-                         bool portInitiated = false);
+                         TransactionInitType initType = INIT_BY_COMMAND);
 
     /**
      * @brief Begin transmit of a directory

@@ -782,7 +782,7 @@ void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep,
 
 Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_filename,
                              Class::T cfdp_class, Keep::T keep, U8 chan_num,
-                             U8 priority, EntityId dest_id, bool portInitiated)
+                             U8 priority, EntityId dest_id, TransactionInitType initType)
 {
     Transaction *txn;
     Channel* chan = nullptr;
@@ -818,8 +818,8 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
         chan->incrementCmdTxCounter();
         txn->m_flags.tx.cmd_tx = true;
 
-        // Mark transaction as port-initiated if requested
-        txn->m_portInitiated = portInitiated;
+        // Set transaction initiation type
+        txn->m_initType = initType;
     }
 
     return ret;
@@ -1064,25 +1064,21 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
         }
 
         // Notify via port if this was a port-initiated transfer
-        if (txn->m_portInitiated)
+        if (txn->m_initType == INIT_BY_PORT)
         {
-            Svc::SendFileResponse response;
-
             // Map transaction status to SendFileStatus
+            Svc::SendFileStatus::T status;
             if (TxnStatusIsError(txn->m_history->txn_stat))
             {
-                response.set_status(Svc::SendFileStatus::STATUS_ERROR);
+                status = Svc::SendFileStatus::STATUS_ERROR;
             }
             else
             {
-                response.set_status(Svc::SendFileStatus::STATUS_OK);
+                status = Svc::SendFileStatus::STATUS_OK;
             }
 
-            // Context was set to portNum in SendFile_handler
-            response.set_context(0);
-
-            // Invoke the FileComplete output port
-            this->m_manager->FileComplete_out(0, response);
+            // Invoke the file complete notification
+            this->m_manager->sendFileComplete(status);
         }
 
         txn->m_flags.com.keep_history = keep_history;

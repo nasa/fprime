@@ -81,6 +81,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //! \param pduBuffer [in] Buffer containing the PDU to send
   void sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer);
 
+  //! Send file completion notification for port-initiated transfers
+  //!
+  //! Invokes the fileComplete output port with the transaction status.
+  //!
+  //! \param status Transaction completion status
+  void sendFileComplete(Svc::SendFileStatus::T status);
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -106,7 +113,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     ) override;
 
     //! Handler for input port SendFile
-    Svc::SendFileResponse SendFile_handler(
+    Svc::SendFileResponse sendFile_handler(
         FwIndexType portNum, //!< The port number
         const Fw::StringBase& sourceFileName, //!< Path of file to send
         const Fw::StringBase& destFileName, //!< Path to store file at destination

@@ -14,6 +14,13 @@ event SendFileInitiatied(
     severity activity low \
     format "Succesfully initiated file send transfer for {}" 
 
+event UnsupportedSendFileArguments(
+    offset: U32 @< Offset of the send file request
+    length: U32 @< Lenght of the send file request
+) \
+    severity warning low \
+    format "Invalid send file port request with offset {}, length {}" 
+
 event SendFileInitiateFail(
     sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
 ) \

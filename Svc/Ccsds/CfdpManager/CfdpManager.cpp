@@ -73,7 +73,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     this->dataInReturn_out(portNum, fwBuffer);
 }
 
-Svc::SendFileResponse CfdpManager ::SendFile_handler(
+Svc::SendFileResponse CfdpManager ::sendFile_handler(
     FwIndexType portNum,
     const Fw::StringBase& sourceFileName,
     const Fw::StringBase& destFileName,
@@ -83,36 +83,45 @@ Svc::SendFileResponse CfdpManager ::SendFile_handler(
     Svc::SendFileResponse response;
     FW_ASSERT(this->m_engine != NULL);
 
-    // Get parameters for port-initiated transfers
-    Fw::ParamValid valid;
-    U8 channelId = this->paramGet_PORT_DEFAULT_CHANNEL(valid);
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-              static_cast<FwAssertArgType>(valid.e));
+    // TODO BPC: CFDP engine does not support partial file retransmit at this time
+    if(offset > 0 || length > 0)
+    {
+        response.set_status(Svc::SendFileStatus::STATUS_INVALID);
+        this->log_WARNING_LO_UnsupportedSendFileArguments(offset, length);
+    }
+    else
+    {
+        // Get parameters for port-initiated transfers
+        Fw::ParamValid valid;
+        U8 channelId = this->paramGet_PORT_DEFAULT_CHANNEL(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
 
-    EntityId destEid = this->paramGet_PORT_DEFAULT_DEST_ENTITY_ID(valid);
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-              static_cast<FwAssertArgType>(valid.e));
+        EntityId destEid = this->paramGet_PORT_DEFAULT_DEST_ENTITY_ID(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
 
-    // Use default values for port-initiated transfers
-    // - Class 2 (acknowledged) for reliability
-    // - Keep = KEEP (don't delete after transfer)
-    // - Priority = 0 (highest priority)
-    Class::T cfdpClass = Class::CLASS_2;
-    Keep::T keep = Keep::KEEP;
-    U8 priority = 0;
+        // Use default values for port-initiated transfers
+        // - Class 2 (acknowledged) for reliability
+        // - Keep = KEEP (don't delete after transfer)
+        // - Priority = 0 (highest priority)
+        Class::T cfdpClass = Class::CLASS_2;
+        Keep::T keep = Keep::KEEP;
+        U8 priority = 0;
 
-    // Attempt to initiate the file transfer (mark as port-initiated)
-    Status::T status = this->m_engine->txFile(
-        sourceFileName, destFileName, cfdpClass, keep,
-        channelId, priority, destEid, true);
+        // Attempt to initiate the file transfer (mark as port-initiated)
+        Status::T status = this->m_engine->txFile(
+            sourceFileName, destFileName, cfdpClass, keep,
+            channelId, priority, destEid, INIT_BY_PORT);
 
-    // Map CFDP status to SendFileStatus
-    if (status == Status::SUCCESS) {
-        response.set_status(Svc::SendFileStatus::STATUS_OK);
-        this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
-    } else {
-        response.set_status(Svc::SendFileStatus::STATUS_ERROR);
-        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+        // Map CFDP status to SendFileStatus
+        if (status == Status::SUCCESS) {
+            response.set_status(Svc::SendFileStatus::STATUS_OK);
+            this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
+        } else {
+            response.set_status(Svc::SendFileStatus::STATUS_ERROR);
+            this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+        }
     }
 
     // Set context to portNum so we can identify this transaction later
@@ -181,6 +190,15 @@ void CfdpManager ::sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
 
     // Full send
     this->dataOut_out(portNum, pduBuffer);
+}
+
+void CfdpManager::sendFileComplete(Svc::SendFileStatus::T status)
+{
+    Svc::SendFileResponse response;
+    response.set_status(status);
+    response.set_context(0);
+
+    this->fileComplete_out(0, response);
 }
 
 // ----------------------------------------------------------------------

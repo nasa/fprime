@@ -24,7 +24,7 @@ module Cfdp {
         output port dataOut: [CfdpManagerNumChannels] Fw.BufferSend
 
         @ Buffer that was sent via the dataOut port and is now being retruned
-        sync input port dataReturnIn: [CfdpManagerNumChannels] Svc.ComDataWithContext
+        async input port dataReturnIn: [CfdpManagerNumChannels] Svc.ComDataWithContext
 
         @ Port for input PDU data
         async input port dataIn: [CfdpManagerNumChannels] Fw.BufferSend
@@ -39,10 +39,10 @@ module Cfdp {
         output port bufferDeallocate: [CfdpManagerNumChannels] Fw.BufferSend
 
         @ File send request port
-        guarded input port SendFile: Svc.SendFileRequest
+        guarded input port sendFile: Svc.SendFileRequest
 
         @ File send complete notification port
-        output port FileComplete: Svc.SendFileComplete
+        output port fileComplete: Svc.SendFileComplete
         
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
