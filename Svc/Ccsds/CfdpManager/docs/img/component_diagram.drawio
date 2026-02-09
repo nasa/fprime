@@ -1,0 +1,98 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="CfdpManager Component" id="component">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Central Component Box -->
+        <mxCell id="component-box" value="&lt;b&gt;CfdpManager&lt;/b&gt;&lt;br&gt;CFDP Protocol Engine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0277bd;strokeColor=#01579b;strokeWidth=3;fontColor=#ffffff;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="440" y="340" width="220" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Top Ports - System -->
+        <mxCell id="run1hz" value="&lt;b&gt;run1Hz&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.Sched&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f9a825;strokeColor=#f57f17;strokeWidth=2;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pingin" value="&lt;b&gt;pingIn&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.Ping&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f9a825;strokeColor=#f57f17;strokeWidth=2;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pingout" value="&lt;b&gt;pingOut&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.Ping&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f9a825;strokeColor=#f57f17;strokeWidth=2;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Left Ports - Uplink -->
+        <mxCell id="datain" value="&lt;b&gt;dataIn[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Fw.BufferSend&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#8e24aa;strokeColor=#6a1b9a;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="300" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="datainreturn" value="&lt;b&gt;dataInReturn[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Fw.BufferSend&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#8e24aa;strokeColor=#6a1b9a;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="380" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Right Ports - Downlink -->
+        <mxCell id="dataout" value="&lt;b&gt;dataOut[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Fw.BufferSend&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e64a19;strokeColor=#bf360c;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="260" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="datareturnin" value="&lt;b&gt;dataReturnIn[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.ComDataWithContext&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e64a19;strokeColor=#bf360c;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="330" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bufferallocate" value="&lt;b&gt;bufferAllocate[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Fw.BufferGet&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e64a19;strokeColor=#bf360c;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="400" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bufferdeallocate" value="&lt;b&gt;bufferDeallocate[N]&lt;/b&gt;&lt;br&gt;&lt;i&gt;Fw.BufferSend&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e64a19;strokeColor=#bf360c;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="470" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Bottom Ports - File Transfer -->
+        <mxCell id="sendfile" value="&lt;b&gt;sendFile&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.SendFileRequest&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#43a047;strokeColor=#2e7d32;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="420" y="520" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="filecomplete" value="&lt;b&gt;fileComplete&lt;/b&gt;&lt;br&gt;&lt;i&gt;Svc.SendFileComplete&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#43a047;strokeColor=#2e7d32;strokeWidth=2;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="570" y="520" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows - Top -->
+        <mxCell id="arrow-run1hz" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="run1hz" target="component-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-pingin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="pingin" target="component-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-pingout" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="pingout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows - Left -->
+        <mxCell id="arrow-datain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="datain" target="component-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-datainreturn" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="datainreturn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows - Right -->
+        <mxCell id="arrow-dataout" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="dataout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-datareturnin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.35;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="datareturnin" target="component-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-bufferallocate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="bufferallocate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-bufferdeallocate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="bufferdeallocate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows - Bottom -->
+        <mxCell id="arrow-sendfile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="sendfile" target="component-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-filecomplete" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="component-box" target="filecomplete">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

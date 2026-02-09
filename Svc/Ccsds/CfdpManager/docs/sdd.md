@@ -34,13 +34,13 @@ For detailed attribution, licensing information, and a complete breakdown of por
 
 The CfdpManager component diagram shows the port organization by functional grouping:
 
-![CfdpManager Component Diagram](imgs/class_diagram.md)
+![CfdpManager Component Diagram](img/component_diagram.png)
 
 Ports are organized as follows:
-- **Top (System Ports)**: System health and scheduling - `run1Hz`, `pingIn`, `pingOut`
-- **Bottom (File Transfer Ports)**: Programmatic file send interface - `sendFile`, `fileComplete`
+- **Top (System Ports)**: Scheduling and system health - `run1Hz`, `pingIn`, `pingOut`
 - **Left (Uplink Ports)**: Receive CFDP PDUs from remote entities - `dataIn`, `dataInReturn`
 - **Right (Downlink Ports)**: Send CFDP PDUs to remote entities - `dataOut`, `dataReturnIn`, `bufferAllocate`, `bufferDeallocate`
+- **Bottom (File Transfer Ports)**: Programmatic file send interface - `sendFile`, `fileComplete`
 
 ### Port Descriptions
 
@@ -72,8 +72,8 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Returns transaction initialization status (OK, BUSY, ERROR). |
-| fileComplete | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `sendFile` port. Provides final transfer status. |
+| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Returns immediate status: `STATUS_OK` (transfer initiated), `STATUS_ERROR` (engine error), or `STATUS_INVALID` (unsupported parameters). Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PORT_DEFAULT_CHANNEL` and `PORT_DEFAULT_DEST_ENTITY_ID`, (2) `cfdpClass` is hardcoded to `CLASS_2` (acknowledged), (3) `keep` is hardcoded to `KEEP` (preserve file after transfer), (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`. The transaction is marked as port-initiated (`INIT_BY_PORT`) to enable completion notification via `fileComplete`. |
+| fileComplete | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `sendFile` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
 
 ## Usage Examples
 Add usage examples here
@@ -107,12 +107,6 @@ Add sequence diagrams here
 | Name | Description |
 |---|---|
 |---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
 
 ## Requirements
 Add requirements in the chart below
