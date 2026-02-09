@@ -17,7 +17,9 @@ For complete protocol details, refer to the [CCSDS 727.0-B-5 - CCSDS File Delive
 
 ## CFDP as an F' Component
 
-The CfdpManager component provides an F' implementation of the CFDP protocol. Substantial portions of this implementation were ported from [NASA's CF (CFDP) Application in the Core Flight System (cFS) version 3.0.0](https://github.com/nasa/CF/releases/tag/v3.0.0). The ported code includes:
+The CfdpManager component provides an F' implementation of the CFDP protocol and is designed to replace the standard F' [FileUplink](../../../FileUplink/docs/sdd.md) and [FileDownlink](../../../FileDownlink/docs/sdd.md) components with guaranteed file delivery capabilities. CfdpManager implements the CFDP Class 2 protocol with acknowledgments, retransmissions, and gap detection to ensure reliable file transfers even over lossy or intermittent communication links.
+
+Substantial portions of this implementation were ported from [NASA's CF (CFDP) Application in the Core Flight System (cFS) version 3.0.0](https://github.com/nasa/CF/releases/tag/v3.0.0). The ported code includes:
 - Core CFDP engine and transaction management logic
 - Protocol state machines for transmit and receive operations
 - Utility functions for file handling and resource management
@@ -28,13 +30,13 @@ The F' implementation adds new components built specifically for the F' ecosyste
 - Object-oriented PDU encoding/decoding: Type-safe PDU classes based on F' `Serializable` interface for consistent serialization
 - F' timer implementation: Uses F' time primitives for protocol timers
 
-For detailed attribution, licensing information, and a complete breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
+For detailed attribution, licensing information, and a breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
 
 ## Class Diagram
 
 The CfdpManager component diagram shows the port organization by functional grouping:
 
-![CfdpManager Component Diagram](img/component_diagram.png)
+![CfdpManager Component Diagram](img/CfdpManager.png)
 
 Ports are organized as follows:
 - **Top (System Ports)**: Scheduling and system health - `run1Hz`, `pingIn`, `pingOut`
@@ -72,7 +74,7 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Returns immediate status: `STATUS_OK` (transfer initiated), `STATUS_ERROR` (engine error), or `STATUS_INVALID` (unsupported parameters). Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PORT_DEFAULT_CHANNEL` and `PORT_DEFAULT_DEST_ENTITY_ID`, (2) `cfdpClass` is hardcoded to `CLASS_2` (acknowledged), (3) `keep` is hardcoded to `KEEP` (preserve file after transfer), (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`. The transaction is marked as port-initiated (`INIT_BY_PORT`) to enable completion notification via `fileComplete`. |
+| sendFile | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PORT_DEFAULT_CHANNEL` and `PORT_DEFAULT_DEST_ENTITY_ID`, (2) `cfdpClass` is hardcoded to `CLASS_2` , (3) `keep` is hardcoded to `KEEP`, (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
 | fileComplete | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `sendFile` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
 
 ## Usage Examples
