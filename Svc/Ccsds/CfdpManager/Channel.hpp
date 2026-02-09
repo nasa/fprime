@@ -35,7 +35,7 @@
 
 #include <Fw/Types/Assert.hpp>
 
-#include <Svc/Ccsds/CfdpManager/Types.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
 namespace Svc {
 namespace Ccsds {

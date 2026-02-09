@@ -41,7 +41,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 
-#include <Svc/Ccsds/CfdpManager/Types.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 
 namespace Svc {
