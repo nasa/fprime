@@ -383,6 +383,14 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test multiple transactions in series
     void testMultipleTransactionsInSeries();
 
+  public:
+    // ----------------------------------------------------------------------
+    // Miscellaneous Tests
+    // ----------------------------------------------------------------------
+
+    //! Test ping port functionality
+    void testPing();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides

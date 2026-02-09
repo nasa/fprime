@@ -30,6 +30,14 @@ The F' implementation adds new components built specifically for the F' ecosyste
 
 For detailed attribution, licensing information, and a complete breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
 
+## Class Diagram
+Add a class diagram here
+
+## Port Descriptions
+| Name | Description |
+|---|---|
+|---|---|
+
 ## Usage Examples
 Add usage examples here
 
@@ -38,14 +46,6 @@ Add diagrams here
 
 ### Typical Usage
 And the typical usage of the component here
-
-## Class Diagram
-Add a class diagram here
-
-## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
 
 ## Component States
 Add component states in the chart below
@@ -56,17 +56,12 @@ Add component states in the chart below
 ## Sequence Diagrams
 Add sequence diagrams here
 
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
 ## Commands
 | Name | Description |
 |---|---|
 |---|---|
 
-## Events
+## Parameters
 | Name | Description |
 |---|---|
 |---|---|
@@ -88,7 +83,3 @@ Add requirements in the chart below
 |---|---|---|
 |---|---|---|
 
-## Change Log
-| Date | Description |
-|---|---|
-|---| Initial Draft |

@@ -1010,6 +1010,18 @@ void CfdpManagerTester::testMultipleTransactionsInSeries() {
     );
 }
 
+// ----------------------------------------------------------------------
+// Miscellaneous Tests
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester ::testPing() {
+    const U32 key = 1234;
+    this->invoke_to_pingIn(0, key);
+    this->component.doDispatch();
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

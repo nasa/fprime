@@ -90,6 +90,12 @@ TEST(Transaction, MultipleTransactionsInSeries) {
     delete tester;
 }
 
+TEST(Miscellaneous, Ping) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testPing();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

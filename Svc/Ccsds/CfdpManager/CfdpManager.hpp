@@ -121,6 +121,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U32 length //!< Number of bytes to read (0 = entire file)
     ) override;
 
+    //! Handler for input port pingIn
+    void pingIn_handler(
+        FwIndexType portNum, //!< The port number
+        U32 key //!< Value to return to pinger
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands

@@ -130,6 +130,12 @@ Svc::SendFileResponse CfdpManager ::sendFile_handler(
     return response;
 }
 
+void CfdpManager ::pingIn_handler(FwIndexType portNum, U32 key)
+{
+    // send ping response
+    this->pingOut_out(0, key);
+}
+
 // ----------------------------------------------------------------------
 // Port calls that are invoked by the CFDP engine
 // These functions are analogous to the functions in cf_cfdp_sbintf.*

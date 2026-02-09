@@ -43,7 +43,13 @@ module Cfdp {
 
         @ File send complete notification port
         output port fileComplete: Svc.SendFileComplete
-        
+
+        @ Ping in port
+        async input port pingIn: Svc.Ping
+
+        @ Ping out port
+        output port pingOut: Svc.Ping
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
