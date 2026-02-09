@@ -8,6 +8,15 @@
 #define Svc_Ccsds_Cfdp_Types_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <config/EntityIdAliasAc.hpp>
+#include <config/TransactionSeqAliasAc.hpp>
+#include <config/FileSizeAliasAc.hpp>
+
+#include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/KeepEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/QueueIdEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -52,7 +61,8 @@ enum AckTxnStatus : U8 {
     ACK_TXN_STATUS_UNDEFINED = 0,
     ACK_TXN_STATUS_ACTIVE = 1,
     ACK_TXN_STATUS_TERMINATED = 2,
-    ACK_TXN_STATUS_UNRECOGNIZED = 3
+    ACK_TXN_STATUS_UNRECOGNIZED = 3,
+    ACK_TXN_STATUS_INVALID = 4
 };
 
 // CFDP FIN Delivery Code

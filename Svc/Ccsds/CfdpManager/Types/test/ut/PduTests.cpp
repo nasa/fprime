@@ -40,11 +40,11 @@ TEST_F(PduTest, HeaderBufferSize) {
 TEST_F(PduTest, HeaderRoundTrip) {
     // Arrange
     PduHeader txHeader;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 10;
-    const CfdpTransactionSeq transactionSeq = 20;
-    const CfdpEntityId destEid = 30;
+    const EntityId sourceEid = 10;
+    const TransactionSeq transactionSeq = 20;
+    const EntityId destEid = 30;
     const U16 pduDataLength = 100;
 
     txHeader.initialize(T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
@@ -89,12 +89,12 @@ TEST_F(PduTest, MetadataBufferSize) {
 TEST_F(PduTest, MetadataRoundTrip) {
     // Arrange - Create and initialize transmit PDU
     MetadataPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 100;
-    const CfdpTransactionSeq transactionSeq = 200;
-    const CfdpEntityId destEid = 300;
-    const CfdpFileSize fileSize = 2048;
+    const EntityId sourceEid = 100;
+    const TransactionSeq transactionSeq = 200;
+    const EntityId destEid = 300;
+    const FileSize fileSize = 2048;
     const char* sourceFilename = "source_file.bin";
     const char* destFilename = "dest_file.bin";
     const ChecksumType checksumType = CHECKSUM_TYPE_MODULAR;
@@ -204,12 +204,12 @@ TEST_F(PduTest, MetadataLongFilenames) {
 TEST_F(PduTest, MetadataDeserializeFrom) {
     // Test that MetadataPdu::deserializeFrom() works correctly
     MetadataPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const PduDirection direction = DIRECTION_TOWARD_RECEIVER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 100;
-    const CfdpTransactionSeq transactionSeq = 200;
-    const CfdpEntityId destEid = 300;
-    const CfdpFileSize fileSize = 2048;
+    const EntityId sourceEid = 100;
+    const TransactionSeq transactionSeq = 200;
+    const EntityId destEid = 300;
+    const FileSize fileSize = 2048;
     const char* sourceFilename = "/ground/test_source.bin";
     const char* destFilename = "test/ut/output/test_dest.bin";
     const U8 closureRequested = 1;
@@ -270,11 +270,11 @@ TEST_F(PduTest, FileDataBufferSize) {
 TEST_F(PduTest, FileDataRoundTrip) {
     // Arrange - Create transmit PDU with test data
     FileDataPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const PduDirection direction = DIRECTION_TOWARD_RECEIVER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_1;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
     const U32 fileOffset = 1024;
     const U8 testData[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xBE};
     const U16 dataSize = sizeof(testData);
@@ -374,23 +374,23 @@ TEST_F(PduTest, EofBufferSize) {
                    1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
 
     U32 size = pdu.getBufferSize();
-    // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(CfdpFileSize))
+    // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(FileSize))
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().getBufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+    U32 expectedSize = pdu.asHeader().getBufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(FileSize);
     ASSERT_EQ(expectedSize, size);
 }
 
 TEST_F(PduTest, EofRoundTrip) {
     // Arrange - Create transmit PDU
     EofPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const PduDirection direction = DIRECTION_TOWARD_RECEIVER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_1;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
     const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
     const U32 checksum = 0xDEADBEEF;
-    const CfdpFileSize fileSize = 65536;
+    const FileSize fileSize = 65536;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
                     conditionCode, checksum, fileSize);
@@ -524,11 +524,11 @@ TEST_F(PduTest, FinBufferSize) {
 TEST_F(PduTest, FinRoundTrip) {
     // Arrange - Create transmit PDU
     FinPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
     const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
     const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_COMPLETE;
     const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
@@ -733,11 +733,11 @@ TEST_F(PduTest, AckBufferSize) {
 TEST_F(PduTest, AckRoundTrip) {
     // Arrange - Create transmit PDU
     AckPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
     const FileDirective directiveCode = FILE_DIRECTIVE_END_OF_FILE;
     const U8 directiveSubtypeCode = 0;
     const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
@@ -951,13 +951,13 @@ TEST_F(PduTest, NakBufferSize) {
 TEST_F(PduTest, NakRoundTrip) {
     // Arrange - Create transmit PDU
     NakPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
-    const CfdpFileSize scopeStart = 1024;
-    const CfdpFileSize scopeEnd = 8192;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
+    const FileSize scopeStart = 1024;
+    const FileSize scopeEnd = 8192;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
                     scopeStart, scopeEnd);
@@ -1022,8 +1022,8 @@ TEST_F(PduTest, NakZeroScope) {
 TEST_F(PduTest, NakLargeScope) {
     // Test NAK with large file offsets
     NakPdu txPdu;
-    const CfdpFileSize largeStart = 0xFFFF0000;
-    const CfdpFileSize largeEnd = 0xFFFFFFFF;
+    const FileSize largeStart = 0xFFFF0000;
+    const FileSize largeEnd = 0xFFFFFFFF;
     txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, largeStart, largeEnd);
 
@@ -1074,7 +1074,7 @@ TEST_F(PduTest, NakSingleByte) {
 
 TEST_F(PduTest, NakMultipleCombinations) {
     // Test various scope combinations
-    const CfdpFileSize testScopes[][2] = {
+    const FileSize testScopes[][2] = {
         {0, 100},
         {512, 1024},
         {4096, 8192},
@@ -1111,10 +1111,10 @@ TEST_F(PduTest, NakMultipleCombinations) {
 TEST_F(PduTest, NakWithSingleSegment) {
     // Test NAK PDU with one segment request
     NakPdu txPdu;
-    const CfdpFileSize scopeStart = 0;
-    const CfdpFileSize scopeEnd = 4096;
-    const CfdpFileSize segStart = 1024;
-    const CfdpFileSize segEnd = 2048;
+    const FileSize scopeStart = 0;
+    const FileSize scopeEnd = 4096;
+    const FileSize segStart = 1024;
+    const FileSize segEnd = 2048;
 
     txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, scopeStart, scopeEnd);
@@ -1147,8 +1147,8 @@ TEST_F(PduTest, NakWithSingleSegment) {
 TEST_F(PduTest, NakWithMultipleSegments) {
     // Test NAK PDU with multiple segment requests
     NakPdu txPdu;
-    const CfdpFileSize scopeStart = 0;
-    const CfdpFileSize scopeEnd = 10000;
+    const FileSize scopeStart = 0;
+    const FileSize scopeEnd = 10000;
 
     txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, scopeStart, scopeEnd);
@@ -1196,16 +1196,16 @@ TEST_F(PduTest, NakWithMultipleSegments) {
 TEST_F(PduTest, NakWithMaxSegments) {
     // Test NAK PDU with maximum number of segments (58)
     NakPdu txPdu;
-    const CfdpFileSize scopeStart = 0;
-    const CfdpFileSize scopeEnd = 100000;
+    const FileSize scopeStart = 0;
+    const FileSize scopeEnd = 100000;
 
     txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
                    1, 2, 3, scopeStart, scopeEnd);
 
     // Add 58 segments (CFDP_NAK_MAX_SEGMENTS)
     for (U8 i = 0; i < 58; i++) {
-        CfdpFileSize start = i * 1000;
-        CfdpFileSize end = start + 500;
+        FileSize start = i * 1000;
+        FileSize end = start + 500;
         ASSERT_TRUE(txPdu.addSegment(start, end)) << "Failed to add segment " << static_cast<int>(i);
     }
     EXPECT_EQ(58, txPdu.getNumSegments());
@@ -1273,12 +1273,12 @@ TEST_F(PduTest, NakBufferSizeWithSegments) {
     // Add one segment
     ASSERT_TRUE(pdu.addSegment(100, 200));
     U32 sizeWithOneSegment = pdu.getBufferSize();
-    EXPECT_EQ(baseSizeNoSegments + 8, sizeWithOneSegment);  // 2 * sizeof(CfdpFileSize) = 8
+    EXPECT_EQ(baseSizeNoSegments + 8, sizeWithOneSegment);  // 2 * sizeof(FileSize) = 8
 
     // Add another segment
     ASSERT_TRUE(pdu.addSegment(300, 400));
     U32 sizeWithTwoSegments = pdu.getBufferSize();
-    EXPECT_EQ(baseSizeNoSegments + 16, sizeWithTwoSegments);  // 4 * sizeof(CfdpFileSize) = 16
+    EXPECT_EQ(baseSizeNoSegments + 16, sizeWithTwoSegments);  // 4 * sizeof(FileSize) = 16
 }
 
 // ======================================================================
@@ -1288,12 +1288,12 @@ TEST_F(PduTest, NakBufferSizeWithSegments) {
 TEST_F(PduTest, TlvCreateWithEntityId) {
     // Test creating TLV with entity ID
     Tlv tlv;
-    const CfdpEntityId testEid = 42;
+    const EntityId testEid = 42;
 
     tlv.initialize(testEid);
 
     EXPECT_EQ(TLV_TYPE_ENTITY_ID, tlv.getType());
-    EXPECT_EQ(sizeof(CfdpEntityId), tlv.getData().getLength());
+    EXPECT_EQ(sizeof(EntityId), tlv.getData().getLength());
     EXPECT_EQ(testEid, tlv.getData().getEntityId());
 }
 
@@ -1324,7 +1324,7 @@ TEST_F(PduTest, TlvEncodedSize) {
 TEST_F(PduTest, TlvEncodeDecodeEntityId) {
     // Test encoding and decoding entity ID TLV
     Tlv txTlv;
-    const CfdpEntityId testEid = 123;
+    const EntityId testEid = 123;
     txTlv.initialize(testEid);
 
     U8 buffer[256];
@@ -1404,7 +1404,7 @@ TEST_F(PduTest, TlvListAppendUpToMax) {
 
     for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
         Tlv tlv;
-        tlv.initialize(static_cast<CfdpEntityId>(100 + i));
+        tlv.initialize(static_cast<EntityId>(100 + i));
         ASSERT_TRUE(list.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
     }
 
@@ -1418,7 +1418,7 @@ TEST_F(PduTest, TlvListRejectWhenFull) {
     // Fill the list
     for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
         Tlv tlv;
-        tlv.initialize(static_cast<CfdpEntityId>(i));
+        tlv.initialize(static_cast<EntityId>(i));
         ASSERT_TRUE(list.appendTlv(tlv));
     }
 
@@ -1436,7 +1436,7 @@ TEST_F(PduTest, TlvListClear) {
     // Add some TLVs
     for (U8 i = 0; i < 3; i++) {
         Tlv tlv;
-        tlv.initialize(static_cast<CfdpEntityId>(i));
+        tlv.initialize(static_cast<EntityId>(i));
         ASSERT_TRUE(list.appendTlv(tlv));
     }
     EXPECT_EQ(3, list.getNumTlv());
@@ -1633,14 +1633,14 @@ TEST_F(PduTest, EofTlvBufferSize) {
 TEST_F(PduTest, EofTlvRoundTripComplete) {
     // Comprehensive round-trip test with TLVs
     EofPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_RECEIVER;
+    const PduDirection direction = DIRECTION_TOWARD_RECEIVER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 10;
-    const CfdpTransactionSeq transactionSeq = 20;
-    const CfdpEntityId destEid = 30;
+    const EntityId sourceEid = 10;
+    const TransactionSeq transactionSeq = 20;
+    const EntityId destEid = 30;
     const ConditionCode conditionCode = CONDITION_CODE_FILE_SIZE_ERROR;
     const U32 checksum = 0xDEADBEEF;
-    const CfdpFileSize fileSize = 8192;
+    const FileSize fileSize = 8192;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
                     conditionCode, checksum, fileSize);
@@ -1819,11 +1819,11 @@ TEST_F(PduTest, FinTlvBufferSize) {
 TEST_F(PduTest, FinTlvRoundTripComplete) {
     // Comprehensive round-trip test with TLVs
     FinPdu txPdu;
-    const Direction direction = DIRECTION_TOWARD_SENDER;
+    const PduDirection direction = DIRECTION_TOWARD_SENDER;
     const Cfdp::Class::T txmMode = Cfdp::Class::CLASS_2;
-    const CfdpEntityId sourceEid = 50;
-    const CfdpTransactionSeq transactionSeq = 100;
-    const CfdpEntityId destEid = 75;
+    const EntityId sourceEid = 50;
+    const TransactionSeq transactionSeq = 100;
+    const EntityId destEid = 75;
     const ConditionCode conditionCode = CONDITION_CODE_INACTIVITY_DETECTED;
     const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_INCOMPLETE;
     const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
@@ -1884,7 +1884,7 @@ TEST_F(PduTest, FinWithMaxTlvs) {
     // Add 4 TLVs
     for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
         Tlv tlv;
-        tlv.initialize(static_cast<CfdpEntityId>(100 + i));
+        tlv.initialize(static_cast<EntityId>(100 + i));
         ASSERT_TRUE(txPdu.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
     }
     EXPECT_EQ(CFDP_MAX_TLV, txPdu.getNumTlv());

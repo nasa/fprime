@@ -11,8 +11,8 @@
 #include <Os/FileSystem.hpp>
 
 namespace Svc {
-
 namespace Ccsds {
+namespace Cfdp {
 
 // ----------------------------------------------------------------------
 // Static member definitions
@@ -79,25 +79,25 @@ void CfdpManagerTester::from_dataOut_handler(
 // Transaction Test Helper Implementations
 // ----------------------------------------------------------------------
 
-CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, CfdpTransactionSeq seqNum) {
+CfdpTransaction* CfdpManagerTester::findTransaction(U8 chanNum, TransactionSeq seqNum) {
     // Grab requested channel
     CfdpChannel* chan = component.m_engine->m_channels[chanNum];
 
     // Search through all transaction queues (PEND, TXA, TXW, RX, FREE)
-    // Skip HIST and HIST_FREE as they contain CfdpHistory, not CfdpTransaction
+    // Skip HIST and HIST_FREE as they contain History, not CfdpTransaction
     for (U8 qIdx = 0; qIdx < Cfdp::QueueId::NUM; qIdx++) {
         // Skip history queues (HIST=4, HIST_FREE=5)
         if (qIdx == Cfdp::QueueId::HIST || qIdx == Cfdp::QueueId::HIST_FREE) {
             continue;
         }
 
-        CfdpCListNode* head = chan->m_qs[qIdx];
+        CListNode* head = chan->m_qs[qIdx];
         if (head == nullptr) {
             continue;
         }
 
         // Traverse circular linked list, stopping when we loop back to head
-        CfdpCListNode* node = head;
+        CListNode* node = head;
         do {
             CfdpTransaction* txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
             if (txn->m_history && txn->m_history->seq_num == seqNum) {
@@ -151,10 +151,10 @@ void CfdpManagerTester::setupTxTransaction(
     const char* srcFile,
     const char* dstFile,
     U8 channelId,
-    CfdpEntityId destEid,
+    EntityId destEid,
     Cfdp::Class cfdpClass,
     U8 priority,
-    CfdpTxnState expectedState,
+    TxnState expectedState,
     TransactionSetup& setup)
 {
     const U32 initialSeqNum = component.m_engine->m_seqNum;
@@ -176,7 +176,7 @@ void CfdpManagerTester::setupTxTransaction(
     // Now verify initial state
     EXPECT_EQ(expectedState, setup.txn->m_state) << "Should be in expected state";
     EXPECT_EQ(0, setup.txn->m_foffs) << "File offset should be 0 initially";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state) << "Should start in METADATA sub-state";
     EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
     EXPECT_EQ(priority, setup.txn->m_priority) << "Priority should match";
 
@@ -191,11 +191,11 @@ void CfdpManagerTester::setupRxTransaction(
     const char* srcFile,
     const char* dstFile,
     U8 channelId,
-    CfdpEntityId sourceEid,
+    EntityId sourceEid,
     Cfdp::Class::T cfdpClass,
     U32 fileSize,
     U32 transactionSeq,
-    CfdpTxnState expectedState,
+    TxnState expectedState,
     TransactionSetup& setup)
 {
     // Send Metadata PDU to initiate RX transaction
@@ -221,7 +221,7 @@ void CfdpManagerTester::setupRxTransaction(
 
     // Verify transaction state
     EXPECT_EQ(expectedState, setup.txn->m_state) << "Should be in expected RX state";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should start in FILEDATA sub-state";
+    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should start in FILEDATA sub-state";
     EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
     EXPECT_TRUE(setup.txn->m_flags.rx.md_recv) << "md_recv flag should be set after Metadata PDU";
 
@@ -250,7 +250,7 @@ void CfdpManagerTester::waitForTransactionRecycle(U8 channelId, U32 expectedSeqN
 
 void CfdpManagerTester::completeClass2Handshake(
     U8 channelId,
-    CfdpEntityId destEid,
+    EntityId destEid,
     U32 expectedSeqNum,
     CfdpTransaction* txn)
 {
@@ -269,8 +269,8 @@ void CfdpManagerTester::completeClass2Handshake(
 
     EXPECT_TRUE(txn->m_flags.tx.eof_ack_recv) << "eof_ack_recv flag should be set after EOF-ACK received";
     EXPECT_FALSE(txn->m_flags.com.ack_timer_armed) << "ack_timer_armed should be cleared after EOF-ACK";
-    EXPECT_EQ(CFDP_TXN_STATE_S2, txn->m_state) << "Should remain in S2 state waiting for FIN";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_CLOSEOUT_SYNC, txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for FIN";
+    EXPECT_EQ(TXN_STATE_S2, txn->m_state) << "Should remain in S2 state waiting for FIN";
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for FIN";
 
     // Send FIN
     this->sendFinPdu(
@@ -285,7 +285,7 @@ void CfdpManagerTester::completeClass2Handshake(
     this->component.doDispatch();
 
     EXPECT_TRUE(txn->m_flags.tx.fin_recv) << "fin_recv flag should be set after FIN received";
-    EXPECT_EQ(CFDP_TXN_STATE_HOLD, txn->m_state) << "Should move to HOLD state after FIN received";
+    EXPECT_EQ(TXN_STATE_HOLD, txn->m_state) << "Should move to HOLD state after FIN received";
     EXPECT_TRUE(txn->m_flags.tx.send_fin_ack) << "send_fin_ack flag should be set";
 
     // Run cycle to send FIN-ACK
@@ -295,8 +295,8 @@ void CfdpManagerTester::completeClass2Handshake(
 
 void CfdpManagerTester::verifyFinAckPdu(
     FwIndexType pduIndex,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
+    EntityId sourceEid,
+    EntityId destEid,
     U32 expectedSeqNum)
 {
     Fw::Buffer finAckPduBuffer = this->getSentPduBuffer(pduIndex);
@@ -325,7 +325,7 @@ void CfdpManagerTester::verifyMetadataPduAtIndex(
     ASSERT_GT(metadataPduBuffer.getSize(), 0) << "Metadata PDU should be sent";
     EXPECT_EQ(fileSize, setup.txn->m_fsize) << "File size should be set after file is opened";
     verifyMetadataPdu(metadataPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                      setup.expectedSeqNum, static_cast<CfdpFileSize>(fileSize), srcFile, dstFile, cfdpClass);
+                      setup.expectedSeqNum, static_cast<FileSize>(fileSize), srcFile, dstFile, cfdpClass);
 }
 
 void CfdpManagerTester::verifyMultipleFileDataPdus(
@@ -393,7 +393,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                             Cfdp::Class::CLASS_1, TEST_PRIORITY, CFDP_TXN_STATE_S1, setup);
+                             Cfdp::Class::CLASS_1, TEST_PRIORITY, TXN_STATE_S1, setup);
 
     // Run first engine cycle - should send Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -410,7 +410,7 @@ void CfdpManagerTester::testClass1TxNominal() {
                      setup.expectedSeqNum, 0, static_cast<U16>(fileSize), srcFile, Cfdp::Class::CLASS_1);
 
     EXPECT_EQ(fileSize, setup.txn->m_foffs) << "Should have read entire file";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_EOF, setup.txn->m_state_data.send.sub_state) << "Should progress to EOF sub-state";
+    EXPECT_EQ(TX_SUB_STATE_EOF, setup.txn->m_state_data.send.sub_state) << "Should progress to EOF sub-state";
 
     // Run second engine cycle - should send EOF PDU
     this->invoke_to_run1Hz(0, 0);
@@ -421,7 +421,7 @@ void CfdpManagerTester::testClass1TxNominal() {
     Fw::Buffer eofPduBuffer = this->getSentPduBuffer(2);
     ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(fileSize), srcFile);
+                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(fileSize), srcFile);
 
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
@@ -441,7 +441,7 @@ void CfdpManagerTester::testClass2TxNominal() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_1, TEST_GROUND_EID,
-                             Cfdp::Class::CLASS_2, TEST_PRIORITY, CFDP_TXN_STATE_S2, setup);
+                             Cfdp::Class::CLASS_2, TEST_PRIORITY, TXN_STATE_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -452,9 +452,9 @@ void CfdpManagerTester::testClass2TxNominal() {
     verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
 
     EXPECT_EQ(expectedFileSize, setup.txn->m_foffs) << "Should have read entire file";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
     EXPECT_TRUE(setup.txn->m_flags.tx.send_eof) << "send_eof flag should be set";
-    EXPECT_EQ(CFDP_TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state";
+    EXPECT_EQ(TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state";
 
     // Run cycle and verify EOF PDU
     this->invoke_to_run1Hz(0, 0);
@@ -464,10 +464,10 @@ void CfdpManagerTester::testClass2TxNominal() {
     Fw::Buffer eofPduBuffer = this->getSentPduBuffer(6);
     ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
+                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
 
-    EXPECT_EQ(CFDP_TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state until EOF-ACK received";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for EOF-ACK";
+    EXPECT_EQ(TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state until EOF-ACK received";
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC waiting for EOF-ACK";
     EXPECT_FALSE(setup.txn->m_flags.tx.send_eof) << "send_eof flag should be cleared after EOF sent";
     EXPECT_FALSE(setup.txn->m_flags.tx.eof_ack_recv) << "eof_ack_recv should be false before ACK received";
 
@@ -497,7 +497,7 @@ void CfdpManagerTester::testClass2TxNack() {
     // Setup transaction and verify initial state
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                             Cfdp::Class::CLASS_2, TEST_PRIORITY, CFDP_TXN_STATE_S2, setup);
+                             Cfdp::Class::CLASS_2, TEST_PRIORITY, TXN_STATE_S2, setup);
 
     // Run engine cycle and verify Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -507,7 +507,7 @@ void CfdpManagerTester::testClass2TxNack() {
     verifyMetadataPduAtIndex(0, setup, expectedFileSize, srcFile, dstFile, Cfdp::Class::CLASS_2);
     verifyMultipleFileDataPdus(1, 5, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
 
-    EXPECT_EQ(CFDP_TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should be in CLOSEOUT_SYNC after file data complete";
     EXPECT_TRUE(setup.txn->m_flags.tx.send_eof) << "send_eof flag should be set";
 
     // Run cycle and verify first EOF PDU
@@ -518,7 +518,7 @@ void CfdpManagerTester::testClass2TxNack() {
     Fw::Buffer firstEofPduBuffer = this->getSentPduBuffer(6);
     ASSERT_GT(firstEofPduBuffer.getSize(), 0) << "First EOF PDU should be sent";
     verifyEofPdu(firstEofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
+                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
 
     // Clear history to make room for retransmitted PDUs
     this->clearHistory();
@@ -537,14 +537,14 @@ void CfdpManagerTester::testClass2TxNack() {
         TEST_GROUND_EID,
         setup.expectedSeqNum,
         0,
-        static_cast<CfdpFileSize>(expectedFileSize),
+        static_cast<FileSize>(expectedFileSize),
         2,
         segments
     );
     this->component.doDispatch();
 
-    EXPECT_EQ(CFDP_TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state after NAK";
-    EXPECT_EQ(CFDP_TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC after NAK";
+    EXPECT_EQ(TXN_STATE_S2, setup.txn->m_state) << "Should remain in S2 state after NAK";
+    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state) << "Should remain in CLOSEOUT_SYNC after NAK";
 
     // Run cycles until second EOF and verify
     U32 maxCycles = 10;
@@ -572,7 +572,7 @@ void CfdpManagerTester::testClass2TxNack() {
     Fw::Buffer secondEofPduBuffer = this->getSentPduBuffer(secondEofIndex);
     ASSERT_GT(secondEofPduBuffer.getSize(), 0) << "Second EOF PDU should be sent";
     verifyEofPdu(secondEofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
-                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<CfdpFileSize>(expectedFileSize), srcFile);
+                 setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
 
     // Complete Class 2 handshake after NAK
     completeClass2Handshake(TEST_CHANNEL_ID_0, TEST_GROUND_EID, setup.expectedSeqNum, setup.txn);
@@ -604,7 +604,7 @@ void CfdpManagerTester::testClass1RxNominal() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::Class::CLASS_1, static_cast<U32>(actualFileSize), transactionSeq, CFDP_TXN_STATE_R1, setup);
+                       Cfdp::Class::CLASS_1, static_cast<U32>(actualFileSize), transactionSeq, TXN_STATE_R1, setup);
 
     // Uplink FileData PDU
     // Read test data from source file
@@ -633,8 +633,8 @@ void CfdpManagerTester::testClass1RxNominal() {
     component.doDispatch();
 
     // Verify FileData processed
-    EXPECT_EQ(CFDP_TXN_STATE_R1, setup.txn->m_state) << "Should remain in R1 state after FileData";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
+    EXPECT_EQ(TXN_STATE_R1, setup.txn->m_state) << "Should remain in R1 state after FileData";
+    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
 
     // Compute CRC for EOF PDU
     CFDP::Checksum crc;
@@ -649,13 +649,13 @@ void CfdpManagerTester::testClass1RxNominal() {
         transactionSeq,
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
-        static_cast<CfdpFileSize>(actualFileSize),
+        static_cast<FileSize>(actualFileSize),
         Cfdp::Class::CLASS_1
     );
     component.doDispatch();
 
     // Verify transaction completed (moved to HOLD state)
-    EXPECT_EQ(CFDP_TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after EOF processing";
+    EXPECT_EQ(TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after EOF processing";
 
     // Verify file written to disk
     verifyReceivedFile(dstFile, testData, actualFileSize);
@@ -687,7 +687,7 @@ void CfdpManagerTester::testClass2RxNominal() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CFDP_TXN_STATE_R2, setup);
+                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, TXN_STATE_R2, setup);
 
     // Read test data from source file
     U8* testData = new U8[actualFileSize];
@@ -719,8 +719,8 @@ void CfdpManagerTester::testClass2RxNominal() {
 
     // Verify FileData processed
 
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after FileData";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after FileData";
+    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
 
     // Compute CRC for EOF PDU
     CFDP::Checksum crc;
@@ -738,13 +738,13 @@ void CfdpManagerTester::testClass2RxNominal() {
         transactionSeq,
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
-        static_cast<CfdpFileSize>(actualFileSize),
+        static_cast<FileSize>(actualFileSize),
         Cfdp::Class::CLASS_2
     );
     component.doDispatch();
 
     // Verify EOF processed
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after EOF";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after EOF";
     EXPECT_TRUE(setup.txn->m_flags.rx.eof_recv) << "eof_recv flag should be set after EOF received";
     EXPECT_TRUE(setup.txn->m_flags.rx.send_eof_ack) << "send_eof_ack flag should be set after EOF received";
     EXPECT_TRUE(setup.txn->m_flags.rx.send_fin) << "send_fin flag should be set after EOF received (file is complete)";
@@ -793,8 +793,8 @@ void CfdpManagerTester::testClass2RxNominal() {
     // Verify FIN PDU was sent
     ASSERT_TRUE(foundFin) << "FIN PDU should be sent after CRC calculation completes";
 
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state until FIN-ACK received";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state) << "Should be in CLOSEOUT_SYNC waiting for FIN-ACK";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state until FIN-ACK received";
+    EXPECT_EQ(RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state) << "Should be in CLOSEOUT_SYNC waiting for FIN-ACK";
 
     Fw::Buffer finPduBuffer = this->getSentPduBuffer(finIndex);
     verifyFinPdu(finPduBuffer,
@@ -820,7 +820,7 @@ void CfdpManagerTester::testClass2RxNominal() {
     this->component.doDispatch();
 
     // Verify transaction completed (moved to HOLD state)
-    EXPECT_EQ(CFDP_TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after FIN-ACK received";
+    EXPECT_EQ(TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after FIN-ACK received";
 
     // Wait for transaction recycle (this closes the file descriptor)
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, transactionSeq);
@@ -852,7 +852,7 @@ void CfdpManagerTester::testClass2RxNack() {
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSideSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, CFDP_TXN_STATE_R2, setup);
+                       Cfdp::Class::CLASS_2, static_cast<U32>(actualFileSize), transactionSeq, TXN_STATE_R2, setup);
 
     // Read test data from source file
     U8* testData = new U8[actualFileSize];
@@ -885,8 +885,8 @@ void CfdpManagerTester::testClass2RxNack() {
     }
 
     // Verify FileData processed
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after FileData";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after FileData";
+    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should remain in FILEDATA sub-state";
 
     // Compute CRC for EOF PDU
     CFDP::Checksum crc;
@@ -904,13 +904,13 @@ void CfdpManagerTester::testClass2RxNack() {
         transactionSeq,
         Cfdp::CONDITION_CODE_NO_ERROR,
         expectedCrc,
-        static_cast<CfdpFileSize>(actualFileSize),
+        static_cast<FileSize>(actualFileSize),
         Cfdp::Class::CLASS_2
     );
     component.doDispatch();
 
     // Verify EOF processed
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after EOF";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after EOF";
     EXPECT_TRUE(setup.txn->m_flags.rx.eof_recv) << "eof_recv flag should be set after EOF received";
     EXPECT_TRUE(setup.txn->m_flags.rx.send_eof_ack) << "send_eof_ack flag should be set after EOF received";
     EXPECT_FALSE(setup.txn->m_flags.rx.send_fin) << "send_fin flag should NOT be set (file has gaps)";
@@ -1001,7 +1001,7 @@ void CfdpManagerTester::testClass2RxNack() {
     }
 
     // Verify transaction now sees file as complete
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after gap fill";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state after gap fill";
     EXPECT_TRUE(setup.txn->m_flags.rx.complete) << "complete flag should be set after gaps filled";
 
     // Run cycles until FIN PDU is sent (CRC calculation may take multiple ticks)
@@ -1028,8 +1028,8 @@ void CfdpManagerTester::testClass2RxNack() {
     // Verify FIN PDU was sent
     ASSERT_TRUE(foundFin) << "FIN PDU should be sent after gaps filled and CRC calculated";
 
-    EXPECT_EQ(CFDP_TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state until FIN-ACK received";
-    EXPECT_EQ(CFDP_RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state) << "Should be in CLOSEOUT_SYNC waiting for FIN-ACK";
+    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state) << "Should remain in R2 state until FIN-ACK received";
+    EXPECT_EQ(RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state) << "Should be in CLOSEOUT_SYNC waiting for FIN-ACK";
 
     Fw::Buffer finPduBuffer = this->getSentPduBuffer(finIndex);
     verifyFinPdu(finPduBuffer,
@@ -1055,7 +1055,7 @@ void CfdpManagerTester::testClass2RxNack() {
     this->component.doDispatch();
 
     // Verify transaction completed (moved to HOLD state)
-    EXPECT_EQ(CFDP_TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after FIN-ACK received";
+    EXPECT_EQ(TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after FIN-ACK received";
 
     // Wait for transaction recycle (this closes the file descriptor)
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, transactionSeq);
@@ -1071,5 +1071,6 @@ void CfdpManagerTester::testClass2RxNack() {
     cleanupTestFile(srcFile);
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

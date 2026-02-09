@@ -13,12 +13,12 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void MetadataPdu::initialize(Direction direction,
+void MetadataPdu::initialize(PduDirection direction,
                                    Cfdp::Class::T txmMode,
-                                   CfdpEntityId sourceEid,
-                                   CfdpTransactionSeq transactionSeq,
-                                   CfdpEntityId destEid,
-                                   CfdpFileSize fileSize,
+                                   EntityId sourceEid,
+                                   TransactionSeq transactionSeq,
+                                   EntityId destEid,
+                                   FileSize fileSize,
                                    const Fw::String& sourceFilename,
                                    const Fw::String& destFilename,
                                    ChecksumType checksumType,
@@ -47,7 +47,7 @@ U32 MetadataPdu::getBufferSize() const {
     // Directive code: 1 byte
     // Segmentation control byte (includes closure requested and checksum type): 1 byte
     // File size: variable
-    size += sizeof(U8) + sizeof(U8) + sizeof(CfdpFileSize);
+    size += sizeof(U8) + sizeof(U8) + sizeof(FileSize);
 
     // Source filename LV: length(1) + value(n)
     size += 1 + static_cast<U32>(this->m_sourceFilename.length());
@@ -129,7 +129,7 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
         return status;
     }
 
-    // File size (CfdpFileSize)
+    // File size (FileSize)
     status = serialBuffer.serializeFrom(this->m_fileSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;

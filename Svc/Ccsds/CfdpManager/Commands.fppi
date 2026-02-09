@@ -1,7 +1,7 @@
 @ Command to start a CFDP file transaction
 async command SendFile(
     channelId: U8 @< Channel ID for the file transaction
-    destId: CfdpEntityId @< Destination entity id
+    destId: Cfdp.EntityId @< Destination entity id
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer
     keep: Cfdp.Keep @< Whether or not to keep or delete the file upon completion
     $priority: U8 @< Priority: 0=highest priority
@@ -12,7 +12,7 @@ async command SendFile(
 @ Command to start a directory playback
 async command PlaybackDirectory(
     channelId: U8 @< Channel ID for the file transaction(s)
-    destId: CfdpEntityId @< Destination entity id
+    destId: Cfdp.EntityId @< Destination entity id
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer(s)
     keep: Cfdp.Keep @< Whether or not to keep or delete the file(s) upon completion
     $priority: U8 @< Priority: 0=highest priority
@@ -24,7 +24,7 @@ async command PlaybackDirectory(
 async command PollDirectory(
     channelId: U8 @< Channel ID for the file transaction(s)
     pollId: U8 @< Channel poll ID for the file transaction(s)
-    destId: CfdpEntityId @< Destination entity id
+    destId: Cfdp.EntityId @< Destination entity id
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer(s)
     $priority: U8 @< Priority: 0=highest priority
     interval: U32 @< Interval to poll the directory in seconds

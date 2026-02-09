@@ -16,18 +16,18 @@ namespace Cfdp {
 
 //! Segment request structure for NAK PDU
 struct SegmentRequest {
-    CfdpFileSize offsetStart;  //!< Start offset of missing data
-    CfdpFileSize offsetEnd;    //!< End offset of missing data
+    FileSize offsetStart;  //!< Start offset of missing data
+    FileSize offsetEnd;    //!< End offset of missing data
 };
 
 //! The type of a NAK PDU
 class NakPdu : public PduBase {
   private:
     //! Scope start offset
-    CfdpFileSize m_scopeStart;
+    FileSize m_scopeStart;
 
     //! Scope end offset
-    CfdpFileSize m_scopeEnd;
+    FileSize m_scopeEnd;
 
     //! Number of segment requests
     U8 m_numSegments;
@@ -40,13 +40,13 @@ class NakPdu : public PduBase {
     NakPdu() : m_scopeStart(0), m_scopeEnd(0), m_numSegments(0) {}
 
     //! Initialize a NAK PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
-                   CfdpFileSize scopeStart,
-                   CfdpFileSize scopeEnd);
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
+                   FileSize scopeStart,
+                   FileSize scopeEnd);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;
@@ -63,10 +63,10 @@ class NakPdu : public PduBase {
     const PduHeader& asHeader() const { return this->m_header; }
 
     //! Get scope start
-    CfdpFileSize getScopeStart() const { return this->m_scopeStart; }
+    FileSize getScopeStart() const { return this->m_scopeStart; }
 
     //! Get scope end
-    CfdpFileSize getScopeEnd() const { return this->m_scopeEnd; }
+    FileSize getScopeEnd() const { return this->m_scopeEnd; }
 
     //! Get number of segments
     U8 getNumSegments() const { return this->m_numSegments; }
@@ -76,7 +76,7 @@ class NakPdu : public PduBase {
 
     //! Add a segment request
     //! @return True if segment was added, false if segment array is full
-    bool addSegment(CfdpFileSize offsetStart, CfdpFileSize offsetEnd);
+    bool addSegment(FileSize offsetStart, FileSize offsetEnd);
 
     //! Clear all segment requests
     void clearSegments();

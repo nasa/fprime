@@ -42,12 +42,13 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 // ======================================================================
 // CfdpChunkList Class Implementation
 // ======================================================================
 
-CfdpChunkList::CfdpChunkList(CfdpChunkIdx maxChunks, CfdpChunk* chunkMem)
+CfdpChunkList::CfdpChunkList(ChunkIdx maxChunks, CfdpChunk* chunkMem)
     : m_count(0), m_maxChunks(maxChunks), m_chunks(chunkMem)
 {
     FW_ASSERT(maxChunks > 0);
@@ -61,10 +62,10 @@ void CfdpChunkList::reset()
     memset(m_chunks, 0, sizeof(*m_chunks) * m_maxChunks);
 }
 
-void CfdpChunkList::add(CfdpFileSize offset, CfdpFileSize size)
+void CfdpChunkList::add(FileSize offset, FileSize size)
 {
     const CfdpChunk chunk = {offset, size};
-    const CfdpChunkIdx i = findInsertPosition(&chunk);
+    const ChunkIdx i = findInsertPosition(&chunk);
 
     /* PTFO: files won't be so big we need to gracefully handle overflow,
      * and in that case the user should change everything in chunks
@@ -79,7 +80,7 @@ const CfdpChunk* CfdpChunkList::getFirstChunk() const
     return m_count ? &m_chunks[0] : nullptr;
 }
 
-void CfdpChunkList::removeFromFirst(CfdpFileSize size)
+void CfdpChunkList::removeFromFirst(FileSize size)
 {
     CfdpChunk* chunk = &m_chunks[0]; /* front is always 0 */
 
@@ -99,16 +100,16 @@ void CfdpChunkList::removeFromFirst(CfdpFileSize size)
     }
 }
 
-U32 CfdpChunkList::computeGaps(CfdpChunkIdx maxGaps,
-                                CfdpFileSize total,
-                                CfdpFileSize start,
-                                const CfdpGapComputeCallback& callback,
+U32 CfdpChunkList::computeGaps(ChunkIdx maxGaps,
+                                FileSize total,
+                                FileSize start,
+                                const GapComputeCallback& callback,
                                 void* opaque) const
 {
     U32 ret = 0;
-    CfdpChunkIdx i = 0;
-    CfdpFileSize next_off;
-    CfdpFileSize gap_start;
+    ChunkIdx i = 0;
+    FileSize next_off;
+    FileSize gap_start;
     CfdpChunk chunk;
 
     FW_ASSERT(total); /* does it make sense to have a 0 byte file? */
@@ -167,7 +168,7 @@ U32 CfdpChunkList::computeGaps(CfdpChunkIdx maxGaps,
     return ret;
 }
 
-void CfdpChunkList::insertChunk(CfdpChunkIdx index, const CfdpChunk* chunk)
+void CfdpChunkList::insertChunk(ChunkIdx index, const CfdpChunk* chunk)
 {
     FW_ASSERT(m_count < m_maxChunks, m_count, m_maxChunks);
     FW_ASSERT(index <= m_count, index, m_count);
@@ -182,7 +183,7 @@ void CfdpChunkList::insertChunk(CfdpChunkIdx index, const CfdpChunk* chunk)
     ++m_count;
 }
 
-void CfdpChunkList::eraseChunk(CfdpChunkIdx index)
+void CfdpChunkList::eraseChunk(ChunkIdx index)
 {
     FW_ASSERT(m_count > 0);
     FW_ASSERT(index < m_count, index, m_count);
@@ -193,7 +194,7 @@ void CfdpChunkList::eraseChunk(CfdpChunkIdx index)
     --m_count;
 }
 
-void CfdpChunkList::eraseRange(CfdpChunkIdx start, CfdpChunkIdx end)
+void CfdpChunkList::eraseRange(ChunkIdx start, ChunkIdx end)
 {
     /* Sanity check */
     FW_ASSERT(end <= m_count, end, m_count);
@@ -201,16 +202,16 @@ void CfdpChunkList::eraseRange(CfdpChunkIdx start, CfdpChunkIdx end)
     if (start < end)
     {
         memmove(&m_chunks[start], &m_chunks[end], sizeof(*m_chunks) * (m_count - end));
-        m_count -= static_cast<CfdpChunkIdx>(end - start);
+        m_count -= static_cast<ChunkIdx>(end - start);
     }
 }
 
-CfdpChunkIdx CfdpChunkList::findInsertPosition(const CfdpChunk* chunk)
+ChunkIdx CfdpChunkList::findInsertPosition(const CfdpChunk* chunk)
 {
-    CfdpChunkIdx first = 0;
-    CfdpChunkIdx i;
-    CfdpChunkIdx count = m_count;
-    CfdpChunkIdx step;
+    ChunkIdx first = 0;
+    ChunkIdx i;
+    ChunkIdx count = m_count;
+    ChunkIdx step;
 
     while (count > 0)
     {
@@ -220,7 +221,7 @@ CfdpChunkIdx CfdpChunkList::findInsertPosition(const CfdpChunk* chunk)
         if (m_chunks[i].offset < chunk->offset)
         {
             first = i + 1;
-            count -= static_cast<CfdpChunkIdx>(step + 1);
+            count -= static_cast<ChunkIdx>(step + 1);
         }
         else
         {
@@ -231,11 +232,11 @@ CfdpChunkIdx CfdpChunkList::findInsertPosition(const CfdpChunk* chunk)
     return first;
 }
 
-bool CfdpChunkList::combineNext(CfdpChunkIdx i, const CfdpChunk* chunk)
+bool CfdpChunkList::combineNext(ChunkIdx i, const CfdpChunk* chunk)
 {
-    CfdpChunkIdx combined_i = i;
+    ChunkIdx combined_i = i;
     bool ret = false;
-    CfdpFileSize chunk_end = chunk->offset + chunk->size;
+    FileSize chunk_end = chunk->offset + chunk->size;
 
     /* Assert no rollover, only possible as a bug */
     FW_ASSERT(chunk_end > chunk->offset, chunk_end, chunk->offset);
@@ -269,11 +270,11 @@ bool CfdpChunkList::combineNext(CfdpChunkIdx i, const CfdpChunk* chunk)
     return ret;
 }
 
-bool CfdpChunkList::combinePrevious(CfdpChunkIdx i, const CfdpChunk* chunk)
+bool CfdpChunkList::combinePrevious(ChunkIdx i, const CfdpChunk* chunk)
 {
     CfdpChunk* prev;
-    CfdpFileSize prev_end;
-    CfdpFileSize chunk_end;
+    FileSize prev_end;
+    FileSize chunk_end;
     bool ret = false;
 
     FW_ASSERT(i <= m_maxChunks, i, m_maxChunks);
@@ -300,9 +301,9 @@ bool CfdpChunkList::combinePrevious(CfdpChunkIdx i, const CfdpChunk* chunk)
     return ret;
 }
 
-void CfdpChunkList::insert(CfdpChunkIdx i, const CfdpChunk* chunk)
+void CfdpChunkList::insert(ChunkIdx i, const CfdpChunk* chunk)
 {
-    CfdpChunkIdx smallest_i;
+    ChunkIdx smallest_i;
     CfdpChunk* smallest_c;
     bool next = combineNext(i, chunk);
     bool combined;
@@ -338,10 +339,10 @@ void CfdpChunkList::insert(CfdpChunkIdx i, const CfdpChunk* chunk)
     }
 }
 
-CfdpChunkIdx CfdpChunkList::findSmallestSize() const
+ChunkIdx CfdpChunkList::findSmallestSize() const
 {
-    CfdpChunkIdx i;
-    CfdpChunkIdx smallest = 0;
+    ChunkIdx i;
+    ChunkIdx smallest = 0;
 
     for (i = 1; i < m_count; ++i)
     {
@@ -354,5 +355,6 @@ CfdpChunkIdx CfdpChunkList::findSmallestSize() const
     return smallest;
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

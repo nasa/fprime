@@ -15,8 +15,8 @@
 #include <Svc/Ccsds/CfdpManager/CfdpChannel.hpp>
 
 namespace Svc {
-
 namespace Ccsds {
+namespace Cfdp {
 
 class CfdpManagerTester final : public CfdpManagerGTestBase {
   public:
@@ -92,7 +92,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param peerId Peer entity ID
     //! @return Pointer to configured transaction (owned by component)
     CfdpTransaction* setupTestTransaction(
-        CfdpTxnState state,
+        TxnState state,
         U8 channelId,
         const char* srcFilename,
         const char* dstFilename,
@@ -120,7 +120,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
-        CfdpFileSize expectedFileSize,
+        FileSize expectedFileSize,
         const char* expectedSourceFilename,
         const char* expectedDestFilename,
         Svc::Ccsds::Cfdp::Class::T expectedClass
@@ -159,7 +159,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
         Cfdp::ConditionCode expectedConditionCode,
-        CfdpFileSize expectedFileSize,
+        FileSize expectedFileSize,
         const char* sourceFilename
     );
 
@@ -215,8 +215,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedSourceEid,
         U32 expectedDestEid,
         U32 expectedTransactionSeq,
-        CfdpFileSize expectedScopeStart,
-        CfdpFileSize expectedScopeEnd,
+        FileSize expectedScopeStart,
+        FileSize expectedScopeEnd,
         U8 expectedNumSegments,
         const Cfdp::SegmentRequest* expectedSegments
     );
@@ -225,7 +225,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param chanNum Channel number to search
     //! @param seqNum Transaction sequence number
     //! @return Pointer to transaction or nullptr if not found
-    CfdpTransaction* findTransaction(U8 chanNum, CfdpTransactionSeq seqNum);
+    CfdpTransaction* findTransaction(U8 chanNum, TransactionSeq seqNum);
 
     // ----------------------------------------------------------------------
     // PDU Uplink Helper Functions
@@ -243,10 +243,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param closureRequested Closure requested flag (typically 0 for Class 1, 1 for Class 2)
     void sendMetadataPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
-        CfdpFileSize fileSize,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
+        FileSize fileSize,
         const char* sourceFilename,
         const char* destFilename,
         Cfdp::Class::T txmMode,
@@ -264,10 +264,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param class Transmission mode (Class 1 or Class 2)
     void sendFileDataPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
-        CfdpFileSize offset,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
+        FileSize offset,
         U16 dataSize,
         const U8* data,
         Cfdp::Class::T txmMode
@@ -284,12 +284,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param class Transmission mode (Class 1 or Class 2)
     void sendEofPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
         Cfdp::ConditionCode conditionCode,
         U32 checksum,
-        CfdpFileSize fileSize,
+        FileSize fileSize,
         Cfdp::Class::T txmMode
     );
 
@@ -303,9 +303,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param fileStatus File status
     void sendFinPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
         Cfdp::ConditionCode conditionCode,
         Cfdp::FinDeliveryCode deliveryCode,
         Cfdp::FinFileStatus fileStatus
@@ -322,9 +322,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param transactionStatus Transaction status
     void sendAckPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
         Cfdp::FileDirective directiveCode,
         U8 directiveSubtypeCode,
         Cfdp::ConditionCode conditionCode,
@@ -342,11 +342,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param segments Array of segment requests (can be nullptr if numSegments is 0)
     void sendNakPdu(
         U8 channelId,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
-        CfdpTransactionSeq transactionSeq,
-        CfdpFileSize scopeStart,
-        CfdpFileSize scopeEnd,
+        EntityId sourceEid,
+        EntityId destEid,
+        TransactionSeq transactionSeq,
+        FileSize scopeStart,
+        FileSize scopeEnd,
         U8 numSegments,
         const Cfdp::SegmentRequest* segments
     );
@@ -399,7 +399,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test configuration constants
     static constexpr U8 TEST_CHANNEL_ID_0 = 0;
     static constexpr U8 TEST_CHANNEL_ID_1 = 1;
-    static constexpr CfdpEntityId TEST_GROUND_EID = 10;
+    static constexpr EntityId TEST_GROUND_EID = 10;
     static constexpr U8 TEST_PRIORITY = 0;
 
     //! Helper struct for transaction setup results
@@ -420,10 +420,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* srcFile,
         const char* dstFile,
         U8 channelId,
-        CfdpEntityId destEid,
+        EntityId destEid,
         Cfdp::Class cfdpClass,
         U8 priority,
-        CfdpTxnState expectedState,
+        TxnState expectedState,
         TransactionSetup& setup
     );
 
@@ -432,11 +432,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         const char* srcFile,
         const char* dstFile,
         U8 channelId,
-        CfdpEntityId sourceEid,
+        EntityId sourceEid,
         Cfdp::Class::T cfdpClass,
         U32 fileSize,
         U32 transactionSeq,
-        CfdpTxnState expectedState,
+        TxnState expectedState,
         TransactionSetup& setup
     );
 
@@ -446,7 +446,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Complete Class 2 transaction handshake (EOF-ACK, FIN, FIN-ACK)
     void completeClass2Handshake(
         U8 channelId,
-        CfdpEntityId destEid,
+        EntityId destEid,
         U32 expectedSeqNum,
         CfdpTransaction* txn
     );
@@ -454,8 +454,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Verify FIN-ACK PDU at given index
     void verifyFinAckPdu(
         FwIndexType pduIndex,
-        CfdpEntityId sourceEid,
-        CfdpEntityId destEid,
+        EntityId sourceEid,
+        EntityId destEid,
         U32 expectedSeqNum
     );
 
@@ -506,8 +506,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     FwSizeType m_pduCopyCount;
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
-
 }  // namespace Svc
 
 #endif

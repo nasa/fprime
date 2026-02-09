@@ -25,7 +25,7 @@ class EofPdu : public PduBase {
     U32 m_checksum;
 
     //! File size
-    CfdpFileSize m_fileSize;
+    FileSize m_fileSize;
 
     //! TLV list (optional)
     TlvList m_tlvList;
@@ -35,14 +35,14 @@ class EofPdu : public PduBase {
     EofPdu() : m_conditionCode(CONDITION_CODE_NO_ERROR), m_checksum(0), m_fileSize(0) {}
 
     //! Initialize an EOF PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
                    ConditionCode conditionCode,
                    U32 checksum,
-                   CfdpFileSize fileSize);
+                   FileSize fileSize);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;
@@ -65,7 +65,7 @@ class EofPdu : public PduBase {
     U32 getChecksum() const { return this->m_checksum; }
 
     //! Get file size
-    CfdpFileSize getFileSize() const { return this->m_fileSize; }
+    FileSize getFileSize() const { return this->m_fileSize; }
 
     //! Get directive code
     FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_END_OF_FILE; }

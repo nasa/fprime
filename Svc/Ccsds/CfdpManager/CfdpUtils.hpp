@@ -40,6 +40,7 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 /**
  * @brief Argument structure for use with CList_Traverse()
@@ -49,8 +50,8 @@ namespace Ccsds {
  */
 struct CfdpTraverseTransSeqArg
 {
-    CfdpTransactionSeq transaction_sequence_number;
-    CfdpEntityId       src_eid;
+    TransactionSeq transaction_sequence_number;
+    EntityId       src_eid;
     CfdpTransaction *  txn; /**< \brief output transaction pointer */
 };
 
@@ -86,7 +87,7 @@ struct CfdpTraversePriorityArg
  * @retval 1 when it's found, which terminates list traversal
  * @retval 0 when it isn't found, which causes list traversal to continue
  */
-CfdpCListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CfdpCListNode *node, void *context);
+CListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
@@ -97,7 +98,7 @@ CfdpCListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CfdpCListNode *n
  * @retval CFDP_CLIST_EXIT when it's found, which terminates list traversal
  * @retval CFDP_CLIST_CONT when it isn't found, which causes list traversal to continue
  */
-CfdpCListTraverseStatus CfdpPrioSearch(CfdpCListNode *node, void *context);
+CListTraverseStatus CfdpPrioSearch(CListNode *node, void *context);
 
 /************************************************************************/
 /** @brief Converts the internal transaction status to a CFDP condition code
@@ -110,7 +111,7 @@ CfdpCListTraverseStatus CfdpPrioSearch(CfdpCListNode *node, void *context);
  *
  * @returns CFDP protocol condition code
  */
-CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat);
+ConditionCode CfdpTxnStatusToConditionCode(TxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Check if the internal transaction status represents an error
@@ -125,7 +126,7 @@ CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat);
  * @retval true if an error has occurred during the transaction
  * @retval false if no error has occurred during the transaction yet
  */
-bool CfdpTxnStatusIsError(CfdpTxnStatus txn_stat);
+bool CfdpTxnStatusIsError(TxnStatus txn_stat);
 
 /************************************************************************/
 /** @brief Gets the status of this transaction
@@ -134,10 +135,11 @@ bool CfdpTxnStatusIsError(CfdpTxnStatus txn_stat);
  * (By definition if it has a txn object then it is not UNRECOGNIZED)
  *
  * @param txn   Transaction
- * @returns CfdpAckTxnStatus value corresponding to transaction
+ * @returns AckTxnStatus value corresponding to transaction
  */
-CfdpAckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn);
+AckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn);
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

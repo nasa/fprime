@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  CfdpTimer.cpp
+// \title  Timer.cpp
 // \author campuzan
-// \brief  cpp file for the CfdpTimer class implementation
+// \brief  cpp file for the Timer class implementation
 // ======================================================================
 
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
@@ -10,37 +10,38 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 // ----------------------------------------------------------------------
 // Class construction and destruction
 // ----------------------------------------------------------------------
 
-CfdpTimer ::CfdpTimer() : timerStatus(UNITIALIZED), secondsRemaining(0) {}
+Timer ::Timer() : timerStatus(UNITIALIZED), secondsRemaining(0) {}
 
-CfdpTimer ::~CfdpTimer() {}
+Timer ::~Timer() {}
 
 // ----------------------------------------------------------------------
 // Class interfaces
 // ----------------------------------------------------------------------
 
-void CfdpTimer ::setTimer(U32 timerDuration)
+void Timer ::setTimer(U32 timerDuration)
 {
     this->timerStatus = RUNNING;
     this->secondsRemaining = timerDuration;
 }
 
-void CfdpTimer ::disableTimer(void)
+void Timer ::disableTimer(void)
 {
     this->timerStatus = EXPIRED;
     this->secondsRemaining = 0;
 }
 
-CfdpTimer::Status CfdpTimer ::getStatus(void)
+Timer::Status Timer ::getStatus(void)
 {
     return this->timerStatus;
 }
 
-void CfdpTimer ::run(void)
+void Timer ::run(void)
 {
     if(this->timerStatus == RUNNING)
     {
@@ -54,5 +55,6 @@ void CfdpTimer ::run(void)
     }
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

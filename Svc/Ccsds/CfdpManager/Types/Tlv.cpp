@@ -21,11 +21,11 @@ TlvData::TlvData() : m_dataLength(0) {
     memset(this->m_rawData, 0, sizeof(this->m_rawData));
 }
 
-void TlvData::setEntityId(CfdpEntityId eid) {
+void TlvData::setEntityId(EntityId eid) {
     this->m_eid = eid;
     // Entity ID length depends on the value
-    // For now, use sizeof(CfdpEntityId) as the length
-    this->m_dataLength = sizeof(CfdpEntityId);
+    // For now, use sizeof(EntityId) as the length
+    this->m_dataLength = sizeof(EntityId);
 }
 
 void TlvData::setData(const U8* data, U8 length) {
@@ -36,7 +36,7 @@ void TlvData::setData(const U8* data, U8 length) {
     this->m_dataLength = length;
 }
 
-CfdpEntityId TlvData::getEntityId() const {
+EntityId TlvData::getEntityId() const {
     return this->m_eid;
 }
 
@@ -56,7 +56,7 @@ Tlv::Tlv() : m_type(TLV_TYPE_ENTITY_ID) {
     // Default constructor
 }
 
-void Tlv::initialize(CfdpEntityId eid) {
+void Tlv::initialize(EntityId eid) {
     this->m_type = TLV_TYPE_ENTITY_ID;
     this->m_data.setEntityId(eid);
 }
@@ -97,8 +97,8 @@ Fw::SerializeStatus Tlv::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) cons
 
     // Serialize data
     if (this->m_type == TLV_TYPE_ENTITY_ID) {
-        // For Entity ID, serialize as CfdpEntityId
-        CfdpEntityId eid = this->m_data.getEntityId();
+        // For Entity ID, serialize as EntityId
+        EntityId eid = this->m_data.getEntityId();
         status = serialBuffer.serializeFrom(eid);
         if (status != Fw::FW_SERIALIZE_OK) {
             return status;
@@ -137,8 +137,8 @@ Fw::SerializeStatus Tlv::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
 
     // Deserialize data
     if (this->m_type == TLV_TYPE_ENTITY_ID) {
-        // For Entity ID, deserialize as CfdpEntityId
-        CfdpEntityId eid;
+        // For Entity ID, deserialize as EntityId
+        EntityId eid;
         status = serialBuffer.deserializeTo(eid);
         if (status != Fw::FW_SERIALIZE_OK) {
             return status;

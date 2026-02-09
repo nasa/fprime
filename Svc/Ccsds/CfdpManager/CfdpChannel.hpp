@@ -39,6 +39,7 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 // Forward declarations
 class CfdpEngine;
@@ -113,7 +114,7 @@ class CfdpChannel {
      * @returns Pointer to a free transaction
      * @retval  NULL if no free transactions available.
      */
-    CfdpTransaction* findUnusedTransaction(CfdpDirection direction);
+    CfdpTransaction* findUnusedTransaction(Direction direction);
 
     /**
      * @brief Finds an active transaction by sequence number
@@ -127,8 +128,8 @@ class CfdpChannel {
      * @returns Pointer to the given transaction if found
      * @retval  NULL if the transaction is not found
      */
-    CfdpTransaction* findTransactionBySequenceNumber(CfdpTransactionSeq transaction_sequence_number,
-                                                     CfdpEntityId src_eid);
+    CfdpTransaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
+                                                     EntityId src_eid);
 
     /**
      * @brief Traverses all transactions on all active queues and performs an operation on them
@@ -144,11 +145,11 @@ class CfdpChannel {
      * @brief Returns a history structure back to its unused state
      *
      * There's nothing to do currently other than remove the history
-     * from its current queue and put it back on Cfdp::QueueId::HIST_FREE.
+     * from its current queue and put it back on QueueId::HIST_FREE.
      *
      * @param history Pointer to the history entry
      */
-    void resetHistory(CfdpHistory* history);
+    void resetHistory(History* history);
 
     // ----------------------------------------------------------------------
     // Channel State Management
@@ -207,14 +208,14 @@ class CfdpChannel {
      *
      * @param flowState New flow state (NORMAL or FROZEN)
      */
-    inline void setFlowState(Cfdp::Flow::T flowState) { m_flowState = flowState; }
+    inline void setFlowState(Flow::T flowState) { m_flowState = flowState; }
 
     /**
      * @brief Get the flow state for this channel
      *
      * @returns Current flow state
      */
-    inline Cfdp::Flow::T getFlowState() const { return m_flowState; }
+    inline Flow::T getFlowState() const { return m_flowState; }
 
     /**
      * @brief Get a playback directory entry
@@ -222,7 +223,7 @@ class CfdpChannel {
      * @param index Index of playback directory
      * @returns Pointer to playback directory
      */
-    inline CfdpPlayback* getPlayback(U32 index) {
+    inline Playback* getPlayback(U32 index) {
         FW_ASSERT(index < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN);
         return &m_playback[index];
     }
@@ -252,7 +253,7 @@ class CfdpChannel {
      * @param index History index within this channel
      * @returns Pointer to history entry
      */
-    CfdpHistory* getHistory(U32 index);
+    History* getHistory(U32 index);
 
     // ----------------------------------------------------------------------
     // Resource Management
@@ -270,7 +271,7 @@ class CfdpChannel {
      *
      * @returns Pointer to list head
      */
-    CfdpCListNode** getChunkListHead(U8 direction);
+    CListNode** getChunkListHead(U8 direction);
 
     /**
      * @brief Find unused chunks for this channel
@@ -280,7 +281,7 @@ class CfdpChannel {
      * @returns Pointer to unused chunk wrapper
      * @retval  NULL if no chunks available
      */
-    CfdpChunkWrapper* findUnusedChunks(CfdpDirection dir);
+    CfdpChunkWrapper* findUnusedChunks(Direction dir);
 
     // ----------------------------------------------------------------------
     // Transaction Management
@@ -308,7 +309,7 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of destination queue
      */
-    void moveTransaction(CfdpTransaction* txn, Cfdp::QueueId::T queue);
+    void moveTransaction(CfdpTransaction* txn, QueueId::T queue);
 
     /**
      * @brief Frees and resets a transaction and returns it for later use
@@ -345,7 +346,7 @@ class CfdpChannel {
      * @param txn   Pointer to the transaction object
      * @param queue Index of queue to insert into
      */
-    void insertSortPrio(CfdpTransaction* txn, Cfdp::QueueId::T queue);
+    void insertSortPrio(CfdpTransaction* txn, QueueId::T queue);
 
     // ----------------------------------------------------------------------
     // Queue Management
@@ -357,7 +358,7 @@ class CfdpChannel {
      * @param queueidx  Queue index
      * @param node      Node to remove
      */
-    inline void removeFromQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* node);
+    inline void removeFromQueue(QueueId::T queueidx, CListNode* node);
 
     /**
      * @brief Insert a node after another in a channel queue
@@ -366,7 +367,7 @@ class CfdpChannel {
      * @param start     Node to insert after
      * @param after     Node to insert
      */
-    inline void insertAfterInQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* start, CfdpCListNode* after);
+    inline void insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after);
 
     /**
      * @brief Insert a node at the back of a channel queue
@@ -374,7 +375,7 @@ class CfdpChannel {
      * @param queueidx  Queue index
      * @param node      Node to insert
      */
-    inline void insertBackInQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* node);
+    inline void insertBackInQueue(QueueId::T queueidx, CListNode* node);
 
     // ----------------------------------------------------------------------
     // Callback methods (public so wrappers can call them)
@@ -384,19 +385,19 @@ class CfdpChannel {
      * @brief Traverse callback for cycling the first active transaction
      *
      * @param node     List node being traversed
-     * @param context  Callback context (CfdpCycleTxArgs*)
+     * @param context  Callback context (CycleTxArgs*)
      * @returns Traversal status (CONT or EXIT)
      */
-    CfdpCListTraverseStatus cycleTxFirstActive(CfdpCListNode* node, void* context);
+    CListTraverseStatus cycleTxFirstActive(CListNode* node, void* context);
 
     /**
      * @brief Traverse callback for ticking a transaction
      *
      * @param node     List node being traversed
-     * @param context  Callback context (CfdpTickArgs*)
+     * @param context  Callback context (TickArgs*)
      * @returns Traversal status (CONT or EXIT)
      */
-    CfdpCListTraverseStatus doTick(CfdpCListNode* node, void* context);
+    CListTraverseStatus doTick(CListNode* node, void* context);
 
   private:
     // ----------------------------------------------------------------------
@@ -411,7 +412,7 @@ class CfdpChannel {
      *
      * @param pb    The playback state
      */
-    void processPlaybackDirectory(CfdpPlayback* pb);
+    void processPlaybackDirectory(Playback* pb);
 
     /**
      * @brief Update playback/poll counted state
@@ -420,7 +421,7 @@ class CfdpChannel {
      * @param up      Whether to increment (1) or decrement (0)
      * @param counter Counter to update
      */
-    void updatePollPbCounted(CfdpPlayback* pb, int up, U8* counter);
+    void updatePollPbCounted(Playback* pb, int up, U8* counter);
 
   private:
     // ----------------------------------------------------------------------
@@ -429,12 +430,12 @@ class CfdpChannel {
 
     CfdpEngine* m_engine;    //!< Parent CFDP engine
 
-    CfdpCListNode* m_qs[Cfdp::QueueId::NUM];    //!< Transaction queues
-    CfdpCListNode* m_cs[CFDP_DIRECTION_NUM];    //!< Command/history lists
+    CListNode* m_qs[QueueId::NUM];    //!< Transaction queues
+    CListNode* m_cs[DIRECTION_NUM];    //!< Command/history lists
 
     U32 m_numCmdTx;                            //!< Number of commanded TX transactions
 
-    CfdpPlayback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
+    Playback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
     CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
 
     const CfdpTransaction* m_cur;              //!< Current transaction during channel cycle
@@ -443,16 +444,16 @@ class CfdpChannel {
     U8 m_tickType;                             //!< Type of tick being processed
     U8 m_channelId;                            //!< Channel ID (index into engine array)
 
-    Cfdp::Flow::T m_flowState;                   //!< Channel flow state (normal/frozen)
+    Flow::T m_flowState;                   //!< Channel flow state (normal/frozen)
     U32 m_outgoingCounter;                     //!< PDU throttling counter
 
     // Per-channel resource arrays (dynamically allocated, moved from CfdpEngine)
     CfdpTransaction* m_transactions;           //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
-    CfdpHistory* m_histories;                  //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
-    CfdpChunkWrapper* m_chunks;                //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * CFDP_DIRECTION_NUM
+    History* m_histories;                  //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
+    CfdpChunkWrapper* m_chunks;                //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM
     CfdpChunk* m_chunkMem;                     //!< Chunk memory backing store
 
-    U32 m_dirMaxChunks[CFDP_DIRECTION_NUM];    //!< Max chunks per direction (RX/TX) for this channel
+    U32 m_dirMaxChunks[DIRECTION_NUM];    //!< Max chunks per direction (RX/TX) for this channel
 
     // Friend declarations for testing
     friend class CfdpManagerTester;
@@ -462,21 +463,22 @@ class CfdpChannel {
 // Inline function implementations
 // ----------------------------------------------------------------------
 
-inline void CfdpChannel::removeFromQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* node)
+inline void CfdpChannel::removeFromQueue(QueueId::T queueidx, CListNode* node)
 {
     CfdpCListRemove(&m_qs[queueidx], node);
 }
 
-inline void CfdpChannel::insertAfterInQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* start, CfdpCListNode* after)
+inline void CfdpChannel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after)
 {
     CfdpCListInsertAfter(&m_qs[queueidx], start, after);
 }
 
-inline void CfdpChannel::insertBackInQueue(Cfdp::QueueId::T queueidx, CfdpCListNode* node)
+inline void CfdpChannel::insertBackInQueue(QueueId::T queueidx, CListNode* node)
 {
     CfdpCListInsertBack(&m_qs[queueidx], node);
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

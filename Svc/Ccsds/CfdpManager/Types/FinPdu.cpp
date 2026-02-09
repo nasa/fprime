@@ -11,11 +11,11 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void FinPdu::initialize(Direction direction,
+void FinPdu::initialize(PduDirection direction,
                               Cfdp::Class::T txmMode,
-                              CfdpEntityId sourceEid,
-                              CfdpTransactionSeq transactionSeq,
-                              CfdpEntityId destEid,
+                              EntityId sourceEid,
+                              TransactionSeq transactionSeq,
+                              EntityId destEid,
                               ConditionCode conditionCode,
                               FinDeliveryCode deliveryCode,
                               FinFileStatus fileStatus) {

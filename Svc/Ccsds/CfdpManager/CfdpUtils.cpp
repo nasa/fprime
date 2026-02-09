@@ -38,35 +38,36 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-CfdpAckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn)
+AckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn)
 {
-    CfdpAckTxnStatus LocalStatus;
+    AckTxnStatus LocalStatus;
 
     /* check if this is still an active Tx (not in holdover or drop etc) */
     /* in theory this should never be called on S1 because there is no fin-ack to send,
      * but including it for completeness (because it is an active txn) */
     if (txn == NULL)
     {
-        LocalStatus = CFDP_ACK_TXN_STATUS_UNRECOGNIZED;
+        LocalStatus = ACK_TXN_STATUS_UNRECOGNIZED;
     }
     else
         switch (txn->getState())
         {
-            case CFDP_TXN_STATE_S1:
-            case CFDP_TXN_STATE_R1:
-            case CFDP_TXN_STATE_S2:
-            case CFDP_TXN_STATE_R2:
-                LocalStatus = CFDP_ACK_TXN_STATUS_ACTIVE;
+            case TXN_STATE_S1:
+            case TXN_STATE_R1:
+            case TXN_STATE_S2:
+            case TXN_STATE_R2:
+                LocalStatus = ACK_TXN_STATUS_ACTIVE;
                 break;
 
-            case CFDP_TXN_STATE_DROP:
-            case CFDP_TXN_STATE_HOLD:
-                LocalStatus = CFDP_ACK_TXN_STATUS_TERMINATED;
+            case TXN_STATE_DROP:
+            case TXN_STATE_HOLD:
+                LocalStatus = ACK_TXN_STATUS_TERMINATED;
                 break;
 
             default:
-                LocalStatus = CFDP_ACK_TXN_STATUS_INVALID;
+                LocalStatus = ACK_TXN_STATUS_INVALID;
                 break;
         }
 
@@ -74,24 +75,24 @@ CfdpAckTxnStatus CfdpGetTxnStatus(CfdpTransaction *txn)
 }
 
 // Static member function - can access private members
-CfdpCListTraverseStatus CfdpTransaction::findBySequenceNumberCallback(CfdpCListNode *node, void *context)
+CListTraverseStatus CfdpTransaction::findBySequenceNumberCallback(CListNode *node, void *context)
 {
     CfdpTransaction *txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
-    CfdpCListTraverseStatus ret = CFDP_CLIST_TRAVERSE_CONTINUE;
+    CListTraverseStatus ret = CLIST_TRAVERSE_CONTINUE;
     CfdpTraverseTransSeqArg* seqContext = static_cast<CfdpTraverseTransSeqArg*>(context);
 
     if (txn->m_history && (txn->m_history->src_eid == seqContext->src_eid) &&
         (txn->m_history->seq_num == seqContext->transaction_sequence_number))
     {
         seqContext->txn = txn;
-        ret = CFDP_CLIST_TRAVERSE_EXIT; /* exit early */
+        ret = CLIST_TRAVERSE_EXIT; /* exit early */
     }
 
     return ret;
 }
 
 // Static member function - can access private members
-CfdpCListTraverseStatus CfdpTransaction::prioritySearchCallback(CfdpCListNode *node, void *context)
+CListTraverseStatus CfdpTransaction::prioritySearchCallback(CListNode *node, void *context)
 {
     CfdpTransaction *         txn = container_of_cpp(node, &CfdpTransaction::m_cl_node);
     CfdpTraversePriorityArg *arg = static_cast<CfdpTraversePriorityArg *>(context);
@@ -103,64 +104,64 @@ CfdpCListTraverseStatus CfdpTransaction::prioritySearchCallback(CfdpCListNode *n
          * the current transaction's prio is less than desired (higher)
          */
         arg->txn = txn;
-        return CFDP_CLIST_TRAVERSE_EXIT;
+        return CLIST_TRAVERSE_EXIT;
     }
 
-    return CFDP_CLIST_TRAVERSE_CONTINUE;
+    return CLIST_TRAVERSE_CONTINUE;
 }
 
 // Legacy wrappers for backward compatibility
-CfdpCListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CfdpCListNode *node, void *context)
+CListTraverseStatus CfdpFindTransactionBySequenceNumberImpl(CListNode *node, void *context)
 {
     return CfdpTransaction::findBySequenceNumberCallback(node, context);
 }
 
-CfdpCListTraverseStatus CfdpPrioSearch(CfdpCListNode *node, void *context)
+CListTraverseStatus CfdpPrioSearch(CListNode *node, void *context)
 {
     return CfdpTransaction::prioritySearchCallback(node, context);
 }
 
-bool CfdpTxnStatusIsError(CfdpTxnStatus txn_stat)
+bool CfdpTxnStatusIsError(TxnStatus txn_stat)
 {
-    /* The value of CFDP_TXN_STATUS_UNDEFINED (-1) indicates a transaction is in progress and no error
-     * has occurred yet.  This will be set to CFDP_TXN_STATUS_NO_ERROR (0) after successful completion
+    /* The value of TXN_STATUS_UNDEFINED (-1) indicates a transaction is in progress and no error
+     * has occurred yet.  This will be set to TXN_STATUS_NO_ERROR (0) after successful completion
      * of the transaction (FIN/EOF).  Anything else indicates a problem has occurred. */
-    return (txn_stat > CFDP_TXN_STATUS_NO_ERROR);
+    return (txn_stat > TXN_STATUS_NO_ERROR);
 }
 
-CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat)
+ConditionCode CfdpTxnStatusToConditionCode(TxnStatus txn_stat)
 {
-    CfdpConditionCode result;
+    ConditionCode result;
 
     if (!CfdpTxnStatusIsError(txn_stat))
     {
-        /* If no status has been set (CFDP_TXN_STATUS_UNDEFINED), treat that as NO_ERROR for
+        /* If no status has been set (TXN_STATUS_UNDEFINED), treat that as NO_ERROR for
          * the purpose of CFDP CC.  This can occur e.g. when sending ACK PDUs and no errors
          * have happened yet, but the transaction is not yet complete and thus not final. */
-        result = CFDP_CONDITION_CODE_NO_ERROR;
+        result = CONDITION_CODE_NO_ERROR;
     }
     else
     {
         switch (txn_stat)
         {
-            /* The definition of CfdpTxnStatus is such that the 4-bit codes (0-15) share the same
+            /* The definition of TxnStatus is such that the 4-bit codes (0-15) share the same
              * numeric values as the CFDP condition codes, and can be put directly into the 4-bit
              * CC field of a FIN/ACK/EOF PDU.  Extended codes use the upper bits (>15) to differentiate */
-            case CFDP_TXN_STATUS_NO_ERROR:
-            case CFDP_TXN_STATUS_POS_ACK_LIMIT_REACHED:
-            case CFDP_TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED:
-            case CFDP_TXN_STATUS_INVALID_TRANSMISSION_MODE:
-            case CFDP_TXN_STATUS_FILESTORE_REJECTION:
-            case CFDP_TXN_STATUS_FILE_CHECKSUM_FAILURE:
-            case CFDP_TXN_STATUS_FILE_SIZE_ERROR:
-            case CFDP_TXN_STATUS_NAK_LIMIT_REACHED:
-            case CFDP_TXN_STATUS_INACTIVITY_DETECTED:
-            case CFDP_TXN_STATUS_INVALID_FILE_STRUCTURE:
-            case CFDP_TXN_STATUS_CHECK_LIMIT_REACHED:
-            case CFDP_TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE:
-            case CFDP_TXN_STATUS_SUSPEND_REQUEST_RECEIVED:
-            case CFDP_TXN_STATUS_CANCEL_REQUEST_RECEIVED:
-                result = static_cast<CfdpConditionCode>(txn_stat);
+            case TXN_STATUS_NO_ERROR:
+            case TXN_STATUS_POS_ACK_LIMIT_REACHED:
+            case TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED:
+            case TXN_STATUS_INVALID_TRANSMISSION_MODE:
+            case TXN_STATUS_FILESTORE_REJECTION:
+            case TXN_STATUS_FILE_CHECKSUM_FAILURE:
+            case TXN_STATUS_FILE_SIZE_ERROR:
+            case TXN_STATUS_NAK_LIMIT_REACHED:
+            case TXN_STATUS_INACTIVITY_DETECTED:
+            case TXN_STATUS_INVALID_FILE_STRUCTURE:
+            case TXN_STATUS_CHECK_LIMIT_REACHED:
+            case TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE:
+            case TXN_STATUS_SUSPEND_REQUEST_RECEIVED:
+            case TXN_STATUS_CANCEL_REQUEST_RECEIVED:
+                result = static_cast<ConditionCode>(txn_stat);
                 break;
 
                 /* Extended status codes below here ---
@@ -169,16 +170,16 @@ CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat)
                  * transaction that is not in a valid CFDP-defined state.  This should be translated
                  * to the closest CFDP CC per the intent/meaning of the transaction status code. */
 
-            case CFDP_TXN_STATUS_ACK_LIMIT_NO_FIN:
-            case CFDP_TXN_STATUS_ACK_LIMIT_NO_EOF:
+            case TXN_STATUS_ACK_LIMIT_NO_FIN:
+            case TXN_STATUS_ACK_LIMIT_NO_EOF:
                 /* this is similar to the inactivity timeout (no fin-ack) */
-                result = CFDP_CONDITION_CODE_INACTIVITY_DETECTED;
+                result = CONDITION_CODE_INACTIVITY_DETECTED;
                 break;
 
             default:
                 /* Catch-all: any invalid protocol state will cancel the transaction, and thus this
                  * is the closest CFDP CC in practice for all other unhandled errors. */
-                result = CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED;
+                result = CONDITION_CODE_CANCEL_REQUEST_RECEIVED;
                 break;
         }
     }
@@ -186,5 +187,6 @@ CfdpConditionCode CfdpTxnStatusToConditionCode(CfdpTxnStatus txn_stat)
     return result;
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

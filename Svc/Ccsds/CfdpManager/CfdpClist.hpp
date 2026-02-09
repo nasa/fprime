@@ -38,43 +38,44 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 /**
  * @brief Traverse status for circular list operations
  */
-enum CfdpCListTraverseStatus : U8
+enum CListTraverseStatus : U8
 {
-    CFDP_CLIST_TRAVERSE_CONTINUE = 0, /**< \brief Continue traversing the list */
-    CFDP_CLIST_TRAVERSE_EXIT     = 1  /**< \brief Stop traversing the list */
+    CLIST_TRAVERSE_CONTINUE = 0, /**< \brief Continue traversing the list */
+    CLIST_TRAVERSE_EXIT     = 1  /**< \brief Stop traversing the list */
 };
 
 /** \brief Constant indicating to continue traversal */
-constexpr U8 CFDP_CLIST_CONT = CFDP_CLIST_TRAVERSE_CONTINUE;
+constexpr U8 CFDP_CLIST_CONT = CLIST_TRAVERSE_CONTINUE;
 
 /** \brief Constant indicating to stop traversal */
-constexpr U8 CFDP_CLIST_EXIT = CFDP_CLIST_TRAVERSE_EXIT;
+constexpr U8 CFDP_CLIST_EXIT = CLIST_TRAVERSE_EXIT;
 
 /**
  * Checks if the list traversal should continue
  */
-static inline bool CfdpCListTraverseStatusIsContinue(CfdpCListTraverseStatus stat)
+static inline bool CfdpCListTraverseStatusIsContinue(CListTraverseStatus stat)
 {
-    return (stat == CFDP_CLIST_TRAVERSE_CONTINUE);
+    return (stat == CLIST_TRAVERSE_CONTINUE);
 }
 
 /**
  * @brief Circular linked list node structure
  */
-struct CfdpCListNode
+struct CListNode
 {
-    struct CfdpCListNode *next; /**< \brief Pointer to next node */
-    struct CfdpCListNode *prev; /**< \brief Pointer to previous node */
+    struct CListNode *next; /**< \brief Pointer to next node */
+    struct CListNode *prev; /**< \brief Pointer to previous node */
 };
 
 /**
  * @brief Obtains a pointer to the parent structure
  *
- * Given a pointer to a CfdpCListNode object which is known to be a member of a
+ * Given a pointer to a CListNode object which is known to be a member of a
  * larger container, this converts the pointer to that of the parent.
  */
 template <typename Container, typename Member>
@@ -97,22 +98,22 @@ constexpr Container* container_of_cpp(Member* member_ptr,
  * @retval  #CFDP_CLIST_CONT Indicates to continue traversing the list
  * @retval  #CFDP_CLIST_EXIT Indicates to stop traversing the list
  */
-using CfdpCListFunc = CfdpCListTraverseStatus(*)(CfdpCListNode*, void*);
+using CListFunc = CListTraverseStatus(*)(CListNode*, void*);
 
 /**
  * @brief Modern callback type for list traversal
  *
- * Replaces CfdpCListFunc with a more flexible std::function-based callback.
+ * Replaces CListFunc with a more flexible std::function-based callback.
  * The callback receives the node and an opaque context pointer.
  */
-using CfdpCListTraverseCallback = std::function<CfdpCListTraverseStatus(CfdpCListNode*, void*)>;
+using CListTraverseCallback = std::function<CListTraverseStatus(CListNode*, void*)>;
 
 /************************************************************************/
 /** @brief Initialize a clist node.
  *
  * @param node  Pointer to node structure to be initialized
  */
-void CfdpCListInitNode(CfdpCListNode *node);
+void CfdpCListInitNode(CListNode *node);
 
 /************************************************************************/
 /** @brief Insert the given node into the front of a list.
@@ -120,7 +121,7 @@ void CfdpCListInitNode(CfdpCListNode *node);
  * @param head  Pointer to head of list to insert into
  * @param node  Pointer to node to insert
  */
-void CfdpCListInsertFront(CfdpCListNode **head, CfdpCListNode *node);
+void CfdpCListInsertFront(CListNode **head, CListNode *node);
 
 /************************************************************************/
 /** @brief Insert the given node into the back of a list.
@@ -128,7 +129,7 @@ void CfdpCListInsertFront(CfdpCListNode **head, CfdpCListNode *node);
  * @param head  Pointer to head of list to insert into
  * @param node  Pointer to node to insert
  */
-void CfdpCListInsertBack(CfdpCListNode **head, CfdpCListNode *node);
+void CfdpCListInsertBack(CListNode **head, CListNode *node);
 
 /************************************************************************/
 /** @brief Remove the given node from the list.
@@ -136,7 +137,7 @@ void CfdpCListInsertBack(CfdpCListNode **head, CfdpCListNode *node);
  * @param head  Pointer to head of list to remove from
  * @param node  Pointer to node to remove
  */
-void CfdpCListRemove(CfdpCListNode **head, CfdpCListNode *node);
+void CfdpCListRemove(CListNode **head, CListNode *node);
 
 /************************************************************************/
 /** @brief Remove the first node from a list and return it.
@@ -146,7 +147,7 @@ void CfdpCListRemove(CfdpCListNode **head, CfdpCListNode *node);
  * @returns The first node (now removed) in the list
  * @retval  NULL if list was empty.
  */
-CfdpCListNode *CfdpCListPop(CfdpCListNode **head);
+CListNode *CfdpCListPop(CListNode **head);
 
 /************************************************************************/
 /** @brief Insert the given node into the last after the given start node.
@@ -155,7 +156,7 @@ CfdpCListNode *CfdpCListPop(CfdpCListNode **head);
  * @param start Pointer to node to insert
  * @param after Pointer to position to insert after
  */
-void CfdpCListInsertAfter(CfdpCListNode **head, CfdpCListNode *start, CfdpCListNode *after);
+void CfdpCListInsertAfter(CListNode **head, CListNode *start, CListNode *after);
 
 /************************************************************************/
 /** @brief Traverse the entire list, calling the given function on all nodes.
@@ -167,7 +168,7 @@ void CfdpCListInsertAfter(CfdpCListNode **head, CfdpCListNode *start, CfdpCListN
  * @param fn      Callback function to invoke for each node
  * @param context Opaque pointer to pass to callback
  */
-void CfdpCListTraverse(CfdpCListNode *start, CfdpCListFunc fn, void *context);
+void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context);
 
 /************************************************************************/
 /** @brief Traverse the entire list, calling the given function on all nodes (modern C++ version).
@@ -179,7 +180,7 @@ void CfdpCListTraverse(CfdpCListNode *start, CfdpCListFunc fn, void *context);
  * @param callback Callback function to invoke for each node
  * @param context  Opaque pointer to pass to callback
  */
-void CfdpCListTraverse(CfdpCListNode *start, const CfdpCListTraverseCallback& callback, void *context);
+void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, void *context);
 
 /************************************************************************/
 /** @brief Reverse list traversal, starting from end, calling given function on all nodes.
@@ -190,8 +191,9 @@ void CfdpCListTraverse(CfdpCListNode *start, const CfdpCListTraverseCallback& ca
  * @param fn      Callback function to invoke for each node
  * @param context Opaque pointer to pass to callback
  */
-void CfdpCListTraverseR(CfdpCListNode *end, CfdpCListFunc fn, void *context);
+void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context);
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

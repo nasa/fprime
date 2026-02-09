@@ -56,8 +56,8 @@ class PduBase : public Fw::Serializable {
     PduTypeEnum getType() const { return this->m_header.getType(); }
 
     //! Get the direction
-    //! @return Direction (toward receiver or sender)
-    Direction getDirection() const { return this->m_header.getDirection(); }
+    //! @return PduDirection (toward receiver or sender)
+    PduDirection getDirection() const { return this->m_header.getDirection(); }
 
     //! Get the transmission mode
     //! @return Transmission mode (Class 1 or Class 2)
@@ -65,15 +65,15 @@ class PduBase : public Fw::Serializable {
 
     //! Get the source entity ID
     //! @return Source entity ID
-    CfdpEntityId getSourceEid() const { return this->m_header.getSourceEid(); }
+    EntityId getSourceEid() const { return this->m_header.getSourceEid(); }
 
     //! Get the transaction sequence number
     //! @return Transaction sequence number
-    CfdpTransactionSeq getTransactionSeq() const { return this->m_header.getTransactionSeq(); }
+    TransactionSeq getTransactionSeq() const { return this->m_header.getTransactionSeq(); }
 
     //! Get the destination entity ID
     //! @return Destination entity ID
-    CfdpEntityId getDestEid() const { return this->m_header.getDestEid(); }
+    EntityId getDestEid() const { return this->m_header.getDestEid(); }
 
     //! Get the header
     //! @return Reference to the PDU header

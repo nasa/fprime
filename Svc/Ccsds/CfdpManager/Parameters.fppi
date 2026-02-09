@@ -1,5 +1,5 @@
 @ CFDP ID to denote the current node when sending PDUs
-param LocalEid: CfdpEntityId \
+param LocalEid: Cfdp.EntityId \
     default 42
 
 @ Maximum number of bytes to put into a file PDU

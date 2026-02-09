@@ -46,12 +46,13 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 // Forward declarations
+class CfdpManager;
 class CfdpEngine;
 class CfdpChannel;
 class CfdpTransaction;
-class CfdpManager;
 
 // ======================================================================
 // Dispatch Table Type Definitions
@@ -66,7 +67,7 @@ class CfdpManager;
  *
  * @note This is a member function pointer - invoke with: (txn->*fn)()
  */
-using CfdpStateSendFunc = void (CfdpTransaction::*)();
+using StateSendFunc = void (CfdpTransaction::*)();
 
 /**
  * @brief A member function pointer for dispatching actions to a handler, with existing PDU data
@@ -78,7 +79,7 @@ using CfdpStateSendFunc = void (CfdpTransaction::*)();
  * @param[inout] buffer The buffer containing the PDU currently being received/processed
  * @note This is a member function pointer - invoke with: (txn->*fn)(buffer)
  */
-using CfdpStateRecvFunc = void (CfdpTransaction::*)(const Fw::Buffer& buffer);
+using StateRecvFunc = void (CfdpTransaction::*)(const Fw::Buffer& buffer);
 
 /**
  * @brief A table of transmit handler functions based on transaction state
@@ -87,9 +88,9 @@ using CfdpStateRecvFunc = void (CfdpTransaction::*)(const Fw::Buffer& buffer);
  * Each possible state has a corresponding function pointer in the table to implement
  * the PDU transmit action(s) associated with that state.
  */
-struct CfdpTxnSendDispatchTable
+struct TxnSendDispatchTable
 {
-    CfdpStateSendFunc tx[CFDP_TXN_STATE_INVALID]; /**< \brief Transmit handler function */
+    StateSendFunc tx[TXN_STATE_INVALID]; /**< \brief Transmit handler function */
 };
 
 /**
@@ -99,10 +100,10 @@ struct CfdpTxnSendDispatchTable
  * Each possible state has a corresponding function pointer in the table to implement
  * the PDU receive action(s) associated with that state.
  */
-struct CfdpTxnRecvDispatchTable
+struct TxnRecvDispatchTable
 {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    CfdpStateRecvFunc rx[CFDP_TXN_STATE_INVALID];
+    StateRecvFunc rx[TXN_STATE_INVALID];
 };
 
 /**
@@ -112,10 +113,10 @@ struct CfdpTxnRecvDispatchTable
  * than file data - this provides a table to branch to a different handler
  * function depending on the value of the file directive code.
  */
-struct CfdpFileDirectiveDispatchTable
+struct FileDirectiveDispatchTable
 {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    CfdpStateRecvFunc fdirective[Cfdp::FILE_DIRECTIVE_INVALID_MAX];
+    StateRecvFunc fdirective[FILE_DIRECTIVE_INVALID_MAX];
 };
 
 /**
@@ -124,9 +125,9 @@ struct CfdpFileDirectiveDispatchTable
  * This is used for "receive file" transactions upon receipt of a directive PDU.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-struct CfdpRSubstateDispatchTable
+struct RSubstateDispatchTable
 {
-    const CfdpFileDirectiveDispatchTable *state[CFDP_RX_SUB_STATE_NUM_STATES];
+    const FileDirectiveDispatchTable *state[RX_SUB_STATE_NUM_STATES];
 };
 
 /**
@@ -135,9 +136,9 @@ struct CfdpRSubstateDispatchTable
  * This is used for "send file" transactions upon receipt of a directive PDU.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-struct CfdpSSubstateRecvDispatchTable
+struct SSubstateRecvDispatchTable
 {
-    const CfdpFileDirectiveDispatchTable *substate[CFDP_TX_SUB_STATE_NUM_STATES];
+    const FileDirectiveDispatchTable *substate[TX_SUB_STATE_NUM_STATES];
 };
 
 /**
@@ -146,9 +147,9 @@ struct CfdpSSubstateRecvDispatchTable
  * This is used for "send file" transactions to generate the next PDU to be sent.
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
-struct CfdpSSubstateSendDispatchTable
+struct SSubstateSendDispatchTable
 {
-    CfdpStateSendFunc substate[CFDP_TX_SUB_STATE_NUM_STATES];
+    StateSendFunc substate[TX_SUB_STATE_NUM_STATES];
 };
 
 /**
@@ -196,7 +197,7 @@ class CfdpTransaction {
      * @param chan       Channel number
      * @param priority   Transaction priority
      */
-    void initTxFile(Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority);
+    void initTxFile(Class::T cfdp_class, Keep::T keep, U8 chan, U8 priority);
 
     /**
      * @brief Static callback for finding transaction by sequence number
@@ -207,7 +208,7 @@ class CfdpTransaction {
      * @param context Pointer to CfdpTraverseTransSeqArg
      * @return Traversal status (CONTINUE or EXIT)
      */
-    static CfdpCListTraverseStatus findBySequenceNumberCallback(CfdpCListNode *node, void *context);
+    static CListTraverseStatus findBySequenceNumberCallback(CListNode *node, void *context);
 
     /**
      * @brief Static callback for priority search
@@ -218,7 +219,7 @@ class CfdpTransaction {
      * @param context Pointer to CfdpTraversePriorityArg
      * @return Traversal status (CONTINUE or EXIT)
      */
-    static CfdpCListTraverseStatus prioritySearchCallback(CfdpCListNode *node, void *context);
+    static CListTraverseStatus prioritySearchCallback(CListNode *node, void *context);
 
     // ----------------------------------------------------------------------
     // Accessors
@@ -228,7 +229,7 @@ class CfdpTransaction {
      * @brief Get transaction history
      * @return Pointer to history structure
      */
-    CfdpHistory* getHistory() const { return m_history; }
+    History* getHistory() const { return m_history; }
 
     /**
      * @brief Get transaction priority
@@ -246,13 +247,13 @@ class CfdpTransaction {
      * @brief Get transaction class (CLASS_1 or CLASS_2)
      * @return Transaction class
      */
-    Cfdp::Class::T getClass() const { return m_txn_class; }
+    Class::T getClass() const { return m_txn_class; }
 
     /**
      * @brief Get transaction state
      * @return Transaction state
      */
-    CfdpTxnState getState() const { return m_state; }
+    TxnState getState() const { return m_state; }
 
     // ----------------------------------------------------------------------
     // TX State Machine - Implemented in CfdpTxTransaction.cpp
@@ -410,13 +411,13 @@ class CfdpTransaction {
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval SEND_PDU_ERROR if an error occurred while building the packet.
      */
-    Cfdp::Status::T sSendEof();
+    Status::T sSendEof();
 
-    Cfdp::Status::T sSendFileData(CfdpFileSize foffs, CfdpFileSize bytes_to_read, U8 calc_crc, CfdpFileSize* bytes_processed);
+    Status::T sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 calc_crc, FileSize* bytes_processed);
 
-    Cfdp::Status::T sCheckAndRespondNak(bool* nakProcessed);
+    Status::T sCheckAndRespondNak(bool* nakProcessed);
 
-    Cfdp::Status::T sSendFinAck();
+    Status::T sSendFinAck();
 
   public:
     // ----------------------------------------------------------------------
@@ -473,7 +474,7 @@ class CfdpTransaction {
      *
      * @param txn_stat Status Code value to set within transaction
      */
-    void r2SetFinTxnStatus(CfdpTxnStatus txn_stat);
+    void r2SetFinTxnStatus(TxnStatus txn_stat);
 
     /************************************************************************/
     /** @brief CFDP R1 transaction reset function.
@@ -498,7 +499,7 @@ class CfdpTransaction {
      *
      * @param expected_crc Expected CRC
      */
-    Cfdp::Status::T rCheckCrc(U32 expected_crc);
+    Status::T rCheckCrc(U32 expected_crc);
 
     /************************************************************************/
     /** @brief Checks R2 transaction state for transaction completion status.
@@ -531,8 +532,8 @@ class CfdpTransaction {
      * @param fd_fn     Function to handle file data PDUs
      */
     void rDispatchRecv(const Fw::Buffer& buffer,
-                       const CfdpRSubstateDispatchTable *dispatch,
-                       CfdpStateRecvFunc fd_fn);
+                       const RSubstateDispatchTable *dispatch,
+                       StateRecvFunc fd_fn);
 
     /************************************************************************/
     /** @brief Dispatch function for received PDUs on send-file transactions
@@ -544,7 +545,7 @@ class CfdpTransaction {
      * @param dispatch  Dispatch table for file directive PDUs
      */
     void sDispatchRecv(const Fw::Buffer& buffer,
-                       const CfdpSSubstateRecvDispatchTable *dispatch);
+                       const SSubstateRecvDispatchTable *dispatch);
 
     /************************************************************************/
     /** @brief Dispatch function to send/generate PDUs on send-file transactions
@@ -555,7 +556,7 @@ class CfdpTransaction {
      *
      * @param dispatch  State-based dispatch table
      */
-    void sDispatchTransmit(const CfdpSSubstateSendDispatchTable *dispatch);
+    void sDispatchTransmit(const SSubstateSendDispatchTable *dispatch);
 
     /************************************************************************/
     /** @brief Top-level Dispatch function to send a PDU based on current state
@@ -565,7 +566,7 @@ class CfdpTransaction {
      *
      * @param dispatch  Transaction State-based Dispatch table
      */
-    void txStateDispatch(const CfdpTxnSendDispatchTable *dispatch);
+    void txStateDispatch(const TxnSendDispatchTable *dispatch);
 
   private:
     /************************************************************************/
@@ -575,7 +576,7 @@ class CfdpTransaction {
      *
      * @param pdu Buffer containing the file data PDU to process
      */
-    Cfdp::Status::T rProcessFd(const Fw::Buffer& pdu);
+    Status::T rProcessFd(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Processing receive EOF common functionality for R1/R2.
@@ -588,7 +589,7 @@ class CfdpTransaction {
      *
      * @param pdu Buffer containing the EOF PDU to process
      */
-    Cfdp::Status::T rSubstateRecvEof(const Fw::Buffer& pdu);
+    Status::T rSubstateRecvEof(const Fw::Buffer& pdu);
 
     /************************************************************************/
     /** @brief Process receive EOF for R1.
@@ -640,7 +641,7 @@ class CfdpTransaction {
      * @param chunk Pointer to the gap chunk information
      * @param nak   Pointer to the NAK PDU being constructed
      */
-    void r2GapCompute(const CfdpChunk *chunk, Cfdp::NakPdu& nak);
+    void r2GapCompute(const CfdpChunk *chunk, NakPdu& nak);
 
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
@@ -653,7 +654,7 @@ class CfdpTransaction {
      *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      */
-    Cfdp::Status::T rSubstateSendNak();
+    Status::T rSubstateSendNak();
 
     /************************************************************************/
     /** @brief Calculate up to the configured amount of bytes of CRC.
@@ -671,14 +672,14 @@ class CfdpTransaction {
      * @retval Cfdp::Status::SUCCESS on completion.
      * @retval Cfdp::Status::CFDP_ERROR on non-completion.
      */
-    Cfdp::Status::T r2CalcCrcChunk();
+    Status::T r2CalcCrcChunk();
 
     /************************************************************************/
     /** @brief Send a FIN PDU.
      *
      * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.
      */
-    Cfdp::Status::T r2SubstateSendFin();
+    Status::T r2SubstateSendFin();
 
     /************************************************************************/
     /** @brief Process receive FIN-ACK PDU.
@@ -718,21 +719,21 @@ class CfdpTransaction {
      *
      * Each engine is commanded to do something, which is the overall state.
      */
-    CfdpTxnState m_state;
+    TxnState m_state;
 
     /**
      * @brief Transaction class (CLASS_1 or CLASS_2)
      *
      * Set at initialization and never changes.
      */
-    Cfdp::Class::T m_txn_class;
+    Class::T m_txn_class;
 
     /**
      * @brief Pointer to history entry
      *
      * Holds active filenames and possibly other info.
      */
-    CfdpHistory* m_history;
+    History* m_history;
 
     /**
      * @brief Pointer to chunk wrapper
@@ -746,24 +747,24 @@ class CfdpTransaction {
      *
      * Set to the overall inactivity timer of a remote.
      */
-    CfdpTimer m_inactivity_timer;
+    Timer m_inactivity_timer;
 
     /**
      * @brief ACK/NAK timer
      *
      * Called ack_timer, but is also nak_timer.
      */
-    CfdpTimer m_ack_timer;
+    Timer m_ack_timer;
 
     /**
      * @brief File size
      */
-    CfdpFileSize m_fsize;
+    FileSize m_fsize;
 
     /**
      * @brief File offset for next read
      */
-    CfdpFileSize m_foffs;
+    FileSize m_foffs;
 
     /**
      * @brief File descriptor
@@ -778,7 +779,7 @@ class CfdpTransaction {
     /**
      * @brief Keep file flag
      */
-    Cfdp::Keep::T m_keep;
+    Keep::T m_keep;
 
     /**
      * @brief Channel number
@@ -797,14 +798,14 @@ class CfdpTransaction {
      *
      * For connection to a CList (intrusive linked list).
      */
-    CfdpCListNode m_cl_node;
+    CListNode m_cl_node;
 
     /**
      * @brief Pointer to playback entry
      *
      * NULL if transaction does not belong to a playback.
      */
-    CfdpPlayback* m_pb;
+    Playback* m_pb;
 
     /**
      * @brief State-specific data (TX or RX)
@@ -844,6 +845,7 @@ class CfdpTransaction {
     CfdpEngine* m_engine;
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

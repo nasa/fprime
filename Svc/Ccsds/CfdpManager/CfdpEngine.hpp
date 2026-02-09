@@ -43,18 +43,21 @@
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
 namespace Svc {
 namespace Ccsds {
-    class CfdpManager;
-    class CfdpChannel;
+    class CfdpManager;  // CfdpManager stays in Svc::Ccsds
+    namespace Cfdp {
+        class CfdpChannel;  // CfdpChannel is in Svc::Ccsds::Cfdp
+    }
 }
 }
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
 /**
  * @brief Structure for use with the CfdpChannel::cycleTx() function
  */
-struct CfdpCycleTxArgs
+struct CycleTxArgs
 {
     CfdpChannel *chan;    /**< \brief channel object */
     int          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
@@ -63,7 +66,7 @@ struct CfdpCycleTxArgs
 /**
  * @brief Structure for use with the CfdpChannel::doTick() function
  */
-struct CfdpTickArgs
+struct TickArgs
 {
     CfdpChannel *chan;                                /**< \brief channel object */
     void (CfdpTransaction::*fn)(int *);               /**< \brief member function pointer */
@@ -142,9 +145,9 @@ class CfdpEngine {
      * @param dest_id    Entity ID of remote receiver
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    Cfdp::Status::T txFile(const Fw::String& src, const Fw::String& dst,
-                         Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep,
-                         U8 chan_num, U8 priority, CfdpEntityId dest_id);
+    Status::T txFile(const Fw::String& src, const Fw::String& dst,
+                         Class::T cfdp_class, Keep::T keep,
+                         U8 chan_num, U8 priority, EntityId dest_id);
 
     /**
      * @brief Begin transmit of a directory
@@ -158,9 +161,9 @@ class CfdpEngine {
      * @param dest_id    Entity ID of remote receiver
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    Cfdp::Status::T playbackDir(const Fw::String& src, const Fw::String& dst,
-                              Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep,
-                              U8 chan, U8 priority, CfdpEntityId dest_id);
+    Status::T playbackDir(const Fw::String& src, const Fw::String& dst,
+                              Class::T cfdp_class, Keep::T keep,
+                              U8 chan, U8 priority, EntityId dest_id);
 
     /**
      * @brief Start polling a directory
@@ -175,9 +178,9 @@ class CfdpEngine {
      * @param intervalSec Time between directory playbacks in seconds
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    Cfdp::Status::T startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir,
-                               const Fw::String& dstDir, Cfdp::Class::T cfdp_class,
-                               U8 priority, CfdpEntityId destEid, U32 intervalSec);
+    Status::T startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir,
+                               const Fw::String& dstDir, Class::T cfdp_class,
+                               U8 priority, EntityId destEid, U32 intervalSec);
 
     /**
      * @brief Stop polling a directory
@@ -186,7 +189,7 @@ class CfdpEngine {
      * @param pollId Channel poll directory index
      * @returns Cfdp::Status::SUCCESS on success, error code otherwise
      */
-    Cfdp::Status::T stopPollDir(U8 chanId, U8 pollId);
+    Status::T stopPollDir(U8 chanId, U8 pollId);
 
     /**
      * @brief Set channel flow state
@@ -196,7 +199,7 @@ class CfdpEngine {
      * @param channelId Channel index
      * @param flowState Flow state to set (normal or frozen)
      */
-    void setChannelFlowState(U8 channelId, Cfdp::Flow::T flowState);
+    void setChannelFlowState(U8 channelId, Flow::T flowState);
 
     // ----------------------------------------------------------------------
     // Public Transaction Interface
@@ -230,7 +233,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction object
      * @param txn_stat Status Code value to set within transaction
      */
-    void setTxnStatus(CfdpTransaction *txn, CfdpTxnStatus txn_stat);
+    void setTxnStatus(CfdpTransaction *txn, TxnStatus txn_stat);
 
     /**
      * @brief Arm the ACK timer for a transaction
@@ -261,12 +264,12 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendMd(CfdpTransaction *txn);
+    Status::T sendMd(CfdpTransaction *txn);
 
     /**
      * @brief Encode and send a File Data PDU
@@ -278,12 +281,12 @@ class CfdpEngine {
      * @param txn    Pointer to the transaction object
      * @param fdPdu  Reference to initialized FileDataPdu object
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendFd(CfdpTransaction *txn, Cfdp::FileDataPdu& fdPdu);
+    Status::T sendFd(CfdpTransaction *txn, FileDataPdu& fdPdu);
 
     /**
      * @brief Create, encode, and send an EOF (End of File) PDU
@@ -294,12 +297,12 @@ class CfdpEngine {
      *
      * @param txn  Pointer to the transaction object
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendEof(CfdpTransaction *txn);
+    Status::T sendEof(CfdpTransaction *txn);
 
     /**
      * @brief Create, encode, and send an ACK (Acknowledgment) PDU
@@ -311,7 +314,7 @@ class CfdpEngine {
      * @note This function takes explicit peer_eid and tsn parameters instead of
      * getting them from transaction history because of the special case where a
      * FIN-ACK must be sent for an unknown transaction. It's better for long term
-     * maintenance to not build an incomplete CfdpHistory for it.
+     * maintenance to not build an incomplete History for it.
      *
      * @param txn       Pointer to the transaction object
      * @param ts        Transaction ACK status
@@ -320,13 +323,13 @@ class CfdpEngine {
      * @param peer_eid  Remote entity ID
      * @param tsn       Transaction sequence number
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendAck(CfdpTransaction *txn, Cfdp::AckTxnStatus ts, Cfdp::FileDirective dir_code,
-                          Cfdp::ConditionCode cc, CfdpEntityId peer_eid, CfdpTransactionSeq tsn);
+    Status::T sendAck(CfdpTransaction *txn, AckTxnStatus ts, FileDirective dir_code,
+                          ConditionCode cc, EntityId peer_eid, TransactionSeq tsn);
 
     /**
      * @brief Create, encode, and send a FIN (Finished) PDU
@@ -340,13 +343,13 @@ class CfdpEngine {
      * @param fs   Final file status (retained or rejected, etc)
      * @param cc   Final CFDP condition code
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendFin(CfdpTransaction *txn, CfdpFinDeliveryCode dc, CfdpFinFileStatus fs,
-                          Cfdp::ConditionCode cc);
+    Status::T sendFin(CfdpTransaction *txn, FinDeliveryCode dc, FinFileStatus fs,
+                          ConditionCode cc);
 
     /**
      * @brief Encode and send a NAK (Negative Acknowledgment) PDU
@@ -360,12 +363,12 @@ class CfdpEngine {
      * @param txn     Pointer to the transaction object
      * @param nakPdu  Reference to initialized NakPdu object
      *
-     * @returns Cfdp::Status::T status code
+     * @returns Status::T status code
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
      */
-    Cfdp::Status::T sendNak(CfdpTransaction *txn, Cfdp::NakPdu& nakPdu);
+    Status::T sendNak(CfdpTransaction *txn, NakPdu& nakPdu);
 
     /**
      * @brief Handle receipt of metadata PDU
@@ -376,7 +379,7 @@ class CfdpEngine {
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
      */
-    void recvMd(CfdpTransaction *txn, const Cfdp::MetadataPdu& pdu);
+    void recvMd(CfdpTransaction *txn, const MetadataPdu& pdu);
 
     /**
      * @brief Unpack a file data PDU from a received message
@@ -392,7 +395,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::ERROR for general errors
      * @retval Cfdp::Status::SHORT_PDU_ERROR PDU too short
      */
-    Cfdp::Status::T recvFd(CfdpTransaction *txn, const Cfdp::FileDataPdu& pdu);
+    Status::T recvFd(CfdpTransaction *txn, const FileDataPdu& pdu);
 
     /**
      * @brief Unpack an EOF PDU from a received message
@@ -407,7 +410,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvEof(CfdpTransaction *txn, const Cfdp::EofPdu& pdu);
+    Status::T recvEof(CfdpTransaction *txn, const EofPdu& pdu);
 
     /**
      * @brief Unpack an ACK PDU from a received message
@@ -422,7 +425,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvAck(CfdpTransaction *txn, const Cfdp::AckPdu& pdu);
+    Status::T recvAck(CfdpTransaction *txn, const AckPdu& pdu);
 
     /**
      * @brief Unpack an FIN PDU from a received message
@@ -437,7 +440,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvFin(CfdpTransaction *txn, const Cfdp::FinPdu& pdu);
+    Status::T recvFin(CfdpTransaction *txn, const FinPdu& pdu);
 
     /**
      * @brief Unpack a NAK PDU from a received message
@@ -452,7 +455,7 @@ class CfdpEngine {
      * @retval Cfdp::Status::SUCCESS on success
      * @retval Cfdp::Status::SHORT_PDU_ERROR on error
      */
-    Cfdp::Status::T recvNak(CfdpTransaction *txn, const Cfdp::NakPdu& pdu);
+    Status::T recvNak(CfdpTransaction *txn, const NakPdu& pdu);
 
     /**
      * @brief Initiate a file transfer transaction
@@ -464,8 +467,8 @@ class CfdpEngine {
      * @param priority     Priority of transfer
      * @param dest_id      Destination entity ID
      */
-    void txFileInitiate(CfdpTransaction *txn, Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan,
-                        U8 priority, CfdpEntityId dest_id);
+    void txFileInitiate(CfdpTransaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
+                        U8 priority, EntityId dest_id);
 
     /**
      * @brief Initiate playback of a directory
@@ -480,8 +483,8 @@ class CfdpEngine {
      * @param dest_id      Destination entity ID
      * @returns SUCCESS if initiated, error otherwise
      */
-    Cfdp::Status::T playbackDirInitiate(CfdpPlayback *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
-                                      Cfdp::Class::T cfdp_class, Cfdp::Keep::T keep, U8 chan, U8 priority, CfdpEntityId dest_id);
+    Status::T playbackDirInitiate(Playback *pb, const Fw::String& src_filename, const Fw::String& dst_filename,
+                                      Class::T cfdp_class, Keep::T keep, U8 chan, U8 priority, EntityId dest_id);
 
     /**
      * @brief Dispatch TX state machine for a transaction
@@ -504,7 +507,7 @@ class CfdpEngine {
     CfdpChannel* m_channels[CFDP_NUM_CHANNELS];
 
     //! Sequence number tracker for outgoing transactions
-    CfdpTransactionSeq m_seqNum;
+    TransactionSeq m_seqNum;
 
     // Note: Transactions, histories, and chunks are now owned by each CfdpChannel
 
@@ -625,6 +628,7 @@ class CfdpEngine {
     friend class CfdpManagerTester;
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

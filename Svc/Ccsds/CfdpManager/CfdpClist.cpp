@@ -37,16 +37,17 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-void CfdpCListInitNode(CfdpCListNode *node)
+void CfdpCListInitNode(CListNode *node)
 {
     node->next = node;
     node->prev = node;
 }
 
-void CfdpCListInsertFront(CfdpCListNode **head, CfdpCListNode *node)
+void CfdpCListInsertFront(CListNode **head, CListNode *node)
 {
-    CfdpCListNode *last;
+    CListNode *last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -67,9 +68,9 @@ void CfdpCListInsertFront(CfdpCListNode **head, CfdpCListNode *node)
     *head = node;
 }
 
-void CfdpCListInsertBack(CfdpCListNode **head, CfdpCListNode *node)
+void CfdpCListInsertBack(CListNode **head, CListNode *node)
 {
-    CfdpCListNode *last;
+    CListNode *last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -91,9 +92,9 @@ void CfdpCListInsertBack(CfdpCListNode **head, CfdpCListNode *node)
     }
 }
 
-CfdpCListNode *CfdpCListPop(CfdpCListNode **head)
+CListNode *CfdpCListPop(CListNode **head)
 {
-    CfdpCListNode *ret;
+    CListNode *ret;
 
     FW_ASSERT(head);
 
@@ -106,7 +107,7 @@ CfdpCListNode *CfdpCListPop(CfdpCListNode **head)
     return ret;
 }
 
-void CfdpCListRemove(CfdpCListNode **head, CfdpCListNode *node)
+void CfdpCListRemove(CListNode **head, CListNode *node)
 {
     FW_ASSERT(head);
     FW_ASSERT(node);
@@ -135,7 +136,7 @@ void CfdpCListRemove(CfdpCListNode **head, CfdpCListNode *node)
     CfdpCListInitNode(node);
 }
 
-void CfdpCListInsertAfter(CfdpCListNode **head, CfdpCListNode *start, CfdpCListNode *after)
+void CfdpCListInsertAfter(CListNode **head, CListNode *start, CListNode *after)
 {
     /* calling insert_after with nothing to insert after (no head) makes no sense */
     FW_ASSERT(head);
@@ -150,10 +151,10 @@ void CfdpCListInsertAfter(CfdpCListNode **head, CfdpCListNode *start, CfdpCListN
     after->next->prev = after;
 }
 
-void CfdpCListTraverse(CfdpCListNode *start, CfdpCListFunc fn, void *context)
+void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context)
 {
-    CfdpCListNode *node = start;
-    CfdpCListNode *node_next;
+    CListNode *node = start;
+    CListNode *node_next;
     bool           last = false;
 
     if (node)
@@ -184,10 +185,10 @@ void CfdpCListTraverse(CfdpCListNode *start, CfdpCListFunc fn, void *context)
     }
 }
 
-void CfdpCListTraverse(CfdpCListNode *start, const CfdpCListTraverseCallback& callback, void *context)
+void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, void *context)
 {
-    CfdpCListNode *node = start;
-    CfdpCListNode *node_next;
+    CListNode *node = start;
+    CListNode *node_next;
     bool           last = false;
 
     if (node)
@@ -218,12 +219,12 @@ void CfdpCListTraverse(CfdpCListNode *start, const CfdpCListTraverseCallback& ca
     }
 }
 
-void CfdpCListTraverseR(CfdpCListNode *end, CfdpCListFunc fn, void *context)
+void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context)
 {
     if (end)
     {
-        CfdpCListNode *node = end->prev;
-        CfdpCListNode *node_next;
+        CListNode *node = end->prev;
+        CListNode *node_next;
         bool           last = false;
 
         if (node)
@@ -259,5 +260,6 @@ void CfdpCListTraverseR(CfdpCListNode *end, CfdpCListFunc fn, void *context)
     }
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

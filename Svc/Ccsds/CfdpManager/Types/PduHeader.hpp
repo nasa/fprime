@@ -10,8 +10,8 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Buffer/Buffer.hpp>
-#include <config/CfdpEntityIdAliasAc.hpp>
-#include <config/CfdpTransactionSeqAliasAc.hpp>
+#include <config/EntityIdAliasAc.hpp>
+#include <config/TransactionSeqAliasAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
 
 namespace Svc {
@@ -24,8 +24,8 @@ enum PduType : U8 {
     PDU_TYPE_FILE_DATA = 1   // File data PDU
 };
 
-// CFDP Direction
-enum Direction : U8 {
+// CFDP PduDirection
+enum PduDirection : U8 {
     DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
     DIRECTION_TOWARD_SENDER = 1     // Toward file sender
 };
@@ -65,8 +65,8 @@ class PduHeader {
     //! PDU type
     PduType m_pduType;
 
-    //! Direction
-    Direction m_direction;
+    //! PduDirection
+    PduDirection m_direction;
 
     //! Transmission mode
     Cfdp::Class::T m_class;
@@ -87,13 +87,13 @@ class PduHeader {
     U16 m_pduDataLength;
 
     //! Source entity ID
-    CfdpEntityId m_sourceEid;
+    EntityId m_sourceEid;
 
     //! Transaction sequence number
-    CfdpTransactionSeq m_transactionSeq;
+    TransactionSeq m_transactionSeq;
 
     //! Destination entity ID
-    CfdpEntityId m_destEid;
+    EntityId m_destEid;
 
   public:
     //! Header size (variable due to EID/TSN lengths)
@@ -101,11 +101,11 @@ class PduHeader {
 
     //! Initialize a PDU header
     void initialize(PduTypeEnum type,
-                   Direction direction,
+                   PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid);
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid);
 
     //! Compute the buffer size needed to hold this Header
     U32 getBufferSize() const;
@@ -125,19 +125,19 @@ class PduHeader {
     PduTypeEnum getType() const { return this->m_type; }
 
     //! Get the direction
-    Direction getDirection() const { return this->m_direction; }
+    PduDirection getDirection() const { return this->m_direction; }
 
     //! Get the transmission mode
     Cfdp::Class::T getTxmMode() const { return this->m_class; }
 
     //! Get the source entity ID
-    CfdpEntityId getSourceEid() const { return this->m_sourceEid; }
+    EntityId getSourceEid() const { return this->m_sourceEid; }
 
     //! Get the transaction sequence number
-    CfdpTransactionSeq getTransactionSeq() const { return this->m_transactionSeq; }
+    TransactionSeq getTransactionSeq() const { return this->m_transactionSeq; }
 
     //! Get the destination entity ID
-    CfdpEntityId getDestEid() const { return this->m_destEid; }
+    EntityId getDestEid() const { return this->m_destEid; }
 
     //! Get PDU data length
     U16 getPduDataLength() const { return this->m_pduDataLength; }

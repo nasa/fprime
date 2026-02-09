@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CfdpTimer.hpp
+// \title  Timer.hpp
 // \author campuzan
 // \brief  hpp file for CFDP timer that is driven by 
 // ======================================================================
@@ -11,8 +11,9 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-class CfdpTimer  {
+class Timer  {
   // ----------------------------------------------------------------------
   // Class types
   // ----------------------------------------------------------------------
@@ -28,11 +29,11 @@ class CfdpTimer  {
     // Class construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct CfdpTimer object
-    CfdpTimer();
+    //! Construct Timer object
+    Timer();
 
-    //! Destroy CfdpTimer object
-    ~CfdpTimer();
+    //! Destroy Timer object
+    ~Timer();
 
   public:
     // ----------------------------------------------------------------------
@@ -64,6 +65,7 @@ class CfdpTimer  {
     U32 secondsRemaining;
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

@@ -37,11 +37,11 @@ class AckPdu : public PduBase {
                m_transactionStatus(ACK_TXN_STATUS_UNDEFINED) {}
 
     //! Initialize an ACK PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
                    FileDirective directiveCode,
                    U8 directiveSubtypeCode,
                    ConditionCode conditionCode,

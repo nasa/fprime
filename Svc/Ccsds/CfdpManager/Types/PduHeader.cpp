@@ -14,11 +14,11 @@ namespace Ccsds {
 namespace Cfdp {
 
 void PduHeader::initialize(PduTypeEnum type,
-                              Direction direction,
+                              PduDirection direction,
                               Cfdp::Class::T txmMode,
-                              CfdpEntityId sourceEid,
-                              CfdpTransactionSeq transactionSeq,
-                              CfdpEntityId destEid) {
+                              EntityId sourceEid,
+                              TransactionSeq transactionSeq,
+                              EntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
     this->m_pduType = (type == T_FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
@@ -174,7 +174,7 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
 
     this->m_version = (flags >> 5) & 0x07;
     this->m_pduType = static_cast<PduType>((flags >> 4) & 0x01);
-    this->m_direction = static_cast<Direction>((flags >> 3) & 0x01);
+    this->m_direction = static_cast<PduDirection>((flags >> 3) & 0x01);
     this->m_class = static_cast<Cfdp::Class::T>((flags >> 2) & 0x01);
     this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
     this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
@@ -202,17 +202,17 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
     FW_ASSERT(tsnSize >= 1 && tsnSize <= 8, static_cast<FwAssertArgType>(tsnSize));
 
     // Variable-width fields (size determined by encoded length)
-    this->m_sourceEid = static_cast<CfdpEntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
+    this->m_sourceEid = static_cast<EntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    this->m_transactionSeq = static_cast<CfdpTransactionSeq>(decodeIntegerInSize(serialBuffer, tsnSize, status));
+    this->m_transactionSeq = static_cast<TransactionSeq>(decodeIntegerInSize(serialBuffer, tsnSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    this->m_destEid = static_cast<CfdpEntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
+    this->m_destEid = static_cast<EntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

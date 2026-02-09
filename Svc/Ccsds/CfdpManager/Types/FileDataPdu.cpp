@@ -12,12 +12,12 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void FileDataPdu::initialize(Direction direction,
+void FileDataPdu::initialize(PduDirection direction,
                                    Cfdp::Class::T txmMode,
-                                   CfdpEntityId sourceEid,
-                                   CfdpTransactionSeq transactionSeq,
-                                   CfdpEntityId destEid,
-                                   CfdpFileSize offset,
+                                   EntityId sourceEid,
+                                   TransactionSeq transactionSeq,
+                                   EntityId destEid,
+                                   FileSize offset,
                                    U16 dataSize,
                                    const U8* data) {
     // Initialize header with T_FILE_DATA type

@@ -11,14 +11,14 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void EofPdu::initialize(Direction direction,
+void EofPdu::initialize(PduDirection direction,
                               Cfdp::Class::T txmMode,
-                              CfdpEntityId sourceEid,
-                              CfdpTransactionSeq transactionSeq,
-                              CfdpEntityId destEid,
+                              EntityId sourceEid,
+                              TransactionSeq transactionSeq,
+                              EntityId destEid,
                               ConditionCode conditionCode,
                               U32 checksum,
-                              CfdpFileSize fileSize) {
+                              FileSize fileSize) {
     // Initialize header with T_EOF type
     this->m_header.initialize(T_EOF, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -36,8 +36,8 @@ U32 EofPdu::getBufferSize() const {
     // Directive code: 1 byte
     // Condition code: 1 byte
     // Checksum: 4 bytes (U32)
-    // File size: sizeof(CfdpFileSize) bytes
-    size += sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(CfdpFileSize);
+    // File size: sizeof(FileSize) bytes
+    size += sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(FileSize);
 
     // Add TLV size
     size += this->m_tlvList.getEncodedSize();
@@ -116,7 +116,7 @@ Fw::SerializeStatus EofPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
         return status;
     }
 
-    // File size (CfdpFileSize)
+    // File size (FileSize)
     status = serialBuffer.serializeFrom(this->m_fileSize);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;

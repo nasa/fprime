@@ -11,13 +11,13 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void NakPdu::initialize(Direction direction,
+void NakPdu::initialize(PduDirection direction,
                               Cfdp::Class::T txmMode,
-                              CfdpEntityId sourceEid,
-                              CfdpTransactionSeq transactionSeq,
-                              CfdpEntityId destEid,
-                              CfdpFileSize scopeStart,
-                              CfdpFileSize scopeEnd) {
+                              EntityId sourceEid,
+                              TransactionSeq transactionSeq,
+                              EntityId destEid,
+                              FileSize scopeStart,
+                              FileSize scopeEnd) {
     // Initialize header with T_NAK type
     this->m_header.initialize(T_NAK, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -26,7 +26,7 @@ void NakPdu::initialize(Direction direction,
     this->m_numSegments = 0;
 }
 
-bool NakPdu::addSegment(CfdpFileSize offsetStart, CfdpFileSize offsetEnd) {
+bool NakPdu::addSegment(FileSize offsetStart, FileSize offsetEnd) {
     if (this->m_numSegments >= CFDP_NAK_MAX_SEGMENTS) {
         return false;
     }
@@ -44,11 +44,11 @@ U32 NakPdu::getBufferSize() const {
     U32 size = this->m_header.getBufferSize();
 
     // Directive code: 1 byte (FILE_DIRECTIVE_NAK)
-    // Scope start: sizeof(CfdpFileSize) bytes
-    // Scope end: sizeof(CfdpFileSize) bytes
-    // Segment requests: m_numSegments * (2 * sizeof(CfdpFileSize)) bytes
-    size += static_cast<U32>(sizeof(U8) + sizeof(CfdpFileSize) + sizeof(CfdpFileSize));
-    size += static_cast<U32>(this->m_numSegments * (sizeof(CfdpFileSize) + sizeof(CfdpFileSize)));
+    // Scope start: sizeof(FileSize) bytes
+    // Scope end: sizeof(FileSize) bytes
+    // Segment requests: m_numSegments * (2 * sizeof(FileSize)) bytes
+    size += static_cast<U32>(sizeof(U8) + sizeof(FileSize) + sizeof(FileSize));
+    size += static_cast<U32>(this->m_numSegments * (sizeof(FileSize) + sizeof(FileSize)));
 
     return size;
 }
@@ -159,9 +159,9 @@ Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer)
     }
 
     // Calculate number of segment requests from remaining buffer size
-    // Each segment is 2 * sizeof(CfdpFileSize) bytes
+    // Each segment is 2 * sizeof(FileSize) bytes
     Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
-    U32 segmentSize = sizeof(CfdpFileSize) + sizeof(CfdpFileSize);
+    U32 segmentSize = sizeof(FileSize) + sizeof(FileSize);
     U32 numSegsCalculated = static_cast<U32>(remainingBytes / segmentSize);
     this->m_numSegments = static_cast<U8>(numSegsCalculated);
 

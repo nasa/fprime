@@ -21,15 +21,15 @@
 #include <cstdio>
 
 namespace Svc {
-
 namespace Ccsds {
+namespace Cfdp {
 
 // ----------------------------------------------------------------------
 // PDU Test Helper Implementations
 // ----------------------------------------------------------------------
 
 CfdpTransaction* CfdpManagerTester::setupTestTransaction(
-    CfdpTxnState state,
+    TxnState state,
     U8 channelId,
     const char* srcFilename,
     const char* dstFilename,
@@ -42,7 +42,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     FW_ASSERT(chan != nullptr);
 
     CfdpTransaction* txn = chan->getTransaction(0);  // Use first transaction for channel
-    CfdpHistory* history = chan->getHistory(0);     // Use first history for channel
+    Cfdp::History* history = chan->getHistory(0);     // Use first history for channel
 
     // Initialize transaction state
     txn->m_state = state;
@@ -53,7 +53,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
-    if ((state == CFDP_TXN_STATE_S2) || (state == CFDP_TXN_STATE_R2)) {
+    if ((state == TXN_STATE_S2) || (state == TXN_STATE_R2)) {
         txn->m_txn_class = Cfdp::Class::CLASS_2;
     } else {
         txn->m_txn_class = Cfdp::Class::CLASS_1;
@@ -64,7 +64,7 @@ CfdpTransaction* CfdpManagerTester::setupTestTransaction(
     history->seq_num = sequenceId;
     history->fnames.src_filename = Fw::String(srcFilename);
     history->fnames.dst_filename = Fw::String(dstFilename);
-    history->dir = CFDP_DIRECTION_TX;
+    history->dir = DIRECTION_TX;
 
     return txn;
 }
@@ -92,7 +92,7 @@ void CfdpManagerTester::verifyMetadataPdu(
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
-    CfdpFileSize expectedFileSize,
+    FileSize expectedFileSize,
     const char* expectedSourceFilename,
     const char* expectedDestFilename,
     Svc::Ccsds::Cfdp::Class::T expectedClass
@@ -200,7 +200,7 @@ void CfdpManagerTester::verifyEofPdu(
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
     Cfdp::ConditionCode expectedConditionCode,
-    CfdpFileSize expectedFileSize,
+    FileSize expectedFileSize,
     const char* sourceFilename
 ) {
     // Deserialize PDU
@@ -321,8 +321,8 @@ void CfdpManagerTester::verifyNakPdu(
     U32 expectedSourceEid,
     U32 expectedDestEid,
     U32 expectedTransactionSeq,
-    CfdpFileSize expectedScopeStart,
-    CfdpFileSize expectedScopeEnd,
+    FileSize expectedScopeStart,
+    FileSize expectedScopeEnd,
     U8 expectedNumSegments,
     const Cfdp::SegmentRequest* expectedSegments
 ) {
@@ -368,10 +368,10 @@ void CfdpManagerTester::verifyNakPdu(
 
 void CfdpManagerTester::sendMetadataPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
-    CfdpFileSize fileSize,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
+    FileSize fileSize,
     const char* sourceFilename,
     const char* destFilename,
     Cfdp::Class::T txmMode,
@@ -408,10 +408,10 @@ void CfdpManagerTester::sendMetadataPdu(
 
 void CfdpManagerTester::sendFileDataPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
-    CfdpFileSize offset,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
+    FileSize offset,
     U16 dataSize,
     const U8* data,
     Cfdp::Class::T txmMode
@@ -445,12 +445,12 @@ void CfdpManagerTester::sendFileDataPdu(
 
 void CfdpManagerTester::sendEofPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
     Cfdp::ConditionCode conditionCode,
     U32 checksum,
-    CfdpFileSize fileSize,
+    FileSize fileSize,
     Cfdp::Class::T txmMode
 ) {
     // Create and initialize EOF PDU
@@ -482,9 +482,9 @@ void CfdpManagerTester::sendEofPdu(
 
 void CfdpManagerTester::sendFinPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
     Cfdp::ConditionCode conditionCode,
     Cfdp::FinDeliveryCode deliveryCode,
     Cfdp::FinFileStatus fileStatus
@@ -518,9 +518,9 @@ void CfdpManagerTester::sendFinPdu(
 
 void CfdpManagerTester::sendAckPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
     Cfdp::FileDirective directiveCode,
     U8 directiveSubtypeCode,
     Cfdp::ConditionCode conditionCode,
@@ -556,11 +556,11 @@ void CfdpManagerTester::sendAckPdu(
 
 void CfdpManagerTester::sendNakPdu(
     U8 channelId,
-    CfdpEntityId sourceEid,
-    CfdpEntityId destEid,
-    CfdpTransactionSeq transactionSeq,
-    CfdpFileSize scopeStart,
-    CfdpFileSize scopeEnd,
+    EntityId sourceEid,
+    EntityId destEid,
+    TransactionSeq transactionSeq,
+    FileSize scopeStart,
+    FileSize scopeEnd,
     U8 numSegments,
     const Cfdp::SegmentRequest* segments
 ) {
@@ -613,13 +613,13 @@ void CfdpManagerTester::testMetaDataPdu() {
     // Configure transaction for Metadata PDU emission
     const char* srcFile = "/tmp/test_source.bin";
     const char* dstFile = "/tmp/test_dest.bin";
-    const CfdpFileSize fileSize = 1024;
+    const FileSize fileSize = 1024;
     const U8 channelId = 0;
     const U32 testSequenceId = 98;
     const U32 testPeerId = 100;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_S1,  // Sender, class 1
+        TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
         dstFile,
@@ -669,7 +669,7 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_S1,  // Sender, class 1
+        TXN_STATE_S1,  // Sender, class 1
         channelId,
         srcFile,
         dstFile,
@@ -700,7 +700,7 @@ void CfdpManagerTester::testFileDataPdu() {
 
     // Create File Data PDU with test data
     Cfdp::FileDataPdu fdPdu;
-    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+    Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
 
     fdPdu.initialize(
         direction,
@@ -739,13 +739,13 @@ void CfdpManagerTester::testEofPdu() {
     // Configure transaction for EOF PDU emission
     const char* srcFile = "Types/test/ut/data/test_file.bin";
     const char* dstFile = "/tmp/dest_eof.bin";
-    const CfdpFileSize fileSize = 242;  // Actual size of test_file.bin
+    const FileSize fileSize = 242;  // Actual size of test_file.bin
     const U8 channelId = 0;
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
+        TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -804,13 +804,13 @@ void CfdpManagerTester::testFinPdu() {
     // Configure transaction for FIN PDU emission
     const char* srcFile = "/tmp/test_fin.bin";
     const char* dstFile = "/tmp/dest_fin.bin";
-    const CfdpFileSize fileSize = 8192;
+    const FileSize fileSize = 8192;
     const U8 channelId = 0;
     const U32 testSequenceId = 77;
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -821,9 +821,9 @@ void CfdpManagerTester::testFinPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file reception complete
-    const CfdpConditionCode testConditionCode = CFDP_CONDITION_CODE_NO_ERROR;
-    const CfdpFinDeliveryCode testDeliveryCode = CFDP_FIN_DELIVERY_CODE_COMPLETE;
-    const CfdpFinFileStatus testFileStatus = CFDP_FIN_FILE_STATUS_RETAINED;
+    const ConditionCode testConditionCode = CONDITION_CODE_NO_ERROR;
+    const FinDeliveryCode testDeliveryCode = FIN_DELIVERY_CODE_COMPLETE;
+    const FinFileStatus testFileStatus = FIN_FILE_STATUS_RETAINED;
 
     // Clear port history before test
     this->clearHistory();
@@ -860,13 +860,13 @@ void CfdpManagerTester::testAckPdu() {
     // Configure transaction for ACK PDU emission
     const char* srcFile = "/tmp/test_ack.bin";
     const char* dstFile = "/tmp/dest_ack.bin";
-    const CfdpFileSize fileSize = 2048;
+    const FileSize fileSize = 2048;
     const U8 channelId = 0;
     const U32 testSequenceId = 88;
     const U32 testPeerId = 175;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -918,13 +918,13 @@ void CfdpManagerTester::testNakPdu() {
     // Configure transaction for NAK PDU emission
     const char* srcFile = "/tmp/test_nak.bin";
     const char* dstFile = "/tmp/dest_nak.bin";
-    const CfdpFileSize fileSize = 4096;
+    const FileSize fileSize = 4096;
     const U8 channelId = 0;
     const U32 testSequenceId = 99;
     const U32 testPeerId = 200;
 
     CfdpTransaction* txn = setupTestTransaction(
-        CFDP_TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
         channelId,
         srcFile,
         dstFile,
@@ -939,9 +939,9 @@ void CfdpManagerTester::testNakPdu() {
 
     // Create and initialize NAK PDU
     Cfdp::NakPdu nakPdu;
-    Cfdp::Direction direction = Cfdp::DIRECTION_TOWARD_SENDER;
-    const CfdpFileSize testScopeStart = 0;      // Scope covers entire file
-    const CfdpFileSize testScopeEnd = fileSize; // Scope covers entire file
+    Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_SENDER;
+    const FileSize testScopeStart = 0;      // Scope covers entire file
+    const FileSize testScopeEnd = fileSize; // Scope covers entire file
     
     // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // requesting retransmission of missing data
@@ -996,5 +996,6 @@ void CfdpManagerTester::testNakPdu() {
                  3, expectedSegments);
 }
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

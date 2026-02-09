@@ -9,7 +9,7 @@
 
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <config/CfdpFileSizeAliasAc.hpp>
+#include <config/FileSizeAliasAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -19,7 +19,7 @@ namespace Cfdp {
 class FileDataPdu : public PduBase {
   private:
     //! File offset
-    CfdpFileSize m_offset;
+    FileSize m_offset;
 
     //! Data size
     U16 m_dataSize;
@@ -32,12 +32,12 @@ class FileDataPdu : public PduBase {
     FileDataPdu() : m_offset(0), m_dataSize(0), m_data(nullptr) {}
 
     //! Initialize a File Data PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
-                   CfdpFileSize offset,
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
+                   FileSize offset,
                    U16 dataSize,
                    const U8* data);
 
@@ -62,7 +62,7 @@ class FileDataPdu : public PduBase {
     const PduHeader& asHeader() const { return this->m_header; }
 
     //! Get the file offset
-    CfdpFileSize getOffset() const { return this->m_offset; }
+    FileSize getOffset() const { return this->m_offset; }
 
     //! Get the data size
     U16 getDataSize() const { return this->m_dataSize; }

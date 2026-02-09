@@ -37,11 +37,11 @@ class FinPdu : public PduBase {
                m_fileStatus(FIN_FILE_STATUS_RETAINED) {}
 
     //! Initialize a Finished PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
                    ConditionCode conditionCode,
                    FinDeliveryCode deliveryCode,
                    FinFileStatus fileStatus);

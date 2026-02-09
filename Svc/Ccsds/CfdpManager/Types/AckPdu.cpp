@@ -11,11 +11,11 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void AckPdu::initialize(Direction direction,
+void AckPdu::initialize(PduDirection direction,
                               Cfdp::Class::T txmMode,
-                              CfdpEntityId sourceEid,
-                              CfdpTransactionSeq transactionSeq,
-                              CfdpEntityId destEid,
+                              EntityId sourceEid,
+                              TransactionSeq transactionSeq,
+                              EntityId destEid,
                               FileDirective directiveCode,
                               U8 directiveSubtypeCode,
                               ConditionCode conditionCode,

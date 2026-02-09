@@ -27,6 +27,9 @@ namespace Ccsds {
 /**
  *  @brief Type for logical file size / file offset values used by CFDP
  *
+ *  @par Description:
+ *       This type is now auto-generated from CfdpCfg.fpp as Svc::Ccsds::Cfdp::FileSize
+ *
  *  @par Limits:
  *       Must be a U32 or U64.
  *
@@ -41,8 +44,10 @@ namespace Ccsds {
  *  @reference
  *       CCSDS 727.0-B-5, CCSDS File Delivery Protocol (CFDP),
  *       https://public.ccsds.org/Pubs/727x0b5e1.pdf
+ *
+ *  @note The old typedef "CfdpFileSize" is replaced by the FPP-generated type
+ *        Svc::Ccsds::Cfdp::FileSize defined in config/FileSizeAliasAc.hpp
  */
-typedef U32 CfdpFileSize;
 
 /**
  *  @brief RX chunks per transaction (per channel)

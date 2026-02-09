@@ -26,7 +26,7 @@ class MetadataPdu : public PduBase {
     ChecksumType m_checksumType;
 
     //! File size
-    CfdpFileSize m_fileSize;
+    FileSize m_fileSize;
 
     //! Source filename
     Fw::String m_sourceFilename;
@@ -39,12 +39,12 @@ class MetadataPdu : public PduBase {
     MetadataPdu() : m_sourceFilename(""), m_destFilename("") {}
 
     //! Initialize a Metadata PDU
-    void initialize(Direction direction,
+    void initialize(PduDirection direction,
                    Cfdp::Class::T txmMode,
-                   CfdpEntityId sourceEid,
-                   CfdpTransactionSeq transactionSeq,
-                   CfdpEntityId destEid,
-                   CfdpFileSize fileSize,
+                   EntityId sourceEid,
+                   TransactionSeq transactionSeq,
+                   EntityId destEid,
+                   FileSize fileSize,
                    const Fw::String& sourceFilename,
                    const Fw::String& destFilename,
                    ChecksumType checksumType,
@@ -65,7 +65,7 @@ class MetadataPdu : public PduBase {
     const PduHeader& asHeader() const { return this->m_header; }
 
     //! Get the file size
-    CfdpFileSize getFileSize() const { return this->m_fileSize; }
+    FileSize getFileSize() const { return this->m_fileSize; }
 
     //! Get the source filename
     const Fw::String& getSourceFilename() const { return this->m_sourceFilename; }

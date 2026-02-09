@@ -39,9 +39,9 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <config/CfdpCfg.hpp>
-#include <config/CfdpEntityIdAliasAc.hpp>
-#include <config/CfdpTransactionSeqAliasAc.hpp>
-#include <config/CfdpFileSizeAliasAc.hpp>
+#include <config/EntityIdAliasAc.hpp>
+#include <config/TransactionSeqAliasAc.hpp>
+#include <config/FileSizeAliasAc.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
@@ -51,6 +51,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpClist.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpChunk.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpTimer.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/QueueIdEnumAc.hpp>
@@ -58,10 +59,11 @@
 
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-// Forward declarations
-class CfdpChannel;
+// Forward declarations (classes in Cfdp namespace)
 class CfdpManager;
+class CfdpChannel;
 class CfdpEngine;
 class CfdpTransaction;
 
@@ -91,40 +93,40 @@ class CfdpTransaction;
 /**
  * @brief High-level state of a transaction
  */
-enum CfdpTxnState : U8
+enum TxnState : U8
 {
-    CFDP_TXN_STATE_UNDEF   = 0, /**< \brief State assigned to an unused object on the free list */
-    CFDP_TXN_STATE_INIT    = 1, /**< \brief State assigned to a newly allocated transaction object */
-    CFDP_TXN_STATE_R1      = 2, /**< \brief Receive file as class 1 */
-    CFDP_TXN_STATE_S1      = 3, /**< \brief Send file as class 1 */
-    CFDP_TXN_STATE_R2      = 4, /**< \brief Receive file as class 2 */
-    CFDP_TXN_STATE_S2      = 5, /**< \brief Send file as class 2 */
-    CFDP_TXN_STATE_DROP    = 6, /**< \brief State where all PDUs are dropped */
-    CFDP_TXN_STATE_HOLD    = 7, /**< \brief State assigned to a transaction after freeing it */
-    CFDP_TXN_STATE_INVALID = 8  /**< \brief Marker value for the highest possible state number */
+    TXN_STATE_UNDEF   = 0, /**< \brief State assigned to an unused object on the free list */
+    TXN_STATE_INIT    = 1, /**< \brief State assigned to a newly allocated transaction object */
+    TXN_STATE_R1      = 2, /**< \brief Receive file as class 1 */
+    TXN_STATE_S1      = 3, /**< \brief Send file as class 1 */
+    TXN_STATE_R2      = 4, /**< \brief Receive file as class 2 */
+    TXN_STATE_S2      = 5, /**< \brief Send file as class 2 */
+    TXN_STATE_DROP    = 6, /**< \brief State where all PDUs are dropped */
+    TXN_STATE_HOLD    = 7, /**< \brief State assigned to a transaction after freeing it */
+    TXN_STATE_INVALID = 8  /**< \brief Marker value for the highest possible state number */
 };
 
 /**
  * @brief Sub-state of a send file transaction
  */
-enum CfdpTxSubState : U8
+enum TxSubState : U8
 {
-    CFDP_TX_SUB_STATE_METADATA      = 0, /**< sending the initial MD directive */
-    CFDP_TX_SUB_STATE_FILEDATA      = 1, /**< sending file data PDUs */
-    CFDP_TX_SUB_STATE_EOF           = 2, /**< sending the EOF directive */
-    CFDP_TX_SUB_STATE_CLOSEOUT_SYNC = 3, /**< pending final acks from remote */
-    CFDP_TX_SUB_STATE_NUM_STATES    = 4
+    TX_SUB_STATE_METADATA      = 0, /**< sending the initial MD directive */
+    TX_SUB_STATE_FILEDATA      = 1, /**< sending file data PDUs */
+    TX_SUB_STATE_EOF           = 2, /**< sending the EOF directive */
+    TX_SUB_STATE_CLOSEOUT_SYNC = 3, /**< pending final acks from remote */
+    TX_SUB_STATE_NUM_STATES    = 4
 };
 
 /**
  * @brief Sub-state of a receive file transaction
  */
-enum CfdpRxSubState : U8
+enum RxSubState : U8
 {
-    CFDP_RX_SUB_STATE_FILEDATA      = 0, /**< receive file data PDUs */
-    CFDP_RX_SUB_STATE_EOF           = 1, /**< got EOF directive */
-    CFDP_RX_SUB_STATE_CLOSEOUT_SYNC = 2, /**< pending final acks from remote */
-    CFDP_RX_SUB_STATE_NUM_STATES    = 3
+    RX_SUB_STATE_FILEDATA      = 0, /**< receive file data PDUs */
+    RX_SUB_STATE_EOF           = 1, /**< got EOF directive */
+    RX_SUB_STATE_CLOSEOUT_SYNC = 2, /**< pending final acks from remote */
+    RX_SUB_STATE_NUM_STATES    = 3
 };
 
 /**
@@ -132,11 +134,11 @@ enum CfdpRxSubState : U8
  *
  * Differentiates between send and receive history entries
  */
-enum CfdpDirection : U8
+enum Direction : U8
 {
-    CFDP_DIRECTION_RX  = 0,
-    CFDP_DIRECTION_TX  = 1,
-    CFDP_DIRECTION_NUM = 2,
+    DIRECTION_RX  = 0,
+    DIRECTION_TX  = 1,
+    DIRECTION_NUM = 2,
 };
 
 /**
@@ -152,40 +154,40 @@ enum CfdpDirection : U8
  * codes defined in the blue book, but can be translated to one
  * of those codes for the purposes of FIN/ACK/EOF PDUs.
  */
-enum CfdpTxnStatus : I32
+enum TxnStatus : I32
 {
     /**
      * The undefined status is a placeholder for new transactions before a value is set.
      */
-    CFDP_TXN_STATUS_UNDEFINED = -1,
+    TXN_STATUS_UNDEFINED = -1,
 
     /* Status codes 0-15 share the same values/meanings as the CFDP condition code (CC) */
-    CFDP_TXN_STATUS_NO_ERROR                  = CFDP_CONDITION_CODE_NO_ERROR,
-    CFDP_TXN_STATUS_POS_ACK_LIMIT_REACHED     = CFDP_CONDITION_CODE_POS_ACK_LIMIT_REACHED,
-    CFDP_TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED  = CFDP_CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED,
-    CFDP_TXN_STATUS_INVALID_TRANSMISSION_MODE = CFDP_CONDITION_CODE_INVALID_TRANSMISSION_MODE,
-    CFDP_TXN_STATUS_FILESTORE_REJECTION       = CFDP_CONDITION_CODE_FILESTORE_REJECTION,
-    CFDP_TXN_STATUS_FILE_CHECKSUM_FAILURE     = CFDP_CONDITION_CODE_FILE_CHECKSUM_FAILURE,
-    CFDP_TXN_STATUS_FILE_SIZE_ERROR           = CFDP_CONDITION_CODE_FILE_SIZE_ERROR,
-    CFDP_TXN_STATUS_NAK_LIMIT_REACHED         = CFDP_CONDITION_CODE_NAK_LIMIT_REACHED,
-    CFDP_TXN_STATUS_INACTIVITY_DETECTED       = CFDP_CONDITION_CODE_INACTIVITY_DETECTED,
-    CFDP_TXN_STATUS_INVALID_FILE_STRUCTURE    = CFDP_CONDITION_CODE_INVALID_FILE_STRUCTURE,
-    CFDP_TXN_STATUS_CHECK_LIMIT_REACHED       = CFDP_CONDITION_CODE_CHECK_LIMIT_REACHED,
-    CFDP_TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE = CFDP_CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE,
-    CFDP_TXN_STATUS_SUSPEND_REQUEST_RECEIVED  = CFDP_CONDITION_CODE_SUSPEND_REQUEST_RECEIVED,
-    CFDP_TXN_STATUS_CANCEL_REQUEST_RECEIVED   = CFDP_CONDITION_CODE_CANCEL_REQUEST_RECEIVED,
+    TXN_STATUS_NO_ERROR                  = CONDITION_CODE_NO_ERROR,
+    TXN_STATUS_POS_ACK_LIMIT_REACHED     = CONDITION_CODE_POS_ACK_LIMIT_REACHED,
+    TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED  = CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED,
+    TXN_STATUS_INVALID_TRANSMISSION_MODE = CONDITION_CODE_INVALID_TRANSMISSION_MODE,
+    TXN_STATUS_FILESTORE_REJECTION       = CONDITION_CODE_FILESTORE_REJECTION,
+    TXN_STATUS_FILE_CHECKSUM_FAILURE     = CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+    TXN_STATUS_FILE_SIZE_ERROR           = CONDITION_CODE_FILE_SIZE_ERROR,
+    TXN_STATUS_NAK_LIMIT_REACHED         = CONDITION_CODE_NAK_LIMIT_REACHED,
+    TXN_STATUS_INACTIVITY_DETECTED       = CONDITION_CODE_INACTIVITY_DETECTED,
+    TXN_STATUS_INVALID_FILE_STRUCTURE    = CONDITION_CODE_INVALID_FILE_STRUCTURE,
+    TXN_STATUS_CHECK_LIMIT_REACHED       = CONDITION_CODE_CHECK_LIMIT_REACHED,
+    TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE = CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE,
+    TXN_STATUS_SUSPEND_REQUEST_RECEIVED  = CONDITION_CODE_SUSPEND_REQUEST_RECEIVED,
+    TXN_STATUS_CANCEL_REQUEST_RECEIVED   = CONDITION_CODE_CANCEL_REQUEST_RECEIVED,
 
     /* Additional status codes for items not representable in a CFDP CC, these can be set in
      * transactions that did not make it to the point of sending FIN/EOF. */
-    CFDP_TXN_STATUS_PROTOCOL_ERROR     = 16,
-    CFDP_TXN_STATUS_ACK_LIMIT_NO_FIN   = 17,
-    CFDP_TXN_STATUS_ACK_LIMIT_NO_EOF   = 18,
-    CFDP_TXN_STATUS_NAK_RESPONSE_ERROR = 19,
-    CFDP_TXN_STATUS_SEND_EOF_FAILURE   = 20,
-    CFDP_TXN_STATUS_EARLY_FIN          = 21,
+    TXN_STATUS_PROTOCOL_ERROR     = 16,
+    TXN_STATUS_ACK_LIMIT_NO_FIN   = 17,
+    TXN_STATUS_ACK_LIMIT_NO_EOF   = 18,
+    TXN_STATUS_NAK_RESPONSE_ERROR = 19,
+    TXN_STATUS_SEND_EOF_FAILURE   = 20,
+    TXN_STATUS_EARLY_FIN          = 21,
 
     /* keep last */
-    CFDP_TXN_STATUS_MAX = 22
+    TXN_STATUS_MAX = 22
 };
 
 /**
@@ -205,15 +207,15 @@ struct CfdpTxnFilenames
  *
  * Records CFDP operations for future reference
  */
-struct CfdpHistory
+struct History
 {
     CfdpTxnFilenames fnames;   /**< \brief file names associated with this history entry */
-    CfdpCListNode cl_node;  /**< \brief for connection to a CList */
-    CfdpDirection dir;      /**< \brief direction of this history entry */
-    CfdpTxnStatus txn_stat; /**< \brief final status of operation */
-    CfdpEntityId src_eid;  /**< \brief the source eid of the transaction */
-    CfdpEntityId peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
-    CfdpTransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
+    CListNode cl_node;  /**< \brief for connection to a CList */
+    Direction dir;      /**< \brief direction of this history entry */
+    TxnStatus txn_stat; /**< \brief final status of operation */
+    EntityId src_eid;  /**< \brief the source eid of the transaction */
+    EntityId peer_eid; /**< \brief peer_eid is always the "other guy", same src_eid for RX */
+    TransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
 };
 
 /**
@@ -225,7 +227,7 @@ struct CfdpHistory
 struct CfdpChunkWrapper
 {
     CfdpChunkList chunks;   //!< Chunk list for gap tracking
-    CfdpCListNode cl_node; //!< Circular list node for pooling
+    CListNode cl_node; //!< Circular list node for pooling
 
     /**
      * @brief Constructor for initializing the chunk list
@@ -233,7 +235,7 @@ struct CfdpChunkWrapper
      * @param maxChunks Maximum number of chunks this list can hold
      * @param chunkMem Pointer to pre-allocated chunk memory
      */
-    CfdpChunkWrapper(CfdpChunkIdx maxChunks, CfdpChunk* chunkMem)
+    CfdpChunkWrapper(ChunkIdx maxChunks, CfdpChunk* chunkMem)
         : chunks(maxChunks, chunkMem), cl_node{} {}
 };
 
@@ -242,19 +244,19 @@ struct CfdpChunkWrapper
  *
  * Keeps the state of CFDP playback requests
  */
-struct CfdpPlayback
+struct Playback
 {
     Os::Directory dir;
-    Cfdp::Class::T cfdp_class;
+    Class::T cfdp_class;
     CfdpTxnFilenames fnames;
     U16 num_ts; /**< \brief number of transactions */
     U8 priority;
-    CfdpEntityId dest_id;
+    EntityId dest_id;
     char pending_file[FppConstant_CfdpManagerMaxFileSize::CfdpManagerMaxFileSize];
 
     bool busy;
     bool diropen;
-    Cfdp::Keep::T keep;
+    Keep::T keep;
     bool counted;
 };
 
@@ -265,14 +267,14 @@ struct CfdpPlayback
  */
 struct CfdpPollDir
 {
-    CfdpPlayback pb; /**< \brief State of the currrent playback requests */
-    CfdpTimer intervalTimer; /**< \brief Timer object used to poll the directory */
+    Playback pb; /**< \brief State of the currrent playback requests */
+    Timer intervalTimer; /**< \brief Timer object used to poll the directory */
 
     U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */
 
     U8 priority;   /**< \brief priority to use when placing transactions on the pending queue */
-    Cfdp::Class::T cfdpClass; /**< \brief the CFDP class to send */
-    CfdpEntityId destEid;   /**< \brief destination entity id */
+    Class::T cfdpClass; /**< \brief the CFDP class to send */
+    EntityId destEid;   /**< \brief destination entity id */
 
     Fw::String srcDir; /**< \brief path to source dir */
     Fw::String dstDir; /**< \brief path to destination dir */
@@ -294,8 +296,8 @@ struct CfdpTxS2Data
  */
 struct CfdpTxStateData
 {
-    CfdpTxSubState sub_state;
-    CfdpFileSize cached_pos;
+    TxSubState sub_state;
+    FileSize cached_pos;
 
     CfdpTxS2Data s2;
 };
@@ -306,10 +308,10 @@ struct CfdpTxStateData
 struct CfdpRxS2Data
 {
     U32                    eof_crc;
-    CfdpFileSize           eof_size;
-    CfdpFileSize           rx_crc_calc_bytes;
-    CfdpFinDeliveryCode dc;
-    CfdpFinFileStatus   fs;
+    FileSize           eof_size;
+    FileSize           rx_crc_calc_bytes;
+    FinDeliveryCode dc;
+    FinFileStatus   fs;
     U8                     eof_cc; /**< \brief remember the cc in the received EOF PDU to echo in eof-ack */
     U8                     acknak_count;
 };
@@ -319,8 +321,8 @@ struct CfdpRxS2Data
  */
 struct CfdpRxStateData
 {
-    CfdpRxSubState sub_state;
-    CfdpFileSize cached_pos;
+    RxSubState sub_state;
+    FileSize cached_pos;
 
     CfdpRxS2Data r2;
 };
@@ -409,6 +411,7 @@ enum CfdpTickType : U8
     CFDP_TICK_TYPE_NUM_TYPES
 };
 
+}  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
 

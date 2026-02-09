@@ -9,7 +9,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <config/CfdpEntityIdAliasAc.hpp>
+#include <config/EntityIdAliasAc.hpp>
 #include <config/CfdpCfg.hpp>
 
 namespace Svc {
@@ -31,7 +31,7 @@ enum TlvType : U8 {
 class TlvData {
   private:
     union {
-        CfdpEntityId m_eid;      // Valid when type=ENTITY_ID
+        EntityId m_eid;      // Valid when type=ENTITY_ID
         U8 m_rawData[256];       // Valid for other types (max 255 bytes + null term)
     };
     U8 m_dataLength;             // Actual length of data
@@ -40,13 +40,13 @@ class TlvData {
     TlvData();
 
     // Set entity ID (for TLV type 6)
-    void setEntityId(CfdpEntityId eid);
+    void setEntityId(EntityId eid);
 
     // Set raw data (for other TLV types)
     void setData(const U8* data, U8 length);
 
     // Get entity ID
-    CfdpEntityId getEntityId() const;
+    EntityId getEntityId() const;
 
     // Get raw data pointer
     const U8* getData() const;
@@ -65,7 +65,7 @@ class Tlv {
     Tlv();
 
     // Initialize with entity ID
-    void initialize(CfdpEntityId eid);
+    void initialize(EntityId eid);
 
     // Initialize with raw data
     void initialize(TlvType type, const U8* data, U8 length);
