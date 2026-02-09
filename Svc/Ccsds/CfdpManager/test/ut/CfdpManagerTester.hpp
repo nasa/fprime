@@ -380,6 +380,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 TX file transfer with NAK handling (port-based)
     void testClass2TxPortBasedNack();
 
+    //! Test multiple transactions in series
+    void testMultipleTransactionsInSeries();
+
   private:
     // ----------------------------------------------------------------------
     //  Test Harness: output port overrides

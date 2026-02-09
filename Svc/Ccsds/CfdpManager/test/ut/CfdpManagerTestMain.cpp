@@ -84,6 +84,12 @@ TEST(Transaction, Class1TxPortBased) {
     delete tester;
 }
 
+TEST(Transaction, MultipleTransactionsInSeries) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testMultipleTransactionsInSeries();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
