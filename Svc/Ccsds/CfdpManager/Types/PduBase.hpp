@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  PduBase.hpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  Base class for all CFDP PDU types
 //
 // This base class provides a common interface for all PDU types,

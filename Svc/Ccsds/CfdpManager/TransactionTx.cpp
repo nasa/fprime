@@ -269,7 +269,7 @@ void Transaction::sTick(int *cont /* unused */) {
     // is still listening to us but do not expect any future ACKs
     if (this->m_flags.com.inactivity_fired && !pending_send)
     {
-        // the transaction is now recycleable - this means we will
+        // the transaction is now recyclable - this means we will
         // no longer have a record of this transaction seq.  If the sender
         // wakes up or if the network delivers severely delayed PDUs at
         // some future point, then they will be seen as spurious.  They
@@ -317,7 +317,7 @@ Status::T Transaction::sSendEof() {
     // this is OK as we still need to put some value into the EOF
     if (!this->m_flags.com.crc_calc)
     {
-        // The F' version does not have an equivelent finalize call as it
+        // The F' version does not have an equivalent finalize call as it
         // - Never stores a partial word internally
         // - Never needs to "flush" anything
         // - Always accounts for padding at update time

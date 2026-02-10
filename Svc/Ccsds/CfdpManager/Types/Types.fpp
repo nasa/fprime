@@ -6,7 +6,7 @@ module Cfdp {
     # CFDP Types
     # ------------------------------------------------
     enum Status {
-        SUCCESS @< CFDP operation has been succesfull
+        SUCCESS @< CFDP operation has been successful
         ERROR @< Generic CFDP error return code
         PDU_METADATA_ERROR @< Invalid metadata PDU
         SHORT_PDU_ERROR @< PDU too short
@@ -62,7 +62,7 @@ module Cfdp {
         max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
     }
 
-    @< Struture for the configured array of CFDP channels
+    @< Structure for the configured array of CFDP channels
     array ChannelArrayParams = [NumChannels] ChannelParams
 
     @< Structure for telemetry counters for a single CFDP channel

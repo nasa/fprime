@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  CfdpManagerTestMain.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CfdpManager component test main function
 // ======================================================================
 

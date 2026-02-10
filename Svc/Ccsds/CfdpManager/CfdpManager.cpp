@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  CfdpManager.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CfdpManager component implementation class
 // ======================================================================
 
@@ -117,7 +117,7 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(
         // Map CFDP status to SendFileStatus
         if (status == Status::SUCCESS) {
             response.set_status(Svc::SendFileStatus::STATUS_OK);
-            this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
+            this->log_ACTIVITY_LO_SendFileInitiated(sourceFileName);
         } else {
             response.set_status(Svc::SendFileStatus::STATUS_ERROR);
             this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
@@ -169,7 +169,7 @@ Status::T CfdpManager ::getPduBuffer(Fw::Buffer& buffer, Channel& channel,
         }
         else
         {
-            this->log_WARNING_LO_BuffersExuasted();
+            this->log_WARNING_LO_BuffersExhausted();
             status = Status::SEND_PDU_NO_BUF_AVAIL_ERROR;
         }
     }
@@ -183,7 +183,7 @@ void CfdpManager ::returnPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
     // There is a direct mapping between channel index and port number
     portNum = static_cast<FwIndexType>(channel.getChannelId());
 
-    // Was unable to succesfully populate the PDU buffer, return it
+    // Was unable to successfully populate the PDU buffer, return it
     this->bufferDeallocate_out(portNum, pduBuffer);
 }
 
@@ -226,7 +226,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
         (Status::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
                                                         channelId, priority, destId)))
     {
-        this->log_ACTIVITY_LO_SendFileInitiatied(sourceFileName);
+        this->log_ACTIVITY_LO_SendFileInitiated(sourceFileName);
         rspStatus = Fw::CmdResponse::OK;
     }
     else
@@ -254,7 +254,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
         (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
                                                              keep.e, channelId, priority, destId)))
     {
-        this->log_ACTIVITY_LO_PlaybackInitiatied(sourceDirectory);
+        this->log_ACTIVITY_LO_PlaybackInitiated(sourceDirectory);
     }
     else
     {
@@ -286,7 +286,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
         (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
                                                               cfdpClass.e, priority, destId, interval)))
     {
-        this->log_ACTIVITY_LO_PollDirInitiatied(sourceDirectory);
+        this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory);
     }
     else
     {

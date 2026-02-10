@@ -80,7 +80,7 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| dataIn | async input array[N] | `Fw.BufferSend` | Receive incoming CFDP PDU data buffers from upstream components (e.g., frame deencapsulation, radio). One port (`N`) per CFDP channel. |
+| dataIn | async input array[N] | `Fw.BufferSend` | Receive incoming CFDP PDU data buffers from upstream components (e.g., deframing, radio). One port (`N`) per CFDP channel. |
 | dataInReturn | output array[N] | `Fw.BufferSend` | Return buffers received via `dataIn` after PDU processing is complete. One port (`N`) per CFDP channel. |
 
 #### File Transfer Ports
@@ -451,7 +451,7 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 |---|---|---|
 | recvErrors | U32 | Number of PDU receive errors. Incremented when malformed or invalid PDUs are received |
 | recvDropped | U32 | Number of PDUs dropped due to lack of resources (buffers, transactions) |
-| recvSpurious | U32 | Number of spurious PDUs received (PDUs for non-existent or completed transactions) |
+| recvSpurious | U32 | Number of spurious PDUs received (PDUs for nonexistent or completed transactions) |
 | recvFileDataBytes | U64 | Total file data bytes received across all transactions |
 | recvNakSegmentRequests | U32 | Number of NAK segment requests received from peer entity |
 

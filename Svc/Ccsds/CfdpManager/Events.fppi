@@ -1,5 +1,5 @@
-event BuffersExuasted severity warning low \
-    format "Unable to alocate a PDU buffer"
+event BuffersExhausted severity warning low \
+    format "Unable to allocate a PDU buffer"
 
 event InvalidChannel(
     channelId: U8 @< Requested channel index
@@ -8,15 +8,15 @@ event InvalidChannel(
     severity warning low \
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
-event SendFileInitiatied(
+event SendFileInitiated(
     sourceFileName: string size MaxFileSize @< Source file being sent
 ) \
     severity activity low \
-    format "Succesfully initiated file send transfer for {}" 
+    format "Successfully initiated file send transfer for {}" 
 
 event UnsupportedSendFileArguments(
     offset: U32 @< Offset of the send file request
-    length: U32 @< Lenght of the send file request
+    length: U32 @< Length of the send file request
 ) \
     severity warning low \
     format "Invalid send file port request with offset {}, length {}" 
@@ -34,11 +34,11 @@ event PlaybackInvalidChannel(
     severity warning low \
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
-event PlaybackInitiatied(
+event PlaybackInitiated(
     sourceDirectory: string size MaxFileSize @< Source directory being sent
 ) \
     severity activity low \
-    format "Succesfully initiated directory playback for {}" 
+    format "Successfully initiated directory playback for {}" 
 
 event PlaybackInitiateFail(
     sourceDirectory: string size MaxFileSize @< Source directory being sent
@@ -46,18 +46,18 @@ event PlaybackInitiateFail(
     severity warning low \
     format "Failed to initiate file send transfer for {}"
 
-event PollDirInitiatied(
+event PollDirInitiated(
     sourceDirectory: string size MaxFileSize @< Source directory being sent
 ) \
     severity activity low \
-    format "Succesfully initiated directory poll for {}"
+    format "Successfully initiated directory poll for {}"
 
 event PollDirStopped(
     channelId: U8 @< Channel index stopped
     pollId: U8 @< Channel poll index stopped
 ) \
     severity activity low \
-    format "Succesfully stopped directory poll for channel {}, index {}"
+    format "Successfully stopped directory poll for channel {}, index {}"
 
 event SetFlowState(
     channelId: U8 @< Channel being set

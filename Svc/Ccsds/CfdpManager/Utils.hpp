@@ -122,7 +122,7 @@ ConditionCode TxnStatusToConditionCode(TxnStatus txn_stat);
  *
  * @param txn_stat   Transaction status
  *
- * @returns Boolean value indicating if the transaction is in an errorred state
+ * @returns Boolean value indicating if the transaction is in an errored state
  * @retval true if an error has occurred during the transaction
  * @retval false if no error has occurred during the transaction yet
  */

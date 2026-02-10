@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  PduTests.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  Unit tests for CFDP PDU classes
 // ======================================================================
 

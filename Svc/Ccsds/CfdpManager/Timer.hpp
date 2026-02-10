@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Timer.hpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  hpp file for CFDP timer that is driven by 
 // ======================================================================
 
@@ -19,7 +19,7 @@ class Timer  {
   // ----------------------------------------------------------------------
   public:
     enum Status {
-      UNITIALIZED,
+      UNINITIALIZED,
       RUNNING,
       EXPIRED
     };

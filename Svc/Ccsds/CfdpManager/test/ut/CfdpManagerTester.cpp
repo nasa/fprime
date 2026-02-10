@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  CfdpManagerTester.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CfdpManager component test harness implementation class
 // ======================================================================
 

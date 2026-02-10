@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  PduHeader.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CFDP PDU Header
 // ======================================================================
 

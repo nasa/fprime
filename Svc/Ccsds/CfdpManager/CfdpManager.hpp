@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  CfdpManager.hpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  hpp file for CfdpManager component implementation class
 // ======================================================================
 
@@ -95,7 +95,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     //! Handler implementation for run1Hz
     //!
-    //! Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
+    //! Run port which must be invoked at 1 Hz in order to satisfy CFDP timer logic
     void run1Hz_handler(FwIndexType portNum,  //!< The port number
                         U32 context           //!< The call order
     ) override;

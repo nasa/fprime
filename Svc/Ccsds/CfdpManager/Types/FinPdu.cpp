@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  FinPdu.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CFDP FIN (Finished) PDU
 // ======================================================================
 

@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Tlv.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CFDP TLV (Type-Length-Value) classes
 // ======================================================================
 

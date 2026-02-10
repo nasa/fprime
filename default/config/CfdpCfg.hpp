@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  CfdpCfg.hpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  F Prime CFDP configuration constants
 // ======================================================================
 
@@ -205,7 +205,7 @@ namespace Cfdp {
 #define CFDP_PRI_ENTITY_ID PRIu32
 
 /**
- * @brief Macro type for transaction seqeunces that is used in printf style formatting
+ * @brief Macro type for transaction sequences that is used in printf style formatting
  *
  * @note This must match the size of CfdpTransactionSeq as defined in CfdpCfg.fpp
  */

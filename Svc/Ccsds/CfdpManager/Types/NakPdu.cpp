@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  NakPdu.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for CFDP NAK (Negative Acknowledge) PDU
 // ======================================================================
 

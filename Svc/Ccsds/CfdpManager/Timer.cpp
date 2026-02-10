@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Timer.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for the Timer class implementation
 // ======================================================================
 
@@ -16,7 +16,7 @@ namespace Cfdp {
 // Class construction and destruction
 // ----------------------------------------------------------------------
 
-Timer ::Timer() : timerStatus(UNITIALIZED), secondsRemaining(0) {}
+Timer ::Timer() : timerStatus(UNINITIALIZED), secondsRemaining(0) {}
 
 Timer ::~Timer() {}
 

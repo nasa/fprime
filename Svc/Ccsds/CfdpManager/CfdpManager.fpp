@@ -2,7 +2,7 @@ module Svc {
 module Ccsds {
 module Cfdp {
 
-    @ F' implementation of the CFDP file transfer prototcol
+    @ F' implementation of the CFDP file transfer protocol
     active component CfdpManager {
 
         ##############################################################################
@@ -18,7 +18,7 @@ module Cfdp {
         ##############################################################################
 
         # Admin ports
-        @ Run port which must be invoked at 1 Hz in order to satify CFDP timer logic
+        @ Run port which must be invoked at 1 Hz in order to satisfy CFDP timer logic
         async input port run1Hz: Svc.Sched
 
         @ Ping in port
@@ -31,7 +31,7 @@ module Cfdp {
         @ Port for outputting PDU data
         output port dataOut: [NumChannels] Fw.BufferSend
 
-        @ Buffer that was sent via the dataOut port and is now being retruned
+        @ Buffer that was sent via the dataOut port and is now being returned
         async input port dataReturnIn: [NumChannels] Svc.ComDataWithContext
 
         @ Port for allocating buffers to hold PDU data
@@ -44,7 +44,7 @@ module Cfdp {
         @ Port for input PDU data
         async input port dataIn: [NumChannels] Fw.BufferSend
 
-        @ Return buffer that was recieved on the dataIn port
+        @ Return buffer that was received on the dataIn port
         output port dataInReturn: [NumChannels] Fw.BufferSend
 
         # DP ports

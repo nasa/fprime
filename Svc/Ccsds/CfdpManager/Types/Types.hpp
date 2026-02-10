@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Types.hpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  hpp file for shared CFDP protocol type definitions
 // ======================================================================
 
@@ -310,7 +310,7 @@ struct Playback
  */
 struct CfdpPollDir
 {
-    Playback pb; /**< \brief State of the currrent playback requests */
+    Playback pb; /**< \brief State of the current playback requests */
     Timer intervalTimer; /**< \brief Timer object used to poll the directory */
 
     U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */

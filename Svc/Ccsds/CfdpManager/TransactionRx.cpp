@@ -330,7 +330,7 @@ void Transaction::rTick(int *cont /* unused */) {
      * is still listening to us but do not expect any future ACKs */
     if (this->m_flags.com.inactivity_fired && !pending_send)
     {
-        /* the transaction is now recycleable - this means we will
+        /* the transaction is now recyclable - this means we will
          * no longer have a record of this transaction seq.  If the sender
          * wakes up or if the network delivers severely delayed PDUs at
          * some future point, then they will be seen as spurious.  They
@@ -440,7 +440,7 @@ Status::T Transaction::rCheckCrc(U32 expected_crc) {
     Status::T ret = Cfdp::Status::SUCCESS;
     U32 crc_result;
 
-    // The F' version does not have an equivelent finalize call as it
+    // The F' version does not have an equivalent finalize call as it
     // - Never stores a partial word internally
     // - Never needs to "flush" anything
     // - Always accounts for padding at update time
@@ -1166,7 +1166,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             }
             else
             {
-                 // File was succesfully renamed, open for writing
+                 // File was successfully renamed, open for writing
                 fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
                 if (fileStatus != Os::File::OP_OK)
                 {

@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  PduTester.cpp
-// \author campuzan
+// \author Brian Campuzano
 // \brief  cpp file for PDU test implementations
 //
 // This file contains PDU test function implementations for CfdpManagerTester.
