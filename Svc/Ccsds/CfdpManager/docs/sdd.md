@@ -153,6 +153,110 @@ Concrete PDU types (all in [Types/](../Types/) directory):
 
 ## Sequence Diagrams
 
+The following sequence diagrams illustrate the external protocol exchanges between spacecraft and ground systems during CFDP transactions. These diagrams focus on the PDU-level interactions and do not depict the internal state machine transitions, timer management, or detailed transaction processing logic within the CfdpManager component.
+
+### Class 1 TX Transaction (Unacknowledged)
+
+This diagram shows a Class 1 file transmission from spacecraft to ground. Class 1 is unacknowledged and provides no retransmission or delivery guarantees.
+
+```mermaid
+sequenceDiagram
+    participant Ground
+    participant Spacecraft
+
+    Ground->>Spacecraft: SendFile command<br/>(source file, destination file)
+
+    Note over Spacecraft: Initialize transaction
+
+    Spacecraft->>Ground: Metadata PDU<br/>(filename, size)
+
+    loop File Data Transfer
+        Spacecraft->>Ground: File Data PDU<br/>(offset, data segment)
+    end
+
+    Spacecraft->>Ground: EOF PDU<br/>(checksum, file size)
+
+    Note over Spacecraft: Transaction complete<br/>(no acknowledgment)
+    Note over Ground: Verify checksum<br/>Keep or discard file
+```
+
+**Key characteristics:**
+- No acknowledgments (ACK, NAK, or FIN PDUs)
+- No retransmissions or gap detection
+- Sender completes immediately after sending EOF
+- Receiver validates checksum and keeps/discards file independently
+
+### Class 2 TX Transaction (Acknowledged)
+
+This diagram shows a Class 2 file transmission from spacecraft to ground with gap detection and retransmission. The scenario includes a missing File Data PDU that is detected and retransmitted via NAK.
+
+```mermaid
+sequenceDiagram
+    participant G_ACK as Ground<br/>ACK Timer
+    participant G_NACK as Ground<br/>NACK Timer
+    participant Ground
+    participant Spacecraft
+    participant S_ACK as Spacecraft<br/>ACK Timer
+
+    Ground->>Spacecraft: SendFile command<br/>(source file, destination file)
+
+    Note over Spacecraft: Initialize transaction
+
+    Spacecraft->>Ground: Metadata PDU<br/>(filename, size)
+
+    Spacecraft->>Ground: File Data PDU (1)
+    Spacecraft--xGround: File Data PDU (2) [LOST]
+    Spacecraft->>Ground: File Data PDU (3)
+
+    Spacecraft->>Ground: EOF PDU<br/>(checksum, file size)
+
+    activate S_ACK
+    Note over S_ACK: Armed on<br/>EOF send
+
+    Ground->>Spacecraft: ACK(EOF)
+
+    deactivate S_ACK
+    Note over S_ACK: Cancelled on<br/>ACK(EOF) received
+
+    Note over Ground: Gap detected<br/>(missing PDU (2))
+
+    Ground->>Spacecraft: NAK<br/>(request PDU (2))
+
+    activate G_NACK
+    Note over G_NACK: Armed on<br/>NAK send
+
+    Spacecraft->>Ground: File Data PDU (2) [RETRANSMIT]
+
+    deactivate G_NACK
+    Note over G_NACK: Cancelled on<br/>gap fill
+
+    Note over Ground: All data received<br/>Verify checksum
+
+    Ground->>Spacecraft: FIN PDU<br/>(delivery complete, file retained)
+    Note over Ground: File saved and<br>ready for use
+
+    activate G_ACK
+    Note over G_ACK: Armed on<br/>FIN send
+
+    Spacecraft->>Ground: ACK(FIN)
+
+    deactivate G_ACK
+    Note over G_ACK: Cancelled on<br/>ACK(FIN) received
+
+    Note over Spacecraft: Transaction complete
+    Note over Ground: Transaction complete
+```
+
+**Key characteristics:**
+- Full acknowledgment and retransmission support
+- EOF is acknowledged to confirm reception
+- Ground detects missing data and sends NAK with gap information
+- Spacecraft retransmits requested segments
+- FIN PDU from receiver confirms final delivery status
+- ACK timers ensure protocol progress and detect failures
+  - Spacecraft ACK timer: Armed when EOF is sent, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
+- Transaction completes only after FIN/ACK exchange
+
 ## Commands
 | Name | Description |
 |---|---|
