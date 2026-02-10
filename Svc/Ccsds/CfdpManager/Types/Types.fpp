@@ -65,6 +65,46 @@ module Cfdp {
     @< Struture for the configured array of CFDP channels
     array ChannelArrayParams = [CfdpManagerNumChannels] ChannelParams
 
+    @< Structure for telemetry counters for a single CFDP channel
+    struct ChannelTelemetry {
+        # Receive counters
+        recvErrors: U32 @< Number of PDU receive errors
+        recvDropped: U32 @< Number of PDUs dropped due to lack of resources
+        recvSpurious: U32 @< Number of spurious PDUs received
+        recvFileDataBytes: U64 @< Total file data bytes received
+        recvNakSegmentRequests: U32 @< Number of NAK segment requests received from peer
+
+        # Sent counters
+        sentNakSegmentRequests: U32 @< Number of NAK segment requests sent to peer
+
+        # Fault counters
+        faultAckLimit: U32 @< Number of transactions abandoned due to ACK limit exceeded
+        faultNakLimit: U32 @< Number of transactions abandoned due to NAK limit exceeded
+        faultInactivityTimer: U32 @< Number of transactions abandoned due to inactivity timeout
+        faultCrcMismatch: U32 @< Number of CRC mismatches detected in received files
+        faultFileSizeMismatch: U32 @< Number of file size mismatches detected
+        faultFileOpen: U32 @< Number of file open failures
+        faultFileRead: U32 @< Number of file read failures
+        faultFileWrite: U32 @< Number of file write failures
+        faultFileSeek: U32 @< Number of file seek failures
+        faultFileRename: U32 @< Number of file rename failures
+        faultDirectoryRead: U32 @< Number of directory read failures
+
+        # Queue depths
+        queueFree: U16 @< Number of transactions in FREE queue
+        queueTxActive: U16 @< Number of transactions in active transmit queue (TXA)
+        queueTxWaiting: U16 @< Number of transactions in waiting transmit queue (TXW)
+        queueRx: U16 @< Number of transactions in receive queue (RX)
+        queueHistory: U16 @< Number of completed transactions in history queue
+
+        # Activity counters
+        playbackCounter: U8 @< Number of active directory playback operations
+        pollCounter: U8 @< Number of active directory poll operations
+    }
+
+    @< Structure for the telemetry array of CFDP channels
+    array ChannelTelemetryArray = [CfdpManagerNumChannels] ChannelTelemetry
+
 }
 }
 }

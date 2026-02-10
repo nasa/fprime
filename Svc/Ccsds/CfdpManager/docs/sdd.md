@@ -370,9 +370,56 @@ sequenceDiagram
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
 
 ## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
+
+**Note:** Telemetry channels are currently **proposals** defined in [Telemetry.fppi](../Telemetry.fppi) but not yet implemented. Proposals are based the CF implementation.
+
+### ChannelTelemetry
+
+An array of telemetry structures, one per CFDP channel. Each element is a `ChannelTelemetry` struct containing the following fields:
+
+#### Receive Counters
+| Field | Type | Description |
+|---|---|---|
+| recvErrors | U32 | Number of PDU receive errors. Incremented when malformed or invalid PDUs are received |
+| recvDropped | U32 | Number of PDUs dropped due to lack of resources (buffers, transactions) |
+| recvSpurious | U32 | Number of spurious PDUs received (PDUs for non-existent or completed transactions) |
+| recvFileDataBytes | U64 | Total file data bytes received across all transactions |
+| recvNakSegmentRequests | U32 | Number of NAK segment requests received from peer entity |
+
+#### Sent Counters
+| Field | Type | Description |
+|---|---|---|
+| sentNakSegmentRequests | U32 | Number of NAK segment requests sent to peer entity |
+
+#### Fault Counters
+| Field | Type | Description |
+|---|---|---|
+| faultAckLimit | U32 | Number of transactions abandoned due to ACK limit exceeded (no ACK(EOF) or ACK(FIN) received) |
+| faultNakLimit | U32 | Number of transactions abandoned due to NAK limit exceeded (retransmitted data not received) |
+| faultInactivityTimer | U32 | Number of transactions abandoned due to inactivity timeout |
+| faultCrcMismatch | U32 | Number of CRC mismatches detected in received files |
+| faultFileSizeMismatch | U32 | Number of file size mismatches detected (EOF size vs actual received size) |
+| faultFileOpen | U32 | Number of file open failures |
+| faultFileRead | U32 | Number of file read failures |
+| faultFileWrite | U32 | Number of file write failures |
+| faultFileSeek | U32 | Number of file seek failures |
+| faultFileRename | U32 | Number of file rename failures |
+| faultDirectoryRead | U32 | Number of directory read failures during playback/poll operations |
+
+#### Queue Depths
+| Field | Type | Description |
+|---|---|---|
+| queueFree | U16 | Number of transactions in FREE queue (available for allocation) |
+| queueTxActive | U16 | Number of transactions in active transmit queue (TXA) |
+| queueTxWaiting | U16 | Number of transactions in waiting transmit queue (TXW) |
+| queueRx | U16 | Number of transactions in receive queue (RX) |
+| queueHistory | U16 | Number of completed transactions in history queue |
+
+#### Activity Counters
+| Field | Type | Description |
+|---|---|---|
+| playbackCounter | U8 | Number of active directory playback operations |
+| pollCounter | U8 | Number of active directory poll operations |
 
 ## Requirements
 Add requirements in the chart below
