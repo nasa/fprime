@@ -315,7 +315,7 @@ class Engine {
      *
      * @param txn       Pointer to the transaction object
      * @param ts        Transaction ACK status
-     * @param dir_code  File directive code being ACK'ed (EOF or FIN)
+     * @param dir_code  File directive code being acknowledged (EOF or FIN)
      * @param cc        Condition code of transaction
      * @param peer_eid  Remote entity ID
      * @param tsn       Transaction sequence number

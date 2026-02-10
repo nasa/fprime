@@ -581,7 +581,7 @@ void Engine::recvHold(Transaction *txn, const Fw::Buffer& buffer)
                          txn->m_history->seq_num);
         }
         // Note: Deserialization errors are silently ignored in hold state
-        // as we're just trying to be helpful by re-acking FIN if we can
+        // as we're just trying to be helpful by re-acknowledging FIN if we can
     }
 }
 
