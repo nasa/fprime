@@ -345,12 +345,29 @@ sequenceDiagram
 ## Commands
 | Name | Description |
 |---|---|
-|---|---|
+| SendFile | Initiates a CFDP file transaction to send a file to a remote entity. Specifies channel, destination entity ID, CFDP class (1 or 2), file retention policy, priority, source filename, and destination filename. |
+| PlaybackDirectory | Starts a directory playback operation to send all files from a source directory to a destination directory on a remote entity. Files are sent sequentially as individual CFDP transactions. Completes when all files in the directory have been processed. |
+| PollDirectory | Establishes a recurring directory poll that periodically checks a source directory for new files and automatically sends them to a destination directory on a remote entity. Poll interval is configurable in seconds. |
+| StopPollDirectory | Stops an active directory poll operation identified by channel ID and poll ID. |
+| SetChannelFlow | Sets the flow control state for a specific CFDP channel. Can freeze (pause) or resume PDU transmission on the channel. |
 
 ## Parameters
 | Name | Description |
 |---|---|
-|---|---|
+| LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
+| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
+| RxCrcCalcBytesPerWakeup | Maximum number of received file bytes to process for CRC calculation in a single execution cycle. Prevents blocking during large file verification |
+| TmpDir | Directory path for storing temporary files during receive (RX) transactions. Files are moved to final destination upon successful completion |
+| FailDir | Directory path for storing files from polling operations that failed to transfer successfully |
+| PortDefaultChannel | Default CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
+| PortDefaultDestEntityId | Default destination entity ID used for file transfers initiated via the `fileIn` port interface |
+| ChannelConfig.ack_limit | Maximum number of ACK retransmission attempts before abandoning a transaction. Applies when waiting for ACK(EOF) or ACK(FIN) acknowledgments |
+| ChannelConfig.nack_limit | Maximum number of NAK retransmission attempts before abandoning a transaction. Applies when waiting for retransmitted file data after sending NAK |
+| ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting |
+| ChannelConfig.inactivity_timer | Inactivity timeout duration in seconds. Transaction is abandoned if no PDUs are received within this period |
+| ChannelConfig.dequeue_enabled | Enable or disable transaction dequeuing and processing for this channel. Can be used to pause channel activity |
+| ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
+| ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
 
 ## Telemetry
 | Name | Description |

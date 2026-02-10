@@ -19,11 +19,11 @@ param FailDir: string size CfdpManagerMaxFileSize \
     default "/fail"
 
 @ Default CFDP channel for port-initiated file transfers
-param PORT_DEFAULT_CHANNEL: U8 \
+param PortDefaultChannel: U8 \
     default 0
 
 @ Default destination entity ID for port-initiated file transfers
-param PORT_DEFAULT_DEST_ENTITY_ID: Cfdp.EntityId \
+param PortDefaultDestEntityId: Cfdp.EntityId \
     default 100
 
 @ Parameter configuration for an array CFDP channels

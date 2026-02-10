@@ -93,11 +93,11 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(
     {
         // Get parameters for port-initiated transfers
         Fw::ParamValid valid;
-        U8 channelId = this->paramGet_PORT_DEFAULT_CHANNEL(valid);
+        U8 channelId = this->paramGet_PortDefaultChannel(valid);
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));
 
-        EntityId destEid = this->paramGet_PORT_DEFAULT_DEST_ENTITY_ID(valid);
+        EntityId destEid = this->paramGet_PortDefaultDestEntityId(valid);
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));
 
