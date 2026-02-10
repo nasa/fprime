@@ -295,7 +295,7 @@ struct Playback
     U16 num_ts; /**< \brief number of transactions */
     U8 priority;
     EntityId dest_id;
-    char pending_file[CfdpManagerMaxFileSize];
+    char pending_file[MaxFileSize];
 
     bool busy;
     bool diropen;

@@ -359,7 +359,7 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
     Status::T status = Cfdp::Status::SUCCESS;
 
     // Local buffer for file data
-    U8 fileDataBuffer[CFDP_MAX_PDU_SIZE];
+    U8 fileDataBuffer[MaxPduSize];
 
     // Create File Data PDU
     FileDataPdu fdPdu;

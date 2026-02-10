@@ -9,7 +9,7 @@ event InvalidChannel(
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
 event SendFileInitiatied(
-    sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
+    sourceFileName: string size MaxFileSize @< Source file being sent
 ) \
     severity activity low \
     format "Succesfully initiated file send transfer for {}" 
@@ -22,7 +22,7 @@ event UnsupportedSendFileArguments(
     format "Invalid send file port request with offset {}, length {}" 
 
 event SendFileInitiateFail(
-    sourceFileName: string size CfdpManagerMaxFileSize @< Source file being sent
+    sourceFileName: string size MaxFileSize @< Source file being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
@@ -35,19 +35,19 @@ event PlaybackInvalidChannel(
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
 event PlaybackInitiatied(
-    sourceDirectory: string size CfdpManagerMaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFileSize @< Source directory being sent
 ) \
     severity activity low \
     format "Succesfully initiated directory playback for {}" 
 
 event PlaybackInitiateFail(
-    sourceDirectory: string size CfdpManagerMaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFileSize @< Source directory being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
 
 event PollDirInitiatied(
-    sourceDirectory: string size CfdpManagerMaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFileSize @< Source directory being sent
 ) \
     severity activity low \
     format "Succesfully initiated directory poll for {}"
@@ -74,16 +74,16 @@ event InvalidChannelPoll(
     format "Invalid poll ID {}, maximum poll ID is {}" 
 
 event FailKeepFileMove(
-    srcFile: string size CfdpManagerMaxFileSize @< Source file being moved
-    moveDir: string size CfdpManagerMaxFileSize @< Directory file was moved to
+    srcFile: string size MaxFileSize @< Source file being moved
+    moveDir: string size MaxFileSize @< Directory file was moved to
     status: I32 @< Status of the move operation
 ) \
     severity warning low \
     format "Failed to move {} to {} error {}" 
 
 event FailPollFileMove(
-    srcFile: string size CfdpManagerMaxFileSize @< Source file being moved
-    failDir: string size CfdpManagerMaxFileSize @< Directory file was moved to
+    srcFile: string size MaxFileSize @< Source file being moved
+    failDir: string size MaxFileSize @< Directory file was moved to
     status: I32 @< Status of the move operation
 ) \
     severity warning low \

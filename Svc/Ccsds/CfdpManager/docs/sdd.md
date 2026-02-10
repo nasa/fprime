@@ -1,6 +1,6 @@
-# Ccsds::CfdpManager Component
+# Ccsds::CfdpManager
 
-## 1 Introduction
+## CFDP Introduction
 
 The CCSDS File Delivery Protocol (CFDP) is a space communication standard designed for reliable, autonomous file transfer in space missions. CFDP provides a robust mechanism for transferring files between ground systems and spacecraft even in environments with long propagation delays, intermittent connectivity, or high error rates.
 
@@ -13,7 +13,7 @@ The protocol supports two operational modes:
 - Class 1 (Unacknowledged): Unreliable transfer with no acknowledgments, suitable for real-time or non-critical data where speed is prioritized
 - Class 2 (Acknowledged): Reliable transfer with acknowledgments, retransmissions, and gap detection, ensuring complete and verified file delivery
 
-### 1.1 Protocol Data Units (PDUs)
+### Protocol Data Units (PDUs)
 
 CFDP uses Protocol Data Units (PDUs) - structured messages with a common header and type-specific payloads:
 
@@ -28,7 +28,7 @@ File Data PDU: Carries file content segments with offset information
 
 For complete protocol details, refer to the [CCSDS 727.0-B-5 - CCSDS File Delivery Protocol (CFDP)](https://ccsds.org/Pubs/727x0b5e1.pdf) Blue Book specification.
 
-### 1.2 CFDP as an F' Component
+## CFDP as an F' Component
 
 The CfdpManager component provides an F' implementation of the CFDP protocol and is designed to replace the standard F' [FileUplink](../../../FileUplink/docs/sdd.md) and [FileDownlink](../../../FileDownlink/docs/sdd.md) components with the addition of guaranteed file delivery. CfdpManager implements both CFDP Class 1 and Class 2 protocols, providing options for both unacknowledged and acknowledged transfers with retransmissions, gap detection, and reliable file delivery even over lossy or intermittent communication links.
 
@@ -45,7 +45,7 @@ The F' implementation adds new components built specifically for the F' ecosyste
 
 For detailed attribution, licensing information, and a breakdown of ported vs. new code, see [ATTRIBUTION.md](../ATTRIBUTION.md).
 
-## 2 Class Diagram
+## Class Diagram
 
 The CfdpManager component diagram shows the port organization by functional grouping:
 
@@ -57,7 +57,7 @@ Ports are organized as follows:
 - **Right (Downlink Ports)**: Send CFDP PDUs to remote entities - `dataOut`, `dataReturnIn`, `bufferAllocate`, `bufferDeallocate`
 - **Bottom (File Transfer Ports)**: Port-based file send interface - `fileIn`, `fileDoneOut`
 
-### 2.1 Port Descriptions
+### Port Descriptions
 
 #### System Ports
 
@@ -90,7 +90,7 @@ Ports are organized as follows:
 | fileIn | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PortDefaultChannel` and `PortDefaultDestEntityId`, (2) `cfdpClass` is hardcoded to `CLASS_2` , (3) `keep` is hardcoded to `KEEP`, (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
 | fileDoneOut | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `fileIn` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
 
-## 3 Usage Examples
+## Usage Examples
 
 The following diagram shows typical CfdpManager port connections with other F' components:
 
@@ -101,9 +101,9 @@ This example demonstrates:
 - **Downlink data flow**: CfdpManager sends outgoing CFDP PDUs to ComQueue via `dataOut` for transmission
 - **Port-based file transfers**: DpCatalog initiates file transfers via CfdpManager's `fileIn` port and receives completion notifications via `fileDoneOut`
 
-## 4 Component Design
+## Component Design
 
-### 4.1 Assumptions
+### Assumptions
 
 The design of `CfdpManager` assumes the following:
 
@@ -123,7 +123,7 @@ The design of `CfdpManager` assumes the following:
 
 8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`PortDefaultChannel`, `PortDefaultDestEntityId`) and are always Class 2 with highest priority.
 
-### 4.2 Main Class Hierarchy
+### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
 - Top-level F' component that integrates CFDP into the F' framework
@@ -152,7 +152,7 @@ Transaction ([Transaction.hpp](../Transaction.hpp))
 - Implementation split across [TransactionTx.cpp](../TransactionTx.cpp) and [TransactionRx.cpp](../TransactionRx.cpp)
 - Manages file I/O, checksums, timers, and retry logic for each transaction
 
-### 4.3 PDU Type Hierarchy
+### PDU Type Hierarchy
 
 PduBase ([Types/PduBase.hpp](../Types/PduBase.hpp))
 - Abstract base class for all CFDP Protocol Data Units
@@ -167,7 +167,7 @@ Concrete PDU types (all in [Types/](../Types/) directory):
 - AckPdu ([AckPdu.hpp](../Types/AckPdu.hpp)): Acknowledges receipt of EOF or FIN directives (Class 2 only)
 - NakPdu ([NakPdu.hpp](../Types/NakPdu.hpp)): Requests retransmission of missing file segments (Class 2 only)
 
-### 4.4 Supporting Types and Utilities
+### Supporting Types and Utilities
 
 **Classes:**
 - Timer ([Timer.hpp](../Timer.hpp)): CFDP timer implementation using F' time primitives for ACK timeouts and inactivity detection
@@ -182,11 +182,11 @@ Concrete PDU types (all in [Types/](../Types/) directory):
 **Utilities:**
 - Utils ([Utils.hpp](../Utils.hpp)): Utility functions for transaction traversal, status conversion, and protocol helpers
 
-## 5 Sequence Diagrams
+## Sequence Diagrams
 
 The following sequence diagrams illustrate the external protocol exchanges between spacecraft and ground systems during CFDP transactions. These diagrams focus on the PDU-level interactions and do not depict the internal state machine transitions or detailed transaction processing logic within the CfdpManager component.
 
-### 5.1 Class 1 TX Transaction (Unacknowledged)
+### Class 1 TX Transaction (Unacknowledged)
 
 This diagram shows a Class 1 file transmission from spacecraft to ground. Class 1 is unacknowledged and provides no retransmission or delivery guarantees.
 
@@ -217,7 +217,7 @@ sequenceDiagram
 - Sender completes immediately after sending EOF
 - Receiver validates checksum and keeps/discards file independently
 
-### 5.2 Class 2 TX Transaction (Acknowledged)
+### Class 2 TX Transaction (Acknowledged)
 
 This diagram shows a Class 2 file transmission from spacecraft to ground with gap detection and retransmission. The scenario includes a missing File Data PDU that is detected and retransmitted via NAK.
 
@@ -288,7 +288,7 @@ sequenceDiagram
   - Spacecraft ACK timer: Armed when EOF is sent, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
 - Transaction completes only after FIN/ACK exchange
 
-### 5.3 Class 2 RX Transaction (Acknowledged)
+### Class 2 RX Transaction (Acknowledged)
 
 This diagram shows a Class 2 file reception at the spacecraft from ground with gap detection and retransmission. The scenario includes a missing File Data PDU that is detected and retransmitted via NAK.
 
@@ -360,7 +360,56 @@ sequenceDiagram
   - Spacecraft ACK timer: Armed when FIN is sent, cancelled when ACK(FIN) is received. If the timer expires, the spacecraft retransmits FIN and rearms the timer. After `ChannelConfig.ack_limit` retries without ACK(FIN), the transaction is abandoned
 - Transaction completes only after FIN/ACK exchange
 
-## 6 Commands
+## Configuration
+
+`CfdpManager` uses compile-time configuration defined in two files:
+- **[CfdpCfg.fpp](../../../../default/config/CfdpCfg.fpp)**: FPP constants and types visible to both FPP and C++ code
+- **[CfdpCfg.hpp](../../../../default/config/CfdpCfg.hpp)**: C++ preprocessor definitions for implementation details
+
+### FPP Constants (CfdpCfg.fpp)
+
+These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configured at compile time:
+
+| Constant | Purpose |
+|----------|---------|
+| `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
+| `MaxFileSize` | Maximum length for file path strings. Used to size string parameters (`TmpDir`, `FailDir`) and internal file path buffers. |
+| `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
+
+### FPP Types (CfdpCfg.fpp)
+
+These types define the size of CFDP protocol fields:
+
+| Type | Purpose |
+|------|---------|
+| `EntityId` | Entity ID size. Maximum size of entity IDs in CFDP packets. The protocol supports variable-size entity IDs at runtime, but this establishes the maximum. Must be one of: U8, U16, U32, U64. |
+| `TransactionSeq` | Transaction sequence number size. Maximum size of transaction sequence numbers in CFDP packets. The protocol supports variable sizes at runtime, but this establishes the maximum. Must be one of: U8, U16, U32, U64. |
+| `FileSize` | File size and offset type. Used for file sizes and offsets in CFDP operations. The protocol permits 64-bit values, but the current implementation uses 32-bit. Must be one of: U8, U16, U32, U64. |
+
+### C++ Configuration Constants (CfdpCfg.hpp)
+
+#### Protocol Configuration
+
+| Constant | Purpose |
+|----------|---------|
+| `CFDP_NAK_MAX_SEGMENTS` | Maximum NAK segments supported in a NAK PDU. When sending or receiving NAK PDUs, this is the maximum number of segment requests supported. Should match ground CFDP engine configuration. |
+| `CFDP_MAX_TLV` | Maximum TLVs (Type-Length-Value) per PDU. Limits the number of TLV metadata fields in EOF and FIN PDUs for diagnostic information (entity IDs, fault handler overrides, messages). |
+| `CFDP_R2_CRC_CHUNK_SIZE` | Class 2 CRC calculation chunk size. Buffer size for CRC calculation upon file completion. Larger values use more stack but complete faster. Total bytes per wakeup controlled by `RxCrcCalcBytesPerWakeup` parameter. |
+| `CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION` | RX chunks per transaction per channel (array). For Class 2 receive transactions, each chunk tracks a contiguous received file segment. Used for gap detection and NAK generation. Array size must match `NumChannels`. |
+| `CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION` | TX chunks per transaction per channel (array). For Class 2 transmit transactions, each chunk tracks a gap requested via NAK that needs retransmission. Array size must match `NumChannels`. |
+
+#### Resource Pool Configuration
+
+| Constant | Purpose |
+|----------|---------|
+| `CFDP_MAX_SIMULTANEOUS_RX` | Maximum simultaneous file receives. Each channel can support this many active/concurrent receive transactions. Contributes to total transaction pool size. |
+| `CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN` | Maximum commanded playback files per channel. Maximum number of outstanding ground-commanded file transmits per channel. |
+| `CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN` | Maximum commanded playback directories per channel. Each channel can support this many ground-commanded directory playbacks. |
+| `CFDP_MAX_POLLING_DIR_PER_CHAN` | Maximum polling directories per channel. Affects configuration table size - there must be an entry (can be empty) for each polling directory per channel. |
+| `CFDP_NUM_TRANSACTIONS_PER_PLAYBACK` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
+| `CFDP_NUM_HISTORIES_PER_CHANNEL` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
+
+## Commands
 
 | Name | Description |
 |---|---|
@@ -370,7 +419,7 @@ sequenceDiagram
 | StopPollDirectory | Stops an active directory poll operation identified by channel ID and poll ID. |
 | SetChannelFlow | Sets the flow control state for a specific CFDP channel. Can freeze (pause) or resume PDU transmission on the channel. |
 
-## 7 Parameters
+## Parameters
 
 | Name | Description |
 |---|---|
@@ -389,11 +438,11 @@ sequenceDiagram
 | ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
 
-## 8 Telemetry
+## Telemetry
 
 **Note:** Telemetry channels are currently **proposals** defined in [Telemetry.fppi](../Telemetry.fppi) but not yet implemented. Proposals are based on the CF implementation.
 
-### 8.1 ChannelTelemetry
+### ChannelTelemetry
 
 An array of telemetry structures, one per CFDP channel. Each element is a `ChannelTelemetry` struct containing the following fields:
 
@@ -441,7 +490,7 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | playbackCounter | U8 | Number of active directory playback operations |
 | pollCounter | U8 | Number of active directory poll operations |
 
-## 9 Requirements
+## Requirements
 
 | Requirement | Description | Rationale | Verification Method |
 |---|---|---|---|

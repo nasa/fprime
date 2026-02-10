@@ -4,174 +4,13 @@
 // \brief  F Prime CFDP configuration constants
 // ======================================================================
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
 namespace Svc {
 namespace Ccsds {
+namespace Cfdp {
 
-/**
- *  @brief Number of channels
- *
- *  @par Description:
- *       The number of channels in the engine. Changing this
- *       value changes the configuration table for the application.
- *       This must match CfdpManagerNumChannels defined in CfdpCfg.fpp
- *
- *  @par Limits:
- *       Must be less <= 200. Obviously it will be smaller than that.
- * 
- * BPC TODO: replace with CfdpManagerNumChannels
- */
-#define CFDP_NUM_CHANNELS (2)
-
-/**
- *  @brief Type for logical file size / file offset values used by CFDP
- *
- *  @par Description:
- *       This type is now auto-generated from CfdpCfg.fpp as Svc::Ccsds::Cfdp::FileSize
- *
- *  @par Limits:
- *       Must be a U32 or U64.
- *
- *       Per CCSDS 727.0-B-5 (CFDP Blue Book), all File Size Sensitive (FSS)
- *       fields, including file size and file offset, are encoded as either
- *       32-bit or 64-bit unsigned integers depending on the value of the
- *       CFDP Large File flag.
- *
- *       When the Large File flag is 0, FSS fields are 32 bits.
- *       When the Large File flag is 1, FSS fields are 64 bits.
- *
- *  @reference
- *       CCSDS 727.0-B-5, CCSDS File Delivery Protocol (CFDP),
- *       https://public.ccsds.org/Pubs/727x0b5e1.pdf
- *
- *  @note The old typedef "CfdpFileSize" is replaced by the FPP-generated type
- *        Svc::Ccsds::Cfdp::FileSize defined in config/FileSizeAliasAc.hpp
- */
-
-/**
- *  @brief RX chunks per transaction (per channel)
- *
- *  @par Description:
- *       Number of chunks per transaction per channel (RX).
- *
- * CHUNKS -
- * A chunk is a representation of a range (offset, size) of data received by a receiver.
- *
- * Class 2 CFDP deals with NAK, so received data must be tracked for receivers in order to generate
- * the NAK. The sender must also keep track of NAK requests and send new file data PDUs as a result.
- * (array size must be CFDP_NUM_CHANNELS)
- * CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks per transaction
- * CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION is an array for each channel indicating the number of chunks to keep track
- * of NAK requests from the receiver per transaction
- *
- *  @par Limits:
- *
- */
-#define CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION \
-    {                                            \
-        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
-    }
-
-/**
- *  @brief TX chunks per transaction (per channel)
- *
- *  @par Description:
- *       Number of chunks per transaction per channel (TX).
- *
- *  @par Limits:
- *
- */
-#define CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION \
-    {                                            \
-        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
-    }
-
-/**
- *  @brief Number of max commanded playback files per chan.
- *
- *  @par Description:
- *       This is the max number of outstanding ground commanded file transmits per channel.
- *
- *  @par Limits:
- *
- */
-#define CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
-
-/**
- *  @brief Max number of simultaneous file receives.
- *
- *  @par Description:
- *       Each channel can support this number of file receive transactions at a time.
- *
- *  @par Limits:
- *
- */
-#define CFDP_MAX_SIMULTANEOUS_RX (5)
-
-/* definitions that affect execution */
-
-/**
- *  @brief Max number of commanded playback directories per channel.
- *
- *  @par Description:
- *       Each channel can support this number of ground commanded directory playbacks.
- *
- *  @par Limits:
- *
- */
-#define CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN (2)
-
-/**
- *  @brief Number of histories per channel
- *
- *  @par Description:
- *       Each channel can support this number of file receive transactions at a time.
- *
- *  @par Limits:
- *       65536 is the current max.
- */
-#define CFDP_NUM_HISTORIES_PER_CHANNEL (256)
-
-/**
- *  @brief Number of transactions per playback directory.
- *
- *  @par Description:
- *       Each playback/polling directory operation will be able to have this
- *       many active transfers at a time pending or active.
- *
- *  @par Limits:
- *
- */
-#define CFDP_NUM_TRANSACTIONS_PER_PLAYBACK (5)
-
-/**
- *  @brief R2 CRC calc chunk size
- *
- *  @par Description
- *       R2 performs CRC calculation upon file completion in chunks. This is the size
- *       of the buffer. The larger the size the more stack will be used, but
- *       the faster it can go. The overall number of bytes calculated per wakeup
- *       is set in the configuration table.
- *
- *  @par Limits:
- *
- */
-#define CFDP_R2_CRC_CHUNK_SIZE (1024)
-
-/**
- *  @brief Total number of chunks (tx, rx, all channels)
- *
- *  @par Description:
- *       Must be equal to the sum of all values input in CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION
- *       and CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION.
- *
- *  @par Limits:
- *
- */
-/* CFDP_TOTAL_CHUNKS must be equal to the total number of chunks per rx/tx transactions per channel */
-/* (in other words, the summation of all elements in CFDP_CHANNEL_NUM_R/TX_CHUNKS_PER_TRANSACTION */
-#define CFDP_TOTAL_CHUNKS (CFDP_NAK_MAX_SEGMENTS * 4)
+// ==================================================================
+// Protocol Configuration
+// ==================================================================
 
 /**
  *  @brief Max NAK segments supported in a NAK PDU
@@ -201,8 +40,8 @@ namespace Ccsds {
  *       to aid in debugging.
  *
  *       This value sets an upper bound on TLV storage per PDU to prevent
- *       unbounded memory growth. The limit of 4 is based on NASA's cFS CF
- *       implementation and is sufficient for typical CFDP operations:
+ *       unbounded memory growth. The limit of 4 is sufficient for typical
+ *       CFDP operations:
  *       - 1 for Entity ID TLV
  *       - 3 additional for filestore requests/responses or messages
  *
@@ -214,6 +53,108 @@ namespace Ccsds {
  *       CCSDS 727.0-B-5, section 5.4, table 5-3
  */
 #define CFDP_MAX_TLV (4)
+
+/**
+ *  @brief R2 CRC calc chunk size
+ *
+ *  @par Description
+ *       R2 performs CRC calculation upon file completion in chunks. This is the size
+ *       of the buffer. The larger the size the more stack will be used, but
+ *       the faster it can go. The overall number of bytes calculated per wakeup
+ *       is set in the configuration table.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_R2_CRC_CHUNK_SIZE (1024)
+
+/**
+ *  @brief RX chunks per transaction (per channel)
+ *
+ *  @par Description:
+ *       Number of chunks per transaction per channel (RX).
+ *
+ * RX CHUNKS -
+ * For Class 2 CFDP receive transactions, the receiver must track which file segments
+ * have been successfully received. A chunk represents a contiguous range (offset, size)
+ * of received file data. By tracking received chunks, the receiver can identify gaps
+ * in the file data and generate NAK PDUs to request retransmission of missing segments.
+ *
+ * (array size must be NumChannels)
+ * CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION is an array for each channel indicating
+ * the number of chunks per transaction to track received file segments. This enables
+ * gap detection and NAK generation for reliable Class 2 transfers.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION \
+    {                                            \
+        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
+    }
+
+/**
+ *  @brief TX chunks per transaction (per channel)
+ *
+ *  @par Description:
+ *       Number of chunks per transaction per channel (TX).
+ *
+ * TX CHUNKS -
+ * For Class 2 CFDP transmit transactions, the sender must track which file segments
+ * the receiver has requested via NAK PDUs. Each chunk represents a gap (offset, size)
+ * that needs to be retransmitted.
+ *
+ * (array size must be NumChannels)
+ * CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION is an array for each channel indicating
+ * the number of chunks to track NAK segment requests from the receiver per transaction.
+ * This allows the sender to queue and retransmit the requested missing file data.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION \
+    {                                            \
+        CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS \
+    }
+
+// ==================================================================
+// Resource Pool Configuration
+// ==================================================================
+
+/**
+ *  @brief Max number of simultaneous file receives.
+ *
+ *  @par Description:
+ *       Each channel can support this number of active/concurrent file receive
+ *       transactions. This contributes to the total transaction pool size and
+ *       limits how many incoming files can be received simultaneously.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_MAX_SIMULTANEOUS_RX (5)
+
+/**
+ *  @brief Number of max commanded playback files per chan.
+ *
+ *  @par Description:
+ *       This is the max number of outstanding ground commanded file transmits per channel.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
+
+/**
+ *  @brief Max number of commanded playback directories per channel.
+ *
+ *  @par Description:
+ *       Each channel can support this number of ground commanded directory playbacks.
+ *
+ *  @par Limits:
+ *
+ */
+#define CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN (2)
 
 /**
  *  @brief Max number of polling directories per channel.
@@ -228,55 +169,48 @@ namespace Ccsds {
 #define CFDP_MAX_POLLING_DIR_PER_CHAN (5)
 
 /**
- *  @brief Max PDU size.
+ *  @brief Number of transactions per playback directory.
  *
  *  @par Description:
- *       Limits the maximum possible Tx PDU size. Note the resulting CCSDS packet
- *       also includes a CCSDS header and CF_PDU_ENCAPSULATION_EXTRA_TRAILING_BYTES.
- *       The outgoing file data chunk size is also limited from the table configuration
- *       or by set parameter command, which is checked against this value
- *       (+ smallest possible PDU header).
- *
- *  @par Note:
- *       This does NOT limit Rx PDUs, since the file data is written from
- *       the transport packet to the file.
+ *       Each playback/polling directory operation will be able to have this
+ *       many active transfers at a time pending or active.
  *
  *  @par Limits:
- *       Since PDUs are wrapped in CCSDS packets, need to respect any
- *       CCSDS packet size limits on the system.
  *
  */
-#define CFDP_MAX_PDU_SIZE (512)
+#define CFDP_NUM_TRANSACTIONS_PER_PLAYBACK (5)
 
 /**
- *  @brief Maximum file name length.
+ *  @brief Number of histories per channel
+ *
+ *  @par Description:
+ *       Each channel maintains a circular buffer of completed transaction records
+ *       (history entries) for debugging and reference. This defines the maximum
+ *       number of completed transactions to keep in the history buffer.
  *
  *  @par Limits:
- *
+ *       65536 is the current max.
  */
-#define CFDP_FILENAME_MAX_NAME FileNameStringSize
+#define CFDP_NUM_HISTORIES_PER_CHANNEL (256)
 
-/**
- *  @brief Max filename and path length.
- *
- *  @par Limits:
- *
- */
-#define CFDP_FILENAME_MAX_LEN FileNameStringSize
+// ==================================================================
+// Miscellaneous
+// ==================================================================
 
 /**
  * @brief Macro type for Entity id that is used in printf style formatting
- * 
+ *
  * @note This must match the size of CfdpEntityId as defined in CfdpCfg.fpp
  */
 #define CFDP_PRI_ENTITY_ID PRIu32
 
 /**
  * @brief Macro type for transaction seqeunces that is used in printf style formatting
- * 
+ *
  * @note This must match the size of CfdpTransactionSeq as defined in CfdpCfg.fpp
  */
 #define CFDP_PRI_TRANSACTION_SEQ PRIu32
 
-}  // namespace Svc
+}  // namespace Cfdp
 }  // namespace Ccsds
+}  // namespace Svc

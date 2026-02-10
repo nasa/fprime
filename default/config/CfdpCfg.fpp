@@ -5,14 +5,13 @@
 
 module Svc {
     module Ccsds {
-        @ Number of buffer ports used to send PDUs
-        @ This must match the CFDP_NUM_CHANNELS macro defined in CfdpCfg.hpp
-        constant CfdpManagerNumChannels = 2
-
-        @ File path size used for CFDP file system operations
-        constant CfdpManagerMaxFileSize = 200
-
         module Cfdp {
+            @ Number of CFDP channels
+            constant NumChannels = 2
+
+            @ File path size used for CFDP file system operations
+            constant MaxFileSize = 200
+            
             @ @brief Entity id size
             @
             @ @par Description:
@@ -59,24 +58,11 @@ module Svc {
             @ @brief Maximum PDU size in bytes
             @
             @ @par Description:
-            @      Limits the maximum possible Tx PDU size. This value must match
-            @      CFDP_MAX_PDU_SIZE in CfdpCfg.hpp. The resulting CCSDS packet also
-            @      includes a CCSDS header and additional bytes.
+            @      Limits the maximum possible Tx PDU size.
             @
             @ @par Limits:
             @      Must respect any CCSDS packet size limits on the system.
             constant MaxPduSize = 512
-
-            @ @brief Maximum file data payload size in a File Data PDU
-            @
-            @ @par Description:
-            @      This is the maximum data bytes that can be carried in a File Data PDU
-            @      after accounting for CFDP headers (PDU header + File Data header).
-            @      This value should be MaxPduSize minus typical header overhead.
-            @
-            @ @par Limits:
-            @      Must be less than MaxPduSize.
-            constant MaxFileDataSize = 450
         }
     }
 }

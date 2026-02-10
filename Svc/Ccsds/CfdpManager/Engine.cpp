@@ -60,7 +60,7 @@ Engine::Engine(CfdpManager* manager) :
     m_manager(manager),
     m_seqNum(0)
 {
-    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i)
     {
         m_channels[i] = nullptr;
     }
@@ -68,7 +68,7 @@ Engine::Engine(CfdpManager* manager) :
 
 Engine::~Engine()
 {
-    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i)
     {
         if (m_channels[i] != nullptr)
         {
@@ -85,7 +85,7 @@ Engine::~Engine()
 void Engine::init()
 {
     // Create all channels
-    for (U8 i = 0; i < CFDP_NUM_CHANNELS; ++i)
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i)
     {
         m_channels[i] = new Channel(this, i, this->m_manager);
         FW_ASSERT(m_channels[i] != nullptr);
@@ -691,7 +691,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
     Transaction *txn = NULL;
     Channel *chan = NULL;
 
-    FW_ASSERT(chan_id < CFDP_NUM_CHANNELS, chan_id, CFDP_NUM_CHANNELS);
+    FW_ASSERT(chan_id < Cfdp::NumChannels, chan_id, Cfdp::NumChannels);
 
     chan = m_channels[chan_id];
     FW_ASSERT(chan != NULL);
@@ -754,7 +754,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
 void Engine::setChannelFlowState(U8 channelId, Flow::T flowState)
 {
-    FW_ASSERT(channelId <= CFDP_NUM_CHANNELS, channelId, CFDP_NUM_CHANNELS);
+    FW_ASSERT(channelId <= Cfdp::NumChannels, channelId, Cfdp::NumChannels);
     m_channels[channelId]->setFlowState(flowState);
 }
 
@@ -763,8 +763,8 @@ void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep,
 {
     // CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
     //                   "CF: start class %d tx of file %lu:%.*s -> %lu:%.*s", cfdp_class + 1,
-    //                   (unsigned long)m_manager->getLocalEidParam(), CFDP_FILENAME_MAX_LEN,
-    //                   txn->m_history->fnames.src_filename, (unsigned long)dest_id, CFDP_FILENAME_MAX_LEN,
+    //                   (unsigned long)m_manager->getLocalEidParam(), MaxFileSize,
+    //                   txn->m_history->fnames.src_filename, (unsigned long)dest_id, MaxFileSize,
     //                   txn->m_history->fnames.dst_filename);
 
     txn->initTxFile(cfdp_class, keep, chan, priority);
@@ -787,7 +787,7 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
     Transaction *txn;
     Channel* chan = nullptr;
 
-    FW_ASSERT(chan_num < CFDP_NUM_CHANNELS, chan_num, CFDP_NUM_CHANNELS);
+    FW_ASSERT(chan_num < Cfdp::NumChannels, chan_num, Cfdp::NumChannels);
     chan = m_channels[chan_num];
 
     Status::T ret = Cfdp::Status::SUCCESS;
@@ -830,7 +830,7 @@ Transaction *Engine::startRxTransaction(U8 chan_num)
     Channel *chan = nullptr;
     Transaction *txn;
     
-    FW_ASSERT(chan_num < CFDP_NUM_CHANNELS, chan_num, CFDP_NUM_CHANNELS);
+    FW_ASSERT(chan_num < Cfdp::NumChannels, chan_num, Cfdp::NumChannels);
     chan = m_channels[chan_num];
 
     // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[QueueId::RX] < CF_MAX_SIMULTANEOUS_RX)
@@ -928,7 +928,7 @@ Status::T Engine::startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, c
     Status::T status = Cfdp::Status::SUCCESS;
     CfdpPollDir* pd = NULL;
 
-    FW_ASSERT(chanId < CFDP_NUM_CHANNELS, chanId, CFDP_NUM_CHANNELS);
+    FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
     FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
 
     // First check if the poll directory is already in use
@@ -961,7 +961,7 @@ Status::T Engine::stopPollDir(U8 chanId, U8 pollId)
     Status::T status = Cfdp::Status::SUCCESS;
     CfdpPollDir* pd = NULL;
 
-    FW_ASSERT(chanId < CFDP_NUM_CHANNELS, chanId, CFDP_NUM_CHANNELS);
+    FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
     FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
 
     // Check if the poll directory is in use
@@ -993,7 +993,7 @@ void Engine::cycle(void)
 {
     int i;
 
-    for (i = 0; i < CFDP_NUM_CHANNELS; ++i)
+    for (i = 0; i < Cfdp::NumChannels; ++i)
     {
         Channel* chan = m_channels[i];
         FW_ASSERT(chan != nullptr);
@@ -1167,7 +1167,7 @@ void Engine::cancelTransaction(Transaction *txn)
 bool Engine::isPollingDir(const char *src_file, U8 chan_num)
 {
     bool return_code = false;
-    char src_dir[CFDP_FILENAME_MAX_LEN] = "\0";
+    char src_dir[MaxFileSize] = "\0";
     CfdpPollDir * pd;
     int i;
 

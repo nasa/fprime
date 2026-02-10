@@ -669,7 +669,7 @@ CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir)
 void Channel::processPlaybackDirectory(Playback* pb)
 {
     Transaction* txn;
-    char path[CfdpManagerMaxFileSize];
+    char path[MaxFileSize];
     Os::Directory::Status status;
 
     // either there's no transaction (first one) or the last one was finished, so check for a new one
@@ -680,7 +680,7 @@ void Channel::processPlaybackDirectory(Playback* pb)
     {
         if (pb->pending_file[0] == 0)
         {
-            status = pb->dir.read(path, CfdpManagerMaxFileSize);
+            status = pb->dir.read(path, MaxFileSize);
             if (status == Os::Directory::NO_MORE_FILES)
             {
                 // TODO BPC: Emit playback success EVR

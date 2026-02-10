@@ -589,11 +589,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     CfdpManager component;
 
     //! Reusable buffer for allocation handler
-    U8 m_internalDataBuffer[CFDP_MAX_PDU_SIZE];
+    U8 m_internalDataBuffer[MaxPduSize];
 
     //! Storage for PDU copies (to avoid buffer reuse issues)
     static constexpr FwSizeType MAX_PDU_COPIES = 100;
-    U8 m_pduCopyStorage[MAX_PDU_COPIES][CFDP_MAX_PDU_SIZE];
+    U8 m_pduCopyStorage[MAX_PDU_COPIES][MaxPduSize];
     FwSizeType m_pduCopyCount;
 };
 

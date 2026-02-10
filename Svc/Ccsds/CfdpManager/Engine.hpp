@@ -501,7 +501,7 @@ class Engine {
     CfdpManager* m_manager;       
 
     //! Channel data structures
-    Channel* m_channels[CFDP_NUM_CHANNELS];
+    Channel* m_channels[Cfdp::NumChannels];
 
     //! Sequence number tracker for outgoing transactions
     TransactionSeq m_seqNum;

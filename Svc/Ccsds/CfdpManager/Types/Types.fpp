@@ -58,12 +58,12 @@ module Cfdp {
         ack_timer: U32 @< Acknowledge timer in seconds
         inactivity_timer: U32 @< Inactivity timer in seconds
         dequeue_enabled: Fw.Enabled @< if enabled, then the channel will make pending transactions active
-        move_dir: string size CfdpManagerMaxFileSize @< Move directory if not empty
+        move_dir: string size MaxFileSize @< Move directory if not empty
         max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
     }
 
     @< Struture for the configured array of CFDP channels
-    array ChannelArrayParams = [CfdpManagerNumChannels] ChannelParams
+    array ChannelArrayParams = [NumChannels] ChannelParams
 
     @< Structure for telemetry counters for a single CFDP channel
     struct ChannelTelemetry {
@@ -103,7 +103,7 @@ module Cfdp {
     }
 
     @< Structure for the telemetry array of CFDP channels
-    array ChannelTelemetryArray = [CfdpManagerNumChannels] ChannelTelemetry
+    array ChannelTelemetryArray = [NumChannels] ChannelTelemetry
 
 }
 }

@@ -11,11 +11,11 @@ param RxCrcCalcBytesPerWakeup: U32 \
     default 16384
 
 @ Location to store temporary files during uplink transactions
-param TmpDir: string size CfdpManagerMaxFileSize \
+param TmpDir: string size MaxFileSize \
     default "/tmp"
 
 @ Location to store files that were downlinked from a polling directory, but failed
-param FailDir: string size CfdpManagerMaxFileSize \
+param FailDir: string size MaxFileSize \
     default "/fail"
 
 @ Default CFDP channel for port-initiated file transfers

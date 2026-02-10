@@ -29,23 +29,23 @@ module Cfdp {
 
         # Downlink ports
         @ Port for outputting PDU data
-        output port dataOut: [CfdpManagerNumChannels] Fw.BufferSend
+        output port dataOut: [NumChannels] Fw.BufferSend
 
         @ Buffer that was sent via the dataOut port and is now being retruned
-        async input port dataReturnIn: [CfdpManagerNumChannels] Svc.ComDataWithContext
+        async input port dataReturnIn: [NumChannels] Svc.ComDataWithContext
 
         @ Port for allocating buffers to hold PDU data
-        output port bufferAllocate: [CfdpManagerNumChannels] Fw.BufferGet
+        output port bufferAllocate: [NumChannels] Fw.BufferGet
 
         @ Port for deallocating buffers allocated for PDU data
-        output port bufferDeallocate: [CfdpManagerNumChannels] Fw.BufferSend
+        output port bufferDeallocate: [NumChannels] Fw.BufferSend
 
         # Uplink ports
         @ Port for input PDU data
-        async input port dataIn: [CfdpManagerNumChannels] Fw.BufferSend
+        async input port dataIn: [NumChannels] Fw.BufferSend
 
         @ Return buffer that was recieved on the dataIn port
-        output port dataInReturn: [CfdpManagerNumChannels] Fw.BufferSend
+        output port dataInReturn: [NumChannels] Fw.BufferSend
 
         # DP ports
         @ File send request port

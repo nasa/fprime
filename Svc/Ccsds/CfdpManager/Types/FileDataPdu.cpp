@@ -52,7 +52,7 @@ U32 FileDataPdu::getMaxFileDataSize() {
         size += sizeof(U32);  // 4-byte offset
     }
 
-    return CFDP_MAX_PDU_SIZE - size;
+    return MaxPduSize - size;
 }
 
 Fw::SerializeStatus FileDataPdu::toBuffer(Fw::Buffer& buffer) const {

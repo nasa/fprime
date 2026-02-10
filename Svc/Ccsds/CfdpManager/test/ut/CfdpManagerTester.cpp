@@ -46,8 +46,8 @@ Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(
     FwIndexType portNum,
     FwSizeType size
 ) {
-    EXPECT_LT(size, CFDP_MAX_PDU_SIZE) << "Buffer size request is too large";
-    if (size >= CFDP_MAX_PDU_SIZE) {
+    EXPECT_LT(size, MaxPduSize) << "Buffer size request is too large";
+    if (size >= MaxPduSize) {
         return Fw::Buffer();
     }
     return Fw::Buffer(this->m_internalDataBuffer, size);
@@ -61,8 +61,8 @@ void CfdpManagerTester::from_dataOut_handler(
     EXPECT_LT(m_pduCopyCount, MAX_PDU_COPIES) << "Too many PDUs sent";
     if (m_pduCopyCount < MAX_PDU_COPIES) {
         FwSizeType copySize = fwBuffer.getSize();
-        if (copySize > CFDP_MAX_PDU_SIZE) {
-            copySize = CFDP_MAX_PDU_SIZE;
+        if (copySize > MaxPduSize) {
+            copySize = MaxPduSize;
         }
         memcpy(m_pduCopyStorage[m_pduCopyCount], fwBuffer.getData(), copySize);
 
