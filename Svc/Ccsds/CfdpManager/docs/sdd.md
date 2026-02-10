@@ -13,11 +13,24 @@ The protocol supports two operational modes:
 - Class 1 (Unacknowledged): Unreliable transfer with no acknowledgments, suitable for real-time or non-critical data where speed is prioritized
 - Class 2 (Acknowledged): Reliable transfer with acknowledgments, retransmissions, and gap detection, ensuring complete and verified file delivery
 
+### Protocol Data Units (PDUs)
+
+CFDP uses Protocol Data Units (PDUs) - structured messages with a common header and type-specific payloads:
+
+File Directive PDUs (control messages):
+- Metadata: Initiates transfer with filenames, file size, and options
+- EOF: Signals completion of file transmission with checksum
+- FIN: Reports final delivery status (Class 2 only)
+- ACK: Confirms receipt of EOF or FIN (Class 2 only)
+- NAK: Requests retransmission of missing segments (Class 2 only)
+
+File Data PDU: Carries file content segments with offset information
+
 For complete protocol details, refer to the [CCSDS 727.0-B-5 - CCSDS File Delivery Protocol (CFDP)](https://ccsds.org/Pubs/727x0b5e1.pdf) Blue Book specification.
 
 ## CFDP as an F' Component
 
-The CfdpManager component provides an F' implementation of the CFDP protocol and is designed to replace the standard F' [FileUplink](../../../FileUplink/docs/sdd.md) and [FileDownlink](../../../FileDownlink/docs/sdd.md) components with guaranteed file delivery capabilities. CfdpManager implements the CFDP Class 2 protocol with acknowledgments, retransmissions, and gap detection to ensure reliable file transfers even over lossy or intermittent communication links.
+The CfdpManager component provides an F' implementation of the CFDP protocol and is designed to replace the standard F' [FileUplink](../../../FileUplink/docs/sdd.md) and [FileDownlink](../../../FileDownlink/docs/sdd.md) components with the addition of guaranteed file delivery. CfdpManager implements the CFDP Class 2 protocol with acknowledgments, retransmissions, and gap detection to ensure reliable file transfers even over lossy or intermittent communication links.
 
 Substantial portions of this implementation were ported from [NASA's CF (CFDP) Application in the Core Flight System (cFS) version 3.0.0](https://github.com/nasa/CF/releases/tag/v3.0.0). The ported code includes:
 - Core CFDP engine and transaction management logic
@@ -239,11 +252,11 @@ sequenceDiagram
     Note over G_ACK: Armed on<br/>FIN send
 
     Spacecraft->>Ground: ACK(FIN)
+    Note over Spacecraft: Transaction complete
 
     deactivate G_ACK
     Note over G_ACK: Cancelled on<br/>ACK(FIN) received
 
-    Note over Spacecraft: Transaction complete
     Note over Ground: Transaction complete
 ```
 
@@ -253,8 +266,80 @@ sequenceDiagram
 - Ground detects missing data and sends NAK with gap information
 - Spacecraft retransmits requested segments
 - FIN PDU from receiver confirms final delivery status
-- ACK timers ensure protocol progress and detect failures
+- Timers ensure protocol progress and detect failures
   - Spacecraft ACK timer: Armed when EOF is sent, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
+- Transaction completes only after FIN/ACK exchange
+
+### Class 2 RX Transaction (Acknowledged)
+
+This diagram shows a Class 2 file reception at the spacecraft from ground with gap detection and retransmission. The scenario includes a missing File Data PDU that is detected and retransmitted via NAK.
+
+```mermaid
+sequenceDiagram
+    participant G_ACK as Ground<br/>ACK Timer
+    participant Ground
+    participant Spacecraft
+    participant S_NAK as Spacecraft<br/>NAK Timer
+    participant S_ACK as Spacecraft<br/>ACK Timer
+
+    Note over Ground: Initialize transaction
+
+    Ground->>Spacecraft: Metadata PDU<br/>(filename, size)
+
+    Ground--xSpacecraft: File Data PDU (1) [LOST]
+    Ground->>Spacecraft: File Data PDU (2)
+    Ground--xSpacecraft: File Data PDU (3) [LOST]
+    Ground->>Spacecraft: File Data PDU (4)
+
+    Ground->>Spacecraft: EOF PDU<br/>(checksum, file size)
+
+    activate G_ACK
+    Note over G_ACK: Armed on<br/>EOF send
+
+    Spacecraft->>Ground: ACK(EOF)
+
+    deactivate G_ACK
+    Note over G_ACK: Cancelled on<br/>ACK(EOF) received
+
+    Note over Spacecraft: Gaps detected<br/>(missing PDUs (1) and (3))
+
+    Spacecraft->>Ground: NAK<br/>(request PDUs (1) and (3))
+
+    activate S_NAK
+    Note over S_NAK: Armed on<br/>NAK send
+
+    Ground->>Spacecraft: File Data PDU (1) [RETRANSMIT]
+    Ground->>Spacecraft: File Data PDU (3) [RETRANSMIT]
+
+    deactivate S_NAK
+    Note over S_NAK: Cancelled on<br/>gaps filled
+
+    Note over Spacecraft: All data received<br/>Verify checksum
+
+    Spacecraft->>Ground: FIN PDU<br/>(delivery complete, file retained)
+    Note over Spacecraft: File saved and<br>ready for use
+
+    activate S_ACK
+    Note over S_ACK: Armed on<br/>FIN send
+
+    Ground->>Spacecraft: ACK(FIN)
+    Note over Ground: Transaction complete
+
+    deactivate S_ACK
+    Note over S_ACK: Cancelled on<br/>ACK(FIN) received
+
+    Note over Spacecraft: Transaction complete
+```
+
+**Key characteristics:**
+- Full acknowledgment and retransmission support
+- EOF is acknowledged to confirm reception
+- Spacecraft detects missing data and sends NAK with gap information
+- Ground retransmits requested segments
+- FIN PDU from receiver confirms final delivery status
+- Timers ensure protocol progress and detect failures
+  - Spacecraft NAK timer: Armed when NAK is sent, cancelled when **all** requested data is received. If the timer expires before receiving retransmitted data, the spacecraft sends another NAK and rearms the timer. After `ChannelConfig.nack_limit` retries without data, the transaction is abandoned with status `NAK_LIMIT_REACHED`
+  - Spacecraft ACK timer: Armed when FIN is sent, cancelled when ACK(FIN) is received. If the timer expires, the spacecraft retransmits FIN and rearms the timer. After `ChannelConfig.ack_limit` retries without ACK(FIN), the transaction is abandoned
 - Transaction completes only after FIN/ACK exchange
 
 ## Commands
