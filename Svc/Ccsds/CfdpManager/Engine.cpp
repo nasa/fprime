@@ -1192,7 +1192,7 @@ bool Engine::isPollingDir(const char *src_file, U8 chan_num)
 
 void Engine::handleNotKeepFile(Transaction *txn)
 {
-    Os::FileSystem::Status fileStatus;
+    Os::FileSystem::Status fileStatus = Os::FileSystem::OTHER_ERROR;
     Fw::String failDir;
     Fw::String moveDir;
 
@@ -1213,6 +1213,14 @@ void Engine::handleNotKeepFile(Transaction *txn)
                     //                                                   moveDir, fileStatus);
                 }
             }
+
+            // If move_dir is empty or move failed, delete the file
+            if(fileStatus != Os::FileSystem::OP_OK)
+            {
+                fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
+                // TODO BPC: emit failure EVR
+                (void) fileStatus;
+            }
         }
         else
         {
@@ -1230,6 +1238,14 @@ void Engine::handleNotKeepFile(Transaction *txn)
                         // m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename,
                         //                                                   failDir, fileStatus);
                     }
+                }
+
+                // If fail_dir is empty or move failed, delete the file
+                if(fileStatus != Os::FileSystem::OP_OK)
+                {
+                    fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
+                    // TODO BPC: emit failure EVR
+                    (void) fileStatus;
                 }
             }
         }
