@@ -79,48 +79,15 @@ Ports are organized as follows:
 
 ## Usage Examples
 
-```mermaid
-%%{init: {
-  "theme": "base",
-  "themeVariables": {
-    "background": "#0b1d26",
-    "primaryColor": "#5b8f9e",
-    "primaryTextColor": "#ffffff",
-    "primaryBorderColor": "#5b8f9e",
-    "lineColor": "#cfd8dc",
-    "fontSize": "14px"
-  }
-}}%%
+The following diagram shows typical CfdpManager port connections with other F' components:
 
-flowchart LR
-  subgraph FprimeRouter
-    FprimeRouter_fileOut["fileOut<br/>0"]
-  end
+![CfdpManager Usage Example](img/CfdpManager_usage.png)
 
-  subgraph CfdpManager
-    CfdpManager_dataIn["dataIn<br/>0"]
-    CfdpManager_dataOut["dataOut<br/>0"]
-    CfdpManager_sendFile["sendFile<br/>0"]
-    CfdpManager_fileDoneOut["fileDoneOut<br/>0"]
-  end
+This example demonstrates:
+- **Uplink data flow**: FprimeRouter deframes incoming CFDP PDUs and sends them to CfdpManager via `dataIn`
+- **Downlink data flow**: CfdpManager sends outgoing CFDP PDUs to ComQueue via `dataOut` for transmission
+- **Port-based file transfers**: DpCatalog initiates file transfers via CfdpManager's `fileIn` port and receives completion notifications via `fileDoneOut`
 
-  subgraph ComQueue
-    ComQueue_bufferQueueIn["bufferQueueIn<br/>0"]
-  end
-
-  subgraph DpCatalog
-    DpCatalog_fileOut["fileOut<br/>0"]
-    DpCatalog_fileDone["fileDone<br/>1"]
-  end
-
-  FprimeRouter_fileOut --> CfdpManager_dataIn
-  CfdpManager_dataOut --> ComQueue_bufferQueueIn
-  DpCatalog_fileOut --> CfdpManager_sendFile
-  CfdpManager_fileDoneOut --> DpCatalog_fileDone
-```
-
-### Typical Usage
-And the typical usage of the component here
 
 ## Component States
 Add component states in the chart below
