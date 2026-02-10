@@ -422,8 +422,19 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | pollCounter | U8 | Number of active directory poll operations |
 
 ## Requirements
-Add requirements in the chart below
-| Name | Description | Validation |
-|---|---|---|
-|---|---|---|
+
+| Requirement | Description | Rationale | Verification Method |
+|---|---|---|---|
+| CFDP-001 | `CfdpManager` shall support CFDP Class 1 (unacknowledged) file transfers | Provides unreliable but low-overhead file transfer for non-critical data where speed is prioritized over guaranteed delivery | Unit Test, System Test |
+| CFDP-002 | `CfdpManager` shall support CFDP Class 2 (acknowledged) file transfers with automatic retransmission | Ensures reliable file delivery with guaranteed completion even over lossy communication links | Unit Test, System Test |
+| CFDP-003 | `CfdpManager` shall detect missing file segments using gap tracking and request retransmission via NAK PDUs | Provides the mechanism to recover from lost file data PDUs in Class 2 transfers | Unit Test |
+| CFDP-004 | `CfdpManager` shall verify file integrity using CRC checksums and reject files with checksum mismatches | Ensures data corruption is detected and prevents accepting corrupted files | Unit Test |
+| CFDP-005 | `CfdpManager` shall support multiple simultaneous file transfers across configurable channels | Allows concurrent file operations to maximize throughput and operational flexibility | Unit Test, System Test |
+| CFDP-006 | `CfdpManager` shall support directory playback operations to transfer all files from a specified directory | Provides batch file transfer capability for operational efficiency | Unit Test |
+| CFDP-007 | `CfdpManager` shall support directory polling operations to automatically detect and transfer new files at configurable intervals | Enables autonomous file downlink without ground intervention | Unit Test |
+| CFDP-008 | `CfdpManager` shall enforce configurable ACK and NAK retry limits and abandon transactions that exceed these limits | Prevents infinite retry loops and ensures forward progress when peer becomes unresponsive | Unit Test |
+| CFDP-009 | `CfdpManager` shall detect transaction inactivity using configurable timeout values and abandon inactive transactions | Reclaims resources from stalled transactions and prevents resource exhaustion | Unit Test |
+| CFDP-010 | `CfdpManager` shall support configurable file archiving to move completed files instead of deletion | Preserves files for audit trails and operational analysis while managing storage | Unit Test |
+| CFDP-011 | `CfdpManager` shall support both command-initiated and port-initiated file transfers | Allows both ground operators and onboard components to initiate file transfers | Unit Test, System Test |
+| CFDP-012 | `CfdpManager` shall support flow control to freeze and resume channel operations | Provides mechanism to temporarily halt file transfers during critical spacecraft operations | Unit Test |
 
