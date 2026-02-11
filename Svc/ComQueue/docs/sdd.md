@@ -58,6 +58,7 @@ The diagram below shows the `Svc::ComQueue` component.
 
 ### 4.2. State
 `Svc::ComQueue` maintains the following state:
+
 1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
 2. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
 3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
@@ -81,6 +82,7 @@ Buffers are queued when in `WAITING` state.
 
 ### 4.3 Model Configuration
 `Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
+
 1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comPacketQueueIn` port array.
 2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `bufferQueueIn` port array.
 
@@ -101,6 +103,7 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
 #### 4.5.1 bufferQueueIn
 The `bufferQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
 It does the following:
+
 1. Ensures that the port number is between zero and the value of the buffer size 
 2. Enqueue the buffer onto the `m_queues` instance 
 3. Returns a warning if `m_queues` is full
@@ -111,6 +114,7 @@ is added to the queue.
 #### 4.5.2 comPacketQueueIn
 The `comPacketQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
 It does the following:
+
 1. Ensures that the port number is between zero and the value of the com buffer size
 2. Enqueue the com buffer onto the `m_queues` instance
 3. Returns a warning if `m_queues` is full

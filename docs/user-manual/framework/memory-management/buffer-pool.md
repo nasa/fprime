@@ -138,6 +138,7 @@ Allocating more memory than available will result in buffers with size 0 being r
 buffers must be allocated and returned using the same instance of Svc.BufferManager. 
 
 Buffer manager will assert under the following conditions:
+
 1. A returned buffer has the incorrect manager ID (returned to the wrong instance).
 2. A returned buffer has an incorrect buffer ID (invalid buffer returned).
 3. A returned buffer is returned with a correct buffer ID but hasn't already been allocated.
@@ -175,6 +176,7 @@ The Svc::BufferManagerComponentImpl::BufferBins is a table specifying N buffers 
 bins can be specified. The table is copied when setup() is called, so it does not need to be retained after the call.
 
 The rules for specifying bins:
+
 1. For each bin (BufferBins.bins[n]), specify the size of the buffers (bufferSize) in the bin and how many buffers for
    that bin (numBuffers).
 2. The bins must be ordered based on an increasing bufferSize to allow BufferManager to search for available buffers.

@@ -189,6 +189,7 @@ Example JSON of qualified name
 
 Type information for integer constant dictionary entries is determined by
 checking the sign of a constant and will always default to the maximum integer size (64 bits):
+
 - If the constant is positive, the type of the constant is U64.
 - If the constant is negative, the type of the constant is I64.
   
