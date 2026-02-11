@@ -17,18 +17,6 @@ namespace Os {
 namespace Posix {
 namespace File {
 
-// Sets up the default file permission as user read + user write
-// Some posix systems (e.g. Darwin) use the older S_IREAD and S_IWRITE flags while other systems (e.g. Linux) use the
-// newer S_IRUSR and S_IWUSR flags, and some don't support these flags at all. Hence, we look if flags are defined then
-// set USER_FLAGS to be the set of flags supported or 0 in the case neither is defined.
-#if defined(S_IREAD) && defined(S_IWRITE)
-#define USER_FLAGS (S_IREAD | S_IWRITE)
-#elif defined(S_IRUSR) && defined(S_IWUSR)
-#define USER_FLAGS (S_IRUSR | S_IWUSR)
-#else
-#define USER_FLAGS (0)
-#endif
-
 // O_SYNC is not defined on every system. This will set up the SYNC_FLAGS variable to be O_SYNC when defined and
 // (0) when not defined. This allows OPEN_SYNC_WRITE to fall-back to OPEN_WRITE on those systems.
 #if defined(O_SYNC)
@@ -78,6 +66,36 @@ PosixFile& PosixFile::operator=(const PosixFile& other) {
     return *this;
 }
 
+mode_t PosixFile::map_open_create_mode(const U32 create_mode) {
+    mode_t out_mode = 0;
+
+    // Some posix systems (e.g. Darwin) use the older S_IREAD and S_IWRITE flags
+    // while other systems (e.g. Linux) use the newer S_IRUSR and S_IWUSR flags.
+#if defined(S_IREAD)
+    out_mode |= (create_mode & Os::FILE_MODE_IRUSR) ? S_IREAD : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IWUSR) ? S_IWRITE : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IXUSR) ? S_IEXEC : 0;
+#else
+    out_mode |= (create_mode & Os::FILE_MODE_IRUSR) ? S_IRUSR : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IWUSR) ? S_IWUSR : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IXUSR) ? S_IXUSR : 0;
+#endif
+
+    out_mode |= (create_mode & Os::FILE_MODE_IRGRP) ? S_IRGRP : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IWGRP) ? S_IWGRP : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IXGRP) ? S_IXGRP : 0;
+
+    out_mode |= (create_mode & Os::FILE_MODE_IROTH) ? S_IROTH : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IWOTH) ? S_IWOTH : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_IXOTH) ? S_IXOTH : 0;
+
+    out_mode |= (create_mode & Os::FILE_MODE_ISUID) ? S_ISUID : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_ISGID) ? S_ISGID : 0;
+    out_mode |= (create_mode & Os::FILE_MODE_ISVTX) ? S_ISVTX : 0;
+
+    return out_mode;
+}
+
 PosixFile::Status PosixFile::open(const char* filepath,
                                   PosixFile::Mode requested_mode,
                                   PosixFile::OverwriteType overwrite) {
@@ -104,7 +122,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             FW_ASSERT(0, requested_mode);
             break;
     }
-    int descriptor = ::open(filepath, mode_flags, USER_FLAGS);
+    int descriptor = ::open(filepath, mode_flags, map_open_create_mode(Os::FILE_DEFAULT_CREATE_MODE));
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR == descriptor) {
         int errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);

@@ -82,7 +82,7 @@ void AssertHook::reportAssert(FILE_NAME_ARG file,
                               FwAssertArgType arg4,
                               FwAssertArgType arg5,
                               FwAssertArgType arg6) {
-    CHAR destBuffer[FW_ASSERT_TEXT_SIZE];
+    CHAR destBuffer[FW_ASSERT_TEXT_SIZE] = {0};
     defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, destBuffer,
                         static_cast<FwSizeType>(sizeof(destBuffer)));
     // print message

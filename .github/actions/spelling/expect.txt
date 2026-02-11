@@ -1,4 +1,5 @@
 Aadil
+AArray
 AClass
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
@@ -39,6 +40,7 @@ bibtex
 Bies
 binaryfile
 BINDIR
+bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -202,6 +204,7 @@ eabi
 eabihf
 eay
 ECLIPSEHELP
+EEnum
 EHAs
 eip
 Elts
@@ -285,6 +288,7 @@ getty
 ghprb
 gitmodules
 gmock
+GNC
 Gnd
 gnueabihf
 googletest
@@ -720,6 +724,7 @@ tparam
 TPP
 trinomials
 tts
+Tumbar
 typedef
 typedef'ed
 uart

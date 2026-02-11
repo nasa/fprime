@@ -277,7 +277,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
 
     // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
-    FwPacketDescriptorType descriptor;
+    FwPacketDescriptorType descriptor = 0;
     Fw::SerializeStatus status = comBuffer.deserializeTo(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     context.set_apid(static_cast<ComCfg::Apid::T>(descriptor));

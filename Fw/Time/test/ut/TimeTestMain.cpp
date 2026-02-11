@@ -29,6 +29,11 @@ TEST(TimeTestNominal, ZeroTimeEquality) {
     tester.test_ZeroTimeEquality();
 }
 
+TEST(TimeTestNominal, TimeToTimeValue) {
+    Fw::TimeTester tester;
+    tester.test_TimeToTimeValue();
+}
+
 // TimeInterval tests
 TEST(TimeIntervalTestNominal, test_TimeIntervalInstantiateTest) {
     Fw::TimeIntervalTester tester;
@@ -53,6 +58,11 @@ TEST(TimeIntervalTestNominal, test_TimeIntervalAdditionTest) {
 TEST(TimeIntervalTestNominal, test_TimeIntervalSubtractionTest) {
     Fw::TimeIntervalTester tester;
     tester.test_TimeIntervalSubtractionTest();
+}
+
+TEST(TimeIntervalTestNominal, test_TimeIntervalToTimeIntervalValue) {
+    Fw::TimeIntervalTester tester;
+    tester.test_TimeIntervalToTimeIntervalValue();
 }
 
 int main(int argc, char* argv[]) {

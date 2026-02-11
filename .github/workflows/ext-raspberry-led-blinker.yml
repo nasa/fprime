@@ -5,15 +5,15 @@ name: "External Repo: RPI LedBlinker"
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
     paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -85,6 +85,7 @@ jobs:
         run: |
           python -m venv venv
           . venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
