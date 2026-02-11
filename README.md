@@ -1,3 +1,5 @@
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nasa/fprime)
+
 <h2 align="center">A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework</h2>
 <p align="center"><br/>
 <img width="200em" src="docs/img/fprime-logo.svg"><br/>
