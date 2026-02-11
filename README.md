@@ -23,9 +23,34 @@ Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
 ## System Requirements
 
 1. Linux, Windows with WSL, or macOS operating system
-2. [git](https://git-scm.com/)
-3. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
-4. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
+
+2. [git](https://git-scm.com/)<br>
+   Verify satisfaction with `git --version`
+
+3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html)<br>
+   Verify satisfaction with `python --version` and `python -m venv -h`.  Your system might use an alternate like `python3` or `python3.13`.
+
+4. [PIP](https://pypi.org/project/pip/).
+Verify satisfaction with `pip --version`.  On your system it might be `pip3` or `pipx`.<br>
+
+5. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
+  <details><summary>How to Verify compiler</summary>
+`g++  --version` and then create, build, and run a test program.  For example, create a file named hello.cpp with contents:
+
+```cpp
+#include <iostream>
+int main(void){
+    std::cout << "Hello, World!" << std::endl;
+}
+```
+
+then build and run it, for example like:
+```bash
+% g++ -o hi hello.cpp
+% ./hi
+Hello, World!
+```
+</details>
 
 
 ## Getting Started
