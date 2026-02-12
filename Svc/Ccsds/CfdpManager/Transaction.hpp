@@ -295,7 +295,7 @@ class Transaction {
     /** @brief Perform tick (time-based) processing for S transactions.
      *
      * This function is called on every transaction by the engine on
-     * every CFDP wakeup. This is where flags are checked to send EOF or
+     * every scheduler cycle. This is where flags are checked to send EOF or
      * FIN-ACK. If nothing else is sent, it checks to see if a NAK
      * retransmit must occur.
      *
@@ -450,7 +450,7 @@ class Transaction {
     /** @brief Perform tick (time-based) processing for R transactions.
      *
      * This function is called on every transaction by the engine on
-     * every CFDP wakeup. This is where flags are checked to send ACK,
+     * every scheduler cycle. This is where flags are checked to send ACK,
      * NAK, and FIN. It checks for inactivity timer and processes the
      * ACK timer. The ACK timer is what triggers re-sends of PDUs
      * that require acknowledgment.
@@ -659,15 +659,15 @@ class Transaction {
     /************************************************************************/
     /** @brief Calculate up to the configured amount of bytes of CRC.
      *
-     * The configuration table has a number of bytes to calculate per
-     * transaction per wakeup. At each wakeup, the file is read and
-     * this number of bytes are calculated. This function will set
+     * The RxCrcCalcBytesPerCycle parameter specifies the number of bytes
+     * to calculate per transaction per scheduler cycle. At each cycle, the file is
+     * read and this number of bytes are calculated. This function will set
      * the checksum error condition code if the final CRC does not match.
      *
      * @par PTFO
-     *       Increase throughput by consuming all CRC bytes per wakeup in
+     *       Increase throughput by consuming all CRC bytes per scheduler cycle in
      *       transaction-order. This would require a change to the meaning
-     *       of the value in the configuration table.
+     *       of the RxCrcCalcBytesPerCycle parameter.
      *
      * @retval Cfdp::Status::SUCCESS on completion.
      * @retval Cfdp::Status::CFDP_ERROR on non-completion.

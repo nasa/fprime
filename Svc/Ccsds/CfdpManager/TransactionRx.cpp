@@ -934,7 +934,7 @@ Status::T Transaction::r2CalcCrcChunk() {
     FwSizeType read_size;
     Os::File::Status fileStatus;
     Status::T ret = Cfdp::Status::SUCCESS;
-    FileSize rx_crc_calc_bytes_per_wakeup = 0;
+    FileSize rx_crc_calc_bytes_per_cycle = 0;
 
     memset(buf, 0, sizeof(buf));
 
@@ -967,10 +967,10 @@ Status::T Transaction::r2CalcCrcChunk() {
 
     // Process file in chunks
     if (ret == Cfdp::Status::SUCCESS) {
-        rx_crc_calc_bytes_per_wakeup = this->m_cfdpManager->getRxCrcCalcBytesPerWakeupParam();
+        rx_crc_calc_bytes_per_cycle = this->m_cfdpManager->getRxCrcCalcBytesPerCycleParam();
 
         while ((ret == Cfdp::Status::SUCCESS) &&
-               (count_bytes < rx_crc_calc_bytes_per_wakeup) &&
+               (count_bytes < rx_crc_calc_bytes_per_cycle) &&
                (this->m_state_data.receive.r2.rx_crc_calc_bytes < this->m_fsize))
         {
             want_offs_size = this->m_state_data.receive.r2.rx_crc_calc_bytes + sizeof(buf);

@@ -200,7 +200,7 @@ The transmission throttling mechanism works in conjunction with buffer allocatio
 
 #### Receive Throttling
 
-Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled wakeup cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
+Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled execution cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
 
 ## Sequence Diagrams
 
@@ -393,7 +393,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 | Constant | Purpose |
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
-| `MaxFilePathSize` | Maximum length for file path strings. Used to size per-channel string parameters (`tmp_dir`, `fail_dir`, `move_dir`) and internal file path buffers. |
+| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`) and internal file path buffers. |
 | `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
 
 ### FPP Types (CfdpCfg.fpp)
@@ -414,7 +414,7 @@ These types define the size of CFDP protocol fields:
 |----------|---------|
 | `CFDP_NAK_MAX_SEGMENTS` | Maximum NAK segments supported in a NAK PDU. When sending or receiving NAK PDUs, this is the maximum number of segment requests supported. Should match ground CFDP engine configuration. |
 | `CFDP_MAX_TLV` | Maximum TLVs (Type-Length-Value) per PDU. Limits the number of TLV metadata fields in EOF and FIN PDUs for diagnostic information (entity IDs, fault handler overrides, messages). |
-| `CFDP_R2_CRC_CHUNK_SIZE` | Class 2 CRC calculation chunk size. Buffer size for CRC calculation upon file completion. Larger values use more stack but complete faster. Total bytes per wakeup controlled by `RxCrcCalcBytesPerWakeup` parameter. |
+| `CFDP_R2_CRC_CHUNK_SIZE` | Class 2 CRC calculation chunk size. Buffer size for CRC calculation upon file completion. Larger values use more stack but complete faster. Total bytes per scheduler cycle controlled by `RxCrcCalcBytesPerCycle` parameter. |
 | `CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION` | RX chunks per transaction per channel (array). For Class 2 receive transactions, each chunk tracks a contiguous received file segment. Used for gap detection and NAK generation. Array size must match `NumChannels`. |
 | `CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION` | TX chunks per transaction per channel (array). For Class 2 transmit transactions, each chunk tracks a gap requested via NAK that needs retransmission. Array size must match `NumChannels`. |
 
@@ -425,7 +425,7 @@ These types define the size of CFDP protocol fields:
 | `CFDP_MAX_SIMULTANEOUS_RX` | Maximum simultaneous file receives. Each channel can support this many active/concurrent receive transactions. Contributes to total transaction pool size. |
 | `CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN` | Maximum commanded playback files per channel. Maximum number of outstanding ground-commanded file transmits per channel. |
 | `CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN` | Maximum commanded playback directories per channel. Each channel can support this many ground-commanded directory playbacks. |
-| `CFDP_MAX_POLLING_DIR_PER_CHAN` | Maximum polling directories per channel. Affects configuration table size - there must be an entry (can be empty) for each polling directory per channel. |
+| `CFDP_MAX_POLLING_DIR_PER_CHAN` | Maximum polling directories per channel. Determines the size of the per-channel polling directory array. |
 | `CFDP_NUM_TRANSACTIONS_PER_PLAYBACK` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
 | `CFDP_NUM_HISTORIES_PER_CHANNEL` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
 
@@ -448,7 +448,7 @@ These types define the size of CFDP protocol fields:
 |---|---|
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
 | OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
-| RxCrcCalcBytesPerWakeup | Maximum number of received file bytes to process for CRC calculation in a single execution cycle. Prevents blocking during large file verification |
+| RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
 | FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
 | FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |

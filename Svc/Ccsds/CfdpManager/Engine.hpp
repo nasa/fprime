@@ -114,7 +114,7 @@ class Engine {
     void init();
 
     /**
-     * @brief Cycle the engine once per wakeup
+     * @brief Cycle the engine once per scheduler call
      *
      * This drives all CFDP protocol processing
      */

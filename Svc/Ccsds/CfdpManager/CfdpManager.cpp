@@ -482,12 +482,12 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
 
     return chunkSize;
   }
-  U32 CfdpManager:: getRxCrcCalcBytesPerWakeupParam(void)
+  U32 CfdpManager:: getRxCrcCalcBytesPerCycleParam(void)
   {
     Fw::ParamValid valid;
-    
+
     // Check for coding errors as all CFDP parameters must have a default
-    U32 rxSize = this->paramGet_RxCrcCalcBytesPerWakeup(valid);
+    U32 rxSize = this->paramGet_RxCrcCalcBytesPerCycle(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 

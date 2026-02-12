@@ -260,10 +260,10 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //! \return Maximum size in bytes for file data segments in outgoing PDUs
   U32 getOutgoingFileChunkSizeParam(void);
 
-  //! Get the RX CRC calculation bytes per wakeup parameter
+  //! Get the RX CRC calculation bytes per scheduler cycle parameter
   //!
   //! \return Number of bytes to process per cycle when calculating received file CRC
-  U32 getRxCrcCalcBytesPerWakeupParam(void);
+  U32 getRxCrcCalcBytesPerCycleParam(void);
 
   //! Get the temporary directory parameter for a channel
   //!

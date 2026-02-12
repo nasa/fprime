@@ -210,7 +210,7 @@ void Channel::cycleTx()
         // NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
         // PDUs that can be sent once we get to here
         if (!this->m_cur)
-        { // don't enter if cur is set, since we need to pick up where we left off on tick processing next wakeup
+        { // don't enter if cur is set, since we need to pick up where we left off on tick processing next scheduler cycle
 
             // TODO BPC: refactor all while loops
             while (true)
@@ -281,7 +281,7 @@ void Channel::tickTransactions()
 
             if (args.early_exit)
             {
-                // early exit means we ran out of available outgoing messages this wakeup.
+                // early exit means we ran out of available outgoing messages this scheduler cycle.
                 // If current tick type is NAK response, then reset tick type. It would be
                 // bad to let NAK response starve out RX or TXW ticks on the next cycle.
                 //

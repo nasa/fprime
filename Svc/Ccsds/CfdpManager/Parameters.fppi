@@ -6,8 +6,8 @@ param LocalEid: Cfdp.EntityId \
 param OutgoingFileChunkSize: U32 \
     default 480
 
-@ The maximum number of received bytes to calculate a CRC for in a single wakeup period
-param RxCrcCalcBytesPerWakeup: U32 \
+@ The maximum number of received bytes to calculate a CRC for in a single scheduler cycle
+param RxCrcCalcBytesPerCycle: U32 \
     default 16384
 
 @ Default CFDP channel for fileIn port-initiated file transfers

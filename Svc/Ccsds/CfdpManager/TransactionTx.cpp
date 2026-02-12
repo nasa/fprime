@@ -297,7 +297,7 @@ void Transaction::sTickNak(int *cont) {
         status = this->sCheckAndRespondNak(&nakProcessed);
         if ((status == Cfdp::Status::SUCCESS) && nakProcessed)
         {
-            *cont = 1; // cause dispatcher to re-enter this wakeup
+            *cont = 1; // cause dispatcher to re-enter this scheduler cycle
         }
     }
 }
