@@ -679,6 +679,8 @@ class FpySequencer : public FpySequencerComponentBase {
         U8 nextStatementOpcode = 0;
         // if the next statement is a cmd directive, the opcode of that cmd
         FwOpcodeType nextCmdOpcode = 0;
+        // the index of the next statement we're going to execute
+        U32 nextStatementIndex = 0;
         // the size of the stack. store this separately from the real stack size
         // so we can avoid changing this during runtime, only modify it during
         // debug
