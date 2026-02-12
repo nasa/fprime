@@ -307,7 +307,6 @@ sequenceDiagram
   - NAKs received during file data transmission (before EOF is sent) are processed immediately
   - Requested gap segments are queued and retransmitted with priority over new file data
   - This allows gaps to be filled proactively as they are detected, rather than waiting for EOF acknowledgment
-  - For detailed NAK processing behavior across all transmission states, see [NAK Before EOF Behavior Analysis](nak-before-eof-behavior.md)
 - FIN PDU from receiver confirms final delivery status
 - Timers ensure protocol progress and detect failures
   - Spacecraft ACK timer: Armed when EOF is sent with duration `ChannelConfig.ack_timer`, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
