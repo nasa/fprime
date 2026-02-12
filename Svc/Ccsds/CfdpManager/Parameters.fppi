@@ -10,14 +10,6 @@ param OutgoingFileChunkSize: U32 \
 param RxCrcCalcBytesPerWakeup: U32 \
     default 16384
 
-@ Location to store temporary files during uplink transactions
-param TmpDir: string size MaxFilePathSize \
-    default "/tmp"
-
-@ Location to store files that were downlinked from a polling directory, but failed
-param FailDir: string size MaxFilePathSize \
-    default "/fail"
-
 @ Default CFDP channel for fileIn port-initiated file transfers
 param FileInDefaultChannel: U8 \
     default 0
@@ -48,7 +40,9 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
-            max_outgoing_pdus_per_cycle = 32 \
+            max_outgoing_pdus_per_cycle = 32, \
+            tmp_dir = "/tmp", \
+            fail_dir = "/fail" \
         }, \
         {
             ack_limit = 4, \
@@ -57,6 +51,8 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
-            max_outgoing_pdus_per_cycle = 32 \
+            max_outgoing_pdus_per_cycle = 32, \
+            tmp_dir = "/tmp", \
+            fail_dir = "/fail" \
         } \
     ]

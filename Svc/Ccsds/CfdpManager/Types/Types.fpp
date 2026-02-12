@@ -66,6 +66,8 @@ module Cfdp {
         dequeue_enabled: Fw.Enabled @< if enabled, then the channel will make pending transactions active
         move_dir: string size MaxFilePathSize @< Move directory if not empty
         max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
+        tmp_dir: string size MaxFilePathSize @< Temporary directory for uplink file reception
+        fail_dir: string size MaxFilePathSize @< Directory for failed poll files
     }
 
     @< Structure for the configured array of CFDP channels

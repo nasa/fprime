@@ -265,15 +265,17 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //! \return Number of bytes to process per cycle when calculating received file CRC
   U32 getRxCrcCalcBytesPerWakeupParam(void);
 
-  //! Get the temporary directory parameter
+  //! Get the temporary directory parameter for a channel
   //!
+  //! \param channelIndex [in] Index of the channel
   //! \return Path to temporary directory for in-progress file transfers
-  Fw::String getTmpDirParam(void);
+  Fw::String getTmpDirParam(U8 channelIndex);
 
-  //! Get the failure directory parameter
+  //! Get the failure directory parameter for a channel
   //!
+  //! \param channelIndex [in] Index of the channel
   //! \return Path to directory where failed transfers are moved
-  Fw::String getFailDirParam(void);
+  Fw::String getFailDirParam(U8 channelIndex);
 
   //! Get the ACK limit parameter for a channel
   //!

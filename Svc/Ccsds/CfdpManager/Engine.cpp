@@ -1268,7 +1268,7 @@ void Engine::handleNotKeepFile(Transaction *txn)
             if (this->isPollingDir(txn->m_history->fnames.src_filename.toChar(), txn->getChannelId()))
             {
                 // If fail directory is defined attempt move
-                failDir = m_manager->getFailDirParam();
+                failDir = m_manager->getFailDirParam(txn->getChannelId());
                 if(failDir.length() > 0)
                 {
                     fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());

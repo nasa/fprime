@@ -368,7 +368,7 @@ void Transaction::rInit() {
     {
         if (!this->m_flags.rx.md_recv)
         {
-            tmpDir = this->m_cfdpManager->getTmpDirParam();
+            tmpDir = this->m_cfdpManager->getTmpDirParam(this->m_chan_num);
             /* we need to make a temp file and then do a NAK for md PDU */
             /* the transaction already has a history, and that has a buffer that we can use to
              * hold the temp filename which is defined by the sequence number and the source entity ID */

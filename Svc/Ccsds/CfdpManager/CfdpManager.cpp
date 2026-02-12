@@ -494,28 +494,36 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex)
     return rxSize;
   }
   
-  Fw::String CfdpManager:: getTmpDirParam(void)
+  Fw::String CfdpManager:: getTmpDirParam(U8 channelIndex)
   {
     Fw::ParamValid valid;
-    
+
+    FW_ASSERT(channelIndex < Cfdp::NumChannels, channelIndex, Cfdp::NumChannels);
+
     // Check for coding errors as all CFDP parameters must have a default
-    Fw::String tmpDir = this->paramGet_TmpDir(valid);
+    // Get the array first
+    ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
-    return tmpDir;
+    // Now get individual parameter
+    return paramArray[channelIndex].get_tmp_dir();
   }
 
-  Fw::String CfdpManager:: getFailDirParam(void)
+  Fw::String CfdpManager:: getFailDirParam(U8 channelIndex)
   {
     Fw::ParamValid valid;
-    
+
+    FW_ASSERT(channelIndex < Cfdp::NumChannels, channelIndex, Cfdp::NumChannels);
+
     // Check for coding errors as all CFDP parameters must have a default
-    Fw::String failDir = this->paramGet_TmpDir(valid);
+    // Get the array first
+    ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
     FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
               static_cast<FwAssertArgType>(valid.e));
 
-    return failDir;
+    // Now get individual parameter
+    return paramArray[channelIndex].get_fail_dir();
   }
 
   U8 CfdpManager:: getAckLimitParam(U8 channelIndex)
