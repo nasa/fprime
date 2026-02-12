@@ -17,14 +17,12 @@ The protocol supports two operational modes:
 
 CFDP uses Protocol Data Units (PDUs) - structured messages with a common header and type-specific payloads:
 
-File Directive PDUs (control messages):
-- Metadata: Initiates transfer with filenames, file size, and options
-- EOF: Signals completion of file transmission with checksum
-- FIN: Reports final delivery status (Class 2 only)
-- ACK: Confirms receipt of EOF or FIN (Class 2 only)
-- NAK: Requests retransmission of missing segments (Class 2 only)
-
-File Data PDU: Carries file content segments with offset information
+ - Metadata: Initiates transfer with filenames, file size, and options
+ - File Data: Carries file content segments with offset information
+ - EOF: Signals completion of file transmission with checksum
+ - FIN: Reports final delivery status (Class 2 only)
+ - ACK: Confirms receipt of EOF or FIN (Class 2 only)
+ - NAK: Requests retransmission of missing segments (Class 2 only)
 
 For complete protocol details, refer to the [CCSDS 727.0-B-5 - CCSDS File Delivery Protocol (CFDP)](https://ccsds.org/Pubs/727x0b5e1.pdf) Blue Book specification.
 
@@ -87,7 +85,7 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| fileIn | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated as follows: (1) `channelId` and `destEid` are read from component parameters `PortDefaultChannel` and `PortDefaultDestEntityId`, (2) `cfdpClass` is hardcoded to `CLASS_2` , (3) `keep` is hardcoded to `KEEP`, (4) `priority` is hardcoded to `0` (highest priority). The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
+| fileIn | guarded input | `Svc.SendFileRequest` | Programmatic file send request interface. Allows other components to initiate CFDP file transfers without using commands. Transaction arguments are populated from component parameters: `FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`. The `offset` and `length` parameters are currently unsupported and must be `0`, or `STATUS_INVALID` is returned|
 | fileDoneOut | output | `Svc.SendFileComplete` | Asynchronous notification of file transfer completion for transfers initiated via `fileIn` port. Provides final transfer status. Only invoked for port-initiated transactions (not command-initiated). |
 
 ## Usage Examples
@@ -121,7 +119,7 @@ The design of `CfdpManager` assumes the following:
 
 7. Received files are written to a temporary directory (`TmpDir` parameter) during transfer and moved to their final destination upon successful completion.
 
-8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`PortDefaultChannel`, `PortDefaultDestEntityId`) and are always Class 2 with highest priority.
+8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`).
 
 ### Main Class Hierarchy
 
@@ -181,6 +179,28 @@ Concrete PDU types (all in [Types/](../Types/) directory):
 
 **Utilities:**
 - Utils ([Utils.hpp](../Utils.hpp)): Utility functions for transaction traversal, status conversion, and protocol helpers
+
+### Transmission and Receive Throttling
+
+#### Transmission Throttling
+
+Transmission throttling governs how many outgoing PDUs can be sent in a single execution cycle of the component. This mechanism prevents the CFDP engine from overwhelming downstream components (such as communication queues or radio interfaces) with excessive PDU traffic in a single scheduler invocation.
+
+**Configuration:**
+
+Transmission throttling is controlled by the `ChannelConfig.max_outgoing_pdus_per_cycle` parameter, which specifies the maximum number of outgoing PDUs that can be transmitted per channel per execution cycle. This limit applies to all outgoing PDU types including Metadata, File Data, EOF, ACK, NAK, and FIN PDUs.
+
+**Implementation:**
+
+The transmission throttling mechanism is implemented through a per-channel outgoing PDU counter that is reset at the beginning of each execution cycle. When a transaction requests a buffer to send a PDU, the implementation checks if the counter has reached the configured limit. If under the limit, the buffer is allocated and the counter is incremented. If the limit is reached, buffer allocation is denied and the transaction is deferred to the next cycle, with processing resuming from where it left off.
+
+**Buffer Management:**
+
+The transmission throttling mechanism works in conjunction with buffer allocation from downstream components. Two failure modes can occur: throttling limit reached (the `max_outgoing_pdus_per_cycle` limit is reached and no buffer allocation is attempted) or buffer exhaustion (the downstream buffer pool is exhausted and buffer allocation fails even when under the throttling limit). In both cases, the transaction defers PDU transmission until the next cycle by returning to a pending state and resuming processing in the next execution cycle. For Class 2 transactions, protocol timers (ACK, NAK, inactivity) continue running and will eventually trigger retransmissions or transaction abandonment if PDUs cannot be sent.
+
+#### Receive Throttling
+
+Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled wakeup cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
 
 ## Sequence Diagrams
 
@@ -428,8 +448,11 @@ These types define the size of CFDP protocol fields:
 | RxCrcCalcBytesPerWakeup | Maximum number of received file bytes to process for CRC calculation in a single execution cycle. Prevents blocking during large file verification |
 | TmpDir | Directory path for storing temporary files during receive (RX) transactions. Files are moved to final destination upon successful completion |
 | FailDir | Directory path for storing files from polling operations that failed to transfer successfully |
-| PortDefaultChannel | Default CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
-| PortDefaultDestEntityId | Default destination entity ID used for file transfers initiated via the `fileIn` port interface |
+| FileInDefaultChannel | Default CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
+| FileInDefaultDestEntityId | Default destination entity ID used for file transfers initiated via the `fileIn` port interface |
+| FileInDefaultClass | Default CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface. Defaults to CLASS_2 for reliability |
+| FileInDefaultKeep | Default file retention policy (KEEP or DELETE) for file transfers initiated via the `fileIn` port interface. Defaults to DELETE |
+| FileInDefaultPriority | Default priority (0-255, where 0 is highest) for file transfers initiated via the `fileIn` port interface. Defaults to 0 |
 | ChannelConfig.ack_limit | Maximum number of ACK retransmission attempts before abandoning a transaction. Applies when waiting for ACK(EOF) or ACK(FIN) acknowledgments |
 | ChannelConfig.nack_limit | Maximum number of NAK retransmission attempts before abandoning a transaction. Applies when waiting for retransmitted file data after sending NAK |
 | ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting |

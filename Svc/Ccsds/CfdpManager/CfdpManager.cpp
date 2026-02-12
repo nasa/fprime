@@ -91,23 +91,27 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(
     }
     else
     {
-        // Get parameters for port-initiated transfers
+        // Get parameters for fileIn port-initiated transfers
         Fw::ParamValid valid;
-        U8 channelId = this->paramGet_PortDefaultChannel(valid);
+        U8 channelId = this->paramGet_FileInDefaultChannel(valid);
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));
 
-        EntityId destEid = this->paramGet_PortDefaultDestEntityId(valid);
+        EntityId destEid = this->paramGet_FileInDefaultDestEntityId(valid);
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));
 
-        // Use default values for port-initiated transfers
-        // - Class 2 (acknowledged) for reliability
-        // - Keep = KEEP (don't delete after transfer)
-        // - Priority = 0 (highest priority)
-        Class::T cfdpClass = Class::CLASS_2;
-        Keep::T keep = Keep::KEEP;
-        U8 priority = 0;
+        Class::T cfdpClass = this->paramGet_FileInDefaultClass(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        Keep::T keep = this->paramGet_FileInDefaultKeep(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        U8 priority = this->paramGet_FileInDefaultPriority(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
 
         // Attempt to initiate the file transfer (mark as port-initiated)
         Status::T status = this->m_engine->txFile(
