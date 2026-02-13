@@ -31,7 +31,7 @@ Each role has a set of privileges afforded to it. These privileges are:
 | User              | ✅          | ❌                   | ❌                               | ❌     | ❌             | ❌     | ❌                | ❌       |
 | Contributor       | ✅          | ✅                   | ✅                               | ✅     | ❌             | ❌     | ❌                | ❌       |
 | CCB Member        | ✅          | ✅                   | ✅                               | ✅     | ❌             | ❌     | ✅                | ❌       |
-| Maintainer        | ✅          | ✅                   | ✅                               | ✅     | ✅             | ✅     | ✅                | ✅       |
+| Maintainer        | ✅          | ✅                   | ✅                               | ✅     | ✅             | ✅     | ❌                | ✅       |
 | Community Manager | ✅          | ✅                   | ✅                               | ✅     | ✅             | ✅     | ✅                | ✅       |
 
 ### User
