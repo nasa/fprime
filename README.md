@@ -89,6 +89,7 @@ Each product has a set of Maintainers who are charged with the day-to-day implem
 | fprime-gds                   | @thomas-bc, @LeStarch      |
 | fpp                          | @bocchino, @Kronos3        |
 | F Prime Platforms            | @kevin-f-ortega, @LeStarch |
+| ROSES Documentation          | @yvijay99, @LeStarch       |
 | Security                     | @bitWarrior                |
 
 ## Release Notes
