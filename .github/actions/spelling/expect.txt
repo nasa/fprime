@@ -377,6 +377,7 @@ jobrestrictions
 jpl
 jplffs
 jre
+kevin
 kermit
 kubiak
 Lammert
@@ -510,6 +511,7 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+Peet
 penv
 PERLMOD
 PHASERMEMBEROUT
@@ -703,6 +705,7 @@ timebase
 timerfd
 timetag
 timeval
+timcanham
 Tinternal
 tions
 tjh
