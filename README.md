@@ -49,8 +49,10 @@ New users are encouraged to read through the [User Manual](https://fprime.jpl.na
 
 ### Discussions
 To ask questions, discuss improvements, and ask for help please use the project's [GitHub Discussions](https://github.com/nasa/fprime/discussions).
+
 ### Bug reports
 To report bugs and issues, [open an issue here](https://github.com/nasa/fprime/issues).
+
 ### Community
 The [F´ Community](https://github.com/fprime-community) GitHub Organization contains third party contributions, more documentation of flight software development, and additional resources.
 
@@ -62,6 +64,32 @@ The [F´ Community](https://github.com/fprime-community) GitHub Organization con
 - [Submit an Issue](https://github.com/nasa/fprime/issues)
 - [F´ Community](https://github.com/fprime-community)
 
+## Meet the Team
+
+The following roles are members of the CCB and per our [governance](./GOVERNANCE.md) document have decision making power within the framework.
+
+| Role              | Team Member     |
+|-------------------|-----------------|
+| Community Manager | @LeStarch       |
+| Community Manager | @thomas-bc      |
+| Security Overseer | @bitWarrior     |
+| CCB Member        | @bocchino       |
+| CCB Member        | @kevin-f-ortega |
+| CCB Member        | @SterlingPeet   |
+| CCB Member        | @timcanham      |
+| CCB Member        | @zimri-leisher  |
+
+Each product has a set of Maintainers who are charged with the day-to-day implementation of the CCB's direction as realized in a by product.
+
+| Product                      | Core Maintainer(s)         |
+|------------------------------|----------------------------|
+| F Prime                      | @LeStarch, @thomas-bc      |
+| F Prime (v3.6.x Maintenance) | @SterlingPeet              |
+| fprime-tools                 | @thomas-bc, @LeStarch      |
+| fprime-gds                   | @thomas-bc, @LeStarch      |
+| fpp                          | @bocchino, @Kronos3        |
+| F Prime Platforms            | @kevin-f-ortega, @LeStarch |
+| Security                     | @bitWarrior                |
 
 ## Release Notes
 
