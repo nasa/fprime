@@ -458,9 +458,9 @@ void Engine::recvMd(Transaction *txn, const MetadataPdu& md)
     txn->m_history->fnames.src_filename = md.getSourceFilename();
     txn->m_history->fnames.dst_filename = md.getDestFilename();
 
-    // CFE_EVS_SendEvent(CF_PDU_MD_RECVD_INF_EID, CFE_EVS_EventType_INFORMATION,
-    //                   "CF: md received for source: %s, dest: %s", txn->m_history->fnames.src_filename.toChar(),
-    //                   txn->m_history->fnames.dst_filename.toChar());
+    this->m_manager->log_ACTIVITY_LO_MetadataReceived(
+        txn->m_history->fnames.src_filename,
+        txn->m_history->fnames.dst_filename);
 }
 
 Status::T Engine::recvFd(Transaction *txn, const FileDataPdu& fd)
@@ -474,8 +474,7 @@ Status::T Engine::recvFd(Transaction *txn, const FileDataPdu& fd)
     if (header.hasSegmentMetadata())
     {
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
-        // CFE_EVS_SendEvent(CF_PDU_FD_UNSUPPORTED_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: filedata PDU with segment metadata received");
+        this->m_manager->log_WARNING_HI_FileDataSegmentMetadata();
         this->setTxnStatus(txn, TXN_STATUS_PROTOCOL_ERROR);
         // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
         ret = Cfdp::Status::ERROR;
@@ -617,9 +616,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
         }
         if (txn->m_chunks == NULL)
         {
-            // CFE_EVS_SendEvent(CF_CFDP_NO_CHUNKLIST_AVAIL_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF: cannot get chunklist -- abandoning transaction %u\n",
-            //                  (unsigned int)transactionSeq);
+            this->m_manager->log_WARNING_HI_ChunklistUnavailable(transactionSeq);
         }
         else
         {
@@ -670,8 +667,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
             else
             {
                 // Unexpected PDU type in init state
-                // CFE_EVS_SendEvent(CF_CFDP_FD_UNHANDLED_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: unhandled PDU type in idle state");
+                this->m_manager->log_WARNING_LO_UnhandledPduInIdleState();
                 // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
             }
         }
@@ -722,17 +718,14 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
                 txn = this->startRxTransaction(chan->getChannelId());
                 if (txn == NULL)
                 {
-                    // CFE_EVS_SendEvent(
-                    //     CF_CFDP_RX_DROPPED_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //     "CF: dropping packet from %lu transaction number 0x%08lx due max RX transactions reached",
-                    //     (unsigned long)sourceEid, (unsigned long)transactionSeq);
+                    this->m_manager->log_WARNING_HI_RxTransactionLimitReached(
+                        sourceEid,
+                        transactionSeq);
                 }
             }
             else
             {
-                // CFE_EVS_SendEvent(CF_CFDP_INVALID_DST_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF: dropping packet for invalid destination eid 0x%lx",
-                //                   (unsigned long)destEid);
+                this->m_manager->log_WARNING_LO_InvalidDestinationEid(destEid);
             }
         }
 
@@ -744,6 +737,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
         else
         {
             // TODO BPC: Add throttled EVR
+            // TODO JMP: One of the two EVRs above get sent right before an EVR here (throttle those too?)
         }
     } else {
         // Invalid PDU header, drop packet
@@ -761,11 +755,12 @@ void Engine::setChannelFlowState(U8 channelId, Flow::T flowState)
 void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
                              U8 priority, EntityId dest_id)
 {
-    // CFE_EVS_SendEvent(CF_CFDP_S_START_SEND_INF_EID, CFE_EVS_EventType_INFORMATION,
-    //                   "CF: start class %d tx of file %lu:%.*s -> %lu:%.*s", cfdp_class + 1,
-    //                   (unsigned long)m_manager->getLocalEidParam(), MaxFileSize,
-    //                   txn->m_history->fnames.src_filename, (unsigned long)dest_id, MaxFileSize,
-    //                   txn->m_history->fnames.dst_filename);
+    this->m_manager->log_ACTIVITY_HI_TxFileTransferStarted(
+        getClassDisplay(cfdp_class),
+        m_manager->getLocalEidParam(),
+        txn->m_history->fnames.src_filename,
+        dest_id,
+        txn->m_history->fnames.dst_filename);
 
     txn->initTxFile(cfdp_class, keep, chan, priority);
 
@@ -803,8 +798,7 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
 
     if (txn == NULL)
     {
-        // CFE_EVS_SendEvent(CF_CFDP_MAX_CMD_TX_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: max number of commanded files reached");
+        this->m_manager->log_WARNING_HI_MaxTxTransactionsReached();
         ret = Cfdp::Status::ERROR;
     }
     else
@@ -868,8 +862,9 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
     dirStatus = pb->dir.open(src_filename.toChar(), Os::Directory::READ);
     if (dirStatus != Os::Directory::OP_OK)
     {
-        // CFE_EVS_SendEvent(CF_CFDP_OPENDIR_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: failed to open playback directory %s, error=%ld", src_filename, (long)ret);
+        this->m_manager->log_WARNING_HI_PlaybackDirOpenFailed(
+            src_filename,
+            dirStatus);
         // ++CF_AppData.hk.Payload.channel_hk[chan].counters.fault.directory_read;
         status = Cfdp::Status::ERROR;
     }
@@ -910,7 +905,7 @@ Status::T Engine::playbackDir(const Fw::String& src_filename, const Fw::String& 
 
     if (i == CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN)
     {
-        // CFE_EVS_SendEvent(CF_CFDP_DIR_SLOT_ERR_EID, CFE_EVS_EventType_ERROR, "CF: no playback dir slot available");
+        this->m_manager->log_WARNING_HI_PlaybackDirSlotUnavailable();
         status = Cfdp::Status::ERROR;
     }
     else
@@ -1022,8 +1017,7 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
 {
     if (txn->m_flags.com.q_index == QueueId::FREE)
     {
-        // CFE_EVS_SendEvent(CF_RESET_FREED_XACT_DBG_EID, CFE_EVS_EventType_DEBUG,
-        //                   "CF: attempt to reset a transaction that has already been freed");
+        this->m_manager->log_DIAGNOSTIC_ResetFreedTransaction();
         return;
     }
 
@@ -1208,9 +1202,8 @@ void Engine::handleNotKeepFile(Transaction *txn)
                 fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDir.toChar());
                 if(fileStatus != Os::FileSystem::OP_OK)
                 {
-                    // TODO BPC: event interfaces are protected
-                    // m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename,
-                    //                                                   moveDir, fileStatus);
+                    m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename,
+                                                                      moveDir, fileStatus);
                 }
             }
 
@@ -1218,13 +1211,15 @@ void Engine::handleNotKeepFile(Transaction *txn)
             if(fileStatus != Os::FileSystem::OP_OK)
             {
                 fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
-                // TODO BPC: emit failure EVR
-                (void) fileStatus;
+                if(fileStatus != Os::FileSystem::OP_OK)
+                {
+                    m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.src_filename, fileStatus);
+                }
             }
         }
         else
         {
-            // file inside an polling directory
+            // file inside a polling directory
             if (this->isPollingDir(txn->m_history->fnames.src_filename.toChar(), txn->getChannelId()))
             {
                 // If fail directory is defined attempt move
@@ -1234,9 +1229,8 @@ void Engine::handleNotKeepFile(Transaction *txn)
                     fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());
                     if(fileStatus != Os::FileSystem::OP_OK)
                     {
-                        // TODO BPC: event interfaces are protected
-                        // m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename,
-                        //                                                   failDir, fileStatus);
+                        m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename,
+                                                                          failDir, fileStatus);
                     }
                 }
 
@@ -1244,8 +1238,10 @@ void Engine::handleNotKeepFile(Transaction *txn)
                 if(fileStatus != Os::FileSystem::OP_OK)
                 {
                     fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
-                    // TODO BPC: emit failure EVR
-                    (void) fileStatus;
+                    if(fileStatus != Os::FileSystem::OP_OK)
+                    {
+                        m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.src_filename, fileStatus);
+                    }
                 }
             }
         }
@@ -1254,8 +1250,10 @@ void Engine::handleNotKeepFile(Transaction *txn)
     else
     {
         fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());
-        // TODO BPC: emit failure EVR
-        (void) fileStatus;
+        if(fileStatus != Os::FileSystem::OP_OK)
+        {
+            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
+        }
     }
 }
 

@@ -170,9 +170,10 @@ void Transaction::sAckTimerTick() {
         ack_limit = this->m_cfdpManager->getAckLimitParam(this->m_chan_num);
         if (this->m_state_data.send.s2.acknak_count >= ack_limit)
         {
-            // CFE_EVS_SendEvent(CFDP_S_ACK_LIMIT_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF S2(%lu:%lu), ack limit reached, no eof-ack", (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num);
+            this->m_cfdpManager->log_WARNING_HI_TxAckLimitReached(
+                Cfdp::getClassDisplay(this->getClass()),
+                this->m_history->src_eid,
+                this->m_history->seq_num);
             this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_EOF);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.ack_limit;
 
@@ -233,9 +234,10 @@ void Transaction::sTick(int *cont /* unused */) {
             // inactivity is abnormal in any other state
             if (this->m_state != TXN_STATE_HOLD && this->m_state == TXN_STATE_S2)
             {
-                // CFE_EVS_SendEvent(CFDP_S_INACT_TIMER_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S2(%lu:%lu): inactivity timer expired", (unsigned long)this->m_history->src_eid,
-                //                   (unsigned long)this->m_history->seq_num);
+                this->m_cfdpManager->log_WARNING_HI_TxInactivityTimeout(
+                    Cfdp::getClassDisplay(this->getClass()),
+                    this->m_history->src_eid,
+                    this->m_history->seq_num);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_INACTIVITY_DETECTED);
 
                 // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.inactivity_timer;
@@ -540,10 +542,12 @@ void Transaction::sSubstateSendMetadata() {
         fileStatus = this->m_fd.open(this->m_history->fnames.src_filename.toChar(), Os::File::OPEN_READ);
         if (fileStatus != Os::File::OP_OK)
         {
-            // CFE_EVS_SendEvent(CFDP_S_OPEN_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF S%d(%lu:%lu): failed to open file %s, error=%ld", (this->m_state == TXN_STATE_S2),
-            //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num,
-            //                   this->m_history->fnames.src_filename, (long)ret);
+            this->m_cfdpManager->log_WARNING_HI_TxFileOpenFailed(
+                Cfdp::getClassDisplay(this->getClass()),
+                this->m_history->src_eid,
+                this->m_history->seq_num,
+                this->m_history->fnames.src_filename,
+                fileStatus);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
             // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
             success = false;
@@ -556,11 +560,11 @@ void Transaction::sSubstateSendMetadata() {
             this->m_fsize = static_cast<FileSize>(file_size);
             if (fileStatus != Os::File::Status::OP_OK)
             {
-                // CFE_EVS_SendEvent(CFDP_S_SEEK_BEG_ERR_EID, CFE_EVS_EventType_ERROR,
-                //                   "CF S%d(%lu:%lu): failed to seek begin file %s, got %ld",
-                //                   (this->m_state == TXN_STATE_S2), (unsigned long)this->m_history->src_eid,
-                //                   (unsigned long)this->m_history->seq_num, this->m_history->fnames.src_filename,
-                //                   (long)status);
+                this->m_cfdpManager->log_WARNING_HI_TxFileSeekFailed(
+                    Cfdp::getClassDisplay(this->getClass()),
+                    this->m_history->src_eid,
+                    this->m_history->seq_num,
+                    fileStatus);
                 // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
                 success = false;
             }
@@ -578,9 +582,10 @@ void Transaction::sSubstateSendMetadata() {
         if (status == Cfdp::Status::SEND_PDU_ERROR)
         {
             /* failed to send md */
-            // CFE_EVS_SendEvent(CFDP_S_SEND_MD_ERR_EID, CFE_EVS_EventType_ERROR, "CF S%d(%lu:%lu): failed to send md",
-            //                   (this->m_state == TXN_STATE_S2), (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num);
+            this->m_cfdpManager->log_WARNING_HI_TxSendMetadataFailed(
+                Cfdp::getClassDisplay(this->getClass()),
+                this->m_history->src_eid,
+                this->m_history->seq_num);
             success = false;
         }
         else if (status == Cfdp::Status::SUCCESS)
@@ -611,9 +616,10 @@ Status::T Transaction::sSendFinAck() {
 
 void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     // received early fin, so just cancel
-    // CFE_EVS_SendEvent(CFDP_S_EARLY_FIN_ERR_EID, CFE_EVS_EventType_ERROR,
-    //                   "CF S%d(%lu:%lu): got early FIN -- cancelling", (this->m_state == TXN_STATE_S2),
-    //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
+    this->m_cfdpManager->log_WARNING_HI_TxEarlyFinReceived(
+        Cfdp::getClassDisplay(this->getClass()),
+        this->m_history->src_eid,
+        this->m_history->seq_num);
     this->m_engine->setTxnStatus(this, TXN_STATUS_EARLY_FIN);
 
     this->m_state_data.send.sub_state = TX_SUB_STATE_CLOSEOUT_SYNC;
@@ -673,9 +679,6 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         // Bad NAK PDU
         this->m_cfdpManager->log_WARNING_LO_FailNakPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
-        // CFE_EVS_SendEvent(CFDP_S_PDU_NAK_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF S%d(%lu:%lu): received invalid NAK PDU", (this->m_state == TXN_STATE_S2),
-        //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
         // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
         return;
     }
@@ -716,17 +719,19 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
         //     nak->segment_list.num_segments;
         if (bad_sr)
         {
-            // CFE_EVS_SendEvent(CFDP_S_INVALID_SR_ERR_EID, CFE_EVS_EventType_ERROR,
-            //                   "CF S%d(%lu:%lu): received %d invalid NAK segment requests",
-            //                   (this->m_state == TXN_STATE_S2), (unsigned long)this->m_history->src_eid,
-            //                   (unsigned long)this->m_history->seq_num, bad_sr);
+            this->m_cfdpManager->log_WARNING_LO_TxInvalidSegmentRequests(
+                Cfdp::getClassDisplay(this->getClass()),
+                this->m_history->src_eid,
+                this->m_history->seq_num,
+                bad_sr);
         }
     }
     else
     {
-        // CFE_EVS_SendEvent(CFDP_S_PDU_NAK_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF S%d(%lu:%lu): received invalid NAK PDU", (this->m_state == TXN_STATE_S2),
-        //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
+        this->m_cfdpManager->log_WARNING_HI_TxInvalidNakPdu(
+            Cfdp::getClassDisplay(this->getClass()),
+            this->m_history->src_eid,
+            this->m_history->seq_num);
         // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
     }
 }
@@ -785,9 +790,10 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
 
     if (pduType == Cfdp::T_FILE_DATA)
     {
-        // CFE_EVS_SendEvent(CFDP_S_NON_FD_PDU_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF S%d(%lu:%lu): received non-file directive PDU", (this->m_state == TXN_STATE_S2),
-        //                   (unsigned long)this->m_history->src_eid, (unsigned long)this->m_history->seq_num);
+        this->m_cfdpManager->log_WARNING_LO_TxNonFileDirectivePduReceived(
+            Cfdp::getClassDisplay(this->getClass()),
+            this->m_history->src_eid,
+            this->m_history->seq_num);
     }
     else if (pduType != Cfdp::T_NONE)
     {
@@ -815,12 +821,12 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
                 }
                 else
                 {
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
-                    // CFE_EVS_SendEvent(CFDP_S_DC_INV_ERR_EID, CFE_EVS_EventType_ERROR,
-                    //                   "CF S%d(%lu:%lu): received PDU with invalid directive code %d for sub-state %d",
-                    //                   (this->m_state == TXN_STATE_S2), (unsigned long)this->m_history->src_eid,
-                    //                   (unsigned long)this->m_history->seq_num, directiveCode,
-                    //                   this->m_state_data.send.sub_state);
+                    this->m_cfdpManager->log_WARNING_LO_TxInvalidDirectiveCode(
+                        Cfdp::getClassDisplay(this->getClass()),
+                        this->m_history->src_eid,
+                        this->m_history->seq_num,
+                        directiveCodeByte,
+                        this->m_state_data.send.sub_state);
                 }
             }
         }

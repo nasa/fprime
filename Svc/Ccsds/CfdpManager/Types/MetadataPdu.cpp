@@ -201,17 +201,11 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
 
     // Validate filename length against MaxFileSize
     if (sourceFilenameLength > MaxFileSize) {
-        // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: metadata PDU rejected due to invalid source filename length of 0x%02x", sourceFilenameLength);
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
     // Validate filename is not empty
     if (sourceFilenameLength == 0) {
-        // CFE_EVS_SendEvent(CF_PDU_INVALID_SRC_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: metadata PDU rejected due to empty source filename");
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
@@ -235,17 +229,11 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
 
     // Validate filename length against MaxFileSize
     if (destFilenameLength > MaxFileSize) {
-        // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: metadata PDU rejected due to invalid dest filename length of 0x%02x", destFilenameLength);
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
     // Validate filename is not empty
     if (destFilenameLength == 0) {
-        // CFE_EVS_SendEvent(CF_PDU_INVALID_DST_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
-        //                   "CF: metadata PDU rejected due to empty dest filename");
-        // ++CF_AppData.hk.Payload.channel_hk[chan_num].counters.recv.error;
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 

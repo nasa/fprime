@@ -442,6 +442,19 @@ union CfdpStateData
  */
 using CfdpTraverseAllTransactionsFunc = std::function<void(Transaction *txn, void *context)>;
 
+/**
+ * @brief Convert CFDP class from encoded format to display format
+ *
+ * Converts the format class encoding (CLASS_2=0, CLASS_1=1) to
+ * user-readable display format (2 for Class 2, 1 for Class 1).
+ *
+ * @param cfdpClass The encoded CFDP class
+ * @return Display class number (1 or 2)
+ */
+inline U8 getClassDisplay(Class::T cfdpClass) {
+    return cfdpClass == Class::CLASS_1 ? 1 : 2;
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

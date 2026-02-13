@@ -705,7 +705,7 @@ class Transaction {
     void r2RecvMd(const Fw::Buffer& pdu);
 
     /************************************************************************/
-    /** @brief Sends an inactivity timer expired event to EVS.
+    /** @brief Logs an inactivity timer expired event.
      */
     void rSendInactivityEvent();
 
