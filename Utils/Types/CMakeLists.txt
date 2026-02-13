@@ -11,7 +11,7 @@ register_fprime_module(
 
 )
 
-set (UT_TARGET_NAME "Utils_Types_Circular_Buffer_ut_exe")
+set (UT_TARGET_NAME "Types_Circular_Buffer_ut_exe")
 register_fprime_ut("${UT_TARGET_NAME}"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularBuffer/CircularState.cpp"
