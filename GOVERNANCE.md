@@ -54,7 +54,7 @@ The CCB is also charged with selecting the contributors to join the CCB.  These 
 
 ### Maintainer
 
-Maintainers are granted the authority to merge and release specific products as part of the Project. These maintainers may or may not be part of the CCB but they do assist the Community Managers in their charge of carrying out the decisisons of the CCB as directed to a specific product.  Maintainers are selected by the CCB.
+Maintainers are granted the authority to merge and release specific products as part of the Project. These maintainers may or may not be part of the CCB but they do assist the Community Managers in their charge of carrying out the decisions of the CCB as directed to a specific product.  Maintainers are selected by the CCB.
 
 ### Community Manager 
 
