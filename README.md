@@ -35,6 +35,7 @@ Verify satisfaction with `pip --version`.  On your system it might be `pip3` or 
 
 5. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
   <details><summary>How to Verify compiler</summary>
+
 `g++  --version` and then create, build, and run a test program.  For example, create a file named hello.cpp with contents:
 
 ```cpp
