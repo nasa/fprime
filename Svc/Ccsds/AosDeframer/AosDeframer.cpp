@@ -142,7 +142,8 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
 
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
     // AOS uses version '01' binary = 1
-    U8 tfvn = static_cast<U8>((globalVcId & AOSHeaderSubfields::frameVersionMask) >> AOSHeaderSubfields::frameVersionOffset);
+    U8 tfvn =
+        static_cast<U8>((globalVcId & AOSHeaderSubfields::frameVersionMask) >> AOSHeaderSubfields::frameVersionOffset);
     if (tfvn != AOSHeaderSubfields::expectedFrameVersion) {
         this->log_WARNING_HI_InvalidTfvn(tfvn, static_cast<U8>(AOSHeaderSubfields::expectedFrameVersion));
         this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_VERSION);
@@ -151,9 +152,11 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
 
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LSBs in globalVcId, 2 MSBs in signaling field
-    U16 scidLsb = static_cast<U16>((globalVcId & AOSHeaderSubfields::spacecraftIdLsbMask) >> AOSHeaderSubfields::spacecraftIdLsbOffset);
+    U16 scidLsb = static_cast<U16>((globalVcId & AOSHeaderSubfields::spacecraftIdLsbMask) >>
+                                   AOSHeaderSubfields::spacecraftIdLsbOffset);
     U8 signalingByte = static_cast<U8>(frameCountAndSignaling & 0xFF);
-    U16 scidMsb = static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >> AOSHeaderSubfields::spacecraftIdMsbOffset);
+    U16 scidMsb = static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
+                                   AOSHeaderSubfields::spacecraftIdMsbOffset);
     U16 spacecraftId = static_cast<U16>(scidLsb | (scidMsb << 8));
 
     if (spacecraftId != m_spacecraftId) {
@@ -172,7 +175,8 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
 
     // Extract Virtual Channel Frame Count (Section 4.1.2.4)
     // 24 bits in the upper 3 bytes of frameCountAndSignaling
-    U32 vcFrameCount = (frameCountAndSignaling >> AOSHeaderSubfields::vcFrameCountOffset) & AOSHeaderSubfields::vcFrameCountMask;
+    U32 vcFrameCount =
+        (frameCountAndSignaling >> AOSHeaderSubfields::vcFrameCountOffset) & AOSHeaderSubfields::vcFrameCountMask;
 
     // Extract Replay Flag (Section 4.1.2.5.2)
     bool replayFlag = (signalingByte & AOSHeaderSubfields::replayFlagMask) != 0;
@@ -185,9 +189,11 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
     }
 
+    (void)vcFrameCount;
+    (void)replayFlag;
+
     // Update context with extracted values
     context.set_vcId(vcId);
-    context.set_replayFlag(replayFlag);
 
     return true;
 }
@@ -252,8 +258,8 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
         // Entire data zone is continuation of previous packet
         if (m_spanningPacket.active) {
             // Add all data to spanning packet buffer
-            FwSizeType bytesToCopy = FW_MIN(dataZoneSize,
-                                            sizeof(m_spanningPacket.buffer) - m_spanningPacket.bytesReceived);
+            FwSizeType bytesToCopy =
+                FW_MIN(dataZoneSize, sizeof(m_spanningPacket.buffer) - m_spanningPacket.bytesReceived);
             ::memcpy(m_spanningPacket.buffer + m_spanningPacket.bytesReceived, dataZone, bytesToCopy);
             m_spanningPacket.bytesReceived += bytesToCopy;
 
@@ -267,8 +273,7 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
             }
 
             // Check if packet is complete
-            if (m_spanningPacket.expectedSize > 0 &&
-                m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
+            if (m_spanningPacket.expectedSize > 0 && m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
                 // Output the complete packet
                 Fw::Buffer packetBuffer(m_spanningPacket.buffer, m_spanningPacket.expectedSize);
 
@@ -309,8 +314,7 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
         }
 
         // Check if the spanning packet is now complete
-        if (m_spanningPacket.expectedSize > 0 &&
-            m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
+        if (m_spanningPacket.expectedSize > 0 && m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
             // Output the complete packet
             Fw::Buffer packetBuffer(m_spanningPacket.buffer, m_spanningPacket.expectedSize);
 
@@ -420,7 +424,8 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
 
     // Parse first byte
     U8 firstByte = payloadStart[0];
-    U8 packetVersion = static_cast<U8>((firstByte & EPPSubfields::packetVersionMask) >> EPPSubfields::packetVersionOffset);
+    U8 packetVersion =
+        static_cast<U8>((firstByte & EPPSubfields::packetVersionMask) >> EPPSubfields::packetVersionOffset);
 
     // Validate packet version
     if (packetVersion != EPPSubfields::expectedPacketVersion) {
