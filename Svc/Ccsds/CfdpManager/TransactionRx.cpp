@@ -230,7 +230,7 @@ void Transaction::rAckTimerTick() {
             if (this->m_state_data.receive.r2.acknak_count >= ack_limit)
             {
                 this->m_cfdpManager->log_WARNING_HI_RxAckLimitReached(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_FIN);
@@ -382,7 +382,7 @@ void Transaction::rInit() {
             this->m_history->fnames.dst_filename = dst;
 
             this->m_cfdpManager->log_ACTIVITY_LO_RxTempFileCreated(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
                 this->m_history->fnames.dst_filename);
@@ -395,7 +395,7 @@ void Transaction::rInit() {
     if (status != Os::File::OP_OK)
     {
         this->m_cfdpManager->log_WARNING_HI_RxFileCreateFailed(
-            Cfdp::getClassDisplay(this->getClass()),
+            this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num,
             this->m_history->fnames.dst_filename,
@@ -452,7 +452,7 @@ Status::T Transaction::rCheckCrc(U32 expected_crc) {
     if (crc_result != expected_crc)
     {
         this->m_cfdpManager->log_WARNING_HI_RxCrcMismatch(
-            Cfdp::getClassDisplay(this->getClass()),
+            this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num,
             expected_crc,
@@ -506,7 +506,7 @@ void Transaction::r2Complete(int ok_to_send_nak) {
             if (this->m_state_data.receive.r2.acknak_count >= nack_limit)
             {
                 this->m_cfdpManager->log_WARNING_HI_RxNakLimitReached(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
                 send_fin = true;
@@ -572,7 +572,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
             if (status != Os::File::OP_OK)
             {
                 this->m_cfdpManager->log_WARNING_HI_RxSeekFailed(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     offset,
@@ -592,7 +592,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
         if (status != Os::File::OP_OK)
         {
             this->m_cfdpManager->log_WARNING_HI_RxWriteFailed(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
                 dataSize,
@@ -635,7 +635,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
             if (this->m_flags.rx.md_recv && (eof.getFileSize() != this->m_fsize))
             {
                 this->m_cfdpManager->log_WARNING_HI_RxFileSizeMismatch(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     this->m_fsize,
@@ -647,7 +647,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
         else
         {
             this->m_cfdpManager->log_WARNING_LO_RxInvalidEofPdu(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
             // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
@@ -990,7 +990,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                 if (fileStatus != Os::File::OP_OK)
                 {
                     this->m_cfdpManager->log_WARNING_HI_RxSeekCrcFailed(
-                        Cfdp::getClassDisplay(this->getClass()),
+                        this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
                         this->m_state_data.receive.r2.rx_crc_calc_bytes,
@@ -1007,7 +1007,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                 if (fileStatus != Os::File::OP_OK)
                 {
                     this->m_cfdpManager->log_WARNING_HI_RxReadCrcFailed(
-                        Cfdp::getClassDisplay(this->getClass()),
+                        this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
                         static_cast<U32>(expected_read_size),
@@ -1151,7 +1151,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             if (this->m_state_data.receive.r2.eof_size != this->m_fsize)
             {
                 this->m_cfdpManager->log_WARNING_HI_RxEofMdSizeMismatch(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     this->m_fsize,
@@ -1172,7 +1172,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             if (fileSysStatus != Os::FileSystem::OP_OK)
             {
                 this->m_cfdpManager->log_WARNING_HI_RxFileRenameFailed(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     fname,
@@ -1190,7 +1190,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                 if (fileStatus != Os::File::OP_OK)
                 {
                     this->m_cfdpManager->log_WARNING_HI_RxFileReopenFailed(
-                        Cfdp::getClassDisplay(this->getClass()),
+                        this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
                         this->m_history->fnames.dst_filename,
@@ -1215,7 +1215,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
 
 void Transaction::rSendInactivityEvent() {
     this->m_cfdpManager->log_WARNING_HI_RxInactivityTimeout(
-        Cfdp::getClassDisplay(this->getClass()),
+        this->getClass(),
         this->m_history->src_eid,
         this->m_history->seq_num);
     // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.inactivity_timer;
@@ -1279,7 +1279,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
                 {
                     // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
                     this->m_cfdpManager->log_WARNING_LO_RxInvalidDirectiveCode(
-                        Cfdp::getClassDisplay(this->getClass()),
+                        this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
                         directiveCodeByte,

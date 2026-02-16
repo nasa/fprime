@@ -171,7 +171,7 @@ void Transaction::sAckTimerTick() {
         if (this->m_state_data.send.s2.acknak_count >= ack_limit)
         {
             this->m_cfdpManager->log_WARNING_HI_TxAckLimitReached(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
             this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_EOF);
@@ -235,7 +235,7 @@ void Transaction::sTick(int *cont /* unused */) {
             if (this->m_state != TXN_STATE_HOLD && this->m_state == TXN_STATE_S2)
             {
                 this->m_cfdpManager->log_WARNING_HI_TxInactivityTimeout(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_INACTIVITY_DETECTED);
@@ -543,7 +543,7 @@ void Transaction::sSubstateSendMetadata() {
         if (fileStatus != Os::File::OP_OK)
         {
             this->m_cfdpManager->log_WARNING_HI_TxFileOpenFailed(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
                 this->m_history->fnames.src_filename,
@@ -561,7 +561,7 @@ void Transaction::sSubstateSendMetadata() {
             if (fileStatus != Os::File::Status::OP_OK)
             {
                 this->m_cfdpManager->log_WARNING_HI_TxFileSeekFailed(
-                    Cfdp::getClassDisplay(this->getClass()),
+                    this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     fileStatus);
@@ -583,7 +583,7 @@ void Transaction::sSubstateSendMetadata() {
         {
             /* failed to send md */
             this->m_cfdpManager->log_WARNING_HI_TxSendMetadataFailed(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
             success = false;
@@ -617,7 +617,7 @@ Status::T Transaction::sSendFinAck() {
 void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     // received early fin, so just cancel
     this->m_cfdpManager->log_WARNING_HI_TxEarlyFinReceived(
-        Cfdp::getClassDisplay(this->getClass()),
+        this->getClass(),
         this->m_history->src_eid,
         this->m_history->seq_num);
     this->m_engine->setTxnStatus(this, TXN_STATUS_EARLY_FIN);
@@ -720,7 +720,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
         if (bad_sr)
         {
             this->m_cfdpManager->log_WARNING_LO_TxInvalidSegmentRequests(
-                Cfdp::getClassDisplay(this->getClass()),
+                this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
                 bad_sr);
@@ -729,7 +729,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
     else
     {
         this->m_cfdpManager->log_WARNING_HI_TxInvalidNakPdu(
-            Cfdp::getClassDisplay(this->getClass()),
+            this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num);
         // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
@@ -791,7 +791,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
     if (pduType == Cfdp::T_FILE_DATA)
     {
         this->m_cfdpManager->log_WARNING_LO_TxNonFileDirectivePduReceived(
-            Cfdp::getClassDisplay(this->getClass()),
+            this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num);
     }
@@ -822,7 +822,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
                 else
                 {
                     this->m_cfdpManager->log_WARNING_LO_TxInvalidDirectiveCode(
-                        Cfdp::getClassDisplay(this->getClass()),
+                        this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
                         directiveCodeByte,

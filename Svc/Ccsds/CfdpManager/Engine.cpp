@@ -756,7 +756,7 @@ void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep,
                              U8 priority, EntityId dest_id)
 {
     this->m_manager->log_ACTIVITY_HI_TxFileTransferStarted(
-        getClassDisplay(cfdp_class),
+        cfdp_class,
         m_manager->getLocalEidParam(),
         txn->m_history->fnames.src_filename,
         dest_id,
