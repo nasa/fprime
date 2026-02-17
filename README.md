@@ -28,22 +28,18 @@ The following system requirements apply to your workstation for developing F´ a
 
 2. [git](https://git-scm.com/)
 
-3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html)
+3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
 
-4. [PIP](https://pypi.org/project/pip/)
-
-5. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
+4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
 
 <details>
 <summary>Click to Expand: How to Verify System Requirements</summary>
 
 2. `git --version`
 
-3. `python --version` and `python -m venv -h`. Your system might use an alternate like `python3` or `python3.13`.
+3. `python --version` and `python -m venv -h`. Your system might use an alternate like `python3` or `python3.13`. For pip: `pip --version`.  On your system it might be `pip3` or `pipx`.
 
-4. `pip --version`.  On your system it might be `pip3` or `pipx`.
-
-5.  `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
+4.  `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
 
 ```cpp
 #include <iostream>
