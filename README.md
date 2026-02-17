@@ -39,21 +39,21 @@ The following system requirements apply to your workstation for developing F´ a
 
 3. `python --version` and `python -m venv -h`. Your system might use an alternate like `python3` or `python3.13`. For pip: `pip --version`.  On your system it might be `pip3` or `pipx`.
 
-4.  `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
+4. `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
 
-```cpp
-#include <iostream>
-int main(void){
-    std::cout << "Hello, World!" << std::endl;
-}
-```
+    ```cpp
+    #include <iostream>
+    int main(void){
+        std::cout << "Hello, World!" << std::endl;
+    }
+    ```
 
-then build and run it, for example like:
-```bash
-% g++ -o hi hello.cpp
-% ./hi
-Hello, World!
-```
+    then build and run it, for example like:
+    ```bash
+    % g++ -o hi hello.cpp
+    % ./hi
+    Hello, World!
+    ```
 
 </details>
 
