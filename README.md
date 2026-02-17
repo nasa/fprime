@@ -22,21 +22,28 @@ Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
 
 ## System Requirements
 
+The following system requirements apply to your workstation for developing F´ applications. To see the list of supported platforms on which F´ applications can run on, see [Supported Platforms](./docs/user-manual/framework/supported-platforms.md).
+
 1. Linux, Windows with WSL, or macOS operating system
 
-2. [git](https://git-scm.com/)<br>
-   Verify satisfaction with `git --version`
+2. [git](https://git-scm.com/)
 
-3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html)<br>
-   Verify satisfaction with `python --version` and `python -m venv -h`.  Your system might use an alternate like `python3` or `python3.13`.
+3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html)
 
-4. [PIP](https://pypi.org/project/pip/).
-Verify satisfaction with `pip --version`.  On your system it might be `pip3` or `pipx`.<br>
+4. [PIP](https://pypi.org/project/pip/)
 
 5. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
-  <details><summary>How to Verify compiler</summary>
 
-`g++  --version` and then create, build, and run a test program.  For example, create a file named hello.cpp with contents:
+<details>
+<summary>Click to Expand: How to Verify System Requirements</summary>
+
+2. `git --version`
+
+3. `python --version` and `python -m venv -h`. Your system might use an alternate like `python3` or `python3.13`.
+
+4. `pip --version`.  On your system it might be `pip3` or `pipx`.
+
+5.  `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
 
 ```cpp
 #include <iostream>
@@ -51,6 +58,7 @@ then build and run it, for example like:
 % ./hi
 Hello, World!
 ```
+
 </details>
 
 
