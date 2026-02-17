@@ -1099,19 +1099,9 @@ void Transaction::r2RecvFinAck(const Fw::Buffer& buffer) {
         return;
     }
 
-    if (!this->m_engine->recvAck(this, ack))
-    {
-        /* got fin-ack, so time to close the state */
-        this->r2Reset();
-    }
-    else
-    {
-        // TODO JMP Not converted to EVR because this is unreachable code. Verify implementation of recvAck
-        // CFE Event: CFDP_R_PDU_FINACK_ERR_EID, EventType_ERROR, "CF R%d(%lu:%lu): invalid fin-ack",
-        //            (this->m_state == TXN_STATE_R2), (unsigned long)this->m_history->src_eid,
-        //            (unsigned long)this->m_history->seq_num);
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
-    }
+    // ACK PDU has been validated during deserialization
+    // Got fin-ack, so time to close the state
+    this->r2Reset();
 }
 
 void Transaction::r2RecvMd(const Fw::Buffer& buffer) {

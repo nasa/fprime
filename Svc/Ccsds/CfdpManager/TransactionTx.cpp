@@ -754,8 +754,9 @@ void Transaction::s2EofAck(const Fw::Buffer& buffer) {
         return;
     }
 
-    if (!this->m_engine->recvAck(this, ack) &&
-        ack.getDirectiveCode() == FILE_DIRECTIVE_END_OF_FILE)
+    // ACK PDU has been validated during deserialization
+    // Check if this is an EOF acknowledgment
+    if (ack.getDirectiveCode() == FILE_DIRECTIVE_END_OF_FILE)
     {
         this->m_flags.tx.eof_ack_recv           = true;
         this->m_flags.com.ack_timer_armed       = false; // just wait for FIN now, nothing to re-send

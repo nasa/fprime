@@ -502,12 +502,6 @@ Status::T Engine::recvEof(Transaction *txn, const EofPdu& eofPdu)
     return Cfdp::Status::SUCCESS;
 }
 
-Status::T Engine::recvAck(Transaction *txn, const AckPdu& pdu)
-{
-    // ACK PDU has been validated during fromBuffer()
-    return Cfdp::Status::SUCCESS;
-}
-
 Status::T Engine::recvFin(Transaction *txn, const FinPdu& finPdu)
 {
     // FIN PDU has been validated during fromBuffer()

@@ -410,21 +410,6 @@ class Engine {
     Status::T recvEof(Transaction *txn, const EofPdu& pdu);
 
     /**
-     * @brief Unpack an ACK PDU from a received message
-     *
-     * This should only be invoked for buffers that have been identified
-     * as an acknowledgment PDU.
-     *
-     * @param txn  Pointer to the transaction state
-     * @param pdu  The ACK PDU
-     *
-     * @returns integer status code
-     * @retval Cfdp::Status::SUCCESS on success
-     * @retval Cfdp::Status::SHORT_PDU_ERROR on error TODO JMP This ever gets returned?
-     */
-    Status::T recvAck(Transaction *txn, const AckPdu& pdu);
-
-    /**
      * @brief Unpack an FIN PDU from a received message
      *
      * This should only be invoked for buffers that have been identified
