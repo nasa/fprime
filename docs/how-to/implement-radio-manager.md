@@ -78,7 +78,7 @@ void RadioManager::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuf
 
 ### Incoming (uplink) data: **`drvReceiveIn`**
 
-Forward received data to `dataOut`. If you are using a different driver, the port name or strategy may differ.
+This port is receiving uplink data from the driver (hardware), which is then forwarded to the communications stack through the `dataOut` port. If you are using a different driver, the `drvReceiveIn` port name or strategy may differ.
 
 **Example:**
 
