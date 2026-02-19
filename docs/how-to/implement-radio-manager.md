@@ -24,33 +24,6 @@ A common approach is to use an intermediate driver component (e.g., `Drv.ByteStr
 > [!NOTE]
 > For the curious reader: Some systems may not have a radio, for example if communications are done over a wired interface or local network (e.g. TCP/UDP). In this case, a component must still exist to implement the Communications Adapter Interface and act as a bridge to whichever hardware interface is used. An example of such a component is `Svc.ComStub` - it implements the Communications Adapter Interface and acts as a pass-through to a `Drv.ByteStreamDriver` for read/writes. This is the default configuration when creating new deployments! And because F´ ships with 3 common ByteStreamDriver implementations (`TcpClient`, `TcpServer` and `UART`), that is why you have three communication driver options to choose from when creating a new deployment.
 
-### Architecture
-
-```mermaid
-graph LR
-    subgraph Downlink
-        A[Svc.ComQueue] -->|dataOut| B[Framer]
-        B -->|comStatusOut| A
-    end
-    subgraph Radio
-        C[Radio Manager]
-    end
-    subgraph Uplink
-        D[Deframer] -->|dataOut| E[Svc.FprimeRouter]
-    end
-    subgraph Hardware
-        F[Radio Hardware]
-    end
-    B -->|dataOut| C
-    C -->|comStatusOut| B
-    C -->|dataOut| D
-    C <-->|Hardware I/O| F
-    style C fill:#fff4e1
-```
-**Figure**: Radio Manager in the F´ communication stack.
-
----
-
 ## Step 0 - Read the Reference Documentation
 
 Before starting, read the [Communication Adapter Interface](../reference/communication-adapter-interface.md) reference documentation. This How-To Guide is essentially walking through the implementation of the interface, and much of the information we are going to cover is explained at length in the reference documentation.
