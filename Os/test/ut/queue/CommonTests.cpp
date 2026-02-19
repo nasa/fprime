@@ -240,7 +240,7 @@ TEST(BasicRules, Create) {
     // Repetitive create
     create_rule.action(tester);
 #if FW_QUEUE_REGISTRATION
- EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
+    EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
 #endif
 }
 
