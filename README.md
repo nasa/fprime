@@ -102,6 +102,7 @@ The following roles are members of the CCB and per our [governance](./GOVERNANCE
 |-------------------|-----------------|
 | Community Manager | @LeStarch       |
 | Community Manager | @thomas-bc      |
+| Community Manager | @kevin-f-ortega |
 | Security Overseer | @bitWarrior     |
 | CCB Member        | @bocchino       |
 | CCB Member        | @kevin-f-ortega |

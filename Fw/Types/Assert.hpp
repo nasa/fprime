@@ -155,9 +155,13 @@ class AssertHook {
     void registerHook();
     // deregister the hook
     void deregisterHook();
+    // get a pointer to the registered hook
+    static AssertHook* getRegisteredHook();
 
   protected:
   private:
+    // the currently registered assert hook
+    static AssertHook* s_assertHook;
     // the previous assert hook
     AssertHook* previousHook;
 };

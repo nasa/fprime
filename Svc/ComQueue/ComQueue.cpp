@@ -25,6 +25,8 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->entries)); i++) {
         this->entries[i].priority = 0;
         this->entries[i].depth = 0;
+        this->entries[i].mode = Types::QUEUE_FIFO;
+        this->entries[i].overflowMode = Types::QUEUE_DROP_NEWEST;
     }
 }
 
@@ -39,6 +41,8 @@ ComQueue ::ComQueue(const char* const compName)
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
     }
+
+    static_assert(TOTAL_PORT_COUNT >= 1, "ComQueue must have more than one port");
 }
 
 ComQueue ::~ComQueue() {}
@@ -86,6 +90,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 QueueMetadata& entry = this->m_prioritizedList[currentPriorityIndex];
                 entry.priority = queueConfig.entries[entryIndex].priority;
                 entry.depth = queueConfig.entries[entryIndex].depth;
+                entry.mode = queueConfig.entries[entryIndex].mode;
+                entry.overflowMode = queueConfig.entries[entryIndex].overflowMode;
                 entry.index = entryIndex;
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
@@ -119,7 +125,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         if (allocationSize > 0) {
             this->m_queues[this->m_prioritizedList[i].index].setup(
                 reinterpret_cast<U8*>(this->m_allocation) + allocationOffset, allocationSize,
-                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize);
+                this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize, this->m_prioritizedList[i].mode,
+                this->m_prioritizedList[i].overflowMode);
         }
         allocationOffset += allocationSize;
     }
@@ -134,8 +141,14 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 
 void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
     // Acquire the queue that we need to drain
-    FwIndexType queueIndex =
-        (queueType == QueueType::COM_QUEUE) ? index : static_cast<FwIndexType>(index + COM_PORT_COUNT);
+    FwIndexType queueIndex = this->getQueueNum(queueType, index);
+
+    // Validate queue index
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     this->drainQueue(queueIndex);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -144,6 +157,55 @@ void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->drainQueue(i);
     }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                             U32 cmdSeq,
+                                             Svc::QueueType queueType,
+                                             FwIndexType index,
+                                             FwIndexType newPriority) {
+    // Acquire the queue we are to reprioritize
+    FwIndexType queueIndex = this->getQueueNum(queueType, index);
+
+    // Validate queue index
+    if (queueIndex < 0 || queueIndex >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Validate priority range
+    if (newPriority < 0 || newPriority >= TOTAL_PORT_COUNT) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Find our queue in the prioritized list & update the priority
+    for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
+        // If the port based index matches, then update
+        if (m_prioritizedList[prioIndex].index == queueIndex) {
+            m_prioritizedList[prioIndex].priority = newPriority;
+            break;  // Since we shouldn't find more than one queue at this port index
+        }
+    }
+
+    // Re-sort the prioritized list to maintain priority ordering
+    // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT - 1; i++) {
+        for (FwIndexType j = 0; (j < TOTAL_PORT_COUNT - i - 1) && (j < TOTAL_PORT_COUNT - 1); j++) {
+            if (m_prioritizedList[j].priority > m_prioritizedList[j + 1].priority) {
+                // Swap metadata
+                QueueMetadata temp = m_prioritizedList[j];
+                m_prioritizedList[j] = m_prioritizedList[j + 1];
+                m_prioritizedList[j + 1] = temp;
+            }
+        }
+    }
+
+    // Emit event for successful priority change
+    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, queueIndex, newPriority);
+
+    // Send command response
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -251,24 +313,23 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
               static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
     const FwIndexType portNum =
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
-    bool rvStatus = true;
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
-            this->log_WARNING_HI_QueueOverflow(queueType, static_cast<U32>(portNum));
+            this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;
         }
-
-        rvStatus = false;
     }
+
     // When the component is already in READY state process the queue to send out the next available message immediately
     if (this->m_state == READY) {
         this->processQueue();
     }
 
-    return rvStatus;
+    // Check if the buffer was accepted or must be returned
+    return status != Fw::FW_SERIALIZE_NO_ROOM_LEFT;
 }
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
@@ -384,5 +445,10 @@ void ComQueue::processQueue() {
         this->m_prioritizedList[priorityIndex] = this->m_prioritizedList[priorityIndex - 1];
         this->m_prioritizedList[priorityIndex - 1] = temp;
     }
+}
+
+FwIndexType ComQueue::getQueueNum(Svc::QueueType queueType, FwIndexType portNum) {
+    // Acquire the queue that we need to drain
+    return static_cast<FwIndexType>(portNum + ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
 }
 }  // end namespace Svc

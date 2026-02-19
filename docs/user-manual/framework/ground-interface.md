@@ -84,6 +84,7 @@ nothing to retry.
 
 Uplink handles received data, unpacks F´ data types, and routes these to the greater F´ system. In a typical formation,
 these com buffers are sent to the command dispatcher and raw buffers are sent to the file uplink. Uplink is implemented by chaining multiple components:
+
 - a [Svc.FrameAccumulator](../../../Svc/FrameAccumulator/docs/sdd.md) component, accumulating bytes from the driver until it detects a full frame
 - a component implementing the [Svc.DeframerInterface](../../../Svc/Interfaces/docs/sdd.md) port interface to unpack the frame into F´ data types. F´ ships with implementations for various protocols:
   - [Svc.FprimeDeframer](../../../Svc/FprimeDeframer/docs/sdd.md) for the lightweight F´ protocol
@@ -94,6 +95,7 @@ these com buffers are sent to the command dispatcher and raw buffers are sent to
 
 Downlink takes in F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
 sent to the driver for handling. Downlink is implemented with a component implementing the [Svc.FramerInterface](../../../Svc/Interfaces/docs/sdd.md) port interface. F´ ships with implementations for two different protocols:
+
 - [Svc.FprimeFramer](../../../Svc/FprimeFramer/docs/sdd.md)
 - [Svc.Ccsds Package](../../../Svc/Ccsds) containing implementations for the CCSDS TM and Space Packet protocols
 

@@ -52,6 +52,12 @@ class CircularState {
      */
     bool rotate(FwSizeType size);
     /**
+     * Trim the circular buffer (remove from the back).
+     * @param size: size to trim
+     * @return true if successful, false otherwise
+     */
+    bool trim(FwSizeType size);
+    /**
      * Get the size of the random buffer data.
      * @return size of the buffer
      */
