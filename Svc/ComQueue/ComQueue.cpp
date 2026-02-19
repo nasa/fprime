@@ -192,7 +192,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
     // Re-sort the prioritized list to maintain priority ordering
     // Using simple bubble sort since TOTAL_PORT_COUNT is typically small
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT - 1; i++) {
-        for (FwIndexType j = 0; j < TOTAL_PORT_COUNT - i - 1; j++) {
+        for (FwIndexType j = 0; (j < TOTAL_PORT_COUNT - i - 1) && (j < TOTAL_PORT_COUNT - 1); j++) {
             if (m_prioritizedList[j].priority > m_prioritizedList[j + 1].priority) {
                 // Swap metadata
                 QueueMetadata temp = m_prioritizedList[j];
