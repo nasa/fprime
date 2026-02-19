@@ -24,6 +24,9 @@ void Queue::setup(U8* const storage,
     const FwSizeType total_needed_size = depth * message_size;
     FW_ASSERT(storage_size >= total_needed_size, static_cast<FwAssertArgType>(storage_size),
               static_cast<FwAssertArgType>(depth), static_cast<FwAssertArgType>(message_size));
+    FW_ASSERT(mode == QUEUE_FIFO || mode == QUEUE_LIFO, static_cast<FwAssertArgType>(mode));
+    FW_ASSERT(overflow_mode == QUEUE_DROP_OLDEST || overflow_mode == QUEUE_DROP_NEWEST,
+              static_cast<FwAssertArgType>(overflow_mode));
     m_internal.setup(storage, total_needed_size);
     m_message_size = message_size;
     m_mode = mode;
@@ -34,7 +37,7 @@ Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType siz
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));  // Ensure initialization
     FW_ASSERT(m_message_size == size, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(m_message_size));  // Message size is as expected
-
+    FW_ASSERT(message != nullptr);
     Fw::SerializeStatus status = m_internal.serialize(message, m_message_size);
 
     // If queue is full and we're in DROP_OLDEST mode, remove the oldest and try again
@@ -62,7 +65,7 @@ Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
     FW_ASSERT(m_message_size > 0);  // Ensure initialization
     FW_ASSERT(m_message_size <= size, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(m_message_size));  // Sufficient storage space for read message
-
+    FW_ASSERT(message != nullptr);
     Fw::SerializeStatus result;
 
     if (m_mode == QUEUE_FIFO) {
