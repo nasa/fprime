@@ -215,6 +215,7 @@ endmacro
 endraw
 enduml
 EPP
+epp
 ERRORCHECK
 errornum
 ert
@@ -240,6 +241,7 @@ ffff
 Ffs
 fge
 fgt
+fhp
 FILEDISPATCHER
 FILEDISPATCHERCFG
 FILEDOWNLINK
@@ -435,6 +437,7 @@ MMAPALLOCATOR
 MML
 modbus
 MOVEFILE
+mpdu
 Mpu
 Msb
 msc

@@ -2,6 +2,7 @@ module Svc {
 module Ccsds {
 
     @ Enum representing an error during framing/deframing in the CCSDS protocols
+    @ TODO: Decide whether AOS errors should be merged with TC errors into a unified enum
     enum FrameError: U8 {
         SP_INVALID_LENGTH = 0
         TC_INVALID_SCID = 1
@@ -104,8 +105,10 @@ module Ccsds {
             @< 1 bit replay flag | 1 bit VC frame count cycle flag | 2 most significant bits of spacecraft ID | 4 bits VC frame count cycle
     }
 
-    @ Offsets and masks for (de)serializing individual sub-fields in AOS headers
+    @ Offsets and masks for deserializing individual sub-fields in AOS headers
     @ Per CCSDS 732.0-B-5 Section 4.1.2
+    @ Note: Masks are provided for reading (deframing) operations.
+    @ The AOS framer only writes, so it only needs offsets; the deframer reads and needs both.
     module AOSHeaderSubfields {
         # globalVcId offsets and masks (16 bits)
         constant frameVersionOffset = 14
@@ -129,13 +132,12 @@ module Ccsds {
         # VC Frame Count (24 bits)
         constant vcFrameCountMask = 0x00FFFFFF  @< 24 bits of frame count
 
-        # Expected Frame Version per CCSDS 732.0-B-5 Section 4.1.2.2.2
-        constant expectedFrameVersion = 1       @< AOS uses '01' binary = 1
+        # expectedFrameVersion removed: use Tfvn::AOS from the Tfvn enum instead
     }
 
-    @ Masks and special values for M_PDU First Header Pointer
+    @ Masks and special values for AOS M_PDU First Header Pointer
     @ Per CCSDS 732.0-B-5 Section 4.1.4.2.2
-    module MPDUSubfields {
+    module AOSMPDUSubfields {
         constant firstHeaderPointerMask = 0x07FF  @< 0b0000011111111111 - bits [10:0]
         constant reservedMask = 0xF800            @< 0b1111100000000000 - bits [15:11]
 
@@ -144,7 +146,8 @@ module Ccsds {
         constant FHP_IDLE_DATA_ONLY = 0x07FF      @< Frame contains only idle data
     }
 
-    @ Constants for Encapsulation Packet Protocol per CCSDS 133.1-B-3
+    @ Bit masks and offsets for Encapsulation Packet Protocol first byte
+    @ Per CCSDS 133.1-B-3
     module EPPSubfields {
         # First octet masks (8 bits)
         constant packetVersionMask = 0xE0         @< 0b11100000 - bits [7:5]
@@ -155,24 +158,40 @@ module Ccsds {
         constant packetVersionOffset = 5
         constant packetTypeOffset = 4
 
-        # Expected values per CCSDS 133.1-B-3
-        constant expectedPacketVersion = 7        @< EPP uses '111' binary = 7
-
-        # Packet Types per CCSDS 133.1-B-3 Section 4.1.3
-        constant typeEncapsulation = 0            @< Encapsulation Packet (data)
-        constant typeEncapsulationIdle = 1        @< Encapsulation Idle Packet
-
-        # Protocol IDs for encapsulation packets per CCSDS 133.1-B-3 Section 4.2.1
-        constant protocolExtended = 0x00          @< Extended Protocol ID
-        constant protocolIPv4Extension = 0x02     @< Internet Protocol Extension (IPv4/IPv6)
-        constant protocolMissionSpecific = 0x07   @< Mission-specific
-
-        # Length of Length values for idle packets per CCSDS 133.1-B-3 Section 4.1.3.2
-        constant lol1Octet = 0x01                 @< 1 octet length field
-        constant lol2Octets = 0x02                @< 2 octet length field
-        constant lol4Octets = 0x04                @< 4 octet length field
-        constant lol8Octets = 0x08                @< 8 octet length field
+        # expectedPacketVersion removed: use PacketVersionNumber::EPP from the PacketVersionNumber enum
+        # Type/protocol/length-of-length constants removed: use EppPacketType, EppProtocolId, EppLengthOfLength enums
     }
+
+    @ Packet Version Numbers (upper 3 bits of first packet byte)
+    @ Used to distinguish between SPP and EPP packets on the wire
+    @ Per CCSDS 133.0-B-2 (SPP) and CCSDS 133.1-B-3 (EPP)
+    dictionary enum PacketVersionNumber : U8 {
+        SPP = 0  @< Space Packet Protocol - PVN '000' binary
+        EPP = 7  @< Encapsulation Packet Protocol - PVN '111' binary
+    } default SPP
+
+    @ Packet types for Encapsulation Packet Protocol per CCSDS 133.1-B-3 Section 4.1.3
+    dictionary enum EppPacketType : U8 {
+        Encapsulation     = 0  @< Encapsulation Packet (data)
+        EncapsulationIdle = 1  @< Encapsulation Idle Packet
+    } default Encapsulation
+
+    @ Protocol IDs for EPP encapsulation packets per CCSDS 133.1-B-3 Section 4.2.1
+    dictionary enum EppProtocolId : U8 {
+        Extended        = 0x00  @< Extended Protocol ID
+        IPv4Extension   = 0x02  @< Internet Protocol Extension (IPv4/IPv6)
+        MissionSpecific = 0x07  @< Mission-specific
+    } default Extended
+
+    @ Length of Length field values for EPP idle packets per CCSDS 133.1-B-3 Section 4.1.3.2
+    @ Specifies how many octets are used for the packet length field
+    dictionary enum EppLengthOfLength : U8 {
+        Fill        = 0x00  @< Fill packet - no length field, consumes remaining data zone
+        OneOctet    = 0x01  @< 1 octet length field
+        TwoOctets   = 0x02  @< 2 octet length field
+        FourOctets  = 0x04  @< 4 octet length field
+        EightOctets = 0x08  @< 8 octet length field
+    } default OneOctet
 
     @ Describes the header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) multiplex protocol data unit (M_PDU)
     struct M_PDUHeader {

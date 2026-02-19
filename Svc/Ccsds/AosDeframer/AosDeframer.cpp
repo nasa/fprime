@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  AosDeframer.cpp
-// \author Auto-generated
+// \author Will MacCormack
 // \brief  cpp file for AosDeframer component implementation class
 //
 // Deframer for the AOS Space Data Link Protocol per CCSDS 732.0-B-5.
@@ -12,6 +12,8 @@
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
 #include "Fw/Types/String.hpp"
+#include "Svc/Ccsds/Types/EppPacketTypeEnumAc.hpp"
+#include "Svc/Ccsds/Types/PacketVersionNumberEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -28,17 +30,11 @@ AosDeframer::AosDeframer(const char* const compName)
       m_fixedFrameSize(0),
       m_fecfEnabled(true),
       m_spacecraftId(ComCfg::SpacecraftId),
-      m_vcId(0),
-      m_acceptAllVcid(true),
-      m_pvnMask(PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK),
-      m_frameCount(0),
-      m_packetCount(0),
-      m_crcErrorCount(0) {
-    // Initialize spanning packet state
-    m_spanningPacket.bytesReceived = 0;
-    m_spanningPacket.expectedSize = 0;
-    m_spanningPacket.pvn = 0;
-    m_spanningPacket.active = false;
+      m_acceptAllVcid(true) {
+    // Initialize VC struct
+    m_vcs[0].vcStructIndex = 0;
+    m_vcs[0].virtualChannelId = 0;
+    m_vcs[0].pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;
 }
 
 AosDeframer::~AosDeframer() {}
@@ -69,9 +65,11 @@ void AosDeframer::configure(U32 fixedFrameSize,
     m_fixedFrameSize = fixedFrameSize;
     m_fecfEnabled = frameErrorControlField;
     m_spacecraftId = spacecraftId;
-    m_vcId = vcId;
     m_acceptAllVcid = acceptAllVcid;
-    m_pvnMask = pvnMask;
+
+    // Populate the (single) VC struct
+    m_vcs[0].virtualChannelId = vcId;
+    m_vcs[0].pvnMask = pvnMask;
 }
 
 // ----------------------------------------------------------------------
@@ -99,18 +97,21 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         return;
     }
 
+    // Look up the VC struct for this frame's VCID
+    AosDeframerVc& vc = this->getVcStruct(packetContext);
+
     // Validate FECF if enabled (Section 4.1.6)
-    if (m_fecfEnabled && !this->validateFecf(data)) {
+    if (m_fecfEnabled && !this->validateFecf(data, vc)) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
 
     // Update telemetry
-    m_frameCount++;
-    this->tlmWrite_FrameCount(m_frameCount);
+    vc.frameCount++;
+    this->tlmWrite_FrameCount(vc.frameCount);
 
     // Extract packets from the M_PDU data zone
-    this->extractPackets(data, packetContext);
+    this->extractPackets(vc, data, packetContext);
 
     // Return the frame buffer
     this->dataReturnOut_out(0, data, context);
@@ -131,27 +132,38 @@ void AosDeframer::errorNotifyHelper(Ccsds::FrameError error) {
     }
 }
 
+AosDeframer::AosDeframerVc& AosDeframer::getVcStruct(const ComCfg::FrameContext& context) {
+    // TODO: Implement multi-VC support by mapping context.vcId to the correct VC struct
+    (void)context;
+    return m_vcs[0];
+}
+
 bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context) {
     // Deserialize the AOS Primary Header (per CCSDS 732.0-B-5 Section 4.1.2)
     AOSHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        // Buffer too small to contain a valid AOS primary header
+        this->log_WARNING_HI_InvalidFrameLength(m_fixedFrameSize, data.getSize());
+        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_LENGTH);
+        return false;
+    }
 
     U16 globalVcId = header.get_globalVcId();
     U32 frameCountAndSignaling = header.get_frameCountAndSignaling();
 
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
-    // AOS uses version '01' binary = 1
+    // AOS uses Tfvn::AOS = 0x1 ('01' binary)
     U8 tfvn =
         static_cast<U8>((globalVcId & AOSHeaderSubfields::frameVersionMask) >> AOSHeaderSubfields::frameVersionOffset);
-    if (tfvn != AOSHeaderSubfields::expectedFrameVersion) {
-        this->log_WARNING_HI_InvalidTfvn(tfvn, static_cast<U8>(AOSHeaderSubfields::expectedFrameVersion));
+    if (tfvn != static_cast<U8>(Tfvn::AOS)) {
+        this->log_WARNING_HI_InvalidTfvn(tfvn, static_cast<U8>(Tfvn::AOS));
         this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_VERSION);
         return false;
     }
 
     // Extract Spacecraft ID (Section 4.1.2.2)
-    // SCID is split: 8 LSBs in globalVcId, 2 MSBs in signaling field
+    // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
     U16 scidLsb = static_cast<U16>((globalVcId & AOSHeaderSubfields::spacecraftIdLsbMask) >>
                                    AOSHeaderSubfields::spacecraftIdLsbOffset);
     U8 signalingByte = static_cast<U8>(frameCountAndSignaling & 0xFF);
@@ -167,8 +179,8 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
 
     // Extract Virtual Channel ID (Section 4.1.2.3)
     U8 vcId = static_cast<U8>(globalVcId & AOSHeaderSubfields::virtualChannelIdMask);
-    if (!m_acceptAllVcid && vcId != m_vcId) {
-        this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcId);
+    if (!m_acceptAllVcid && vcId != m_vcs[0].virtualChannelId) {
+        this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcs[0].virtualChannelId);
         this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_VCID);
         return false;
     }
@@ -178,19 +190,16 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     U32 vcFrameCount =
         (frameCountAndSignaling >> AOSHeaderSubfields::vcFrameCountOffset) & AOSHeaderSubfields::vcFrameCountMask;
 
-    // Extract Replay Flag (Section 4.1.2.5.2)
-    bool replayFlag = (signalingByte & AOSHeaderSubfields::replayFlagMask) != 0;
-
     // Extract VC Frame Count Cycle if in use (Section 4.1.2.5.3)
     bool cycleCountInUse = (signalingByte & AOSHeaderSubfields::cycleCountFlagMask) != 0;
     if (cycleCountInUse) {
         U8 vcFrameCountCycle = signalingByte & AOSHeaderSubfields::vcFrameCountCycleMask;
-        // Extend the 24-bit frame count with 4-bit cycle
+        // Extend the 24-bit frame count with the 4-bit cycle count
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
     }
 
-    (void)vcFrameCount;
-    (void)replayFlag;
+    // Store VC frame count in the VC struct for reference (e.g., gap detection)
+    m_vcs[0].vcFrameCount = vcFrameCount;
 
     // Update context with extracted values
     context.set_vcId(vcId);
@@ -198,7 +207,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     return true;
 }
 
-bool AosDeframer::validateFecf(Fw::Buffer& data) {
+bool AosDeframer::validateFecf(Fw::Buffer& data, AosDeframerVc& vc) {
     // Per CCSDS 732.0-B-5 Section 4.1.6, FECF is a 16-bit CRC
     // computed over all preceding bits in the frame
 
@@ -216,15 +225,60 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     if (transmittedCrc != computedCrc) {
         this->log_WARNING_HI_InvalidCrc(transmittedCrc, computedCrc);
         this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_CRC);
-        m_crcErrorCount++;
-        this->tlmWrite_CrcErrorCount(m_crcErrorCount);
+        vc.crcErrorCount++;
+        this->tlmWrite_CrcErrorCount(vc.crcErrorCount);
         return false;
     }
 
     return true;
 }
 
-void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context) {
+bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc,
+                                         U8* data,
+                                         FwSizeType size,
+                                         ComCfg::FrameContext& context) {
+    // Clamp copy to buffer capacity to avoid overflow
+    FwSizeType bytesToCopy = FW_MIN(size, sizeof(vc.spanningPacket.buffer) - vc.spanningPacket.bytesReceived);
+    ::memcpy(vc.spanningPacket.buffer + vc.spanningPacket.bytesReceived, data, bytesToCopy);
+    vc.spanningPacket.bytesReceived += bytesToCopy;
+
+    // Determine expected size once we have enough SPP header bytes
+    if (vc.spanningPacket.expectedSize == 0 &&
+        vc.spanningPacket.pvn == static_cast<U8>(PacketVersionNumber::SPP) &&
+        (vc.pvnMask & PvnBitfield::SPP_MASK) &&
+        vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
+        U16 dataLength =
+            static_cast<U16>((vc.spanningPacket.buffer[4] << 8) | vc.spanningPacket.buffer[5]);
+        vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
+    }
+
+    // Check if the spanning packet is now complete
+    if (vc.spanningPacket.expectedSize > 0 &&
+        vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
+        // Spanning packet data is owned by vc.spanningPacket.buffer (persistent member)
+        Fw::Buffer packetBuffer(vc.spanningPacket.buffer, vc.spanningPacket.expectedSize);
+
+        ComCfg::FrameContext packetContext = context;
+        if (vc.spanningPacket.pvn == static_cast<U8>(PacketVersionNumber::SPP)) {
+            packetContext.set_pvn(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+        } else {
+            packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+        }
+
+        this->dataOut_out(0, packetBuffer, packetContext);
+        vc.packetCount++;
+        this->tlmWrite_PacketCount(vc.packetCount);
+
+        vc.spanningPacket.active = false;
+        vc.spanningPacket.bytesReceived = 0;
+        vc.spanningPacket.expectedSize = 0;
+        return true;
+    }
+
+    return false;
+}
+
+void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::FrameContext& context) {
     // Parse M_PDU header (per CCSDS 732.0-B-5 Section 4.1.4.2.2)
     M_PDUHeader mpduHeader;
     auto deserializer = data.getDeserializer();
@@ -232,7 +286,7 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
     Fw::SerializeStatus status = deserializer.deserializeTo(mpduHeader);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer() & MPDUSubfields::firstHeaderPointerMask;
+    U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer() & AOSMPDUSubfields::firstHeaderPointerMask;
 
     // Calculate data zone boundaries
     const FwSizeType dataZoneStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE;
@@ -241,131 +295,63 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
     U8* dataZone = data.getData() + dataZoneStart;
 
     // Handle special First Header Pointer values (Section 4.1.4.2.2.4)
-    if (firstHeaderPointer == MPDUSubfields::FHP_IDLE_DATA_ONLY) {
-        // Frame contains only idle data
+    if (firstHeaderPointer == AOSMPDUSubfields::FHP_IDLE_DATA_ONLY) {
+        // Frame contains only idle data - reset any in-progress spanning packet
         this->log_ACTIVITY_LO_IdleFrame();
-        // If there's a spanning packet in progress, this is an error condition
-        // Per the standard, idle-only frames shouldn't occur mid-packet
-        m_spanningPacket.active = false;
-        m_spanningPacket.bytesReceived = 0;
+        vc.spanningPacket.active = false;
+        vc.spanningPacket.bytesReceived = 0;
         return;
     }
 
-    FwSizeType currentOffset = 0;
-
-    // Handle continuing packet data (data before First Header Pointer)
-    if (firstHeaderPointer == MPDUSubfields::FHP_NO_PACKET_START) {
+    // Handle continuation data (data before First Header Pointer)
+    if (firstHeaderPointer == AOSMPDUSubfields::FHP_NO_PACKET_START) {
         // Entire data zone is continuation of previous packet
-        if (m_spanningPacket.active) {
-            // Add all data to spanning packet buffer
-            FwSizeType bytesToCopy =
-                FW_MIN(dataZoneSize, sizeof(m_spanningPacket.buffer) - m_spanningPacket.bytesReceived);
-            ::memcpy(m_spanningPacket.buffer + m_spanningPacket.bytesReceived, dataZone, bytesToCopy);
-            m_spanningPacket.bytesReceived += bytesToCopy;
-
-            // Check if we now have enough for the header to determine packet size
-            if (m_spanningPacket.expectedSize == 0 && m_spanningPacket.bytesReceived >= 6) {
-                // For SPP, packet length is in bytes 4-5 (0-indexed)
-                if ((m_spanningPacket.pvn == 0) && (m_pvnMask & PvnBitfield::SPP_MASK)) {
-                    U16 dataLength = static_cast<U16>((m_spanningPacket.buffer[4] << 8) | m_spanningPacket.buffer[5]);
-                    m_spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
-                }
-            }
-
-            // Check if packet is complete
-            if (m_spanningPacket.expectedSize > 0 && m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
-                // Output the complete packet
-                Fw::Buffer packetBuffer(m_spanningPacket.buffer, m_spanningPacket.expectedSize);
-
-                // Update context with PVN
-                ComCfg::FrameContext packetContext = context;
-                if (m_spanningPacket.pvn == 0) {
-                    packetContext.set_pvn(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
-                } else {
-                    packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
-                }
-
-                this->dataOut_out(0, packetBuffer, packetContext);
-                m_packetCount++;
-                this->tlmWrite_PacketCount(m_packetCount);
-
-                m_spanningPacket.active = false;
-                m_spanningPacket.bytesReceived = 0;
-                m_spanningPacket.expectedSize = 0;
-            }
+        if (vc.spanningPacket.active) {
+            (void)this->appendToSpanningPacket(vc, dataZone, dataZoneSize, context);
         }
-        // If no spanning packet active, this is continuation data we can't use
+        // If no spanning packet active, this continuation data cannot be used
         return;
     }
 
-    // Handle continuation data before first packet header
-    if (firstHeaderPointer > 0 && m_spanningPacket.active) {
-        FwSizeType continuationBytes = FW_MIN(static_cast<FwSizeType>(firstHeaderPointer),
-                                              sizeof(m_spanningPacket.buffer) - m_spanningPacket.bytesReceived);
-        ::memcpy(m_spanningPacket.buffer + m_spanningPacket.bytesReceived, dataZone, continuationBytes);
-        m_spanningPacket.bytesReceived += continuationBytes;
-
-        // Determine expected size if we have enough header bytes
-        if (m_spanningPacket.expectedSize == 0 && m_spanningPacket.bytesReceived >= 6) {
-            if ((m_spanningPacket.pvn == 0) && (m_pvnMask & PvnBitfield::SPP_MASK)) {
-                U16 dataLength = static_cast<U16>((m_spanningPacket.buffer[4] << 8) | m_spanningPacket.buffer[5]);
-                m_spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
-            }
-        }
-
-        // Check if the spanning packet is now complete
-        if (m_spanningPacket.expectedSize > 0 && m_spanningPacket.bytesReceived >= m_spanningPacket.expectedSize) {
-            // Output the complete packet
-            Fw::Buffer packetBuffer(m_spanningPacket.buffer, m_spanningPacket.expectedSize);
-
-            ComCfg::FrameContext packetContext = context;
-            if (m_spanningPacket.pvn == 0) {
-                packetContext.set_pvn(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
-            } else {
-                packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
-            }
-
-            this->dataOut_out(0, packetBuffer, packetContext);
-            m_packetCount++;
-            this->tlmWrite_PacketCount(m_packetCount);
-        }
-
-        m_spanningPacket.active = false;
-        m_spanningPacket.bytesReceived = 0;
-        m_spanningPacket.expectedSize = 0;
+    // There is continuation data before the first packet header
+    if (firstHeaderPointer > 0 && vc.spanningPacket.active) {
+        (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
+        vc.spanningPacket.active = false;
+        vc.spanningPacket.bytesReceived = 0;
+        vc.spanningPacket.expectedSize = 0;
     }
 
     // Move to first packet header
-    currentOffset = firstHeaderPointer;
+    FwSizeType currentOffset = firstHeaderPointer;
 
     // Extract packets starting at First Header Pointer
     while (currentOffset < dataZoneSize) {
         U8* packetStart = dataZone + currentOffset;
         FwSizeType remainingBytes = dataZoneSize - currentOffset;
 
-        // Determine packet type from PVN
+        // Determine packet type from PVN (upper 3 bits of first byte)
         U8 pvn = getPacketVersion(packetStart[0]);
 
         FwSizeType packetSize = 0;
 
-        if (pvn == 0 && (m_pvnMask & PvnBitfield::SPP_MASK)) {
+        if (pvn == static_cast<U8>(PacketVersionNumber::SPP) && (vc.pvnMask & PvnBitfield::SPP_MASK)) {
             // Space Packet Protocol
-            packetSize = extractSppPacket(packetStart, remainingBytes, context);
-        } else if (pvn == 7 && (m_pvnMask & PvnBitfield::EPP_MASK)) {
+            packetSize = extractSppPacket(vc, packetStart, remainingBytes, context);
+        } else if (pvn == static_cast<U8>(PacketVersionNumber::EPP) && (vc.pvnMask & PvnBitfield::EPP_MASK)) {
             // Encapsulation Packet Protocol
-            packetSize = extractEppPacket(packetStart, remainingBytes, context);
+            packetSize = extractEppPacket(vc, packetStart, remainingBytes, context);
         } else {
-            // Unknown or disabled packet type - skip to next frame
+            // Unknown or disabled packet type - stop processing this frame
             break;
         }
 
         if (packetSize == 0) {
             // Packet spans to next frame - save state
-            m_spanningPacket.active = true;
-            m_spanningPacket.pvn = pvn;
-            m_spanningPacket.bytesReceived = remainingBytes;
-            m_spanningPacket.expectedSize = 0;
-            ::memcpy(m_spanningPacket.buffer, packetStart, remainingBytes);
+            vc.spanningPacket.active = true;
+            vc.spanningPacket.pvn = pvn;
+            vc.spanningPacket.bytesReceived = remainingBytes;
+            vc.spanningPacket.expectedSize = 0;
+            ::memcpy(vc.spanningPacket.buffer, packetStart, remainingBytes);
             break;
         }
 
@@ -373,7 +359,10 @@ void AosDeframer::extractPackets(Fw::Buffer& data, ComCfg::FrameContext& context
     }
 }
 
-FwSizeType AosDeframer::extractSppPacket(U8* payloadStart, FwSizeType payloadSize, ComCfg::FrameContext& context) {
+FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
+                                          U8* payloadStart,
+                                          FwSizeType payloadSize,
+                                          ComCfg::FrameContext& context) {
     // Per CCSDS 133.0-B-2, Space Packet Header is 6 bytes
     if (payloadSize < SpacePacketHeader::SERIALIZED_SIZE) {
         return 0;  // Incomplete header - spans to next frame
@@ -395,7 +384,7 @@ FwSizeType AosDeframer::extractSppPacket(U8* payloadStart, FwSizeType payloadSiz
         return totalPacketSize;
     }
 
-    // Create buffer pointing to the packet data
+    // Create buffer pointing to the packet data within the incoming frame buffer
     Fw::Buffer packetBuffer(payloadStart, totalPacketSize);
 
     // Update context
@@ -410,13 +399,16 @@ FwSizeType AosDeframer::extractSppPacket(U8* payloadStart, FwSizeType payloadSiz
 
     // Output the packet
     this->dataOut_out(0, packetBuffer, packetContext);
-    m_packetCount++;
-    this->tlmWrite_PacketCount(m_packetCount);
+    vc.packetCount++;
+    this->tlmWrite_PacketCount(vc.packetCount);
 
     return totalPacketSize;
 }
 
-FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSize, ComCfg::FrameContext& context) {
+FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
+                                          U8* payloadStart,
+                                          FwSizeType payloadSize,
+                                          ComCfg::FrameContext& context) {
     // Per CCSDS 133.1-B-3 Section 4.1, EPP minimum header is 1 byte
     if (payloadSize < 1) {
         return 0;
@@ -427,8 +419,8 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
     U8 packetVersion =
         static_cast<U8>((firstByte & EPPSubfields::packetVersionMask) >> EPPSubfields::packetVersionOffset);
 
-    // Validate packet version
-    if (packetVersion != EPPSubfields::expectedPacketVersion) {
+    // Validate packet version - EPP uses PVN '111' binary = 7
+    if (packetVersion != static_cast<U8>(PacketVersionNumber::EPP)) {
         Fw::String reason("Invalid packet version number");
         this->log_WARNING_HI_InvalidEppPacket(packetVersion, reason);
         this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_EPP);
@@ -439,7 +431,7 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
 
     FwSizeType totalPacketSize = 0;
 
-    if (packetType == EPPSubfields::typeEncapsulationIdle) {
+    if (packetType == static_cast<U8>(EppPacketType::EncapsulationIdle)) {
         // Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2
         U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
 
@@ -472,9 +464,6 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
         // Encapsulation Packet (data) per CCSDS 133.1-B-3 Section 4.1.3.1
         U8 protocolId = firstByte & EPPSubfields::protocolIdMask;
 
-        // For now, support basic protocol IDs with defined structure
-        // Protocol ID determines the header structure
-
         if (protocolId <= 0x07) {
             // Standard encapsulation - next 2 bytes are length
             if (payloadSize < 3) {
@@ -485,7 +474,7 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
             totalPacketSize = 3 + packetDataLength;
         } else {
             // Extended protocol ID (0x8-0xF) - variable structure
-            // For simplicity, treat as 2-byte length following
+            // Treat as 2-byte length following
             if (payloadSize < 3) {
                 return 0;
             }
@@ -498,7 +487,7 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
             return 0;  // Incomplete packet
         }
 
-        // Create buffer for packet
+        // Create buffer pointing to the packet data within the incoming frame buffer
         Fw::Buffer packetBuffer(payloadStart, totalPacketSize);
 
         // Update context
@@ -507,8 +496,8 @@ FwSizeType AosDeframer::extractEppPacket(U8* payloadStart, FwSizeType payloadSiz
 
         // Output the packet
         this->dataOut_out(0, packetBuffer, packetContext);
-        m_packetCount++;
-        this->tlmWrite_PacketCount(m_packetCount);
+        vc.packetCount++;
+        this->tlmWrite_PacketCount(vc.packetCount);
 
         return totalPacketSize;
     }
@@ -520,10 +509,10 @@ U8 AosDeframer::getPacketVersion(U8 firstByte) {
 }
 
 bool AosDeframer::isPacketTypeEnabled(U8 pvn) const {
-    if (pvn == 0) {
-        return (m_pvnMask & PvnBitfield::SPP_MASK) != 0;
-    } else if (pvn == 7) {
-        return (m_pvnMask & PvnBitfield::EPP_MASK) != 0;
+    if (pvn == static_cast<U8>(PacketVersionNumber::SPP)) {
+        return (m_vcs[0].pvnMask & PvnBitfield::SPP_MASK) != 0;
+    } else if (pvn == static_cast<U8>(PacketVersionNumber::EPP)) {
+        return (m_vcs[0].pvnMask & PvnBitfield::EPP_MASK) != 0;
     }
     return false;
 }
