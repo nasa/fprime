@@ -100,17 +100,17 @@ void ChoiceTester::checkActionsAndGuards(FwIndexType expectedActionSize, FwIndex
     ASSERT_EQ(this->m_choice_action_a_history.getSize(), expectedActionSize);
     ASSERT_EQ(this->m_smInitialChoice_action_a_history.getSize(), expectedActionSize);
     for (FwIndexType i = 0; i < expectedActionSize; i++) {
-        ASSERT_EQ(this->m_choice_action_a_history.getItemAt(i), Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(this->m_choice_action_a_history.getItemAt(i), Choice_Choice::Signal::__FPRIME_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialChoice_action_a_history.getItemAt(i),
-                  SmInitial_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+                  SmInitial_Choice::Signal::__FPRIME_INITIAL_TRANSITION);
     }
     ASSERT_EQ(this->m_choice_guard_g.getCallHistory().getSize(), expectedGuardSize);
     ASSERT_EQ(this->m_smInitialChoice_guard_g.getCallHistory().getSize(), expectedGuardSize);
     for (FwIndexType i = 0; i < expectedGuardSize; i++) {
         ASSERT_EQ(this->m_choice_guard_g.getCallHistory().getItemAt(i),
-                  Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+                  Choice_Choice::Signal::__FPRIME_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialChoice_guard_g.getCallHistory().getItemAt(i),
-                  SmInitial_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+                  SmInitial_Choice::Signal::__FPRIME_INITIAL_TRANSITION);
     }
 }
 
