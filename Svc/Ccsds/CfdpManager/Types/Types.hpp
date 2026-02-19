@@ -24,6 +24,7 @@
 #include <Svc/Ccsds/CfdpManager/Types/FlowEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/KeepEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/SuspendResumeEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/QueueIdEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
 #include <Svc/Ccsds/CfdpManager/Chunk.hpp>

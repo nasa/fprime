@@ -482,3 +482,42 @@ event FileRemoveFailed(
 ) \
     severity warning low \
     format "Failed to remove file {}, error={}"
+@ Transaction was suspended
+event TransactionSuspended(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity low \
+    format "Transaction ({}, {}) suspended"
+
+@ Transaction was resumed
+event TransactionResumed(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity low \
+    format "Transaction ({}, {}) resumed"
+
+@ Transaction cancel initiated
+event TransactionCanceled(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity high \
+    format "Transaction ({}, {}) canceled"
+
+@ Transaction abandoned
+event TransactionAbandoned(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity high \
+    format "Transaction ({}, {}) abandoned"
+
+@ Transaction not found for command
+event TransactionNotFound(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity warning low \
+    format "Transaction ({}, {}) not found"

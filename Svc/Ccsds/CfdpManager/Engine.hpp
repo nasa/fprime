@@ -198,6 +198,37 @@ class Engine {
      */
     void setChannelFlowState(U8 channelId, Flow::T flowState);
 
+    /**
+     * @brief Set transaction suspend state
+     *
+     * @param channelId Channel ID
+     * @param transactionSeq Transaction sequence number
+     * @param entityId Entity ID
+     * @param action Suspend or resume action
+     * @return Status::SUCCESS if transaction was found and state changed, Status::ERROR otherwise
+     */
+    Status::T setSuspendResumeTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId, SuspendResume::T action);
+
+    /**
+     * @brief Cancel a transaction with graceful close-out
+     *
+     * @param channelId Channel ID
+     * @param transactionSeq Transaction sequence number
+     * @param entityId Entity ID
+     * @return Status::SUCCESS if transaction was found and canceled, Status::ERROR otherwise
+     */
+    Status::T cancelTransactionBySeq(U8 channelId, TransactionSeq transactionSeq, EntityId entityId);
+
+    /**
+     * @brief Abandon a transaction immediately
+     *
+     * @param channelId Channel ID
+     * @param transactionSeq Transaction sequence number
+     * @param entityId Entity ID
+     * @return Status::SUCCESS if transaction was found and abandoned, Status::ERROR otherwise
+     */
+    Status::T abandonTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId);
+
     // ----------------------------------------------------------------------
     // Public Transaction Interface
     // Methods used by CfdpRx/CfdpTx transaction processing

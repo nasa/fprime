@@ -43,3 +43,25 @@ async command SetChannelFlow(
     channelId: U8 @< Channel ID to set
     freeze: Cfdp.Flow @< Flow state to set
 )
+
+@ Command to suspend or resume a transaction
+async command SuspendResumeTransaction(
+    channelId: U8 @< Channel ID for the transaction
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID of the transaction
+    $action: Cfdp.SuspendResume @< Action to take: SUSPEND or RESUME
+)
+
+@ Command to cancel a transaction with graceful close-out
+async command CancelTransaction(
+    channelId: U8 @< Channel ID for the transaction
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID of the transaction
+)
+
+@ Command to abandon a transaction immediately
+async command AbandonTransaction(
+    channelId: U8 @< Channel ID for the transaction
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID of the transaction
+)

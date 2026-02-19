@@ -39,6 +39,12 @@ module Cfdp {
         KEEP = 1 @< File will be kept after the CFDP transaction
     }
 
+    @ Suspend/resume action
+    enum SuspendResume: U8 {
+        RESUME = 0 @< Resume transaction
+        SUSPEND = 1 @< Suspend transaction
+    }
+
     @ CFDP queue identifiers
     enum QueueId: U8 {
         PEND = 0, @< first one on this list is active

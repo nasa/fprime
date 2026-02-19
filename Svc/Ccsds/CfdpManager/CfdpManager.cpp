@@ -342,6 +342,89 @@ void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8
 
 }
 
+void CfdpManager ::SuspendResumeTransaction_cmdHandler(
+    FwOpcodeType opCode,
+    U32 cmdSeq,
+    U8 channelId,
+    TransactionSeq transactionSeq,
+    EntityId entityId,
+    SuspendResume action)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    FW_ASSERT(this->m_engine != NULL);
+
+    rspStatus = checkCommandChannelIndex(channelId);
+
+    if (rspStatus == Fw::CmdResponse::OK) {
+        Status::T status = this->m_engine->setSuspendResumeTransaction(channelId, transactionSeq, entityId, action);
+        if (status == Status::SUCCESS) {
+            if (action == SuspendResume::SUSPEND) {
+                log_ACTIVITY_LO_TransactionSuspended(transactionSeq, entityId);
+            } else {
+                log_ACTIVITY_LO_TransactionResumed(transactionSeq, entityId);
+            }
+        } else {
+            log_WARNING_LO_TransactionNotFound(transactionSeq, entityId);
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::CancelTransaction_cmdHandler(
+    FwOpcodeType opCode,
+    U32 cmdSeq,
+    U8 channelId,
+    TransactionSeq transactionSeq,
+    EntityId entityId)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    FW_ASSERT(this->m_engine != NULL);
+
+    rspStatus = checkCommandChannelIndex(channelId);
+
+    if (rspStatus == Fw::CmdResponse::OK) {
+        Status::T status = this->m_engine->cancelTransactionBySeq(channelId, transactionSeq, entityId);
+        if (status == Status::SUCCESS) {
+            log_ACTIVITY_HI_TransactionCanceled(transactionSeq, entityId);
+        } else {
+            log_WARNING_LO_TransactionNotFound(transactionSeq, entityId);
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::AbandonTransaction_cmdHandler(
+    FwOpcodeType opCode,
+    U32 cmdSeq,
+    U8 channelId,
+    TransactionSeq transactionSeq,
+    EntityId entityId)
+{
+    Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
+
+    FW_ASSERT(this->m_engine != NULL);
+
+    rspStatus = checkCommandChannelIndex(channelId);
+
+    if (rspStatus == Fw::CmdResponse::OK) {
+        Status::T status = this->m_engine->abandonTransaction(channelId, transactionSeq, entityId);
+        if (status == Status::SUCCESS) {
+            log_ACTIVITY_HI_TransactionAbandoned(transactionSeq, entityId);
+        } else {
+            log_WARNING_LO_TransactionNotFound(transactionSeq, entityId);
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
+    }
+
+    this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
 // ----------------------------------------------------------------------
 // Private command helper functions
 // ----------------------------------------------------------------------

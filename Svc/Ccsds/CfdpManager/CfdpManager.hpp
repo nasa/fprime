@@ -198,6 +198,40 @@ class CfdpManager final : public CfdpManagerComponentBase {
         Flow freeze //!< Flow state to set
     ) override;
 
+    //! Handler for command SuspendResumeTransaction
+    //!
+    //! Command to suspend or resume a transaction
+    void SuspendResumeTransaction_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId, //!< Channel ID for the transaction
+        TransactionSeq transactionSeq, //!< Transaction sequence number
+        EntityId entityId, //!< Entity ID of the transaction
+        SuspendResume action //!< Action to take: SUSPEND or RESUME
+    ) override;
+
+    //! Handler for command CancelTransaction
+    //!
+    //! Command to cancel a transaction with graceful close-out
+    void CancelTransaction_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId, //!< Channel ID for the transaction
+        TransactionSeq transactionSeq, //!< Transaction sequence number
+        EntityId entityId //!< Entity ID of the transaction
+    ) override;
+
+    //! Handler for command AbandonTransaction
+    //!
+    //! Command to abandon a transaction immediately
+    void AbandonTransaction_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId, //!< Channel ID for the transaction
+        TransactionSeq transactionSeq, //!< Transaction sequence number
+        EntityId entityId //!< Entity ID of the transaction
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Private command helper functions

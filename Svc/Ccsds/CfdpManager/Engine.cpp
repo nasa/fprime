@@ -746,6 +746,57 @@ void Engine::setChannelFlowState(U8 channelId, Flow::T flowState)
     m_channels[channelId]->setFlowState(flowState);
 }
 
+Status::T Engine::setSuspendResumeTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId, SuspendResume::T action)
+{
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        txn->m_flags.com.suspended = (action == SuspendResume::SUSPEND);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
+Status::T Engine::cancelTransactionBySeq(U8 channelId, TransactionSeq transactionSeq, EntityId entityId)
+{
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        this->cancelTransaction(txn);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
+Status::T Engine::abandonTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId)
+{
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        this->finishTransaction(txn, false);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
 void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
                              U8 priority, EntityId dest_id)
 {
