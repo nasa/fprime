@@ -120,7 +120,6 @@ struct Tester : public Os::QueueRegistry {
     //! Complete a previous blocking queue receive
     void shadow_receive_unblock();
 
-
     //! Register a queue with the registry
     void registerQueue(Os::Queue* q) override;
 
