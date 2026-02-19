@@ -305,7 +305,7 @@ sequenceDiagram
 - Spacecraft retransmits requested segments
 - FIN PDU from receiver confirms final delivery status
 - Timers ensure protocol progress and detect failures
-  - Spacecraft ACK timer: Armed when EOF is sent, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
+  - Spacecraft ACK timer: Armed when EOF is sent with duration `ChannelConfig.ack_timer`, cancelled when ACK(EOF) or FIN is received. If the timer expires before receiving acknowledgment, the spacecraft retransmits EOF and rearms the timer. After `ChannelConfig.ack_limit` retries without acknowledgment, the transaction is abandoned with status `ACK_LIMIT_NO_EOF`
 - Transaction completes only after FIN/ACK exchange
 
 ### Class 2 RX Transaction (Acknowledged)
@@ -376,8 +376,8 @@ sequenceDiagram
 - Ground retransmits requested segments
 - FIN PDU from receiver confirms final delivery status
 - Timers ensure protocol progress and detect failures
-  - Spacecraft NAK timer: Armed when NAK is sent, cancelled when **all** requested data is received. If the timer expires before receiving retransmitted data, the spacecraft sends another NAK and rearms the timer. After `ChannelConfig.nack_limit` retries without data, the transaction is abandoned with status `NAK_LIMIT_REACHED`
-  - Spacecraft ACK timer: Armed when FIN is sent, cancelled when ACK(FIN) is received. If the timer expires, the spacecraft retransmits FIN and rearms the timer. After `ChannelConfig.ack_limit` retries without ACK(FIN), the transaction is abandoned
+  - Spacecraft NAK timer: Armed when NAK is sent with duration `ChannelConfig.ack_timer`, cancelled when **all** requested data is received. If the timer expires before receiving retransmitted data, the spacecraft sends another NAK and rearms the timer. After `ChannelConfig.nack_limit` retries without data, the transaction is abandoned with status `NAK_LIMIT_REACHED`
+  - Spacecraft ACK timer: Armed when FIN is sent with duration `ChannelConfig.ack_timer`, cancelled when ACK(FIN) is received. If the timer expires, the spacecraft retransmits FIN and rearms the timer. After `ChannelConfig.ack_limit` retries without ACK(FIN), the transaction is abandoned
 - Transaction completes only after FIN/ACK exchange
 
 ## Configuration
@@ -393,7 +393,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 | Constant | Purpose |
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
-| `MaxFileSize` | Maximum length for file path strings. Used to size string parameters (`TmpDir`, `FailDir`) and internal file path buffers. |
+| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`TmpDir`, `FailDir`) and internal file path buffers. |
 | `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
 
 ### FPP Types (CfdpCfg.fpp)
@@ -448,11 +448,11 @@ These types define the size of CFDP protocol fields:
 | RxCrcCalcBytesPerWakeup | Maximum number of received file bytes to process for CRC calculation in a single execution cycle. Prevents blocking during large file verification |
 | TmpDir | Directory path for storing temporary files during receive (RX) transactions. Files are moved to final destination upon successful completion |
 | FailDir | Directory path for storing files from polling operations that failed to transfer successfully |
-| FileInDefaultChannel | Default CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
-| FileInDefaultDestEntityId | Default destination entity ID used for file transfers initiated via the `fileIn` port interface |
-| FileInDefaultClass | Default CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface. Defaults to CLASS_2 for reliability |
-| FileInDefaultKeep | Default file retention policy (KEEP or DELETE) for file transfers initiated via the `fileIn` port interface. Defaults to DELETE |
-| FileInDefaultPriority | Default priority (0-255, where 0 is highest) for file transfers initiated via the `fileIn` port interface. Defaults to 0 |
+| FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
+| FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
+| FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |
+| FileInDefaultKeep | File retention policy (KEEP or DELETE) for file transfers initiated via the `fileIn` port interface |
+| FileInDefaultPriority | Priority (0-255, where 0 is highest) for file transfers initiated via the `fileIn` port interface |
 | ChannelConfig.ack_limit | Maximum number of ACK retransmission attempts before abandoning a transaction. Applies when waiting for ACK(EOF) or ACK(FIN) acknowledgments |
 | ChannelConfig.nack_limit | Maximum number of NAK retransmission attempts before abandoning a transaction. Applies when waiting for retransmitted file data after sending NAK |
 | ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting |

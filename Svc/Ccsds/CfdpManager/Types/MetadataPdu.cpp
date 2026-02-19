@@ -27,14 +27,14 @@ void MetadataPdu::initialize(PduDirection direction,
 
     this->m_fileSize = fileSize;
 
-    // Enforce MaxFileSize for source filename
+    // Enforce MaxFilePathSize for source filename
     FwSizeType srcLen = sourceFilename.length();
-    FW_ASSERT(srcLen <= MaxFileSize, static_cast<FwAssertArgType>(srcLen), MaxFileSize);
+    FW_ASSERT(srcLen <= MaxFilePathSize, static_cast<FwAssertArgType>(srcLen), MaxFilePathSize);
     this->m_sourceFilename = sourceFilename;
 
-    // Enforce MaxFileSize for destination filename
+    // Enforce MaxFilePathSize for destination filename
     FwSizeType dstLen = destFilename.length();
-    FW_ASSERT(dstLen <= MaxFileSize, static_cast<FwAssertArgType>(dstLen), MaxFileSize);
+    FW_ASSERT(dstLen <= MaxFilePathSize, static_cast<FwAssertArgType>(dstLen), MaxFilePathSize);
     this->m_destFilename = destFilename;
 
     this->m_checksumType = checksumType;
@@ -199,8 +199,8 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
         return status;
     }
 
-    // Validate filename length against MaxFileSize
-    if (sourceFilenameLength > MaxFileSize) {
+    // Validate filename length against MaxFilePathSize
+    if (sourceFilenameLength > MaxFilePathSize) {
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
@@ -210,7 +210,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char sourceFilenameBuffer[MaxFileSize + 1];
+    char sourceFilenameBuffer[MaxFilePathSize + 1];
     FwSizeType actualLength = sourceFilenameLength;
     status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(sourceFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -227,8 +227,8 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
         return status;
     }
 
-    // Validate filename length against MaxFileSize
-    if (destFilenameLength > MaxFileSize) {
+    // Validate filename length against MaxFilePathSize
+    if (destFilenameLength > MaxFilePathSize) {
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
@@ -238,7 +238,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char destFilenameBuffer[MaxFileSize + 1];
+    char destFilenameBuffer[MaxFilePathSize + 1];
     actualLength = destFilenameLength;
     status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(destFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {

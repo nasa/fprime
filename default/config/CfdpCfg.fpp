@@ -10,7 +10,7 @@ module Svc {
             constant NumChannels = 2
 
             @ File path size used for CFDP file system operations
-            constant MaxFileSize = 200
+            constant MaxFilePathSize = 200
             
             @ @brief Entity id size
             @

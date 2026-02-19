@@ -1155,7 +1155,7 @@ void Engine::cancelTransaction(Transaction *txn)
 bool Engine::isPollingDir(const char *src_file, U8 chan_num)
 {
     bool return_code = false;
-    char src_dir[MaxFileSize] = "\0";
+    char src_dir[MaxFilePathSize] = "\0";
     CfdpPollDir * pd;
     int i;
 

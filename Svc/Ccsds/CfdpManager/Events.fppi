@@ -9,7 +9,7 @@ event InvalidChannel(
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
 event SendFileInitiated(
-    sourceFileName: string size MaxFileSize @< Source file being sent
+    sourceFileName: string size MaxFilePathSize @< Source file being sent
 ) \
     severity activity low \
     format "Successfully initiated file send transfer for {}" 
@@ -22,7 +22,7 @@ event UnsupportedSendFileArguments(
     format "Invalid send file port request with offset {}, length {}" 
 
 event SendFileInitiateFail(
-    sourceFileName: string size MaxFileSize @< Source file being sent
+    sourceFileName: string size MaxFilePathSize @< Source file being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
@@ -35,19 +35,19 @@ event PlaybackInvalidChannel(
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
 event PlaybackInitiated(
-    sourceDirectory: string size MaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFilePathSize @< Source directory being sent
 ) \
     severity activity low \
     format "Successfully initiated directory playback for {}" 
 
 event PlaybackInitiateFail(
-    sourceDirectory: string size MaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFilePathSize @< Source directory being sent
 ) \
     severity warning low \
     format "Failed to initiate file send transfer for {}"
 
 event PollDirInitiated(
-    sourceDirectory: string size MaxFileSize @< Source directory being sent
+    sourceDirectory: string size MaxFilePathSize @< Source directory being sent
 ) \
     severity activity low \
     format "Successfully initiated directory poll for {}"
@@ -74,16 +74,16 @@ event InvalidChannelPoll(
     format "Invalid poll ID {}, maximum poll ID is {}" 
 
 event FailKeepFileMove(
-    srcFile: string size MaxFileSize @< Source file being moved
-    moveDir: string size MaxFileSize @< Directory file was moved to
+    srcFile: string size MaxFilePathSize @< Source file being moved
+    moveDir: string size MaxFilePathSize @< Directory file was moved to
     status: I32 @< Status of the move operation
 ) \
     severity warning low \
     format "Failed to move {} to {} error {}" 
 
 event FailPollFileMove(
-    srcFile: string size MaxFileSize @< Source file being moved
-    failDir: string size MaxFileSize @< Directory file was moved to
+    srcFile: string size MaxFilePathSize @< Source file being moved
+    failDir: string size MaxFilePathSize @< Directory file was moved to
     status: I32 @< Status of the move operation
 ) \
     severity warning low \
@@ -192,7 +192,7 @@ event RxTempFileCreated(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    filename: string size MaxFileSize @< Temporary filename created
+    filename: string size MaxFilePathSize @< Temporary filename created
 ) \
     severity activity low \
     format "RX class {} transaction {}:{} creating temp file {} without metadata"
@@ -201,7 +201,7 @@ event RxFileCreateFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    filename: string size MaxFileSize @< File that failed to create
+    filename: string size MaxFilePathSize @< File that failed to create
     status: I32 @< File operation status
 ) \
     severity warning high \
@@ -297,8 +297,8 @@ event RxFileRenameFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    tempFile: string size MaxFileSize @< Temporary file path
-    finalFile: string size MaxFileSize @< Final file path
+    tempFile: string size MaxFilePathSize @< Temporary file path
+    finalFile: string size MaxFilePathSize @< Final file path
     status: I32 @< File system operation status
 ) \
     severity warning high \
@@ -308,7 +308,7 @@ event RxFileReopenFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    filename: string size MaxFileSize @< File that failed to reopen
+    filename: string size MaxFilePathSize @< File that failed to reopen
     status: I32 @< File operation status
 ) \
     severity warning high \
@@ -352,7 +352,7 @@ event TxFileOpenFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    filename: string size MaxFileSize @< File that failed to open
+    filename: string size MaxFilePathSize @< File that failed to open
     status: I32 @< File operation status
 ) \
     severity warning high \
@@ -421,16 +421,16 @@ event TxInvalidDirectiveCode(
 event TxFileTransferStarted(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
-    srcFile: string size MaxFileSize @< Source filename
+    srcFile: string size MaxFilePathSize @< Source filename
     destEid: U32 @< Destination entity ID
-    destFile: string size MaxFileSize @< Destination filename
+    destFile: string size MaxFilePathSize @< Destination filename
 ) \
     severity activity high \
     format "TX starting class {} transfer {}:{} -> {}:{}"
 
 event MetadataReceived(
-    srcFile: string size MaxFileSize @< Source filename from metadata
-    destFile: string size MaxFileSize @< Destination filename from metadata
+    srcFile: string size MaxFilePathSize @< Source filename from metadata
+    destFile: string size MaxFilePathSize @< Destination filename from metadata
 ) \
     severity activity low \
     format "Metadata received for source: {}, dest: {}"
@@ -464,7 +464,7 @@ event MaxTxTransactionsReached severity warning high \
     format "Maximum number of commanded TX files reached"
 
 event PlaybackDirOpenFailed(
-    directory: string size MaxFileSize @< Directory that failed to open
+    directory: string size MaxFilePathSize @< Directory that failed to open
     status: I32 @< Directory operation status
 ) \
     severity warning high \
@@ -477,7 +477,7 @@ event ResetFreedTransaction severity diagnostic \
     format "Attempt to reset a transaction that has already been freed"
 
 event FileRemoveFailed(
-    filename: string size MaxFileSize @< File that failed to delete
+    filename: string size MaxFilePathSize @< File that failed to delete
     status: I32 @< File system operation status
 ) \
     severity warning low \

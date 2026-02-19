@@ -5,8 +5,8 @@ async command SendFile(
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer
     keep: Cfdp.Keep @< Whether or not to keep or delete the file upon completion
     $priority: U8 @< Priority: 0=highest priority
-    sourceFileName: string size MaxFileSize @< The name of the on-board file to send
-    destFileName: string size MaxFileSize @< The name of the destination file on the ground
+    sourceFileName: string size MaxFilePathSize @< The name of the on-board file to send
+    destFileName: string size MaxFilePathSize @< The name of the destination file on the ground
 )
 
 @ Command to start a directory playback
@@ -16,8 +16,8 @@ async command PlaybackDirectory(
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer(s)
     keep: Cfdp.Keep @< Whether or not to keep or delete the file(s) upon completion
     $priority: U8 @< Priority: 0=highest priority
-    sourceDirectory: string size MaxFileSize @< The name of the on-board directory to send
-    destDirectory: string size MaxFileSize @< The name of the destination directory on the ground
+    sourceDirectory: string size MaxFilePathSize @< The name of the on-board directory to send
+    destDirectory: string size MaxFilePathSize @< The name of the destination directory on the ground
 )
 
 @ Command to start a directory poll
@@ -28,8 +28,8 @@ async command PollDirectory(
     cfdpClass: Cfdp.Class @< CFDP class for the file transfer(s)
     $priority: U8 @< Priority: 0=highest priority
     interval: U32 @< Interval to poll the directory in seconds
-    sourceDirectory: string size MaxFileSize @< The name of the on-board directory to send
-    destDirectory: string size MaxFileSize @< The name of the destination directory on the ground
+    sourceDirectory: string size MaxFilePathSize @< The name of the on-board directory to send
+    destDirectory: string size MaxFilePathSize @< The name of the destination directory on the ground
 )
 
 @ Command to stop a directory poll

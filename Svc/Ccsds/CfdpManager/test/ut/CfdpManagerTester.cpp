@@ -391,7 +391,9 @@ void CfdpManagerTester::verifyMultipleFileDataPdus(
 
 void CfdpManagerTester::cleanupTestFile(const char* filePath) {
     Os::FileSystem::Status fsStatus = Os::FileSystem::removeFile(filePath);
-    EXPECT_EQ(Os::FileSystem::OP_OK, fsStatus) << "Should remove test file";
+    // File may already be deleted by CFDP (keep=DELETE), which is acceptable
+    EXPECT_TRUE(fsStatus == Os::FileSystem::OP_OK || fsStatus == Os::FileSystem::DOESNT_EXIST)
+        << "Should remove test file or file already deleted";
 }
 
 void CfdpManagerTester::verifyReceivedFile(

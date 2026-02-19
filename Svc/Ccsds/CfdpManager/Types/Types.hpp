@@ -295,7 +295,7 @@ struct Playback
     U16 num_ts; /**< \brief number of transactions */
     U8 priority;
     EntityId dest_id;
-    char pending_file[MaxFileSize];
+    char pending_file[MaxFilePathSize];
 
     bool busy;
     bool diropen;
