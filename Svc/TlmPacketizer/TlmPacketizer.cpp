@@ -48,7 +48,7 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
 
     // enable sections
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        (void)(this->m_sectionEnabled[section] = Fw::Enabled::ENABLED);
+        (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = Fw::Enabled::ENABLED);
     }
 
     static_assert(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS == MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1,
@@ -123,8 +123,8 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
             Fw::Enabled groupEnabled = group <= startLevel ? Fw::Enabled::ENABLED : Fw::Enabled::DISABLED;
-            this->m_groupConfigs[section][group] = defaultGroupConfig;
-            this->m_groupConfigs[section][group].set_enabled(groupEnabled);
+            this->m_groupConfigs[static_cast<FwSizeType>(section)][group] = defaultGroupConfig;
+            this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_enabled(groupEnabled);
         }
     }
 
@@ -373,8 +373,9 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
 
             const FwIndexType outIndex = static_cast<FwIndexType>(section * NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS +
                                                                   static_cast<FwIndexType>(entryGroup));
-            PktSendCounters& pktEntryFlags = this->m_packetFlags[section][pkt];
-            TlmPacketizer_GroupConfig& entryGroupConfig = this->m_groupConfigs[section][entryGroup];
+            PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
+            TlmPacketizer_GroupConfig& entryGroupConfig =
+                this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
 
             /* Base conditions for sending
             1. Output port is connected
@@ -391,7 +392,8 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             if (pktEntryFlags.updateFlag == UpdateFlag::REQUESTED) {
                 sendOutFlag = true;
             } else {
-                if (not((entryGroupConfig.get_enabled() and this->m_sectionEnabled[section] == Fw::Enabled::ENABLED) or
+                if (not((entryGroupConfig.get_enabled() and
+                         this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED) or
                         entryGroupConfig.get_forceEnabled() == Fw::Enabled::ENABLED)) {
                     continue;
                 }
@@ -456,7 +458,7 @@ void TlmPacketizer ::controlIn_handler(FwIndexType portNum,
     FW_ASSERT(section.isValid());
     FW_ASSERT(enabled.isValid());
     if (0 <= section && section < TelemetrySection::NUM_SECTIONS) {
-        (void)(this->m_sectionEnabled[section] = enabled);
+        (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = enabled);
     } else {
         this->log_WARNING_LO_SectionUnconfigurable(section, enabled);
     }
@@ -477,8 +479,8 @@ void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 c
     }
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-            this->m_groupConfigs[section][group].set_enabled(group <= level ? Fw::Enabled::ENABLED
-                                                                            : Fw::Enabled::DISABLED);
+            this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_enabled(
+                group <= level ? Fw::Enabled::ENABLED : Fw::Enabled::DISABLED);
         }
     }
     this->tlmWrite_GroupConfigs(this->m_groupConfigs);
