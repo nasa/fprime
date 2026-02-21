@@ -26,7 +26,7 @@ async command RemoveFile(
 
 @ Perform a Linux shell command and write the output to a log file.
 async command ShellCommand(
-                            $command: string size 256 @< The shell command string
+                            $command: string size FW_CMD_STRING_MAX_SIZE @< The shell command string
                             logFileName: string size FileNameStringSize @< The name of the log file
                           ) \
   opcode 0x04

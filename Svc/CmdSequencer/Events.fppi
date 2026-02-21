@@ -1,6 +1,6 @@
 @ Sequence file was successfully loaded.
 event CS_SequenceLoaded(
-                         fileName: string size 60 @< The name of the sequence file
+                         fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                        ) \
   severity activity low \
   id 0 \
@@ -8,7 +8,7 @@ event CS_SequenceLoaded(
 
 @ A command sequence was successfully canceled.
 event CS_SequenceCanceled(
-                           fileName: string size 60 @< The name of the sequence file
+                           fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                          ) \
   severity activity high \
   id 1 \
@@ -16,7 +16,7 @@ event CS_SequenceCanceled(
 
 @ The Sequence File Loader could not read the sequence file.
 event CS_FileReadError(
-                        fileName: string size 60 @< The name of the sequence file
+                        fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                       ) \
   severity warning high \
   id 2 \
@@ -24,7 +24,7 @@ event CS_FileReadError(
 
 @ The sequence file format was invalid.
 event CS_FileInvalid(
-                      fileName: string size 60 @< The name of the sequence file
+                      fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                       stage: FileReadStage @< The read stage
                       error: I32 @< The error code
                     ) \
@@ -34,7 +34,7 @@ event CS_FileInvalid(
 
 @ The format of a command record was invalid.
 event CS_RecordInvalid(
-                        fileName: string size 60 @< The name of the sequence file
+                        fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                         recordNumber: U32 @< The record number
                         error: I32 @< The error code
                       ) \
@@ -44,7 +44,7 @@ event CS_RecordInvalid(
 
 @ The sequence file was too large.
 event CS_FileSizeError(
-                        fileName: string size 60 @< The name of the sequence file
+                        fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                         $size: U32 @< Invalid size
                       ) \
   severity warning high \
@@ -53,7 +53,7 @@ event CS_FileSizeError(
 
 @ The sequence file was not found
 event CS_FileNotFound(
-                       fileName: string size 60 @< The sequence file
+                       fileName: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                      ) \
   severity warning high \
   id 6 \
@@ -62,7 +62,7 @@ event CS_FileNotFound(
 
 @ The sequence file validation failed
 event CS_FileCrcFailure(
-                         fileName: string size 60 @< The sequence file
+                         fileName: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                          storedCRC: U32 @< The CRC stored in the file
                          computedCRC: U32 @< The CRC computed over the file
                        ) \
@@ -72,7 +72,7 @@ event CS_FileCrcFailure(
 
 @ The Command Sequencer issued a command and received a success status in return.
 event CS_CommandComplete(
-                          fileName: string size 60 @< The name of the sequence file
+                          fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                           recordNumber: U32 @< The record number of the command
                           opCode: FwOpcodeType @< The command opcode
                         ) \
@@ -82,7 +82,7 @@ event CS_CommandComplete(
 
 @ A command sequence successfully completed.
 event CS_SequenceComplete(
-                           fileName: string size 60 @< The name of the sequence file
+                           fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                          ) \
   severity activity high \
   id 9 \
@@ -90,7 +90,7 @@ event CS_SequenceComplete(
 
 @ The Command Sequencer issued a command and received an error status in return.
 event CS_CommandError(
-                       fileName: string size 60 @< The name of the sequence file
+                       fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                        recordNumber: U32 @< The record number
                        opCode: FwOpcodeType @< The opcode
                        errorStatus: U32 @< The error status
@@ -107,7 +107,7 @@ event CS_InvalidMode \
 
 @ Number of records in header doesn't match number in file
 event CS_RecordMismatch(
-                         fileName: string size 60 @< The name of the sequence file
+                         fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                          header_records: U32 @< The number of records in the header
                          extra_bytes: U32 @< The number of bytes beyond last record
                        ) \
@@ -117,7 +117,7 @@ event CS_RecordMismatch(
 
 @ The running time base doesn't match the time base in the sequence files
 event CS_TimeBaseMismatch(
-                           fileName: string size 60 @< The name of the sequence file
+                           fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                            time_base: U16 @< The current time
                            seq_time_base: U16 @< The sequence time base
                          ) \
@@ -127,7 +127,7 @@ event CS_TimeBaseMismatch(
 
 @ The running time base doesn't match the time base in the sequence files
 event CS_TimeContextMismatch(
-                              fileName: string size 60 @< The name of the sequence file
+                              fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                               currTimeBase: U8 @< The current time base
                               seqTimeBase: U8 @< The sequence time base
                             ) \
@@ -137,7 +137,7 @@ event CS_TimeContextMismatch(
 
 @ A local port request to run a sequence was started
 event CS_PortSequenceStarted(
-                              filename: string size 60 @< The sequence file
+                              filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                             ) \
   severity activity high \
   id 15 \
@@ -167,7 +167,7 @@ event CS_NoSequenceActive \
 
 @ A sequence passed validation
 event CS_SequenceValid(
-                        filename: string size 60 @< The sequence file
+                        filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                       ) \
   severity activity high \
   id 19 \
@@ -175,7 +175,7 @@ event CS_SequenceValid(
 
 @ A sequence passed validation
 event CS_SequenceTimeout(
-                          filename: string size 60 @< The sequence file
+                          filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                           $command: U32 @< The command that timed out
                         ) \
   severity warning high \
@@ -184,7 +184,7 @@ event CS_SequenceTimeout(
 
 @ A command in a sequence was stepped through
 event CS_CmdStepped(
-                     filename: string size 60 @< The sequence file
+                     filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                      $command: U32 @< The command that was stepped
                    ) \
   severity activity high \
@@ -193,7 +193,7 @@ event CS_CmdStepped(
 
 @ A manual sequence was started
 event CS_CmdStarted(
-                     filename: string size 60 @< The sequence file
+                     filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                    ) \
   severity activity high \
   id 22 \
@@ -201,7 +201,7 @@ event CS_CmdStarted(
 
 @ Wait for the current running sequence file complete
 event CS_JoinWaiting(
-                      filename: string size 60 @< The sequence file
+                      filename: string size FW_LOG_STRING_MAX_SIZE @< The sequence file
                       recordNumber: U32 @< The record number
                       opCode: FwOpcodeType @< The opcode
                     ) \
@@ -216,7 +216,7 @@ event CS_JoinWaitingNotComplete() \
   format "Still waiting for sequence file to complete"
 
 event CS_NoRecords(
-                      fileName: string size 60 @< The name of the sequence file
+                      fileName: string size FW_LOG_STRING_MAX_SIZE @< The name of the sequence file
                     ) \
   severity warning low \
   id 25 \

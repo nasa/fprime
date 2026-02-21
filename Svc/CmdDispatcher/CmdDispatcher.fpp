@@ -75,7 +75,7 @@ module Svc {
 
     @ No-op string command
     async command CMD_NO_OP_STRING(
-                                    arg1: string size 40 @< The String command argument
+                                    arg1: string size FW_CMD_STRING_MAX_SIZE @< The String command argument
                                   ) \
       opcode 1
 
@@ -162,7 +162,7 @@ module Svc {
 
     @ The command dispatcher has successfully received a NO-OP command from GUI with a string
     event NoOpStringReceived(
-                              message: string size 40 @< The NO-OP string that is generated
+                              message: string size FW_LOG_STRING_MAX_SIZE @< The NO-OP string that is generated
                             ) \
       severity activity high \
       id 8 \
