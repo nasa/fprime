@@ -42,12 +42,13 @@ void SerializeOkRule::action(MockTypes::CircularState& state) {
 SerializeOverflowRule::SerializeOverflowRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
 
 bool SerializeOverflowRule::precondition(const MockTypes::CircularState& state) {
-    return state.getRemainingSize() < state.getRandomSize();
+    return state.getRemainingSize() <= state.getRandomSize();
 }
 
 void SerializeOverflowRule::action(MockTypes::CircularState& state) {
     Fw::SerializeStatus status = state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize());
-    ASSERT_EQ(status, Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    Fw::SerializeStatus expected_status = (state.getRandomSize() == 0) ? (Fw::FW_SERIALIZE_OK) : (Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    ASSERT_EQ(status, expected_status);
 }
 
 PeekOkRule::PeekOkRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
