@@ -139,8 +139,8 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
 
     Fw::Time m_testTime;  //!< store test time for packets
 
-    bool m_primaryTestLock{true};  //! Lock limited to entries from port 0 PktSend
-    U8 m_portOutInvokes[TelemetrySection::NUM_SECTIONS][MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1]{};
+    // bool m_primaryTestLock{true};  //! Lock limited to entries from port 0 PktSend
+    FwSizeType m_portOutInvokes[Svc::TELEMETRY_SEND_PORTS]{};
 };
 
 }  // end namespace Svc

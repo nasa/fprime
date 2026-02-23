@@ -15,6 +15,7 @@
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
+#include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "config/TlmPacketizerCfg.hpp"
 
 namespace Svc {
@@ -201,6 +202,18 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         U32 prevSentCounter = std::numeric_limits<U32>::max();  // Prevent Start up spam
         UpdateFlag updateFlag = UpdateFlag::NEVER_UPDATED;
     } m_packetFlags[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
+
+    const static TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
+
+  private:
+    //! \brief Helper function to get output port index from section and group
+    //!
+    //! Invokes the mapping defined in TELEMETRY_SEND_PORT_MAP to get the output port index for a given section and
+    //! group.
+    //! \param section The telemetry section (e.g., PRIMARY, SECONDARY, etc.)
+    //! \param group The telemetry group number
+    //! \return The output port index to send telemetry for the given section and group
+    static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 };
 
 }  // end namespace Svc

@@ -36,7 +36,7 @@ module Svc {
 
     @ Packet send port
     @ Ordered by Section, Group
-    output port PktSend: [TelemetrySection.NUM_SECTIONS * NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] Fw.Com
+    output port PktSend: [TELEMETRY_SEND_PORTS] Fw.Com
 
     async input port controlIn: EnableSection
 
@@ -192,6 +192,9 @@ module Svc {
     @ Telemetry send level
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
+
+    array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
+    array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING
 
   }
 

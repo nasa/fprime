@@ -15,6 +15,10 @@
 
 namespace Svc {
 
+const TlmPacketizer_TelemetrySendPortMap TlmPacketizer::TELEMETRY_SEND_PORT_MAP = {};
+
+static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry section is required");
+
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
@@ -370,9 +374,8 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             }
 
             bool sendOutFlag = false;
+            const FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
 
-            const FwIndexType outIndex = static_cast<FwIndexType>(section * NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS +
-                                                                  static_cast<FwIndexType>(entryGroup));
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
             TlmPacketizer_GroupConfig& entryGroupConfig =
                 this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
@@ -585,6 +588,18 @@ void TlmPacketizer ::CONFIGURE_GROUP_RATES_cmdHandler(FwOpcodeType opCode,
     groupConfig.set_max(maxDelta);
     this->tlmWrite_GroupConfigs(this->m_groupConfigs);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+FwIndexType TlmPacketizer::sectionGroupToPort(const FwIndexType section, const FwSizeType group) {
+    // Confirm the indices will not overflow the size of the array
+    FW_ASSERT(group < TlmPacketizer_TelemetrySendSection::SIZE, static_cast<FwAssertArgType>(group));
+    FW_ASSERT(section < TlmPacketizer_TelemetrySendPortMap::SIZE, static_cast<FwAssertArgType>(section));
+
+    const FwIndexType outIndex = TlmPacketizer::TELEMETRY_SEND_PORT_MAP[static_cast<FwSizeType>(section)][group];
+
+    // Confirm the output port index is within the valid number of telemetry send ports
+    FW_ASSERT(outIndex < TELEMETRY_SEND_PORTS, static_cast<FwAssertArgType>(outIndex));
+    return outIndex;
 }
 
 FwChanIdType TlmPacketizer::doHash(FwChanIdType id) {

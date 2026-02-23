@@ -11,7 +11,7 @@
 #include "TlmPacketizerTester.hpp"
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 100
 #define QUEUE_DEPTH 10
 
 #include <Fw/Com/ComPacket.hpp>
@@ -138,8 +138,8 @@ void TlmPacketizerTester ::sendPacketsTest() {
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
-    ASSERT_FROM_PORT_HISTORY_SIZE(2);
-    ASSERT_from_PktSend_SIZE(2);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
     // construct the packet buffers and make sure they are correct
 
@@ -153,7 +153,8 @@ void TlmPacketizerTester ::sendPacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     // No recently sent packet 1. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    ASSERT_from_PktSend(0 * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                        static_cast<U32>(std::numeric_limits<U32>::max()));
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -166,7 +167,8 @@ void TlmPacketizerTester ::sendPacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     // No recently sent packet 2. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(1, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    ASSERT_from_PktSend(1 * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                        static_cast<U32>(std::numeric_limits<U32>::max()));
 }
 
 void TlmPacketizerTester ::sendPacketLevelsTest() {
@@ -263,7 +265,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(2);
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -275,7 +277,10 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // No recently sent packet 1. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -288,7 +293,10 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // No recently sent packet 1. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(1, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((1 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 
     // second channel
 
@@ -303,8 +311,8 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
-    // only one should be pushed
-    ASSERT_from_PktSend_SIZE(1);
+    // only one should be pushed and is replicated across all sections
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -316,7 +324,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // Packet 1 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -326,8 +336,8 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    // only one should be pushed
-    ASSERT_from_PktSend_SIZE(1);
+    // only one should be pushed and is replicated across all sections
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -339,7 +349,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     // Packet 1 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -349,7 +361,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -362,7 +374,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // Packet 2 sent recently with a delta sched ticks of 3
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(3));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(3));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -372,7 +386,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
 
@@ -387,7 +401,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // Packet 2 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -397,7 +413,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -410,7 +426,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     // Packet 2 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     //** Update all the packets again with new values
 
@@ -423,7 +441,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(2);
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -435,7 +453,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     // Packet 1 sent recently with a delta sched ticks of 4
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(4));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(4));
+    }
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -448,7 +468,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     // Packet 2 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(1, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((1 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     // second channel
 
@@ -460,7 +482,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -472,7 +494,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
     // Packet 1 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -482,7 +506,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -494,7 +518,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(211)));
 
     // Packet 1 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -504,7 +530,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -517,7 +543,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     // Packet 2 sent recently with a delta sched ticks of 3
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(3));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(3));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -527,7 +555,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -540,7 +568,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
 
     // Packet 2 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 
     buff.resetSer();
     ts.add(1, 0);
@@ -550,7 +580,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -563,7 +593,9 @@ void TlmPacketizerTester ::updatePacketsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(65)));
 
     // Packet 2 sent recently with a delta sched ticks of 1
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(1));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff, static_cast<U32>(1));
+    }
 }
 
 void TlmPacketizerTester ::ignoreTest() {
@@ -590,7 +622,7 @@ void TlmPacketizerTester ::ignoreTest() {
     this->clearFromPortHistory();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(2);
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -615,7 +647,10 @@ void TlmPacketizerTester ::ignoreTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(0)));
 
     // First Packet 2 Send. Delta Sched Ticks = Max
-    ASSERT_from_PktSend(1, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((1 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 
     // ignored channel
 
@@ -673,8 +708,8 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
-    ASSERT_FROM_PORT_HISTORY_SIZE(2);
-    ASSERT_from_PktSend_SIZE(2);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
     // construct the packet buffers and make sure they are correct
 
@@ -688,7 +723,10 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff1.serializeFrom(static_cast<U8>(14)));
 
     // First Packet 1 Send. Delta Sched Ticks = Max
-    ASSERT_from_PktSend(0, comBuff1, static_cast<U32>(std::numeric_limits<U32>::max()));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff1,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 
     Fw::ComBuffer comBuff2;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -701,7 +739,10 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff2.serializeFrom(static_cast<U8>(15)));
 
     // First Packet 2 Send. Delta Sched Ticks = Max
-    ASSERT_from_PktSend(1, comBuff2, static_cast<U32>(std::numeric_limits<U32>::max()));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((1 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff2,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 
     // should not be any new packets
     this->clearHistory();
@@ -712,7 +753,7 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     ASSERT_from_PktSend_SIZE(0);
 
     // send command to manually send a packet
-    this->sendCmd_SEND_PKT(0, 12, 4, TelemetrySection::PRIMARY);
+    this->sendCmd_SEND_PKT(0, 12, 4, static_cast<TelemetrySection::T>(0));
     this->component.doDispatch();
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PacketSent(0, 4);
@@ -721,9 +762,11 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     // dispatch run call to send packet
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
     // Packet 1 Sent recently. Delta Sched Ticks = 2
-    ASSERT_from_PktSend(0, comBuff1, static_cast<U32>(2));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff1, static_cast<U32>(2));
+    }
 
     // another packet
     this->clearHistory();
@@ -735,7 +778,7 @@ void TlmPacketizerTester ::sendManualPacketTest() {
 
     // send command to manually send a packet
     this->clearHistory();
-    this->sendCmd_SEND_PKT(0, 12, 8, TelemetrySection::PRIMARY);
+    this->sendCmd_SEND_PKT(0, 12, 8, static_cast<TelemetrySection::T>(0));
     this->component.doDispatch();
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PacketSent(0, 8);
@@ -744,14 +787,16 @@ void TlmPacketizerTester ::sendManualPacketTest() {
     // dispatch run call to send packet
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_from_PktSend_SIZE(1);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
     // Packet 2 Sent recently. Delta Sched Ticks = 4
-    ASSERT_from_PktSend(0, comBuff2, static_cast<U32>(4));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend((0 * Svc::TelemetrySection::NUM_SECTIONS) + section, comBuff2, static_cast<U32>(4));
+    }
 
     // Try to send invalid packet
     // send command to manually send a packet
     this->clearHistory();
-    this->sendCmd_SEND_PKT(0, 12, 20, TelemetrySection::PRIMARY);
+    this->sendCmd_SEND_PKT(0, 12, 20, static_cast<TelemetrySection::T>(0));
     this->component.doDispatch();
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PacketNotFound(0, 20);
@@ -948,8 +993,22 @@ void TlmPacketizerTester ::getChannelValueTest() {
 //! Configured tlm groups test
 //!
 void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
+    if (TelemetrySection::NUM_SECTIONS < 2) {
+        GTEST_SKIP() << "This test requires 2 or more telemetry sections to function";
+    }
+    std::vector<FwIndexType> port_list;
+    for (FwIndexType i = 0; i < Svc::TelemetrySection::NUM_SECTIONS; i++) {
+        for (FwIndexType j = 0; j < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; j++) {
+            FwIndexType port = TlmPacketizer::sectionGroupToPort(i, j);
+            if (std::find(port_list.begin(), port_list.end(), port) == port_list.end()) {
+                port_list.push_back(port);
+            } else {
+                GTEST_SKIP() << "This test cannot run with reused ports. Found duplicate port: " << port;
+            }
+        }
+    }
+
     this->component.setPacketList(packetList2, ignore, 4);
-    this->m_primaryTestLock = false;
     Fw::Time time;
     Fw::TlmBuffer buffer;
 
@@ -958,40 +1017,42 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     this->component.doDispatch();
 
     // Group 1
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::PRIMARY, 1, Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN,
-                                        3, 3);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1,
+                                        Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN, 3, 3);
     this->component.doDispatch();
 
     // Send every 5 on port 1
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::SECONDARY, 1,
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 1,
                                         Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN, 2, 2);
     this->component.doDispatch();
 
     this->clearHistory();
 
     // Group 2
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::PRIMARY, 2,
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 2,
                                         Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 4, 12);
     this->component.doDispatch();
 
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::SECONDARY, 2, Svc::TlmPacketizer_RateLogic::SILENCED, 0,
-                                        0);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 2,
+                                        Svc::TlmPacketizer_RateLogic::SILENCED, 0, 0);
     this->component.doDispatch();
 
     this->clearHistory();
 
     // Group 3
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::SECONDARY, 3,
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 3,
                                         Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 0, 7);
     this->component.doDispatch();
 
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::PRIMARY, 3, Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0,
-                                        6);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 3,
+                                        Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0, 6);
     this->component.doDispatch();
 
     // Disable output on section 2 via port invocation
-    this->invoke_to_controlIn(0, TelemetrySection::TERTIARY, Fw::Enabled::DISABLED);
-    this->component.doDispatch();
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        this->invoke_to_controlIn(0, static_cast<TelemetrySection::T>(section), Fw::Enabled::DISABLED);
+        this->component.doDispatch();
+    }
 
     this->clearHistory();
 
@@ -1090,12 +1151,19 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(5);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
 
     // construct the packet buffers and make sure they are correct
 
@@ -1165,13 +1233,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 3
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -1193,13 +1266,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 1
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -1224,13 +1302,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 1 on section 0
     // comBuff unchanged since this->m_testTime is the same
     // Pkt 1 on section 0 sent recently with a delta of 3
@@ -1246,13 +1329,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 3);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 2 on Port 0
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -1285,13 +1373,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 3);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 1);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 1);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 4 on section 1 (Unchanged since T = 0)
     comBuff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -1314,13 +1407,18 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(1);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 3);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 2);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 2);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
-
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 2);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
     // Pkt 4 on section 1 (Unchanged since T = 0)
     // Pkt 4 on section 1 sent recently with a delta of 7
     ASSERT_from_PktSend(0, comBuff, static_cast<U32>(7));
@@ -1336,12 +1434,19 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
         ASSERT_from_PktSend_SIZE(0);
 
         // Packet Location Indices (Checking proper Section, Group)
-        ASSERT_EQ(this->m_portOutInvokes[0][1], 2);
-        ASSERT_EQ(this->m_portOutInvokes[1][1], 2);
-        ASSERT_EQ(this->m_portOutInvokes[0][2], 3);
-        ASSERT_EQ(this->m_portOutInvokes[1][3], 2);
-        ASSERT_EQ(this->m_portOutInvokes[0][3], 2);
-        ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 2);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 2);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 3);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 2);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 2);
+        ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+
+        // Check that the sections are disabled
+        for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+            for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+                ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+            }
+        }
     }
 
     buffer.resetSer();
@@ -1358,12 +1463,19 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
     ASSERT_from_PktSend_SIZE(5);
 
     // Packet Location Indices (Checking proper Section, Group)
-    ASSERT_EQ(this->m_portOutInvokes[0][1], 3);
-    ASSERT_EQ(this->m_portOutInvokes[1][1], 3);
-    ASSERT_EQ(this->m_portOutInvokes[0][2], 4);
-    ASSERT_EQ(this->m_portOutInvokes[1][3], 3);
-    ASSERT_EQ(this->m_portOutInvokes[0][3], 3);
-    ASSERT_EQ(this->m_portOutInvokes[1][2], 0);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 1)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 1)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 2)], 4);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 3)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(0, 3)], 3);
+    ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(1, 2)], 0);
+
+    // Check that the sections are disabled
+    for (FwIndexType section = 2; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)], 0);
+        }
+    }
 
     // Pkt 1
     comBuff.resetSer();
@@ -1413,7 +1525,6 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
 //!
 void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->component.setPacketList(packetList2, ignore, 4);
-    this->m_primaryTestLock = false;
     Fw::Time time;
     Fw::TlmBuffer buffer;
 
@@ -1427,13 +1538,13 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->component.doDispatch();
 
     // Default ON_CHANGE Behavior
-    ASSERT_FROM_PORT_HISTORY_SIZE(3);
-    ASSERT_from_PktSend_SIZE(3);
+    ASSERT_FROM_PORT_HISTORY_SIZE(Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_from_PktSend_SIZE(Svc::TelemetrySection::NUM_SECTIONS);
     this->clearHistory();
 
     // Send a packet every time the port is invoked.
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, TelemetrySection::PRIMARY, 1, Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0,
-                                        0);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1,
+                                        Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0, 0);
     this->component.doDispatch();
 
     this->clearHistory();
@@ -1447,7 +1558,7 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->clearHistory();
 
     // Disable this group on section 0 (primary)
-    this->sendCmd_ENABLE_GROUP(0, 0, TelemetrySection::PRIMARY, 1, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 1, Fw::Enabled::DISABLED);
     this->component.doDispatch();
     // Expect No Packets
     this->invoke_to_Run(0, 0);
@@ -1456,9 +1567,9 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     ASSERT_from_PktSend_SIZE(0);
 
     // Enable group on section, but disable section
-    this->sendCmd_ENABLE_GROUP(0, 0, TelemetrySection::PRIMARY, 1, Fw::Enabled::ENABLED);
+    this->sendCmd_ENABLE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 1, Fw::Enabled::ENABLED);
     this->component.doDispatch();
-    this->sendCmd_ENABLE_SECTION(0, 0, TelemetrySection::PRIMARY, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_SECTION(0, 0, static_cast<TelemetrySection::T>(0), Fw::Enabled::DISABLED);
     this->component.doDispatch();
     // Expect No Packets
     this->invoke_to_Run(0, 0);
@@ -1467,9 +1578,9 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     ASSERT_from_PktSend_SIZE(0);
 
     // Enable Section by Port Invocation
-    this->sendCmd_ENABLE_SECTION(0, 0, TelemetrySection::PRIMARY, Fw::Enabled::ENABLED);
+    this->sendCmd_ENABLE_SECTION(0, 0, static_cast<TelemetrySection::T>(0), Fw::Enabled::ENABLED);
     this->component.doDispatch();
-    this->invoke_to_controlIn(0, TelemetrySection::PRIMARY, Fw::Enabled::ENABLED);
+    this->invoke_to_controlIn(0, static_cast<TelemetrySection::T>(0), Fw::Enabled::ENABLED);
     this->component.doDispatch();
     // Expect A Packet
     this->invoke_to_Run(0, 0);
@@ -1479,9 +1590,9 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->clearHistory();
 
     // Disable section by port invocation, but Send Command Force Section
-    this->invoke_to_controlIn(0, TelemetrySection::PRIMARY, Fw::Enabled::DISABLED);
+    this->invoke_to_controlIn(0, static_cast<TelemetrySection::T>(0), Fw::Enabled::DISABLED);
     this->component.doDispatch();
-    this->sendCmd_FORCE_GROUP(0, 0, TelemetrySection::PRIMARY, 1, Fw::Enabled::ENABLED);
+    this->sendCmd_FORCE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 1, Fw::Enabled::ENABLED);
     this->component.doDispatch();
     // Expect A Packet
     this->invoke_to_Run(0, 0);
@@ -1491,7 +1602,7 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->clearHistory();
 
     // Disable group, but keep force group command active
-    this->sendCmd_ENABLE_GROUP(0, 0, TelemetrySection::PRIMARY, 1, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 1, Fw::Enabled::DISABLED);
     this->component.doDispatch();
     // Expect A Packet
     this->invoke_to_Run(0, 0);
@@ -1501,7 +1612,7 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
     this->clearHistory();
 
     // Disable Force Group, with Group Disabled and Section Disabled
-    this->sendCmd_FORCE_GROUP(0, 0, TelemetrySection::PRIMARY, 1, Fw::Enabled::DISABLED);
+    this->sendCmd_FORCE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 1, Fw::Enabled::DISABLED);
     this->component.doDispatch();
     // Expect No Packets
     this->invoke_to_Run(0, 0);
@@ -1516,11 +1627,7 @@ void TlmPacketizerTester ::advancedControlGroupTests(void) {
 // ----------------------------------------------------------------------
 
 void TlmPacketizerTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->m_portOutInvokes[portNum / (MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1)]
-                          [portNum % (MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1)]++;
-    if (this->m_primaryTestLock && portNum > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP * 1) {
-        return;
-    }
+    this->m_portOutInvokes[portNum]++;
     this->pushFromPortEntry_PktSend(data, context);
 }
 
@@ -1573,8 +1680,7 @@ void TlmPacketizerTester ::connectPorts() {
     // TlmGet
     this->connect_to_TlmGet(0, this->component.get_TlmGet_InputPort(0));
 
-    for (FwIndexType index = 0; index < TelemetrySection::NUM_SECTIONS * (MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1);
-         index++) {
+    for (FwIndexType index = 0; index < Svc::TELEMETRY_SEND_PORTS; index++) {
         this->component.set_PktSend_OutputPort(index, this->get_from_PktSend(index));
     }
 
@@ -1600,7 +1706,7 @@ void TlmPacketizerTester ::initComponents() {
 void TlmPacketizerTester ::resetCounter(void) {
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < MAX_CONFIGURABLE_TLMPACKETIZER_GROUP; group++) {
-            this->m_portOutInvokes[section][group] = 0;
+            this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)] = 0;
         };
     }
 };
