@@ -15,7 +15,7 @@
 #define QUEUE_DEPTH 10
 
 #include <Fw/Com/ComPacket.hpp>
-
+#include <algorithm>
 namespace Svc {
 
 // ----------------------------------------------------------------------

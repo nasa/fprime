@@ -192,10 +192,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     TlmPacketizer_SectionConfigs m_groupConfigs{};
 
     enum UpdateFlag : U8 {
-        NEVER_UPDATED = 0,  // Packet has never been updated (NO DATA)
-        PAST = 1,           // Packet has been sent and has old data
-        NEW = 2,            // Packet has been updated - use for ON_CHANGE_MIN logic
-        REQUESTED = 3,      // Packet has been requested - bypass all rate and enabled checks
+        NEVER_UPDATED = 0,  //!< Packet has never been updated (NO DATA)
+        PAST = 1,           //!< Packet has been sent and has old data
+        NEW = 2,            //!< Packet has been updated - use for ON_CHANGE_MIN logic
+        REQUESTED = 3,      //!< Packet has been requested - bypass all rate and enabled checks
     };
 
     struct PktSendCounters {

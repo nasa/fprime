@@ -44,12 +44,15 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
 
 #### 3.1.3 Terminology
-Telemetry Point: An emitted value.
-Telemetry Channel: A tagged type, identifier, and timestamp for emitting telemetry points.
-Telemetry Packets: A group of telemetry channels.
-Telemetry Group / Level: An identifier specifying a set of packets to get transmitted together.
-Telemetry Section: A resampling of telemetry groups. Each Section typically is destined for a different destination (e.g. realtime downlink vs store & forward)
-Output Port: The port used to write telemetry packets. The output port index is determined by the section and group of the packet.
+
+This SDD and component use the following terminology:
+
+1. Telemetry Point: An emitted value.
+2. Telemetry Channel: A tagged type, identifier, and timestamp for emitting telemetry points.
+3. Telemetry Packets: A group of telemetry channels.
+4. Telemetry Group / Level: An identifier specifying a set of packets to get transmitted together.
+5. Telemetry Section: A resampling of telemetry groups. Each Section typically is destined for a different destination (e.g. realtime downlink vs store & forward)
+6. Output Port: The port used to write telemetry packets. The output port index is determined by the section and group of the packet.
 
 The following example demonstrates the structure composition of packet set specifications and packet sections used in `Svc::TlmPacketizer`. While multiple packet sets can have packets with different group identifiers, a section contains all packets partitioned based on group identifier.
 
