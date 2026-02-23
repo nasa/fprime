@@ -221,6 +221,7 @@ Rancher Desktop is an alternative to Docker Desktop that allows users to run doc
 > Non-Macintosh users are advised to run without the below Docker container
 
 To install [Rancher Desktop](https://rancherdesktop.io/), follow the instructions for your operating system. When presented with a "Welcome to Rancher Desktop" dialog, choose the following settings:
+
 1. Disable Kubernetes
 2. Select `dockerd`
 3. Configure PATH Automatic

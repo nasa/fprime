@@ -344,7 +344,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStart
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+    if (this->isConnected_seqStartOut_OutputPort(0)) {
         // report that the sequence started to internal callers
         this->seqStartOut_out(0, this->m_sequenceFilePath);
     }

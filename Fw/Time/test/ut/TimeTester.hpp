@@ -20,6 +20,7 @@ class TimeTester {
     void test_MathTest();
     void test_CopyTest();
     void test_ZeroTimeEquality();
+    void test_TimeToTimeValue();
 };
 }  // namespace Fw
 

@@ -149,4 +149,23 @@ void TimeTester::test_ZeroTimeEquality() {
     ASSERT_EQ(time2, Fw::ZERO_TIME);
 }
 
+void TimeTester::test_TimeToTimeValue() {
+    U32 seconds = 5;
+    U32 useconds = 500000;
+    TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
+    FwTimeContextStoreType context = 3;
+
+    Fw::Time time(timeBase, context, seconds, useconds);
+
+    Fw::TimeValue time_value = time.asTimeValue();
+
+    // Alter the original
+    time.set(TimeBase::TB_NONE, 0, 0, 0);
+
+    ASSERT_EQ(time_value.get_timeBase(), timeBase);
+    ASSERT_EQ(time_value.get_timeContext(), context);
+    ASSERT_EQ(time_value.get_seconds(), seconds);
+    ASSERT_EQ(time_value.get_useconds(), useconds);
+}
+
 }  // namespace Fw

@@ -1,13 +1,7 @@
 // ======================================================================
 // \title  EnumToStringTest.cpp
-// \author T. Chieu
+// \author T. Chieu, R. Bocchino
 // \brief  cpp file for EnumToStringTest class
-//
-// \copyright
-// Copyright (C) 2009-2022 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 #include "FppTest/enum/DefaultEnumAc.hpp"
@@ -23,6 +17,8 @@
 #include <sstream>
 
 namespace FppTest {
+
+namespace Enum {
 
 // Populate an array with enum values
 template <typename EnumType>
@@ -83,15 +79,13 @@ void setEnumStrArray<Interval>(std::string (&a)[Interval::NUM_CONSTANTS + 1]) {
     a[7] = "[invalid] (11)";
 }
 
-}  // namespace FppTest
-
 // Test enum string functions
 template <typename EnumType>
 class EnumToStringTest : public ::testing::Test {
   protected:
     void SetUp() override {
-        FppTest::setEnumValArray<EnumType>(vals);
-        FppTest::setEnumStrArray<EnumType>(strs);
+        setEnumValArray<EnumType>(vals);
+        setEnumStrArray<EnumType>(strs);
     };
 
     EnumType e;
@@ -116,3 +110,7 @@ TYPED_TEST(EnumToStringTest, ToString) {
         this->buf.str("");
     }
 }
+
+}  // namespace Enum
+
+}  // namespace FppTest

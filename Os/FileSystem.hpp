@@ -57,7 +57,7 @@ class FileSystemInterface {
     FileSystemInterface(const FileSystemInterface& other) = delete;
 
     //! \brief assignment operator is forbidden
-    FileSystemInterface& operator=(const FileSystemInterface& other) = delete;
+    FileSystemInterface& operator=(const FileSystemInterface& other) = delete;  // NO_CODESONAR (cpp:S3657)
 
     //! \brief return the underlying FileSystem handle (implementation specific)
     //! \return internal FileSystem handle representation

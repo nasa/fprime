@@ -15,17 +15,17 @@ PolyType::PolyType(U8 val) {
     this->m_val.u8Val = val;
 }
 
-PolyType::operator U8() {
+PolyType::operator U8() const {
     FW_ASSERT(TYPE_U8 == this->m_dataType);
     return this->m_val.u8Val;
 }
 
-void PolyType::get(U8& val) {
+void PolyType::get(U8& val) const {
     FW_ASSERT(TYPE_U8 == this->m_dataType);
     val = this->m_val.u8Val;
 }
 
-bool PolyType::isU8() {
+bool PolyType::isU8() const {
     return (TYPE_U8 == this->m_dataType);
 }
 
@@ -42,17 +42,17 @@ PolyType::PolyType(I8 val) {
     this->m_val.i8Val = val;
 }
 
-PolyType::operator I8() {
+PolyType::operator I8() const {
     FW_ASSERT(TYPE_I8 == this->m_dataType);
     return this->m_val.i8Val;
 }
 
-void PolyType::get(I8& val) {
+void PolyType::get(I8& val) const {
     FW_ASSERT(TYPE_I8 == this->m_dataType);
     val = this->m_val.i8Val;
 }
 
-bool PolyType::isI8() {
+bool PolyType::isI8() const {
     return (TYPE_I8 == this->m_dataType);
 }
 
@@ -71,17 +71,17 @@ PolyType::PolyType(U16 val) {
     this->m_val.u16Val = val;
 }
 
-PolyType::operator U16() {
+PolyType::operator U16() const {
     FW_ASSERT(TYPE_U16 == this->m_dataType);
     return this->m_val.u16Val;
 }
 
-void PolyType::get(U16& val) {
+void PolyType::get(U16& val) const {
     FW_ASSERT(TYPE_U16 == this->m_dataType);
     val = this->m_val.u16Val;
 }
 
-bool PolyType::isU16() {
+bool PolyType::isU16() const {
     return (TYPE_U16 == this->m_dataType);
 }
 
@@ -98,17 +98,17 @@ PolyType::PolyType(I16 val) {
     this->m_val.i16Val = val;
 }
 
-PolyType::operator I16() {
+PolyType::operator I16() const {
     FW_ASSERT(TYPE_I16 == this->m_dataType);
     return this->m_val.i16Val;
 }
 
-void PolyType::get(I16& val) {
+void PolyType::get(I16& val) const {
     FW_ASSERT(TYPE_I16 == this->m_dataType);
     val = this->m_val.i16Val;
 }
 
-bool PolyType::isI16() {
+bool PolyType::isI16() const {
     return (TYPE_I16 == this->m_dataType);
 }
 
@@ -129,17 +129,17 @@ PolyType::PolyType(U32 val) {
     this->m_val.u32Val = val;
 }
 
-PolyType::operator U32() {
+PolyType::operator U32() const {
     FW_ASSERT(TYPE_U32 == this->m_dataType);
     return this->m_val.u32Val;
 }
 
-void PolyType::get(U32& val) {
+void PolyType::get(U32& val) const {
     FW_ASSERT(TYPE_U32 == this->m_dataType);
     val = this->m_val.u32Val;
 }
 
-bool PolyType::isU32() {
+bool PolyType::isU32() const {
     return (TYPE_U32 == this->m_dataType);
 }
 
@@ -156,17 +156,17 @@ PolyType::PolyType(I32 val) {
     this->m_val.i32Val = val;
 }
 
-PolyType::operator I32() {
+PolyType::operator I32() const {
     FW_ASSERT(TYPE_I32 == this->m_dataType);
     return this->m_val.i32Val;
 }
 
-void PolyType::get(I32& val) {
+void PolyType::get(I32& val) const {
     FW_ASSERT(TYPE_I32 == this->m_dataType);
     val = this->m_val.i32Val;
 }
 
-bool PolyType::isI32() {
+bool PolyType::isI32() const {
     return (TYPE_I32 == this->m_dataType);
 }
 
@@ -186,17 +186,17 @@ PolyType::PolyType(U64 val) {
     this->m_val.u64Val = val;
 }
 
-PolyType::operator U64() {
+PolyType::operator U64() const {
     FW_ASSERT(TYPE_U64 == this->m_dataType);
     return this->m_val.u64Val;
 }
 
-void PolyType::get(U64& val) {
+void PolyType::get(U64& val) const {
     FW_ASSERT(TYPE_U64 == this->m_dataType);
     val = this->m_val.u64Val;
 }
 
-bool PolyType::isU64() {
+bool PolyType::isU64() const {
     return (TYPE_U64 == this->m_dataType);
 }
 
@@ -213,17 +213,17 @@ PolyType::PolyType(I64 val) {
     this->m_val.i64Val = val;
 }
 
-PolyType::operator I64() {
+PolyType::operator I64() const {
     FW_ASSERT(TYPE_I64 == this->m_dataType);
     return this->m_val.i64Val;
 }
 
-void PolyType::get(I64& val) {
+void PolyType::get(I64& val) const {
     FW_ASSERT(TYPE_I64 == this->m_dataType);
     val = this->m_val.i64Val;
 }
 
-bool PolyType::isI64() {
+bool PolyType::isI64() const {
     return (TYPE_I64 == this->m_dataType);
 }
 
@@ -240,17 +240,17 @@ PolyType::PolyType(F64 val) {
     this->m_val.f64Val = val;
 }
 
-PolyType::operator F64() {
+PolyType::operator F64() const {
     FW_ASSERT(TYPE_F64 == this->m_dataType);
     return this->m_val.f64Val;
 }
 
-void PolyType::get(F64& val) {
+void PolyType::get(F64& val) const {
     FW_ASSERT(TYPE_F64 == this->m_dataType);
     val = this->m_val.f64Val;
 }
 
-bool PolyType::isF64() {
+bool PolyType::isF64() const {
     return (TYPE_F64 == this->m_dataType);
 }
 
@@ -265,17 +265,17 @@ PolyType::PolyType(F32 val) {
     this->m_val.f32Val = val;
 }
 
-PolyType::operator F32() {
+PolyType::operator F32() const {
     FW_ASSERT(TYPE_F32 == this->m_dataType);
     return this->m_val.f32Val;
 }
 
-void PolyType::get(F32& val) {
+void PolyType::get(F32& val) const {
     FW_ASSERT(TYPE_F32 == this->m_dataType);
     val = this->m_val.f32Val;
 }
 
-bool PolyType::isF32() {
+bool PolyType::isF32() const {
     return (TYPE_F32 == this->m_dataType);
 }
 
@@ -290,17 +290,17 @@ PolyType::PolyType(bool val) {
     this->m_val.boolVal = val;
 }
 
-PolyType::operator bool() {
+PolyType::operator bool() const {
     FW_ASSERT(TYPE_BOOL == this->m_dataType);
     return this->m_val.boolVal;
 }
 
-void PolyType::get(bool& val) {
+void PolyType::get(bool& val) const {
     FW_ASSERT(TYPE_BOOL == this->m_dataType);
     val = this->m_val.boolVal;
 }
 
-bool PolyType::isBool() {
+bool PolyType::isBool() const {
     return (TYPE_BOOL == this->m_dataType);
 }
 
@@ -315,17 +315,17 @@ PolyType::PolyType(void* val) {
     this->m_val.ptrVal = val;
 }
 
-PolyType::operator void*() {
+PolyType::operator void*() const {
     FW_ASSERT(TYPE_PTR == this->m_dataType);
     return this->m_val.ptrVal;
 }
 
-void PolyType::get(void*& val) {
+void PolyType::get(void*& val) const {
     FW_ASSERT(TYPE_PTR == this->m_dataType);
     val = this->m_val.ptrVal;
 }
 
-bool PolyType::isPtr() {
+bool PolyType::isPtr() const {
     return (TYPE_PTR == this->m_dataType);
 }
 
@@ -335,12 +335,10 @@ PolyType& PolyType::operator=(void* other) {
     return *this;
 }
 
-PolyType::PolyType(const PolyType& original) : Fw::Serializable() {
-    this->m_dataType = original.m_dataType;
-    this->m_val = original.m_val;
-}
+PolyType::PolyType(const PolyType& original)
+    : Fw::Serializable(), m_dataType(original.m_dataType), m_val(original.m_val) {}
 
-PolyType::~PolyType() {}
+PolyType::~PolyType() = default;
 
 PolyType& PolyType::operator=(const PolyType& src) {
     this->m_dataType = src.m_dataType;
@@ -646,7 +644,7 @@ void PolyType::toString(StringBase& dest, bool append) const {
     if (append) {
         dest += external;
     } else {
-        dest = external;
+        dest = static_cast<const StringBase&>(external);
     }
 }
 

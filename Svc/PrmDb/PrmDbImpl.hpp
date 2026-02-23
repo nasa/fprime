@@ -104,6 +104,9 @@ class PrmDbImpl final : public PrmDbComponentBase {
         }
     };
 
+    // helper to compute CRC over a buffer
+    U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
+
     // Pointers to the active and staging databases
     // These point to the actual storage arrays below
     // The active database is the ONLY one used for getting parameters
