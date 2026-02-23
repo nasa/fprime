@@ -203,7 +203,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         UpdateFlag updateFlag = UpdateFlag::NEVER_UPDATED;
     } m_packetFlags[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
 
-    const static TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
+    //! Mapping of section/group to the output port used to send telemetry
+    static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
 
   private:
     //! \brief Helper function to get output port index from section and group
