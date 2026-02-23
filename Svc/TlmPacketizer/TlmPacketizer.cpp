@@ -12,6 +12,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 #include <cstring>
+#include <algorithm>
 
 namespace Svc {
 
