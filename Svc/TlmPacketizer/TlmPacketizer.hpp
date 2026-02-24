@@ -11,14 +11,18 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
+#include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "config/TlmPacketizerCfg.hpp"
 
 namespace Svc {
 
 class TlmPacketizer final : public TlmPacketizerComponentBase {
+    friend class TlmPacketizerTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -32,7 +36,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     void setPacketList(
         const TlmPacketizerPacketList& packetList,   // channels to packetize
         const Svc::TlmPacketizerPacket& ignoreList,  // channels to ignore (i.e. no warning event if not packetized)
-        const FwChanIdType startLevel);              // starting level of packets to send
+        const FwChanIdType startLevel,               // starting level of packets to send
+        const TlmPacketizer_GroupConfig& defaultGroupConfig =
+            TlmPacketizer_GroupConfig{});  // default group config setting
 
     //! Destroy object TlmPacketizer
     //!
@@ -57,6 +63,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
                      U32 context                /*!< The call order*/
                      ) override;
 
+    //! Handler implementation for controlIn
+    void controlIn_handler(FwIndexType portNum,                   //!< The port number
+                           const Svc::TelemetrySection& section,  //!< Section to enable (Primary, Secondary, etc...)
+                           const Fw::Enabled& enabled             //!< Enable / Disable Section
+                           ) override;
+
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
@@ -72,18 +84,55 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
                                 ) override;
 
     //! Implementation for SET_LEVEL command handler
-    //! Set telemetry send leve
-    void SET_LEVEL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                              const U32 cmdSeq,          /*!< The command sequence number*/
-                              FwChanIdType level         /*!< The I32 command argument*/
+    //! Set telemetry send level
+    void SET_LEVEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwChanIdType level    //!< The I32 command argument
                               ) override;
 
     //! Implementation for SEND_PKT command handler
     //! Force a packet to be sent
-    void SEND_PKT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
-                             const U32 cmdSeq,          /*!< The command sequence number*/
-                             U32 id                     /*!< The packet ID*/
+    void SEND_PKT_cmdHandler(FwOpcodeType opCode,           //!< The opcode
+                             U32 cmdSeq,                    //!< The command sequence number
+                             U32 id,                        //!< The packet ID
+                             Svc::TelemetrySection section  //!< Section to emit packet
                              ) override;
+
+    //! Handler implementation for command ENABLE_SECTION
+    void ENABLE_SECTION_cmdHandler(FwOpcodeType opCode,            //!< The opcode
+                                   U32 cmdSeq,                     //!< The command sequence number
+                                   Svc::TelemetrySection section,  //!< Section grouping to configure
+                                   Fw::Enabled enable              //!< Section enabled or disabled
+                                   ) override;
+
+    //! Handler implementation for command ENABLE_GROUP
+    //!
+    //! Enable / disable telemetry of a group on a section
+    void ENABLE_GROUP_cmdHandler(FwOpcodeType opCode,            //!< The opcode
+                                 U32 cmdSeq,                     //!< The command sequence number
+                                 Svc::TelemetrySection section,  //!< Section grouping to configure
+                                 FwChanIdType tlmGroup,          //!< Group Identifier
+                                 Fw::Enabled enable              //!< Section enabled or disabled
+                                 ) override;
+
+    //! Handler implementation for command FORCE_GROUP
+    void FORCE_GROUP_cmdHandler(FwOpcodeType opCode,            //!< The opcode
+                                U32 cmdSeq,                     //!< The command sequence number
+                                Svc::TelemetrySection section,  //!< Section grouping
+                                FwChanIdType tlmGroup,          //!< Group Identifier
+                                Fw::Enabled enable              //!< Section enabled or disabled
+                                ) override;
+
+    //! Handler implementation for command CONFIGURE_GROUP_RATES
+    void CONFIGURE_GROUP_RATES_cmdHandler(
+        FwOpcodeType opCode,                     //!< The opcode
+        U32 cmdSeq,                              //!< The command sequence number
+        Svc::TelemetrySection section,           //!< Section grouping
+        FwChanIdType tlmGroup,                   //!< Group Identifier
+        Svc::TlmPacketizer_RateLogic rateLogic,  //!< Rate Logic
+        U32 minDelta,  //!< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
+        U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
+        ) override;
 
     // number of packets to fill
     FwChanIdType m_numPackets;
@@ -96,7 +145,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         FwChanIdType id;       //!< channel id
         FwChanIdType level;    //!< channel level
         bool updated;          //!< if packet had any updates during last cycle
-        bool requested;        //!< if the packet was requested with SEND_PKT in the last cycle
     };
 
     // buffers for filling with telemetry
@@ -112,7 +160,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         FwSizeType channelSize;  //!< max serialized size of the channel in bytes
         TlmEntry* next;          //!< pointer to next bucket in table
         bool used;               //!< if entry has been used
-        bool ignored;            //!< ignored packet id
+        bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once
         FwChanIdType bucketNo;   //!< for testing
     };
@@ -139,8 +187,34 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
 
     TlmEntry* findBucket(FwChanIdType id);
 
-    FwChanIdType m_startLevel;  //!< initial level for sending packets
-    FwChanIdType m_maxLevel;    //!< maximum level in all packets
+    TlmPacketizer_SectionEnabled m_sectionEnabled{};
+
+    TlmPacketizer_SectionConfigs m_groupConfigs{};
+
+    enum UpdateFlag : U8 {
+        NEVER_UPDATED = 0,  //!< Packet has never been updated (NO DATA)
+        PAST = 1,           //!< Packet has been sent and has old data
+        NEW = 2,            //!< Packet has been updated - use for ON_CHANGE_MIN logic
+        REQUESTED = 3,      //!< Packet has been requested - bypass all rate and enabled checks
+    };
+
+    struct PktSendCounters {
+        U32 prevSentCounter = std::numeric_limits<U32>::max();  // Prevent Start up spam
+        UpdateFlag updateFlag = UpdateFlag::NEVER_UPDATED;
+    } m_packetFlags[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
+
+    //! Mapping of section/group to the output port used to send telemetry
+    static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
+
+  private:
+    //! \brief Helper function to get output port index from section and group
+    //!
+    //! Invokes the mapping defined in TELEMETRY_SEND_PORT_MAP to get the output port index for a given section and
+    //! group.
+    //! \param section The telemetry section (e.g., PRIMARY, SECONDARY, etc.)
+    //! \param group The telemetry group number
+    //! \return The output port index to send telemetry for the given section and group
+    static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 };
 
 }  // end namespace Svc
