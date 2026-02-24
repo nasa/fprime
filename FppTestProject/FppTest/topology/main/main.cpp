@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  main.cpp
-// \author bocchino
+// \author bocchino, tumbar
 // \brief  Main program for FppTest deployment
 // ======================================================================
 

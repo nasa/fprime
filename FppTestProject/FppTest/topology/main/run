@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-cd `dirname $0`
-
-fprime-util build "$@"
-../../../build-fprime-automatic-native/bin/Darwin/FppTest_topology_deployment

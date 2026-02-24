@@ -4,6 +4,7 @@
 # Builds unit tests for FPP autocoder
 ###
 
+# FIXME(tumbar) This seems fairly brittle to disable certain UTs with direct port calls
 if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
     # Disable unit testing for components that require
     # indirect port calls
