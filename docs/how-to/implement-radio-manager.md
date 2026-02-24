@@ -70,11 +70,16 @@ void RadioManager::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuf
     Drv::ByteStreamStatus sendStatus = this->drvSendOut_out(0, sendBuffer);
     // Determine success or failure
     Fw::Success comSuccess = (sendStatus == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
-    // Return buffer ownership and comStatus
+    // [CAUTION: See note below]
+    // Return buffer ownership back first
     this->dataReturnOut_out(0, sendBuffer, context);
+    // Then send comStatus **after** buffer ownership is returned
     this->comStatusOut_out(0, comSuccess);
 }
 ```
+
+> [!CAUTION]
+> The ordering of the last two port calls (`dataReturnOut_out` / `comStatusOut_out`) is important. The first one returns ownership of the buffer back to upstream components such as ComQueue, or ComAggregator if present. The second one signals that we are ready to accept more data to be sent out. However these upstream components may assert if they receive a comStatus but do not own the sent buffer. Users therefore **must** call `dataReturnOut` before calling `comStatusOut`.
 
 ### Incoming (uplink) data: **`drvReceiveIn`**
 
