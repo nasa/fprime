@@ -1707,8 +1707,8 @@ void TlmPacketizerTester ::resetCounter(void) {
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < MAX_CONFIGURABLE_TLMPACKETIZER_GROUP; group++) {
             this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)] = 0;
-        };
+        }
     }
-};
+}
 
 }  // end namespace Svc
