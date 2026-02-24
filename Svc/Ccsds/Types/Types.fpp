@@ -131,8 +131,6 @@ module Ccsds {
 
         # VC Frame Count (24 bits)
         constant vcFrameCountMask = 0x00FFFFFF  @< 24 bits of frame count
-
-        # expectedFrameVersion removed: use Tfvn::AOS from the Tfvn enum instead
     }
 
     @ Masks and special values for AOS M_PDU First Header Pointer
@@ -157,18 +155,7 @@ module Ccsds {
 
         constant packetVersionOffset = 5
         constant packetTypeOffset = 4
-
-        # expectedPacketVersion removed: use PacketVersionNumber::EPP from the PacketVersionNumber enum
-        # Type/protocol/length-of-length constants removed: use EppPacketType, EppProtocolId, EppLengthOfLength enums
     }
-
-    @ Packet Version Numbers (upper 3 bits of first packet byte)
-    @ Used to distinguish between SPP and EPP packets on the wire
-    @ Per CCSDS 133.0-B-2 (SPP) and CCSDS 133.1-B-3 (EPP)
-    dictionary enum PacketVersionNumber : U8 {
-        SPP = 0  @< Space Packet Protocol - PVN '000' binary
-        EPP = 7  @< Encapsulation Packet Protocol - PVN '111' binary
-    } default SPP
 
     @ Packet types for Encapsulation Packet Protocol per CCSDS 133.1-B-3 Section 4.1.3
     dictionary enum EppPacketType : U8 {
@@ -205,10 +192,13 @@ module Ccsds {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
 
+    @ Bitmask of enabled Packet Version Numbers (PVN)
+    @ Each bit position corresponds to a PVN value (bit N set = PVN N is enabled)
+    @ SPP PVN = 0, EPP PVN = 7 per CCSDS 133.0-B-2 / 133.1-B-3
     module PvnBitfield {
-        constant SPP_MASK = 0x1 @< 1 << 0x0
-        constant EPP_MASK = 0x8 @< 1 << 0x3
-        constant VALID_MASK = SPP_MASK + EPP_MASK
+        constant SPP_MASK   = 0x01  @< 1 << 0 (SPP PVN = 0)
+        constant EPP_MASK   = 0x80  @< 1 << 7 (EPP PVN = 7)
+        constant VALID_MASK = 0x81  @< SPP_MASK | EPP_MASK
     }
 
     @ Transfer Frame Version Numbers are 4 bits long

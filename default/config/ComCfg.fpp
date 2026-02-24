@@ -50,6 +50,7 @@ module ComCfg {
         apid: Apid                  @< 11 bits APID in CCSDS
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
+        pvn: Pvn                    @< Packet Version Number - used for AOS deframing to identify packet type
         sendNow: bool               @< Flag to AOS Framer that the Frame this packet goes into should be sent ASAP
 
     } default {
@@ -57,6 +58,7 @@ module ComCfg {
         apid = Apid.FW_PACKET_UNKNOWN
         sequenceCount = 0
         vcId = 1
+        pvn = Pvn.INVALID_UNINITIALIZED
         sendNow = false
     }
 

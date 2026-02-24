@@ -61,14 +61,14 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test invalid frame length handling
     void testInvalidFrameLength();
 
-    //! Test invalid CRC handling
-    void testInvalidCrc();
+    //! Test invalid FECF (CRC) handling
+    void testInvalidFecf();
 
     //! Test invalid transfer frame version number
     void testInvalidTfvn();
 
-    //! Test accept all VCID mode
-    void testAcceptAllVcid();
+    // Accept-all-VCID is not supported: each VC struct maps to exactly one VCID,
+    // enabling per-packet spanning state tracking.
 
     // ----------------------------------------------------------------------
     // Tests - M_PDU Processing

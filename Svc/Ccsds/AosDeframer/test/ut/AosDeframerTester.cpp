@@ -99,8 +99,8 @@ void AosDeframerTester::testInvalidScId() {
 }
 
 void AosDeframerTester::testInvalidVcId() {
-    // Configure to accept only VCID 0
-    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, false);
+    // Configure to accept only VCID 0 (always filtered - no accept-all-vcid mode)
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0);
 
     U8 payload[50];
     FwSizeType sppSize = this->createSppPacket(payload, 0x001, 20);
@@ -138,7 +138,7 @@ void AosDeframerTester::testInvalidFrameLength() {
     ASSERT_EVENTS_InvalidFrameLength_SIZE(1);
 }
 
-void AosDeframerTester::testInvalidCrc() {
+void AosDeframerTester::testInvalidFecf() {
     this->configureDefault();
 
     U8 payload[50];
@@ -157,7 +157,7 @@ void AosDeframerTester::testInvalidCrc() {
     ASSERT_from_errorNotify_SIZE(1);
     ASSERT_from_errorNotify(0, Ccsds::FrameError::AOS_INVALID_CRC);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_InvalidCrc_SIZE(1);
+    ASSERT_EVENTS_InvalidFecf_SIZE(1);
     ASSERT_TLM_CrcErrorCount_SIZE(1);
     ASSERT_TLM_CrcErrorCount(0, 1);
 }
@@ -182,25 +182,8 @@ void AosDeframerTester::testInvalidTfvn() {
     ASSERT_EVENTS_InvalidTfvn_SIZE(1);
 }
 
-void AosDeframerTester::testAcceptAllVcid() {
-    // Configure to accept all VCIDs
-    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, true);
-
-    U8 payload[50];
-    FwSizeType sppSize = this->createSppPacket(payload, 0x001, 20);
-
-    // Test with various VCIDs
-    for (U8 vcid = 0; vcid < 4; vcid++) {
-        this->clearHistory();
-        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, vcid);
-        ComCfg::FrameContext context;
-
-        this->invoke_to_dataIn(0, buffer, context);
-
-        ASSERT_from_dataOut_SIZE(1);
-        ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), vcid);
-    }
-}
+// testAcceptAllVcid removed: accept-all-VCID mode is not supported.
+// Each VC struct maps to exactly one VCID for per-packet spanning state tracking.
 
 // ----------------------------------------------------------------------
 // Tests - M_PDU Processing
@@ -294,6 +277,7 @@ void AosDeframerTester::testFhpIdleDataOnly() {
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_IdleFrame_SIZE(1);
+    ASSERT_EVENTS_IdleFrame(0, 0);  // vcId=0 (the configured VC)
     ASSERT_TLM_FrameCount_SIZE(1);
     ASSERT_TLM_FrameCount(0, 1);
 }
@@ -607,7 +591,7 @@ void AosDeframerTester::testFecfDisabled() {
     const U32 frameSizeNoFecf = TEST_FRAME_SIZE - AOSTrailer::SERIALIZED_SIZE;
 
     // Configure without FECF
-    this->component.configure(frameSizeNoFecf, false, ComCfg::SpacecraftId, 0, true);
+    this->component.configure(frameSizeNoFecf, false, ComCfg::SpacecraftId, 0);
 
     U8 payload[100];
     FwSizeType sppSize = this->createSppPacket(payload, 0x200, 50);
@@ -619,13 +603,13 @@ void AosDeframerTester::testFecfDisabled() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
-    // No CRC error events
-    ASSERT_EVENTS_InvalidCrc_SIZE(0);
+    // No FECF error events
+    ASSERT_EVENTS_InvalidFecf_SIZE(0);
 }
 
 void AosDeframerTester::testPvnMaskSppOnly() {
     // Configure for SPP only
-    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, true, PvnBitfield::SPP_MASK);
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, PvnBitfield::SPP_MASK);
 
     U8 payload[150];
     FwSizeType offset = 0;
@@ -650,7 +634,7 @@ void AosDeframerTester::testPvnMaskSppOnly() {
 
 void AosDeframerTester::testPvnMaskEppOnly() {
     // Configure for EPP only
-    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, true, PvnBitfield::EPP_MASK);
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, PvnBitfield::EPP_MASK);
 
     U8 payload[100];
     FwSizeType eppSize = this->createEppPacket(payload, 0x02, 30);
@@ -726,7 +710,7 @@ void AosDeframerTester::testCrcErrorCountTelemetry() {
 // ----------------------------------------------------------------------
 
 void AosDeframerTester::configureDefault() {
-    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, true,
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0,
                               PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 }
 

@@ -15,6 +15,8 @@ register_fprime_library(
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframer.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/AosDeframerEvents.fppi"
+    "${CMAKE_CURRENT_LIST_DIR}/AosDeframerTelem.fppi"
   DEPENDS
     Svc_Ccsds_Types
 )
@@ -25,6 +27,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTester.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/AosDeframerEvents.fppi"
+    "${CMAKE_CURRENT_LIST_DIR}/AosDeframerTelem.fppi"
   DEPENDS
     Svc_Ccsds_Types
     STest

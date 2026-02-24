@@ -47,14 +47,12 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param frameErrorControlField Whether FECF is present (per Section 4.1.6)
     //! \param spacecraftId The spacecraft ID to accept (10 bits, per Section 4.1.2.2)
     //! \param vcId The virtual channel ID to accept (6 bits, per Section 4.1.2.3)
-    //! \param acceptAllVcid If true, accept frames from all virtual channels
-    //! \param pvnMask Bitmask of Packet Version Numbers to extract (SPP=0x1, EPP=0x8)
+    //! \param pvnMask Bitmask of Packet Version Numbers to extract (SPP=0x01, EPP=0x80)
     //!
     void configure(U32 fixedFrameSize,
                    bool frameErrorControlField,
                    U16 spacecraftId = ComCfg::SpacecraftId,
                    U8 vcId = 0,
-                   bool acceptAllVcid = true,
                    U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
   private:
@@ -66,6 +64,8 @@ class AosDeframer : public AosDeframerComponentBase {
     //!
     //! Port to receive framed AOS data. This is essentially the CCSDS AOS
     //! VC_RECEIVE.indication Service Primitive (per Section 3.4.3.2)
+    //! Note: parseAndValidateHeader handles warning events and errorNotify for
+    //!       header failures; this function is responsible for data return.
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;
@@ -81,10 +81,6 @@ class AosDeframer : public AosDeframerComponentBase {
     // Private helper methods
     // ----------------------------------------------------------------------
 
-    //! Helper method to send an error notification if the errorNotify port is connected
-    //! \param error The error to send
-    void errorNotifyHelper(Svc::Ccsds::FrameError error);
-
     //! Parse the AOS Primary Header per CCSDS 732.0-B-5 Section 4.1.2
     //! \param data The frame buffer
     //! \param context The frame context to update
@@ -92,10 +88,10 @@ class AosDeframer : public AosDeframerComponentBase {
     bool parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context);
 
     //! Validate the Frame Error Control Field (CRC) per CCSDS 732.0-B-5 Section 4.1.6
+    //! Increments the global m_crcErrorCount on failure (FECF is a physical-channel concern).
     //! \param data The frame buffer
-    //! \param vc The virtual channel state (for CRC error counter)
-    //! \return true if CRC is valid, false otherwise
-    bool validateFecf(Fw::Buffer& data, AosDeframerVc& vc);
+    //! \return true if FECF is valid, false otherwise
+    bool validateFecf(Fw::Buffer& data);
 
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
@@ -128,39 +124,6 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \return Packet Version Number (0 for SPP, 7 for EPP)
     static U8 getPacketVersion(U8 firstByte);
 
-    //! Check if a packet type is enabled in the PVN mask
-    //! \param pvn Packet Version Number
-    //! \return true if packet type should be extracted
-    bool isPacketTypeEnabled(U8 pvn) const;
-
-    //! Per-virtual-channel state, mirroring the AosFramer::AosVc pattern for future multi-VC support
-    struct AosDeframerVc {
-        U8 vcStructIndex = 0xFF;     //!< Index into VC array for this vc struct
-        U8 virtualChannelId = 0;     //!< VCID for this virtual channel
-        U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;  //!< Bitmask of enabled PVNs
-
-        // Telemetry counters
-        U32 frameCount = 0;          //!< Total frames received on this VC
-        U32 packetCount = 0;         //!< Total packets extracted from this VC
-        U32 crcErrorCount = 0;       //!< Total CRC errors for this VC
-        U32 vcFrameCount = 0;        //!< Last received virtual channel frame count
-
-        // Spanning packet state (for packets that span multiple frames)
-        // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
-        struct SpanningPacketState {
-            U8 buffer[ComCfg::AosMaxFrameFixedSize];  //!< Buffer for partial packet data
-            FwSizeType bytesReceived = 0;              //!< Bytes received so far
-            FwSizeType expectedSize = 0;               //!< Expected total packet size (0 if unknown)
-            U8 pvn = 0;                                //!< Packet Version Number of spanning packet
-            bool active = false;                       //!< Whether a spanning packet is in progress
-        } spanningPacket;
-    };
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private helper methods (continued)
-    // ----------------------------------------------------------------------
-
     //! Append data to the active spanning packet buffer, completing it if possible
     //! \param vc The virtual channel state
     //! \param data Pointer to data bytes to append
@@ -173,6 +136,30 @@ class AosDeframer : public AosDeframerComponentBase {
     //! TODO: Implement multi-VC support; currently always returns m_vcs[0]
     AosDeframerVc& getVcStruct(const ComCfg::FrameContext& context);
 
+    //! Per-virtual-channel state, mirroring the AosFramer::AosVc pattern for future multi-VC support
+    struct AosDeframerVc {
+        U8 vcStructIndex = 0xFF;     //!< Index into VC array for this vc struct
+        U8 virtualChannelId = 0;     //!< VCID for this virtual channel
+        U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;  //!< Bitmask of enabled PVNs
+
+        // Telemetry counters (per-VC)
+        U32 frameCount = 0;          //!< Total frames received on this VC
+        U32 packetCount = 0;         //!< Total packets extracted from this VC
+        U32 vcFrameCount = 0;        //!< Last received virtual channel frame count from header
+
+        // Spanning packet state (for packets that span multiple frames)
+        // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
+        struct SpanningPacketState {
+            static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header size before size is known
+            U8 buffer[ComCfg::AosMaxFrameFixedSize];  //!< Buffer for partial packet data
+            FwSizeType bytesReceived = 0;              //!< Bytes received so far
+            FwSizeType expectedSize = 0;               //!< Expected total packet size (0 if unknown)
+            //! PVN of spanning packet; initialized to max U8 to indicate "not set"
+            U8 pvn = 0xFF;
+            bool active = false;                       //!< Whether a spanning packet is in progress
+        } spanningPacket;
+    };
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -182,7 +169,9 @@ class AosDeframer : public AosDeframerComponentBase {
     U32 m_fixedFrameSize = 0;            //!< Fixed frame size in bytes
     bool m_fecfEnabled = true;           //!< Whether FECF is enabled
     U16 m_spacecraftId = 0;              //!< Expected spacecraft ID (10 bits)
-    bool m_acceptAllVcid = true;         //!< Accept frames from all VCIDs
+
+    //! FECF CRC error counter - per physical channel (not per-VC)
+    U32 m_crcErrorCount = 0;
 
     //! TODO: Implement multiple VCs - currently always returns m_vcs[0]
     AosDeframerVc m_vcs[1];  //!< Our one AOS Virtual Channel (for now)

@@ -35,9 +35,9 @@ TEST(AosDeframer, testInvalidFrameLength) {
     tester.testInvalidFrameLength();
 }
 
-TEST(AosDeframer, testInvalidCrc) {
+TEST(AosDeframer, testInvalidFecf) {
     Svc::Ccsds::AosDeframerTester tester;
-    tester.testInvalidCrc();
+    tester.testInvalidFecf();
 }
 
 TEST(AosDeframer, testInvalidTfvn) {
@@ -45,10 +45,7 @@ TEST(AosDeframer, testInvalidTfvn) {
     tester.testInvalidTfvn();
 }
 
-TEST(AosDeframer, testAcceptAllVcid) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testAcceptAllVcid();
-}
+// testAcceptAllVcid removed: accept-all-VCID mode is not supported.
 
 // ----------------------------------------------------------------------
 // Tests - M_PDU Processing

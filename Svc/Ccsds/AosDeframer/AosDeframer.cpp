@@ -11,9 +11,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
-#include "Fw/Types/String.hpp"
 #include "Svc/Ccsds/Types/EppPacketTypeEnumAc.hpp"
-#include "Svc/Ccsds/Types/PacketVersionNumberEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -30,7 +28,7 @@ AosDeframer::AosDeframer(const char* const compName)
       m_fixedFrameSize(0),
       m_fecfEnabled(true),
       m_spacecraftId(ComCfg::SpacecraftId),
-      m_acceptAllVcid(true) {
+      m_crcErrorCount(0) {
     // Initialize VC struct
     m_vcs[0].vcStructIndex = 0;
     m_vcs[0].virtualChannelId = 0;
@@ -43,7 +41,6 @@ void AosDeframer::configure(U32 fixedFrameSize,
                             bool frameErrorControlField,
                             U16 spacecraftId,
                             U8 vcId,
-                            bool acceptAllVcid,
                             U8 pvnMask) {
     // Validate frame size is within bounds
     FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
@@ -59,13 +56,16 @@ void AosDeframer::configure(U32 fixedFrameSize,
     // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
     FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
 
-    // At least one packet type must be enabled
+    // pvnMask must only contain valid PVN bits and at least one must be set
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
+    FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
     m_fixedFrameSize = fixedFrameSize;
     m_fecfEnabled = frameErrorControlField;
     m_spacecraftId = spacecraftId;
-    m_acceptAllVcid = acceptAllVcid;
+
+    // Zero out FECF error counter on (re)configure
+    m_crcErrorCount = 0;
 
     // Populate the (single) VC struct
     m_vcs[0].virtualChannelId = vcId;
@@ -83,7 +83,9 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     if (data.getSize() < m_fixedFrameSize) {
         this->log_WARNING_HI_InvalidFrameLength(m_fixedFrameSize, data.getSize());
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_LENGTH);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
+        }
         this->dataReturnOut_out(0, data, context);
         return;
     }
@@ -92,6 +94,7 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     ComCfg::FrameContext packetContext = context;
 
     // Parse and validate the AOS Primary Header (Section 4.1.2)
+    // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
     if (!this->parseAndValidateHeader(data, packetContext)) {
         this->dataReturnOut_out(0, data, context);
         return;
@@ -101,14 +104,13 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     AosDeframerVc& vc = this->getVcStruct(packetContext);
 
     // Validate FECF if enabled (Section 4.1.6)
-    if (m_fecfEnabled && !this->validateFecf(data, vc)) {
+    if (m_fecfEnabled && !this->validateFecf(data)) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
 
     // Update telemetry
-    vc.frameCount++;
-    this->tlmWrite_FrameCount(vc.frameCount);
+    this->tlmWrite_FrameCount(++vc.frameCount);
 
     // Extract packets from the M_PDU data zone
     this->extractPackets(vc, data, packetContext);
@@ -126,12 +128,6 @@ void AosDeframer::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer
 // Private helper methods
 // ----------------------------------------------------------------------
 
-void AosDeframer::errorNotifyHelper(Ccsds::FrameError error) {
-    if (this->isConnected_errorNotify_OutputPort(0)) {
-        this->errorNotify_out(0, error);
-    }
-}
-
 AosDeframer::AosDeframerVc& AosDeframer::getVcStruct(const ComCfg::FrameContext& context) {
     // TODO: Implement multi-VC support by mapping context.vcId to the correct VC struct
     (void)context;
@@ -145,54 +141,59 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     if (status != Fw::FW_SERIALIZE_OK) {
         // Buffer too small to contain a valid AOS primary header
         this->log_WARNING_HI_InvalidFrameLength(m_fixedFrameSize, data.getSize());
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_LENGTH);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
+        }
         return false;
     }
 
-    U16 globalVcId = header.get_globalVcId();
-    U32 frameCountAndSignaling = header.get_frameCountAndSignaling();
-
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
     // AOS uses Tfvn::AOS = 0x1 ('01' binary)
-    U8 tfvn =
-        static_cast<U8>((globalVcId & AOSHeaderSubfields::frameVersionMask) >> AOSHeaderSubfields::frameVersionOffset);
+    U8 tfvn = static_cast<U8>((header.get_globalVcId() & AOSHeaderSubfields::frameVersionMask) >>
+                              AOSHeaderSubfields::frameVersionOffset);
     if (tfvn != static_cast<U8>(Tfvn::AOS)) {
         this->log_WARNING_HI_InvalidTfvn(tfvn, static_cast<U8>(Tfvn::AOS));
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_VERSION);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VERSION);
+        }
         return false;
     }
 
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
-    U16 scidLsb = static_cast<U16>((globalVcId & AOSHeaderSubfields::spacecraftIdLsbMask) >>
-                                   AOSHeaderSubfields::spacecraftIdLsbOffset);
-    U8 signalingByte = static_cast<U8>(frameCountAndSignaling & 0xFF);
-    U16 scidMsb = static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
-                                   AOSHeaderSubfields::spacecraftIdMsbOffset);
-    U16 spacecraftId = static_cast<U16>(scidLsb | (scidMsb << 8));
+    U8 signalingByte = static_cast<U8>(header.get_frameCountAndSignaling() & 0xFF);
+    U16 spacecraftId =
+        static_cast<U16>(((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
+                          AOSHeaderSubfields::spacecraftIdLsbOffset) |
+                         (static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
+                                           AOSHeaderSubfields::spacecraftIdMsbOffset)
+                          << 8));
 
     if (spacecraftId != m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraftId, m_spacecraftId);
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_SCID);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_SCID);
+        }
         return false;
     }
 
     // Extract Virtual Channel ID (Section 4.1.2.3)
-    U8 vcId = static_cast<U8>(globalVcId & AOSHeaderSubfields::virtualChannelIdMask);
-    if (!m_acceptAllVcid && vcId != m_vcs[0].virtualChannelId) {
+    U8 vcId = static_cast<U8>(header.get_globalVcId() & AOSHeaderSubfields::virtualChannelIdMask);
+    if (vcId != m_vcs[0].virtualChannelId) {
         this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcs[0].virtualChannelId);
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_VCID);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VCID);
+        }
         return false;
     }
 
     // Extract Virtual Channel Frame Count (Section 4.1.2.4)
     // 24 bits in the upper 3 bytes of frameCountAndSignaling
-    U32 vcFrameCount =
-        (frameCountAndSignaling >> AOSHeaderSubfields::vcFrameCountOffset) & AOSHeaderSubfields::vcFrameCountMask;
+    U32 vcFrameCount = (header.get_frameCountAndSignaling() >> AOSHeaderSubfields::vcFrameCountOffset) &
+                       AOSHeaderSubfields::vcFrameCountMask;
 
     // Extract VC Frame Count Cycle if in use (Section 4.1.2.5.3)
-    bool cycleCountInUse = (signalingByte & AOSHeaderSubfields::cycleCountFlagMask) != 0;
-    if (cycleCountInUse) {
+    if ((signalingByte & AOSHeaderSubfields::cycleCountFlagMask) != 0) {
         U8 vcFrameCountCycle = signalingByte & AOSHeaderSubfields::vcFrameCountCycleMask;
         // Extend the 24-bit frame count with the 4-bit cycle count
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
@@ -207,7 +208,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     return true;
 }
 
-bool AosDeframer::validateFecf(Fw::Buffer& data, AosDeframerVc& vc) {
+bool AosDeframer::validateFecf(Fw::Buffer& data) {
     // Per CCSDS 732.0-B-5 Section 4.1.6, FECF is a 16-bit CRC
     // computed over all preceding bits in the frame
 
@@ -223,10 +224,11 @@ bool AosDeframer::validateFecf(Fw::Buffer& data, AosDeframerVc& vc) {
 
     U16 transmittedCrc = trailer.get_fecf();
     if (transmittedCrc != computedCrc) {
-        this->log_WARNING_HI_InvalidCrc(transmittedCrc, computedCrc);
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_CRC);
-        vc.crcErrorCount++;
-        this->tlmWrite_CrcErrorCount(vc.crcErrorCount);
+        this->log_WARNING_HI_InvalidFecf(transmittedCrc, computedCrc);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_CRC);
+        }
+        this->tlmWrite_CrcErrorCount(++m_crcErrorCount);
         return false;
     }
 
@@ -244,7 +246,7 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc,
 
     // Determine expected size once we have enough SPP header bytes
     if (vc.spanningPacket.expectedSize == 0 &&
-        vc.spanningPacket.pvn == static_cast<U8>(PacketVersionNumber::SPP) &&
+        vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
         (vc.pvnMask & PvnBitfield::SPP_MASK) &&
         vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
         U16 dataLength =
@@ -259,15 +261,14 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc,
         Fw::Buffer packetBuffer(vc.spanningPacket.buffer, vc.spanningPacket.expectedSize);
 
         ComCfg::FrameContext packetContext = context;
-        if (vc.spanningPacket.pvn == static_cast<U8>(PacketVersionNumber::SPP)) {
+        if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL)) {
             packetContext.set_pvn(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
         } else {
             packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
         }
 
         this->dataOut_out(0, packetBuffer, packetContext);
-        vc.packetCount++;
-        this->tlmWrite_PacketCount(vc.packetCount);
+        this->tlmWrite_PacketCount(++vc.packetCount);
 
         vc.spanningPacket.active = false;
         vc.spanningPacket.bytesReceived = 0;
@@ -297,7 +298,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     // Handle special First Header Pointer values (Section 4.1.4.2.2.4)
     if (firstHeaderPointer == AOSMPDUSubfields::FHP_IDLE_DATA_ONLY) {
         // Frame contains only idle data - reset any in-progress spanning packet
-        this->log_ACTIVITY_LO_IdleFrame();
+        this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
         vc.spanningPacket.active = false;
         vc.spanningPacket.bytesReceived = 0;
         return;
@@ -325,7 +326,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     FwSizeType currentOffset = firstHeaderPointer;
 
     // Extract packets starting at First Header Pointer
-    while (currentOffset < dataZoneSize) {
+    for (; currentOffset < dataZoneSize;) {
         U8* packetStart = dataZone + currentOffset;
         FwSizeType remainingBytes = dataZoneSize - currentOffset;
 
@@ -334,10 +335,12 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 
         FwSizeType packetSize = 0;
 
-        if (pvn == static_cast<U8>(PacketVersionNumber::SPP) && (vc.pvnMask & PvnBitfield::SPP_MASK)) {
+        if (pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
+            (vc.pvnMask & PvnBitfield::SPP_MASK)) {
             // Space Packet Protocol
             packetSize = extractSppPacket(vc, packetStart, remainingBytes, context);
-        } else if (pvn == static_cast<U8>(PacketVersionNumber::EPP) && (vc.pvnMask & PvnBitfield::EPP_MASK)) {
+        } else if (pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL) &&
+                   (vc.pvnMask & PvnBitfield::EPP_MASK)) {
             // Encapsulation Packet Protocol
             packetSize = extractEppPacket(vc, packetStart, remainingBytes, context);
         } else {
@@ -369,8 +372,8 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
     }
 
     // Parse packet data length from header (bytes 4-5)
-    U16 dataLength = static_cast<U16>((payloadStart[4] << 8) | payloadStart[5]);
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
+    U16 dataLength = static_cast<U16>((payloadStart[4] << 8) | payloadStart[5]);
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
 
     if (payloadSize < totalPacketSize) {
@@ -399,8 +402,7 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
 
     // Output the packet
     this->dataOut_out(0, packetBuffer, packetContext);
-    vc.packetCount++;
-    this->tlmWrite_PacketCount(vc.packetCount);
+    this->tlmWrite_PacketCount(++vc.packetCount);
 
     return totalPacketSize;
 }
@@ -416,17 +418,6 @@ FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
 
     // Parse first byte
     U8 firstByte = payloadStart[0];
-    U8 packetVersion =
-        static_cast<U8>((firstByte & EPPSubfields::packetVersionMask) >> EPPSubfields::packetVersionOffset);
-
-    // Validate packet version - EPP uses PVN '111' binary = 7
-    if (packetVersion != static_cast<U8>(PacketVersionNumber::EPP)) {
-        Fw::String reason("Invalid packet version number");
-        this->log_WARNING_HI_InvalidEppPacket(packetVersion, reason);
-        this->errorNotifyHelper(Ccsds::FrameError::AOS_INVALID_EPP);
-        return payloadSize;  // Skip rest of data zone
-    }
-
     U8 packetType = static_cast<U8>((firstByte & EPPSubfields::packetTypeMask) >> EPPSubfields::packetTypeOffset);
 
     FwSizeType totalPacketSize = 0;
@@ -496,8 +487,7 @@ FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
 
         // Output the packet
         this->dataOut_out(0, packetBuffer, packetContext);
-        vc.packetCount++;
-        this->tlmWrite_PacketCount(vc.packetCount);
+        this->tlmWrite_PacketCount(++vc.packetCount);
 
         return totalPacketSize;
     }
@@ -506,15 +496,6 @@ FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
 U8 AosDeframer::getPacketVersion(U8 firstByte) {
     // PVN is the upper 3 bits per both CCSDS 133.0-B-2 and 133.1-B-3
     return (firstByte >> 5) & 0x07;
-}
-
-bool AosDeframer::isPacketTypeEnabled(U8 pvn) const {
-    if (pvn == static_cast<U8>(PacketVersionNumber::SPP)) {
-        return (m_vcs[0].pvnMask & PvnBitfield::SPP_MASK) != 0;
-    } else if (pvn == static_cast<U8>(PacketVersionNumber::EPP)) {
-        return (m_vcs[0].pvnMask & PvnBitfield::EPP_MASK) != 0;
-    }
-    return false;
 }
 
 }  // namespace Ccsds
