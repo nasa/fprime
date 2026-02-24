@@ -3,6 +3,7 @@
 * Format is DIRECTIVE_NAME (opcode).
 * Arguments can either be "hardcoded", meaning they are present in the sequence binary after the opcode, or "stack", meaning they are popped off the stack at runtime.
 * Directives can have a "stack result type", which is the type that they push to the stack after execution.
+* The `bool` type is encoded as a single byte: `FW_SERIALIZE_TRUE_VALUE` (`0xFF`) for true and `FW_SERIALIZE_FALSE_VALUE` (`0x00`) for false.
 
 ## WAIT_REL (1)
 Sleeps for a relative duration from the current time.
@@ -136,7 +137,7 @@ Performs an `and` between two booleans, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## IEQ (11)
-Compares two integers for equality, pushes result to stack. Doesn't differentiate between signed and unsigned.
+Compares two integers for equality. If equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Doesn't differentiate between signed and unsigned.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -149,7 +150,7 @@ Compares two integers for equality, pushes result to stack. Doesn't differentiat
 **Requirement:**  FPY-SEQ-002
 
 ## INE (12)
-Compares two integers for inequality, pushes result to stack. Doesn't differentiate between signed and unsigned.
+Compares two integers for inequality. If not equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Doesn't differentiate between signed and unsigned.
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
@@ -163,7 +164,7 @@ Compares two integers for inequality, pushes result to stack. Doesn't differenti
 **Requirement:**  FPY-SEQ-002
 
 ## ULT (13)
-Performs an unsigned less than comparison on two unsigned integers, pushes result to stack
+Performs an unsigned less than comparison on two unsigned integers. If the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -176,7 +177,7 @@ Performs an unsigned less than comparison on two unsigned integers, pushes resul
 **Requirement:**  FPY-SEQ-002
 
 ## ULE (14)
-Performs an unsigned less than or equal to comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned less than or equal to comparison on two unsigned integers. If the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -189,7 +190,7 @@ Performs an unsigned less than or equal to comparison on two unsigned integers, 
 **Requirement:**  FPY-SEQ-002
 
 ## UGT (15)
-Performs an unsigned greater than comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned greater than comparison on two unsigned integers. If the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -202,7 +203,7 @@ Performs an unsigned greater than comparison on two unsigned integers, pushes re
 **Requirement:**  FPY-SEQ-002
 
 ## UGE (16)
-Performs an unsigned greater than or equal to comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned greater than or equal to comparison on two unsigned integers. If the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -215,7 +216,7 @@ Performs an unsigned greater than or equal to comparison on two unsigned integer
 **Requirement:**  FPY-SEQ-002
 
 ## SLT (17)
-Performs a signed less than comparison on two signed integers, pushes result to stack.
+Performs a signed less than comparison on two signed integers. If the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -228,7 +229,7 @@ Performs a signed less than comparison on two signed integers, pushes result to 
 **Requirement:**  FPY-SEQ-002
 
 ## SLE (18)
-Performs a signed less than or equal to comparison on two signed integers, pushes result to stack.
+Performs a signed less than or equal to comparison on two signed integers. If the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -241,7 +242,7 @@ Performs a signed less than or equal to comparison on two signed integers, pushe
 **Requirement:**  FPY-SEQ-002
 
 ## SGT (19)
-Performs a signed greater than comparison on two signed integers, pushes result to stack.
+Performs a signed greater than comparison on two signed integers. If the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -254,7 +255,7 @@ Performs a signed greater than comparison on two signed integers, pushes result 
 **Requirement:**  FPY-SEQ-002
 
 ## SGE (20)
-Performs a signed greater than or equal to comparison on two signed integers, pushes result to stack.
+Performs a signed greater than or equal to comparison on two signed integers. If the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -267,7 +268,7 @@ Performs a signed greater than or equal to comparison on two signed integers, pu
 **Requirement:**  FPY-SEQ-002
 
 ## FEQ (21)
-Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -280,7 +281,7 @@ Compares two floats for equality, pushes result to stack. If neither is NaN and 
 **Requirement:**  FPY-SEQ-002
 
 ## FNE (22)
-Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -293,7 +294,7 @@ Compares two floats for inequality, pushes result to stack. If either is NaN or 
 **Requirement:**  FPY-SEQ-002
 
 ## FLT (23)
-Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -306,7 +307,7 @@ Performs a less than comparison on two floats, pushes result to stack. If neithe
 **Requirement:**  FPY-SEQ-002
 
 ## FLE (24)
-Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -319,7 +320,7 @@ Performs a less than or equal to comparison on two floats, pushes result to stac
 **Requirement:**  FPY-SEQ-002
 
 ## FGT (25)
-Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -332,7 +333,7 @@ Performs a greater than comparison on two floats, pushes result to stack. If nei
 **Requirement:**  FPY-SEQ-002
 
 ## FGE (26)
-Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -345,7 +346,7 @@ Performs a greater than or equal to comparison on two floats, pushes result to s
 **Requirement:**  FPY-SEQ-002
 
 ## NOT (27)
-Performs a boolean not operation on a boolean, pushes result to stack.
+Performs a boolean not operation on a boolean. If the operand is `FW_SERIALIZE_FALSE_VALUE`, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | bool     | stack  | Value to negate |
@@ -820,7 +821,7 @@ Discards bytes from the top of the stack.
 
 ## MEMCMP (63)
 
-Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison pushing a boolean true when equal and false when unequal.
+Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison. If equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
@@ -880,7 +881,7 @@ Pops a bool off the stack, and sets a command sequencer flag from the value.
 **Requirement:**  FPY-SEQ-020
 
 ## GET_FLAG (68)
-Gets a command sequencer flag and pushes its value as a U8 to the stack.
+Gets a command sequencer flag and pushes its value to the stack as `FW_SERIALIZE_TRUE_VALUE` or `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | flag_idx | U8 | hardcoded | Index of the flag to get |

@@ -22,6 +22,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 class ComQueue final : public ComQueueComponentBase {
+    // Added to enable easy testing of set queue priority command
+    friend class ComQueueTester;
+
     //! State of the currently transmitted buffer
     enum BufferState { OWNED, UNOWNED };
 
@@ -47,10 +50,16 @@ class ComQueue final : public ComQueueComponentBase {
      * Priority is an integer between 0 (inclusive) and TOTAL_PORT_COUNT (exclusive). Queues with lower priority values
      * will be serviced first. Priorities may be repeated and queues sharing priorities will be serviced in a balanced
      * manner.
+     *
+     * Queue mode determines whether messages are dequeued in FIFO or LIFO order.
+     *
+     * Overflow mode determines whether the newest or oldest message is dropped when the queue is full.
      */
     struct QueueConfigurationEntry {
-        FwSizeType depth;      //!< Depth of the queue [0, infinity)
-        FwIndexType priority;  //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        FwSizeType depth;                       //!< Depth of the queue [0, infinity)
+        FwIndexType priority;                   //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode (DROP_NEWEST or DROP_OLDEST)
     };
 
     /**
@@ -81,10 +90,12 @@ class ComQueue final : public ComQueueComponentBase {
      * method. Index and message size are calculated by the configuration call.
      */
     struct QueueMetadata {
-        FwSizeType depth;      //!< Depth of the queue in messages
-        FwIndexType priority;  //!< Priority of the queue
-        FwIndexType index;     //!< Index of this queue in the prioritized list
-        FwSizeType msgSize;    //!< Message size of messages in this queue
+        FwSizeType depth;                       //!< Depth of the queue in messages
+        FwIndexType priority;                   //!< Priority of the queue
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode
+        FwIndexType index;                      //!< Index of this queue in m_queues
+        FwSizeType msgSize;                     //!< Message size of messages in this queue
     };
 
     /**
@@ -144,6 +155,16 @@ class ComQueue final : public ComQueueComponentBase {
     void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                      U32 cmdSeq            //!< The command sequence number
                                      ) override;
+
+    //! Handler for SET_QUEUE_PRIORITY command
+    //!
+    void SET_QUEUE_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,       //!< The opcode
+        U32 cmdSeq,                //!< The command sequence number
+        Svc::QueueType queueType,  //!< The Queue data type
+        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
+        FwIndexType newPriority    //!< New priority value for the queue
+        ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -221,6 +242,9 @@ class ComQueue final : public ComQueueComponentBase {
     //! Process the queues to select the next priority message
     //!
     void processQueue();
+
+    //! Convert Queue Type & Index into single queueIndex
+    FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
 
   private:
     // ----------------------------------------------------------------------

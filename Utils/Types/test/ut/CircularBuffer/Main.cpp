@@ -37,12 +37,14 @@ TEST(CircularBufferTests, RandomCircularTests) {
     Types::SerializeOverflowRule serializeOverflow("serializeOverflow");
     Types::PeekOkRule peekOk("peekOk");
     Types::PeekBadRule peekBad("peekBad");
-    Types::PeekOkRule rotateOk("rotateOk");
-    Types::PeekBadRule rotateBad("rotateBad");
+    Types::RotateOkRule rotateOk("rotateOk");
+    Types::RotateBadRule rotateBad("rotateBad");
+    Types::TrimOkRule trimOk("trimOk");
+    Types::TrimBadRule trimBad("trimBad");
 
     // Setup a list of rules to choose from
-    STest::Rule<MockTypes::CircularState>* rules[] = {&randomize, &serializeOk, &serializeOverflow, &peekOk,
-                                                      &peekBad,   &rotateOk,    &rotateBad};
+    STest::Rule<MockTypes::CircularState>* rules[] = {
+        &randomize, &serializeOk, &serializeOverflow, &peekOk, &peekBad, &rotateOk, &rotateBad, &trimOk, &trimBad};
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<MockTypes::CircularState> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
@@ -161,6 +163,33 @@ TEST(CircularBufferTests, BasicRotateBadTest) {
     // Run all peek variants
     Types::RotateBadRule rotateBad("rotateBad");
     rotateBad.apply(state);
+}
+
+/**
+ * Test that the most basic trim work.
+ */
+TEST(CircularBufferTests, BasicTrimTest) {
+    // Setup and register state
+    MockTypes::CircularState state;
+
+    // Create rules, and assign them into the array
+    Types::RandomizeRule randomGo("randomGo");
+    Types::SerializeOkRule serializeOk("SerializeOk");
+    Types::TrimOkRule trimOk("trimOk");
+    randomGo.apply(state);
+    serializeOk.apply(state);
+    trimOk.apply(state);
+}
+
+/**
+ * Test that the most basic bad-trim work.
+ */
+TEST(CircularBufferTests, BasicTrimBadTest) {
+    // Setup all circular state
+    MockTypes::CircularState state;
+    // Run trim bad rule
+    Types::TrimBadRule trimBad("trimBad");
+    trimBad.apply(state);
 }
 
 /**

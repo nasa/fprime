@@ -22,10 +22,40 @@ Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
 
 ## System Requirements
 
+The following system requirements apply to your workstation for developing F´ applications. To see the list of supported platforms on which F´ applications can run on, see [Supported Platforms](./docs/user-manual/framework/supported-platforms.md).
+
 1. Linux, Windows with WSL, or macOS operating system
+
 2. [git](https://git-scm.com/)
-3. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
-4. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
+
+3. [Python 3.9+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
+
+4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
+
+<details>
+<summary>Click to Expand: How to Verify System Requirements</summary>
+
+2. `git --version`
+
+3. `python --version` and `python -m venv -h`. Your system might use an alternate like `python3` or `python3.13`. For pip: `pip --version`.  On your system it might be `pip3` or `pipx`.
+
+4. `g++  --version` and then create, build, and run a test program.  For example, create a file named `hello.cpp` with contents:
+
+    ```cpp
+    #include <iostream>
+    int main(void){
+        std::cout << "Hello, World!" << std::endl;
+    }
+    ```
+
+    then build and run it, for example like:
+    ```bash
+    % g++ -o hi hello.cpp
+    % ./hi
+    Hello, World!
+    ```
+
+</details>
 
 
 ## Getting Started
@@ -49,8 +79,10 @@ New users are encouraged to read through the [User Manual](https://fprime.jpl.na
 
 ### Discussions
 To ask questions, discuss improvements, and ask for help please use the project's [GitHub Discussions](https://github.com/nasa/fprime/discussions).
+
 ### Bug reports
 To report bugs and issues, [open an issue here](https://github.com/nasa/fprime/issues).
+
 ### Community
 The [F´ Community](https://github.com/fprime-community) GitHub Organization contains third party contributions, more documentation of flight software development, and additional resources.
 
@@ -62,6 +94,33 @@ The [F´ Community](https://github.com/fprime-community) GitHub Organization con
 - [Submit an Issue](https://github.com/nasa/fprime/issues)
 - [F´ Community](https://github.com/fprime-community)
 
+## Meet the Team
+
+The following roles are members of the CCB and per our [governance](./GOVERNANCE.md) document have decision making power within the framework.
+
+| Role              | Team Member     |
+|-------------------|-----------------|
+| Community Manager | @LeStarch       |
+| Community Manager | @thomas-bc      |
+| Community Manager | @kevin-f-ortega |
+| Security Overseer | @bitWarrior     |
+| CCB Member        | @bocchino       |
+| CCB Member        | @kevin-f-ortega |
+| CCB Member        | @SterlingPeet   |
+| CCB Member        | @timcanham      |
+| CCB Member        | @zimri-leisher  |
+
+Each product has a set of Maintainers who are charged with the day-to-day implementation of the CCB's direction as realized in a by product.
+
+| Product                      | Core Maintainer(s)         |
+|------------------------------|----------------------------|
+| F Prime                      | @LeStarch, @thomas-bc      |
+| F Prime (v3.6.x Maintenance) | @SterlingPeet              |
+| fprime-tools                 | @thomas-bc, @LeStarch      |
+| fprime-gds                   | @thomas-bc, @LeStarch      |
+| fpp                          | @bocchino, @Kronos3        |
+| F Prime Platforms            | @kevin-f-ortega, @LeStarch |
+| Security                     | @bitWarrior                |
 
 ## Release Notes
 
