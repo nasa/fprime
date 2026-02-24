@@ -46,4 +46,4 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 - [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md)
 - [`Svc::Ccsds::SpacePacketDeframer`](../../SpacePacketDeframer/docs/sdd.md)
-- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf)
+- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)

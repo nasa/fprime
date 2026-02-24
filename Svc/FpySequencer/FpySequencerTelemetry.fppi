@@ -38,6 +38,8 @@ telemetry Debug_ReachedEndOfFile: bool update on change
 telemetry Debug_NextStatementReadSuccess: bool update on change
 @ the opcode of the next statement to dispatch.
 telemetry Debug_NextStatementOpcode: U8 update on change
+@ the index of the next statement to be executed
+telemetry Debug_NextStatementIndex: U32 update on change
 @ if the next statement is a cmd directive, the opcode of that cmd
 telemetry Debug_NextCmdOpcode: FwOpcodeType update on change
 @ the size of the stack in bytes

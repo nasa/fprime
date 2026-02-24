@@ -138,5 +138,37 @@ struct RotateBadRule : public STest::Rule<MockTypes::CircularState> {
     // Action that tests the buffer's ability to rotate
     void action(MockTypes::CircularState& state);
 };
+
+/**
+ * TrimOkRule:
+ *
+ * This rule tests that the circular buffer can trim correctly (remove from the back).
+ */
+struct TrimOkRule : public STest::Rule<MockTypes::CircularState> {
+    // Constructor
+    TrimOkRule(const char* const name);
+
+    // Trim is ok when there is more data then trim size
+    bool precondition(const MockTypes::CircularState& state);
+
+    // Action that tests the buffer's ability to trim
+    void action(MockTypes::CircularState& state);
+};
+
+/**
+ * TrimBadRule:
+ *
+ * This rule tests that the circular buffer cannot trim when it should not trim.
+ */
+struct TrimBadRule : public STest::Rule<MockTypes::CircularState> {
+    // Constructor
+    TrimBadRule(const char* const name);
+
+    // Trim is bad when there is less data then trim size
+    bool precondition(const MockTypes::CircularState& state);
+
+    // Action that tests the buffer's inability to trim
+    void action(MockTypes::CircularState& state);
+};
 }  // namespace Types
 #endif  // FPRIME_GROUNDINTERFACERULES_HPP

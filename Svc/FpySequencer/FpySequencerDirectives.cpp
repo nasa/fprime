@@ -463,14 +463,18 @@ DirectiveError FpySequencer::op_ieq() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
         return DirectiveError::STACK_UNDERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<I64>() == this->m_runtime.stack.pop<I64>()));
+    this->m_runtime.stack.push(static_cast<U8>((this->m_runtime.stack.pop<I64>() == this->m_runtime.stack.pop<I64>())
+                                                   ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                   : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ine() {
     if (this->m_runtime.stack.size < sizeof(I64) * 2) {
         return DirectiveError::STACK_UNDERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<I64>() != this->m_runtime.stack.pop<I64>()));
+    this->m_runtime.stack.push(static_cast<U8>((this->m_runtime.stack.pop<I64>() != this->m_runtime.stack.pop<I64>())
+                                                   ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                   : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ult() {
@@ -479,7 +483,8 @@ DirectiveError FpySequencer::op_ult() {
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs < rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs < rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ule() {
@@ -488,7 +493,8 @@ DirectiveError FpySequencer::op_ule() {
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs <= rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs <= rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ugt() {
@@ -497,7 +503,8 @@ DirectiveError FpySequencer::op_ugt() {
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs > rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs > rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_uge() {
@@ -506,7 +513,8 @@ DirectiveError FpySequencer::op_uge() {
     }
     U64 rhs = this->m_runtime.stack.pop<U64>();
     U64 lhs = this->m_runtime.stack.pop<U64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs >= rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs >= rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_slt() {
@@ -515,7 +523,8 @@ DirectiveError FpySequencer::op_slt() {
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs < rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs < rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sle() {
@@ -524,7 +533,8 @@ DirectiveError FpySequencer::op_sle() {
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs <= rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs <= rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sgt() {
@@ -533,7 +543,8 @@ DirectiveError FpySequencer::op_sgt() {
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs > rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs > rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sge() {
@@ -542,7 +553,8 @@ DirectiveError FpySequencer::op_sge() {
     }
     I64 rhs = this->m_runtime.stack.pop<I64>();
     I64 lhs = this->m_runtime.stack.pop<I64>();
-    this->m_runtime.stack.push(static_cast<U8>(lhs >= rhs));
+    this->m_runtime.stack.push(static_cast<U8>((lhs >= rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_feq() {
@@ -552,7 +564,8 @@ DirectiveError FpySequencer::op_feq() {
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
     // eq is true if they are equal and neither is nan
-    this->m_runtime.stack.push(static_cast<U8>((lhs == rhs) ? 1 : 0));
+    this->m_runtime.stack.push(static_cast<U8>((lhs == rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fne() {
@@ -562,7 +575,8 @@ DirectiveError FpySequencer::op_fne() {
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
     // ne is true if they are not equal or either is nan
-    this->m_runtime.stack.push(static_cast<U8>((lhs != rhs) ? 1 : 0));
+    this->m_runtime.stack.push(static_cast<U8>((lhs != rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                            : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_flt() {
@@ -571,7 +585,8 @@ DirectiveError FpySequencer::op_flt() {
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<U8>(std::isless(lhs, rhs)));
+    this->m_runtime.stack.push(static_cast<U8>(std::isless(lhs, rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                                     : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fle() {
@@ -580,7 +595,8 @@ DirectiveError FpySequencer::op_fle() {
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<U8>(std::islessequal(lhs, rhs)));
+    this->m_runtime.stack.push(static_cast<U8>(std::islessequal(lhs, rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                                          : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fgt() {
@@ -589,7 +605,8 @@ DirectiveError FpySequencer::op_fgt() {
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<U8>(std::isgreater(lhs, rhs)));
+    this->m_runtime.stack.push(static_cast<U8>(std::isgreater(lhs, rhs) ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                                        : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fge() {
@@ -598,14 +615,18 @@ DirectiveError FpySequencer::op_fge() {
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<U8>(std::isgreaterequal(lhs, rhs)));
+    this->m_runtime.stack.push(static_cast<U8>(std::isgreaterequal(lhs, rhs)
+                                                   ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                   : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_not() {
     if (this->m_runtime.stack.size < sizeof(U8)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<U8>(this->m_runtime.stack.pop<U8>() == 0));
+    this->m_runtime.stack.push(static_cast<U8>((this->m_runtime.stack.pop<U8>() == 0)
+                                                   ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                                   : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fpext() {
@@ -1212,12 +1233,12 @@ Signal FpySequencer::memCmp_directiveHandler(const FpySequencer_MemCmpDirective&
     // after the byte arrays
     this->m_runtime.stack.size -= directive.get_size() * 2;
 
-    // memcmp the two byte arrays, push 1 if they were equal, 0 otherwise
+    // memcmp the two byte arrays, push FW_SERIALIZE_TRUE_VALUE if they were equal, FW_SERIALIZE_FALSE_VALUE otherwise
     if (memcmp(this->m_runtime.stack.bytes + lhsOffset, this->m_runtime.stack.bytes + rhsOffset,
                directive.get_size()) == 0) {
-        this->m_runtime.stack.push<U8>(1);
+        this->m_runtime.stack.push<U8>(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE));
     } else {
-        this->m_runtime.stack.push<U8>(0);
+        this->m_runtime.stack.push<U8>(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE));
     }
     return Signal::stmtResponse_success;
 }
@@ -1303,7 +1324,8 @@ Signal FpySequencer::getFlag_directiveHandler(const FpySequencer_GetFlagDirectiv
     }
 
     bool flagVal = this->m_runtime.flags[directive.get_flagIdx()];
-    this->m_runtime.stack.push<U8>(flagVal);
+    this->m_runtime.stack.push<U8>(flagVal ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
+                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE));
     return Signal::stmtResponse_success;
 }
 

@@ -9,6 +9,7 @@ Modern F´ deployments use the CCSDS protocol by default via the `Svc.ComCcsds` 
 This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. For a bi-directional framing implementation (uplink and downlink), you will need to implement both a framer and a deframer component. A framer is required for downlink (flight software → GDS). A deframer (and optionally a FrameDetector) is needed for deframing uplink messages (GDS → flight software).
 
 A reference implementation of a custom framing protocol (the "Decaf Protocol") is available in the `fprime-examples` repository:
+
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)
 
@@ -22,6 +23,7 @@ This guide is divided into two main sections: flight software implementation and
 **Important**: Before implementing custom framing protocols, you should familiarize yourself with F´ subtopologies. Modern F´ deployments ship with the `Svc.ComCcsds` subtopology by default, which provides a standard communication stack including framing/deframing components.
 
 To implement custom framing protocols, you will typically need to:
+
 1. **Understand the existing communication subtopology**: Review how the default `Svc.ComCcsds` subtopology is structured and integrated into your deployment
 2. **Manually import components**: Copy the relevant topology code from the subtopology into your main topology so you can modify the component connections as needed, and remove the old `import Svc.ComCcsds` statement.
 3. **Replace standard components**: Substitute the default framer/deframer components with your custom implementations
@@ -31,6 +33,7 @@ For more information on working with subtopologies, see the [Subtopologies Guide
 ## Flight Software Implementation
 
 To implement a custom framing protocol in F´, will need to implement the following:
+
 - **Framer**: An F´ component that wraps payload data into frames for transmission.
 - **Deframer**: An F´ component that unpacks received frames, extracts the payload data, and validates the frame.
 - **FrameDetector** Helper Class (optional): A C++ helper class (not an F´ component) that detects the start and end of frames in a stream of data, if your transport does not guarantee complete packets (e.g., TCP, UART).
@@ -112,6 +115,7 @@ Before implementing, consider these best practices:
 4. **Integrate Components into Your Topology**
 
     After implementing the framer, deframer, and optionally the frame detector, integrate these components into your main topology. This typically involves:
+
     - Removing the import statement for the existing communication subtopology (e.g., `import Svc.ComCcsds`).
     - Manually adding the topology code from the subtopology as needed. See [ComFprime.fpp](https://github.com/nasa/fprime/blob/devel/Svc/Subtopologies/ComFprime/ComFprime.fpp) for a reference code to add to your topology. You should be copy-pasting most of this code into your own topology, and adapt the C++ phase code as necessary.
     - Updating the `framer` and `deframer` instances to use your custom implementations.
@@ -238,7 +242,7 @@ Make sure to [package and install the plugin in your virtual environment](./deve
 fprime-gds --framing-selection MyCustomProtocol
 ```
 
-## References 
+## References
 
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)

@@ -33,7 +33,7 @@ void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& test
 
 TEST(PassiveRateGroupTest, NominalSchedule) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
-        U32 contexts[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
+        U32 contexts[PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
 
         Svc::PassiveRateGroup impl("PassiveRateGroup");
         impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));

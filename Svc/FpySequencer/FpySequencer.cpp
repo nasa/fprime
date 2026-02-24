@@ -426,6 +426,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_Debug_NextCmdOpcode(this->m_debug.nextCmdOpcode);
     this->tlmWrite_Debug_NextStatementOpcode(this->m_debug.nextStatementOpcode);
     this->tlmWrite_Debug_NextStatementReadSuccess(this->m_debug.nextStatementReadSuccess);
+    this->tlmWrite_Debug_NextStatementIndex(this->m_debug.nextStatementIndex);
     this->tlmWrite_Debug_ReachedEndOfFile(this->m_debug.reachedEndOfFile);
     this->tlmWrite_Debug_StackSize(this->m_debug.stackSize);
 }
@@ -439,6 +440,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = false;
             this->m_debug.nextStatementOpcode = 0;
             this->m_debug.nextCmdOpcode = 0;
+            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
             this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
@@ -452,6 +454,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = false;
             this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
             this->m_debug.nextCmdOpcode = 0;
+            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
             this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
@@ -462,6 +465,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementReadSuccess = true;
             this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
             this->m_debug.nextCmdOpcode = directiveUnion.constCmd.get_opCode();
+            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
             this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
@@ -470,6 +474,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
         this->m_debug.nextStatementReadSuccess = true;
         this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
         this->m_debug.nextCmdOpcode = 0;
+        this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
         this->m_debug.stackSize = this->m_runtime.stack.size;
         return;
     }
@@ -478,6 +483,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
     this->m_debug.nextStatementReadSuccess = false;
     this->m_debug.nextStatementOpcode = 0;
     this->m_debug.nextCmdOpcode = 0;
+    this->m_debug.nextStatementIndex = 0;
     this->m_debug.stackSize = 0;
 }
 

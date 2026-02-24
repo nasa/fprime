@@ -12,14 +12,15 @@ namespace Fw {
 
 class StringBase;  //!< forward declaration for string
 typedef enum {
-    FW_SERIALIZE_OK,               //!< Serialization/Deserialization operation was successful
-    FW_SERIALIZE_FORMAT_ERROR,     //!< Data was the wrong format (e.g. wrong packet type)
-    FW_SERIALIZE_NO_ROOM_LEFT,     //!< No room left in the buffer to serialize data
-    FW_DESERIALIZE_BUFFER_EMPTY,   //!< Deserialization buffer was empty when trying to read more data
-    FW_DESERIALIZE_FORMAT_ERROR,   //!< Deserialization data had incorrect values (unexpected data types)
-    FW_DESERIALIZE_SIZE_MISMATCH,  //!< Data was left in the buffer, but not enough to deserialize
-    FW_DESERIALIZE_TYPE_MISMATCH,  //!< Deserialized type ID didn't match
-    FW_DESERIALIZE_IMMUTABLE,      //!< Attempted to deserialize into an immutable buffer
+    FW_SERIALIZE_OK,                  //!< Serialization/Deserialization operation was successful
+    FW_SERIALIZE_FORMAT_ERROR,        //!< Data was the wrong format (e.g. wrong packet type)
+    FW_SERIALIZE_NO_ROOM_LEFT,        //!< No room left in the buffer to serialize data
+    FW_DESERIALIZE_BUFFER_EMPTY,      //!< Deserialization buffer was empty when trying to read more data
+    FW_DESERIALIZE_FORMAT_ERROR,      //!< Deserialization data had incorrect values (unexpected data types)
+    FW_DESERIALIZE_SIZE_MISMATCH,     //!< Data was left in the buffer, but not enough to deserialize
+    FW_DESERIALIZE_TYPE_MISMATCH,     //!< Deserialized type ID didn't match
+    FW_DESERIALIZE_IMMUTABLE,         //!< Attempted to deserialize into an immutable buffer
+    FW_SERIALIZE_DISCARDED_EXISTING,  //!< Serialization succeeded, but deleted old data
 } SerializeStatus;
 
 class SerialBufferBase;  //!< forward declaration

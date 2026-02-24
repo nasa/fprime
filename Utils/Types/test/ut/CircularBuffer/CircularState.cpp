@@ -94,6 +94,15 @@ bool CircularState::rotate(FwSizeType size) {
     return true;
 }
 
+bool CircularState::trim(FwSizeType size) {
+    // Fail if we try to trim too much
+    if ((m_infinite_write - size) < m_infinite_read) {
+        return false;
+    }
+    m_infinite_write -= size;
+    return true;
+}
+
 FwSizeType CircularState::getRandomSize() const {
     return m_random_size;
 }

@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         # Purposefully test on both ARM and Intel macOS (macos-latest is ARM)
         runner: [macos-15-intel, macos-latest, ubuntu-22.04, ubuntu-latest]
     steps:
