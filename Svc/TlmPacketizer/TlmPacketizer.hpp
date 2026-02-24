@@ -57,6 +57,18 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
                          Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value*/
                          ) override;
 
+    //! Handler implementation for configureSectionGroupRate
+    //!
+    //! Input configuration port
+    void configureSectionGroupRate_handler(
+        FwIndexType portNum,                   //!< The port number
+        const Svc::TelemetrySection& section,  //!< Section grouping
+        FwChanIdType tlmGroup,                 //!< Group Identifier
+        const Svc::RateLogic& rateLogic,       //!< Rate Logic
+        U32 minDelta,  //!< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
+        U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
+        ) override;
+
     //! Handler implementation for Run
     //!
     void Run_handler(const FwIndexType portNum, /*!< The port number*/
@@ -125,13 +137,13 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
 
     //! Handler implementation for command CONFIGURE_GROUP_RATES
     void CONFIGURE_GROUP_RATES_cmdHandler(
-        FwOpcodeType opCode,                     //!< The opcode
-        U32 cmdSeq,                              //!< The command sequence number
-        Svc::TelemetrySection section,           //!< Section grouping
-        FwChanIdType tlmGroup,                   //!< Group Identifier
-        Svc::TlmPacketizer_RateLogic rateLogic,  //!< Rate Logic
-        U32 minDelta,  //!< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
-        U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
+        FwOpcodeType opCode,            //!< The opcode
+        U32 cmdSeq,                     //!< The command sequence number
+        Svc::TelemetrySection section,  //!< Section grouping
+        FwChanIdType tlmGroup,          //!< Group Identifier
+        Svc::RateLogic rateLogic,       //!< Rate Logic
+        U32 minDelta,                   //!< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
+        U32 maxDelta                    //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
         ) override;
 
     // number of packets to fill
@@ -207,6 +219,17 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
 
   private:
+    //! Handler implementation for configureSectionGroupRate
+    //!
+    //! Input configuration port
+    void configureSectionGroupRate(
+        const Svc::TelemetrySection& section,  //!< Section grouping
+        FwChanIdType tlmGroup,                 //!< Group Identifier
+        const Svc::RateLogic& rateLogic,       //!< Rate Logic
+        U32 minDelta,  //!< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
+        U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
+    );
+
     //! \brief Helper function to get output port index from section and group
     //!
     //! Invokes the mapping defined in TELEMETRY_SEND_PORT_MAP to get the output port index for a given section and
