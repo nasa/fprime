@@ -992,7 +992,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
 
 //! Configured tlm groups test
 //!
-void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
+void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
     if (TelemetrySection::NUM_SECTIONS < 2) {
         GTEST_SKIP() << "This test requires 2 or more telemetry sections to function";
     }
@@ -1523,7 +1523,7 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests(void) {
 
 //! Configure telemetry enable logic
 //!
-void TlmPacketizerTester ::advancedControlGroupTests(void) {
+void TlmPacketizerTester ::advancedControlGroupTests() {
     this->component.setPacketList(packetList2, ignore, 4);
     Fw::Time time;
     Fw::TlmBuffer buffer;
@@ -1703,7 +1703,7 @@ void TlmPacketizerTester ::initComponents() {
     this->component.init(QUEUE_DEPTH, INSTANCE);
 }
 
-void TlmPacketizerTester ::resetCounter(void) {
+void TlmPacketizerTester ::resetCounter() {
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < MAX_CONFIGURABLE_TLMPACKETIZER_GROUP; group++) {
             this->m_portOutInvokes[TlmPacketizer::sectionGroupToPort(section, group)] = 0;
