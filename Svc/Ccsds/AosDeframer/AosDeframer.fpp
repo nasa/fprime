@@ -12,6 +12,7 @@ module Ccsds {
 
         # TODO: figure out storage and telemetry round up of per VC stat counters
         type VCxU32 = U32
+        type VCxU8 = U8
 
         import Deframer
 

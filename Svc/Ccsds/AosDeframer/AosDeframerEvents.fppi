@@ -9,7 +9,7 @@
             format "Frame length mismatch. Received: {} | Expected: {} "
 
         @ Deframing received a VCID not in the accepted set (CCSDS 732.0-B-5 Section 4.1.2.3)
-        event InvalidVcId(transmitted: U8, configured: U8) \
+        event InvalidVcId(transmitted: U8, configured: VCxU8) \
             severity activity low \
             format "Invalid Virtual Channel ID. Frame contained: {} | Accepted VCIDs: {}"
 

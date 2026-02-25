@@ -88,30 +88,30 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         return;
     }
 
-    // Create a mutable context for extracted packet info
-    ComCfg::FrameContext packetContext = context;
-
-    // Parse and validate the AOS Primary Header (Section 4.1.2)
-    // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
-    if (!this->parseAndValidateHeader(data, packetContext)) {
-        this->dataReturnOut_out(0, data, context);
-        return;
-    }
-
-    // Look up the VC struct for this frame's VCID
-    AosDeframerVc& vc = this->getVcStruct(packetContext);
-
     // Validate FECF if enabled (Section 4.1.6)
+    // FrameDetector + FrameAccumulator or Lower Protocol Layer should enforce whole AOS Frames
     if (m_fecfEnabled && !this->validateFecf(data)) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
 
+    // Create a mutable context for extracted packet info
+    ComCfg::FrameContext packetContext = context;
+    // Start null, and is set by the
+    AosDeframerVc* vc;
+
+    // Parse and validate the AOS Primary Header (Section 4.1.2)
+    // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
+    if ((vc = this->parseAndValidateHeader(data, packetContext)) == nullptr) {
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
+
     // Update telemetry
-    this->tlmWrite_FramesProcessed(++vc.framesProcessed);
+    this->tlmWrite_FramesProcessed(++vc->framesProcessed);
 
     // Extract packets from the M_PDU data zone
-    this->extractPackets(vc, data, packetContext);
+    this->extractPackets(*vc, data, packetContext);
 
     // Return the frame buffer
     this->dataReturnOut_out(0, data, context);
@@ -126,13 +126,17 @@ void AosDeframer::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer
 // Private helper methods
 // ----------------------------------------------------------------------
 
-AosDeframer::AosDeframerVc& AosDeframer::getVcStruct(const ComCfg::FrameContext& context) {
-    // TODO: Implement multi-VC support by mapping context.vcId to the correct VC struct
-    (void)context;
-    return m_vcs[0];
+AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
+    for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
+        if (m_vcs[vcInd].virtualChannelId == vcId) {
+            return &m_vcs[vcInd];
+        }
+    }
+
+    return nullptr;
 }
 
-bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context) {
+AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context) {
     // Deserialize the AOS Primary Header (per CCSDS 732.0-B-5 Section 4.1.2)
     AOSHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
@@ -142,7 +146,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
         }
-        return false;
+        return nullptr;
     }
 
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
@@ -154,7 +158,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VERSION);
         }
-        return false;
+        return nullptr;
     }
 
     // Extract Spacecraft ID (Section 4.1.2.2)
@@ -171,17 +175,20 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_SCID);
         }
-        return false;
+        return nullptr;
     }
 
     // Extract Virtual Channel ID (Section 4.1.2.3)
     U8 vcId = static_cast<U8>(header.get_globalVcId() & AOSHeaderSubfields::virtualChannelIdMask);
-    if (vcId != m_vcs[0].virtualChannelId) {
+    AosDeframerVc* vc = this->getVcStruct(vcId);
+
+    if (vc == nullptr) {
+        // TODO: Handle logging all valid vcIds
         this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcs[0].virtualChannelId);
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VCID);
         }
-        return false;
+        return vc;
     }
 
     // Extract Virtual Channel Frame Count (Section 4.1.2.4)
@@ -196,14 +203,19 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
     }
 
+    // Gap Detect
+    if (vcFrameCount != vc->vcFrameCount + 1) {
+        // TODO: VC Frame Count Gap Detection
+    }
+
     // Store VC frame count in the VC struct for reference (e.g., gap detection)
-    m_vcs[0].vcFrameCount = vcFrameCount;
+    vc->vcFrameCount = vcFrameCount;
     this->tlmWrite_LatestVcFrameCount(vcFrameCount);
 
     // Update context with extracted values
     context.set_vcId(vcId);
 
-    return true;
+    return vc;
 }
 
 bool AosDeframer::validateFecf(Fw::Buffer& data) {

@@ -88,8 +88,8 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Parse the AOS Primary Header per CCSDS 732.0-B-5 Section 4.1.2
     //! \param data The frame buffer
     //! \param context The frame context to update
-    //! \return true if header is valid, false otherwise
-    bool parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context);
+    //! \return pointer to the vc struct if header is valid, nullptr otherwise
+    AosDeframerVc* parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext& context);
 
     //! Validate the Frame Error Control Field (CRC) per CCSDS 732.0-B-5 Section 4.1.6
     //! Increments the global m_crcErrorCount on failure (FECF is a physical-channel concern).
@@ -143,8 +143,10 @@ class AosDeframer : public AosDeframerComponentBase {
     bool appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context);
 
     //! Map frame context onto the appropriate virtual channel struct
-    //! TODO: Implement multi-VC support; currently always returns m_vcs[0]
-    AosDeframerVc& getVcStruct(const ComCfg::FrameContext& context);
+    //! \param vcId the virtual channel id to lookup
+    //! \return pointer to the vc struct if vcId is known, nullptr otherwise
+    //! TODO: Implement multi-VC support; currently always returns m_vcs[0] or nullptr
+    AosDeframerVc* getVcStruct(const U8 vcId);
 
     //! Per-virtual-channel state, mirroring the AosFramer::AosVc pattern for future multi-VC support
     struct AosDeframerVc {
