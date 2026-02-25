@@ -97,6 +97,9 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \return true if FECF is valid, false otherwise
     bool validateFecf(Fw::Buffer& data);
 
+    //! Emit an errorNotify port message if the port is connected
+    void notifyErrorIfConnected(Ccsds::FrameError error);
+
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
     //! \param data The frame buffer (positioned after AOS primary header)

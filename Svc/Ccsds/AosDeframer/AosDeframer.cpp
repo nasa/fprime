@@ -81,9 +81,7 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     if (data.getSize() < m_fixedFrameSize) {
         this->log_WARNING_HI_InvalidFrameLength(data.getSize(), m_fixedFrameSize);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
         this->dataReturnOut_out(0, data, context);
         return;
     }
@@ -126,6 +124,12 @@ void AosDeframer::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer
 // Private helper methods
 // ----------------------------------------------------------------------
 
+void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
+    if (this->isConnected_errorNotify_OutputPort(0)) {
+        this->errorNotify_out(0, error);
+    }
+}
+
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
     for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
         if (m_vcs[vcInd].virtualChannelId == vcId) {
@@ -143,9 +147,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     if (status != Fw::FW_SERIALIZE_OK) {
         // Buffer too small to contain a valid AOS primary header
         this->log_WARNING_HI_InvalidFrameLength(data.getSize(), m_fixedFrameSize);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
         return nullptr;
     }
 
@@ -155,9 +157,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
                               AOSHeaderSubfields::frameVersionOffset);
     if (tfvn != static_cast<U8>(Tfvn::AOS)) {
         this->log_WARNING_HI_InvalidTfvn(tfvn, static_cast<U8>(Tfvn::AOS));
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VERSION);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_VERSION);
         return nullptr;
     }
 
@@ -172,9 +172,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     if (spacecraftId != m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraftId, m_spacecraftId);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_SCID);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_SCID);
         return nullptr;
     }
 
@@ -185,9 +183,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     if (vc == nullptr) {
         // TODO: Handle logging all valid vcIds
         this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcs[0].virtualChannelId);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_VCID);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_VCID);
         return vc;
     }
 
@@ -235,9 +231,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     U16 transmittedCrc = trailer.get_fecf();
     if (transmittedCrc != computedCrc) {
         this->log_WARNING_HI_InvalidFecf(transmittedCrc, computedCrc);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_CRC);
-        }
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_CRC);
         this->tlmWrite_CrcErrorCount(++m_crcErrorCount);
         return false;
     }

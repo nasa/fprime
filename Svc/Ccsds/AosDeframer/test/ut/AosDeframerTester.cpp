@@ -55,11 +55,11 @@ void AosDeframerTester::testNominalDeframing() {
     ASSERT_EQ(outBuffer.getSize(), sppSize);
 
     // Verify telemetry
-    ASSERT_TLM_SIZE(2);  // FrameCount and PacketCount
-    ASSERT_TLM_FrameCount_SIZE(1);
-    ASSERT_TLM_FrameCount(0, 1);
-    ASSERT_TLM_PacketCount_SIZE(1);
-    ASSERT_TLM_PacketCount(0, 1);
+    ASSERT_TLM_SIZE(3);  // LatestVcFrameCount, FramesProcessed, and PacketsExtracted
+    ASSERT_TLM_FramesProcessed_SIZE(1);
+    ASSERT_TLM_FramesProcessed(0, 1);
+    ASSERT_TLM_PacketsExtracted_SIZE(1);
+    ASSERT_TLM_PacketsExtracted(0, 1);
 }
 
 void AosDeframerTester::testDataReturn() {
@@ -278,8 +278,8 @@ void AosDeframerTester::testFhpIdleDataOnly() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_IdleFrame_SIZE(1);
     ASSERT_EVENTS_IdleFrame(0, 0);  // vcId=0 (the configured VC)
-    ASSERT_TLM_FrameCount_SIZE(1);
-    ASSERT_TLM_FrameCount(0, 1);
+    ASSERT_TLM_FramesProcessed_SIZE(1);
+    ASSERT_TLM_FramesProcessed(0, 1);
 }
 
 void AosDeframerTester::testMultiplePacketsInFrame() {
@@ -299,8 +299,8 @@ void AosDeframerTester::testMultiplePacketsInFrame() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(3);
-    ASSERT_TLM_PacketCount_SIZE(3);
-    ASSERT_TLM_PacketCount(2, 3);  // Final count is 3
+    ASSERT_TLM_PacketsExtracted_SIZE(3);
+    ASSERT_TLM_PacketsExtracted(2, 3);  // Final count is 3
 }
 
 // ----------------------------------------------------------------------
@@ -622,7 +622,7 @@ void AosDeframerTester::testInvalidEppVersion() {
     // Frame should still be returned
     ASSERT_from_dataReturnOut_SIZE(1);
     // Telemetry should still be updated for frame count
-    ASSERT_TLM_FrameCount_SIZE(1);
+    ASSERT_TLM_FramesProcessed_SIZE(1);
 }
 
 void AosDeframerTester::testHeaderDeserializeFailureHelperPath() {
@@ -697,7 +697,7 @@ void AosDeframerTester::testExtendedEppProtocolBranch() {
     ASSERT_EQ(consumed, static_cast<FwSizeType>(sizeof(eppExtendedPacket)));
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
-    ASSERT_TLM_PacketCount_SIZE(1);
+    ASSERT_TLM_PacketsExtracted_SIZE(1);
 }
 
 void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
@@ -808,7 +808,7 @@ void AosDeframerTester::testFrameCountTelemetry() {
         this->clearHistory();
         Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
         this->invoke_to_dataIn(0, buffer, context);
-        ASSERT_TLM_FrameCount(0, i + 1);
+        ASSERT_TLM_FramesProcessed(0, i + 1);
     }
 }
 
@@ -826,8 +826,8 @@ void AosDeframerTester::testPacketCountTelemetry() {
 
     this->invoke_to_dataIn(0, buffer, context);
 
-    ASSERT_TLM_PacketCount_SIZE(3);
-    ASSERT_TLM_PacketCount(2, 3);  // Final value
+    ASSERT_TLM_PacketsExtracted_SIZE(3);
+    ASSERT_TLM_PacketsExtracted(2, 3);  // Final value
 }
 
 void AosDeframerTester::testCrcErrorCountTelemetry() {
