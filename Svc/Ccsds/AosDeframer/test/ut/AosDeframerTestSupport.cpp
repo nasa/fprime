@@ -15,6 +15,19 @@ namespace Svc {
 
 namespace Ccsds {
 
+Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
+    (void)portNum;
+    if (size <= ALLOC_BUF_SIZE) {
+        return Fw::Buffer(this->m_allocBuf, size);
+    }
+    return Fw::Buffer();
+}
+
+void AosDeframerTester::from_deallocate_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    (void)portNum;
+    (void)fwBuffer;
+}
+
 void AosDeframerTester::configureDefault() {
     this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0,
                               PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);

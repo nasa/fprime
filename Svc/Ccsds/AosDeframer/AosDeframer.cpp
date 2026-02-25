@@ -58,6 +58,10 @@ void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
     FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
+    // Spanning packet reassembly requires dynamic backing via allocator ports
+    FW_ASSERT(this->isConnected_allocate_OutputPort(0));
+    FW_ASSERT(this->isConnected_deallocate_OutputPort(0));
+
     m_fixedFrameSize = fixedFrameSize;
     m_fecfEnabled = frameErrorControlField;
     m_spacecraftId = spacecraftId;
@@ -131,13 +135,19 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
 }
 
 void AosDeframer::resetSpanningPacket(AosDeframerVc& vc) {
-    // Spanning packet storage is currently inline in the VC state, so there is no
-    // heap allocation to release. Keep reset centralized here so deallocation can be
-    // added if spanning storage becomes dynamically owned later.
+    // Reset state after successful handoff downstream; buffer ownership has already transferred.
+    vc.spanningPacket.buffer = Fw::Buffer();
     vc.spanningPacket.active = false;
     vc.spanningPacket.bytesReceived = 0;
     vc.spanningPacket.expectedSize = 0;
     vc.spanningPacket.pvn = 0xFF;
+}
+
+void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
+    if (vc.spanningPacket.buffer.isValid()) {
+        this->deallocate_out(0, vc.spanningPacket.buffer);
+    }
+    this->resetSpanningPacket(vc);
 }
 
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
@@ -215,7 +225,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
         if (vcFrameCount != expectedVcFrameCount) {
             this->log_WARNING_HI_VcFrameCountGap(vcId, vcFrameCount, expectedVcFrameCount);
             this->notifyErrorIfConnected(Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
-            this->resetSpanningPacket(*vc);
+            this->abandonSpanningPacket(*vc);
         }
     }
 
@@ -255,23 +265,78 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
 }
 
 bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
-    // Clamp copy to buffer capacity to avoid overflow
-    FwSizeType bytesToCopy = FW_MIN(size, sizeof(vc.spanningPacket.buffer) - vc.spanningPacket.bytesReceived);
-    ::memcpy(vc.spanningPacket.buffer + vc.spanningPacket.bytesReceived, data, bytesToCopy);
-    vc.spanningPacket.bytesReceived += bytesToCopy;
+    if (!vc.spanningPacket.buffer.isValid()) {
+        const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
+        const FwSizeType toHeader = FW_MIN(size, headerCap - vc.spanningPacket.bytesReceived);
+        if (toHeader > 0) {
+            ::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
+            vc.spanningPacket.bytesReceived += toHeader;
+        }
 
-    // Determine expected size once we have enough SPP header bytes
-    if (vc.spanningPacket.expectedSize == 0 &&
-        vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
-        (vc.pvnMask & PvnBitfield::SPP_MASK) && vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
-        U16 dataLength = static_cast<U16>((vc.spanningPacket.buffer[4] << 8) | vc.spanningPacket.buffer[5]);
-        vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
+        if (vc.spanningPacket.expectedSize == 0) {
+            if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
+                vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
+                const U16 dataLength =
+                    static_cast<U16>((vc.spanningPacket.headerBuf[4] << 8) | vc.spanningPacket.headerBuf[5]);
+                vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
+            } else if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL) &&
+                       vc.spanningPacket.bytesReceived >= 1U) {
+                const U8 firstByte = vc.spanningPacket.headerBuf[0];
+                const U8 packetType =
+                    static_cast<U8>((firstByte & EPPSubfields::packetTypeMask) >> EPPSubfields::packetTypeOffset);
+
+                if (packetType == static_cast<U8>(EppPacketType::EncapsulationIdle)) {
+                    const U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
+                    if ((lengthOfLength > 0U) &&
+                        (vc.spanningPacket.bytesReceived >= static_cast<FwSizeType>(1U + lengthOfLength))) {
+                        FwSizeType packetDataLength = 0;
+                        for (U8 i = 0; i < lengthOfLength; i++) {
+                            packetDataLength = (packetDataLength << 8) | vc.spanningPacket.headerBuf[1 + i];
+                        }
+                        vc.spanningPacket.expectedSize = 1U + lengthOfLength + packetDataLength;
+                    }
+                } else if (vc.spanningPacket.bytesReceived >= 3U) {
+                    const U16 packetDataLength =
+                        static_cast<U16>((vc.spanningPacket.headerBuf[1] << 8) | vc.spanningPacket.headerBuf[2]);
+                    vc.spanningPacket.expectedSize = 3U + packetDataLength;
+                }
+            }
+        }
+
+        if (vc.spanningPacket.expectedSize == 0) {
+            return false;
+        }
+
+        Fw::Buffer allocated = this->allocate_out(0, vc.spanningPacket.expectedSize);
+        if (!allocated.isValid() || allocated.getSize() < vc.spanningPacket.expectedSize) {
+            this->abandonSpanningPacket(vc);
+            return false;
+        }
+
+        ::memcpy(allocated.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
+
+        const FwSizeType alreadyCopied = toHeader;
+        const FwSizeType remaining = size - alreadyCopied;
+        const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
+        const FwSizeType moreBytes = FW_MIN(remaining, spaceLeft);
+        if (moreBytes > 0) {
+            ::memcpy(allocated.getData() + vc.spanningPacket.bytesReceived, data + alreadyCopied, moreBytes);
+            vc.spanningPacket.bytesReceived += moreBytes;
+        }
+
+        vc.spanningPacket.buffer = allocated;
+    } else {
+        const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
+        const FwSizeType bytesToCopy = FW_MIN(size, spaceLeft);
+        if (bytesToCopy > 0) {
+            ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, bytesToCopy);
+            vc.spanningPacket.bytesReceived += bytesToCopy;
+        }
     }
 
     // Check if the spanning packet is now complete
     if (vc.spanningPacket.expectedSize > 0 && vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
-        // Spanning packet data is owned by vc.spanningPacket.buffer (persistent member)
-        Fw::Buffer packetBuffer(vc.spanningPacket.buffer, vc.spanningPacket.expectedSize);
+        vc.spanningPacket.buffer.setSize(vc.spanningPacket.expectedSize);
 
         ComCfg::FrameContext packetContext = context;
         if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL)) {
@@ -280,7 +345,7 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
             packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
         }
 
-        this->dataOut_out(0, packetBuffer, packetContext);
+        this->dataOut_out(0, vc.spanningPacket.buffer, packetContext);
         this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
         this->resetSpanningPacket(vc);
@@ -308,9 +373,9 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 
     // Handle special First Header Pointer values (Section 4.1.4.2.2.4)
     if (firstHeaderPointer == M_PDUSubfields::FHP_IDLE_DATA_ONLY) {
-        // Frame contains only idle data - reset any in-progress spanning packet
+        // Frame contains only idle data - abandon any in-progress spanning packet
         this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
-        this->resetSpanningPacket(vc);
+        this->abandonSpanningPacket(vc);
         return;
     }
 
@@ -327,7 +392,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     // There is continuation data before the first packet header
     if (firstHeaderPointer > 0 && vc.spanningPacket.active) {
         (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
-        this->resetSpanningPacket(vc);
+        this->abandonSpanningPacket(vc);
     }
 
     // Move to first packet header
@@ -359,9 +424,10 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
             // Packet spans to next frame - save state
             vc.spanningPacket.active = true;
             vc.spanningPacket.pvn = pvn;
-            vc.spanningPacket.bytesReceived = remainingBytes;
+            vc.spanningPacket.buffer = Fw::Buffer();
+            vc.spanningPacket.bytesReceived = 0;
             vc.spanningPacket.expectedSize = 0;
-            ::memcpy(vc.spanningPacket.buffer, packetStart, remainingBytes);
+            (void)this->appendToSpanningPacket(vc, packetStart, remainingBytes, context);
             break;
         }
 

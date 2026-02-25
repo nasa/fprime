@@ -29,6 +29,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     // Test frame sizes
     static const U32 TEST_FRAME_SIZE = 256;
     static const U32 TEST_FRAME_SIZE_LARGE = 1024;
+    static const FwSizeType ALLOC_BUF_SIZE = 65536;
 
   public:
     // ----------------------------------------------------------------------
@@ -181,6 +182,14 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
   private:
     // ----------------------------------------------------------------------
+    // From-port handlers (allocator support for spanning packets)
+    // ----------------------------------------------------------------------
+
+    Fw::Buffer from_allocate_handler(FwIndexType portNum, FwSizeType size) override;
+    void from_deallocate_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) override;
+
+  private:
+    // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
 
@@ -262,6 +271,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Secondary frame buffer for multi-frame tests
     U8 m_frameData2[ComCfg::AosMaxFrameFixedSize];
+
+    //! Static backing storage returned by the allocate port in unit tests
+    U8 m_allocBuf[ALLOC_BUF_SIZE];
 };
 
 }  // namespace Ccsds

@@ -19,6 +19,9 @@ module Ccsds {
         @ Port to notify of a deframing error
         output port errorNotify: Ccsds.ErrorNotify
 
+        @ Buffer allocation and deallocation for packets that span across multiple AOS frames
+        import Svc.BufferAllocation
+
         include "AosDeframerEvents.fppi"
 
         include "AosDeframerTelem.fppi"

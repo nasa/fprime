@@ -279,7 +279,8 @@ void AosDeframerTester::testFhpNoPacketStart() {
     FwSizeType remainingSize = sppSize - dataZoneSize;
     ::memcpy(payload2, payload1 + dataZoneSize, remainingSize);
 
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingSize, M_PDUSubfields::FHP_NO_PACKET_START);
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingSize, M_PDUSubfields::FHP_NO_PACKET_START,
+                                                   ComCfg::SpacecraftId, 0, 1);
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -361,8 +362,8 @@ void AosDeframerTester::testSpanningPacketTwoFrames() {
     // Add another packet after the spanning one
     FwSizeType nextPacketSize = this->createSppPacket(payload2 + remainingBytes, 0x021, 20);
 
-    Fw::Buffer buffer2 =
-        this->assembleFrameBuffer(payload2, remainingBytes + nextPacketSize, static_cast<U16>(remainingBytes));
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingBytes + nextPacketSize,
+                                                   static_cast<U16>(remainingBytes), ComCfg::SpacecraftId, 0, 1);
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -487,7 +488,8 @@ void AosDeframerTester::testSpanningPacketContinuation() {
     // Add new packet after continuation
     FwSizeType nextSize = this->createSppPacket(payload2 + continuation, 0x041, 30);
 
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, continuation + nextSize, static_cast<U16>(continuation));
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, continuation + nextSize, static_cast<U16>(continuation),
+                                                   ComCfg::SpacecraftId, 0, 1);
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -736,8 +738,10 @@ void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
     vc.spanningPacket.pvn = static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
     vc.spanningPacket.bytesReceived = 2;
     vc.spanningPacket.expectedSize = 4;
-    vc.spanningPacket.buffer[0] = static_cast<U8>((7 << 5) | 0x08);
-    vc.spanningPacket.buffer[1] = 0x00;
+    vc.spanningPacket.buffer = this->from_allocate_handler(0, vc.spanningPacket.expectedSize);
+    ASSERT_TRUE(vc.spanningPacket.buffer.isValid());
+    vc.spanningPacket.buffer.getData()[0] = static_cast<U8>((7 << 5) | 0x08);
+    vc.spanningPacket.buffer.getData()[1] = 0x00;
 
     U8 tail[2] = {0x00, 0xAA};
     ComCfg::FrameContext context;

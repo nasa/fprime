@@ -100,6 +100,9 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Emit an errorNotify port message if the port is connected
     void notifyErrorIfConnected(Ccsds::FrameError error);
 
+    //! Abandon an in-progress spanning packet, deallocating backing storage if needed
+    void abandonSpanningPacket(AosDeframerVc& vc);
+
     //! Reset per-VC spanning-packet state when the partial packet is no longer valid
     void resetSpanningPacket(AosDeframerVc& vc);
 
@@ -168,8 +171,9 @@ class AosDeframer : public AosDeframerComponentBase {
         // Spanning packet state (for packets that span multiple frames)
         // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
         struct SpanningPacketState {
-            static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header size before size is known
-            U8 buffer[ComCfg::AosMaxFrameFixedSize];           //!< Buffer for partial packet data
+            static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header bytes needed to determine size
+            Fw::Buffer buffer;                                 //!< Dynamically-allocated packet buffer (if size known)
+            U8 headerBuf[HEADER_BUF_SIZE];                     //!< Header bytes accumulated before allocation
             FwSizeType bytesReceived = 0;                      //!< Bytes received so far
             FwSizeType expectedSize = 0;                       //!< Expected total packet size (0 if unknown)
             //! PVN of spanning packet; initialized to max U8 to indicate "not set"
