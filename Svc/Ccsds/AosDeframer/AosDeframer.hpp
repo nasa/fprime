@@ -153,9 +153,9 @@ class AosDeframer : public AosDeframerComponentBase {
         U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;  //!< Bitmask of enabled PVNs
 
         // Telemetry counters (per-VC)
-        U32 frameCount = 0;    //!< Total frames received on this VC
-        U32 packetCount = 0;   //!< Total packets extracted from this VC
-        U32 vcFrameCount = 0;  //!< Last received virtual channel frame count from header
+        U32 framesProcessed = 0;   //!< Total frames received on this VC
+        U32 packetsProcessed = 0;  //!< Total packets extracted from this VC
+        U32 vcFrameCount = 0;      //!< Last received virtual channel frame count from header
 
         // Spanning packet state (for packets that span multiple frames)
         // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
