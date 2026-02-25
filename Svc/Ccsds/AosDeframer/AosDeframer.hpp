@@ -154,7 +154,7 @@ class AosDeframer : public AosDeframerComponentBase {
 
         // Telemetry counters (per-VC)
         U32 framesProcessed = 0;   //!< Total frames received on this VC
-        U32 packetsProcessed = 0;  //!< Total packets extracted from this VC
+        U32 packetsExtracted = 0;  //!< Total packets extracted from this VC
         U32 vcFrameCount = 0;      //!< Last received virtual channel frame count from header
 
         // Spanning packet state (for packets that span multiple frames)

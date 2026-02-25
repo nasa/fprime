@@ -108,7 +108,7 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     }
 
     // Update telemetry
-    this->tlmWrite_FrameCount(++vc.framesProcessed);
+    this->tlmWrite_FramesProcessed(++vc.framesProcessed);
 
     // Extract packets from the M_PDU data zone
     this->extractPackets(vc, data, packetContext);
@@ -198,6 +198,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
 
     // Store VC frame count in the VC struct for reference (e.g., gap detection)
     m_vcs[0].vcFrameCount = vcFrameCount;
+    this->tlmWrite_LatestVcFrameCount(vcFrameCount);
 
     // Update context with extracted values
     context.set_vcId(vcId);
@@ -259,7 +260,7 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         }
 
         this->dataOut_out(0, packetBuffer, packetContext);
-        this->tlmWrite_PacketCount(++vc.packetsProcessed);
+        this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
         vc.spanningPacket.active = false;
         vc.spanningPacket.bytesReceived = 0;
@@ -392,7 +393,7 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
 
     // Output the packet
     this->dataOut_out(0, packetBuffer, packetContext);
-    this->tlmWrite_PacketCount(++vc.packetsProcessed);
+    this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
     return totalPacketSize;
 }
@@ -477,7 +478,7 @@ FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
 
         // Output the packet
         this->dataOut_out(0, packetBuffer, packetContext);
-        this->tlmWrite_PacketCount(++vc.packetsProcessed);
+        this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
         return totalPacketSize;
     }
