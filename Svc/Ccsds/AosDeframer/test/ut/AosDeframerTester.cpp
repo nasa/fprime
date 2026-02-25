@@ -182,6 +182,33 @@ void AosDeframerTester::testInvalidTfvn() {
     ASSERT_EVENTS_InvalidTfvn_SIZE(1);
 }
 
+void AosDeframerTester::testVcFrameCountGap() {
+    this->configureDefault();
+
+    U8 payload[50];
+    FwSizeType sppSize = this->createSppPacket(payload, 0x001, 20);
+    ComCfg::FrameContext context;
+
+    // First valid frame initializes the tracked VC frame count and should not report a gap.
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+    ASSERT_from_errorNotify_SIZE(0);
+    ASSERT_EVENTS_VcFrameCountGap_SIZE(0);
+
+    this->clearHistory();
+
+    // Skip VC frame count 1 to force a discontinuity.
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, 0, 2);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    ASSERT_from_dataOut_SIZE(1);        // Frame is still processed
+    ASSERT_from_dataReturnOut_SIZE(1);  // Frame buffer returned
+    ASSERT_from_errorNotify_SIZE(1);
+    ASSERT_from_errorNotify(0, Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
+    ASSERT_EVENTS_VcFrameCountGap_SIZE(1);
+    ASSERT_EVENTS_VcFrameCountGap(0, 0, 2, 1);
+}
+
 // testAcceptAllVcid removed: accept-all-VCID mode is not supported.
 // Each VC struct maps to exactly one VCID for per-packet spanning state tracking.
 

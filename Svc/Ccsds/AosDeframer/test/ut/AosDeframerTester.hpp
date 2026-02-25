@@ -67,6 +67,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test invalid transfer frame version number
     void testInvalidTfvn();
 
+    //! Test VC frame count gap detection emits event + errorNotify
+    void testVcFrameCountGap();
+
     // Accept-all-VCID is not supported: each VC struct maps to exactly one VCID,
     // enabling per-packet spanning state tracking.
 

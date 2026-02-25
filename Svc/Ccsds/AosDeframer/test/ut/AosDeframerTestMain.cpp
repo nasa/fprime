@@ -45,6 +45,11 @@ TEST(AosDeframer, testInvalidTfvn) {
     tester.testInvalidTfvn();
 }
 
+TEST(AosDeframer, testVcFrameCountGap) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testVcFrameCountGap();
+}
+
 // testAcceptAllVcid removed: accept-all-VCID mode is not supported.
 
 // ----------------------------------------------------------------------

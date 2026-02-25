@@ -199,9 +199,15 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
     }
 
-    // Gap Detect
-    if (vcFrameCount != vc->vcFrameCount + 1) {
-        // TODO: VC Frame Count Gap Detection
+    // Gap detect after the first accepted frame on a VC
+    if (vc->framesProcessed > 0U) {
+        const U32 expectedVcFrameCount = vc->vcFrameCount + 1U;
+        if (vcFrameCount != expectedVcFrameCount) {
+            this->log_WARNING_HI_VcFrameCountGap(vcId, vcFrameCount, expectedVcFrameCount);
+            this->notifyErrorIfConnected(Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
+
+            // Drop anything in progress
+        }
     }
 
     // Store VC frame count in the VC struct for reference (e.g., gap detection)
@@ -299,6 +305,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
         this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
         vc.spanningPacket.active = false;
         vc.spanningPacket.bytesReceived = 0;
+        vc.spanningPacket.expectedSize = 0;
         return;
     }
 

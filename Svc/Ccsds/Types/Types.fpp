@@ -15,6 +15,7 @@ module Ccsds {
         AOS_INVALID_CRC = 8       @< CCSDS 732.0-B-5: Frame Error Control Field CRC mismatch (4.1.6)
         AOS_INVALID_VERSION = 9   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
         AOS_INVALID_EPP = 10      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
+        AOS_VC_FRAME_COUNT_GAP = 11 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
     }
 
     # ------------------------------------------------

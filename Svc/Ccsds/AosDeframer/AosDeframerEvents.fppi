@@ -37,3 +37,8 @@
         event IdleFrame(vcId: U8) \
             severity activity low \
             format "Received frame containing only idle data on VC {}"
+
+        @ Deframing detected a gap/discontinuity in the AOS VC frame count sequence
+        event VcFrameCountGap(vcId: U8, received: U32, expected: U32) \
+            severity warning high \
+            format "VC frame count gap on VC {}. Received {} | Expected next count {}"
