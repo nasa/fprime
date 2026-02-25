@@ -37,11 +37,7 @@ AosDeframer::AosDeframer(const char* const compName)
 
 AosDeframer::~AosDeframer() {}
 
-void AosDeframer::configure(U32 fixedFrameSize,
-                            bool frameErrorControlField,
-                            U16 spacecraftId,
-                            U8 vcId,
-                            U8 pvnMask) {
+void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16 spacecraftId, U8 vcId, U8 pvnMask) {
     // Validate frame size is within bounds
     FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
 
@@ -162,12 +158,11 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
     U8 signalingByte = static_cast<U8>(header.get_frameCountAndSignaling() & 0xFF);
-    U16 spacecraftId =
-        static_cast<U16>(((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
-                          AOSHeaderSubfields::spacecraftIdLsbOffset) |
-                         (static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
-                                           AOSHeaderSubfields::spacecraftIdMsbOffset)
-                          << 8));
+    U16 spacecraftId = static_cast<U16>(((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
+                                         AOSHeaderSubfields::spacecraftIdLsbOffset) |
+                                        (static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
+                                                          AOSHeaderSubfields::spacecraftIdMsbOffset)
+                                         << 8));
 
     if (spacecraftId != m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraftId, m_spacecraftId);
@@ -235,10 +230,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     return true;
 }
 
-bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc,
-                                         U8* data,
-                                         FwSizeType size,
-                                         ComCfg::FrameContext& context) {
+bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
     // Clamp copy to buffer capacity to avoid overflow
     FwSizeType bytesToCopy = FW_MIN(size, sizeof(vc.spanningPacket.buffer) - vc.spanningPacket.bytesReceived);
     ::memcpy(vc.spanningPacket.buffer + vc.spanningPacket.bytesReceived, data, bytesToCopy);
@@ -247,16 +239,13 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc,
     // Determine expected size once we have enough SPP header bytes
     if (vc.spanningPacket.expectedSize == 0 &&
         vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
-        (vc.pvnMask & PvnBitfield::SPP_MASK) &&
-        vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
-        U16 dataLength =
-            static_cast<U16>((vc.spanningPacket.buffer[4] << 8) | vc.spanningPacket.buffer[5]);
+        (vc.pvnMask & PvnBitfield::SPP_MASK) && vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
+        U16 dataLength = static_cast<U16>((vc.spanningPacket.buffer[4] << 8) | vc.spanningPacket.buffer[5]);
         vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
     }
 
     // Check if the spanning packet is now complete
-    if (vc.spanningPacket.expectedSize > 0 &&
-        vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
+    if (vc.spanningPacket.expectedSize > 0 && vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
         // Spanning packet data is owned by vc.spanningPacket.buffer (persistent member)
         Fw::Buffer packetBuffer(vc.spanningPacket.buffer, vc.spanningPacket.expectedSize);
 
@@ -287,7 +276,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     Fw::SerializeStatus status = deserializer.deserializeTo(mpduHeader);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer() & AOSMPDUSubfields::firstHeaderPointerMask;
+    U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer();
 
     // Calculate data zone boundaries
     const FwSizeType dataZoneStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE;
@@ -296,7 +285,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     U8* dataZone = data.getData() + dataZoneStart;
 
     // Handle special First Header Pointer values (Section 4.1.4.2.2.4)
-    if (firstHeaderPointer == AOSMPDUSubfields::FHP_IDLE_DATA_ONLY) {
+    if (firstHeaderPointer == M_PDUSubfields::FHP_IDLE_DATA_ONLY) {
         // Frame contains only idle data - reset any in-progress spanning packet
         this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
         vc.spanningPacket.active = false;
@@ -305,7 +294,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     }
 
     // Handle continuation data (data before First Header Pointer)
-    if (firstHeaderPointer == AOSMPDUSubfields::FHP_NO_PACKET_START) {
+    if (firstHeaderPointer == M_PDUSubfields::FHP_NO_PACKET_START) {
         // Entire data zone is continuation of previous packet
         if (vc.spanningPacket.active) {
             (void)this->appendToSpanningPacket(vc, dataZone, dataZoneSize, context);
@@ -335,8 +324,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 
         FwSizeType packetSize = 0;
 
-        if (pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
-            (vc.pvnMask & PvnBitfield::SPP_MASK)) {
+        if (pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) && (vc.pvnMask & PvnBitfield::SPP_MASK)) {
             // Space Packet Protocol
             packetSize = extractSppPacket(vc, packetStart, remainingBytes, context);
         } else if (pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL) &&
@@ -363,9 +351,9 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 }
 
 FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
-                                          U8* payloadStart,
-                                          FwSizeType payloadSize,
-                                          ComCfg::FrameContext& context) {
+                                         U8* payloadStart,
+                                         FwSizeType payloadSize,
+                                         ComCfg::FrameContext& context) {
     // Per CCSDS 133.0-B-2, Space Packet Header is 6 bytes
     if (payloadSize < SpacePacketHeader::SERIALIZED_SIZE) {
         return 0;  // Incomplete header - spans to next frame
@@ -408,9 +396,9 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
 }
 
 FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
-                                          U8* payloadStart,
-                                          FwSizeType payloadSize,
-                                          ComCfg::FrameContext& context) {
+                                         U8* payloadStart,
+                                         FwSizeType payloadSize,
+                                         ComCfg::FrameContext& context) {
     // Per CCSDS 133.1-B-3 Section 4.1, EPP minimum header is 1 byte
     if (payloadSize < 1) {
         return 0;

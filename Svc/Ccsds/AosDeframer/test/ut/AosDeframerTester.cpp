@@ -252,7 +252,7 @@ void AosDeframerTester::testFhpNoPacketStart() {
     FwSizeType remainingSize = sppSize - dataZoneSize;
     ::memcpy(payload2, payload1 + dataZoneSize, remainingSize);
 
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingSize, AOSMPDUSubfields::FHP_NO_PACKET_START);
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingSize, M_PDUSubfields::FHP_NO_PACKET_START);
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -267,7 +267,7 @@ void AosDeframerTester::testFhpIdleDataOnly() {
     ::memset(payload, 0x55, sizeof(payload));  // Idle pattern
 
     // FHP = 0x7FF means idle data only
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), AOSMPDUSubfields::FHP_IDLE_DATA_ONLY);
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), M_PDUSubfields::FHP_IDLE_DATA_ONLY);
     ComCfg::FrameContext context;
 
     this->invoke_to_dataIn(0, buffer, context);
@@ -370,7 +370,7 @@ void AosDeframerTester::testSpanningPacketMultipleFrames() {
 
     // Second frame - continuation only
     Fw::Buffer buffer2 =
-        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, M_PDUSubfields::FHP_NO_PACKET_START,
                                   ComCfg::SpacecraftId, 0, 1, 1, true);
     this->invoke_to_dataIn(0, buffer2, context);
     ASSERT_from_dataOut_SIZE(0);
@@ -409,14 +409,14 @@ void AosDeframerTester::testSpanningPacketFourFrames() {
     this->clearHistory();
 
     Fw::Buffer buffer2 =
-        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, M_PDUSubfields::FHP_NO_PACKET_START,
                                   ComCfg::SpacecraftId, 0, 1, 1, true);
     this->invoke_to_dataIn(0, buffer2, context);
     ASSERT_from_dataOut_SIZE(0);
     this->clearHistory();
 
     Fw::Buffer buffer3 =
-        this->assembleFrameBuffer(fullPacket + (2 * dataZoneSize), dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+        this->assembleFrameBuffer(fullPacket + (2 * dataZoneSize), dataZoneSize, M_PDUSubfields::FHP_NO_PACKET_START,
                                   ComCfg::SpacecraftId, 0, 2, 1, true);
     this->invoke_to_dataIn(0, buffer3, context);
     ASSERT_from_dataOut_SIZE(0);
