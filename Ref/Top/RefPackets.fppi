@@ -18,7 +18,8 @@ telemetry packets RefPackets {
     ComCcsds.commsBufferManager.TotalBuffs
     ComCcsds.commsBufferManager.CurrBuffs
     ComCcsds.commsBufferManager.HiBuffs
-    #ComCcsds.tlmSend.SendLevel
+    #CdhCore.tlmSend.GroupConfigs
+    #CdhCore.tlmSend.SectionEnabled
 
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
