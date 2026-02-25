@@ -105,6 +105,11 @@ TEST(AosDeframer, testSpanningPacketContinuation) {
     tester.testSpanningPacketContinuation();
 }
 
+TEST(AosDeframer, testSpanningPacketAllocFailureEvent) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSpanningPacketAllocFailureEvent();
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------

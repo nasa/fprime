@@ -496,6 +496,25 @@ void AosDeframerTester::testSpanningPacketContinuation() {
     ASSERT_from_dataOut_SIZE(2);  // Both packets
 }
 
+void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
+    this->configureDefault();
+
+    U8 payload[64] = {};
+    // Start an EPP packet that declares a payload large enough to exceed the test allocator buffer.
+    payload[0] = static_cast<U8>((7 << 5) | 0x02);  // EPP, protocolId=2
+    payload[1] = 0xFF;
+    payload[2] = 0xFF;  // dataLength = 65535 -> total packet size = 65538 (> ALLOC_BUF_SIZE=65536)
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------
@@ -645,11 +664,11 @@ void AosDeframerTester::testInvalidEppVersion() {
 
     this->invoke_to_dataIn(0, buffer, context);
 
-    // Unrecognized PVN should result in no packets output
-    // (extraction stops when encountering unknown packet type)
+    // Unrecognized PVN should result in no packets output and an explicit event.
     ASSERT_from_dataOut_SIZE(0);
     // Frame should still be returned
     ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_InvalidPvn_SIZE(1);
     // Telemetry should still be updated for frame count
     ASSERT_TLM_FramesProcessed_SIZE(1);
 }
@@ -735,7 +754,7 @@ void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
 
     AosDeframer::AosDeframerVc& vc = this->component.m_vcs[0];
     vc.spanningPacket.active = true;
-    vc.spanningPacket.pvn = static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+    vc.spanningPacket.pvn = ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL;
     vc.spanningPacket.bytesReceived = 2;
     vc.spanningPacket.expectedSize = 4;
     vc.spanningPacket.buffer = this->from_allocate_handler(0, vc.spanningPacket.expectedSize);

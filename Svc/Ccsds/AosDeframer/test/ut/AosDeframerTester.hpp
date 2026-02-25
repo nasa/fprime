@@ -109,6 +109,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet with continuation frame
     void testSpanningPacketContinuation();
 
+    //! Test spanning packet allocation failure emits an event and drops the packet
+    void testSpanningPacketAllocFailureEvent();
+
     // ----------------------------------------------------------------------
     // Tests - SPP Extraction
     // ----------------------------------------------------------------------

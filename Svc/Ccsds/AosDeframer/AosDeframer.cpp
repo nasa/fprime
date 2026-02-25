@@ -134,20 +134,15 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
     }
 }
 
-void AosDeframer::resetSpanningPacket(AosDeframerVc& vc) {
-    // Reset state after successful handoff downstream; buffer ownership has already transferred.
-    vc.spanningPacket.buffer = Fw::Buffer();
-    vc.spanningPacket.active = false;
-    vc.spanningPacket.bytesReceived = 0;
-    vc.spanningPacket.expectedSize = 0;
-    vc.spanningPacket.pvn = 0xFF;
-}
-
 void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     if (vc.spanningPacket.buffer.isValid()) {
         this->deallocate_out(0, vc.spanningPacket.buffer);
     }
-    this->resetSpanningPacket(vc);
+    vc.spanningPacket.buffer = Fw::Buffer();
+    vc.spanningPacket.active = false;
+    vc.spanningPacket.bytesReceived = 0;
+    vc.spanningPacket.expectedSize = 0;
+    vc.spanningPacket.pvn = ComCfg::Pvn::INVALID_UNINITIALIZED;
 }
 
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
@@ -274,12 +269,12 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         }
 
         if (vc.spanningPacket.expectedSize == 0) {
-            if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) &&
+            if (vc.spanningPacket.pvn == ComCfg::Pvn::SPACE_PACKET_PROTOCOL &&
                 vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
                 const U16 dataLength =
                     static_cast<U16>((vc.spanningPacket.headerBuf[4] << 8) | vc.spanningPacket.headerBuf[5]);
                 vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
-            } else if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL) &&
+            } else if (vc.spanningPacket.pvn == ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL &&
                        vc.spanningPacket.bytesReceived >= 1U) {
                 const U8 firstByte = vc.spanningPacket.headerBuf[0];
                 const U8 packetType =
@@ -309,6 +304,8 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
 
         Fw::Buffer allocated = this->allocate_out(0, vc.spanningPacket.expectedSize);
         if (!allocated.isValid() || allocated.getSize() < vc.spanningPacket.expectedSize) {
+            this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, static_cast<U8>(vc.spanningPacket.pvn),
+                                                           vc.spanningPacket.expectedSize);
             this->abandonSpanningPacket(vc);
             return false;
         }
@@ -339,16 +336,14 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         vc.spanningPacket.buffer.setSize(vc.spanningPacket.expectedSize);
 
         ComCfg::FrameContext packetContext = context;
-        if (vc.spanningPacket.pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL)) {
-            packetContext.set_pvn(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
-        } else {
-            packetContext.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
-        }
+        packetContext.set_pvn(vc.spanningPacket.pvn);
 
         this->dataOut_out(0, vc.spanningPacket.buffer, packetContext);
         this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
-        this->resetSpanningPacket(vc);
+        // Ownership of the buffer has transferred downstream; clear local handle before consolidating state reset.
+        vc.spanningPacket.buffer = Fw::Buffer();
+        this->abandonSpanningPacket(vc);
         return true;
     }
 
@@ -405,17 +400,21 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 
         // Determine packet type from PVN (upper 3 bits of first byte)
         U8 pvn = getPacketVersion(packetStart[0]);
+        const bool isSpp = (pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL));
+        const bool isEpp = (pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL));
 
         FwSizeType packetSize = 0;
 
-        if (pvn == static_cast<U8>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL) && (vc.pvnMask & PvnBitfield::SPP_MASK)) {
+        if (isSpp && (vc.pvnMask & PvnBitfield::SPP_MASK)) {
             // Space Packet Protocol
             packetSize = extractSppPacket(vc, packetStart, remainingBytes, context);
-        } else if (pvn == static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL) &&
-                   (vc.pvnMask & PvnBitfield::EPP_MASK)) {
+        } else if (isEpp && (vc.pvnMask & PvnBitfield::EPP_MASK)) {
             // Encapsulation Packet Protocol
             packetSize = extractEppPacket(vc, packetStart, remainingBytes, context);
         } else {
+            if (!isSpp && !isEpp) {
+                this->log_WARNING_HI_InvalidPvn(vc.virtualChannelId, pvn);
+            }
             // Unknown or disabled packet type - stop processing this frame
             break;
         }
@@ -423,7 +422,8 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
         if (packetSize == 0) {
             // Packet spans to next frame - save state
             vc.spanningPacket.active = true;
-            vc.spanningPacket.pvn = pvn;
+            vc.spanningPacket.pvn =
+                isSpp ? ComCfg::Pvn::SPACE_PACKET_PROTOCOL : ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL;
             vc.spanningPacket.buffer = Fw::Buffer();
             vc.spanningPacket.bytesReceived = 0;
             vc.spanningPacket.expectedSize = 0;

@@ -20,6 +20,7 @@
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/M_PDUHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TfvnEnumAc.hpp"
+#include "config/PvnEnumAc.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -103,9 +104,6 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Abandon an in-progress spanning packet, deallocating backing storage if needed
     void abandonSpanningPacket(AosDeframerVc& vc);
 
-    //! Reset per-VC spanning-packet state when the partial packet is no longer valid
-    void resetSpanningPacket(AosDeframerVc& vc);
-
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
     //! \param data The frame buffer (positioned after AOS primary header)
@@ -176,8 +174,8 @@ class AosDeframer : public AosDeframerComponentBase {
             U8 headerBuf[HEADER_BUF_SIZE];                     //!< Header bytes accumulated before allocation
             FwSizeType bytesReceived = 0;                      //!< Bytes received so far
             FwSizeType expectedSize = 0;                       //!< Expected total packet size (0 if unknown)
-            //! PVN of spanning packet; initialized to max U8 to indicate "not set"
-            U8 pvn = 0xFF;
+            //! PVN of spanning packet; valid only when active=true
+            ComCfg::Pvn pvn = ComCfg::Pvn::INVALID_UNINITIALIZED;
             bool active = false;  //!< Whether a spanning packet is in progress
         } spanningPacket;
     };

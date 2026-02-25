@@ -23,6 +23,11 @@
             severity warning high \
             format "Invalid CCSDS Transfer Frame Version Number. Received: {} | Expected: {}"
 
+        @ Deframing encountered an invalid/unsupported packet version number in the M_PDU data zone
+        event InvalidPvn(vcId: U8, pvn: U8) \
+            severity warning high \
+            format "Invalid packet version number {} encountered on VC {}"
+
         @ Deframing encountered an EPP packet with a malformed header (CCSDS 133.1-B-3)
         event InvalidEppPacket() \
             severity warning high \
@@ -37,6 +42,11 @@
         event IdleFrame(vcId: U8) \
             severity activity low \
             format "Received frame containing only idle data on VC {}"
+
+        @ Spanning packet buffer allocation failed; packet dropped
+        event SpanningPacketAllocFailed(vcId: U8, pvn: U8, packetSize: FwSizeType) \
+            severity warning high \
+            format "Spanning packet allocation failed on VC {} for {} packet of {} bytes; packet dropped"
 
         @ Deframing detected a gap/discontinuity in the AOS VC frame count sequence
         event VcFrameCountGap(vcId: U8, received: U32, expected: U32) \
