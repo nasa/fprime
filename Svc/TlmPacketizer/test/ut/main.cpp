@@ -74,6 +74,16 @@ TEST(TestNominal, TlmGetTest) {
     Svc::TlmPacketizerTester tester;
     tester.getChannelValueTest();
 }
+TEST(TestNominal, configuredTelemetryGroupsTests) {
+    TEST_CASE(100.1.9, "Configure Telem Send Levels and Rates");
+    Svc::TlmPacketizerTester tester;
+    tester.configuredTelemetryGroupsTests();
+}
+TEST(TestNominal, advancedControlGroupTests) {
+    TEST_CASE(100.1.10, "Control enable sections and groups");
+    Svc::TlmPacketizerTester tester;
+    tester.advancedControlGroupTests();
+}
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
