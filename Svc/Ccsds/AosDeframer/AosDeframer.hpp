@@ -56,6 +56,9 @@ class AosDeframer : public AosDeframerComponentBase {
                    U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
   private:
+    // Forward declaration for helper method signatures that reference the nested VC state type
+    struct AosDeframerVc;
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -108,7 +111,10 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \note payloadStart points into the incoming frame buffer. In synchronous port mode this
     //!       is safe since the frame is not returned until extractPackets returns. For async
     //!       consumers a copy may be needed before the frame buffer is returned.
-    FwSizeType extractSppPacket(AosDeframerVc& vc, U8* payloadStart, FwSizeType payloadSize, ComCfg::FrameContext& context);
+    FwSizeType extractSppPacket(AosDeframerVc& vc,
+                                U8* payloadStart,
+                                FwSizeType payloadSize,
+                                ComCfg::FrameContext& context);
 
     //! Extract an Encapsulation Packet from the M_PDU data zone per CCSDS 133.1-B-3
     //! \param vc The virtual channel state
@@ -117,7 +123,10 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param context The frame context
     //! \return Number of bytes consumed (packet size), or 0 if incomplete/invalid
     //! \note See extractSppPacket note regarding buffer ownership.
-    FwSizeType extractEppPacket(AosDeframerVc& vc, U8* payloadStart, FwSizeType payloadSize, ComCfg::FrameContext& context);
+    FwSizeType extractEppPacket(AosDeframerVc& vc,
+                                U8* payloadStart,
+                                FwSizeType payloadSize,
+                                ComCfg::FrameContext& context);
 
     //! Determine packet type from first byte (PVN field)
     //! \param firstByte First byte of packet
@@ -138,25 +147,25 @@ class AosDeframer : public AosDeframerComponentBase {
 
     //! Per-virtual-channel state, mirroring the AosFramer::AosVc pattern for future multi-VC support
     struct AosDeframerVc {
-        U8 vcStructIndex = 0xFF;     //!< Index into VC array for this vc struct
-        U8 virtualChannelId = 0;     //!< VCID for this virtual channel
+        U8 vcStructIndex = 0xFF;                                     //!< Index into VC array for this vc struct
+        U8 virtualChannelId = 0;                                     //!< VCID for this virtual channel
         U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;  //!< Bitmask of enabled PVNs
 
         // Telemetry counters (per-VC)
-        U32 frameCount = 0;          //!< Total frames received on this VC
-        U32 packetCount = 0;         //!< Total packets extracted from this VC
-        U32 vcFrameCount = 0;        //!< Last received virtual channel frame count from header
+        U32 frameCount = 0;    //!< Total frames received on this VC
+        U32 packetCount = 0;   //!< Total packets extracted from this VC
+        U32 vcFrameCount = 0;  //!< Last received virtual channel frame count from header
 
         // Spanning packet state (for packets that span multiple frames)
         // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
         struct SpanningPacketState {
             static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header size before size is known
-            U8 buffer[ComCfg::AosMaxFrameFixedSize];  //!< Buffer for partial packet data
-            FwSizeType bytesReceived = 0;              //!< Bytes received so far
-            FwSizeType expectedSize = 0;               //!< Expected total packet size (0 if unknown)
+            U8 buffer[ComCfg::AosMaxFrameFixedSize];           //!< Buffer for partial packet data
+            FwSizeType bytesReceived = 0;                      //!< Bytes received so far
+            FwSizeType expectedSize = 0;                       //!< Expected total packet size (0 if unknown)
             //! PVN of spanning packet; initialized to max U8 to indicate "not set"
             U8 pvn = 0xFF;
-            bool active = false;                       //!< Whether a spanning packet is in progress
+            bool active = false;  //!< Whether a spanning packet is in progress
         } spanningPacket;
     };
 
@@ -166,9 +175,9 @@ class AosDeframer : public AosDeframerComponentBase {
     // ----------------------------------------------------------------------
 
     // Frame-level configuration parameters (set via configure())
-    U32 m_fixedFrameSize = 0;            //!< Fixed frame size in bytes
-    bool m_fecfEnabled = true;           //!< Whether FECF is enabled
-    U16 m_spacecraftId = 0;              //!< Expected spacecraft ID (10 bits)
+    U32 m_fixedFrameSize = 0;   //!< Fixed frame size in bytes
+    bool m_fecfEnabled = true;  //!< Whether FECF is enabled
+    U16 m_spacecraftId = 0;     //!< Expected spacecraft ID (10 bits)
 
     //! FECF CRC error counter - per physical channel (not per-VC)
     U32 m_crcErrorCount = 0;
