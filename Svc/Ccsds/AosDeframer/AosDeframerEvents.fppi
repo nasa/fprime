@@ -4,9 +4,9 @@
             format "Invalid Spacecraft ID Received. Received: {} | Deframer configured with: {}"
 
         @ Deframing received an invalid frame length
-        event InvalidFrameLength(expected: U32, actual: FwSizeType) \
+        event InvalidFrameLength(actual: FwSizeType, expected: U32) \
             severity warning high \
-            format "Frame length mismatch. Expected: {} | Received: {}"
+            format "Frame length mismatch. Received: {} | Expected: {} "
 
         @ Deframing received a VCID not in the accepted set (CCSDS 732.0-B-5 Section 4.1.2.3)
         event InvalidVcId(transmitted: U8, configured: U8) \

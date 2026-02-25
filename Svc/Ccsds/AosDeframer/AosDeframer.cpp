@@ -80,7 +80,7 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     FW_ASSERT(m_fixedFrameSize > 0, static_cast<FwAssertArgType>(m_fixedFrameSize));
 
     if (data.getSize() < m_fixedFrameSize) {
-        this->log_WARNING_HI_InvalidFrameLength(m_fixedFrameSize, data.getSize());
+        this->log_WARNING_HI_InvalidFrameLength(data.getSize(), m_fixedFrameSize);
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
         }
@@ -138,7 +138,7 @@ bool AosDeframer::parseAndValidateHeader(Fw::Buffer& data, ComCfg::FrameContext&
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
     if (status != Fw::FW_SERIALIZE_OK) {
         // Buffer too small to contain a valid AOS primary header
-        this->log_WARNING_HI_InvalidFrameLength(m_fixedFrameSize, data.getSize());
+        this->log_WARNING_HI_InvalidFrameLength(data.getSize(), m_fixedFrameSize);
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
         }
