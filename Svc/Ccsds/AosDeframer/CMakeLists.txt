@@ -25,6 +25,7 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTestSupport.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframerEvents.fppi"
