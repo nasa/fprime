@@ -8,6 +8,11 @@ module Ccsds {
     @ - Encapsulation Packet Protocol (EPP) extraction per CCSDS 133.1-B-3
     passive component AosDeframer {
 
+        constant NumVcs = 1
+
+        # TODO: figure out storage and telemetry round up of per VC stat counters
+        type VCxU32 = U32
+
         import Deframer
 
         @ Port to notify of a deframing error

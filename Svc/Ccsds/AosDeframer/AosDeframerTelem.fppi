@@ -1,9 +1,9 @@
         @ Telemetry for tracking received frames per Virtual Channel
-        telemetry FrameCount: U32 \
+        telemetry FrameCount: VCxU32 \
             format "{} frames received"
 
         @ Telemetry for tracking extracted packets
-        telemetry PacketCount: U32 \
+        telemetry PacketCount: VCxU32 \
             format "{} packets extracted"
 
         @ Telemetry for tracking Frame Error Control Field (FECF) errors (per physical channel)

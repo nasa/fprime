@@ -14,6 +14,7 @@
 #define Svc_Ccsds_AosDeframer_HPP
 
 #include "Svc/Ccsds/AosDeframer/AosDeframerComponentAc.hpp"
+#include "Svc/Ccsds/AosDeframer/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/AOSHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/AOSTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
@@ -183,7 +184,7 @@ class AosDeframer : public AosDeframerComponentBase {
     U32 m_crcErrorCount = 0;
 
     //! TODO: Implement multiple VCs - currently always returns m_vcs[0]
-    AosDeframerVc m_vcs[1];  //!< Our one AOS Virtual Channel (for now)
+    AosDeframerVc m_vcs[AosDeframer_NumVcs];  //!< Our one AOS Virtual Channel (for now)
 };
 
 }  // namespace Ccsds

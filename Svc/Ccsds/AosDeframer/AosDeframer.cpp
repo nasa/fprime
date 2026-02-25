@@ -30,9 +30,11 @@ AosDeframer::AosDeframer(const char* const compName)
       m_spacecraftId(ComCfg::SpacecraftId),
       m_crcErrorCount(0) {
     // Initialize VC struct
-    m_vcs[0].vcStructIndex = 0;
-    m_vcs[0].virtualChannelId = 0;
-    m_vcs[0].pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;
+    for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
+        m_vcs[vcInd].vcStructIndex = 0;
+        m_vcs[vcInd].virtualChannelId = 0;
+        m_vcs[vcInd].pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;
+    }
 }
 
 AosDeframer::~AosDeframer() {}
