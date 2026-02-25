@@ -234,8 +234,8 @@ void AosDeframerTester::testFhpNoPacketStart() {
     FwSizeType sppSize = this->createSppPacket(payload1, 0x004, 250);  // Packet that will span two frames
 
     // Calculate data zone size
-    const FwSizeType dataZoneSize = TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE -
-                                     M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+    const FwSizeType dataZoneSize =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
 
     // First frame - send as much of the packet as fits (up to data zone size)
     Fw::Buffer buffer1 = this->assembleFrameBuffer(payload1, dataZoneSize, 0);
@@ -311,8 +311,8 @@ void AosDeframerTester::testSpanningPacketTwoFrames() {
     this->configureDefault();
 
     // Create a packet larger than one frame's data zone
-    const FwSizeType dataZoneSize = TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE -
-                                     M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+    const FwSizeType dataZoneSize =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
     const FwSizeType packetDataLen = dataZoneSize + 50;  // Spans into second frame
 
     U8 fullPacket[512];
@@ -334,8 +334,8 @@ void AosDeframerTester::testSpanningPacketTwoFrames() {
     // Add another packet after the spanning one
     FwSizeType nextPacketSize = this->createSppPacket(payload2 + remainingBytes, 0x021, 20);
 
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, remainingBytes + nextPacketSize,
-                                                    static_cast<U16>(remainingBytes));
+    Fw::Buffer buffer2 =
+        this->assembleFrameBuffer(payload2, remainingBytes + nextPacketSize, static_cast<U16>(remainingBytes));
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -350,8 +350,8 @@ void AosDeframerTester::testSpanningPacketMultipleFrames() {
     // Use a packet that fits in that but spans 3 smaller frames
     this->configureDefault();
 
-    const FwSizeType dataZoneSize = TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE -
-                                     M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+    const FwSizeType dataZoneSize =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
 
     // Create a packet that spans 3 frames but fits in spanning buffer
     // Each frame data zone ~246 bytes, so use packet ~600 bytes
@@ -363,26 +363,70 @@ void AosDeframerTester::testSpanningPacketMultipleFrames() {
     ComCfg::FrameContext context;
 
     // First frame - first ~246 bytes of packet
-    Fw::Buffer buffer1 = this->assembleFrameBuffer(fullPacket, dataZoneSize, 0,
-                                                    ComCfg::SpacecraftId, 0, 0, 1, true);
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(fullPacket, dataZoneSize, 0, ComCfg::SpacecraftId, 0, 0, 1, true);
     this->invoke_to_dataIn(0, buffer1, context);
     ASSERT_from_dataOut_SIZE(0);
     this->clearHistory();
 
     // Second frame - continuation only
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize,
-                                                    AOSMPDUSubfields::FHP_NO_PACKET_START,
-                                                    ComCfg::SpacecraftId, 0, 1, 1, true);
+    Fw::Buffer buffer2 =
+        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+                                  ComCfg::SpacecraftId, 0, 1, 1, true);
     this->invoke_to_dataIn(0, buffer2, context);
     ASSERT_from_dataOut_SIZE(0);
     this->clearHistory();
 
     // Third frame - rest of packet
     FwSizeType remainingBytes = totalPacketSize - (2 * dataZoneSize);
-    Fw::Buffer buffer3 = this->assembleFrameBuffer(fullPacket + (2 * dataZoneSize), remainingBytes,
-                                                    static_cast<U16>(remainingBytes),
-                                                    ComCfg::SpacecraftId, 0, 2, 1, true);
+    Fw::Buffer buffer3 =
+        this->assembleFrameBuffer(fullPacket + (2 * dataZoneSize), remainingBytes, static_cast<U16>(remainingBytes),
+                                  ComCfg::SpacecraftId, 0, 2, 1, true);
     this->invoke_to_dataIn(0, buffer3, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
+}
+
+void AosDeframerTester::testSpanningPacketFourFrames() {
+    this->configureDefault();
+
+    const FwSizeType dataZoneSize =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+
+    // Header (6) + data (900) = 906 bytes, which spans four ~246-byte data zones
+    const FwSizeType packetDataLen = 900;
+    U8 fullPacket[1024];
+    FwSizeType totalPacketSize = this->createSppPacket(fullPacket, 0x031, static_cast<U16>(packetDataLen));
+
+    ASSERT_TRUE(totalPacketSize > (3 * dataZoneSize));
+    ASSERT_TRUE(totalPacketSize <= (4 * dataZoneSize));
+
+    ComCfg::FrameContext context;
+
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(fullPacket, dataZoneSize, 0, ComCfg::SpacecraftId, 0, 0, 1, true);
+    this->invoke_to_dataIn(0, buffer1, context);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    Fw::Buffer buffer2 =
+        this->assembleFrameBuffer(fullPacket + dataZoneSize, dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+                                  ComCfg::SpacecraftId, 0, 1, 1, true);
+    this->invoke_to_dataIn(0, buffer2, context);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    Fw::Buffer buffer3 =
+        this->assembleFrameBuffer(fullPacket + (2 * dataZoneSize), dataZoneSize, AOSMPDUSubfields::FHP_NO_PACKET_START,
+                                  ComCfg::SpacecraftId, 0, 2, 1, true);
+    this->invoke_to_dataIn(0, buffer3, context);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    FwSizeType remainingBytes = totalPacketSize - (3 * dataZoneSize);
+    Fw::Buffer buffer4 =
+        this->assembleFrameBuffer(fullPacket + (3 * dataZoneSize), remainingBytes, static_cast<U16>(remainingBytes),
+                                  ComCfg::SpacecraftId, 0, 3, 1, true);
+    this->invoke_to_dataIn(0, buffer4, context);
 
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
@@ -393,8 +437,8 @@ void AosDeframerTester::testSpanningPacketContinuation() {
 
     // For spanning, packet must be larger than data zone size (246 bytes)
     // Create packet with header (6) + data (280) = 286 bytes
-    const FwSizeType dataZoneSize = TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE -
-                                     M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+    const FwSizeType dataZoneSize =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
     const U16 packetDataLen = 280;
 
     U8 payload1[300];
@@ -416,8 +460,7 @@ void AosDeframerTester::testSpanningPacketContinuation() {
     // Add new packet after continuation
     FwSizeType nextSize = this->createSppPacket(payload2 + continuation, 0x041, 30);
 
-    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, continuation + nextSize,
-                                                    static_cast<U16>(continuation));
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload2, continuation + nextSize, static_cast<U16>(continuation));
 
     this->invoke_to_dataIn(0, buffer2, context);
 
@@ -564,8 +607,8 @@ void AosDeframerTester::testInvalidEppVersion() {
     // PVN=3 (0b011) means first byte upper 3 bits = 011
     // 0x60 = 0b01100000 -> PVN = 3
     payload[0] = 0x60 | 0x02;  // Version 3, Protocol ID 2
-    payload[1] = 0x00;  // Length high byte
-    payload[2] = 0x10;  // Length low byte (16)
+    payload[1] = 0x00;         // Length high byte
+    payload[2] = 0x10;         // Length low byte (16)
     ::memset(payload + 3, 0xAA, 16);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, 19, 0);
@@ -580,6 +623,106 @@ void AosDeframerTester::testInvalidEppVersion() {
     ASSERT_from_dataReturnOut_SIZE(1);
     // Telemetry should still be updated for frame count
     ASSERT_TLM_FrameCount_SIZE(1);
+}
+
+void AosDeframerTester::testHeaderDeserializeFailureHelperPath() {
+    this->configureDefault();
+    this->clearHistory();
+
+    // Direct helper call to cover the deserialize failure branch, which is preempted by
+    // dataIn_handler's outer frame-length guard in normal port-driven execution.
+    U8 shortFrame[AOSHeader::SERIALIZED_SIZE - 1] = {};
+    Fw::Buffer buffer(shortFrame, sizeof(shortFrame));
+    ComCfg::FrameContext context;
+
+    const bool ok = this->component.parseAndValidateHeader(buffer, context);
+
+    ASSERT_FALSE(ok);
+    ASSERT_from_errorNotify_SIZE(1);
+    ASSERT_from_errorNotify(0, Ccsds::FrameError::AOS_INVALID_LENGTH);
+    ASSERT_EVENTS_InvalidFrameLength_SIZE(1);
+}
+
+void AosDeframerTester::testExtractorGuardPaths() {
+    this->configureDefault();
+    this->clearHistory();
+
+    AosDeframer::AosDeframerVc& vc = this->component.m_vcs[0];
+    ComCfg::FrameContext context;
+
+    U8 sppShortHeader[SpacePacketHeader::SERIALIZED_SIZE - 1] = {};
+    ASSERT_EQ(this->component.extractSppPacket(vc, sppShortHeader, sizeof(sppShortHeader), context), 0);
+
+    U8 dummy = 0;
+    ASSERT_EQ(this->component.extractEppPacket(vc, &dummy, 0, context), 0);
+
+    // Idle EPP with length-of-length=2 but only one byte available
+    U8 eppIdleShortLengthField[1] = {static_cast<U8>((7 << 5) | (1 << 4) | 0x02)};
+    ASSERT_EQ(this->component.extractEppPacket(vc, eppIdleShortLengthField, sizeof(eppIdleShortLengthField), context),
+              0);
+
+    // Idle EPP with complete length field but truncated idle payload
+    U8 eppIdleTruncatedPayload[3] = {static_cast<U8>((7 << 5) | (1 << 4) | 0x02), 0x00, 0x04};
+    ASSERT_EQ(this->component.extractEppPacket(vc, eppIdleTruncatedPayload, sizeof(eppIdleTruncatedPayload), context),
+              0);
+
+    // Standard EPP (protocol ID <= 0x07) with truncated header
+    U8 eppStandardShortHeader[2] = {static_cast<U8>((7 << 5) | 0x02), 0x00};
+    ASSERT_EQ(this->component.extractEppPacket(vc, eppStandardShortHeader, sizeof(eppStandardShortHeader), context), 0);
+
+    // Extended EPP (protocol ID >= 0x08) with truncated header
+    U8 eppExtendedShortHeader[2] = {static_cast<U8>((7 << 5) | 0x08), 0x00};
+    ASSERT_EQ(this->component.extractEppPacket(vc, eppExtendedShortHeader, sizeof(eppExtendedShortHeader), context), 0);
+
+    // Standard EPP with declared payload larger than bytes available
+    U8 eppStandardIncompletePacket[3] = {static_cast<U8>((7 << 5) | 0x02), 0x00, 0x02};
+    ASSERT_EQ(
+        this->component.extractEppPacket(vc, eppStandardIncompletePacket, sizeof(eppStandardIncompletePacket), context),
+        0);
+
+    ASSERT_from_dataOut_SIZE(0);
+}
+
+void AosDeframerTester::testExtendedEppProtocolBranch() {
+    this->configureDefault();
+    this->clearHistory();
+
+    AosDeframer::AosDeframerVc& vc = this->component.m_vcs[0];
+    ComCfg::FrameContext context;
+
+    // Extended protocol ID (0x8-0xF) uses the alternate branch in extractEppPacket.
+    U8 eppExtendedPacket[3] = {static_cast<U8>((7 << 5) | 0x08), 0x00, 0x00};
+    FwSizeType consumed = this->component.extractEppPacket(vc, eppExtendedPacket, sizeof(eppExtendedPacket), context);
+
+    ASSERT_EQ(consumed, static_cast<FwSizeType>(sizeof(eppExtendedPacket)));
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+    ASSERT_TLM_PacketCount_SIZE(1);
+}
+
+void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
+    this->configureDefault();
+    this->clearHistory();
+
+    AosDeframer::AosDeframerVc& vc = this->component.m_vcs[0];
+    vc.spanningPacket.active = true;
+    vc.spanningPacket.pvn = static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+    vc.spanningPacket.bytesReceived = 2;
+    vc.spanningPacket.expectedSize = 4;
+    vc.spanningPacket.buffer[0] = static_cast<U8>((7 << 5) | 0x08);
+    vc.spanningPacket.buffer[1] = 0x00;
+
+    U8 tail[2] = {0x00, 0xAA};
+    ComCfg::FrameContext context;
+    const bool complete = this->component.appendToSpanningPacket(vc, tail, sizeof(tail), context);
+
+    ASSERT_TRUE(complete);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), static_cast<FwSizeType>(4));
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+    ASSERT_FALSE(vc.spanningPacket.active);
+    ASSERT_EQ(vc.spanningPacket.bytesReceived, static_cast<FwSizeType>(0));
+    ASSERT_EQ(vc.spanningPacket.expectedSize, static_cast<FwSizeType>(0));
 }
 
 // ----------------------------------------------------------------------
@@ -715,13 +858,13 @@ void AosDeframerTester::configureDefault() {
 }
 
 Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
-                                                   FwSizeType payloadLength,
-                                                   U16 fhp,
-                                                   U16 scid,
-                                                   U8 vcid,
-                                                   U32 vcCount,
-                                                   U8 tfvn,
-                                                   bool includeFecf) {
+                                                  FwSizeType payloadLength,
+                                                  U16 fhp,
+                                                  U16 scid,
+                                                  U8 vcid,
+                                                  U32 vcCount,
+                                                  U8 tfvn,
+                                                  bool includeFecf) {
     const U32 frameSize = includeFecf ? TEST_FRAME_SIZE : (TEST_FRAME_SIZE - AOSTrailer::SERIALIZED_SIZE);
     ::memset(this->m_frameData, 0, sizeof(this->m_frameData));
 

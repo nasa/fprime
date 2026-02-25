@@ -90,6 +90,11 @@ TEST(AosDeframer, testSpanningPacketMultipleFrames) {
     tester.testSpanningPacketMultipleFrames();
 }
 
+TEST(AosDeframer, testSpanningPacketFourFrames) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSpanningPacketFourFrames();
+}
+
 TEST(AosDeframer, testSpanningPacketContinuation) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testSpanningPacketContinuation();
@@ -136,6 +141,30 @@ TEST(AosDeframer, testEppFillPacket) {
 TEST(AosDeframer, testInvalidEppVersion) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testInvalidEppVersion();
+}
+
+// ----------------------------------------------------------------------
+// Tests - Private Helper Edge Cases (friend access)
+// ----------------------------------------------------------------------
+
+TEST(AosDeframer, testHeaderDeserializeFailureHelperPath) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testHeaderDeserializeFailureHelperPath();
+}
+
+TEST(AosDeframer, testExtractorGuardPaths) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testExtractorGuardPaths();
+}
+
+TEST(AosDeframer, testExtendedEppProtocolBranch) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testExtendedEppProtocolBranch();
+}
+
+TEST(AosDeframer, testAppendToSpanningPacketEppCompletion) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testAppendToSpanningPacketEppCompletion();
 }
 
 // ----------------------------------------------------------------------

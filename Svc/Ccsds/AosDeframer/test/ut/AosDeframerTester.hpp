@@ -99,6 +99,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test packet spanning across multiple frames
     void testSpanningPacketMultipleFrames();
 
+    //! Test packet spanning across four frames (explicit 3+ frame coverage)
+    void testSpanningPacketFourFrames();
+
     //! Test spanning packet with continuation frame
     void testSpanningPacketContinuation();
 
@@ -130,6 +133,22 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test invalid EPP packet version
     void testInvalidEppVersion();
+
+    // ----------------------------------------------------------------------
+    // Tests - Private Helper Edge Cases (friend access)
+    // ----------------------------------------------------------------------
+
+    //! Directly exercise parseAndValidateHeader deserializer failure path
+    void testHeaderDeserializeFailureHelperPath();
+
+    //! Directly exercise short/incomplete packet guard paths in SPP/EPP extractors
+    void testExtractorGuardPaths();
+
+    //! Directly exercise extended EPP protocol branch (protocol ID 0x8-0xF)
+    void testExtendedEppProtocolBranch();
+
+    //! Directly exercise EPP branch of appendToSpanningPacket completion context tagging
+    void testAppendToSpanningPacketEppCompletion();
 
     // ----------------------------------------------------------------------
     // Tests - Configuration
