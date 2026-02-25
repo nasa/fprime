@@ -130,6 +130,16 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
     }
 }
 
+void AosDeframer::resetSpanningPacket(AosDeframerVc& vc) {
+    // Spanning packet storage is currently inline in the VC state, so there is no
+    // heap allocation to release. Keep reset centralized here so deallocation can be
+    // added if spanning storage becomes dynamically owned later.
+    vc.spanningPacket.active = false;
+    vc.spanningPacket.bytesReceived = 0;
+    vc.spanningPacket.expectedSize = 0;
+    vc.spanningPacket.pvn = 0xFF;
+}
+
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
     for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
         if (m_vcs[vcInd].virtualChannelId == vcId) {
@@ -205,8 +215,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
         if (vcFrameCount != expectedVcFrameCount) {
             this->log_WARNING_HI_VcFrameCountGap(vcId, vcFrameCount, expectedVcFrameCount);
             this->notifyErrorIfConnected(Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
-
-            // Drop anything in progress
+            this->resetSpanningPacket(*vc);
         }
     }
 
@@ -274,9 +283,7 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         this->dataOut_out(0, packetBuffer, packetContext);
         this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
-        vc.spanningPacket.active = false;
-        vc.spanningPacket.bytesReceived = 0;
-        vc.spanningPacket.expectedSize = 0;
+        this->resetSpanningPacket(vc);
         return true;
     }
 
@@ -303,9 +310,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     if (firstHeaderPointer == M_PDUSubfields::FHP_IDLE_DATA_ONLY) {
         // Frame contains only idle data - reset any in-progress spanning packet
         this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
-        vc.spanningPacket.active = false;
-        vc.spanningPacket.bytesReceived = 0;
-        vc.spanningPacket.expectedSize = 0;
+        this->resetSpanningPacket(vc);
         return;
     }
 
@@ -322,9 +327,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     // There is continuation data before the first packet header
     if (firstHeaderPointer > 0 && vc.spanningPacket.active) {
         (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
-        vc.spanningPacket.active = false;
-        vc.spanningPacket.bytesReceived = 0;
-        vc.spanningPacket.expectedSize = 0;
+        this->resetSpanningPacket(vc);
     }
 
     // Move to first packet header

@@ -100,6 +100,9 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Emit an errorNotify port message if the port is connected
     void notifyErrorIfConnected(Ccsds::FrameError error);
 
+    //! Reset per-VC spanning-packet state when the partial packet is no longer valid
+    void resetSpanningPacket(AosDeframerVc& vc);
+
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
     //! \param data The frame buffer (positioned after AOS primary header)
