@@ -71,9 +71,11 @@ void AosDeframerTester::testDataReturn() {
 
     this->invoke_to_dataReturnIn(0, buffer, context);
 
-    ASSERT_from_dataReturnOut_SIZE(1);
+    // dataReturnIn receives back dynamically allocated packet buffers from downstream
+    // and deallocates them via the deallocate port.
+    ASSERT_from_deallocate_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
-    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
 }
 
 void AosDeframerTester::testInvalidScId() {
@@ -897,8 +899,6 @@ void AosDeframerTester::testCrcErrorCountTelemetry() {
         ASSERT_TLM_CrcErrorCount(0, i + 1);
     }
 }
-
-// TODO: errorNotify disconnected test
 
 }  // namespace Ccsds
 

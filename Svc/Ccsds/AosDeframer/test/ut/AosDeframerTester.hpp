@@ -189,7 +189,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     // ----------------------------------------------------------------------
 
     Fw::Buffer from_allocate_handler(FwIndexType portNum, FwSizeType size) override;
-    void from_deallocate_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
   private:
     // ----------------------------------------------------------------------

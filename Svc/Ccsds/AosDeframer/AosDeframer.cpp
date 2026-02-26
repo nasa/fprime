@@ -334,12 +334,8 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         vc.spanningPacket.buffer = allocated;
     } else {
         const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
-
-        if (size > spaceLeft) {
-            return false;
-        }
-
-        const FwSizeType bytesToCopy = size;
+        // Clamp to spaceLeft: extra bytes are data-zone padding that follows the packet end
+        const FwSizeType bytesToCopy = FW_MIN(size, spaceLeft);
         if (bytesToCopy > 0) {
             ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, bytesToCopy);
             vc.spanningPacket.bytesReceived += bytesToCopy;
