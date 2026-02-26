@@ -25,7 +25,7 @@ namespace Ccsds {
 
 AosDeframer::AosDeframer(const char* const compName)
     : AosDeframerComponentBase(compName),
-      m_fixedFrameSize(0),
+      m_fixedFrameSize(ComCfg::AosMaxFrameFixedSize),
       m_fecfEnabled(true),
       m_spacecraftId(ComCfg::SpacecraftId),
       m_crcErrorCount(0) {
@@ -72,6 +72,14 @@ void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16
     // Populate the (single) VC struct
     m_vcs[0].virtualChannelId = vcId;
     m_vcs[0].pvnMask = pvnMask;
+
+    // Clear out the stats
+    m_vcs[0].framesProcessed = 0;
+    m_vcs[0].packetsExtracted = 0;
+    m_vcs[0].vcFrameCount = 0;
+
+    // Clear out the spanningPacket
+    this->abandonSpanningPacket(m_vcs[0]);
 }
 
 // ----------------------------------------------------------------------
@@ -120,8 +128,8 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 }
 
 void AosDeframer::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
-    // Forward the buffer return to the upstream component
-    this->dataReturnOut_out(0, fwBuffer, context);
+    // Deallocate this dynamically allocated packet
+    this->deallocate_out(0, fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -204,8 +212,8 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     // Extract Virtual Channel Frame Count (Section 4.1.2.4)
     // 24 bits in the upper 3 bytes of frameCountAndSignaling
-    U32 vcFrameCount = (header.get_frameCountAndSignaling() >> AOSHeaderSubfields::vcFrameCountOffset) &
-                       AOSHeaderSubfields::vcFrameCountMask;
+    U32 vcFrameCount = (header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountMask) >>
+                       AOSHeaderSubfields::vcFrameCountOffset;
 
     // Extract VC Frame Count Cycle if in use (Section 4.1.2.5.3)
     if ((signalingByte & AOSHeaderSubfields::cycleCountFlagMask) != 0) {
@@ -225,8 +233,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     }
 
     // Store VC frame count in the VC struct for reference (e.g., gap detection)
-    vc->vcFrameCount = vcFrameCount;
-    this->tlmWrite_LatestVcFrameCount(vcFrameCount);
+    this->tlmWrite_LatestVcFrameCount(vc->vcFrameCount = vcFrameCount);
 
     // Update context with extracted values
     context.set_vcId(vcId);
@@ -568,7 +575,8 @@ FwSizeType AosDeframer::extractEppPacket(AosDeframerVc& vc,
 
 U8 AosDeframer::getPacketVersion(U8 firstByte) {
     // PVN is the upper 3 bits per both CCSDS 133.0-B-2 and 133.1-B-3
-    return (firstByte >> 5) & 0x07;
+    // EPP's Subfield array is done in bytes
+    return firstByte >> EPPSubfields::packetVersionOffset;
 }
 
 }  // namespace Ccsds

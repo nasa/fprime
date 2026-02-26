@@ -153,6 +153,7 @@ module Ccsds {
         constant frameVersionOffset = 14
         constant spacecraftIdLsbOffset = 6
         constant virtualChannelIdOffset = 0
+
         constant frameVersionMask = 0xC000      @< 0b1100000000000000 - bits [15:14]
         constant spacecraftIdLsbMask = 0x3FC0   @< 0b0011111111000000 - bits [13:6]
         constant virtualChannelIdMask = 0x003F  @< 0b0000000000111111 - bits [5:0]
@@ -163,13 +164,13 @@ module Ccsds {
         constant cycleCountFlagOffset = 6
         constant spacecraftIdMsbOffset = 4
         constant vcFrameCountCycleOffset = 0
-        constant replayFlagMask = 0x80          @< 0b10000000 - bit [7]
-        constant cycleCountFlagMask = 0x40      @< 0b01000000 - bit [6]
-        constant spacecraftIdMsbMask = 0x30     @< 0b00110000 - bits [5:4]
-        constant vcFrameCountCycleMask = 0x0F   @< 0b00001111 - bits [3:0]
 
-        # VC Frame Count (24 bits)
-        constant vcFrameCountMask = 0x00FFFFFF  @< 24 bits of frame count
+        constant vcFrameCountMask = 0xFFFFFF00  @< 24 bits of frame count [31:8]
+        constant replayFlagMask = 0x00000080          @< 0b10000000 - bit [7]
+        constant cycleCountFlagMask = 0x00000040      @< 0b01000000 - bit [6]
+        constant spacecraftIdMsbMask = 0x00000030     @< 0b00110000 - bits [5:4]
+        constant vcFrameCountCycleMask = 0x0000000F   @< 0b00001111 - bits [3:0]
+
     }
 
     @ Special values for AOS M_PDU First Header Pointer
@@ -197,6 +198,7 @@ module Ccsds {
     # ------------------------------------------------
     @ Bitmask of enabled Packet Version Numbers (PVN)
     @ Each bit position corresponds to a PVN value (bit N set = PVN N is enabled)
+    @ Used to selectively enable one or multiple protocols for Aos Framers/Deframers
     @ SPP PVN = 0, EPP PVN = 7 per CCSDS 133.0-B-2 / 133.1-B-3
     module PvnBitfield {
         constant SPP_MASK   = 0x01  @< 1 << 0 (SPP PVN = 0)
