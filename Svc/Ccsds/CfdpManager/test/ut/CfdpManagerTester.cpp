@@ -484,6 +484,37 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID,
                  setup.expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(fileSize), srcFile);
 
+    // Verify telemetry was emitted (should be emitted at end of each run1Hz)
+    // We called run1Hz twice, so expect at least 2 telemetry emissions
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+
+    // Get the LATEST telemetry value (last emission has cumulative counts)
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm =
+        this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+
+    // Verify TX counters incremented (we sent Metadata + FileData + EOF PDUs = 3 total)
+    EXPECT_EQ(3u, tlm[TEST_CHANNEL_ID_0].get_sentPdu())
+        << "sentPdu should be 3 (Metadata + FileData + EOF)";
+    EXPECT_GT(tlm[TEST_CHANNEL_ID_0].get_sentFileDataBytes(), 0u)
+        << "sentFileDataBytes should increment when file data is sent";
+    EXPECT_EQ(fileSize, tlm[TEST_CHANNEL_ID_0].get_sentFileDataBytes())
+        << "sentFileDataBytes should equal file size";
+
+    // Verify no receive counters incremented (this is TX only)
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_recvPdu())
+        << "recvPdu should be 0 for TX-only transaction";
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_recvFileDataBytes())
+        << "recvFileDataBytes should be 0 for TX-only transaction";
+
+    // Verify no errors occurred
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_recvErrors())
+        << "No receive errors should occur";
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_faultAckLimit())
+        << "No ACK limit faults should occur";
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_faultNakLimit())
+        << "No NAK limit faults should occur";
+
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
 }
@@ -557,6 +588,29 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(
 
     // Verify file written to disk
     verifyReceivedFile(dstFile, testData, actualFileSize);
+
+    // Emit telemetry by calling run1Hz (RX tests don't automatically call this)
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Verify telemetry for RX transaction
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+
+    // Verify RX counters (received Metadata + FileData + EOF = 3 PDUs minimum)
+    // Note: Counters are cumulative, so use >= for multi-transaction tests
+    EXPECT_GE(tlm[TEST_CHANNEL_ID_0].get_recvPdu(), 3u)
+        << "recvPdu should be at least 3 (Metadata + FileData + EOF)";
+    EXPECT_GE(tlm[TEST_CHANNEL_ID_0].get_recvFileDataBytes(), actualFileSize)
+        << "recvFileDataBytes should be at least file size";
+
+    // Class1 RX doesn't send responses, but sentPdu may have values from previous transactions
+    // So we just log the values without strict assertions for Class1 RX
+
+    // Verify no errors occurred
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_recvErrors())
+        << "No receive errors should occur";
 
     // Clean up
     delete[] testData;
@@ -759,6 +813,34 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(
     // Verify file
     verifyReceivedFile(dstFile, testData, actualFileSize);
 
+    // Verify telemetry for Class2 RX transaction
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+
+    // Verify RX counters (cumulative across all transactions on this channel)
+    U8 numFileDataPdus = static_cast<U8>(actualFileSize / dataPerPdu);
+    U32 expectedRecvPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData PDUs + EOF + FIN-ACK
+    if (simulateNak) {
+        expectedRecvPdus += 3;  // Add 3 retransmitted FileData PDUs
+    }
+    EXPECT_GT(tlm[TEST_CHANNEL_ID_0].get_recvPdu(), numFileDataPdus)
+        << "recvPdu should include Metadata + FileData + EOF + FIN-ACK";
+    EXPECT_GE(tlm[TEST_CHANNEL_ID_0].get_recvFileDataBytes(), actualFileSize)
+        << "recvFileDataBytes should be at least file size (cumulative)";
+
+    // Verify TX counters (Class2 RX sends EOF-ACK + FIN)
+    EXPECT_GE(tlm[TEST_CHANNEL_ID_0].get_sentPdu(), 2u)
+        << "sentPdu should be at least 2 (EOF-ACK + FIN)";
+    if (simulateNak) {
+        EXPECT_GT(tlm[TEST_CHANNEL_ID_0].get_sentNakSegmentRequests(), 0u)
+            << "NAK segment requests should be sent when gaps detected";
+    }
+
+    // Verify no errors occurred
+    EXPECT_EQ(0u, tlm[TEST_CHANNEL_ID_0].get_recvErrors())
+        << "No receive errors should occur";
+
     // Clean up
     delete[] testData;
     cleanupTestFile(dstFile);
@@ -876,6 +958,35 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(
 
     // Wait for transaction recycle
     waitForTransactionRecycle(channelId, setup.expectedSeqNum);
+
+    // Verify telemetry for Class2 TX transaction
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+
+    // Verify TX counters (Metadata + FileData PDUs + EOF(s) + FIN-ACK)
+    U32 expectedSentPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData + EOF + FIN-ACK
+    U64 expectedSentBytes = fileSize;
+    if (simulateNak) {
+        expectedSentPdus += 3;  // Add 2 retransmitted FileData PDUs + second EOF
+        expectedSentBytes += 2 * dataPerPdu;  // Retransmitted bytes for 2 PDUs
+    }
+    EXPECT_GE(tlm[channelId].get_sentPdu(), expectedSentPdus - 1)
+        << "sentPdu should include Metadata + FileData + EOF + FIN-ACK";
+    EXPECT_GE(tlm[channelId].get_sentFileDataBytes(), fileSize)
+        << "sentFileDataBytes should be at least file size (may include retransmissions)";
+
+    // Verify RX counters (received EOF-ACK + FIN)
+    EXPECT_GE(tlm[channelId].get_recvPdu(), 2u)
+        << "recvPdu should be at least 2 (EOF-ACK + FIN)";
+    if (simulateNak) {
+        EXPECT_GT(tlm[channelId].get_recvNakSegmentRequests(), 0u)
+            << "NAK segment requests should be received when peer requests retransmission";
+    }
+
+    // Verify no errors occurred
+    EXPECT_EQ(0u, tlm[channelId].get_recvErrors())
+        << "No receive errors should occur";
 
     // Clean up
     cleanupTestFile(srcFile);

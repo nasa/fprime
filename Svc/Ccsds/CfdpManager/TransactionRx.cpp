@@ -234,7 +234,7 @@ void Transaction::rAckTimerTick() {
                     this->m_history->src_eid,
                     this->m_history->seq_num);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_FIN);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.ack_limit;
+                this->m_cfdpManager->incrementFaultAckLimit(this->m_chan_num);
 
                 /* give up on this */
                 this->m_engine->finishTransaction(this, true);
@@ -400,8 +400,7 @@ void Transaction::rInit() {
             this->m_history->seq_num,
             this->m_history->fnames.dst_filename,
             status);
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
-        // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
+        this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
         if (this->m_state == TXN_STATE_R2)
         {
             this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
@@ -457,7 +456,7 @@ Status::T Transaction::rCheckCrc(U32 expected_crc) {
             this->m_history->seq_num,
             expected_crc,
             crc_result);
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.crc_mismatch;
+        this->m_cfdpManager->incrementFaultCrcMismatch(this->m_chan_num);
         ret = Cfdp::Status::ERROR;
     }
 
@@ -510,7 +509,7 @@ void Transaction::r2Complete(int ok_to_send_nak) {
                     this->m_history->src_eid,
                     this->m_history->seq_num);
                 send_fin = true;
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.nak_limit;
+                this->m_cfdpManager->incrementFaultNakLimit(this->m_chan_num);
                 /* don't use CFDP_R2_SetFinTxnStatus because many places in this function set send_fin */
                 this->m_engine->setTxnStatus(this, TXN_STATUS_NAK_LIMIT_REACHED);
                 this->m_state_data.receive.r2.acknak_count = 0; /* reset for fin/ack */
@@ -578,7 +577,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
                     offset,
                     status);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
+                this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                 ret = Cfdp::Status::ERROR;
             }
         }
@@ -598,13 +597,13 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
                 dataSize,
                 static_cast<I32>(write_size));
             this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_write;
+            this->m_cfdpManager->incrementFaultFileWrite(this->m_chan_num);
             ret = Cfdp::Status::ERROR;
         }
         else
         {
             this->m_state_data.receive.cached_pos = static_cast<FileSize>(dataSize) + offset;
-            // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.file_data_bytes += pdu->data_len;
+            this->m_cfdpManager->addRecvFileDataBytes(this->m_chan_num, dataSize);
         }
     }
 
@@ -640,7 +639,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
                     this->m_history->seq_num,
                     this->m_fsize,
                     eof.getFileSize());
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
+                this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
                 ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
             }
         }
@@ -650,7 +649,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
                 this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+            this->m_cfdpManager->incrementRecvErrors(this->m_chan_num);
             ret = Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
         }
     }
@@ -902,7 +901,7 @@ Status::T Transaction::rSubstateSendNak() {
             status = this->m_engine->sendNak(this, nakPdu);
             if (status == Cfdp::Status::SUCCESS) {
                 this->m_flags.rx.fd_nak_sent = true;
-                // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.sent.nak_segment_requests += gapCount;
+                this->m_cfdpManager->addSentNakSegmentRequests(this->m_chan_num, gapCount);
             }
         }
     } else {
@@ -996,7 +995,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                         this->m_state_data.receive.r2.rx_crc_calc_bytes,
                         fileStatus);
                     // this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
+                    this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                     ret = Cfdp::Status::ERROR;
                 }
             }
@@ -1013,7 +1012,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                         static_cast<U32>(expected_read_size),
                         static_cast<I32>(read_size));
                     this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_read;
+                    this->m_cfdpManager->incrementFaultFileRead(this->m_chan_num);
                     ret = Cfdp::Status::ERROR;
                 } else {
                     this->m_crc.update(buf, this->m_state_data.receive.r2.rx_crc_calc_bytes, static_cast<U32>(read_size));
@@ -1095,7 +1094,7 @@ void Transaction::r2RecvFinAck(const Fw::Buffer& buffer) {
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         // Bad ACK PDU
         this->m_cfdpManager->log_WARNING_LO_FailAckPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+        this->m_cfdpManager->incrementRecvErrors(this->m_chan_num);
         return;
     }
 
@@ -1146,7 +1145,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                     this->m_history->seq_num,
                     this->m_fsize,
                     this->m_state_data.receive.r2.eof_size);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_size_mismatch;
+                this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
                 this->r2SetFinTxnStatus(TXN_STATUS_FILE_SIZE_ERROR);
                 success = false;
             }
@@ -1168,9 +1167,8 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                     fname,
                     this->m_history->fnames.dst_filename,
                     fileSysStatus);
-                // this->m_fd = OS_OBJECT_ID_UNDEFINED;
                 this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_rename;
+                this->m_cfdpManager->incrementFaultFileRename(this->m_chan_num);
                 success = false;
             }
             else
@@ -1186,8 +1184,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                         this->m_history->fnames.dst_filename,
                         fileStatus);
                     this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
-                    // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
+                    this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
                     success = false;
                 }
             }
@@ -1208,7 +1205,7 @@ void Transaction::rSendInactivityEvent() {
         this->getClass(),
         this->m_history->src_eid,
         this->m_history->seq_num);
-    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.inactivity_timer;
+    this->m_cfdpManager->incrementFaultInactivityTimer(this->m_chan_num);
 }
 
 // ======================================================================
@@ -1237,10 +1234,6 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
         {
             selected_handler = fd_fn;
         }
-        else
-        {
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.dropped;
-        }
     }
     else if (pduType != Cfdp::T_NONE)
     {
@@ -1259,7 +1252,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
 
                 if (directiveCode < FILE_DIRECTIVE_INVALID_MAX)
                 {
-                    /* the CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */
+                    /* The CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */
                     if (dispatch->state[this->m_state_data.receive.sub_state] != NULL)
                     {
                         selected_handler = dispatch->state[this->m_state_data.receive.sub_state]->fdirective[directiveCode];
@@ -1267,7 +1260,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
                 }
                 else
                 {
-                    // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.spurious;
+                    this->m_cfdpManager->incrementRecvSpurious(this->m_chan_num);
                     this->m_cfdpManager->log_WARNING_LO_RxInvalidDirectiveCode(
                         this->getClass(),
                         this->m_history->src_eid,
@@ -1280,13 +1273,17 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
     }
 
     /*
-     * NOTE: if no handler is selected, this will drop packets on the floor here,
-     * without incrementing any counter.  This was existing behavior.
+     * NOTE: if no handler is selected, this will drop packets on the floor here.
      */
     if (selected_handler != NULL)
     {
         (this->*selected_handler)(buffer);
     }
+    else
+    {
+        this->m_cfdpManager->incrementRecvDropped(this->m_chan_num);
+    }
+
 }
 
 }  // namespace Cfdp

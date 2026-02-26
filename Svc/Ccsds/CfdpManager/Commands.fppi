@@ -65,3 +65,8 @@ async command AbandonTransaction(
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
     entityId: Cfdp.EntityId @< Entity ID of the transaction
 )
+
+@ Command to reset telemetry counters
+async command ResetCounters(
+    channelId: U8 @< Channel ID to reset (0xFF for all channels)
+)

@@ -88,6 +88,136 @@ class CfdpManager final : public CfdpManagerComponentBase {
   //! \param status Transaction completion status
   void sendFileComplete(Svc::SendFileStatus::T status);
 
+  // ----------------------------------------------------------------
+  // Telemetry helper methods (public for Engine/Transaction access)
+  // ----------------------------------------------------------------
+
+  //! Increment receive error counter
+  void incrementRecvErrors(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvErrors(m_channelTelemetry[chanId].get_recvErrors() + 1);
+  }
+
+  //! Increment receive dropped counter
+  void incrementRecvDropped(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvDropped(m_channelTelemetry[chanId].get_recvDropped() + 1);
+  }
+
+  //! Increment receive spurious counter
+  void incrementRecvSpurious(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvSpurious(m_channelTelemetry[chanId].get_recvSpurious() + 1);
+  }
+
+  //! Add to received file data bytes
+  void addRecvFileDataBytes(U8 chanId, U32 bytes) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvFileDataBytes(m_channelTelemetry[chanId].get_recvFileDataBytes() + bytes);
+  }
+
+  //! Add to received NAK segment requests
+  void addRecvNakSegmentRequests(U8 chanId, U32 count) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvNakSegmentRequests(m_channelTelemetry[chanId].get_recvNakSegmentRequests() + count);
+  }
+
+  //! Increment received PDU counter
+  void incrementRecvPdu(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_recvPdu(m_channelTelemetry[chanId].get_recvPdu() + 1);
+  }
+
+  //! Add to sent NAK segment requests
+  void addSentNakSegmentRequests(U8 chanId, U32 count) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_sentNakSegmentRequests(m_channelTelemetry[chanId].get_sentNakSegmentRequests() + count);
+  }
+
+  //! Add sent file data bytes
+  void addSentFileDataBytes(U8 chanId, U32 bytes) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_sentFileDataBytes(m_channelTelemetry[chanId].get_sentFileDataBytes() + bytes);
+  }
+
+  //! Increment sent PDU counter
+  void incrementSentPdu(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_sentPdu(m_channelTelemetry[chanId].get_sentPdu() + 1);
+  }
+
+  //! Increment fault ACK limit counter
+  void incrementFaultAckLimit(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultAckLimit(m_channelTelemetry[chanId].get_faultAckLimit() + 1);
+  }
+
+  //! Increment fault NAK limit counter
+  void incrementFaultNakLimit(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultNakLimit(m_channelTelemetry[chanId].get_faultNakLimit() + 1);
+  }
+
+  //! Increment fault inactivity timer counter
+  void incrementFaultInactivityTimer(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultInactivityTimer(m_channelTelemetry[chanId].get_faultInactivityTimer() + 1);
+  }
+
+  //! Increment fault CRC mismatch counter
+  void incrementFaultCrcMismatch(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultCrcMismatch(m_channelTelemetry[chanId].get_faultCrcMismatch() + 1);
+  }
+
+  //! Increment fault file size mismatch counter
+  void incrementFaultFileSizeMismatch(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileSizeMismatch(m_channelTelemetry[chanId].get_faultFileSizeMismatch() + 1);
+  }
+
+  //! Increment fault file open counter
+  void incrementFaultFileOpen(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileOpen(m_channelTelemetry[chanId].get_faultFileOpen() + 1);
+  }
+
+  //! Increment fault file read counter
+  void incrementFaultFileRead(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileRead(m_channelTelemetry[chanId].get_faultFileRead() + 1);
+  }
+
+  //! Increment fault file write counter
+  void incrementFaultFileWrite(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileWrite(m_channelTelemetry[chanId].get_faultFileWrite() + 1);
+  }
+
+  //! Increment fault file seek counter
+  void incrementFaultFileSeek(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileSeek(m_channelTelemetry[chanId].get_faultFileSeek() + 1);
+  }
+
+  //! Increment fault file rename counter
+  void incrementFaultFileRename(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultFileRename(m_channelTelemetry[chanId].get_faultFileRename() + 1);
+  }
+
+  //! Increment fault directory read counter
+  void incrementFaultDirectoryRead(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    m_channelTelemetry[chanId].set_faultDirectoryRead(m_channelTelemetry[chanId].get_faultDirectoryRead() + 1);
+  }
+
+  //! Get reference to channel telemetry for queue depth updates
+  Cfdp::ChannelTelemetry& getChannelTelemetryRef(U8 chanId) {
+    FW_ASSERT(chanId < Cfdp::NumChannels);
+    return m_channelTelemetry[chanId];
+  }
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -232,6 +362,15 @@ class CfdpManager final : public CfdpManagerComponentBase {
         EntityId entityId //!< Entity ID of the transaction
     ) override;
 
+    //! Handler for command ResetCounters
+    //!
+    //! Command to reset telemetry counters
+    void ResetCounters_cmdHandler(
+        FwOpcodeType opCode, //!< The opcode
+        U32 cmdSeq, //!< The command sequence number
+        U8 channelId //!< Channel ID to reset (0xFF for all channels)
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Private command helper functions
@@ -325,6 +464,9 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // ----------------------------------------------------------------------
     // CFDP Engine - owns all protocol state and operations
     Engine* m_engine;
+
+    //! Telemetry array for all CFDP channels
+    Cfdp::ChannelTelemetryArray m_channelTelemetry;
 
 };
 

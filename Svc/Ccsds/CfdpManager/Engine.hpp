@@ -39,6 +39,7 @@
 #include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/ChannelTelemetrySerializableAc.hpp>
 
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
 namespace Svc {
@@ -507,6 +508,16 @@ class Engine {
      * @param txn  Pointer to the transaction state
      */
     void dispatchTx(Transaction *txn);
+
+    /**
+     * @brief Get reference to channel telemetry for Channel class
+     *
+     * Allows Channel to access telemetry without exposing m_manager
+     * 
+     * @param channelId Channel ID
+     * @return Reference to channel telemetry structure
+     */
+    Cfdp::ChannelTelemetry& getChannelTelemetryRef(U8 channelId);
 
   private:
     // ----------------------------------------------------------------------

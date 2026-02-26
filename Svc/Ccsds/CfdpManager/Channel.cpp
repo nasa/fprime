@@ -321,31 +321,38 @@ void Channel::tickTransactions()
 void Channel::processPlaybackDirectories()
 {
     U32 i;
-    // const int chan_index = (m_channel - m_engine->m_engineData.channels);
+    U8 playback_count = 0;
 
     for (i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i)
     {
         this->processPlaybackDirectory(&m_playback[i]);
-        // this->updatePollPbCounted(&m_playback[i], m_playback[i].busy,
-        //                             &CF_AppData.hk.Payload.channel_hk[chan_index].playback_counter);
+        // Count active playback operations
+        if (m_playback[i].busy)
+        {
+            playback_count++;
+        }
     }
+
+    // Update playback counter telemetry
+    Cfdp::ChannelTelemetry& tlm = m_engine->getChannelTelemetryRef(m_channelId);
+    tlm.set_playbackCounter(playback_count);
 }
 
 void Channel::processPollingDirectories()
 {
     CfdpPollDir* pd;
     U32 i;
-    // TODO BPC: count_check is only used for telemetry
-    // I32 count_check;
+    U8 poll_count = 0;
     Status::T status;
 
     for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = &m_polldir[i];
-        // count_check = 0;
 
         if (pd->enabled)
         {
+            poll_count++;
+
             if ((pd->pb.busy == false) && (pd->pb.num_ts == 0))
             {
                 if ((pd->intervalTimer.getStatus() != Timer::Status::RUNNING) && (pd->intervalSec > 0))
@@ -377,12 +384,12 @@ void Channel::processPollingDirectories()
                 // playback is active, so step it
                 this->processPlaybackDirectory(&pd->pb);
             }
-
-            // count_check = 1;
         }
-
-        // this->updatePollPbCounted(&poll->pb, count_check, &CF_AppData.hk.Payload.channel_hk[chan_index].poll_counter);
     }
+
+    // Update poll counter telemetry
+    Cfdp::ChannelTelemetry& tlm = m_engine->getChannelTelemetryRef(m_channelId);
+    tlm.set_pollCounter(poll_count);
 }
 
 // ----------------------------------------------------------------------
@@ -492,19 +499,101 @@ void Channel::dequeueTransaction(Transaction* txn)
 {
     FW_ASSERT(txn);
     CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
-    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+
+    // Update queue depth telemetry
+    Cfdp::ChannelTelemetry& tlm = m_engine->getChannelTelemetryRef(m_channelId);
+    switch (txn->m_flags.com.q_index) {
+        case Cfdp::QueueId::FREE:
+            
+            tlm.set_queueFree(tlm.get_queueFree() - 1);
+            break;
+        case Cfdp::QueueId::TXA:
+            
+            tlm.set_queueTxActive(tlm.get_queueTxActive() - 1);
+            break;
+        case Cfdp::QueueId::TXW:
+            
+            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() - 1);
+            break;
+        case Cfdp::QueueId::RX:
+            
+            tlm.set_queueRx(tlm.get_queueRx() - 1);
+            break;
+        case Cfdp::QueueId::HIST:
+            
+            tlm.set_queueHistory(tlm.get_queueHistory() - 1);
+            break;
+        case Cfdp::QueueId::PEND:
+        case Cfdp::QueueId::HIST_FREE:
+            // PEND and HIST_FREE queues are not tracked in telemetry
+            break;
+        default:
+            FW_ASSERT(0, txn->m_flags.com.q_index);
+    }
 }
 
 void Channel::moveTransaction(Transaction* txn, QueueId::T queue)
 {
     FW_ASSERT(txn);
+    Cfdp::ChannelTelemetry& tlm = m_engine->getChannelTelemetryRef(m_channelId);
+
+    // Decrement old queue
     CfdpCListRemove(&m_qs[txn->m_flags.com.q_index], &txn->m_cl_node);
-    // FW_ASSERT(CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index]); /* sanity check */
-    // --CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+    switch (txn->m_flags.com.q_index) {
+        case Cfdp::QueueId::FREE:
+            
+            tlm.set_queueFree(tlm.get_queueFree() - 1);
+            break;
+        case Cfdp::QueueId::TXA:
+            
+            tlm.set_queueTxActive(tlm.get_queueTxActive() - 1);
+            break;
+        case Cfdp::QueueId::TXW:
+            
+            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() - 1);
+            break;
+        case Cfdp::QueueId::RX:
+            
+            tlm.set_queueRx(tlm.get_queueRx() - 1);
+            break;
+        case Cfdp::QueueId::HIST:
+            
+            tlm.set_queueHistory(tlm.get_queueHistory() - 1);
+            break;
+        case Cfdp::QueueId::PEND:
+        case Cfdp::QueueId::HIST_FREE:
+            // PEND and HIST_FREE queues are not tracked in telemetry
+            break;
+        default:
+            FW_ASSERT(0, txn->m_flags.com.q_index);
+    }
+
+    // Increment new queue
     CfdpCListInsertBack(&m_qs[queue], &txn->m_cl_node);
     txn->m_flags.com.q_index = queue;
-    // ++CF_AppData.hk.Payload.channel_hk[txn->chan_num].q_size[txn->flags.com.q_index];
+    switch (queue) {
+        case Cfdp::QueueId::FREE:
+            tlm.set_queueFree(tlm.get_queueFree() + 1);
+            break;
+        case Cfdp::QueueId::TXA:
+            tlm.set_queueTxActive(tlm.get_queueTxActive() + 1);
+            break;
+        case Cfdp::QueueId::TXW:
+            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() + 1);
+            break;
+        case Cfdp::QueueId::RX:
+            tlm.set_queueRx(tlm.get_queueRx() + 1);
+            break;
+        case Cfdp::QueueId::HIST:
+            tlm.set_queueHistory(tlm.get_queueHistory() + 1);
+            break;
+        case Cfdp::QueueId::PEND:
+        case Cfdp::QueueId::HIST_FREE:
+            // PEND and HIST_FREE queues are not tracked in telemetry
+            break;
+        default:
+            FW_ASSERT(0, queue);
+    }
 }
 
 void Channel::freeTransaction(Transaction* txn)

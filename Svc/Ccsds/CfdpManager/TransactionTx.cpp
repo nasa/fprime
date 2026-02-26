@@ -175,7 +175,7 @@ void Transaction::sAckTimerTick() {
                 this->m_history->src_eid,
                 this->m_history->seq_num);
             this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_EOF);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.ack_limit;
+            this->m_cfdpManager->incrementFaultAckLimit(this->m_chan_num);
 
             // give up on this
             this->m_engine->finishTransaction(this, true);
@@ -240,7 +240,7 @@ void Transaction::sTick(int *cont /* unused */) {
                     this->m_history->seq_num);
                 this->m_engine->setTxnStatus(this, TXN_STATUS_INACTIVITY_DETECTED);
 
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.inactivity_timer;
+                this->m_cfdpManager->incrementFaultInactivityTimer(this->m_chan_num);
             }
         }
     }
@@ -548,8 +548,7 @@ void Transaction::sSubstateSendMetadata() {
                 this->m_history->seq_num,
                 this->m_history->fnames.src_filename,
                 fileStatus);
-            // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_open;
-            // this->m_fd = OS_OBJECT_ID_UNDEFINED; /* just in case */
+            this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
             success = false;
         }
 
@@ -565,7 +564,7 @@ void Transaction::sSubstateSendMetadata() {
                     this->m_history->src_eid,
                     this->m_history->seq_num,
                     fileStatus);
-                // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.fault.file_seek;
+                this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                 success = false;
             }
             else
@@ -679,7 +678,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         // Bad NAK PDU
         this->m_cfdpManager->log_WARNING_LO_FailNakPduDeserialization(this->getChannelId(), static_cast<I32>(deserStatus));
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+        this->m_cfdpManager->incrementRecvErrors(this->m_chan_num);
         return;
     }
 
@@ -715,8 +714,8 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
             }
         }
 
-        // CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.nak_segment_requests +=
-        //     nak->segment_list.num_segments;
+        this->m_cfdpManager->addRecvNakSegmentRequests(this->m_chan_num,
+            nak.getNumSegments());
         if (bad_sr)
         {
             this->m_cfdpManager->log_WARNING_LO_TxInvalidSegmentRequests(
@@ -732,7 +731,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
             this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num);
-        // ++CF_AppData.hk.Payload.channel_hk[this->m_chan_num].counters.recv.error;
+        this->m_cfdpManager->incrementRecvErrors(this->m_chan_num);
     }
 }
 

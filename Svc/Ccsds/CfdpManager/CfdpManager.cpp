@@ -38,6 +38,11 @@ void CfdpManager ::configure(void)
     this->m_engine = new Engine(this);
     FW_ASSERT(this->m_engine != nullptr);
     this->m_engine->init();
+
+    // Initialize telemetry counters to zero
+    for (U8 i = 0; i < Cfdp::NumChannels; i++) {
+        this->m_channelTelemetry[i] = Cfdp::ChannelTelemetry();
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -49,6 +54,9 @@ void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
     FW_ASSERT(this->m_engine != NULL);
     this->m_engine->cycle();
+
+    // Emit telemetry once per second
+    this->tlmWrite_ChannelTelemetry(this->m_channelTelemetry);
 }
 
 void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
@@ -423,6 +431,37 @@ void CfdpManager ::AbandonTransaction_cmdHandler(
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
+}
+
+void CfdpManager ::ResetCounters_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 channelId)
+{
+    // 0xFF means reset all channels
+    if (channelId == 0xFF)
+    {
+        for (U8 i = 0; i < Cfdp::NumChannels; i++)
+        {
+            this->m_channelTelemetry[i] = Cfdp::ChannelTelemetry();
+        }
+        this->log_ACTIVITY_HI_ResetCounters(0xFF);
+    }
+    // Otherwise reset specific channel
+    else if (channelId < Cfdp::NumChannels)
+    {
+        this->m_channelTelemetry[channelId] = Cfdp::ChannelTelemetry();
+        this->log_ACTIVITY_HI_ResetCounters(channelId);
+    }
+    else
+    {
+        // Invalid channel ID
+        this->log_WARNING_LO_InvalidChannel(channelId, Cfdp::NumChannels - 1);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Emit updated telemetry
+    this->tlmWrite_ChannelTelemetry(this->m_channelTelemetry);
+
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // ----------------------------------------------------------------------

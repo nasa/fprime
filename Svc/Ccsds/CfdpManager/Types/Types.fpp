@@ -81,9 +81,12 @@ module Cfdp {
         recvSpurious: U32 @< Number of spurious PDUs received
         recvFileDataBytes: U64 @< Total file data bytes received
         recvNakSegmentRequests: U32 @< Number of NAK segment requests received from peer
+        recvPdu: U32 @< Number of PDUs received with valid headers
 
         # Sent counters
         sentNakSegmentRequests: U32 @< Number of NAK segment requests sent to peer
+        sentFileDataBytes: U64 @< Total file data bytes sent
+        sentPdu: U32 @< Number of PDUs sent
 
         # Fault counters
         faultAckLimit: U32 @< Number of transactions abandoned due to ACK limit exceeded

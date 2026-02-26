@@ -482,6 +482,7 @@ event FileRemoveFailed(
 ) \
     severity warning low \
     format "Failed to remove file {}, error={}"
+
 @ Transaction was suspended
 event TransactionSuspended(
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
@@ -521,3 +522,9 @@ event TransactionNotFound(
 ) \
     severity warning low \
     format "Transaction ({}, {}) not found"
+
+event ResetCounters(
+    channelId: U8 @< Channel ID reset (0xFF indicates all channels)
+) \
+    severity activity high \
+    format "Reset telemetry counters for channel {}"

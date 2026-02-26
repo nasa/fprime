@@ -224,6 +224,8 @@ Status::T Engine::sendMd(Transaction *txn)
             buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter
+            m_manager->incrementSentPdu(txn->getChannelId());
         }
     }
 
@@ -248,6 +250,9 @@ Status::T Engine::sendFd(Transaction *txn, FileDataPdu& fdPdu)
             // Update buffer size to actual serialized size
             buffer.setSize(sb.getSize());
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter and file data bytes
+            m_manager->incrementSentPdu(txn->getChannelId());
+            m_manager->addSentFileDataBytes(txn->getChannelId(), fdPdu.getDataSize());
         }
     }
 
@@ -300,6 +305,8 @@ Status::T Engine::sendEof(Transaction *txn)
             buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter
+            m_manager->incrementSentPdu(txn->getChannelId());
         }
     }
 
@@ -363,6 +370,8 @@ Status::T Engine::sendAck(Transaction *txn, AckTxnStatus ts, FileDirective dir_c
             buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter
+            m_manager->incrementSentPdu(txn->getChannelId());
         }
     }
 
@@ -415,6 +424,8 @@ Status::T Engine::sendFin(Transaction *txn, FinDeliveryCode dc, FinFileStatus fs
             buffer.setSize(sb.getSize());
             // Send the PDU
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter
+            m_manager->incrementSentPdu(txn->getChannelId());
         }
     }
 
@@ -443,6 +454,8 @@ Status::T Engine::sendNak(Transaction *txn, NakPdu& nakPdu)
             // Update buffer size to actual serialized size
             buffer.setSize(sb.getSize());
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
+            // Increment sent PDU counter
+            m_manager->incrementSentPdu(txn->getChannelId());
         }
     }
 
@@ -476,7 +489,7 @@ Status::T Engine::recvFd(Transaction *txn, const FileDataPdu& fd)
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
         this->m_manager->log_WARNING_HI_FileDataSegmentMetadata();
         this->setTxnStatus(txn, TXN_STATUS_PROTOCOL_ERROR);
-        // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
+        this->m_manager->incrementRecvErrors(txn->getChannelId());
         ret = Cfdp::Status::ERROR;
     }
 
@@ -529,14 +542,14 @@ Status::T Engine::recvNak(Transaction *txn, const NakPdu& pdu)
 
 void Engine::recvDrop(Transaction *txn, const Fw::Buffer& buffer)
 {
-    // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.dropped;
+    this->m_manager->incrementRecvDropped(txn->getChannelId());
     (void)buffer;  // Unused - we're just dropping the PDU
 }
 
 void Engine::recvHold(Transaction *txn, const Fw::Buffer& buffer)
 {
     // anything received in this state is considered spurious
-    // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.spurious;
+    this->m_manager->incrementRecvSpurious(txn->getChannelId());
 
     //
     // Normally we do not expect PDUs for a transaction in holdover, because
@@ -662,7 +675,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
             {
                 // Unexpected PDU type in init state
                 this->m_manager->log_WARNING_LO_UnhandledPduInIdleState();
-                // ++CF_AppData.hk.Payload.channel_hk[txn->getChannelId()].counters.recv.error;
+                this->m_manager->incrementRecvErrors(txn->getChannelId());
             }
         }
 
@@ -695,6 +708,9 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
     Fw::SerializeStatus status = header.fromSerialBuffer(sb);
 
     if (status == Fw::FW_SERIALIZE_OK) {
+        // Increment received PDU counter for PDUs with valid headers
+        this->m_manager->incrementRecvPdu(chan_id);
+
         TransactionSeq transactionSeq = header.getTransactionSeq();
         EntityId sourceEid = header.getSourceEid();
         EntityId destEid = header.getDestEid();
@@ -910,7 +926,7 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
         this->m_manager->log_WARNING_HI_PlaybackDirOpenFailed(
             src_filename,
             dirStatus);
-        // ++CF_AppData.hk.Payload.channel_hk[chan].counters.fault.directory_read;
+        this->m_manager->incrementFaultDirectoryRead(chan);
         status = Cfdp::Status::ERROR;
     }
     else
@@ -1300,6 +1316,11 @@ void Engine::handleNotKeepFile(Transaction *txn)
             m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
         }
     }
+}
+
+Cfdp::ChannelTelemetry& Engine::getChannelTelemetryRef(U8 channelId)
+{
+    return this->m_manager->getChannelTelemetryRef(channelId);
 }
 
 }  // namespace Cfdp
