@@ -145,7 +145,6 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
 }
 
 void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
-    // TODO: Verify we clear the buffer when we send it out
     if (vc.spanningPacket.buffer.isValid()) {
         this->deallocate_out(0, vc.spanningPacket.buffer);
     }
@@ -268,7 +267,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     return true;
 }
 
-// TODO: Refactor extract funcs to instead
+// TODO: Refactor extract funcs to instead populate context + determine size (negative means skip this much idle?)
 bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
     if (!vc.spanningPacket.buffer.isValid()) {
         const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
@@ -434,7 +433,8 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
             if (!isSpp && !isEpp) {
                 this->log_WARNING_HI_InvalidPvn(vc.virtualChannelId, pvn);
             } else {
-                // TODO: Add an error for valid, but disabled Pvn
+                this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId,
+                                                 static_cast<ComCfg::Pvn>(static_cast<ComCfg::Pvn::T>(pvn)));
             }
 
             // Unknown or disabled packet type - stop processing this frame

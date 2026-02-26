@@ -754,7 +754,7 @@ void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
 
     AosDeframer::AosDeframerVc& vc = this->component.m_vcs[0];
     vc.spanningPacket.active = true;
-    vc.spanningPacket.pvn = ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL;
+    vc.spanningPacket.context.set_pvn(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
     vc.spanningPacket.bytesReceived = 2;
     vc.spanningPacket.expectedSize = 4;
     vc.spanningPacket.buffer = this->from_allocate_handler(0, vc.spanningPacket.expectedSize);

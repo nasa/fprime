@@ -172,7 +172,6 @@ class AosDeframer : public AosDeframerComponentBase {
             // TODO: Can I get rid of this?
             FwSizeType expectedSize = 0;  //!< Expected total packet size (0 if unknown)
             // Context to be sent w/ the spanning packet
-            // TODO: Actually switch from the pvn tracking to the full context object
             ComCfg::FrameContext context;
             // TODO: Can I get rid of this?
             bool active = false;  //!< Whether a spanning packet is in progress

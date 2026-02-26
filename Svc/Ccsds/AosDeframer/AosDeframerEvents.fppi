@@ -28,6 +28,11 @@
             severity warning high \
             format "Invalid packet version number {} encountered on VC {}"
 
+        @ Deframing encountered a valid packet version number that is disabled by configuration
+        event DisabledPvn(vcId: U8, pvn: ComCfg.Pvn) \
+            severity warning high \
+            format "Valid packet version number {} encountered on VC {} but it is disabled by configuration"
+
         @ Deframing encountered an EPP packet with a malformed header (CCSDS 133.1-B-3)
         event InvalidEppPacket() \
             severity warning high \
