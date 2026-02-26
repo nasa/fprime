@@ -142,8 +142,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param data Pointer to data bytes to append
     //! \param size Number of bytes to append
     //! \param context Frame context for output
-    //! \return true if the spanning packet is now complete and was sent downstream
-    bool appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context);
+    void appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context);
 
     //! Map frame context onto the appropriate virtual channel struct
     //! \param vcId the virtual channel id to lookup

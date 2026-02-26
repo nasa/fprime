@@ -766,9 +766,8 @@ void AosDeframerTester::testAppendToSpanningPacketEppCompletion() {
 
     U8 tail[2] = {0x00, 0xAA};
     ComCfg::FrameContext context;
-    const bool complete = this->component.appendToSpanningPacket(vc, tail, sizeof(tail), context);
+    this->component.appendToSpanningPacket(vc, tail, sizeof(tail), context);
 
-    ASSERT_TRUE(complete);
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), static_cast<FwSizeType>(4));
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);

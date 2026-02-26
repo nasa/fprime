@@ -268,7 +268,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
 }
 
 // TODO: Refactor extract funcs to instead populate context + determine size (negative means skip this much idle?)
-bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
+void AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
     if (!vc.spanningPacket.buffer.isValid()) {
         const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
         const FwSizeType toHeader = FW_MIN(size, headerCap - vc.spanningPacket.bytesReceived);
@@ -307,17 +307,12 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
             }
         }
 
-        if (vc.spanningPacket.expectedSize == 0) {
-            return false;
-        }
-
         Fw::Buffer allocated = this->allocate_out(0, vc.spanningPacket.expectedSize);
         if (!allocated.isValid() || allocated.getSize() < vc.spanningPacket.expectedSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId,
                                                            static_cast<U8>(vc.spanningPacket.context.get_pvn()),
                                                            vc.spanningPacket.expectedSize);
             this->abandonSpanningPacket(vc);
-            return false;
         }
 
         ::memcpy(allocated.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
@@ -353,10 +348,7 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         vc.spanningPacket.buffer = Fw::Buffer();
         // Buffer won't be returned now since we cleared the handle
         this->abandonSpanningPacket(vc);
-        return true;
     }
-
-    return false;
 }
 
 void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::FrameContext& context) {
@@ -387,8 +379,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     if (firstHeaderPointer == M_PDUSubfields::FHP_NO_PACKET_START) {
         // Entire data zone is continuation of previous packet
         if (vc.spanningPacket.active) {
-            // TODO: Why have a return code for this if we dont use it?
-            (void)this->appendToSpanningPacket(vc, dataZone, dataZoneSize, context);
+            this->appendToSpanningPacket(vc, dataZone, dataZoneSize, context);
         }
         // If no spanning packet active, this continuation data cannot be used
         return;
@@ -396,7 +387,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
 
     // There is continuation data before the first packet header
     if (firstHeaderPointer > 0 && vc.spanningPacket.active) {
-        (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
+        this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
         // We must be done w/ the prior packet since we have a FHP
         this->abandonSpanningPacket(vc);
     }
@@ -445,7 +436,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
             vc.spanningPacket.buffer = Fw::Buffer();
             vc.spanningPacket.bytesReceived = 0;
             vc.spanningPacket.expectedSize = 0;
-            (void)this->appendToSpanningPacket(vc, packetStart, remainingBytes, context);
+            this->appendToSpanningPacket(vc, packetStart, remainingBytes, context);
             break;
         }
 
