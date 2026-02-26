@@ -476,8 +476,9 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
     }
 
     // Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)
-    // TODO: Work w/ U16 so we can use the masks and offsets from Types.fpp
-    U16 apid = static_cast<U16>(((payloadStart[0] & 0x07) << 8) | payloadStart[1]);
+    const U16 packetIdentification =
+        static_cast<U16>((static_cast<U16>(payloadStart[0]) << 8) | static_cast<U16>(payloadStart[1]));
+    U16 apid = static_cast<U16>(packetIdentification & SpacePacketSubfields::ApidMask);
     if (apid == static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET)) {
         // Skip idle packets, don't output
         return totalPacketSize;
