@@ -116,9 +116,6 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param payloadSize Available bytes in the data zone
     //! \param context The frame context
     //! \return Number of bytes consumed (packet size), or 0 if incomplete
-    //! \note payloadStart points into the incoming frame buffer. In synchronous port mode this
-    //!       is safe since the frame is not returned until extractPackets returns. For async
-    //!       consumers a copy may be needed before the frame buffer is returned.
     FwSizeType extractSppPacket(AosDeframerVc& vc,
                                 U8* payloadStart,
                                 FwSizeType payloadSize,
@@ -130,7 +127,6 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param payloadSize Available bytes in the data zone
     //! \param context The frame context
     //! \return Number of bytes consumed (packet size), or 0 if incomplete/invalid
-    //! \note See extractSppPacket note regarding buffer ownership.
     FwSizeType extractEppPacket(AosDeframerVc& vc,
                                 U8* payloadStart,
                                 FwSizeType payloadSize,
@@ -152,7 +148,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Map frame context onto the appropriate virtual channel struct
     //! \param vcId the virtual channel id to lookup
     //! \return pointer to the vc struct if vcId is known, nullptr otherwise
-    //! TODO: Implement multi-VC support; currently always returns m_vcs[0] or nullptr
+    //! TODO: Implement multi-VC support; currently always returns &m_vcs[0] or nullptr
     AosDeframerVc* getVcStruct(const U8 vcId);
 
     //! Per-virtual-channel state, mirroring the AosFramer::AosVc pattern for future multi-VC support
@@ -170,12 +166,15 @@ class AosDeframer : public AosDeframerComponentBase {
         // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
         struct SpanningPacketState {
             static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header bytes needed to determine size
-            Fw::Buffer buffer;                                 //!< Dynamically-allocated packet buffer (if size known)
+            Fw::Buffer buffer;                                 //!< Dynamically-allocated packet buffer
             U8 headerBuf[HEADER_BUF_SIZE];                     //!< Header bytes accumulated before allocation
             FwSizeType bytesReceived = 0;                      //!< Bytes received so far
-            FwSizeType expectedSize = 0;                       //!< Expected total packet size (0 if unknown)
-            //! PVN of spanning packet; valid only when active=true
-            ComCfg::Pvn pvn = ComCfg::Pvn::INVALID_UNINITIALIZED;
+            // TODO: Can I get rid of this?
+            FwSizeType expectedSize = 0;  //!< Expected total packet size (0 if unknown)
+            // Context to be sent w/ the spanning packet
+            // TODO: Actually switch from the pvn tracking to the full context object
+            ComCfg::FrameContext context;
+            // TODO: Can I get rid of this?
             bool active = false;  //!< Whether a spanning packet is in progress
         } spanningPacket;
     };
@@ -193,7 +192,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! FECF CRC error counter - per physical channel (not per-VC)
     U32 m_crcErrorCount = 0;
 
-    //! TODO: Implement multiple VCs - currently always returns m_vcs[0]
+    //! TODO: Multi VC | Implement multiple VCs - currently always returns &m_vcs[0]
     AosDeframerVc m_vcs[AosDeframer_NumVcs];  //!< Our one AOS Virtual Channel (for now)
 };
 

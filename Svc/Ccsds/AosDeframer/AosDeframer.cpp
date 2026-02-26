@@ -31,9 +31,7 @@ AosDeframer::AosDeframer(const char* const compName)
       m_crcErrorCount(0) {
     // Initialize VC struct
     for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
-        m_vcs[vcInd].vcStructIndex = 0;
-        m_vcs[vcInd].virtualChannelId = 0;
-        m_vcs[vcInd].pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK;
+        m_vcs[vcInd].vcStructIndex = vcInd;
     }
 }
 
@@ -41,12 +39,14 @@ AosDeframer::~AosDeframer() {}
 
 void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16 spacecraftId, U8 vcId, U8 pvnMask) {
     // Validate frame size is within bounds
-    FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
+    FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize),
+              static_cast<FwAssertArgType>(ComCfg::AosMaxFrameFixedSize));
 
     // Frame must be large enough for header + M_PDU header + optional trailer
     const FwSizeType minSize = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
                                (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0);
-    FW_ASSERT(fixedFrameSize > minSize, static_cast<FwAssertArgType>(fixedFrameSize));
+    FW_ASSERT(fixedFrameSize > minSize, static_cast<FwAssertArgType>(fixedFrameSize),
+              static_cast<FwAssertArgType>(minSize));
 
     // Spacecraft ID is 10 bits (per CCSDS 732.0-B-5 Section 4.1.2.2)
     FW_ASSERT((spacecraftId & 0xFC00) == 0, static_cast<FwAssertArgType>(spacecraftId));
@@ -73,13 +73,15 @@ void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16
     m_vcs[0].virtualChannelId = vcId;
     m_vcs[0].pvnMask = pvnMask;
 
-    // Clear out the stats
-    m_vcs[0].framesProcessed = 0;
-    m_vcs[0].packetsExtracted = 0;
-    m_vcs[0].vcFrameCount = 0;
+    // Clear out all VC stats
+    for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
+        m_vcs[vcInd].framesProcessed = 0;
+        m_vcs[vcInd].packetsExtracted = 0;
+        m_vcs[vcInd].vcFrameCount = 0;
 
-    // Clear out the spanningPacket
-    this->abandonSpanningPacket(m_vcs[0]);
+        // Clear out the spanningPacket
+        this->abandonSpanningPacket(m_vcs[vcInd]);
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -143,6 +145,7 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
 }
 
 void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
+    // TODO: Verify we clear the buffer when we send it out
     if (vc.spanningPacket.buffer.isValid()) {
         this->deallocate_out(0, vc.spanningPacket.buffer);
     }
@@ -150,7 +153,7 @@ void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     vc.spanningPacket.active = false;
     vc.spanningPacket.bytesReceived = 0;
     vc.spanningPacket.expectedSize = 0;
-    vc.spanningPacket.pvn = ComCfg::Pvn::INVALID_UNINITIALIZED;
+    vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
 }
 
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
@@ -186,12 +189,10 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
-    U8 signalingByte = static_cast<U8>(header.get_frameCountAndSignaling() & 0xFF);
     U16 spacecraftId = static_cast<U16>(((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
-                                         AOSHeaderSubfields::spacecraftIdLsbOffset) |
-                                        (static_cast<U16>((signalingByte & AOSHeaderSubfields::spacecraftIdMsbMask) >>
-                                                          AOSHeaderSubfields::spacecraftIdMsbOffset)
-                                         << 8));
+                                         AOSHeaderSubfields::spacecraftIdLsbOffset));
+    spacecraftId |= static_cast<U16>((header.get_frameCountAndSignaling() & AOSHeaderSubfields::spacecraftIdMsbMask)
+                                     << (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     if (spacecraftId != m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraftId, m_spacecraftId);
@@ -204,7 +205,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     AosDeframerVc* vc = this->getVcStruct(vcId);
 
     if (vc == nullptr) {
-        // TODO: Handle logging all valid vcIds
+        // TODO: Multi VC | Handle logging all valid vcIds
         this->log_ACTIVITY_LO_InvalidVcId(vcId, m_vcs[0].virtualChannelId);
         this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_VCID);
         return vc;
@@ -216,8 +217,8 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
                        AOSHeaderSubfields::vcFrameCountOffset;
 
     // Extract VC Frame Count Cycle if in use (Section 4.1.2.5.3)
-    if ((signalingByte & AOSHeaderSubfields::cycleCountFlagMask) != 0) {
-        U8 vcFrameCountCycle = signalingByte & AOSHeaderSubfields::vcFrameCountCycleMask;
+    if ((header.get_frameCountAndSignaling() & AOSHeaderSubfields::cycleCountFlagMask) != 0) {
+        const U8 vcFrameCountCycle = header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountCycleMask;
         // Extend the 24-bit frame count with the 4-bit cycle count
         vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
     }
@@ -228,6 +229,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
         if (vcFrameCount != expectedVcFrameCount) {
             this->log_WARNING_HI_VcFrameCountGap(vcId, vcFrameCount, expectedVcFrameCount);
             this->notifyErrorIfConnected(Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
+            // Other errors will implicitly drop their spanning packet once we finally lock back onto a valid frame
             this->abandonSpanningPacket(*vc);
         }
     }
@@ -266,6 +268,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     return true;
 }
 
+// TODO: Refactor extract funcs to instead
 bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context) {
     if (!vc.spanningPacket.buffer.isValid()) {
         const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
@@ -276,12 +279,12 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         }
 
         if (vc.spanningPacket.expectedSize == 0) {
-            if (vc.spanningPacket.pvn == ComCfg::Pvn::SPACE_PACKET_PROTOCOL &&
+            if (vc.spanningPacket.context.get_pvn() == ComCfg::Pvn::SPACE_PACKET_PROTOCOL &&
                 vc.spanningPacket.bytesReceived >= SpacePacketHeader::SERIALIZED_SIZE) {
                 const U16 dataLength =
                     static_cast<U16>((vc.spanningPacket.headerBuf[4] << 8) | vc.spanningPacket.headerBuf[5]);
                 vc.spanningPacket.expectedSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
-            } else if (vc.spanningPacket.pvn == ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL &&
+            } else if (vc.spanningPacket.context.get_pvn() == ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL &&
                        vc.spanningPacket.bytesReceived >= 1U) {
                 const U8 firstByte = vc.spanningPacket.headerBuf[0];
                 const U8 packetType =
@@ -311,7 +314,8 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
 
         Fw::Buffer allocated = this->allocate_out(0, vc.spanningPacket.expectedSize);
         if (!allocated.isValid() || allocated.getSize() < vc.spanningPacket.expectedSize) {
-            this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, static_cast<U8>(vc.spanningPacket.pvn),
+            this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId,
+                                                           static_cast<U8>(vc.spanningPacket.context.get_pvn()),
                                                            vc.spanningPacket.expectedSize);
             this->abandonSpanningPacket(vc);
             return false;
@@ -331,7 +335,12 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
         vc.spanningPacket.buffer = allocated;
     } else {
         const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
-        const FwSizeType bytesToCopy = FW_MIN(size, spaceLeft);
+
+        if (size > spaceLeft) {
+            return false;
+        }
+
+        const FwSizeType bytesToCopy = size;
         if (bytesToCopy > 0) {
             ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, bytesToCopy);
             vc.spanningPacket.bytesReceived += bytesToCopy;
@@ -342,14 +351,12 @@ bool AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType
     if (vc.spanningPacket.expectedSize > 0 && vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
         vc.spanningPacket.buffer.setSize(vc.spanningPacket.expectedSize);
 
-        ComCfg::FrameContext packetContext = context;
-        packetContext.set_pvn(vc.spanningPacket.pvn);
-
-        this->dataOut_out(0, vc.spanningPacket.buffer, packetContext);
+        this->dataOut_out(0, vc.spanningPacket.buffer, vc.spanningPacket.context);
         this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
         // Ownership of the buffer has transferred downstream; clear local handle before consolidating state reset.
         vc.spanningPacket.buffer = Fw::Buffer();
+        // Buffer won't be returned now since we cleared the handle
         this->abandonSpanningPacket(vc);
         return true;
     }
@@ -385,6 +392,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     if (firstHeaderPointer == M_PDUSubfields::FHP_NO_PACKET_START) {
         // Entire data zone is continuation of previous packet
         if (vc.spanningPacket.active) {
+            // TODO: Why have a return code for this if we dont use it?
             (void)this->appendToSpanningPacket(vc, dataZone, dataZoneSize, context);
         }
         // If no spanning packet active, this continuation data cannot be used
@@ -394,14 +402,18 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
     // There is continuation data before the first packet header
     if (firstHeaderPointer > 0 && vc.spanningPacket.active) {
         (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer), context);
+        // We must be done w/ the prior packet since we have a FHP
         this->abandonSpanningPacket(vc);
     }
 
     // Move to first packet header
     FwSizeType currentOffset = firstHeaderPointer;
 
+    // Max Bound is a sequence of 1 byte EPP Idle Packets
+    const FwIndexType maxIters = static_cast<FwIndexType>(dataZoneSize - firstHeaderPointer);
+
     // Extract packets starting at First Header Pointer
-    for (; currentOffset < dataZoneSize;) {
+    for (FwIndexType iter = 0; iter < maxIters && currentOffset < dataZoneSize; iter++) {
         U8* packetStart = dataZone + currentOffset;
         FwSizeType remainingBytes = dataZoneSize - currentOffset;
 
@@ -421,7 +433,10 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
         } else {
             if (!isSpp && !isEpp) {
                 this->log_WARNING_HI_InvalidPvn(vc.virtualChannelId, pvn);
+            } else {
+                // TODO: Add an error for valid, but disabled Pvn
             }
+
             // Unknown or disabled packet type - stop processing this frame
             break;
         }
@@ -429,8 +444,8 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::Fr
         if (packetSize == 0) {
             // Packet spans to next frame - save state
             vc.spanningPacket.active = true;
-            vc.spanningPacket.pvn =
-                isSpp ? ComCfg::Pvn::SPACE_PACKET_PROTOCOL : ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL;
+            vc.spanningPacket.context.set_pvn(isSpp ? ComCfg::Pvn::SPACE_PACKET_PROTOCOL
+                                                    : ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
             vc.spanningPacket.buffer = Fw::Buffer();
             vc.spanningPacket.bytesReceived = 0;
             vc.spanningPacket.expectedSize = 0;
@@ -453,14 +468,15 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
 
     // Parse packet data length from header (bytes 4-5)
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
-    U16 dataLength = static_cast<U16>((payloadStart[4] << 8) | payloadStart[5]);
-    FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + dataLength + 1;
+    U16 lengthField = static_cast<U16>((payloadStart[4] << 8) | payloadStart[5]);
+    FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + lengthField + 1;
 
     if (payloadSize < totalPacketSize) {
         return 0;  // Incomplete packet - spans to next frame
     }
 
     // Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)
+    // TODO: Work w/ U16 so we can use the masks and offsets from Types.fpp
     U16 apid = static_cast<U16>(((payloadStart[0] & 0x07) << 8) | payloadStart[1]);
     if (apid == static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET)) {
         // Skip idle packets, don't output
@@ -468,6 +484,7 @@ FwSizeType AosDeframer::extractSppPacket(AosDeframerVc& vc,
     }
 
     // Create buffer pointing to the packet data within the incoming frame buffer
+    // TODO: Allocate a buffer for this (since we won't own it very shortly)
     Fw::Buffer packetBuffer(payloadStart, totalPacketSize);
 
     // Update context

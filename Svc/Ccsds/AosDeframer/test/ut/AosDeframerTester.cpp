@@ -898,6 +898,8 @@ void AosDeframerTester::testCrcErrorCountTelemetry() {
     }
 }
 
+// TODO: errorNotify disconnected test
+
 }  // namespace Ccsds
 
 }  // namespace Svc

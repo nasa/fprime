@@ -20,6 +20,7 @@ module ComCfg {
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
 
+    # TODO: Do I want this in context, or can I put this into Types.fpp
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
         SPACE_PACKET_PROTOCOL         = 0x0   @< Fully Featured CCSDS Space Packet Protocol

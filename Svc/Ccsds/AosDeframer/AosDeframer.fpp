@@ -10,7 +10,7 @@ module Ccsds {
 
         constant NumVcs = 1
 
-        # TODO: figure out storage and telemetry round up of per VC stat counters
+        # TODO: Multi VC | figure out storage and telemetry round up of per VC stat counters
         type VCxU32 = U32
         type VCxU8 = U8
 
@@ -23,7 +23,6 @@ module Ccsds {
         import Svc.BufferAllocation
 
         include "AosDeframerEvents.fppi"
-
         include "AosDeframerTelem.fppi"
 
         ###############################################################################

@@ -52,6 +52,7 @@ module Ccsds {
     # ------------------------------------------------
     @ Bit masks and offsets for Encapsulation Packet Protocol first byte
     @ Per CCSDS 133.1-B-3
+    # TODO: Are all these EPP masks & enums right?
     module EPPSubfields {
         # First octet masks (8 bits)
         constant packetVersionMask = 0xE0         @< 0b11100000 - bits [7:5]
