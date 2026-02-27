@@ -47,3 +47,8 @@
         event VcFrameCountGap(vcId: U8, received: U32, expected: U32) \
             severity warning high \
             format "VC frame count gap on VC {}. Received {} | Expected next count {}"
+
+        @ A spanning packet was abandoned before receiving all expected bytes
+        event SpanningPacketAbandoned(vcId: U8, pvn: ComCfg.Pvn, bytesReceived: FwSizeType, bytesExpected: FwSizeType) \
+            severity warning high \
+            format "Spanning packet on VC {} ({}) abandoned after receiving {} of {} expected bytes"

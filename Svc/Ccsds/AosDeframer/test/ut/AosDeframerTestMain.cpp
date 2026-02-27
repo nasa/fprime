@@ -110,6 +110,11 @@ TEST(AosDeframer, testSpanningPacketAbandonedOnIdleFrame) {
     tester.testSpanningPacketAbandonedOnIdleFrame();
 }
 
+TEST(AosDeframer, testSpanningPacketAbandonedOnPrematureFhp) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSpanningPacketAbandonedOnPrematureFhp();
+}
+
 TEST(AosDeframer, testSppHeaderSpansFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testSppHeaderSpansFrame();

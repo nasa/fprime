@@ -120,8 +120,11 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         return;
     }
 
-    // Set the default context
-    vc->spanningPacket.context = packetContext;
+    // Set the default context only if we haven't for this packet already
+    // Otherwise our PVN tracker gets overwritten
+    if (!vc->spanningPacket.buffer.isValid()) {
+        vc->spanningPacket.context = packetContext;
+    }
 
     // Update telemetry
     this->tlmWrite_FramesProcessed(++vc->framesProcessed);
@@ -150,6 +153,9 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
 
 void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     if (vc.spanningPacket.buffer.isValid()) {
+        this->log_WARNING_HI_SpanningPacketAbandoned(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
+                                                     vc.spanningPacket.bytesReceived,
+                                                     vc.spanningPacket.buffer.getSize());
         this->deallocate_out(0, vc.spanningPacket.buffer);
     }
     vc.spanningPacket.buffer = Fw::Buffer();
@@ -465,7 +471,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
 
 FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize) {
     // Per CCSDS 133.1-B-3 Section 4.1.2.1.1, EPP minimum header is 1 byte
-    // Since we IDed this as an EPP we had the 1 byte to read the PVN already
+    // Since we identified this as an EPP we had the 1 byte to read the PVN already
     FW_ASSERT(payloadSize > 0, static_cast<FwAssertArgType>(payloadSize));
 
     // Parse first byte

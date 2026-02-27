@@ -118,6 +118,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet dropped when an idle frame arrives mid-reassembly
     void testSpanningPacketAbandonedOnIdleFrame();
 
+    //! Test spanning packet silently dropped when FHP arrives before the packet's expected end
+    void testSpanningPacketAbandonedOnPrematureFhp();
+
     //! Test SPP packet whose header is split across a frame boundary
     void testSppHeaderSpansFrame();
 

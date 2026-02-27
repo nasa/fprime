@@ -61,6 +61,8 @@ void AosDeframerTester::testNominalDeframing() {
     ASSERT_TLM_FramesProcessed(0, 1);
     ASSERT_TLM_PacketsExtracted_SIZE(1);
     ASSERT_TLM_PacketsExtracted(0, 1);
+    ASSERT_TLM_LatestVcFrameCount_SIZE(1);
+    ASSERT_TLM_LatestVcFrameCount(0, 0);  // vcCount=0 (assembleFrameBuffer default)
 }
 
 void AosDeframerTester::testDataReturn() {
@@ -500,6 +502,8 @@ void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
     ASSERT_from_dataOut_SIZE(1);  // Only the fresh packet — partial spanning packet was dropped
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), freshSize);
     ASSERT_EVENTS_VcFrameCountGap_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE, 286);
 }
 
 void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
@@ -526,6 +530,40 @@ void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
     ASSERT_from_dataOut_SIZE(0);  // Partial spanning packet dropped
     ASSERT_EVENTS_IdleFrame_SIZE(1);
     ASSERT_EVENTS_IdleFrame(0, 0);
+    ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE, 286);
+}
+
+void AosDeframerTester::testSpanningPacketAbandonedOnPrematureFhp() {
+    this->configureDefault();
+
+    // Packet A: 400 bytes total (6-byte SPP header + 394-byte data), exceeds data zone by 154 bytes
+    U8 packetA[400];
+    this->createSppPacket(packetA, 0x070, 394);
+
+    ComCfg::FrameContext context;
+
+    // Frame 0 (vcCount=0): FHP=0, first 246 bytes of packet A accumulated in spanning packet
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(packetA, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+    ASSERT_from_dataOut_SIZE(0);  // Packet A incomplete
+    this->clearHistory();
+
+    // Frame 1 (vcCount=1): FHP=50, only 50 continuation bytes precede packet B
+    // Packet A needs 154 more bytes but only gets 50 — spanning packet is abandoned
+    U8 payload2[TEST_DATA_ZONE_SIZE];
+    const FwSizeType fhp = 50;
+    ::memcpy(payload2, packetA + TEST_DATA_ZONE_SIZE, fhp);  // 50 bytes of packet A's tail
+    FwSizeType sizeB = this->createSppPacket(payload2 + fhp, 0x071, 20);
+    Fw::Buffer buffer2 =
+        this->assembleFrameBuffer(payload2, fhp + sizeB, static_cast<U16>(fhp), ComCfg::SpacecraftId, 0, 1);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    // Packet A abandoned at the FHP boundary; only packet B extracted
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sizeB);
+    ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE + fhp, 400);
 }
 
 void AosDeframerTester::testSppHeaderSpansFrame() {
@@ -893,12 +931,14 @@ void AosDeframerTester::testFrameCountTelemetry() {
 
     ComCfg::FrameContext context;
 
-    // Send 3 frames
+    // Send 3 frames with incrementing vcCount to avoid gap detection
     for (U32 i = 0; i < 3; i++) {
         this->clearHistory();
-        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
+        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, 0, i);
         this->invoke_to_dataIn(0, buffer, context);
         ASSERT_TLM_FramesProcessed(0, i + 1);
+        ASSERT_TLM_PacketsExtracted(0, i + 1);
+        ASSERT_TLM_LatestVcFrameCount(0, i);
     }
 }
 
