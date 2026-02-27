@@ -68,9 +68,9 @@ Parameters are specific variables stored in non-volatile memory. Parameters are 
 
 ## Data Products
 
-Data products are structured file data for downlink. They defined via the FPP modeling language as cotainers and data product records.
+Data products are structured file data for downlink. They defined via the FPP modeling language as containers and data product records.
 
-Containers define the existance of the data product and can include the following options:
+Containers define the existence of the data product and can include the following options:
 
 - `identifier` - The unique name of the container
 - `id` - A unique numeric value for the container (integer)
