@@ -51,41 +51,23 @@ module Ccsds {
     # Encapsulation Packet Protocol
     # ------------------------------------------------
     @ Bit masks and offsets for Encapsulation Packet Protocol first byte
-    @ Per CCSDS 133.1-B-3
-    # TODO: Are all these EPP masks & enums right?
+    @ Per CCSDS 133.1-B-3 section 4.1.2.1
     module EPPSubfields {
         # First octet masks (8 bits)
-        constant packetVersionMask = 0xE0         @< 0b11100000 - bits [7:5]
-        constant packetTypeMask = 0x10            @< 0b00010000 - bit [4]
-        constant protocolIdMask = 0x0F            @< 0b00001111 - bits [3:0] (encapsulation packet)
-        constant lengthOfLengthMask = 0x0F        @< 0b00001111 - bits [3:0] (idle packet)
+        constant packetVersionMask   = 0xE0  @< 0b11100000 - bits [7:5]
+        constant protocolIdMask      = 0x1C  @< 0b00011100 - bits [4:2]
+        constant lengthOfLengthMask  = 0x03  @< 0b00000011 - bits [1:0]
 
         constant packetVersionOffset = 5
-        constant packetTypeOffset = 4
+        constant protocolIdOffset    = 2
     }
 
-    @ Packet types for Encapsulation Packet Protocol per CCSDS 133.1-B-3 Section 4.1.3
-    dictionary enum EppPacketType : U8 {
-        Encapsulation     = 0  @< Encapsulation Packet (data)
-        EncapsulationIdle = 1  @< Encapsulation Idle Packet
-    } default Encapsulation
-
-    @ Protocol IDs for EPP encapsulation packets per CCSDS 133.1-B-3 Section 4.2.1
+    @ Protocol IDs for EPP encapsulation packets per CCSDS 133.1-B-3 Section 4.1.2.3.3
     dictionary enum EppProtocolId : U8 {
-        Extended        = 0x00  @< Extended Protocol ID
-        IPv4Extension   = 0x02  @< Internet Protocol Extension (IPv4/IPv6)
+        Idle            = 0x00  @< 0b000 - Encapsulation Idle Packet
+        Extended        = 0x06  @< 0b110 - Extended Protocol ID Field Driven
         MissionSpecific = 0x07  @< Mission-specific
-    } default Extended
-
-    @ Length of Length field values for EPP idle packets per CCSDS 133.1-B-3 Section 4.1.3.2
-    @ Specifies how many octets are used for the packet length field
-    dictionary enum EppLengthOfLength : U8 {
-        Fill        = 0x00  @< Fill packet - no length field, consumes remaining data zone
-        OneOctet    = 0x01  @< 1 octet length field
-        TwoOctets   = 0x02  @< 2 octet length field
-        FourOctets  = 0x04  @< 4 octet length field
-        EightOctets = 0x08  @< 8 octet length field
-    } default OneOctet
+    } default MissionSpecific
 
     # ------------------------------------------------
     # TC

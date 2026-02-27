@@ -49,7 +49,7 @@
             format "Received frame containing only idle data on VC {}"
 
         @ Spanning packet buffer allocation failed; packet dropped
-        event SpanningPacketAllocFailed(vcId: U8, pvn: U8, packetSize: FwSizeType) \
+        event SpanningPacketAllocFailed(vcId: U8, pvn: ComCfg.Pvn, packetSize: FwSizeType) \
             severity warning high \
             format "Spanning packet allocation failed on VC {} for {} packet of {} bytes; packet dropped"
 

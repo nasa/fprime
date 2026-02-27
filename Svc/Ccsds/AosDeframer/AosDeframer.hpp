@@ -107,30 +107,26 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
     //! \param data The frame buffer (positioned after AOS primary header)
-    //! \param context The frame context
-    void extractPackets(AosDeframerVc& vc, Fw::Buffer& data, ComCfg::FrameContext& context);
+    void extractPackets(AosDeframerVc& vc, Fw::Buffer& data);
 
-    //! Extract a Space Packet from the M_PDU data zone per CCSDS 133.0-B-2
+    //! Determine the validitiy and size, and idle status of a packet
     //! \param vc The virtual channel state
+    //! \param packetStart Pointer to start of packet data within the incoming frame buffer
+    //! \param remainingBytes Available bytes in the data zone
+    //! \return Number of bytes the packet spans, or 0 if not yet known/idle
+    FwSizeType sizePacket(AosDeframerVc& vc, const U8* const packetStart, FwSizeType remainingBytes);
+
+    //! Attempt to parse a Space Packet header from the M_PDU data zone per CCSDS 133.0-B-2
     //! \param payloadStart Pointer to start of packet data within the incoming frame buffer
     //! \param payloadSize Available bytes in the data zone
-    //! \param context The frame context
-    //! \return Number of bytes consumed (packet size), or 0 if incomplete
-    FwSizeType extractSppPacket(AosDeframerVc& vc,
-                                U8* payloadStart,
-                                FwSizeType payloadSize,
-                                ComCfg::FrameContext& context);
+    //! \return Number of bytes the packet spans, or 0 not yet known
+    FwSizeType sizeSppPacket(const U8* const payloadStart, FwSizeType payloadSize);
 
-    //! Extract an Encapsulation Packet from the M_PDU data zone per CCSDS 133.1-B-3
-    //! \param vc The virtual channel state
+    //! Attempt to parse an Encapsulation Packet header from the M_PDU data zone per CCSDS 133.1-B-3
     //! \param payloadStart Pointer to start of packet data within the incoming frame buffer
     //! \param payloadSize Available bytes in the data zone
-    //! \param context The frame context
-    //! \return Number of bytes consumed (packet size), or 0 if incomplete/invalid
-    FwSizeType extractEppPacket(AosDeframerVc& vc,
-                                U8* payloadStart,
-                                FwSizeType payloadSize,
-                                ComCfg::FrameContext& context);
+    //! \return Number of bytes the packet spans, or 0 not yet known
+    FwSizeType sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize);
 
     //! Determine packet type from first byte (PVN field)
     //! \param firstByte First byte of packet
@@ -141,8 +137,8 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param vc The virtual channel state
     //! \param data Pointer to data bytes to append
     //! \param size Number of bytes to append
-    //! \param context Frame context for output
-    void appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size, ComCfg::FrameContext& context);
+    //! \return Number of bytes to seek forward, or zero if done w/ frame
+    FwSizeType appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size);
 
     //! Map frame context onto the appropriate virtual channel struct
     //! \param vcId the virtual channel id to lookup
@@ -164,16 +160,17 @@ class AosDeframer : public AosDeframerComponentBase {
         // Spanning packet state (for packets that span multiple frames)
         // Per CCSDS 732.0-B-5 Section 4.1.4.2.2.3
         struct SpanningPacketState {
-            static constexpr FwSizeType HEADER_BUF_SIZE = 16;  //!< Max header bytes needed to determine size
-            Fw::Buffer buffer;                                 //!< Dynamically-allocated packet buffer
-            U8 headerBuf[HEADER_BUF_SIZE];                     //!< Header bytes accumulated before allocation
-            FwSizeType bytesReceived = 0;                      //!< Bytes received so far
-            // TODO: Can I get rid of this?
+            static constexpr FwSizeType HEADER_BUF_SIZE =
+                8;  //!< Max header bytes needed to determine size (8 bytes is largest EPP Header)
+            U8 headerBuf[HEADER_BUF_SIZE];  //!< Header bytes accumulated before allocation
+
+            Fw::Buffer buffer;  //!< Dynamically-allocated packet buffer
+
+            FwSizeType bytesReceived = 0;  //!< Bytes received so far
+            // TODO: Can I get rid of this? Yes once we know; we'll store it in the Fw::Buffer
             FwSizeType expectedSize = 0;  //!< Expected total packet size (0 if unknown)
             // Context to be sent w/ the spanning packet
             ComCfg::FrameContext context;
-            // TODO: Can I get rid of this?
-            bool active = false;  //!< Whether a spanning packet is in progress
         } spanningPacket;
     };
 
