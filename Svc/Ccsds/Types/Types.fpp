@@ -69,6 +69,13 @@ module Ccsds {
         MissionSpecific = 0x07  @< Mission-specific
     } default MissionSpecific
 
+    dictionary enum EppLengthOfLength : U8 {
+        Zero            = 0x00 @< 0b00 - Single Byte Idle Packet
+        One             = 0x01 @< 0b01 - Two Byte Header
+        Two             = 0x02 @< 0b10 - Four Byte Header
+        Four            = 0x03 @< 0b11 - Eight Byte Header
+    }
+
     # ------------------------------------------------
     # TC
     # ------------------------------------------------

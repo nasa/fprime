@@ -9,6 +9,8 @@
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
 #include "Svc/Ccsds/AosDeframer/AosDeframerGTestBase.hpp"
+#include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
+#include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 
 namespace Svc {
 
@@ -116,6 +118,15 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet dropped when an idle frame arrives mid-reassembly
     void testSpanningPacketAbandonedOnIdleFrame();
 
+    //! Test SPP packet whose header is split across a frame boundary
+    void testSppHeaderSpansFrame();
+
+    //! Test EPP packet whose header is split across a frame boundary
+    void testEppHeaderSpansFrame();
+
+    //! Test alloc failure for a packet that fits in one frame; next packet still extracted
+    void testAllocFailureNextPacketExtracted();
+
     // ----------------------------------------------------------------------
     // Tests - SPP Extraction
     // ----------------------------------------------------------------------
@@ -129,6 +140,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test Encapsulation Packet Protocol extraction
     void testEppExtraction();
+
+    //! Test EPP extraction for all length-of-length variants (lol=1, lol=2, lol=4)
+    void testEppLengthOfLength();
 
     //! Test EPP idle packet handling
     void testEppIdlePacket();
@@ -210,10 +224,10 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Create an EPP packet in the buffer
     //! \param buffer Destination buffer
     //! \param protocolId Protocol ID (0 = Idle per EppProtocolId::Idle)
-    //! \param lengthOfLength Number of length field bytes (0=1 byte idle, 1, 2, or 4)
+    //! \param lengthOfLength EPP length of length enum
     //! \param dataLength Packet data length
     //! \return Total packet size
-    FwSizeType createEppPacket(U8* buffer, U8 protocolId, U8 lengthOfLength, FwSizeType dataLength);
+    FwSizeType createEppPacket(U8* buffer, U8 protocolId, EppLengthOfLength lengthOfLength, FwSizeType dataLength);
 
   private:
     // ----------------------------------------------------------------------
@@ -228,6 +242,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Static backing storage returned by the allocate port in unit tests
     U8 m_allocBuf[ALLOC_BUF_SIZE];
+
+    //! When true, the next allocate call returns an invalid buffer (simulates alloc failure)
+    bool m_failNextAlloc = false;
 };
 
 }  // namespace Ccsds

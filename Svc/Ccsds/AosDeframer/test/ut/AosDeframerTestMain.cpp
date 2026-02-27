@@ -110,6 +110,21 @@ TEST(AosDeframer, testSpanningPacketAbandonedOnIdleFrame) {
     tester.testSpanningPacketAbandonedOnIdleFrame();
 }
 
+TEST(AosDeframer, testSppHeaderSpansFrame) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSppHeaderSpansFrame();
+}
+
+TEST(AosDeframer, testEppHeaderSpansFrame) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHeaderSpansFrame();
+}
+
+TEST(AosDeframer, testAllocFailureNextPacketExtracted) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testAllocFailureNextPacketExtracted();
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------
@@ -126,6 +141,11 @@ TEST(AosDeframer, testSppIdlePacketFiltering) {
 TEST(AosDeframer, testEppExtraction) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppExtraction();
+}
+
+TEST(AosDeframer, testEppLengthOfLength) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppLengthOfLength();
 }
 
 TEST(AosDeframer, testEppIdlePacket) {

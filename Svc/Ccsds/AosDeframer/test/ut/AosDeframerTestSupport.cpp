@@ -17,6 +17,10 @@ namespace Ccsds {
 
 Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
     (void)portNum;
+    if (m_failNextAlloc) {
+        m_failNextAlloc = false;
+        return Fw::Buffer();
+    }
     if (size <= ALLOC_BUF_SIZE) {
         return Fw::Buffer(this->m_allocBuf, size);
     }
@@ -74,7 +78,7 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
     // This prevents interpretation of zeros as valid SPP packets
     FwSizeType fillStart = dataZoneStart + copyLen;
     if (fillStart < dataZoneEnd) {
-        this->createEppPacket(this->m_frameData + fillStart, 0, 0, 0);
+        this->createEppPacket(this->m_frameData + fillStart, EppProtocolId::Idle, EppLengthOfLength::Zero, 0);
     }
 
     // Add FECF if enabled
@@ -109,7 +113,7 @@ FwSizeType AosDeframerTester::createSppPacket(U8* buffer, U16 apid, U16 dataLeng
 
 FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
                                               U8 protocolId,
-                                              U8 lengthOfLength,
+                                              EppLengthOfLength lengthOfLength,
                                               const FwSizeType dataLength) {
     // EPP Packet per CCSDS 133.1-B-3 Section 4.1.2 / 4.1.3.2
     // Byte 0: 3b PVN=7 | 3b protocolId | 2b lengthOfLength
@@ -118,26 +122,32 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
     buffer[0] |= ((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset);
     buffer[0] |= (lengthOfLength & EPPSubfields::lengthOfLengthMask);
 
-    if (lengthOfLength == 0) {
+    if (lengthOfLength == EppLengthOfLength::Zero) {
         return 1;
     }
+
+    // Numerical meaning (not wire version) of length of length
+    U8 lol = lengthOfLength;
 
     FwSizeType offset = 1;
 
     // Extension byte for lengthOfLength >= 2 (per CCSDS 133.1-B-3 Section 4.1.2.1.1)
-    if (lengthOfLength >= 2) {
+    if (lengthOfLength >= EppLengthOfLength::Two) {
         buffer[offset++] = 0x00;
     }
 
     // Two CCSDS reserved bytes for lengthOfLength == 4
-    if (lengthOfLength == 4) {
+    if (lengthOfLength == EppLengthOfLength::Four) {
         buffer[offset++] = 0x00;
         buffer[offset++] = 0x00;
+
+        // 3 on the wire, but means 4
+        lol = 4;
     }
 
     // Length field (big-endian)
-    for (U8 i = 0; i < lengthOfLength; i++) {
-        buffer[offset++] = static_cast<U8>(dataLength >> (8 * (lengthOfLength - i - 1)) & 0xFF);
+    for (U8 i = 0; i < lol; i++) {
+        buffer[offset++] = static_cast<U8>(dataLength >> (8 * (lol - i - 1)) & 0xFF);
     }
 
     // Fill data

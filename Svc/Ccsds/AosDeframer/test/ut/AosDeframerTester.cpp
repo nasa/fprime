@@ -8,7 +8,6 @@
 #include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/Types/AOSHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/AOSTrailerSerializableAc.hpp"
-#include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/M_PDUHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
@@ -529,6 +528,99 @@ void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
     ASSERT_EVENTS_IdleFrame(0, 0);
 }
 
+void AosDeframerTester::testSppHeaderSpansFrame() {
+    this->configureDefault();
+
+    // Fill most of the data zone with a complete packet, leaving only 3 bytes for the
+    // next packet's header (SPP header is 6 bytes, so 3 bytes are insufficient to size it).
+    U8 payload1[TEST_DATA_ZONE_SIZE];
+    FwSizeType firstSize = this->createSppPacket(payload1, 0x072, 237);  // 6 + 237 = 243 bytes
+
+    // Second packet: first 3 bytes go in frame 0, last 3 header bytes + data go in frame 1
+    U8 secondPacket[50];
+    FwSizeType secondSize = this->createSppPacket(secondPacket, 0x073, 20);  // 26 bytes
+    const FwSizeType splitAt = TEST_DATA_ZONE_SIZE - firstSize;              // = 3
+    ::memcpy(payload1 + firstSize, secondPacket, splitAt);
+
+    ComCfg::FrameContext context;
+
+    // Frame 0: first packet complete + 3-byte partial SPP header
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(payload1, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
+    this->clearHistory();
+
+    // Frame 1: remaining 23 bytes of second packet (3 header + 20 data)
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(secondPacket + splitAt, secondSize - splitAt,
+                                                   M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, 1);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), secondSize);
+}
+
+void AosDeframerTester::testEppHeaderSpansFrame() {
+    this->configureDefault();
+
+    // Fill most of the data zone with a complete packet, leaving only 2 bytes for the
+    // next packet's header (EPP lol=2 header is 4 bytes, so 2 bytes are insufficient to size it).
+    U8 payload1[TEST_DATA_ZONE_SIZE];
+    FwSizeType firstSize = this->createSppPacket(payload1, 0x074, 238);  // 6 + 238 = 244 bytes
+
+    // EPP packet lol=2: 1-byte first field + 1-byte extension + 2-byte length + 20 data = 24 bytes
+    U8 eppPacket[50];
+    FwSizeType eppSize = this->createEppPacket(eppPacket, EppProtocolId::MissionSpecific, EppLengthOfLength::Two, 20);
+    const FwSizeType splitAt = TEST_DATA_ZONE_SIZE - firstSize;  // = 2
+    ::memcpy(payload1 + firstSize, eppPacket, splitAt);
+
+    ComCfg::FrameContext context;
+
+    // Frame 0: SPP complete + 2-byte partial EPP header
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(payload1, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
+    this->clearHistory();
+
+    // Frame 1: remaining 22 bytes of EPP packet (2 length bytes + 20 data bytes)
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(eppPacket + splitAt, eppSize - splitAt,
+                                                   M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, 1);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), eppSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+}
+
+void AosDeframerTester::testAllocFailureNextPacketExtracted() {
+    this->configureDefault();
+
+    U8 payload[100];
+    FwSizeType offset = 0;
+
+    // Packet A: alloc will be forced to fail
+    FwSizeType sizeA = this->createSppPacket(payload + offset, 0x080, 20);
+    offset += sizeA;
+
+    // Packet B: should be extracted cleanly after A's failure
+    FwSizeType sizeB = this->createSppPacket(payload + offset, 0x081, 20);
+    offset += sizeB;
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
+    ComCfg::FrameContext context;
+
+    m_failNextAlloc = true;
+    this->invoke_to_dataIn(0, buffer, context);
+
+    // Packet A was dropped; packet B extracted cleanly
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sizeB);
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------
@@ -571,7 +663,8 @@ void AosDeframerTester::testEppExtraction() {
     this->configureDefault();
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, EppProtocolId::MissionSpecific, 1, 50);  // Protocol ID 2
+    FwSizeType eppSize =
+        this->createEppPacket(payload, EppProtocolId::MissionSpecific, EppLengthOfLength::One, 50);  // Protocol ID 2
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;
@@ -582,6 +675,67 @@ void AosDeframerTester::testEppExtraction() {
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), eppSize);
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(outContext.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+}
+
+void AosDeframerTester::testEppLengthOfLength() {
+    this->configureDefault();
+
+    // lol=1: 1 first byte + 1 length byte + 11 data = 13 bytes
+    U8 packet1[13];
+    FwSizeType size1 = this->createEppPacket(packet1, EppProtocolId::MissionSpecific, EppLengthOfLength::One, 11);
+
+    // lol=2: 1 first byte + 1 extension byte + 2 length bytes + 277 data = 281 bytes
+    U8 packet2[281];
+    FwSizeType size2 = this->createEppPacket(packet2, EppProtocolId::MissionSpecific, EppLengthOfLength::Two, 277);
+
+    // lol=4: 1 first byte + 1 extension byte + 2 reserved bytes + 4 length bytes + 1367 data = 1375 bytes
+    U8 packet4[1375];
+    FwSizeType size4 = this->createEppPacket(packet4, EppProtocolId::MissionSpecific, EppLengthOfLength::Four, 1367);
+
+    ComCfg::FrameContext context;
+    U32 vcCount = 0;
+
+    // --- lol=1: fits in a single frame ---
+    Fw::Buffer frame0 = this->assembleFrameBuffer(packet1, size1, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    this->invoke_to_dataIn(0, frame0, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size1);
+    this->clearHistory();
+
+    // --- lol=2: spans two frames (246 + 35 bytes) ---
+    Fw::Buffer frame1 = this->assembleFrameBuffer(packet2, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    this->invoke_to_dataIn(0, frame1, context);
+    ASSERT_from_dataOut_SIZE(0);
+
+    FwSizeType lol2Remaining = size2 - TEST_DATA_ZONE_SIZE;
+    Fw::Buffer frame2 =
+        this->assembleFrameBuffer(packet2 + TEST_DATA_ZONE_SIZE, lol2Remaining, M_PDUSubfields::FHP_NO_PACKET_START,
+                                  ComCfg::SpacecraftId, 0, vcCount++);
+    this->invoke_to_dataIn(0, frame2, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size2);
+    this->clearHistory();
+
+    // --- lol=4: spans six frames (246 bytes x5 + 145 bytes) ---
+    Fw::Buffer frame3 = this->assembleFrameBuffer(packet4, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    this->invoke_to_dataIn(0, frame3, context);
+    ASSERT_from_dataOut_SIZE(0);
+
+    for (FwSizeType i = 1; i <= 4; i++) {
+        Fw::Buffer frameN =
+            this->assembleFrameBuffer(packet4 + i * TEST_DATA_ZONE_SIZE, TEST_DATA_ZONE_SIZE,
+                                      M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, vcCount++);
+        this->invoke_to_dataIn(0, frameN, context);
+        ASSERT_from_dataOut_SIZE(0);
+    }
+
+    FwSizeType lol4Remaining = size4 - 5 * TEST_DATA_ZONE_SIZE;
+    Fw::Buffer frame8 =
+        this->assembleFrameBuffer(packet4 + 5 * TEST_DATA_ZONE_SIZE, lol4Remaining, M_PDUSubfields::FHP_NO_PACKET_START,
+                                  ComCfg::SpacecraftId, 0, vcCount++);
+    this->invoke_to_dataIn(0, frame8, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size4);
 }
 
 void AosDeframerTester::testEppIdlePacket() {
@@ -597,7 +751,7 @@ void AosDeframerTester::testEppIdlePacket() {
     offset += this->createSppPacket(payload + offset, 0x105, 15);
 
     // EPP idle packet with length
-    offset += this->createEppPacket(payload + offset, EppProtocolId::Idle, 2, 10);
+    offset += this->createEppPacket(payload + offset, EppProtocolId::Idle, EppLengthOfLength::Two, 10);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
     ComCfg::FrameContext context;
@@ -618,7 +772,7 @@ void AosDeframerTester::testEppFillPacket() {
     offset += this->createSppPacket(payload + offset, 0x106, 30);
 
     // EPP fill packet (length of length = 0) - consumes rest
-    offset += this->createEppPacket(payload + offset, 0, 0, 0);
+    offset += this->createEppPacket(payload + offset, EppProtocolId::Idle, EppLengthOfLength::Zero, 0);
 
     // Fill rest with pattern
     ::memset(payload + offset, 0x55, sizeof(payload) - offset);
@@ -695,7 +849,7 @@ void AosDeframerTester::testPvnMaskSppOnly() {
     offset += this->createSppPacket(payload + offset, 0x201, 20);
 
     // EPP packet - should be ignored
-    offset += this->createEppPacket(payload + offset, 0x02, 1, 20);
+    offset += this->createEppPacket(payload + offset, 0x02, EppLengthOfLength::One, 20);
 
     // Another SPP
     offset += this->createSppPacket(payload + offset, 0x202, 15);
@@ -716,7 +870,7 @@ void AosDeframerTester::testPvnMaskEppOnly() {
     this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, PvnBitfield::EPP_MASK);
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, EppProtocolId::MissionSpecific, 1, 30);
+    FwSizeType eppSize = this->createEppPacket(payload, EppProtocolId::MissionSpecific, EppLengthOfLength::One, 30);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;

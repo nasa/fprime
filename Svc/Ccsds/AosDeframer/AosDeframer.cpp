@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
+#include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
@@ -170,12 +171,9 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     // Deserialize the AOS Primary Header (per CCSDS 732.0-B-5 Section 4.1.2)
     AOSHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        // Buffer too small to contain a valid AOS primary header
-        this->log_WARNING_HI_InvalidFrameLength(data.getSize(), m_fixedFrameSize);
-        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
-        return nullptr;
-    }
+    // We already checked that a header fits into fixedFrameSize & that this frame is >= fixedFrameSize
+    // This musn't fail
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
     // AOS uses Tfvn::AOS = 0x1 ('01' binary)
@@ -297,10 +295,12 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         if (vc.spanningPacket.buffer.getSize() < packetSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
+            // Save before abandon clears it — needed for the correct seek offset below
+            const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
             this->abandonSpanningPacket(vc);
 
-            // Seek past this packet/frame
-            const FwSizeType remainingLength = seekForward + packetSize - vc.spanningPacket.bytesReceived;
+            // Seek past the failed packet (header bytes already consumed + remaining body)
+            const FwSizeType remainingLength = seekForward + remainingBody;
             if (remainingLength > size) {
                 return 0;
             } else {
@@ -433,19 +433,13 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeTyp
 }
 
 FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) {
-    // Per CCSDS 133.0-B-2, Space Packet Header is 6 bytes
-    if (payloadSize < SpacePacketHeader::SERIALIZED_SIZE) {
-        return 0;  // Incomplete header - spans to next frame
-    }
-
     SpacePacketHeader header;
 
     Fw::Buffer data(payloadStart, payloadSize);
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
 
-    // This should never occur since we have already guarenteed we have a header's worth of data
     if (status != Fw::FW_SERIALIZE_OK) {
-        return 0;
+        return 0;  // Incomplete header - spans to next frame
     }
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
@@ -483,18 +477,20 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
     }
 
     // Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2
-    const U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
+    U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
 
     U8 lengthOffset = 1U;
 
     // If length of length is 2 or more then there's an extra byte of extension/user defined (4.1.2.1.1)
-    if (lengthOfLength >= 2) {
+    if (lengthOfLength >= EppLengthOfLength::Two) {
         lengthOffset += 1U;
     }
 
     // If length of length is 4 then we add 2 bytes for the ccsds reserved field (4.1.2.1.1)
-    if (lengthOfLength == 4) {
+    if (lengthOfLength == EppLengthOfLength::Four) {
         lengthOffset += 2U;
+        // '0d3' on the wire, but means 4
+        lengthOfLength = 4;
     }
 
     // Bytes to get to length + length of length
