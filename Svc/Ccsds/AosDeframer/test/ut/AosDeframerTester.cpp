@@ -28,19 +28,28 @@ AosDeframerTester::AosDeframerTester()
 
 AosDeframerTester::~AosDeframerTester() {}
 
+void AosDeframerTester::assertDataOutVcId(const U8 expectedVcId) const {
+    const U32 dataOutSize = static_cast<U32>(this->fromPortHistory_dataOut->size());
+    for (U32 i = 0; i < dataOutSize; i++) {
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).context.get_vcId(), expectedVcId);
+    }
+}
+
 // ----------------------------------------------------------------------
 // Tests - Basic Validation
 // ----------------------------------------------------------------------
 
 void AosDeframerTester::testNominalDeframing() {
-    this->configureDefault();
+    const U8 testVcId = 7;
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, testVcId,
+                              PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
     // Create a simple SPP packet
     U8 payload[100];
     FwSizeType sppSize = this->createSppPacket(payload, 0x001, 50);  // APID 1, 50 bytes data
 
     // Assemble frame with FHP=0
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, testVcId);
     ComCfg::FrameContext context;
 
     // Invoke the deframer
@@ -48,6 +57,7 @@ void AosDeframerTester::testNominalDeframing() {
 
     // Should output one packet
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(testVcId);
     ASSERT_from_dataReturnOut_SIZE(1);  // Frame buffer returned
 
     // Verify packet content and context
@@ -213,7 +223,8 @@ void AosDeframerTester::testVcFrameCountGap() {
     Fw::Buffer buffer2 = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, 0, 2);
     this->invoke_to_dataIn(0, buffer2, context);
 
-    ASSERT_from_dataOut_SIZE(1);        // Frame is still processed
+    ASSERT_from_dataOut_SIZE(1);  // Frame is still processed
+    this->assertDataOutVcId(0);
     ASSERT_from_dataReturnOut_SIZE(1);  // Frame buffer returned
     ASSERT_from_errorNotify_SIZE(1);
     ASSERT_from_errorNotify(0, Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
@@ -244,6 +255,7 @@ void AosDeframerTester::testFhpAtOffset() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize);
 }
 
@@ -293,6 +305,7 @@ void AosDeframerTester::testFhpNoPacketStart() {
 
     // Should now have complete packet
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
 }
 
 void AosDeframerTester::testFhpIdleDataOnly() {
@@ -334,6 +347,7 @@ void AosDeframerTester::testMultiplePacketsInFrame() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(3);
+    this->assertDataOutVcId(0);
     ASSERT_TLM_PacketsExtracted_SIZE(3);
     ASSERT_TLM_PacketsExtracted(2, 3);  // Final count is 3
 }
@@ -374,6 +388,7 @@ void AosDeframerTester::testSpanningPacketTwoFrames() {
 
     // Should have both packets now
     ASSERT_from_dataOut_SIZE(2);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
 }
 
@@ -417,6 +432,7 @@ void AosDeframerTester::testSpanningPacketFourFrames() {
     this->invoke_to_dataIn(0, buffer4, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
 }
 
@@ -452,6 +468,7 @@ void AosDeframerTester::testSpanningPacketContinuation() {
     this->invoke_to_dataIn(0, buffer2, context);
 
     ASSERT_from_dataOut_SIZE(2);  // Both packets
+    this->assertDataOutVcId(0);
 }
 
 void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
@@ -500,6 +517,7 @@ void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
     this->invoke_to_dataIn(0, buffer2, context);
 
     ASSERT_from_dataOut_SIZE(1);  // Only the fresh packet — partial spanning packet was dropped
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), freshSize);
     ASSERT_EVENTS_VcFrameCountGap_SIZE(1);
     ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
@@ -561,6 +579,7 @@ void AosDeframerTester::testSpanningPacketAbandonedOnPrematureFhp() {
 
     // Packet A abandoned at the FHP boundary; only packet B extracted
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sizeB);
     ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
     ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE + fhp, 400);
@@ -587,6 +606,7 @@ void AosDeframerTester::testSppHeaderSpansFrame() {
     this->invoke_to_dataIn(0, buffer1, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
     this->clearHistory();
 
@@ -596,6 +616,7 @@ void AosDeframerTester::testSppHeaderSpansFrame() {
     this->invoke_to_dataIn(0, buffer2, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), secondSize);
 }
 
@@ -620,6 +641,7 @@ void AosDeframerTester::testEppHeaderSpansFrame() {
     this->invoke_to_dataIn(0, buffer1, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
     this->clearHistory();
 
@@ -629,6 +651,7 @@ void AosDeframerTester::testEppHeaderSpansFrame() {
     this->invoke_to_dataIn(0, buffer2, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), eppSize);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
@@ -655,6 +678,7 @@ void AosDeframerTester::testAllocFailureNextPacketExtracted() {
 
     // Packet A was dropped; packet B extracted cleanly
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sizeB);
     ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
 }
@@ -687,6 +711,7 @@ void AosDeframerTester::testSppIdlePacketFiltering() {
 
     // Only 2 packets output (idle filtered)
     ASSERT_from_dataOut_SIZE(2);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getSize(), sppSize1);
@@ -698,25 +723,30 @@ void AosDeframerTester::testSppIdlePacketFiltering() {
 // ----------------------------------------------------------------------
 
 void AosDeframerTester::testEppExtraction() {
-    this->configureDefault();
+    const U8 testVcId = 11;
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, testVcId,
+                              PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
     U8 payload[100];
     FwSizeType eppSize =
         this->createEppPacket(payload, EppProtocolId::MissionSpecific, EppLengthOfLength::One, 50);  // Protocol ID 2
 
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0, ComCfg::SpacecraftId, testVcId);
     ComCfg::FrameContext context;
 
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(testVcId);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), eppSize);
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(outContext.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
 
 void AosDeframerTester::testEppLengthOfLength() {
-    this->configureDefault();
+    const U8 testVcId = 11;
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, testVcId,
+                              PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
     // lol=1: 1 first byte + 1 length byte + 11 data = 13 bytes
     U8 packet1[13];
@@ -734,35 +764,39 @@ void AosDeframerTester::testEppLengthOfLength() {
     U32 vcCount = 0;
 
     // --- lol=1: fits in a single frame ---
-    Fw::Buffer frame0 = this->assembleFrameBuffer(packet1, size1, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    Fw::Buffer frame0 = this->assembleFrameBuffer(packet1, size1, 0, ComCfg::SpacecraftId, testVcId, vcCount++);
     this->invoke_to_dataIn(0, frame0, context);
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(testVcId);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size1);
     this->clearHistory();
 
     // --- lol=2: spans two frames (246 + 35 bytes) ---
-    Fw::Buffer frame1 = this->assembleFrameBuffer(packet2, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    Fw::Buffer frame1 =
+        this->assembleFrameBuffer(packet2, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, testVcId, vcCount++);
     this->invoke_to_dataIn(0, frame1, context);
     ASSERT_from_dataOut_SIZE(0);
 
     FwSizeType lol2Remaining = size2 - TEST_DATA_ZONE_SIZE;
     Fw::Buffer frame2 =
         this->assembleFrameBuffer(packet2 + TEST_DATA_ZONE_SIZE, lol2Remaining, M_PDUSubfields::FHP_NO_PACKET_START,
-                                  ComCfg::SpacecraftId, 0, vcCount++);
+                                  ComCfg::SpacecraftId, testVcId, vcCount++);
     this->invoke_to_dataIn(0, frame2, context);
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(testVcId);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size2);
     this->clearHistory();
 
     // --- lol=4: spans six frames (246 bytes x5 + 145 bytes) ---
-    Fw::Buffer frame3 = this->assembleFrameBuffer(packet4, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, vcCount++);
+    Fw::Buffer frame3 =
+        this->assembleFrameBuffer(packet4, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, testVcId, vcCount++);
     this->invoke_to_dataIn(0, frame3, context);
     ASSERT_from_dataOut_SIZE(0);
 
     for (FwSizeType i = 1; i <= 4; i++) {
         Fw::Buffer frameN =
             this->assembleFrameBuffer(packet4 + i * TEST_DATA_ZONE_SIZE, TEST_DATA_ZONE_SIZE,
-                                      M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, vcCount++);
+                                      M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, testVcId, vcCount++);
         this->invoke_to_dataIn(0, frameN, context);
         ASSERT_from_dataOut_SIZE(0);
     }
@@ -770,9 +804,10 @@ void AosDeframerTester::testEppLengthOfLength() {
     FwSizeType lol4Remaining = size4 - 5 * TEST_DATA_ZONE_SIZE;
     Fw::Buffer frame8 =
         this->assembleFrameBuffer(packet4 + 5 * TEST_DATA_ZONE_SIZE, lol4Remaining, M_PDUSubfields::FHP_NO_PACKET_START,
-                                  ComCfg::SpacecraftId, 0, vcCount++);
+                                  ComCfg::SpacecraftId, testVcId, vcCount++);
     this->invoke_to_dataIn(0, frame8, context);
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(testVcId);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size4);
 }
 
@@ -798,6 +833,7 @@ void AosDeframerTester::testEppIdlePacket() {
 
     // Only 2 packets (EPP idle filtered)
     ASSERT_from_dataOut_SIZE(2);
+    this->assertDataOutVcId(0);
 }
 
 void AosDeframerTester::testEppFillPacket() {
@@ -822,6 +858,7 @@ void AosDeframerTester::testEppFillPacket() {
 
     // Only 1 packet (fill consumed rest)
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
 }
 
 void AosDeframerTester::testInvalidPvnVersion() {
@@ -872,6 +909,7 @@ void AosDeframerTester::testFecfDisabled() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     // No FECF error events
     ASSERT_EVENTS_InvalidFecf_SIZE(0);
 }
@@ -899,6 +937,7 @@ void AosDeframerTester::testPvnMaskSppOnly() {
 
     // Only the first SPP extracted; EPP triggers DisabledPvn and stops extraction
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EVENTS_DisabledPvn_SIZE(1);
     ASSERT_EVENTS_DisabledPvn(0, 0, ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
@@ -916,6 +955,7 @@ void AosDeframerTester::testPvnMaskEppOnly() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    this->assertDataOutVcId(0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
 
@@ -924,7 +964,9 @@ void AosDeframerTester::testPvnMaskEppOnly() {
 // ----------------------------------------------------------------------
 
 void AosDeframerTester::testFrameCountTelemetry() {
-    this->configureDefault();
+    const U8 testVcId = 5;
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, testVcId,
+                              PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
 
     U8 payload[50];
     FwSizeType sppSize = this->createSppPacket(payload, 0x300, 20);
@@ -934,8 +976,9 @@ void AosDeframerTester::testFrameCountTelemetry() {
     // Send 3 frames with incrementing vcCount to avoid gap detection
     for (U32 i = 0; i < 3; i++) {
         this->clearHistory();
-        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, 0, i);
+        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0, ComCfg::SpacecraftId, testVcId, i);
         this->invoke_to_dataIn(0, buffer, context);
+        this->assertDataOutVcId(testVcId);
         ASSERT_TLM_FramesProcessed(0, i + 1);
         ASSERT_TLM_PacketsExtracted(0, i + 1);
         ASSERT_TLM_LatestVcFrameCount(0, i);

@@ -1,4 +1,4 @@
-        @ Latest VC Frame Recieved from header
+        @ Latest VC Frame Received from header
         telemetry LatestVcFrameCount: VCxU32
 
         @ Processed frames per Virtual Channel

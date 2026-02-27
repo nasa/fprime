@@ -178,7 +178,6 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     AOSHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
     // We already checked that a header fits into fixedFrameSize & that this frame is >= fixedFrameSize
-    // This musn't fail
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
     // Extract Transfer Frame Version Number (Section 4.1.2.2.2)
@@ -455,7 +454,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
-    // TODO: Unify Deframers | bring the whole spp processing into this compoent
+    // TODO: Unify Deframers | bring the whole spp processing into this component
     // since we're only missing seq count logic?
 
     // Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)

@@ -107,7 +107,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param data The frame buffer (positioned after AOS primary header)
     void extractPackets(AosDeframerVc& vc, Fw::Buffer& data);
 
-    //! Determine the validitiy and size, and idle status of a packet
+    //! Determine the validity and size, and idle status of a packet
     //! \param vc The virtual channel state
     //! \param packetStart Pointer to start of packet data within the incoming frame buffer
     //! \param remainingBytes Available bytes in the data zone

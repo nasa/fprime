@@ -197,6 +197,9 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Configure the component with default test settings
     void configureDefault();
 
+    //! Assert that all emitted packet contexts carry the expected VCID
+    void assertDataOutVcId(U8 expectedVcId) const;
+
     //! Assemble an AOS frame buffer with the given parameters
     //! \param payload Pointer to M_PDU payload data
     //! \param payloadLength Length of payload data
