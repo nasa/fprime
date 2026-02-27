@@ -426,19 +426,20 @@ FwSizeType AosDeframer::sizeSppPacket(const U8* const payloadStart, FwSizeType p
         return 0;  // Incomplete header - spans to next frame
     }
 
-    // TODO: Just call Deserialize into the SPP FPP Struct
+    SpacePacketHeader header;
+    Fw::ExternalSerializeBuffer deserializer(const_cast<U8*>(payloadStart), SpacePacketHeader::SERIALIZED_SIZE);
+    if (deserializer.deserializeTo(header) != Fw::FW_SERIALIZE_OK) {
+        return 0;
+    }
 
-    // Parse packet data length from header (bytes 4-5)
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
-    const U16 lengthField = static_cast<U16>((payloadStart[4] << 8) | payloadStart[5]);
-    FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + lengthField + 1;
+    FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
     // TODO: Unify Deframers | bring the whole spp processing into this compoent
     // since we're only missing seq count logic?
 
     // Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)
-    const U16 packetIdentification = static_cast<U16>(payloadStart[0] << 8 | payloadStart[1]);
-    U16 apid = static_cast<U16>(packetIdentification & SpacePacketSubfields::ApidMask);
+    U16 apid = static_cast<U16>(header.get_packetIdentification() & SpacePacketSubfields::ApidMask);
 
     // Idle means this is the last packet in the frame
     if (apid == static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET)) {
