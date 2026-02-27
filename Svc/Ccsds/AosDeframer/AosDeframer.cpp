@@ -298,6 +298,14 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
             this->abandonSpanningPacket(vc);
+
+            // Seek past this packet/frame
+            const FwSizeType remainingLength = seekForward + packetSize - vc.spanningPacket.bytesReceived;
+            if (remainingLength > size) {
+                return 0;
+            } else {
+                return remainingLength;
+            }
         }
 
         // Load the header into the dynamic buffer
@@ -398,7 +406,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
 FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, const U8* const packetStart, FwSizeType remainingBytes) {
     // Determine packet type from PVN (upper 3 bits of first byte)
     U8 pvn = getPacketVersion(packetStart[0]);
-    // Default to invalid, override if valid
+    // Default to invalid, override if valid (non-idle) packet
     vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
 
     // Size the Packet (so we can alloc a buffer)
