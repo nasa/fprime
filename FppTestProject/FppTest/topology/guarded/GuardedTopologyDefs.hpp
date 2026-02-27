@@ -1,6 +1,10 @@
 #ifndef GuardedTopologyDefs_HPP
 #define GuardedTopologyDefs_HPP
 
-#include "FppTestTopologyDefs.hpp"
+namespace FppTest {
+
+struct TopologyState {};
+
+}  // namespace FppTest
 
 #endif
