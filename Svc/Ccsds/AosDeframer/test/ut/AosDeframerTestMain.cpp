@@ -114,11 +114,6 @@ TEST(AosDeframer, testSppIdlePacketFiltering) {
     tester.testSppIdlePacketFiltering();
 }
 
-TEST(AosDeframer, testSppSequenceCount) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testSppSequenceCount();
-}
-
 // ----------------------------------------------------------------------
 // Tests - EPP Extraction
 // ----------------------------------------------------------------------

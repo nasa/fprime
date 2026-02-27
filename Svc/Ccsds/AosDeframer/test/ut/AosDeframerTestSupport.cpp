@@ -74,11 +74,7 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
     // This prevents interpretation of zeros as valid SPP packets
     FwSizeType fillStart = dataZoneStart + copyLen;
     if (fillStart < dataZoneEnd) {
-        // EPP fill packet: PVN=7, protocolId=0 (Idle), lengthOfLength=0 -> 0xE0
-        this->m_frameData[fillStart] = static_cast<U8>((7 << EPPSubfields::packetVersionOffset));
-        for (FwSizeType i = fillStart + 1; i < dataZoneEnd; i++) {
-            this->m_frameData[i] = 0x55;
-        }
+        this->createEppPacket(this->m_frameData + fillStart, 0, 0, 0);
     }
 
     // Add FECF if enabled

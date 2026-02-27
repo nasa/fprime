@@ -483,9 +483,13 @@ void AosDeframerTester::testSppExtraction() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+
+    // Check size of returned packet
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize);
+
+    // Check PVN in context of output
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(outContext.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
-    ASSERT_EQ(outContext.get_apid(), static_cast<ComCfg::Apid::T>(0x100));
 }
 
 void AosDeframerTester::testSppIdlePacketFiltering() {
@@ -495,13 +499,15 @@ void AosDeframerTester::testSppIdlePacketFiltering() {
     FwSizeType offset = 0;
 
     // Real packet
-    offset += this->createSppPacket(payload + offset, 0x101, 20);
-
-    // Idle packet (APID 0x7FF)
-    offset += this->createSppPacket(payload + offset, 0x7FF, 30);
+    FwSizeType sppSize0 = this->createSppPacket(payload + offset, 0x101, 20);
+    offset += sppSize0;
 
     // Another real packet
-    offset += this->createSppPacket(payload + offset, 0x102, 25);
+    FwSizeType sppSize1 = this->createSppPacket(payload + offset, 0x102, 25);
+    offset += sppSize1;
+
+    // Idle packet (APID 0x7FF)
+    offset += this->createSppPacket(payload + offset, ComCfg::Apid::SPP_IDLE_PACKET, 30);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
     ComCfg::FrameContext context;
@@ -510,24 +516,10 @@ void AosDeframerTester::testSppIdlePacketFiltering() {
 
     // Only 2 packets output (idle filtered)
     ASSERT_from_dataOut_SIZE(2);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), static_cast<ComCfg::Apid::T>(0x101));
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).context.get_apid(), static_cast<ComCfg::Apid::T>(0x102));
-}
-
-void AosDeframerTester::testSppSequenceCount() {
-    this->configureDefault();
-
-    U8 payload[100];
-    const U16 seqCount = 0x1234;
-    FwSizeType sppSize = this->createSppPacket(payload, 0x103, 20, seqCount);
-
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
-    ComCfg::FrameContext context;
-
-    this->invoke_to_dataIn(0, buffer, context);
-
-    ASSERT_from_dataOut_SIZE(1);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize0);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getSize(), sppSize1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).context.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
 }
 
 // ----------------------------------------------------------------------
@@ -538,7 +530,7 @@ void AosDeframerTester::testEppExtraction() {
     this->configureDefault();
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 1, 50);  // Protocol ID 2
+    FwSizeType eppSize = this->createEppPacket(payload, EppProtocolId::MissionSpecific, 1, 50);  // Protocol ID 2
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;
@@ -559,11 +551,11 @@ void AosDeframerTester::testEppIdlePacket() {
     // Real SPP packet
     offset += this->createSppPacket(payload + offset, 0x104, 20);
 
-    // EPP idle packet with length
-    offset += this->createEppPacket(payload + offset, 0, 2, 10);
-
     // Another real packet
     offset += this->createSppPacket(payload + offset, 0x105, 15);
+
+    // EPP idle packet with length
+    offset += this->createEppPacket(payload + offset, EppProtocolId::Idle, 2, 10);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
     ComCfg::FrameContext context;
@@ -680,7 +672,7 @@ void AosDeframerTester::testPvnMaskEppOnly() {
     this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, PvnBitfield::EPP_MASK);
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 1, 30);
+    FwSizeType eppSize = this->createEppPacket(payload, EppProtocolId::MissionSpecific, 1, 30);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;

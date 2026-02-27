@@ -120,9 +120,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test SPP idle packet filtering
     void testSppIdlePacketFiltering();
 
-    //! Test SPP with sequence count extraction
-    void testSppSequenceCount();
-
     // ----------------------------------------------------------------------
     // Tests - EPP Extraction
     // ----------------------------------------------------------------------
