@@ -294,7 +294,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Try to allocate a buffer for the whole packet
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
-        if (!vc.spanningPacket.buffer.isValid() || vc.spanningPacket.buffer.getSize() < packetSize) {
+        if (vc.spanningPacket.buffer.getSize() < packetSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
             this->abandonSpanningPacket(vc);

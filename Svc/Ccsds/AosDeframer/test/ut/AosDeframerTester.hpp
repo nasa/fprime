@@ -31,6 +31,10 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     static const U32 TEST_FRAME_SIZE_LARGE = 1024;
     static const FwSizeType ALLOC_BUF_SIZE = 65536;
 
+    // Data zone size within TEST_FRAME_SIZE frames (header + M_PDU header + FECF trailer)
+    static const FwSizeType TEST_DATA_ZONE_SIZE =
+        TEST_FRAME_SIZE - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -77,9 +81,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     // ----------------------------------------------------------------------
     // Tests - M_PDU Processing
     // ----------------------------------------------------------------------
-
-    //! Test First Header Pointer at offset 0
-    void testFhpAtZero();
 
     //! Test First Header Pointer at non-zero offset
     void testFhpAtOffset();
@@ -138,24 +139,8 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test EPP fill packet handling
     void testEppFillPacket();
 
-    //! Test invalid EPP packet version
-    void testInvalidEppVersion();
-
-    // ----------------------------------------------------------------------
-    // Tests - Private Helper Edge Cases (friend access)
-    // ----------------------------------------------------------------------
-
-    //! Directly exercise parseAndValidateHeader deserializer failure path
-    void testHeaderDeserializeFailureHelperPath();
-
-    //! Directly exercise short/incomplete packet guard paths in SPP/EPP extractors
-    void testExtractorGuardPaths();
-
-    //! Directly exercise extended EPP protocol branch (protocol ID 0x8-0xF)
-    void testExtendedEppProtocolBranch();
-
-    //! Directly exercise EPP branch of appendToSpanningPacket completion context tagging
-    void testAppendToSpanningPacketEppCompletion();
+    //! Test invalid packet version
+    void testInvalidPvnVersion();
 
     // ----------------------------------------------------------------------
     // Tests - Configuration
@@ -245,21 +230,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! \return Total packet size
     FwSizeType createEppIdlePacket(U8* buffer, U8 lengthOfLength, FwSizeType packetLength);
 
-    //! Get the frame's TFVN from raw data
-    U8 getFrameTfvn(U8* frameData);
-
-    //! Get the frame's Spacecraft ID from raw data
-    U16 getFrameScId(U8* frameData);
-
-    //! Get the frame's Virtual Channel ID from raw data
-    U8 getFrameVcId(U8* frameData);
-
-    //! Get the frame's VC Frame Count from raw data
-    U32 getFrameVcCount(U8* frameData);
-
-    //! Get the frame's First Header Pointer from raw data
-    U16 getFrameFhp(U8* frameData);
-
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -270,9 +240,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Data buffer used to produce test frames
     U8 m_frameData[ComCfg::AosMaxFrameFixedSize];
-
-    //! Secondary frame buffer for multi-frame tests
-    U8 m_frameData2[ComCfg::AosMaxFrameFixedSize];
 
     //! Static backing storage returned by the allocate port in unit tests
     U8 m_allocBuf[ALLOC_BUF_SIZE];

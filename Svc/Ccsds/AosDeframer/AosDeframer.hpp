@@ -26,8 +26,6 @@ namespace Svc {
 namespace Ccsds {
 
 class AosDeframer : public AosDeframerComponentBase {
-    friend class AosDeframerTester;
-
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

@@ -160,37 +160,6 @@ FwSizeType AosDeframerTester::createEppIdlePacket(U8* buffer, U8 lengthOfLength,
     return 1 + lengthOfLength + packetLength;
 }
 
-U8 AosDeframerTester::getFrameTfvn(U8* frameData) {
-    return static_cast<U8>((frameData[0] >> 6) & 0x03);
-}
-
-U16 AosDeframerTester::getFrameScId(U8* frameData) {
-    U16 scidLsb = static_cast<U16>(((frameData[0] & 0x3F) << 2) | (frameData[1] >> 6));
-    U16 scidMsb = static_cast<U16>((frameData[5] >> 4) & 0x03);
-    return static_cast<U16>(scidLsb | (scidMsb << 8));
-}
-
-U8 AosDeframerTester::getFrameVcId(U8* frameData) {
-    return static_cast<U8>(frameData[1] & 0x3F);
-}
-
-U32 AosDeframerTester::getFrameVcCount(U8* frameData) {
-    U32 count = 0;
-    count |= static_cast<U32>(frameData[2]) << 16;
-    count |= static_cast<U32>(frameData[3]) << 8;
-    count |= static_cast<U32>(frameData[4]);
-
-    if (frameData[5] & 0x40) {  // Cycle count in use
-        count |= static_cast<U32>(frameData[5] & 0x0F) << 24;
-    }
-
-    return count;
-}
-
-U16 AosDeframerTester::getFrameFhp(U8* frameData) {
-    return static_cast<U16>((frameData[6] << 8) | frameData[7]);
-}
-
 }  // namespace Ccsds
 
 }  // namespace Svc

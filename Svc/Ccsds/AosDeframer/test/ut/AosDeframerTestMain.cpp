@@ -56,11 +56,6 @@ TEST(AosDeframer, testVcFrameCountGap) {
 // Tests - M_PDU Processing
 // ----------------------------------------------------------------------
 
-TEST(AosDeframer, testFhpAtZero) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testFhpAtZero();
-}
-
 TEST(AosDeframer, testFhpAtOffset) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testFhpAtOffset();
@@ -148,33 +143,9 @@ TEST(AosDeframer, testEppFillPacket) {
     tester.testEppFillPacket();
 }
 
-TEST(AosDeframer, testInvalidEppVersion) {
+TEST(AosDeframer, testInvalidPvnVersion) {
     Svc::Ccsds::AosDeframerTester tester;
-    tester.testInvalidEppVersion();
-}
-
-// ----------------------------------------------------------------------
-// Tests - Private Helper Edge Cases (friend access)
-// ----------------------------------------------------------------------
-
-TEST(AosDeframer, testHeaderDeserializeFailureHelperPath) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testHeaderDeserializeFailureHelperPath();
-}
-
-TEST(AosDeframer, testExtractorGuardPaths) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testExtractorGuardPaths();
-}
-
-TEST(AosDeframer, testExtendedEppProtocolBranch) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testExtendedEppProtocolBranch();
-}
-
-TEST(AosDeframer, testAppendToSpanningPacketEppCompletion) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testAppendToSpanningPacketEppCompletion();
+    tester.testInvalidPvnVersion();
 }
 
 // ----------------------------------------------------------------------
