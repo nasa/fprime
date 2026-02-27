@@ -33,16 +33,6 @@
             severity warning high \
             format "Valid packet version number {} encountered on VC {} but it is disabled by configuration"
 
-        @ Deframing encountered an EPP packet with a malformed header (CCSDS 133.1-B-3)
-        event InvalidEppPacket() \
-            severity warning high \
-            format "Invalid EPP Packet: malformed header"
-
-        @ Deframing encountered an SPP packet with a malformed header (CCSDS 133.0-B-2)
-        event InvalidSppPacket() \
-            severity warning high \
-            format "Invalid SPP Packet: malformed header"
-
         @ Frame was received with idle-only data on a virtual channel (CCSDS 732.0-B-5 Section 4.1.4.2.2.4)
         event IdleFrame(vcId: U8) \
             severity activity low \

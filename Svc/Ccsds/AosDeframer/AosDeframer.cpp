@@ -443,6 +443,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     Fw::Buffer data(payloadStart, payloadSize);
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
 
+    // This should never occur since we have already guarenteed we have a header's worth of data
     if (status != Fw::FW_SERIALIZE_OK) {
         return 0;
     }
