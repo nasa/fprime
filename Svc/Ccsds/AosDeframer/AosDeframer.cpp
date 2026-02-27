@@ -403,7 +403,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     }
 }
 
-FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, const U8* const packetStart, FwSizeType remainingBytes) {
+FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes) {
     // Determine packet type from PVN (upper 3 bits of first byte)
     U8 pvn = getPacketVersion(packetStart[0]);
     // Default to invalid, override if valid (non-idle) packet
@@ -428,15 +428,18 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, const U8* const packetStar
     }
 }
 
-FwSizeType AosDeframer::sizeSppPacket(const U8* const payloadStart, FwSizeType payloadSize) {
+FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) {
     // Per CCSDS 133.0-B-2, Space Packet Header is 6 bytes
     if (payloadSize < SpacePacketHeader::SERIALIZED_SIZE) {
         return 0;  // Incomplete header - spans to next frame
     }
 
     SpacePacketHeader header;
-    Fw::ExternalSerializeBuffer deserializer(const_cast<U8*>(payloadStart), SpacePacketHeader::SERIALIZED_SIZE);
-    if (deserializer.deserializeTo(header) != Fw::FW_SERIALIZE_OK) {
+
+    Fw::Buffer data(payloadStart, payloadSize);
+    Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
+
+    if (status != Fw::FW_SERIALIZE_OK) {
         return 0;
     }
 

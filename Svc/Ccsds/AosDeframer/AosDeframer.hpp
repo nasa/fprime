@@ -112,13 +112,13 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param packetStart Pointer to start of packet data within the incoming frame buffer
     //! \param remainingBytes Available bytes in the data zone
     //! \return Number of bytes the packet spans, or 0 if not yet known/idle
-    FwSizeType sizePacket(AosDeframerVc& vc, const U8* const packetStart, FwSizeType remainingBytes);
+    FwSizeType sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes);
 
     //! Attempt to parse a Space Packet header from the M_PDU data zone per CCSDS 133.0-B-2
     //! \param payloadStart Pointer to start of packet data within the incoming frame buffer
     //! \param payloadSize Available bytes in the data zone
     //! \return Number of bytes the packet spans, or 0 not yet known
-    FwSizeType sizeSppPacket(const U8* const payloadStart, FwSizeType payloadSize);
+    FwSizeType sizeSppPacket(U8* payloadStart, FwSizeType payloadSize);
 
     //! Attempt to parse an Encapsulation Packet header from the M_PDU data zone per CCSDS 133.1-B-3
     //! \param payloadStart Pointer to start of packet data within the incoming frame buffer
