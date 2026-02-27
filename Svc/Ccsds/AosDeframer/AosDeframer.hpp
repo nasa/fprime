@@ -167,8 +167,6 @@ class AosDeframer : public AosDeframerComponentBase {
             Fw::Buffer buffer;  //!< Dynamically-allocated packet buffer
 
             FwSizeType bytesReceived = 0;  //!< Bytes received so far
-            // TODO: Can I get rid of this? Yes once we know; we'll store it in the Fw::Buffer
-            FwSizeType expectedSize = 0;  //!< Expected total packet size (0 if unknown)
             // Context to be sent w/ the spanning packet
             ComCfg::FrameContext context;
         } spanningPacket;

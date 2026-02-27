@@ -153,7 +153,6 @@ void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     }
     vc.spanningPacket.buffer = Fw::Buffer();
     vc.spanningPacket.bytesReceived = 0;
-    vc.spanningPacket.expectedSize = 0;
     vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
 }
 
@@ -306,7 +305,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
     }
 
     // Already have the dynamic buffer, so fill away
-    const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
+    const FwSizeType spaceLeft = vc.spanningPacket.buffer.getSize() - vc.spanningPacket.bytesReceived;
     // Copy what we got
     const FwSizeType toBody = FW_MIN(size, spaceLeft);
     if (toBody > 0) {
@@ -316,7 +315,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
     }
 
     // Check if the spanning packet is now complete
-    if (vc.spanningPacket.expectedSize > 0 && vc.spanningPacket.bytesReceived >= vc.spanningPacket.expectedSize) {
+    if (vc.spanningPacket.buffer.getSize() > 0 &&
+        vc.spanningPacket.bytesReceived >= vc.spanningPacket.buffer.getSize()) {
         this->dataOut_out(0, vc.spanningPacket.buffer, vc.spanningPacket.context);
         this->tlmWrite_PacketsExtracted(++vc.packetsExtracted);
 
