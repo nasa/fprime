@@ -8,6 +8,7 @@
 #include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/Types/AOSHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/AOSTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/M_PDUHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
@@ -447,9 +448,14 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
 
     U8 payload[64] = {};
     // Start an EPP packet that declares a payload large enough to exceed the test allocator buffer.
-    payload[0] = static_cast<U8>((7 << 5) | 0x02);  // EPP, protocolId=2
-    payload[1] = 0xFF;
-    payload[2] = 0xFF;  // dataLength = 65535 -> total packet size = 65538 (> ALLOC_BUF_SIZE=65536)
+    payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
+    payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
+    payload[0] |= 0x02 & EPPSubfields::lengthOfLengthMask;
+
+    payload[1] = 0x00;  // Ext Field
+
+    payload[2] = 0xFF;
+    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> ALLOC_BUF_SIZE=65536)
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
@@ -532,7 +538,7 @@ void AosDeframerTester::testEppExtraction() {
     this->configureDefault();
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 50);  // Protocol ID 2
+    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 1, 50);  // Protocol ID 2
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;
@@ -554,7 +560,7 @@ void AosDeframerTester::testEppIdlePacket() {
     offset += this->createSppPacket(payload + offset, 0x104, 20);
 
     // EPP idle packet with length
-    offset += this->createEppIdlePacket(payload + offset, 2, 10);
+    offset += this->createEppPacket(payload + offset, 0, 2, 10);
 
     // Another real packet
     offset += this->createSppPacket(payload + offset, 0x105, 15);
@@ -578,7 +584,7 @@ void AosDeframerTester::testEppFillPacket() {
     offset += this->createSppPacket(payload + offset, 0x106, 30);
 
     // EPP fill packet (length of length = 0) - consumes rest
-    offset += this->createEppIdlePacket(payload + offset, 0, 0);
+    offset += this->createEppPacket(payload + offset, 0, 0, 0);
 
     // Fill rest with pattern
     ::memset(payload + offset, 0x55, sizeof(payload) - offset);
@@ -655,7 +661,7 @@ void AosDeframerTester::testPvnMaskSppOnly() {
     offset += this->createSppPacket(payload + offset, 0x201, 20);
 
     // EPP packet - should be ignored
-    offset += this->createEppPacket(payload + offset, 0x02, 20);
+    offset += this->createEppPacket(payload + offset, 0x02, 1, 20);
 
     // Another SPP
     offset += this->createSppPacket(payload + offset, 0x202, 15);
@@ -674,7 +680,7 @@ void AosDeframerTester::testPvnMaskEppOnly() {
     this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0, PvnBitfield::EPP_MASK);
 
     U8 payload[100];
-    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 30);
+    FwSizeType eppSize = this->createEppPacket(payload, 0x02, 1, 30);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, eppSize, 0);
     ComCfg::FrameContext context;

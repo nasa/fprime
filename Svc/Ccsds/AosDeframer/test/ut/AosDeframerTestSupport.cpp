@@ -70,16 +70,14 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
     FwSizeType copyLen = FW_MIN(payloadLength, maxPayload);
     ::memcpy(this->m_frameData + dataZoneStart, payload, copyLen);
 
-    // Fill remaining data zone with EPP fill packet (type=1, lengthOfLength=0)
+    // Fill remaining data zone with an EPP fill packet (protocolId=0, lengthOfLength=0)
     // This prevents interpretation of zeros as valid SPP packets
     FwSizeType fillStart = dataZoneStart + copyLen;
     if (fillStart < dataZoneEnd) {
-        // EPP fill packet header: PVN=7, type=1, lengthOfLength=0
-        // This is 0xF0 = (7<<5) | (1<<4) | 0
-        this->m_frameData[fillStart] = 0xF0;
-        // Fill rest with idle pattern
+        // EPP fill packet: PVN=7, protocolId=0 (Idle), lengthOfLength=0 -> 0xE0
+        this->m_frameData[fillStart] = static_cast<U8>((7 << EPPSubfields::packetVersionOffset));
         for (FwSizeType i = fillStart + 1; i < dataZoneEnd; i++) {
-            this->m_frameData[i] = 0x55;  // Idle fill pattern
+            this->m_frameData[i] = 0x55;
         }
     }
 
@@ -94,70 +92,62 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
 }
 
 FwSizeType AosDeframerTester::createSppPacket(U8* buffer, U16 apid, U16 dataLength, U16 seqCount) {
-    // SPP Header (6 bytes)
-    // Byte 0-1: Packet Identification (3b PVN=0 | 1b type | 1b sec hdr | 11b APID)
-    U16 pktId = apid & 0x07FF;  // APID in lower 11 bits, PVN=0 in upper bits
-    buffer[0] = static_cast<U8>(pktId >> 8);
-    buffer[1] = static_cast<U8>(pktId & 0xFF);
+    const U16 packetIdentification =
+        static_cast<U16>((ComCfg::Pvn::SPACE_PACKET_PROTOCOL << SpacePacketSubfields::PvnOffset) |
+                         (apid & SpacePacketSubfields::ApidMask));
+    const U16 packetSequenceControl = static_cast<U16>((0x3 << SpacePacketSubfields::SeqFlagsOffset) |
+                                                       (seqCount & SpacePacketSubfields::SeqCountMask));
 
-    // Byte 2-3: Packet Sequence Control (2b flags | 14b seq count)
-    U16 seqCtrl = static_cast<U16>((0x3 << 14) | (seqCount & 0x3FFF));  // Unsegmented
-    buffer[2] = static_cast<U8>(seqCtrl >> 8);
-    buffer[3] = static_cast<U8>(seqCtrl & 0xFF);
+    const U16 packetDataLength = static_cast<U16>(dataLength - 1);
 
-    // Byte 4-5: Packet Data Length (actual length - 1)
-    U16 lengthField = static_cast<U16>(dataLength > 0 ? dataLength - 1 : 0);
-    buffer[4] = static_cast<U8>(lengthField >> 8);
-    buffer[5] = static_cast<U8>(lengthField & 0xFF);
+    SpacePacketHeader header(packetIdentification, packetSequenceControl, packetDataLength);
+    Fw::ExternalSerializeBuffer serializer(buffer, SpacePacketHeader::SERIALIZED_SIZE);
+    FW_ASSERT(header.serializeTo(serializer) == Fw::FW_SERIALIZE_OK);
 
-    // Fill data with pattern
     for (U16 i = 0; i < dataLength; i++) {
-        buffer[6 + i] = static_cast<U8>(i & 0xFF);
+        buffer[SpacePacketHeader::SERIALIZED_SIZE + i] = static_cast<U8>(i & 0xFF);
     }
 
     return SpacePacketHeader::SERIALIZED_SIZE + dataLength;
 }
 
-FwSizeType AosDeframerTester::createEppPacket(U8* buffer, U8 protocolId, U16 dataLength) {
-    // EPP Header
-    // Byte 0: 3b PVN=7 | 1b type=0 | 4b protocol ID
-    buffer[0] = static_cast<U8>((7 << 5) | (protocolId & 0x0F));
-
-    // Byte 1-2: Length field (for standard protocol IDs)
-    buffer[1] = static_cast<U8>(dataLength >> 8);
-    buffer[2] = static_cast<U8>(dataLength & 0xFF);
-
-    // Fill data with pattern
-    for (U16 i = 0; i < dataLength; i++) {
-        buffer[3 + i] = static_cast<U8>((i + 0x80) & 0xFF);
-    }
-
-    return 3 + dataLength;
-}
-
-FwSizeType AosDeframerTester::createEppIdlePacket(U8* buffer, U8 lengthOfLength, FwSizeType packetLength) {
-    // EPP Idle Header
-    // Byte 0: 3b PVN=7 | 1b type=1 | 4b length of length
-    buffer[0] = static_cast<U8>((7 << 5) | (1 << 4) | (lengthOfLength & 0x0F));
+FwSizeType AosDeframerTester::createEppPacket(U8* buffer, U8 protocolId, U8 lengthOfLength, FwSizeType dataLength) {
+    // EPP Packet per CCSDS 133.1-B-3 Section 4.1.2 / 4.1.3.2
+    // Byte 0: 3b PVN=7 | 3b protocolId | 2b lengthOfLength
+    // protocolId=0 (EppProtocolId::Idle) produces an EPP idle/fill packet
+    buffer[0] = static_cast<U8>((ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset));
+    buffer[0] |= ((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset);
+    buffer[0] |= (lengthOfLength & EPPSubfields::lengthOfLengthMask);
 
     if (lengthOfLength == 0) {
-        // Fill packet - just header byte
         return 1;
     }
 
-    // Write length field
     FwSizeType offset = 1;
-    for (U8 i = 0; i < lengthOfLength; i++) {
-        U8 shift = static_cast<U8>((lengthOfLength - 1 - i) * 8);
-        buffer[offset++] = static_cast<U8>((packetLength >> shift) & 0xFF);
+
+    // Extension byte for lengthOfLength >= 2 (per CCSDS 133.1-B-3 Section 4.1.2.1.1)
+    if (lengthOfLength >= 2) {
+        buffer[offset++] = 0x00;
     }
 
-    // Fill with idle pattern
-    for (FwSizeType i = 0; i < packetLength; i++) {
+    // Two CCSDS reserved bytes for lengthOfLength == 4
+    if (lengthOfLength == 4) {
+        buffer[offset++] = 0x00;
+        buffer[offset++] = 0x00;
+    }
+
+    // Length field (big-endian)
+    FwSizeType lengthCopy = dataLength;
+    for (U8 i = 0; i < lengthOfLength; i++) {
+        buffer[offset++] = static_cast<U8>((lengthCopy >>= 8) & 0xFF);
+    }
+
+    // Fill data
+    for (FwSizeType i = 0; i < dataLength; i++) {
         buffer[offset++] = 0x55;
     }
 
-    return 1 + lengthOfLength + packetLength;
+    return offset;
 }
 
 }  // namespace Ccsds

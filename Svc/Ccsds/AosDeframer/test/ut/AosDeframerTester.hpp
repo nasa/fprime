@@ -212,17 +212,11 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Create an EPP packet in the buffer
     //! \param buffer Destination buffer
-    //! \param protocolId Protocol ID
+    //! \param protocolId Protocol ID (0 = Idle per EppProtocolId::Idle)
+    //! \param lengthOfLength Number of length field bytes (0=fill, 1, 2, or 4)
     //! \param dataLength Packet data length
     //! \return Total packet size
-    FwSizeType createEppPacket(U8* buffer, U8 protocolId, U16 dataLength);
-
-    //! Create an EPP idle packet in the buffer
-    //! \param buffer Destination buffer
-    //! \param lengthOfLength Length of the length field (0 for fill packet)
-    //! \param packetLength Packet length (if lengthOfLength > 0)
-    //! \return Total packet size
-    FwSizeType createEppIdlePacket(U8* buffer, U8 lengthOfLength, FwSizeType packetLength);
+    FwSizeType createEppPacket(U8* buffer, U8 protocolId, U8 lengthOfLength, FwSizeType dataLength);
 
   private:
     // ----------------------------------------------------------------------
