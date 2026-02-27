@@ -110,12 +110,15 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet allocation failure emits an event and drops the packet
     void testSpanningPacketAllocFailureEvent();
 
+    //! Test spanning packet dropped when a VC frame count gap is detected mid-reassembly
+    void testSpanningPacketAbandonedOnVcGap();
+
+    //! Test spanning packet dropped when an idle frame arrives mid-reassembly
+    void testSpanningPacketAbandonedOnIdleFrame();
+
     // ----------------------------------------------------------------------
     // Tests - SPP Extraction
     // ----------------------------------------------------------------------
-
-    //! Test Space Packet Protocol extraction
-    void testSppExtraction();
 
     //! Test SPP idle packet filtering
     void testSppIdlePacketFiltering();
@@ -155,9 +158,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test frame count telemetry
     void testFrameCountTelemetry();
-
-    //! Test CRC error count telemetry
-    void testCrcErrorCountTelemetry();
 
   private:
     // ----------------------------------------------------------------------
@@ -210,7 +210,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Create an EPP packet in the buffer
     //! \param buffer Destination buffer
     //! \param protocolId Protocol ID (0 = Idle per EppProtocolId::Idle)
-    //! \param lengthOfLength Number of length field bytes (0=fill, 1, 2, or 4)
+    //! \param lengthOfLength Number of length field bytes (0=1 byte idle, 1, 2, or 4)
     //! \param dataLength Packet data length
     //! \return Total packet size
     FwSizeType createEppPacket(U8* buffer, U8 protocolId, U8 lengthOfLength, FwSizeType dataLength);

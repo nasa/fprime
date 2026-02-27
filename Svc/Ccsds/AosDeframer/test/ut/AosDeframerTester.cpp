@@ -51,9 +51,10 @@ void AosDeframerTester::testNominalDeframing() {
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataReturnOut_SIZE(1);  // Frame buffer returned
 
-    // Verify packet content
+    // Verify packet content and context
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ASSERT_EQ(outBuffer.getSize(), sppSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
 
     // Verify telemetry
     ASSERT_TLM_SIZE(3);  // LatestVcFrameCount, FramesProcessed, and PacketsExtracted
@@ -163,6 +164,13 @@ void AosDeframerTester::testInvalidFecf() {
     ASSERT_EVENTS_InvalidFecf_SIZE(1);
     ASSERT_TLM_CrcErrorCount_SIZE(1);
     ASSERT_TLM_CrcErrorCount(0, 1);
+
+    // Second corrupt frame - verify counter accumulates
+    this->clearHistory();
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(payload, sppSize, 0);
+    buffer2.getData()[TEST_FRAME_SIZE - 1] ^= 0xFF;
+    this->invoke_to_dataIn(0, buffer2, context);
+    ASSERT_TLM_CrcErrorCount(0, 2);
 }
 
 void AosDeframerTester::testInvalidTfvn() {
@@ -210,6 +218,8 @@ void AosDeframerTester::testVcFrameCountGap() {
     ASSERT_from_errorNotify(0, Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
     ASSERT_EVENTS_VcFrameCountGap_SIZE(1);
     ASSERT_EVENTS_VcFrameCountGap(0, 0, 2, 1);
+    ASSERT_TLM_LatestVcFrameCount_SIZE(1);
+    ASSERT_TLM_LatestVcFrameCount(0, 2);
 }
 
 // ----------------------------------------------------------------------
@@ -467,30 +477,61 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
 }
 
+void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
+    this->configureDefault();
+
+    // Create a packet that spans two frames (6 + 280 = 286 bytes > 246-byte data zone)
+    U8 fullPacket[300];
+    this->createSppPacket(fullPacket, 0x050, 280);
+
+    ComCfg::FrameContext context;
+
+    // Frame 0 (vcCount=0): send only the first data zone's worth — spanning in progress
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(fullPacket, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    // Frame 2 (vcCount=2, gap): spanning packet abandoned; fresh complete packet still extracted
+    U8 freshPayload[50];
+    FwSizeType freshSize = this->createSppPacket(freshPayload, 0x051, 20);
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(freshPayload, freshSize, 0, ComCfg::SpacecraftId, 0, 2);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    ASSERT_from_dataOut_SIZE(1);  // Only the fresh packet — partial spanning packet was dropped
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), freshSize);
+    ASSERT_EVENTS_VcFrameCountGap_SIZE(1);
+}
+
+void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
+    this->configureDefault();
+
+    // Create a packet that spans two frames (6 + 280 = 286 bytes > 246-byte data zone)
+    U8 fullPacket[300];
+    this->createSppPacket(fullPacket, 0x060, 280);
+
+    ComCfg::FrameContext context;
+
+    // Frame 0 (vcCount=0): spanning in progress
+    Fw::Buffer buffer1 = this->assembleFrameBuffer(fullPacket, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, buffer1, context);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    // Frame 1 (vcCount=1): idle frame — spanning packet abandoned
+    U8 idlePayload[1] = {0};
+    Fw::Buffer buffer2 = this->assembleFrameBuffer(idlePayload, sizeof(idlePayload), M_PDUSubfields::FHP_IDLE_DATA_ONLY,
+                                                   ComCfg::SpacecraftId, 0, 1);
+    this->invoke_to_dataIn(0, buffer2, context);
+
+    ASSERT_from_dataOut_SIZE(0);  // Partial spanning packet dropped
+    ASSERT_EVENTS_IdleFrame_SIZE(1);
+    ASSERT_EVENTS_IdleFrame(0, 0);
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------
-
-void AosDeframerTester::testSppExtraction() {
-    this->configureDefault();
-
-    U8 payload[100];
-    FwSizeType sppSize = this->createSppPacket(payload, 0x100, 50);
-
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
-    ComCfg::FrameContext context;
-
-    this->invoke_to_dataIn(0, buffer, context);
-
-    ASSERT_from_dataOut_SIZE(1);
-
-    // Check size of returned packet
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize);
-
-    // Check PVN in context of output
-    ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(outContext.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
-}
 
 void AosDeframerTester::testSppIdlePacketFiltering() {
     this->configureDefault();
@@ -538,6 +579,7 @@ void AosDeframerTester::testEppExtraction() {
     this->invoke_to_dataIn(0, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), eppSize);
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(outContext.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
@@ -663,8 +705,10 @@ void AosDeframerTester::testPvnMaskSppOnly() {
 
     this->invoke_to_dataIn(0, buffer, context);
 
-    // Only SPP packets extracted (EPP skipped but may stop extraction)
+    // Only the first SPP extracted; EPP triggers DisabledPvn and stops extraction
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EVENTS_DisabledPvn_SIZE(1);
+    ASSERT_EVENTS_DisabledPvn(0, 0, ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
 }
 
 void AosDeframerTester::testPvnMaskEppOnly() {
@@ -701,24 +745,6 @@ void AosDeframerTester::testFrameCountTelemetry() {
         Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
         this->invoke_to_dataIn(0, buffer, context);
         ASSERT_TLM_FramesProcessed(0, i + 1);
-    }
-}
-
-void AosDeframerTester::testCrcErrorCountTelemetry() {
-    this->configureDefault();
-
-    U8 payload[50];
-    FwSizeType sppSize = this->createSppPacket(payload, 0x304, 20);
-
-    ComCfg::FrameContext context;
-
-    // Send 2 frames with bad CRC
-    for (U32 i = 0; i < 2; i++) {
-        this->clearHistory();
-        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
-        buffer.getData()[TEST_FRAME_SIZE - 1] ^= 0xFF;  // Corrupt CRC
-        this->invoke_to_dataIn(0, buffer, context);
-        ASSERT_TLM_CrcErrorCount(0, i + 1);
     }
 }
 

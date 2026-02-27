@@ -100,14 +100,19 @@ TEST(AosDeframer, testSpanningPacketAllocFailureEvent) {
     tester.testSpanningPacketAllocFailureEvent();
 }
 
+TEST(AosDeframer, testSpanningPacketAbandonedOnVcGap) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSpanningPacketAbandonedOnVcGap();
+}
+
+TEST(AosDeframer, testSpanningPacketAbandonedOnIdleFrame) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testSpanningPacketAbandonedOnIdleFrame();
+}
+
 // ----------------------------------------------------------------------
 // Tests - SPP Extraction
 // ----------------------------------------------------------------------
-
-TEST(AosDeframer, testSppExtraction) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testSppExtraction();
-}
 
 TEST(AosDeframer, testSppIdlePacketFiltering) {
     Svc::Ccsds::AosDeframerTester tester;
@@ -164,11 +169,6 @@ TEST(AosDeframer, testPvnMaskEppOnly) {
 TEST(AosDeframer, testFrameCountTelemetry) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testFrameCountTelemetry();
-}
-
-TEST(AosDeframer, testCrcErrorCountTelemetry) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testCrcErrorCountTelemetry();
 }
 
 int main(int argc, char** argv) {

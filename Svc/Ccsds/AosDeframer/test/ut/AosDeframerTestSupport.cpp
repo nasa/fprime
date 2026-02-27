@@ -107,7 +107,10 @@ FwSizeType AosDeframerTester::createSppPacket(U8* buffer, U16 apid, U16 dataLeng
     return SpacePacketHeader::SERIALIZED_SIZE + dataLength;
 }
 
-FwSizeType AosDeframerTester::createEppPacket(U8* buffer, U8 protocolId, U8 lengthOfLength, FwSizeType dataLength) {
+FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
+                                              U8 protocolId,
+                                              U8 lengthOfLength,
+                                              const FwSizeType dataLength) {
     // EPP Packet per CCSDS 133.1-B-3 Section 4.1.2 / 4.1.3.2
     // Byte 0: 3b PVN=7 | 3b protocolId | 2b lengthOfLength
     // protocolId=0 (EppProtocolId::Idle) produces an EPP idle/fill packet
@@ -133,9 +136,8 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer, U8 protocolId, U8 leng
     }
 
     // Length field (big-endian)
-    FwSizeType lengthCopy = dataLength;
     for (U8 i = 0; i < lengthOfLength; i++) {
-        buffer[offset++] = static_cast<U8>((lengthCopy >>= 8) & 0xFF);
+        buffer[offset++] = static_cast<U8>(dataLength >> (8 * (lengthOfLength - i - 1)) & 0xFF);
     }
 
     // Fill data
