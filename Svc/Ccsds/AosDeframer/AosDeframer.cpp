@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
-#include "Svc/Ccsds/Types/EppPacketTypeEnumAc.hpp"
+#include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -269,7 +269,6 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     return true;
 }
 
-// TODO: Refactor extract funcs to instead populate context + determine size (negative means skip this much idle?)
 FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size) {
     // Seek amount
     FwSizeType seekForward = 0;
@@ -284,7 +283,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
             // We'll work w/ everything past the copied header if we get a clean parse
             data += toHeader;
-            size -= toHeader
+            size -= toHeader;
+            seekForward += toHeader;
         }
 
         // Attempt to find a size w/ what we have (zero means this frame is over)
@@ -308,10 +308,11 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
     // Already have the dynamic buffer, so fill away
     const FwSizeType spaceLeft = vc.spanningPacket.expectedSize - vc.spanningPacket.bytesReceived;
     // Copy what we got
-    seekForward = FW_MIN(size, spaceLeft);
-    if (seekForward > 0) {
-        ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, seekForward);
-        vc.spanningPacket.bytesReceived += seekForward;
+    const FwSizeType toBody = FW_MIN(size, spaceLeft);
+    if (toBody > 0) {
+        ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
+        vc.spanningPacket.bytesReceived += toBody;
+        seekForward += toBody;
     }
 
     // Check if the spanning packet is now complete
@@ -324,6 +325,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         // Buffer won't be returned now since we cleared the handle
         this->abandonSpanningPacket(vc);
     }
+
+    return seekForward;
 }
 
 void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
@@ -408,12 +411,12 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, const U8* const packetStar
                 return sizeSppPacket(packetStart, remainingBytes);
             } else {
                 this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvnEnum);
-                return;
+                return 0;
             }
             break;
         default:
             this->log_WARNING_HI_InvalidPvn(vc.virtualChannelId, pvn);
-            return;
+            return 0;
     }
 }
 
