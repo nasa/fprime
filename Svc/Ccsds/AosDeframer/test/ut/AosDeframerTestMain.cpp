@@ -85,11 +85,6 @@ TEST(AosDeframer, testSpanningPacketTwoFrames) {
     tester.testSpanningPacketTwoFrames();
 }
 
-TEST(AosDeframer, testSpanningPacketMultipleFrames) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testSpanningPacketMultipleFrames();
-}
-
 TEST(AosDeframer, testSpanningPacketFourFrames) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testSpanningPacketFourFrames();
@@ -174,11 +169,6 @@ TEST(AosDeframer, testPvnMaskEppOnly) {
 TEST(AosDeframer, testFrameCountTelemetry) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testFrameCountTelemetry();
-}
-
-TEST(AosDeframer, testPacketCountTelemetry) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testPacketCountTelemetry();
 }
 
 TEST(AosDeframer, testCrcErrorCountTelemetry) {

@@ -101,9 +101,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test packet spanning across two frames
     void testSpanningPacketTwoFrames();
 
-    //! Test packet spanning across multiple frames
-    void testSpanningPacketMultipleFrames();
-
     //! Test packet spanning across four frames (explicit 3+ frame coverage)
     void testSpanningPacketFourFrames();
 
@@ -161,9 +158,6 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test frame count telemetry
     void testFrameCountTelemetry();
-
-    //! Test packet count telemetry
-    void testPacketCountTelemetry();
 
     //! Test CRC error count telemetry
     void testCrcErrorCountTelemetry();

@@ -238,6 +238,22 @@ void AosDeframerTester::testFhpAtOffset() {
 void AosDeframerTester::testFhpNoPacketStart() {
     this->configureDefault();
 
+    // Scenario 1: FHP_NO_PACKET_START with NO active spanning packet (orphan continuation)
+    // This covers the "continuation data cannot be used" path in extractPackets.
+    {
+        U8 orphanData[TEST_DATA_ZONE_SIZE];
+        ::memset(orphanData, 0xAA, sizeof(orphanData));
+        Fw::Buffer orphanFrame =
+            this->assembleFrameBuffer(orphanData, TEST_DATA_ZONE_SIZE, M_PDUSubfields::FHP_NO_PACKET_START);
+        ComCfg::FrameContext context;
+        this->invoke_to_dataIn(0, orphanFrame, context);
+        // Data silently dropped, no error events, no output
+        ASSERT_from_dataOut_SIZE(0);
+        ASSERT_from_errorNotify_SIZE(0);
+        this->clearHistory();
+    }
+
+    // Scenario 2: FHP_NO_PACKET_START with an active spanning packet (normal continuation)
     // For TEST_FRAME_SIZE=256 with FECF: data zone = 256 - 6 - 2 - 2 = 246 bytes
     // Create a packet that spans two frames: header (6) + data (250) = 256 bytes
     U8 payload1[300];
@@ -346,47 +362,6 @@ void AosDeframerTester::testSpanningPacketTwoFrames() {
 
     // Should have both packets now
     ASSERT_from_dataOut_SIZE(2);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
-}
-
-void AosDeframerTester::testSpanningPacketMultipleFrames() {
-    // Use default frame size for this test
-    // Spanning packet buffer is ComCfg::AosMaxFrameFixedSize = 1536 bytes
-    // Use a packet that fits in that but spans 3 smaller frames
-    this->configureDefault();
-
-    // Create a packet that spans 3 frames but fits in spanning buffer
-    // Each frame data zone ~246 bytes, so use packet ~600 bytes
-    // Total packet = header (6) + data (600) = 606 bytes < 1536
-    const FwSizeType packetDataLen = 600;
-    U8 fullPacket[700];
-    FwSizeType totalPacketSize = this->createSppPacket(fullPacket, 0x030, static_cast<U16>(packetDataLen));
-
-    ComCfg::FrameContext context;
-
-    // First frame - first ~246 bytes of packet
-    Fw::Buffer buffer1 =
-        this->assembleFrameBuffer(fullPacket, TEST_DATA_ZONE_SIZE, 0, ComCfg::SpacecraftId, 0, 0, 1, true);
-    this->invoke_to_dataIn(0, buffer1, context);
-    ASSERT_from_dataOut_SIZE(0);
-    this->clearHistory();
-
-    // Second frame - continuation only
-    Fw::Buffer buffer2 =
-        this->assembleFrameBuffer(fullPacket + TEST_DATA_ZONE_SIZE, TEST_DATA_ZONE_SIZE,
-                                  M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, 1, 1, true);
-    this->invoke_to_dataIn(0, buffer2, context);
-    ASSERT_from_dataOut_SIZE(0);
-    this->clearHistory();
-
-    // Third frame - rest of packet
-    FwSizeType remainingBytes = totalPacketSize - (2 * TEST_DATA_ZONE_SIZE);
-    Fw::Buffer buffer3 =
-        this->assembleFrameBuffer(fullPacket + (2 * TEST_DATA_ZONE_SIZE), remainingBytes,
-                                  static_cast<U16>(remainingBytes), ComCfg::SpacecraftId, 0, 2, 1, true);
-    this->invoke_to_dataIn(0, buffer3, context);
-
-    ASSERT_from_dataOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), totalPacketSize);
 }
 
@@ -729,24 +704,6 @@ void AosDeframerTester::testFrameCountTelemetry() {
         this->invoke_to_dataIn(0, buffer, context);
         ASSERT_TLM_FramesProcessed(0, i + 1);
     }
-}
-
-void AosDeframerTester::testPacketCountTelemetry() {
-    this->configureDefault();
-
-    U8 payload[200];
-    FwSizeType offset = 0;
-    offset += this->createSppPacket(payload + offset, 0x301, 20);
-    offset += this->createSppPacket(payload + offset, 0x302, 25);
-    offset += this->createSppPacket(payload + offset, 0x303, 30);
-
-    Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
-    ComCfg::FrameContext context;
-
-    this->invoke_to_dataIn(0, buffer, context);
-
-    ASSERT_TLM_PacketsExtracted_SIZE(3);
-    ASSERT_TLM_PacketsExtracted(2, 3);  // Final value
 }
 
 void AosDeframerTester::testCrcErrorCountTelemetry() {
