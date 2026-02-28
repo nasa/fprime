@@ -1017,35 +1017,33 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
     this->component.doDispatch();
 
     // Group 1
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1,
-                                        Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN, 3, 3);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1, Svc::RateLogic::ON_CHANGE_MIN, 3,
+                                        3);
     this->component.doDispatch();
 
     // Send every 5 on port 1
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 1,
-                                        Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN, 2, 2);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 1, Svc::RateLogic::ON_CHANGE_MIN, 2,
+                                        2);
     this->component.doDispatch();
 
     this->clearHistory();
 
     // Group 2
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 2,
-                                        Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 4, 12);
+    this->invoke_to_configureSectionGroupRate(0, static_cast<TelemetrySection::T>(0), 2,
+                                              Svc::RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 4, 12);
     this->component.doDispatch();
 
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 2,
-                                        Svc::TlmPacketizer_RateLogic::SILENCED, 0, 0);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 2, Svc::RateLogic::SILENCED, 0, 0);
     this->component.doDispatch();
 
     this->clearHistory();
 
     // Group 3
     this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(1), 3,
-                                        Svc::TlmPacketizer_RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 0, 7);
+                                        Svc::RateLogic::ON_CHANGE_MIN_OR_EVERY_MAX, 0, 7);
     this->component.doDispatch();
 
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 3,
-                                        Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0, 6);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 3, Svc::RateLogic::EVERY_MAX, 0, 6);
     this->component.doDispatch();
 
     // Disable output on section 2 via port invocation
@@ -1543,8 +1541,7 @@ void TlmPacketizerTester ::advancedControlGroupTests() {
     this->clearHistory();
 
     // Send a packet every time the port is invoked.
-    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1,
-                                        Svc::TlmPacketizer_RateLogic::EVERY_MAX, 0, 0);
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1, Svc::RateLogic::EVERY_MAX, 0, 0);
     this->component.doDispatch();
 
     this->clearHistory();
@@ -1576,6 +1573,14 @@ void TlmPacketizerTester ::advancedControlGroupTests() {
     this->component.doDispatch();
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     ASSERT_from_PktSend_SIZE(0);
+
+    // Invalidate the send algorithm
+    this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<TelemetrySection::T>(0), 1, Svc::RateLogic::SILENCED, 0, 0);
+    this->component.doDispatch();
+    // Re-enable settings using the configuration port
+    this->invoke_to_configureSectionGroupRate(0, static_cast<TelemetrySection::T>(0), 1, Svc::RateLogic::EVERY_MAX, 0,
+                                              0);
+    this->component.doDispatch();
 
     // Enable Section by Port Invocation
     this->sendCmd_ENABLE_SECTION(0, 0, static_cast<TelemetrySection::T>(0), Fw::Enabled::ENABLED);
@@ -1686,6 +1691,8 @@ void TlmPacketizerTester ::connectPorts() {
 
     // controlIn
     this->connect_to_controlIn(0, this->component.get_controlIn_InputPort(0));
+
+    this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

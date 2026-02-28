@@ -91,7 +91,9 @@ mode_t PosixFile::map_open_create_mode(const U32 create_mode) {
 
     out_mode |= (create_mode & Os::FILE_MODE_ISUID) ? S_ISUID : 0;
     out_mode |= (create_mode & Os::FILE_MODE_ISGID) ? S_ISGID : 0;
+#if defined(S_ISVTX)
     out_mode |= (create_mode & Os::FILE_MODE_ISVTX) ? S_ISVTX : 0;
+#endif
 
     return out_mode;
 }

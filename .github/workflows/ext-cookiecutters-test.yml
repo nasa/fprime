@@ -41,6 +41,9 @@ jobs:
   Validate:
     runs-on: ubuntu-latest
     needs: [ get-tools-branch, get-bootstrap-branch ]
+    env:
+      BOOTSTRAP_BRANCH: ${{ needs.get-bootstrap-branch.outputs.target-branch }}
+      TOOLS_BRANCH: ${{ needs.get-tools-branch.outputs.target-branch }}
     steps:
       # Checkout only the bootstrap.expect file, since the full F´ repo will be 
       # checked out as part of the fprime-bootstrap process
@@ -61,7 +64,7 @@ jobs:
         run: |
              sudo apt-get update
              sudo apt-get install expect
-             pip install git+https://github.com/fprime-community/fprime-bootstrap@${{ needs.get-bootstrap-branch.outputs.target-branch }}
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@${BOOTSTRAP_BRANCH}
 
       - name: "Bootstrap Project"
         run: |
@@ -81,7 +84,7 @@ jobs:
              cd my-project
              . fprime-venv/bin/activate
              pip install -U -r ./requirements.txt
-             pip install git+https://github.com/nasa/fprime-tools@${{ needs.get-tools-branch.outputs.target-branch }}
+             pip install git+https://github.com/nasa/fprime-tools@${TOOLS_BRANCH}
 
       - name: "Version Check"
         run: |

@@ -5,13 +5,6 @@ module Svc {
     # Types
     # ----------------------------------------------------------------------
     
-    enum RateLogic {
-      SILENCED,                     @< No logic applied. Does not send group and freezes counter.
-      EVERY_MAX,                    @< Send every MAX ticks between sends.
-      ON_CHANGE_MIN,                @< Send on updates after MIN ticks since last send.
-      ON_CHANGE_MIN_OR_EVERY_MAX,   @< Send on updates after MIN ticks since last send OR at MAX ticks between sends.
-    }
-    
     struct GroupConfig {
       enabled: Fw.Enabled       @< Enable / Disable Telemetry Output
       forceEnabled: Fw.Enabled  @< Force Enable / Disable Telemetry Output
@@ -48,6 +41,9 @@ module Svc {
 
     @ Run port for starting packet send cycle
     async input port Run: Svc.Sched
+
+    @ Input configuration port
+    async input port configureSectionGroupRate: ConfigureGroupRate
 
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm

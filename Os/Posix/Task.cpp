@@ -235,7 +235,7 @@ void PosixTask::resume() {
     FW_ASSERT(0);
 }
 
-Os::Task::Status PosixTask::_delay(Fw::TimeInterval interval) {
+Os::Task::Status PosixTask::_delay(const Fw::TimeInterval& interval) {
     Os::Task::Status task_status = Os::Task::OP_OK;
     timespec sleep_interval;
     sleep_interval.tv_sec = interval.getSeconds();
