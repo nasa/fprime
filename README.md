@@ -125,3 +125,14 @@ Each product has a set of Maintainers who are charged with the day-to-day implem
 ## Release Notes
 
 The version history and artifacts associated with the project can be found at [Releases](https://github.com/nasa/fprime/releases).
+## AI-generated ProductMaps
+
+
+
+| Github file | ProductMap |
+|-------------|------------|
+| [FileUplink.cpp](https://github.com/nasa/fprime/blob/devel/Svc/FileUplink/FileUplink.cpp) | [Link to Map](https://product-map.ai/app/public?url=https://github.com/nasa/fprime/blob/devel/Svc/FileUplink/FileUplink.cpp) |
+
+Contact ProductMap if you have any questions at [juan@product-map.ai](juan@product-map.ai).
+
+Last updated on Mon Feb 03 22:57:35 UTC 2025.
