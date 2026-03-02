@@ -77,6 +77,20 @@
 #endif
 #endif
 
+// Some trusted functions can be marked as NO_ASAN to avoid false trigger of the Address Sanitizer.
+#ifndef NO_ASAN
+#ifndef __has_attribute
+#define __has_attribute(x) 0
+#endif
+#if __has_attribute(no_sanitize_address)
+#define NO_ASAN __attribute__((no_sanitize_address))
+#elif __has_attribute(no_sanitize)
+#define NO_ASAN __attribute__((no_sanitize("address")))
+#else
+#define NO_ASAN
+#endif
+#endif
+
 namespace Fw {
 //! Assert with no arguments
 I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;

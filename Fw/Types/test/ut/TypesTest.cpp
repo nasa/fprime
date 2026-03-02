@@ -1702,9 +1702,56 @@ TEST(Nominal, string_len) {
     ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(3)), 3);
 }
 
+TEST(Nominal, string_len_empty) {
+    const char* test_string = "";
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(10)), 0);
+}
+
+TEST(Nominal, string_len_various_lengths) {
+    char test_buffer[100];
+    const FwSizeType sizes[] = { 1, 3, 4, 5, 7, 8, 15, 16, 17, 31, 32, 33, 63 };
+
+    for (U32 i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++) {
+        FwSizeType len = sizes[i];
+        
+        // Fill buffer with 'a', put NUL at the end
+        (void)::memset(test_buffer, 'a', static_cast<size_t>(len));
+        test_buffer[len] = '\0';
+
+        ASSERT_EQ(Fw::StringUtils::string_length(test_buffer, static_cast<FwSizeType>(100)), len)
+            << "Failed for length: " << len;
+    }
+}
+
+TEST(Nominal, string_len_big_length) {
+    const FwSizeType LEN = 8 * 1024;
+    char test_buffer[LEN];
+
+    (void)::memset(test_buffer, 'a', static_cast<size_t>(LEN));
+    test_buffer[LEN - 1] = '\0';
+
+    ASSERT_EQ(Fw::StringUtils::string_length(test_buffer, LEN), LEN - 1);
+}
+
 TEST(OffNominal, string_len_zero) {
     const char* test_string = "abc123";
     ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(0)), 0);
+}
+
+TEST(OffNominal, string_len_unaligned) {
+    char buffer[64];
+    (void)::memset(buffer, 'a', sizeof(buffer));
+    buffer[60] = '\0';
+
+    // Check offsets from 0 to 15
+    // This is guaranteed to cover all cases
+    for (U32 offset = 0; offset < 16; offset++) {
+        const char* unaligned_ptr = &buffer[offset];
+        FwSizeType expected = static_cast<FwSizeType>(60 - offset);
+        
+        ASSERT_EQ(Fw::StringUtils::string_length(unaligned_ptr, static_cast<FwSizeType>(100)), expected)
+            << "Failed at offset: " << offset;
+    }
 }
 
 TEST(OffNominal, sub_string_no_match) {
