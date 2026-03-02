@@ -160,7 +160,6 @@ module Ccsds {
         constant cycleCountFlagMask = 0x00000040      @< 0b01000000 - bit [6]
         constant spacecraftIdMsbMask = 0x00000030     @< 0b00110000 - bits [5:4]
         constant vcFrameCountCycleMask = 0x0000000F   @< 0b00001111 - bits [3:0]
-
     }
 
     @ Special values for AOS M_PDU First Header Pointer

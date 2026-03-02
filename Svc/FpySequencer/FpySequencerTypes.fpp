@@ -7,7 +7,7 @@ module Svc {
         # should be equal to (last flag id) + 1
         constant FLAG_COUNT = 1
 
-        enum FlagId : U8 {
+        dictionary enum FlagId : U8 {
             # must start at 0 and increment by 1 each time
             @ if true, the sequence will exit with an error if a command fails
             EXIT_ON_CMD_FAIL = 0
