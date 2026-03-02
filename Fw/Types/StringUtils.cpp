@@ -3,6 +3,8 @@
 #include <Fw/Types/ExternalString.hpp>
 #include <cstring>
 #include <limits>
+#include <cstdint>
+#include <algorithm>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
     // Handle self-copy and 0 bytes copy
@@ -21,15 +23,69 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     return returned;
 }
 
+NO_ASAN
 FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType buffer_size) {
     FwSizeType length = 0;
     FW_ASSERT(source != nullptr);
-    for (length = 0; length < buffer_size; length++) {
-        if (source[length] == '\0') {
-            break;
+
+    // Fast path for short strings - avoids alignment overhead
+    if (buffer_size <= sizeof(std::size_t))
+    {
+        while (length < buffer_size) {
+            if (source[length] == '\0') {
+                break;
+            }
+            length++;
         }
+        return length;
     }
-    return length;
+    
+    // Get nearest aligned address
+    constexpr std::uintptr_t align_mask = sizeof(std::size_t) - 1;
+    const std::uintptr_t src_addr = reinterpret_cast<std::uintptr_t>(source);
+    const std::size_t align_offset = ((-src_addr) & align_mask);
+    
+    // Prefix to word-aligned data
+    const std::size_t prefix = std::min(align_offset, buffer_size - 1);
+    
+    // Check to word-alignment
+    while (length < prefix) {
+        if (source[length] == '\0') {
+            return length;
+        }
+        length++;
+    }
+    
+    // Word-aligned check
+    constexpr std::size_t low_magic = std::numeric_limits<std::size_t>::max() / 0xFF; // 0x01010101...
+    constexpr std::size_t high_magic = low_magic * 0x80; // 0x80808080...
+    
+    while (length + sizeof(std::size_t) <= buffer_size)
+    {
+        // Check if reading is aligned
+        FW_ASSERT(reinterpret_cast<std::uintptr_t>(source + length) % sizeof(std::size_t) == 0);
+
+        // Safe read
+        std::size_t word;
+        std::memcpy(&word, source + length, sizeof(word));
+        
+        // Check if NUL char
+        std::size_t is_null = (word - low_magic) & ~word & high_magic;
+        if (is_null) break;
+
+        length += sizeof(std::size_t);
+    }
+    
+    // Check tail
+    while (length < buffer_size)
+    {
+        if (source[length] == '\0') {
+            return length;
+        }
+        length++;
+    }
+
+    return buffer_size;
 }
 
 FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
