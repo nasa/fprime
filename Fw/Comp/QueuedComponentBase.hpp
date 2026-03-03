@@ -26,7 +26,7 @@ class QueuedComponentBase : public PassiveComponentBase {
         MSG_DISPATCH_ERROR,  //!< Errors dispatching messages
         MSG_DISPATCH_EXIT    //!< A message was sent requesting an exit of the loop
     } MsgDispatchStatus;
-    void deinit();                          //!< Allows de-initialization on teardown
+    void deinit();  //!< Allows de-initialization on teardown
 
   protected:
     QueuedComponentBase(const char* name);  //!< Constructor
