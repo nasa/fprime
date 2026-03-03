@@ -295,8 +295,8 @@ void FileDownlink ::sendFile(const char* sourceFilename, const char* destFilenam
     } else if (startOffset + length > fileSize) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
-        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, fileSize,
-                                                    this->m_file.getSourceName(), this->m_file.getDestName());
+        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, fileSize, this->m_file.getSourceName(),
+                                                    this->m_file.getDestName());
         length = fileSize - startOffset;
     }
 
