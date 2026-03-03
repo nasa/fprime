@@ -20,7 +20,7 @@ Hash ::Hash() {
     this->init();
 }
 
-Hash ::~Hash() {}
+Hash ::~Hash() = default;
 
 void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffer) {
     HASH_HANDLE_TYPE local_hash_handle;

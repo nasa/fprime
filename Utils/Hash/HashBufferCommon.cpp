@@ -7,14 +7,14 @@
 
 namespace Utils {
 
-HashBuffer::HashBuffer() {}
+HashBuffer::HashBuffer() = default;
 
 HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
-HashBuffer::~HashBuffer() {}
+HashBuffer::~HashBuffer() = default;
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,
@@ -32,16 +32,16 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
     return *this;
 }
 
-bool HashBuffer::operator==(const HashBuffer& other) const {
-    if ((this->getSize() == other.getSize()) &&
-        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
+bool operator==(const HashBuffer& lhs, const HashBuffer& rhs) {
+    if ((lhs.getSize() == rhs.getSize()) &&
+        (memcmp(lhs.getBuffAddr(), rhs.getBuffAddr(), static_cast<size_t>(lhs.getSize())) != 0)) {
         return false;
     }
     return true;
 }
 
-bool HashBuffer::operator!=(const HashBuffer& other) const {
-    return !(*this == other);
+bool operator!=(const HashBuffer& lhs, const HashBuffer& rhs) {
+    return !(lhs == rhs);
 }
 
 const U8* HashBuffer::getBuffAddr() const {
