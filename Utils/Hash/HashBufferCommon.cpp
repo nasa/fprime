@@ -17,8 +17,8 @@ HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::SerializeBufferBas
 HashBuffer::~HashBuffer() = default;
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,
-        other.Fw::SerializeBufferBase::getSize());
+    Fw::SerializeStatus stat =
+        Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.Fw::SerializeBufferBase::getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
