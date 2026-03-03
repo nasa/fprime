@@ -129,9 +129,9 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
 
-    void test_command_dispatch(); 
+    void test_command_dispatch();
 
-    void test_command_response(); 
+    void test_command_response();
 
     // ----------------------------------------------------------------------
     // Helper methods

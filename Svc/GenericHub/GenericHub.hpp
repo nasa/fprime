@@ -25,12 +25,12 @@ class GenericHub final : public GenericHubComponentBase {
      * Type of serialized data on the wire. Allows for expanding them on the opposing end.
      */
     enum HubType {
-        HUB_TYPE_PORT,     //!< Port type transmission
-        HUB_TYPE_BUFFER,   //!< Buffer type transmission
-        HUB_TYPE_EVENT,    //!< Event transmission
-        HUB_TYPE_CHANNEL,  //!< Telemetry channel type
-        HUB_TYPE_CMD_DISP, //!< Command dispatch type
-        HUB_TYPE_CMD_RESP, //!< Command response type
+        HUB_TYPE_PORT,      //!< Port type transmission
+        HUB_TYPE_BUFFER,    //!< Buffer type transmission
+        HUB_TYPE_EVENT,     //!< Event transmission
+        HUB_TYPE_CHANNEL,   //!< Telemetry channel type
+        HUB_TYPE_CMD_DISP,  //!< Command dispatch type
+        HUB_TYPE_CMD_RESP,  //!< Command response type
         HUB_TYPE_MAX
     };
 

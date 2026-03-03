@@ -163,7 +163,7 @@ void GenericHubTester ::test_command_dispatch() {
 }
 
 void GenericHubTester ::test_command_response() {
-    FwOpcodeType opCode = 0x3A56BF8C; 
+    FwOpcodeType opCode = 0x3A56BF8C;
     U32 cmdSeq = 825;
     Fw::CmdResponse response = Fw::CmdResponse::VALIDATION_ERROR;
 
@@ -175,11 +175,11 @@ void GenericHubTester ::test_command_response() {
 }
 
 void GenericHubTester ::test_commands() {
-    this->test_command_dispatch(); 
+    this->test_command_dispatch();
 
     this->test_command_response();
 }
-  
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
