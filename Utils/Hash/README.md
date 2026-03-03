@@ -30,10 +30,10 @@ from a previously computed hash.
 times as you like, allowing you to continue adding data to the hash state. In this way, a user can hash their data as they read it
 from a buffer, or from a file, in segments.
 
-`hash.final(buffer)` - This method returns a hash of all the data given to the hash object via `update` since
+`hash.finalize(buffer)` - This method returns a hash of all the data given to the hash object via `update` since
 the last `init` was run. It returns the hash in `buffer`, which is a `HashBuffer` object.
 
-`hash.hash(data, len, buffer)` - This method runs `init`, `update`, and `final` all in one shot. If you have already
+`hash.hash(data, len, buffer)` - This method runs `init`, `update`, and `finalize` all in one shot. If you have already
 collected all the data that you want to hash into a buffer `data` with length `len`, you can use this static function
 to calculate the hash all at once. The computed hash is returned in `buffer`, which is a `HashBuffer` object.
 

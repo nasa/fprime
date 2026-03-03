@@ -71,12 +71,12 @@ class Hash {
 
     //! Finalize an incremental computation and return the result
     //!
-    void final(HashBuffer& buffer  //! The result
+    void finalize(HashBuffer& buffer  //! The result
     );
 
     //! Finalize an incremental computation and return the result
     //!
-    void final(U32& hashvalue);
+    void finalize(U32& hashvalue);
 
     //! Get the file extension for the supported hash type
     //! E.g., could return "SHA256"
