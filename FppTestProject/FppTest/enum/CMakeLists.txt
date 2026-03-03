@@ -19,7 +19,6 @@ set(UT_MOD_DEPS
   STest
 )
 
-# List all .cpp files as UT_SOURCE_FILES. Only the UT build is allowed.
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/EnumToStringTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
