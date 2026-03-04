@@ -12,7 +12,7 @@
 #define REF_REFTOPOLOGY_HPP
 // Included for access to Ref::TopologyState and Ref::ConfigObjects::pingEntries. These definitions are required by the
 // autocoder, but are also used in this hand-coded topology.
-#include <Ref/Top/RefTopologyDefs.hpp>
+#include <Ref/Top/RefTopTopologyDefs.hpp>
 
 // Remove unnecessary Ref:: qualifications
 using namespace Ref;
