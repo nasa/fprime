@@ -131,8 +131,7 @@ static void             init_crckermit_tab( void );
 
 unsigned short update_crc_ccitt( unsigned short crc, char c ) {
 
-    unsigned short tmp;
-    unsigned short short_c;
+    unsigned short tmp, short_c;
 
     short_c  = 0x00ff & (unsigned short) c;
 
@@ -160,8 +159,7 @@ unsigned short update_crc_ccitt( unsigned short crc, char c ) {
 
 unsigned short update_crc_sick( unsigned short crc, char c, char prev_byte ) {
 
-    unsigned short short_c;
-    unsigned short short_p;
+    unsigned short short_c, short_p;
 
     short_c  =   0x00ff & (unsigned short) c;
     short_p  =  (unsigned short)(( 0x00ff & (unsigned short) prev_byte ) << 8);
@@ -190,8 +188,7 @@ unsigned short update_crc_sick( unsigned short crc, char c, char prev_byte ) {
 
 unsigned short update_crc_16( unsigned short crc, char c ) {
 
-    unsigned short tmp;
-    unsigned short short_c;
+    unsigned short tmp, short_c;
 
     short_c = 0x00ff & (unsigned short) c;
 
@@ -220,8 +217,7 @@ unsigned short update_crc_16( unsigned short crc, char c ) {
 
 unsigned short update_crc_kermit( unsigned short crc, char c ) {
 
-    unsigned short tmp;
-    unsigned short short_c;
+    unsigned short tmp, short_c;
 
     short_c = 0x00ff & (unsigned short) c;
 
@@ -248,8 +244,7 @@ unsigned short update_crc_kermit( unsigned short crc, char c ) {
 
 unsigned short update_crc_dnp( unsigned short crc, char c ) {
 
-    unsigned short tmp;
-    unsigned short short_c;
+    unsigned short tmp, short_c;
 
     short_c = 0x00ff & (unsigned short) c;
 
@@ -276,9 +271,7 @@ unsigned short update_crc_dnp( unsigned short crc, char c ) {
 
 unsigned long update_crc_32( unsigned long crc, char c ) {
 
-    unsigned long tmp;
-    unsigned long long_c;
-
+    unsigned long tmp, long_c;
 
     long_c = 0x000000ffL & (unsigned long) c;
 
@@ -304,15 +297,15 @@ unsigned long update_crc_32( unsigned long crc, char c ) {
 
 static void init_crc16_tab( void ) {
 
-    unsigned short crc;
-    unsigned short c;
+    int i, j;
+    unsigned short crc, c;
 
-    for (int i = 0; i < 256; i++) {
+    for (i=0; i<256; i++) {
 
         crc = 0;
         c   = (unsigned short) i;
 
-        for (int j = 0; j < 8; j++) {
+        for (j=0; j<8; j++) {
 
             if ( (crc ^ c) & 0x0001 ) crc = ( crc >> 1 ) ^ P_16;
             else                      crc =   crc >> 1;
@@ -340,15 +333,15 @@ static void init_crc16_tab( void ) {
 
 static void init_crckermit_tab( void ) {
 
-    unsigned short crc;
-    unsigned short c;
+    int i, j;
+    unsigned short crc, c;
 
-    for (int i = 0; i < 256; i++) {
+    for (i=0; i<256; i++) {
 
         crc = 0;
         c   = (unsigned short) i;
 
-        for (int j = 0; j < 8; j++) {
+        for (j=0; j<8; j++) {
 
             if ( (crc ^ c) & 0x0001 ) crc = ( crc >> 1 ) ^ P_KERMIT;
             else                      crc =   crc >> 1;
@@ -376,15 +369,15 @@ static void init_crckermit_tab( void ) {
 
 static void init_crcdnp_tab( void ) {
 
-    unsigned short crc;
-    unsigned short c;
+    int i, j;
+    unsigned short crc, c;
 
-    for (int i = 0; i < 256; i++) {
+    for (i=0; i<256; i++) {
 
         crc = 0;
         c   = (unsigned short) i;
 
-        for (int j = 0; j < 8; j++) {
+        for (j=0; j<8; j++) {
 
             if ( (crc ^ c) & 0x0001 ) crc = ( crc >> 1 ) ^ P_DNP;
             else                      crc =   crc >> 1;
@@ -412,13 +405,14 @@ static void init_crcdnp_tab( void ) {
 
 static void init_crc32_tab( void ) {
 
+    int i, j;
     unsigned long crc;
 
-    for (int i = 0; i < 256; i++) {
+    for (i=0; i<256; i++) {
 
         crc = (unsigned long) i;
 
-        for (int j = 0; j < 8; j++) {
+        for (j=0; j<8; j++) {
 
             if ( crc & 0x00000001L ) crc = ( crc >> 1 ) ^ P_32;
             else                     crc =   crc >> 1;
@@ -444,15 +438,15 @@ static void init_crc32_tab( void ) {
 
 static void init_crcccitt_tab( void ) {
 
-    unsigned short crc;
-    unsigned short c;
+    int i, j;
+    unsigned short crc, c;
 
-    for (int i = 0; i < 256; i++) {
+    for (i=0; i<256; i++) {
 
         crc = 0;
         c   = (unsigned short)(((unsigned short) i) << 8);
 
-        for (int j = 0; j < 8; j++) {
+        for (j=0; j<8; j++) {
 
             if ( (crc ^ c) & 0x8000 ) crc = (unsigned short)(( crc << 1 ) ^ P_CCITT);
             else                      crc =   (unsigned short)(crc << 1);
