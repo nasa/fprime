@@ -49,11 +49,11 @@ class HashBuffer : public Fw::SerializeBufferBase {
 
     //! Compare two hash buffers for equality
     //!
-    friend bool operator==(const HashBuffer& lhs, const HashBuffer& rhs);
+    bool operator==(const HashBuffer& other) const;
 
     //! Compare two hash buffers for inequality
     //!
-    friend bool operator!=(const HashBuffer& lhs, const HashBuffer& rhs);
+    bool operator!=(const HashBuffer& other) const;
 
     //! Get the total buffer length of a hash buffer
     //!

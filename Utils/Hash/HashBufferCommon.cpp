@@ -32,16 +32,16 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
     return *this;
 }
 
-bool operator==(const HashBuffer& lhs, const HashBuffer& rhs) {
-    if ((lhs.getSize() == rhs.getSize()) &&
-        (memcmp(lhs.getBuffAddr(), rhs.getBuffAddr(), static_cast<size_t>(lhs.getSize())) != 0)) {
+bool HashBuffer::operator==(const HashBuffer& other) const {
+    if ((this->getSize() == other.getSize()) &&
+        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
         return false;
     }
     return true;
 }
 
-bool operator!=(const HashBuffer& lhs, const HashBuffer& rhs) {
-    return !(lhs == rhs);
+bool HashBuffer::operator!=(const HashBuffer& other) const {
+    return !(*this == other);
 }
 
 const U8* HashBuffer::getBuffAddr() const {
