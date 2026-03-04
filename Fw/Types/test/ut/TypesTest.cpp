@@ -1724,13 +1724,14 @@ TEST(Nominal, string_len_various_lengths) {
 }
 
 TEST(Nominal, string_len_big_length) {
-    const FwSizeType LEN = 8 * 1024;
+    constexpr FwSizeType LEN = 8 * 1024;
+    constexpr FwSizeType NUL_INDEX = LEN - 1;
+
     char test_buffer[LEN];
-
     (void)::memset(test_buffer, 'a', static_cast<size_t>(LEN));
-    test_buffer[LEN - 1] = '\0';
+    test_buffer[NUL_INDEX] = '\0';
 
-    ASSERT_EQ(Fw::StringUtils::string_length(test_buffer, LEN), LEN - 1);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_buffer, LEN), NUL_INDEX);
 }
 
 TEST(OffNominal, string_len_zero) {
@@ -1739,17 +1740,20 @@ TEST(OffNominal, string_len_zero) {
 }
 
 TEST(OffNominal, string_len_unaligned) {
-    char buffer[64];
-    (void)::memset(buffer, 'a', sizeof(buffer));
-    buffer[60] = '\0';
+    constexpr FwSizeType LEN = 64;
+    constexpr FwSizeType NUL_INDEX = LEN - 1;
+
+    char buffer[LEN];
+    (void)::memset(buffer, 'a', static_cast<size_t>(LEN));
+    buffer[NUL_INDEX] = '\0';
 
     // Check offsets from 0 to 15
     // This is guaranteed to cover all cases
-    for (U32 offset = 0; offset < 16; offset++) {
+    for (FwSizeType offset = 0; offset < 16; offset++) {
         const char* unaligned_ptr = &buffer[offset];
-        FwSizeType expected = static_cast<FwSizeType>(60 - offset);
+        FwSizeType expected = NUL_INDEX - offset;
         
-        ASSERT_EQ(Fw::StringUtils::string_length(unaligned_ptr, static_cast<FwSizeType>(100)), expected)
+        ASSERT_EQ(Fw::StringUtils::string_length(unaligned_ptr, LEN), expected)
             << "Failed at offset: " << offset;
     }
 }
