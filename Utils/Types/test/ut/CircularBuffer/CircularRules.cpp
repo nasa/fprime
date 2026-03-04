@@ -14,14 +14,17 @@
 
 namespace Types {
 
-RandomizeRule::RandomizeRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
+RandomizeRule::RandomizeRule(const char* const name, U32 min_buffer_size, U32 max_buffer_size)
+    : STest::Rule<MockTypes::CircularState>(name),
+      m_min_buffer_size(min_buffer_size),
+      m_max_buffer_size(max_buffer_size) {}
 
 bool RandomizeRule::precondition(const MockTypes::CircularState& state) {
     return true;
 }
 
 void RandomizeRule::action(MockTypes::CircularState& truth) {
-    (void)truth.generateRandomBuffer();
+    (void)truth.generateRandomBuffer(m_min_buffer_size, m_max_buffer_size);
 }
 
 SerializeOkRule::SerializeOkRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
@@ -42,7 +45,7 @@ void SerializeOkRule::action(MockTypes::CircularState& state) {
 SerializeOverflowRule::SerializeOverflowRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
 
 bool SerializeOverflowRule::precondition(const MockTypes::CircularState& state) {
-    return state.getRemainingSize() < state.getRandomSize();
+    return (state.getRemainingSize() < state.getRandomSize()) && (state.getRandomSize() != 0);
 }
 
 void SerializeOverflowRule::action(MockTypes::CircularState& state) {

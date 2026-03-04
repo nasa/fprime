@@ -26,12 +26,12 @@ class QueuedComponentBase : public PassiveComponentBase {
         MSG_DISPATCH_ERROR,  //!< Errors dispatching messages
         MSG_DISPATCH_EXIT    //!< A message was sent requesting an exit of the loop
     } MsgDispatchStatus;
+    void deinit();  //!< Allows de-initialization on teardown
 
   protected:
     QueuedComponentBase(const char* name);  //!< Constructor
     virtual ~QueuedComponentBase();         //!< Destructor
     void init(FwEnumStoreType instance);    //!< initialization function
-    void deinit();                          //!< Allows de-initialization on teardown
     Os::Queue m_queue;                      //!< queue object for active component
     Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
     virtual MsgDispatchStatus doDispatch() = 0;  //!< method to dispatch a single message in the queue.
