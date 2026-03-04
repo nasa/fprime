@@ -182,6 +182,11 @@ TEST_F(SenderTester, StructReturn) {
     sender2Guarded.testStructReturn(TestDeploymentPort::STRUCT_RETURN_GUARDED);
 }
 
+TEST_F(SenderTester, SenderTop) {
+    sender1Top.testPrimitiveArgs(TestDeploymentPort::PRIMITIVE_ARGS_SYNC);
+    sender2Top.testPrimitiveArgs(TestDeploymentPort::PRIMITIVE_ARGS_SYNC);
+}
+
 TEST_F(SenderTester, IsReceiverConnected) {
     ReceiverTester::testIsConnected();
 }
