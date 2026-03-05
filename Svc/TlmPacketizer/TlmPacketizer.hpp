@@ -218,6 +218,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //! Mapping of section/group to the output port used to send telemetry
     static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
 
+    void parametersLoaded() override;
+
+    void parameterUpdated(FwPrmIdType id) override;
+
   private:
     //! Handler implementation for configureSectionGroupRate
     //!

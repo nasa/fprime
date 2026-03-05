@@ -627,6 +627,46 @@ FwIndexType TlmPacketizer::sectionGroupToPort(const FwIndexType section, const F
     return outIndex;
 }
 
+void TlmPacketizer::parametersLoaded() {
+    parameterUpdated(PARAMID_DEFAULTMINDELTA);
+    parameterUpdated(PARAMID_DEFAULTMAXDELTA);
+}
+
+void TlmPacketizer::parameterUpdated(FwPrmIdType id) {
+    Fw::ParamValid valid;
+    switch (id) {
+        case PARAMID_DEFAULTMINDELTA: {
+            U32 minDelta = this->paramGet_DefaultMinDelta(valid);
+            FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                      static_cast<FwAssertArgType>(valid.e));
+            for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+                for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+                    this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_min(minDelta);
+                }
+            }
+            this->tlmWrite_GroupConfigs(this->m_groupConfigs);
+            this->tlmWrite_DefaultMinDelta(minDelta);
+            break;
+        }
+        case PARAMID_DEFAULTMAXDELTA: {
+            U32 maxDelta = this->paramGet_DefaultMaxDelta(valid);
+            FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                      static_cast<FwAssertArgType>(valid.e));
+            for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+                for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+                    this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_max(maxDelta);
+                }
+            }
+            this->tlmWrite_GroupConfigs(this->m_groupConfigs);
+            this->tlmWrite_DefaultMaxDelta(maxDelta);
+            break;
+        }
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(id));
+            break;
+    }
+}
+
 FwChanIdType TlmPacketizer::doHash(FwChanIdType id) {
     return (id % TLMPACKETIZER_HASH_MOD_VALUE) % TLMPACKETIZER_NUM_TLM_HASH_SLOTS;
 }
