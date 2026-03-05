@@ -10,7 +10,7 @@
 // ======================================================================
 
 // Provides access to autocoded functions
-#include <Ref/Top/RefTopTopologyAc.hpp>
+#include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
