@@ -85,6 +85,24 @@ TEST(TestNominal, advancedControlGroupTests) {
     tester.advancedControlGroupTests();
 }
 
+TEST(TestNominal, ParameterLoadDefaultMinMaxTest) {
+    TEST_CASE(100.1.9, "Parameter load with default min/max");
+    Svc::TlmPacketizerTester tester;
+    tester.parameterLoadDefaultMinMaxTest();
+}
+
+TEST(TestNominal, ParameterLoadStoredMinMaxTest) {
+    TEST_CASE(100.1.11, "Parameter load with stored min/max values");
+    Svc::TlmPacketizerTester tester;
+    tester.parameterLoadStoredMinMaxTest();
+}
+
+TEST(TestNominal, ParameterUpdateMinMaxTest) {
+    TEST_CASE(100.1.12, "Parameter update min/max via SET command");
+    Svc::TlmPacketizerTester tester;
+    tester.parameterUpdateMinMaxTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

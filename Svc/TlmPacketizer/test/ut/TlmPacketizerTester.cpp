@@ -1627,6 +1627,83 @@ void TlmPacketizerTester ::advancedControlGroupTests() {
     this->clearHistory();
 }
 
+void TlmPacketizerTester ::parameterLoadDefaultMinMaxTest() {
+    // Configure the component with packets
+    this->component.setPacketList(packetList, ignore, 2);
+
+    // Load parameters without setting any value first (will get FPP defaults: 0, 0)
+    this->component.loadParameters();
+
+    // parametersLoaded reads both params and applies them
+    ASSERT_TLM_DefaultMinDelta_SIZE(1);
+    ASSERT_TLM_DefaultMinDelta(0, 0);
+    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
+    ASSERT_TLM_DefaultMaxDelta(0, 0);
+}
+
+void TlmPacketizerTester ::parameterLoadStoredMinMaxTest() {
+    // Configure the component with packets
+    this->component.setPacketList(packetList, ignore, 2);
+
+    // Set stored parameter values (simulates non-volatile storage)
+    this->paramSet_DefaultMinDelta(5, Fw::ParamValid::VALID);
+    this->paramSet_DefaultMaxDelta(10, Fw::ParamValid::VALID);
+
+    // Load parameters - should pick up the stored values
+    this->component.loadParameters();
+
+    ASSERT_TLM_DefaultMinDelta_SIZE(1);
+    ASSERT_TLM_DefaultMinDelta(0, 5);
+    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
+    ASSERT_TLM_DefaultMaxDelta(0, 10);
+
+    // Verify all groups got the new min/max values
+    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_min(), 5U);
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_max(), 10U);
+        }
+    }
+}
+
+void TlmPacketizerTester ::parameterUpdateMinMaxTest() {
+    this->component.setPacketList(packetList, ignore, 0);
+
+    this->paramSet_DefaultMinDelta(3, Fw::ParamValid::VALID);
+    this->paramSend_DefaultMinDelta(0, 0);
+
+    // Only min telemetry should be emitted
+    ASSERT_TLM_DefaultMinDelta_SIZE(1);
+    ASSERT_TLM_DefaultMinDelta(0, 3);
+    ASSERT_TLM_DefaultMaxDelta_SIZE(0);
+
+    // Only min values should be updated; max stays at default (0)
+    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_min(), 3U);
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_max(), 0U);
+        }
+    }
+
+    this->clearTlm();
+
+    this->paramSet_DefaultMaxDelta(7, Fw::ParamValid::VALID);
+    this->paramSend_DefaultMaxDelta(0, 0);
+
+    // Only max telemetry should be emitted
+    ASSERT_TLM_DefaultMinDelta_SIZE(0);
+    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
+    ASSERT_TLM_DefaultMaxDelta(0, 7);
+
+    // Min stays at 3, max now 7
+    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_min(), 3U);
+            ASSERT_EQ(this->component.m_groupConfigs[static_cast<FwSizeType>(section)][group].get_max(), 7U);
+        }
+    }
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -1693,6 +1770,12 @@ void TlmPacketizerTester ::connectPorts() {
     this->connect_to_controlIn(0, this->component.get_controlIn_InputPort(0));
 
     this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
+
+    // prmGetOut
+    this->component.set_prmGetOut_OutputPort(0, this->get_from_prmGetOut(0));
+
+    // prmSetOut
+    this->component.set_prmSetOut_OutputPort(0, this->get_from_prmSetOut(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

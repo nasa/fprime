@@ -87,6 +87,18 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //!
     void advancedControlGroupTests(void);
 
+    //! parameter load with default min/max test
+    //!
+    void parameterLoadDefaultMinMaxTest(void);
+
+    //! parameter load with stored min/max values test
+    //!
+    void parameterLoadStoredMinMaxTest(void);
+
+    //! parameter update min/max test
+    //!
+    void parameterUpdateMinMaxTest(void);
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
