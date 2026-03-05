@@ -1635,10 +1635,10 @@ void TlmPacketizerTester ::parameterLoadDefaultMinMaxTest() {
     this->component.loadParameters();
 
     // parametersLoaded reads both params and applies them
-    ASSERT_TLM_DefaultMinDelta_SIZE(1);
-    ASSERT_TLM_DefaultMinDelta(0, 0);
-    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
-    ASSERT_TLM_DefaultMaxDelta(0, 0);
+    ASSERT_TLM_DEFAULT_MIN_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MIN_DELTA(0, 0);
+    ASSERT_TLM_DEFAULT_MAX_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MAX_DELTA(0, 0);
 }
 
 void TlmPacketizerTester ::parameterLoadStoredMinMaxTest() {
@@ -1646,16 +1646,16 @@ void TlmPacketizerTester ::parameterLoadStoredMinMaxTest() {
     this->component.setPacketList(packetList, ignore, 2);
 
     // Set stored parameter values (simulates non-volatile storage)
-    this->paramSet_DefaultMinDelta(5, Fw::ParamValid::VALID);
-    this->paramSet_DefaultMaxDelta(10, Fw::ParamValid::VALID);
+    this->paramSet_DEFAULT_MIN_DELTA(5, Fw::ParamValid::VALID);
+    this->paramSet_DEFAULT_MAX_DELTA(10, Fw::ParamValid::VALID);
 
     // Load parameters - should pick up the stored values
     this->component.loadParameters();
 
-    ASSERT_TLM_DefaultMinDelta_SIZE(1);
-    ASSERT_TLM_DefaultMinDelta(0, 5);
-    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
-    ASSERT_TLM_DefaultMaxDelta(0, 10);
+    ASSERT_TLM_DEFAULT_MIN_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MIN_DELTA(0, 5);
+    ASSERT_TLM_DEFAULT_MAX_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MAX_DELTA(0, 10);
 
     // Verify all groups got the new min/max values
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -1669,13 +1669,13 @@ void TlmPacketizerTester ::parameterLoadStoredMinMaxTest() {
 void TlmPacketizerTester ::parameterUpdateMinMaxTest() {
     this->component.setPacketList(packetList, ignore, 0);
 
-    this->paramSet_DefaultMinDelta(3, Fw::ParamValid::VALID);
-    this->paramSend_DefaultMinDelta(0, 0);
+    this->paramSet_DEFAULT_MIN_DELTA(3, Fw::ParamValid::VALID);
+    this->paramSend_DEFAULT_MIN_DELTA(0, 0);
 
     // Only min telemetry should be emitted
-    ASSERT_TLM_DefaultMinDelta_SIZE(1);
-    ASSERT_TLM_DefaultMinDelta(0, 3);
-    ASSERT_TLM_DefaultMaxDelta_SIZE(0);
+    ASSERT_TLM_DEFAULT_MIN_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MIN_DELTA(0, 3);
+    ASSERT_TLM_DEFAULT_MAX_DELTA_SIZE(0);
 
     // Only min values should be updated; max stays at default (0)
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -1687,13 +1687,13 @@ void TlmPacketizerTester ::parameterUpdateMinMaxTest() {
 
     this->clearTlm();
 
-    this->paramSet_DefaultMaxDelta(7, Fw::ParamValid::VALID);
-    this->paramSend_DefaultMaxDelta(0, 0);
+    this->paramSet_DEFAULT_MAX_DELTA(7, Fw::ParamValid::VALID);
+    this->paramSend_DEFAULT_MAX_DELTA(0, 0);
 
     // Only max telemetry should be emitted
-    ASSERT_TLM_DefaultMinDelta_SIZE(0);
-    ASSERT_TLM_DefaultMaxDelta_SIZE(1);
-    ASSERT_TLM_DefaultMaxDelta(0, 7);
+    ASSERT_TLM_DEFAULT_MIN_DELTA_SIZE(0);
+    ASSERT_TLM_DEFAULT_MAX_DELTA_SIZE(1);
+    ASSERT_TLM_DEFAULT_MAX_DELTA(0, 7);
 
     // Min stays at 3, max now 7
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {

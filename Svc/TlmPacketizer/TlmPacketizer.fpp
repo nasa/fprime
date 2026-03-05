@@ -87,13 +87,13 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Default minimum sched ticks when using ON_CHANGE_MIN rate logic.
-    param DefaultMinDelta: U32 default 0 \
+    param DEFAULT_MIN_DELTA: U32 default 0 \
       id 0 \
       set opcode 0x10 \
       save opcode 0x11
 
     @ Default maximum sched ticks when using EVERY_MAX rate logic.
-    param DefaultMaxDelta: U32 default 0 \
+    param DEFAULT_MAX_DELTA: U32 default 0 \
       id 1 \
       set opcode 0x12 \
       save opcode 0x13
@@ -211,11 +211,11 @@ module Svc {
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
 
-    @ Readback of DefaultMinDelta parameter
-    telemetry DefaultMinDelta: U32 id 2 update on change
+    @ Readback of DEFAULT_MIN_DELTA parameter
+    telemetry DEFAULT_MIN_DELTA: U32 id 2 update on change
 
-    @ Readback of DefaultMaxDelta parameter
-    telemetry DefaultMaxDelta: U32 id 3 update on change
+    @ Readback of DEFAULT_MAX_DELTA parameter
+    telemetry DEFAULT_MAX_DELTA: U32 id 3 update on change
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING

@@ -628,15 +628,15 @@ FwIndexType TlmPacketizer::sectionGroupToPort(const FwIndexType section, const F
 }
 
 void TlmPacketizer::parametersLoaded() {
-    parameterUpdated(PARAMID_DEFAULTMINDELTA);
-    parameterUpdated(PARAMID_DEFAULTMAXDELTA);
+    parameterUpdated(PARAMID_DEFAULT_MIN_DELTA);
+    parameterUpdated(PARAMID_DEFAULT_MAX_DELTA);
 }
 
 void TlmPacketizer::parameterUpdated(FwPrmIdType id) {
     Fw::ParamValid valid;
     switch (id) {
-        case PARAMID_DEFAULTMINDELTA: {
-            U32 minDelta = this->paramGet_DefaultMinDelta(valid);
+        case PARAMID_DEFAULT_MIN_DELTA: {
+            U32 minDelta = this->paramGet_DEFAULT_MIN_DELTA(valid);
             FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                       static_cast<FwAssertArgType>(valid.e));
             for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -645,11 +645,11 @@ void TlmPacketizer::parameterUpdated(FwPrmIdType id) {
                 }
             }
             this->tlmWrite_GroupConfigs(this->m_groupConfigs);
-            this->tlmWrite_DefaultMinDelta(minDelta);
+            this->tlmWrite_DEFAULT_MIN_DELTA(minDelta);
             break;
         }
-        case PARAMID_DEFAULTMAXDELTA: {
-            U32 maxDelta = this->paramGet_DefaultMaxDelta(valid);
+        case PARAMID_DEFAULT_MAX_DELTA: {
+            U32 maxDelta = this->paramGet_DEFAULT_MAX_DELTA(valid);
             FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                       static_cast<FwAssertArgType>(valid.e));
             for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -658,7 +658,7 @@ void TlmPacketizer::parameterUpdated(FwPrmIdType id) {
                 }
             }
             this->tlmWrite_GroupConfigs(this->m_groupConfigs);
-            this->tlmWrite_DefaultMaxDelta(maxDelta);
+            this->tlmWrite_DEFAULT_MAX_DELTA(maxDelta);
             break;
         }
         default:
