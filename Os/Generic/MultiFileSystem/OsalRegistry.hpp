@@ -69,8 +69,9 @@ class OsalRegistry {
     //! It is invalid to pass `nullptr` as the path.
     //!
     //! \param path The path to route
+    //! \param prefix_len Output parameter for length of matched prefix
     //! \return Routed backing implementation set, or `nullptr` if no route matches or path is invalid
-    static OsalImplSet* routePathToImplementation(const char* path);
+    static OsalImplSet* routePathToImplementation(const char* path, FwIndexType& prefix_len);
 
   private:
     //! Array of registered backing implementation sets
