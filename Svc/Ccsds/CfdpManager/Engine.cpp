@@ -1110,6 +1110,33 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
 
     if (txn->m_history != NULL)
     {
+        // Emit completion events for successful transactions
+        if (!TxnStatusIsError(txn->m_history->txn_stat))
+        {
+            if (txn->m_history->dir == DIRECTION_TX)
+            {
+                this->m_manager->log_ACTIVITY_HI_TxFileTransferCompleted(
+                    txn->m_txn_class,
+                    txn->m_history->src_eid,
+                    txn->m_history->seq_num,
+                    txn->m_history->fnames.src_filename,
+                    txn->m_history->fnames.dst_filename,
+                    static_cast<U32>(txn->m_fsize)
+                );
+            }
+            else if (txn->m_history->dir == DIRECTION_RX)
+            {
+                this->m_manager->log_ACTIVITY_HI_RxFileTransferCompleted(
+                    txn->m_txn_class,
+                    txn->m_history->src_eid,
+                    txn->m_history->seq_num,
+                    txn->m_history->fnames.src_filename,
+                    txn->m_history->fnames.dst_filename,
+                    static_cast<U32>(txn->m_fsize)
+                );
+            }
+        }
+
         this->sendEotPkt(txn);
 
         // extra bookkeeping for tx direction only
