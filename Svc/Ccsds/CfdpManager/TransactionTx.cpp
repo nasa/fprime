@@ -591,8 +591,17 @@ void Transaction::sSubstateSendMetadata() {
         {
             /* once metadata is sent, switch to filedata mode */
             this->m_state_data.send.sub_state = TX_SUB_STATE_FILEDATA;
+
+            this->m_cfdpManager->log_ACTIVITY_HI_TxFileTransferStarted(
+                this->getClass(),
+                this->m_history->src_eid,
+                this->m_history->fnames.src_filename,
+                this->m_history->peer_eid,
+                this->m_history->fnames.dst_filename,
+                static_cast<U32>(this->m_fsize));
         }
         /* if status==Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
+        /* TODO JMP What if status==Cfdp::Status::ERROR*/
     }
 
     if (!success)

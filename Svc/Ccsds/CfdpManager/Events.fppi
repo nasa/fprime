@@ -424,16 +424,17 @@ event TxFileTransferStarted(
     srcFile: string size MaxFilePathSize @< Source filename
     destEid: U32 @< Destination entity ID
     destFile: string size MaxFilePathSize @< Destination filename
+    fileSize: U32 @< File size in bytes
 ) \
     severity activity high \
-    format "TX starting class {} transfer {}:{} -> {}:{}"
+    format "TX starting class {} transfer {}:{} -> {}:{}, {} bytes"
 
 event TxFileTransferCompleted(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    srcFile: string size MaxFileSize @< Source filename
-    destFile: string size MaxFileSize @< Destination filename
+    srcFile: string size MaxFilePathSize @< Source filename
+    destFile: string size MaxFilePathSize @< Destination filename
     fileSize: U32 @< File size in bytes
 ) \
     severity activity high \
@@ -443,8 +444,8 @@ event RxFileTransferCompleted(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
-    srcFile: string size MaxFileSize @< Source filename
-    destFile: string size MaxFileSize @< Destination filename
+    srcFile: string size MaxFilePathSize @< Source filename
+    destFile: string size MaxFilePathSize @< Destination filename
     fileSize: U32 @< File size in bytes
 ) \
     severity activity high \

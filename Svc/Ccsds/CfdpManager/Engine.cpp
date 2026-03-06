@@ -816,13 +816,6 @@ Status::T Engine::abandonTransaction(U8 channelId, TransactionSeq transactionSeq
 void Engine::txFileInitiate(Transaction *txn, Class::T cfdp_class, Keep::T keep, U8 chan,
                              U8 priority, EntityId dest_id)
 {
-    this->m_manager->log_ACTIVITY_HI_TxFileTransferStarted(
-        cfdp_class,
-        m_manager->getLocalEidParam(),
-        txn->m_history->fnames.src_filename,
-        dest_id,
-        txn->m_history->fnames.dst_filename);
-
     txn->initTxFile(cfdp_class, keep, chan, priority);
 
     // Increment sequence number for new transaction
