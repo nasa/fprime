@@ -401,6 +401,11 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
 
     // Initialize and send PDU
     if (status == Cfdp::Status::SUCCESS) {
+        // File has been read successfully, update cached_pos to reflect new file position
+        // This MUST be done before attempting to send, so if send fails (throttle/error),
+        // we don't try to read the same data again on next cycle
+        this->m_state_data.send.cached_pos += static_cast<FileSize>(actual_bytes);
+
         fdPdu.initialize(
             direction,
             this->getClass(),  // transmission mode
@@ -415,9 +420,8 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
         status = this->m_engine->sendFd(this, fdPdu);
     }
 
-    // Update state and CRC
+    // Update CRC and bytes_processed
     if (status == Cfdp::Status::SUCCESS) {
-        this->m_state_data.send.cached_pos += static_cast<FileSize>(actual_bytes);
 
         FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), this->m_fsize);
 
