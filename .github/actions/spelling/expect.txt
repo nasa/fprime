@@ -13,6 +13,7 @@ ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
+Aos
 apid
 APIDOCS
 APPENDFILE
@@ -41,6 +42,7 @@ Bies
 binaryfile
 BINDIR
 bitfield
+Bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -214,6 +216,7 @@ endfunction
 endmacro
 endraw
 enduml
+EPP
 ERRORCHECK
 errornum
 ert
@@ -404,6 +407,7 @@ llu
 LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
+Lsb
 lseek
 LTK
 lvar
@@ -436,6 +440,7 @@ MML
 modbus
 MOVEFILE
 Mpu
+Msb
 msc
 mscfile
 mseconds
@@ -446,6 +451,7 @@ multiarch
 multitool
 mutexattr
 Mutexed
+muxed
 mycompany
 nasafprime
 nbits
@@ -511,6 +517,7 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+pdu
 Peet
 penv
 PERLMOD
@@ -557,7 +564,7 @@ ptbool
 ptf
 pthread
 ptrt
-Pvn
+pvn
 qch
 qhelpgenerator
 QHG
@@ -605,6 +612,7 @@ scid
 scm
 sdd
 sdiv
+sdls
 searchdata
 SENDPARTIAL
 seqgen
@@ -698,6 +706,7 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
@@ -728,6 +737,7 @@ TPP
 trinomials
 tts
 Tumbar
+tumbar
 typedef
 typedef'ed
 uart
@@ -744,12 +754,15 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+USLP
 valdaarhun
 valgrind
 vbai
+vc
 VCA
 vcid
 VCP
+vcs
 VFILE
 VID
 vla

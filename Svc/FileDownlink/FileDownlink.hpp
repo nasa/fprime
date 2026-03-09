@@ -176,6 +176,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Issue a File Read Error warning
         void fileRead(const Os::File::Status status);
 
+        //! Issue a Zero-Size File warning
+        void zeroSize();
+
       private:
         //! Record a warning
         void warning() {

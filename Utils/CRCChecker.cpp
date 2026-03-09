@@ -78,7 +78,7 @@ crc_stat_t create_checksum_file(const char* const fname) {
     f.close();
 
     // generate checksum
-    hash.final(checksum);
+    hash.finalize(checksum);
 
     // open checksum file
     Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
@@ -185,7 +185,7 @@ crc_stat_t verify_checksum(const char* const fname, U32& expected, U32& actual) 
     // close file
     f.close();
     // generate checksum
-    hash.final(checksum);
+    hash.finalize(checksum);
 
     crc_stat_t crcstat = read_crc32_from_file(fname, checksum_from_file);
     if (crcstat != PASSED_FILE_CRC_CHECK) {

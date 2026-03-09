@@ -79,7 +79,7 @@ TEST(CircularBufferTests, BasicOverflowTest) {
     state.setRemainingSize(0);
 
     // Create rules, and assign them into the array
-    Types::RandomizeRule randomGo("randomGo");
+    Types::RandomizeRule randomGo("randomGo", 1);
     Types::SerializeOverflowRule serializeOverflow("serializeOverflow");
 
     randomGo.apply(state);

@@ -3,6 +3,14 @@
 #
 # Builds unit tests for FPP autocoder
 ###
+
+# FIXME(tumbar) This seems fairly brittle to disable certain UTs with direct port calls
+if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
+    # Disable unit testing for components that require
+    # indirect port calls
+    set(__FPRIME_NO_UT_GEN__ ON)
+endif ()
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/component/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/dp/")
@@ -10,6 +18,13 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/state_machine/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/interfaces/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
+
+if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
+    # Re-enable unit testing for the topology since it uses direct port calls
+    set(__FPRIME_NO_UT_GEN__ OFF)
+endif ()
+
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/topology/")
 
 set(SOURCE_FILES "source.cpp")
 set(MOD_DEPS
@@ -28,6 +43,9 @@ set(MOD_DEPS
     ${PROJECT_NAME}/state_machine/internal_instance/initial
     ${PROJECT_NAME}/state_machine/internal_instance/state
     ${PROJECT_NAME}/struct
+    ${PROJECT_NAME}/topology/ports
+    ${PROJECT_NAME}/topology/components/Sender
+    ${PROJECT_NAME}/topology/components/Receiver
 )
 
 register_fprime_deployment()

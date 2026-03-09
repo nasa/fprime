@@ -34,13 +34,17 @@ namespace Types {
  */
 struct RandomizeRule : public STest::Rule<MockTypes::CircularState> {
     // Constructor
-    RandomizeRule(const char* const name);
+    RandomizeRule(const char* const name, U32 min_buffer_size = 0, U32 max_buffer_size = MAX_BUFFER_SIZE);
 
     // Always valid
     bool precondition(const MockTypes::CircularState& state);
 
     // Will randomize the test state
     void action(MockTypes::CircularState& truth);
+
+  private:
+    U32 m_min_buffer_size;
+    U32 m_max_buffer_size;
 };
 
 /**

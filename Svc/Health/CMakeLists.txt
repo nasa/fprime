@@ -10,7 +10,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Health.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/HealthComponentImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Stub/HealthComponentStubChecks.cpp"
 )
 
 register_fprime_module()

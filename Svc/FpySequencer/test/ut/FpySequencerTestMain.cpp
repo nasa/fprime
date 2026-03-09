@@ -802,7 +802,7 @@ TEST_F(FpySequencerTester, fptoui) {
     U64 expected = static_cast<U64>(src);
 
     tester_push<F64>(src);
-    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
     ASSERT_EQ(expected, tester_pop<U64>());
 }
 
@@ -811,7 +811,7 @@ TEST_F(FpySequencerTester, uitofp) {
     F64 expected = static_cast<F64>(src);
 
     tester_push<U64>(src);
-    ASSERT_EQ(tester_op_sitofp(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_op_uitofp(), DirectiveError::NO_ERROR);
     ASSERT_EQ(expected, tester_pop<F64>());
 }
 
@@ -910,6 +910,357 @@ TEST_F(FpySequencerTester, fmod) {
     ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<F64>(), -1.0);
 }
+
+// ======================================================================
+// Binary op stack underflow tests
+// Each binary op is tested with an empty stack and with only one operand.
+// ======================================================================
+
+// --- or / and (need 2x U8) ---
+TEST_F(FpySequencerTester, or_underflow) {
+    // empty stack
+    ASSERT_EQ(tester_op_or(), DirectiveError::STACK_UNDERFLOW);
+    // only one operand
+    tester_push<U8>(1);
+    ASSERT_EQ(tester_op_or(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, and_underflow) {
+    ASSERT_EQ(tester_op_and(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U8>(1);
+    ASSERT_EQ(tester_op_and(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- ieq / ine (need 2x I64) ---
+TEST_F(FpySequencerTester, ieq_underflow) {
+    ASSERT_EQ(tester_op_ieq(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_ieq(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ine_underflow) {
+    ASSERT_EQ(tester_op_ine(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_ine(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- unsigned comparisons (need 2x U64) ---
+TEST_F(FpySequencerTester, ult_underflow) {
+    ASSERT_EQ(tester_op_ult(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_ult(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ule_underflow) {
+    ASSERT_EQ(tester_op_ule(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_ule(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ugt_underflow) {
+    ASSERT_EQ(tester_op_ugt(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_ugt(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, uge_underflow) {
+    ASSERT_EQ(tester_op_uge(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_uge(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- signed comparisons (need 2x I64) ---
+TEST_F(FpySequencerTester, slt_underflow) {
+    ASSERT_EQ(tester_op_slt(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_slt(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sle_underflow) {
+    ASSERT_EQ(tester_op_sle(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sle(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sgt_underflow) {
+    ASSERT_EQ(tester_op_sgt(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sgt(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sge_underflow) {
+    ASSERT_EQ(tester_op_sge(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sge(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- float comparisons (need 2x F64) ---
+TEST_F(FpySequencerTester, feq_underflow) {
+    ASSERT_EQ(tester_op_feq(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_feq(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fne_underflow) {
+    ASSERT_EQ(tester_op_fne(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fne(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, flt_underflow) {
+    ASSERT_EQ(tester_op_flt(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_flt(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fle_underflow) {
+    ASSERT_EQ(tester_op_fle(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fle(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fgt_underflow) {
+    ASSERT_EQ(tester_op_fgt(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fgt(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fge_underflow) {
+    ASSERT_EQ(tester_op_fge(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fge(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- integer arithmetic (need 2x I64) ---
+TEST_F(FpySequencerTester, add_underflow) {
+    ASSERT_EQ(tester_op_add(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_add(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sub_underflow) {
+    ASSERT_EQ(tester_op_sub(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sub(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, mul_underflow) {
+    ASSERT_EQ(tester_op_mul(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sdiv_underflow) {
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, smod_underflow) {
+    ASSERT_EQ(tester_op_smod(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- unsigned arithmetic (need 2x U64) ---
+TEST_F(FpySequencerTester, udiv_underflow) {
+    ASSERT_EQ(tester_op_udiv(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_udiv(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, umod_underflow) {
+    ASSERT_EQ(tester_op_umod(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U64>(1);
+    ASSERT_EQ(tester_op_umod(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// --- float arithmetic (need 2x F64) ---
+TEST_F(FpySequencerTester, fadd_underflow) {
+    ASSERT_EQ(tester_op_fadd(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fadd(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fsub_underflow) {
+    ASSERT_EQ(tester_op_fsub(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fsub(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fmul_underflow) {
+    ASSERT_EQ(tester_op_fmul(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fmul(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fdiv_underflow) {
+    ASSERT_EQ(tester_op_fdiv(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fdiv(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fpow_underflow) {
+    ASSERT_EQ(tester_op_fpow(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fpow(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fmod_underflow) {
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<F64>(1.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// ======================================================================
+// Unary op stack underflow tests (not, fpext, fptrunc, fptosi, sitofp,
+// fptoui, uitofp, flog, siext, ziext, itrunc)
+// ======================================================================
+
+TEST_F(FpySequencerTester, not_underflow) {
+    ASSERT_EQ(tester_op_not(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fpext_underflow) {
+    ASSERT_EQ(tester_op_fpext(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fptrunc_underflow) {
+    ASSERT_EQ(tester_op_fptrunc(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fptosi_underflow) {
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, sitofp_underflow) {
+    ASSERT_EQ(tester_op_sitofp(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, fptoui_underflow) {
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, uitofp_underflow) {
+    ASSERT_EQ(tester_op_uitofp(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, flog_underflow) {
+    ASSERT_EQ(tester_op_flog(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, siext_8_64_underflow) {
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, siext_16_64_underflow) {
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, siext_32_64_underflow) {
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ziext_8_64_underflow) {
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ziext_16_64_underflow) {
+    ASSERT_EQ(tester_op_ziext_16_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, ziext_32_64_underflow) {
+    ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, itrunc_64_8_underflow) {
+    ASSERT_EQ(tester_op_itrunc_64_8(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, itrunc_64_16_underflow) {
+    ASSERT_EQ(tester_op_itrunc_64_16(), DirectiveError::STACK_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, itrunc_64_32_underflow) {
+    ASSERT_EQ(tester_op_itrunc_64_32(), DirectiveError::STACK_UNDERFLOW);
+}
+
+// ======================================================================
+// Arithmetic overflow/underflow tests
+// ======================================================================
+
+// --- add overflow/underflow ---
+TEST_F(FpySequencerTester, add_overflow) {
+    tester_push<I64>(std::numeric_limits<I64>::max());
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_add(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, add_arithmetic_underflow) {
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_add(), DirectiveError::ARITHMETIC_UNDERFLOW);
+}
+
+// --- sub overflow/underflow ---
+TEST_F(FpySequencerTester, sub_overflow) {
+    // lhs positive, rhs negative: lhs - rhs overflows
+    tester_push<I64>(std::numeric_limits<I64>::max());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_sub(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, sub_arithmetic_underflow) {
+    // lhs negative, rhs positive: lhs - rhs underflows
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(1);
+    ASSERT_EQ(tester_op_sub(), DirectiveError::ARITHMETIC_UNDERFLOW);
+}
+
+// --- mul overflow (both positive, both negative) and underflow (mixed signs) ---
+TEST_F(FpySequencerTester, mul_overflow_pos_pos) {
+    tester_push<I64>(std::numeric_limits<I64>::max());
+    tester_push<I64>(2);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_overflow_neg_neg) {
+    tester_push<I64>(std::numeric_limits<I64>::min() / 2 - 1);
+    tester_push<I64>(-3);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_underflow_neg_pos) {
+    // lhs negative, rhs positive
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(2);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_UNDERFLOW);
+}
+TEST_F(FpySequencerTester, mul_underflow_pos_neg) {
+    // lhs positive, rhs negative
+    tester_push<I64>(std::numeric_limits<I64>::max());
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_UNDERFLOW);
+}
+
+// ======================================================================
+// Domain error tests (division/mod by zero, log of non-positive)
+// ======================================================================
+
+TEST_F(FpySequencerTester, udiv_domain_error) {
+    tester_push<U64>(42);
+    tester_push<U64>(0);
+    ASSERT_EQ(tester_op_udiv(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, sdiv_domain_error) {
+    tester_push<I64>(42);
+    tester_push<I64>(0);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, umod_domain_error) {
+    tester_push<U64>(42);
+    tester_push<U64>(0);
+    ASSERT_EQ(tester_op_umod(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, smod_domain_error) {
+    tester_push<I64>(42);
+    tester_push<I64>(0);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, flog_domain_error) {
+    // log(0) is undefined
+    tester_push<F64>(0.0);
+    ASSERT_EQ(tester_op_flog(), DirectiveError::DOMAIN_ERROR);
+    // log(negative) is undefined
+    tester_push<F64>(-1.0);
+    ASSERT_EQ(tester_op_flog(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, fmod_domain_error) {
+    tester_push<F64>(1.0);
+    tester_push<F64>(0.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::DOMAIN_ERROR);
+}
+
+// ======================================================================
+// smod Python-adjustment special case
+// When the remainder and divisor have differing signs, the result is
+// adjusted by adding the divisor (to match Python's % semantics).
+// ======================================================================
+
+TEST_F(FpySequencerTester, smod_python_adjustment_pos_remainder_neg_divisor) {
+    // C++: 7 % -3 = 1 (positive remainder, negative divisor)
+    // Python: 7 % -3 = -2 (adjusted: 1 + (-3) = -2)
+    tester_push<I64>(7);
+    tester_push<I64>(-3);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -2);
+}
+TEST_F(FpySequencerTester, smod_python_adjustment_neg_remainder_pos_divisor) {
+    // C++: -7 % 3 = -1 (negative remainder, positive divisor)
+    // Python: -7 % 3 = 2 (adjusted: -1 + 3 = 2)
+    tester_push<I64>(-7);
+    tester_push<I64>(3);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 2);
+}
+
 TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
@@ -3549,6 +3900,380 @@ TEST_F(FpySequencerTester, pushVal) {
     result = tester_pushVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
+// ----------------------------------------------------------------------
+// Sign/Zero Extension and Truncation Tests
+// ----------------------------------------------------------------------
+
+TEST_F(FpySequencerTester, siext_8_64) {
+    // Positive value
+    tester_push<I8>(42);
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 42);
+
+    // Negative value (sign extension)
+    tester_push<I8>(-42);
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -42);
+
+    // Min value
+    tester_push<I8>(std::numeric_limits<I8>::min());
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), static_cast<I64>(std::numeric_limits<I8>::min()));
+}
+
+TEST_F(FpySequencerTester, siext_16_64) {
+    tester_push<I16>(1234);
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 1234);
+
+    tester_push<I16>(-1234);
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -1234);
+
+    tester_push<I16>(std::numeric_limits<I16>::min());
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), static_cast<I64>(std::numeric_limits<I16>::min()));
+}
+
+TEST_F(FpySequencerTester, siext_32_64) {
+    tester_push<I32>(123456);
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123456);
+
+    tester_push<I32>(-123456);
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -123456);
+
+    tester_push<I32>(std::numeric_limits<I32>::min());
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), static_cast<I64>(std::numeric_limits<I32>::min()));
+}
+
+TEST_F(FpySequencerTester, ziext_8_64) {
+    tester_push<U8>(200);
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 200);
+
+    tester_push<U8>(0);
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 0);
+
+    tester_push<U8>(std::numeric_limits<U8>::max());
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), static_cast<U64>(std::numeric_limits<U8>::max()));
+}
+
+TEST_F(FpySequencerTester, ziext_16_64) {
+    tester_push<U16>(50000);
+    ASSERT_EQ(tester_op_ziext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 50000);
+
+    tester_push<U16>(std::numeric_limits<U16>::max());
+    ASSERT_EQ(tester_op_ziext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), static_cast<U64>(std::numeric_limits<U16>::max()));
+}
+
+TEST_F(FpySequencerTester, ziext_32_64) {
+    tester_push<U32>(3000000000U);
+    ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 3000000000ULL);
+
+    tester_push<U32>(std::numeric_limits<U32>::max());
+    ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), static_cast<U64>(std::numeric_limits<U32>::max()));
+}
+
+TEST_F(FpySequencerTester, itrunc_64_8) {
+    tester_push<U64>(0x123456789ABCDE42ULL);
+    ASSERT_EQ(tester_op_itrunc_64_8(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 0x42);
+
+    tester_push<U64>(255);
+    ASSERT_EQ(tester_op_itrunc_64_8(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 255);
+}
+
+TEST_F(FpySequencerTester, itrunc_64_16) {
+    tester_push<U64>(0x123456789ABCDEFFULL);
+    ASSERT_EQ(tester_op_itrunc_64_16(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U16>(), 0xDEFF);
+
+    tester_push<U64>(65535);
+    ASSERT_EQ(tester_op_itrunc_64_16(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U16>(), 65535);
+}
+
+TEST_F(FpySequencerTester, itrunc_64_32) {
+    tester_push<U64>(0x123456789ABCDEF0ULL);
+    ASSERT_EQ(tester_op_itrunc_64_32(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U32>(), 0x9ABCDEF0U);
+
+    tester_push<U64>(0xFFFFFFFF);
+    ASSERT_EQ(tester_op_itrunc_64_32(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U32>(), 0xFFFFFFFF);
+}
+
+// ----------------------------------------------------------------------
+// Integration Tests (exercise internalInterfaceHandler paths)
+// These tests run full sequences through writeAndRun() which goes
+// through the state machine -> dispatchDirective() ->
+// *_internalInterfaceInvoke() -> *_internalInterfaceHandler()
+// ----------------------------------------------------------------------
+
+TEST_F(FpySequencerTester, IntegrationGoto) {
+    allocMem();
+    // Sequence: GOTO(1), NO_OP
+    // GOTO skips to stmt 1 (NO_OP), then sequence ends
+    add_GOTO(1);
+    add_NO_OP();
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationWaitAbs) {
+    allocMem();
+    // Push Fw::Time bytes for wakeup at time (0, 0)
+    // Fw::Time serialized: U16 timeBase, U8 timeContext, U32 secs, U32 usecs
+    add_PUSH_VAL<U16>(static_cast<U16>(TimeBase::TB_WORKSTATION_TIME));
+    add_PUSH_VAL<U8>(0);
+    add_PUSH_VAL<U32>(0);
+    add_PUSH_VAL<U32>(0);
+    add_WAIT_ABS();
+
+    // Set test time past the wakeup time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 1, 0);
+    setTestTime(testTime);
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_SLEEPING);
+
+    // Wake up via checkTimers
+    invoke_to_checkTimers(0, 0);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationAllocateDiscard) {
+    allocMem();
+    // Sequence: ALLOCATE(8), DISCARD(8)
+    add_ALLOCATE(8);
+    add_DISCARD(8);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationStoreRelConstOffsetLoadRel) {
+    allocMem();
+    // Sequence: ALLOCATE(4), PUSH_VAL<U8>(0x42), STORE_REL_CONST_OFFSET(0, 1), LOAD_REL(0, 1), DISCARD(5)
+    // Allocates 4 bytes, pushes 0x42, stores at offset 0, loads from offset 0, discards all
+    add_ALLOCATE(4);
+    add_PUSH_VAL<U8>(0x42);
+    add_STORE_REL_CONST_OFFSET(0, 1);
+    add_LOAD_REL(0, 1);
+    add_DISCARD(5);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationStoreRel) {
+    allocMem();
+    // Sequence: ALLOCATE(4), PUSH_VAL<U8>(0x42), PUSH_VAL<I32>(0), STORE_REL(1), DISCARD(4)
+    // storeRel pops SignedStackSizeType offset from stack, then pops 'size' bytes and stores
+    add_ALLOCATE(4);
+    add_PUSH_VAL<U8>(0x42);
+    add_PUSH_VAL<I32>(0);  // offset 0 from frame start
+    add_STORE_REL(1);      // store 1 byte
+    add_DISCARD(4);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationMemCmp) {
+    allocMem();
+    // Sequence: PUSH_VAL<U8>(0x42), PUSH_VAL<U8>(0x42), MEMCMP(1), DISCARD(1)
+    // Push two identical bytes, memcmp them (result=TRUE), discard result
+    add_PUSH_VAL<U8>(0x42);
+    add_PUSH_VAL<U8>(0x42);
+    add_MEMCMP(1);
+    add_DISCARD(1);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationSetGetFlag) {
+    allocMem();
+    // Sequence: PUSH_VAL<U8>(1), SET_FLAG(0), GET_FLAG(0), DISCARD(1)
+    add_PUSH_VAL<U8>(1);
+    add_SET_FLAG(0);
+    add_GET_FLAG(0);
+    add_DISCARD(1);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationPushTime) {
+    allocMem();
+    // Sequence: PUSH_TIME, DISCARD(Fw::Time::SERIALIZED_SIZE)
+    add_PUSH_TIME();
+    add_DISCARD(static_cast<Fpy::StackSizeType>(Fw::Time::SERIALIZED_SIZE));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationGetField) {
+    allocMem();
+    // Push a 2-byte "parent": [0xAA, 0xBB]
+    // Push offset 0 (as StackSizeType = U32)
+    // GET_FIELD(parentSize=2, memberSize=1) extracts 1 byte at offset 0 from parent
+    add_PUSH_VAL<U8>(0xAA);
+    add_PUSH_VAL<U8>(0xBB);
+    add_PUSH_VAL<U32>(0);  // offset into parent
+    add_GET_FIELD(2, 1);
+    add_DISCARD(1);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationPeek) {
+    allocMem();
+    // Push a byte, then peek (duplicate) it
+    // PEEK pops: offset (StackSizeType), byteCount (StackSizeType)
+    // Then copies byteCount bytes from (top - offset - byteCount) to top
+    add_PUSH_VAL<U8>(0xAA);
+    add_PUSH_VAL<U32>(1);  // byteCount = 1
+    add_PUSH_VAL<U32>(0);  // offset = 0 from top
+    add_PEEK();
+    add_DISCARD(2);  // discard original + copy
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationCallReturn) {
+    allocMem();
+    // Layout:
+    //   Stmt 0: PUSH_VAL<U32>(4)  -- push target address (stmt 4 = function body)
+    //   Stmt 1: CALL              -- saves returnAddr=2, jumps to stmt 4
+    //   Stmt 2: GOTO(5)           -- after return, skip past function to end
+    //   Stmt 3: NO_OP             -- padding (never reached)
+    //   Stmt 4: RETURN(0, 0)      -- function body: return (no retval, no args)
+    // Execution: 0 -> 1(CALL) -> 4(RETURN) -> 2(GOTO(5)) -> end
+    add_PUSH_VAL<U32>(4);
+    add_CALL();
+    add_GOTO(5);
+    add_NO_OP();
+    add_RETURN(0, 0);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationStoreAbsConstOffsetLoadAbs) {
+    allocMem();
+    // Sequence: ALLOCATE(4), PUSH_VAL<U8>(0x42), STORE_ABS_CONST_OFFSET(0, 1), LOAD_ABS(0, 1), DISCARD(5)
+    add_ALLOCATE(4);
+    add_PUSH_VAL<U8>(0x42);
+    add_STORE_ABS_CONST_OFFSET(0, 1);
+    add_LOAD_ABS(0, 1);
+    add_DISCARD(5);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationStoreAbs) {
+    allocMem();
+    // storeAbs pops StackSizeType offset from stack, then pops 'size' bytes and stores
+    // Sequence: ALLOCATE(4), PUSH_VAL<U8>(0x42), PUSH_VAL<U32>(0), STORE_ABS(1), DISCARD(4)
+    add_ALLOCATE(4);
+    add_PUSH_VAL<U8>(0x42);
+    add_PUSH_VAL<U32>(0);  // global offset = 0
+    add_STORE_ABS(1);      // store 1 byte
+    add_DISCARD(4);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationPushPrm) {
+    allocMem();
+    // Set up param mock
+    nextPrmId = 456;
+    nextPrmValue.setBuffLen(2);
+    nextPrmValue.getBuffAddr()[0] = 0xAA;
+    nextPrmValue.getBuffAddr()[1] = 0xBB;
+
+    add_PUSH_PRM(456);
+    add_DISCARD(2);
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationPushTlmValAndTime) {
+    allocMem();
+    // Set up telemetry mock
+    nextTlmId = 456;
+    nextTlmValue.setBuffLen(1);
+    nextTlmValue.getBuffAddr()[0] = 0xCC;
+    nextTlmTime.set(888, 777);
+
+    add_PUSH_TLM_VAL_AND_TIME(456);
+    add_DISCARD(static_cast<Fpy::StackSizeType>(1 + Fw::Time::SERIALIZED_SIZE));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationStackCmd) {
+    allocMem();
+    FwOpcodeType opcode = 123;
+    // Push opcode (stack cmd pops opcode then args)
+    add_PUSH_VAL<FwOpcodeType>(opcode);
+    add_STACK_CMD(0);  // 0 bytes of args
+
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    // The stackCmd directive will have been invoked via internal interface.
+    // Process the internal interface handler message.
+    tester_doDispatch();
+
+    // State should still be RUNNING_AWAITING_STATEMENT_RESPONSE (waiting for cmd response)
+    ASSERT_EQ(tester_getState(), State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    // Send command response with matching UID
+    // UID = (m_sequencesStarted & 0xFFFF) << 16 | (m_statementsDispatched & 0xFFFF)
+    // m_sequencesStarted=1, m_statementsDispatched=2 (PUSH_VAL + STACK_CMD)
+    U32 uid = (1 << 16) | 2;
+    invoke_to_cmdResponseIn(0, opcode, uid, Fw::CmdResponse::OK);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 }  // namespace Svc

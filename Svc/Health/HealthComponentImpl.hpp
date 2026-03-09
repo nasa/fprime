@@ -78,12 +78,6 @@ class HealthImpl final : public HealthComponentBase {
     //!  The destructor for HealthImpl is empty
     ~HealthImpl();
 
-  protected:
-    //!  \brief additional checks function
-    //!
-    //!  Does additional checks based on the platform
-    void doOtherChecks();
-
   private:
     //!  \brief ping return handler
     //!

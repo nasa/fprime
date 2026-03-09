@@ -20,6 +20,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileManagerCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.fpp"
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"

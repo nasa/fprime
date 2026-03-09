@@ -10,9 +10,12 @@ module ComCfg {
 
     @ Spacecraft ID (10 bits) for CCSDS Data Link layer
     dictionary constant SpacecraftId = 0x0044
-    
+
     @ Fixed size of CCSDS TM frames
     dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+
+    @ Upper Bound on Fixed size of CCSDS AOS frames
+    constant AosMaxFrameFixedSize = 1536
 
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
@@ -39,12 +42,15 @@ module ComCfg {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
         apid: Apid                  @< 11 bits APID in CCSDS
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
-        vcId: U8                    @< 6 bit Virtual Channel ID - used for TC and TM
+        vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
+        sendNow: bool               @< Flag to AOS Framer that the Frame this packet goes into should be sent ASAP
+
     } default {
         comQueueIndex = 0
         apid = Apid.FW_PACKET_UNKNOWN
         sequenceCount = 0
         vcId = 1
+        sendNow = false
     }
 
 }
