@@ -75,7 +75,7 @@ module Svc {
 
     @ No-op string command
     async command CMD_NO_OP_STRING(
-                                    arg1: string size FW_CMD_STRING_MAX_SIZE @< The String command argument
+                                    arg1: string size Svc.CommandDispatcherCfg.NOOP_STRING_SIZE @< The String command argument
                                   ) \
       opcode 1
 

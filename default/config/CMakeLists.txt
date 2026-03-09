@@ -7,6 +7,7 @@ register_fprime_config(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AcConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileDispatcherCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
