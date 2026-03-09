@@ -1,6 +1,6 @@
 # Dictionary Capabilities
 
-## Commands
+## Commands [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Commands)
 
 Commands are specified via the FPP modeling language and can include the following options:
 
@@ -20,7 +20,7 @@ Commands are specified via the FPP modeling language and can include the followi
     - `block` - Blocks the command if the queue is full
     - `hook` - Calls a hook function if the queue is full
 
-## Telemetry
+## Telemetry [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Telemetry)
 
 Telemetry are specified via the FPP modeling language and can include the following options:
 
@@ -33,7 +33,7 @@ Telemetry are specified via the FPP modeling language and can include the follow
     - Can be specified for red, orange, and yellow limits
     - Type of telemetry must be numeric
 
-## Telemetry Packets
+## Telemetry Packets [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Topologies_Telemetry-Packets)
 
 Telemetry packets are specified via the FPP modeling language and can include the following options:
 
@@ -42,7 +42,7 @@ Telemetry packets are specified via the FPP modeling language and can include th
 - `group` - The group of the telemetry packet
 - `telemetry-packet-member-sequence` - Can include individual telemetry indentifiers and/or imports of other telemetry packet fpp definitions
 
-## Events
+## Events [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Telemetry)
 
 Events are specified via the FPP modeling language and can include the following options:
 
@@ -55,7 +55,7 @@ Events are specified via the FPP modeling language and can include the following
     - `identifier` - The unique name of the parameter/argument
     - `type` - Limited to "displayable types" (INT, UINT, BOOL, ENUM, STRING, ARRAY, STRUCT)
 
-## Parameters
+## Parameters [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Parameters)
 
 Parameters are specific variables stored in non-volatile memory. Parameters are specified via the FPP modeling language and can include the following options:
 
@@ -66,7 +66,7 @@ Parameters are specific variables stored in non-volatile memory. Parameters are 
 - `set opcode` - The opcode for setting the parameter in volatile memory (integer)
 - `save opcode` - The opcode for saving the parameter to non-volatile memory (integer)
 
-## Data Products
+## Data Products [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Data-Products)
 
 Data products are structured file data for downlink. They defined via the FPP modeling language as containers and data product records.
 
