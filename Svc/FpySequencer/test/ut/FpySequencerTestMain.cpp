@@ -30,7 +30,7 @@ TEST_F(FpySequencerTester, waitRel) {
 TEST_F(FpySequencerTester, waitAbs) {
     FpySequencer_WaitAbsDirective directive{};
 
-    tester_push<U16>(0);
+    tester_push<FwTimeBaseStoreType>(0);
     tester_push<U8>(0);
     tester_push<U32>(5);
     tester_push<U32>(123);
