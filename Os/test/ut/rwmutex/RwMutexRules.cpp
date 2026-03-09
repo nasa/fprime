@@ -49,8 +49,8 @@ bool Os::Test::RwMutex::Tester::TakeRwMutex::precondition(const Os::Test::RwMute
 
 void Os::Test::RwMutex::Tester::TakeRwMutex::action(Os::Test::RwMutex::Tester& state) {
     state.m_state = Os::Test::RwMutex::Tester::RwMutexState::WRITE_LOCKED;
-    Os::Mutex::Status status = state.m_rwmutex.take();
-    ASSERT_EQ(status, Os::Mutex::Status::OP_OK);
+    Os::RwMutex::Status status = state.m_rwmutex.take();
+    ASSERT_EQ(status, Os::RwMutex::Status::OP_OK);
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ bool Os::Test::RwMutex::Tester::ReleaseRwMutex::precondition(const Os::Test::RwM
 
 void Os::Test::RwMutex::Tester::ReleaseRwMutex::action(Os::Test::RwMutex::Tester& state) {
     state.m_state = Os::Test::RwMutex::Tester::RwMutexState::UNLOCKED;
-    Os::Mutex::Status status = state.m_rwmutex.release();
-    ASSERT_EQ(status, Os::Mutex::Status::OP_OK);
+    Os::RwMutex::Status status = state.m_rwmutex.release();
+    ASSERT_EQ(status, Os::RwMutex::Status::OP_OK);
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ void Os::Test::RwMutex::Tester::ReleaseReadRwMutex::action(Os::Test::RwMutex::Te
         state.m_state = Tester::UNLOCKED;
     }
 
-    Os::Mutex::Status status = state.m_rwmutex.releaseRead();
+    Os::RwMutex::Status status = state.m_rwmutex.releaseRead();
     ASSERT_EQ(status, Os::Mutex::Status::OP_OK);
 }
 
