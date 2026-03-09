@@ -55,8 +55,8 @@ class PosixRwMutex : public RwMutexInterface {
     // Exclusive (write) lock operations
     // ------------------------------------
 
-    Status take() override;         //!<  Acquire an exclusive (write) lock and return status
-    Status release() override;      //!<  Release an exclusive (write) lock and return status
+    Status take() override;     //!<  Acquire an exclusive (write) lock and return status
+    Status release() override;  //!<  Release an exclusive (write) lock and return status
 
     // ------------------------------------
     // Shared (read) lock operations

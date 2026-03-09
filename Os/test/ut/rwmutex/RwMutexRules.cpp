@@ -57,7 +57,8 @@ void Os::Test::RwMutex::Tester::TakeRwMutex::action(Os::Test::RwMutex::Tester& s
 // Rule:  ReleaseRwMutex - Release exclusive (write) lock via release()
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::RwMutex::Tester::ReleaseRwMutex::ReleaseRwMutex() : STest::Rule<Os::Test::RwMutex::Tester>("ReleaseRwMutex") {}
+Os::Test::RwMutex::Tester::ReleaseRwMutex::ReleaseRwMutex()
+    : STest::Rule<Os::Test::RwMutex::Tester>("ReleaseRwMutex") {}
 
 bool Os::Test::RwMutex::Tester::ReleaseRwMutex::precondition(const Os::Test::RwMutex::Tester& state) {
     return state.m_state == Os::Test::RwMutex::Tester::RwMutexState::WRITE_LOCKED;
@@ -105,7 +106,7 @@ bool Os::Test::RwMutex::Tester::UnlockReadRwMutex::precondition(const Os::Test::
 
 void Os::Test::RwMutex::Tester::UnlockReadRwMutex::action(Os::Test::RwMutex::Tester& state) {
     state.m_reader_count--;
-    
+
     if (state.m_reader_count == 0) {
         state.m_state = Tester::UNLOCKED;
     }
@@ -150,7 +151,7 @@ bool Os::Test::RwMutex::Tester::ReleaseReadRwMutex::precondition(const Os::Test:
 
 void Os::Test::RwMutex::Tester::ReleaseReadRwMutex::action(Os::Test::RwMutex::Tester& state) {
     state.m_reader_count--;
-    
+
     if (state.m_reader_count == 0) {
         state.m_state = Tester::UNLOCKED;
     }
@@ -195,14 +196,14 @@ bool Os::Test::RwMutex::Tester::ProtectDataRead::precondition(const Os::Test::Rw
 void Os::Test::RwMutex::Tester::ProtectDataRead::action(Tester& state) {
     // Acquire shared access
     state.m_rwmutex.lockRead();
-    
+
     if (state.m_state == Os::Test::RwMutex::Tester::RwMutexState::UNLOCKED) {
         state.m_state = Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED;
         state.m_reader_count = 1;
     } else if (state.m_state == Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED) {
         state.m_reader_count++;
     }
-    
+
     // Critical section: read and verify protected data
     int capturedValue = state.m_value;
     // Note: We cannot assert equality to a specific value because
@@ -210,10 +211,10 @@ void Os::Test::RwMutex::Tester::ProtectDataRead::action(Tester& state) {
     // is consistent (no tearing) by reading twice:
     int capturedValue2 = state.m_value;
     ASSERT_EQ(capturedValue, capturedValue2);
-    
+
     // Release shared lock and update model
     state.m_rwmutex.unLockRead();
-    
+
     state.m_reader_count--;
     if (state.m_reader_count == 0) {
         state.m_state = Tester::UNLOCKED;

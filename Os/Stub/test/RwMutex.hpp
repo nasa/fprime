@@ -20,14 +20,14 @@ struct StaticData {
         NONE_FN,
         CONSTRUCT_FN,
         DESTRUCT_FN,
-        TAKE_FN,           // Exclusive (write) lock via take()
-        RELEASE_FN,        // Exclusive (write) unlock via release()
-        TAKE_READ_FN,      // Shared (read) lock via takeRead()
-        RELEASE_READ_FN,   // Shared (read) unlock via releaseRead()
-        LOCK_FN,           // Exclusive lock via lock() [assert variant]
-        UNLOCK_FN,         // Exclusive unlock via unLock() [assert variant]
-        LOCK_READ_FN,      // Shared lock via lockRead() [assert variant]
-        UNLOCK_READ_FN,    // Shared unlock via unlockRead() [assert variant]
+        TAKE_FN,          // Exclusive (write) lock via take()
+        RELEASE_FN,       // Exclusive (write) unlock via release()
+        TAKE_READ_FN,     // Shared (read) lock via takeRead()
+        RELEASE_READ_FN,  // Shared (read) unlock via releaseRead()
+        LOCK_FN,          // Exclusive lock via lock() [assert variant]
+        UNLOCK_FN,        // Exclusive unlock via unLock() [assert variant]
+        LOCK_READ_FN,     // Shared lock via lockRead() [assert variant]
+        UNLOCK_READ_FN,   // Shared unlock via unlockRead() [assert variant]
         GET_HANDLE_FN
     };
     StaticData() = default;

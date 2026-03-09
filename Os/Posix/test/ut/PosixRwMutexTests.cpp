@@ -24,7 +24,7 @@ static void writerTaskRoutine(void* pointer) {
         // Critical section: write random value
         int randomValue = STest::Pick::any();
         tester->m_value = randomValue;
-        
+
         // Verify data integrity: value should not be corrupted
         // If mutex fails, another thread could modify m_shared_value
         ASSERT_EQ(tester->m_value, randomValue);
@@ -44,7 +44,7 @@ static void readerTaskRoutine(void* pointer) {
     for (FwSizeType i = 0; i < 100000; i++) {
         // Acquire shared access
         tester->m_rwmutex.lockRead();
-        
+
         // Update model state
         if (tester->m_state == Tester::RwMutexState::UNLOCKED) {
             tester->m_state = Tester::RwMutexState::READ_LOCKED;
@@ -61,7 +61,7 @@ static void readerTaskRoutine(void* pointer) {
 
         // Release shared access and update model
         tester->m_rwmutex.unLockRead();
-        
+
         FW_ASSERT(tester->m_reader_count > 0);
         tester->m_reader_count--;
         if (tester->m_reader_count == 0) {
@@ -76,8 +76,8 @@ static void readerTaskRoutine(void* pointer) {
 
 // Attempt to destroy a write-locked mutex - expect assertion
 TEST_F(FunctionalityTester, PosixDeleteWriteLockedRwMutex) {
-    GTEST_SKIP() << "Skipped: pthread_rwlock_destroy() does not reliably " \
-        "return EBUSY for locked rwlock (POSIX undefined behavior). ";
+    GTEST_SKIP() << "Skipped: pthread_rwlock_destroy() does not reliably "
+                    "return EBUSY for locked rwlock (POSIX undefined behavior). ";
 
     using Tester = Os::Test::RwMutex::Tester;
 
@@ -91,17 +91,17 @@ TEST_F(FunctionalityTester, PosixDeleteWriteLockedRwMutex) {
 
 // Test: Attempt to destroy a read-locked mutex - expect assertion
 TEST_F(FunctionalityTester, PosixDeleteReadLockedRwMutex) {
-    GTEST_SKIP() << "Skipped: pthread_rwlock_destroy() does not reliably " \
-        "return EBUSY for locked rwlock (POSIX undefined behavior). ";
+    GTEST_SKIP() << "Skipped: pthread_rwlock_destroy() does not reliably "
+                    "return EBUSY for locked rwlock (POSIX undefined behavior). ";
 
     using Tester = Os::Test::RwMutex::Tester;
-    
+
     // Acquire shared lock via rule
     Tester::LockReadRwMutex lock_read_rule;
     lock_read_rule.apply(*tester);
     ASSERT_EQ(tester->m_state, Tester::RwMutexState::READ_LOCKED);
     ASSERT_EQ(tester->m_reader_count, static_cast<FwSizeType>(1));
-    
+
     // tester is a unique_ptr, retrieve the raw pointer and attempt to delete the RwMutex
     ASSERT_DEATH_IF_SUPPORTED(delete tester.get(), Tester::ASSERT_IN_RWMUTEX_CPP);
 }
@@ -109,14 +109,10 @@ TEST_F(FunctionalityTester, PosixDeleteReadLockedRwMutex) {
 // Test data protection with concurrent writer thread
 TEST_F(FunctionalityTester, PosixRwMutexWriterDataProtection) {
     using Tester = Os::Test::RwMutex::Tester;
-    
+
     // Start writer task in separate thread
     Os::Task writer_task;
-    Os::Task::Arguments args(
-        Fw::String("RwMutexWriterTask"), 
-        writerTaskRoutine, 
-        static_cast<void*>(tester.get())
-    );
+    Os::Task::Arguments args(Fw::String("RwMutexWriterTask"), writerTaskRoutine, static_cast<void*>(tester.get()));
     Os::Task::Status stat = writer_task.start(args);
     FW_ASSERT(stat == Os::Task::OP_OK, static_cast<FwAssertArgType>(stat));
 
@@ -128,7 +124,7 @@ TEST_F(FunctionalityTester, PosixRwMutexWriterDataProtection) {
 
     // Wait for writer thread to complete
     writer_task.join();
-    
+
     // Final data integrity check
     int finalValue = tester->m_value;
     ASSERT_EQ(tester->m_value, finalValue);
@@ -137,14 +133,10 @@ TEST_F(FunctionalityTester, PosixRwMutexWriterDataProtection) {
 // Test data protection with concurrent reader thread
 TEST_F(FunctionalityTester, PosixRwMutexReaderDataProtection) {
     using Tester = Os::Test::RwMutex::Tester;
-    
+
     // Start reader task in separate thread
     Os::Task reader_task;
-    Os::Task::Arguments args(
-        Fw::String("RwMutexReaderTask"),
-        readerTaskRoutine,
-        static_cast<void*>(tester.get())
-    );
+    Os::Task::Arguments args(Fw::String("RwMutexReaderTask"), readerTaskRoutine, static_cast<void*>(tester.get()));
     Os::Task::Status stat = reader_task.start(args);
     FW_ASSERT(stat == Os::Task::OP_OK, static_cast<FwAssertArgType>(stat));
 

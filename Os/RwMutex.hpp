@@ -60,19 +60,19 @@ class RwMutex final : public RwMutexInterface {
     // Shared (read) lock operations
     // ------------------------------------
 
-    Status takeRead() override;        //!<  Acquire a shared (read) lock and return status
-    Status releaseRead() override;     //!<  Release a shared (read) lock and return status
-    void lockRead();                   //!<  Acquire a shared (read) lock and assert success
-    void unLockRead();                 //!<  Release a shared (read) lock and assert success
+    Status takeRead() override;     //!<  Acquire a shared (read) lock and return status
+    Status releaseRead() override;  //!<  Release a shared (read) lock and return status
+    void lockRead();                //!<  Acquire a shared (read) lock and assert success
+    void unLockRead();              //!<  Release a shared (read) lock and assert success
 
   private:
-    // This section is used to store the implementation-defined reader-writer mutex handle. 
+    // This section is used to store the implementation-defined reader-writer mutex handle.
     // To Os::RwMutex (and Os::Mutex) and F' Prime, this type is opaque and thus normal
-    // allocation cannot be done. Instead, we allow the implementor to store then 
+    // allocation cannot be done. Instead, we allow the implementor to store then
     // handle in the byte-array here and set `handle` to that address for storage.
     //
-    alignas(FW_HANDLE_ALIGNMENT) RwMutexHandleStorage m_handle_storage; //!< Mutex handle storage
-    RwMutexInterface& m_delegate;                                       //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT) RwMutexHandleStorage m_handle_storage;  //!< Mutex handle storage
+    RwMutexInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 //! \brief Acquires a shared (read) lock on a reader-writer mutex for the current scope
 //!

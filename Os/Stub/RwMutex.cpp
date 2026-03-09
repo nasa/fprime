@@ -14,8 +14,7 @@ StubRwMutex::Status StubRwMutex::take() {
 
     // Acquire mutex if it's free
     FwSignedSizeType expected = StubRwMutexHandle::LockState::FREE;
-    while (!this->m_handle.m_lock_state.compare_exchange_weak(
-        expected, StubRwMutexHandle::LockState::WRITER_LOCKED)) {
+    while (!this->m_handle.m_lock_state.compare_exchange_weak(expected, StubRwMutexHandle::LockState::WRITER_LOCKED)) {
         expected = StubRwMutexHandle::LockState::FREE;
     }
     // Successfully acquired exclusive lock.
@@ -39,11 +38,9 @@ StubRwMutex::Status StubRwMutex::release() {
 
 StubRwMutex::Status StubRwMutex::takeRead() {
     FwSignedSizeType curr_state;
-    do
-    {   
+    do {
         curr_state = this->m_handle.m_lock_state.load(std::memory_order_acquire);
-        if (curr_state == StubRwMutexHandle::LockState::WRITER_LOCKED)
-        {   
+        if (curr_state == StubRwMutexHandle::LockState::WRITER_LOCKED) {
             // Spin until writer releases (m_lock_state != WRITER_LOCKED)
             while (this->m_handle.m_writers_waiting.load(std::memory_order_relaxed) > 0) {
                 // Spin-lock if writer locked
@@ -62,8 +59,7 @@ StubRwMutex::Status StubRwMutex::releaseRead() {
     FwSignedSizeType prev_state =
         this->m_handle.m_lock_state.fetch_sub(static_cast<FwSizeType>(1), std::memory_order_release);
     // Validate that we actually held a shared lock
-    if (prev_state >= 0)
-    {
+    if (prev_state >= 0) {
         // Coding defect: releaseRead() called without holding a read lock,
         // or double-release, or mismatched takeRead/releaseRead pairing.
         return Status::ERROR_OTHER;

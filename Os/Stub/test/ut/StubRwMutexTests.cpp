@@ -72,9 +72,9 @@ TEST_F(Interface, UnlockAlias) {
 // Ensure that Os::RwMutex properly calls the implementation takeRead()
 TEST_F(Interface, TakeRead) {
     Os::RwMutex rwMutex;
-    
+
     StaticData::data.takeStatus = Os::RwMutex::Status::ERROR_BUSY;
-    
+
     ASSERT_EQ(rwMutex.takeRead(), StaticData::data.takeStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_READ_FN);
 }
@@ -82,9 +82,9 @@ TEST_F(Interface, TakeRead) {
 // Ensure that Os::RwMutex properly calls the implementation releaseRead()
 TEST_F(Interface, ReleaseRead) {
     Os::RwMutex rwMutex;
-    
+
     StaticData::data.releaseStatus = Os::RwMutex::Status::ERROR_OTHER;
-    
+
     ASSERT_EQ(rwMutex.releaseRead(), StaticData::data.releaseStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_READ_FN);
 }
@@ -92,18 +92,18 @@ TEST_F(Interface, ReleaseRead) {
 // Ensure that Os::RwMutex properly calls the implementation lockRead()
 TEST_F(Interface, LockRead) {
     Os::RwMutex rwMutex;
-    
+
     rwMutex.lockRead();
-    
+
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_READ_FN);
 }
 
 // Ensure that Os::RwMutex properly calls the implementation unLockRead()
 TEST_F(Interface, UnLockRead) {
     Os::RwMutex rwMutex;
-    
+
     rwMutex.unLockRead();
-    
+
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::RELEASE_READ_FN);
 }
 

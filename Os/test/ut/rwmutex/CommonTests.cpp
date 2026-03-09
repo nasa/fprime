@@ -25,10 +25,9 @@ void FunctionalityTester::TearDown() {
         this->tester->m_rwmutex.unLock();
         this->tester->m_state = Os::Test::RwMutex::Tester::UNLOCKED;
     }
-    
+
     // Case 2: Readers hold the lock -> release all (model tracks count)
-    while (this->tester->m_state == Os::Test::RwMutex::Tester::READ_LOCKED &&
-           this->tester->m_reader_count > 0) {
+    while (this->tester->m_state == Os::Test::RwMutex::Tester::READ_LOCKED && this->tester->m_reader_count > 0) {
         this->tester->m_rwmutex.unLockRead();
         this->tester->m_reader_count--;
         if (this->tester->m_reader_count == 0) {
@@ -61,21 +60,21 @@ TEST_F(FunctionalityTester, TakeAndReleaseRwMutex) {
 TEST_F(FunctionalityTester, LockReadAndUnlockRead) {
     Os::Test::RwMutex::Tester::LockReadRwMutex lock_read_rule;
     Os::Test::RwMutex::Tester::UnlockReadRwMutex unlock_read_rule;
-    
+
     // First reader: UNLOCKED -> READ_LOCKED
     lock_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(1));
-    
+
     // Second reader: increment count
     lock_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(2));
-    
+
     // Release one reader: count decrements, state stays READ_LOCKED
     unlock_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(1));
     ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED);
-    
+
     // Release last reader: transition to UNLOCKED
     unlock_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(0));
@@ -86,11 +85,11 @@ TEST_F(FunctionalityTester, LockReadAndUnlockRead) {
 TEST_F(FunctionalityTester, TakeReadAndReleaseRead) {
     Os::Test::RwMutex::Tester::TakeReadRwMutex take_read_rule;
     Os::Test::RwMutex::Tester::ReleaseReadRwMutex release_read_rule;
-    
+
     take_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(1));
-    
+
     release_read_rule.apply(*this->tester);
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(0));
     ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::UNLOCKED);
@@ -99,7 +98,7 @@ TEST_F(FunctionalityTester, TakeReadAndReleaseRead) {
 // Multiple readers can hold lock concurrently
 TEST_F(FunctionalityTester, MultipleConcurrentReaders) {
     Os::Test::RwMutex::Tester::TakeReadRwMutex take_read;
-    
+
     // Acquire 5 concurrent readers
     for (FwSizeType i = 0; i < 5; i++) {
         ASSERT_TRUE(take_read.precondition(*this->tester));
@@ -107,11 +106,11 @@ TEST_F(FunctionalityTester, MultipleConcurrentReaders) {
         ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::READ_LOCKED);
         ASSERT_EQ(this->tester->m_reader_count, i + 1);
     }
-    
+
     // Writer cannot acquire while readers hold lock
     Os::Test::RwMutex::Tester::TakeRwMutex take_write;
     ASSERT_FALSE(take_write.precondition(*this->tester));
-    
+
     // Release all readers
     Os::Test::RwMutex::Tester::ReleaseReadRwMutex release_read;
     for (FwSizeType i = 0; i < 5; i++) {
@@ -119,7 +118,7 @@ TEST_F(FunctionalityTester, MultipleConcurrentReaders) {
     }
     ASSERT_EQ(this->tester->m_reader_count, static_cast<FwSizeType>(0));
     ASSERT_EQ(this->tester->m_state, Os::Test::RwMutex::Tester::RwMutexState::UNLOCKED);
-    
+
     // Now writer can acquire
     ASSERT_TRUE(take_write.precondition(*this->tester));
 }
@@ -127,10 +126,10 @@ TEST_F(FunctionalityTester, MultipleConcurrentReaders) {
 // Protected write operation maintains data integrity
 TEST_F(FunctionalityTester, ProtectDataWrite) {
     Os::Test::RwMutex::Tester::ProtectDataWrite protect_write;
-    
+
     // Apply the rule: acquire lock, write random data, verify, release
     protect_write.apply(*this->tester);
-    
+
     // Verify that the written value persists (no corruption)
     int expected = this->tester->m_value;
     ASSERT_EQ(this->tester->m_value, expected);
@@ -143,7 +142,7 @@ TEST_F(FunctionalityTester, ProtectDataRead) {
         Os::Test::RwMutex::Tester::ProtectDataWrite protect_write;
         protect_write.apply(*this->tester);
     }
-    
+
     // Then read it back with shared lock
     Os::Test::RwMutex::Tester::ProtectDataRead protect_read;
     protect_read.apply(*this->tester);
@@ -156,7 +155,7 @@ TEST_F(FunctionalityTester, RandomizedInterfaceTesting) {
     Os::Test::RwMutex::Tester::ReleaseRwMutex release_write_rule;
     Os::Test::RwMutex::Tester::LockRwMutex lock_write_rule;
     Os::Test::RwMutex::Tester::UnlockRwMutex unlock_write_rule;
-    
+
     Os::Test::RwMutex::Tester::TakeReadRwMutex take_read_rule;
     Os::Test::RwMutex::Tester::ReleaseReadRwMutex release_read_rule;
     Os::Test::RwMutex::Tester::LockReadRwMutex lock_read_rule;
@@ -164,14 +163,8 @@ TEST_F(FunctionalityTester, RandomizedInterfaceTesting) {
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::RwMutex::Tester>* rules[] = {
-        &take_write_rule,
-        &release_write_rule,
-        &lock_write_rule,
-        &unlock_write_rule,
-        &take_read_rule,
-        &release_read_rule,
-        &lock_read_rule,
-        &unlock_read_rule,
+        &take_write_rule, &release_write_rule, &lock_write_rule, &unlock_write_rule,
+        &take_read_rule,  &release_read_rule,  &lock_read_rule,  &unlock_read_rule,
     };
 
     // Take the rules and place them into a random scenario

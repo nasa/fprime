@@ -4,8 +4,8 @@
 // ======================================================================
 #ifndef OS_STUB_RWMUTEX_HPP
 #define OS_STUB_RWMUTEX_HPP
-#include <atomic>
 #include <Os/RwMutex.hpp>
+#include <atomic>
 
 namespace Os {
 namespace Stub {
@@ -13,10 +13,7 @@ namespace Mutex {
 
 struct StubRwMutexHandle : public MutexHandle {
     //! \brief State constants for the lock state machine
-    enum LockState : FwSignedSizeType {
-        FREE = 0,
-        WRITER_LOCKED = -1
-    };
+    enum LockState : FwSignedSizeType { FREE = 0, WRITER_LOCKED = -1 };
 
     //! \brief Count of writers waiting to acquire the lock
     //!
@@ -82,8 +79,8 @@ class StubRwMutex : public RwMutexInterface {
     // Exclusive (write) lock operations
     // ------------------------------------
 
-    Status take() override;         //!<  Acquire an exclusive (write) lock and return status
-    Status release() override;      //!<  Release an exclusive (write) lock and return status
+    Status take() override;     //!<  Acquire an exclusive (write) lock and return status
+    Status release() override;  //!<  Release an exclusive (write) lock and return status
 
     // ------------------------------------
     // Shared (read) lock operations
