@@ -21,12 +21,21 @@ static constexpr FwSizeType MAX_MULTIFS_PATH_PREFIX_LENGTH = 10;
 //! \brief Backing OSAL implementation set
 //!
 //! Contains all three interface implementations for a single OSAL implementation,
-//! ensuring they are registered and maintained together.
+//! ensuring they are registered and maintained together. Also contains factory
+//! functions to create new instances of implementation types.
 //!
 struct OsalImplSet {
     FileSystemInterface* filesystem = nullptr;  //!< FileSystem interface
-    FileInterface* file = nullptr;              //!< File interface
-    DirectoryInterface* directory = nullptr;    //!< Directory interface
+
+    //! \brief Factory function for creating File interface instances via placement-new
+    //! \param storage: aligned storage buffer to construct into
+    //! \return pointer to constructed FileInterface within storage
+    FileInterface* (*file_factory)(FileHandleStorage2& storage) = nullptr;
+
+    //! \brief Factory function for creating Directory interface instances via placement-new
+    //! \param storage: aligned storage buffer to construct into
+    //! \return pointer to constructed DirectoryInterface within storage
+    DirectoryInterface* (*directory_factory)(DirectoryHandleStorage2& storage) = nullptr;
 };
 
 struct OsalImplMapping {
