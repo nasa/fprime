@@ -11,6 +11,7 @@ register_os_implementation("File;FileSystem;Directory" Stub)
 register_os_implementation(Console Stub)
 register_os_implementation(Task Stub)
 register_os_implementation("Mutex;ConditionVariable" Stub)
+register_os_implementation(RwMutex Stub)
 register_os_implementation(Cpu Stub)
 register_os_implementation(Memory Stub)
 register_os_implementation(Queue Stub)
@@ -43,6 +44,7 @@ register_fprime_ut(
   CHOOSES_IMPLEMENTATIONS
     Os_Task_Stub
     Os_Mutex_Stub
+    Os_RwMutex_Stub
     Os_File_Stub
     Os_Console_Stub
     Os_Cpu_Stub

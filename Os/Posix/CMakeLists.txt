@@ -35,6 +35,7 @@ register_os_implementation("Console" Posix)
 
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
+register_os_implementation("RwMutex" Posix Os_Posix_Shared)
 register_os_implementation("RawTime" Posix Os_Posix_Shared)
 
 # -----------------------------------------
@@ -98,6 +99,23 @@ register_fprime_ut(
     STest
   CHOOSES_IMPLEMENTATIONS
     "Os_Mutex_Posix"
+)
+
+# -----------------------------------------
+### Os/RwMutex/Posix Test Section
+# -----------------------------------------
+
+register_fprime_ut(
+     PosixRwMutexTest 
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/rwmutex/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/rwmutex/RwMutexRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixRwMutexTests.cpp"
+  DEPENDS
+    Fw_Types
+    STest
+  CHOOSES_IMPLEMENTATIONS
+    "Os_RwMutex_Posix"
 )
 
 # -----------------------------------------

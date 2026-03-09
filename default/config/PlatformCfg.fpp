@@ -14,6 +14,9 @@ constant FW_FILE_HANDLE_MAX_SIZE = 16
 @ Maximum size of a handle for Os::Mutex
 constant FW_MUTEX_HANDLE_MAX_SIZE = 72
 
+@ Maximum size of a handle for Os::RwMutex
+constant FW_RWMUTEX_HANDLE_MAX_SIZE = 72
+
 @ Maximum size of a handle for Os::Queue
 constant FW_QUEUE_HANDLE_MAX_SIZE = 368
 

@@ -10,6 +10,7 @@
 typedef U8 QueueHandleStorage[FW_QUEUE_HANDLE_MAX_SIZE];
 typedef U8 ConsoleHandleStorage[FW_CONSOLE_HANDLE_MAX_SIZE];
 typedef U8 MutexHandleStorage[FW_MUTEX_HANDLE_MAX_SIZE];
+typedef U8 RwMutexHandleStorage[FW_RWMUTEX_HANDLE_MAX_SIZE];
 typedef U8 FileHandleStorage[FW_FILE_HANDLE_MAX_SIZE];
 typedef U8 TaskHandleStorage[FW_TASK_HANDLE_MAX_SIZE];
 typedef U8 DirectoryHandleStorage[FW_DIRECTORY_HANDLE_MAX_SIZE];

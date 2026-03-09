@@ -18,6 +18,7 @@ register_os_implementation("File;FileSystem;Directory" Test_Stub)
 register_os_implementation(Console Test_Stub)
 register_os_implementation(Task Test_Stub)
 register_os_implementation("Mutex;ConditionVariable" Test_Stub)
+register_os_implementation(RwMutex Test_Stub)
 register_os_implementation(Cpu Test_Stub)
 register_os_implementation(Memory Test_Stub)
 register_os_implementation(Queue Test_Stub)
@@ -118,6 +119,20 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/../../test/ut/mutex/MutexRules.cpp"
   CHOOSES_IMPLEMENTATIONS
     Os_Mutex_Test_Stub
+  DEPENDS
+    Fw_Types
+    STest
+)
+
+#### RwMutex Stub Testing ####
+register_fprime_ut(
+    StubRwMutexTest
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ut/StubRwMutexTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../../test/ut/rwmutex/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../../test/ut/rwmutex/RwMutexRules.cpp"
+  CHOOSES_IMPLEMENTATIONS
+    Os_RwMutex_Test_Stub
   DEPENDS
     Fw_Types
     STest
