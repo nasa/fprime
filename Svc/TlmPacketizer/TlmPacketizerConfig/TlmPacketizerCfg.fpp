@@ -32,4 +32,44 @@ module Svc {
         [1, 1, 1, 1],
         [2, 2, 2, 2]
     ]
+
+    constant DEFAULT_GROUP_CONFIG = { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 }
+
+
+    constant TELEMETRY_SECTION_DEFAULTS = [
+        # PRIMARY section
+        [
+            # Group 0
+            DEFAULT_GROUP_CONFIG,
+            # Group 1
+            DEFAULT_GROUP_CONFIG,
+            # Group 2
+            DEFAULT_GROUP_CONFIG,
+            # Group 3
+            DEFAULT_GROUP_CONFIG,
+        ],
+        # SECONDARY section
+        [
+            # Group 0
+            DEFAULT_GROUP_CONFIG,
+            # Group 1
+            DEFAULT_GROUP_CONFIG,
+            # Group 2
+            DEFAULT_GROUP_CONFIG,
+            # Group 3
+            DEFAULT_GROUP_CONFIG,
+        ],
+        # TERTIARY section
+        [
+            # Group 0
+            DEFAULT_GROUP_CONFIG,
+            # Group 1
+            DEFAULT_GROUP_CONFIG,
+            # Group 2
+            DEFAULT_GROUP_CONFIG,
+            # Group 3
+            DEFAULT_GROUP_CONFIG,
+        ],
+
+    ]
 }

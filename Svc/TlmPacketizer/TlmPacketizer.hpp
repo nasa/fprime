@@ -16,7 +16,7 @@
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
-#include "config/TlmPacketizerCfg.hpp"
+#include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {
 
