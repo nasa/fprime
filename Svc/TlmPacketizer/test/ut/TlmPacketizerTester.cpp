@@ -26,6 +26,7 @@ TlmPacketizerTester ::TlmPacketizerTester()
     : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
     this->connectPorts();
+    this->component.loadParameters();
 }
 
 TlmPacketizerTester ::~TlmPacketizerTester() {
@@ -1657,6 +1658,10 @@ void TlmPacketizerTester ::connectPorts() {
 
     // cmdIn
     this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
+
+    this->component.set_paramGetOut_OutputPort(0, this->get_from_paramGetOut(0));
+
+    this->component.set_paramSetOut_OutputPort(0, this->get_from_paramSetOut(0));
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));

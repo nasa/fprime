@@ -13,6 +13,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer.cpp"
+  DEPENDS
+    Svc_TlmPacketizer_TlmPacketizerConfig
 )
 
 

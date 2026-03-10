@@ -11,7 +11,6 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
-#include <TlmPacketizerConfig/FppConstantsAc.hpp>
 #include <cstring>
 
 namespace Svc {
