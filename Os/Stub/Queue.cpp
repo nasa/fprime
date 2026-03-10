@@ -15,9 +15,7 @@ QueueInterface::Status StubQueue::create(FwEnumStoreType id,
     return QueueInterface::Status::UNKNOWN_ERROR;
 }
 
-void StubQueue::teardown() {
-
-}
+void StubQueue::teardown() {}
 
 QueueInterface::Status StubQueue::send(const U8* buffer,
                                        FwSizeType size,
