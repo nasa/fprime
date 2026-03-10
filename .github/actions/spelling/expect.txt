@@ -162,6 +162,7 @@ deframe
 deframed
 deframer
 deframing
+Deinitialization
 deployables
 DEPRECATEDLIST
 deser
