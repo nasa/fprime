@@ -42,6 +42,11 @@ class StubQueue : public QueueInterface {
                   const Fw::ConstStringBase& name,
                   FwSizeType depth,
                   FwSizeType messageSize) override;
+    
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown. 
+    void teardown() override;
 
     //! \brief send a message into the queue
     //!
