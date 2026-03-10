@@ -25,9 +25,10 @@ class CircularState {
     ~CircularState();
     /**
      * Generates a random buffer for input to various calls to the CircularBuffer.
+     * The size of the random buffer will be within min_size and max_size inclusive.
      * @return size of this buffer
      */
-    FwSizeType generateRandomBuffer();
+    FwSizeType generateRandomBuffer(U32 min_size = 0, U32 max_size = sizeof(m_buffer));
     /**
      * Sets the random settings
      * @param random: random size

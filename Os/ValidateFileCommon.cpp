@@ -53,7 +53,7 @@ File::Status computeHash(const char* fileName, Utils::HashBuffer& hashBuffer) {
 
     // Calculate hash:
     Utils::HashBuffer computedHashBuffer;
-    hash.final(computedHashBuffer);
+    hash.finalize(computedHashBuffer);
     hashBuffer = computedHashBuffer;
 
     return status;

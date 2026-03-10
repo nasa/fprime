@@ -22,4 +22,9 @@ void FileDownlink::Warnings ::fileRead(const Os::File::Status status) {
     this->warning();
 }
 
+void FileDownlink::Warnings ::zeroSize() {
+    this->m_fileDownlink->log_WARNING_HI_DownlinkZeroSizeFile(this->m_fileDownlink->m_file.getSourceName());
+    this->warning();
+}
+
 }  // namespace Svc

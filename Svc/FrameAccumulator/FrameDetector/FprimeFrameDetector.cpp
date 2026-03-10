@@ -85,7 +85,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         hash.update(&byte, 1);
     }
-    hash.final(hashBuffer);
+    hash.finalize(hashBuffer);
 
     // Compare the transmitted CRC with the computed one
     if (trailer.get_crcField() != hashBuffer.asBigEndianU32()) {

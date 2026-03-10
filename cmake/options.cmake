@@ -148,6 +148,20 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
 ####
+# `FPRIME_ENABLE_DIRECT_PORT_CALLS`:
+#
+# Enable F Prime topology direct port calls. Enabling this will disable unit test builds as UTs are not supported
+# with direct port calls.
+#
+# **Values:**
+# - ON: generate topology port connections using direct function calls
+# - OFF: (default) generate topology port connections through a pointer call
+#
+# e.g. `-FPRIME_ENABLE_DIRECT_PORT_CALLS
+####
+option(FPRIME_ENABLE_DIRECT_PORT_CALLS "Call port connections through symbols rather than function pointers" OFF)
+
+####
 # `FPRIME_ENABLE_TEXT_LOGGERS`:
 #
 # When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 

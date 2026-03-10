@@ -36,10 +36,10 @@ CircularState::~CircularState() {
 }
 
 // Generates a random buffer
-FwSizeType CircularState::generateRandomBuffer() {
+FwSizeType CircularState::generateRandomBuffer(U32 min_size, U32 max_size) {
     m_peek_offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
     m_peek_type = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, 4));
-    FwSizeType random_size = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
+    FwSizeType random_size = static_cast<FwSizeType>(STest::Pick::lowerUpper(min_size, max_size));
     for (U32 i = 0; i < random_size; i++) {
         m_buffer[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 256));
     }

@@ -3,7 +3,7 @@ module FppTest {
     state machine SM {
       state S
       initial enter S
-      array A =[3] U32;
+      array A = [3] U32
     }
   }
 }

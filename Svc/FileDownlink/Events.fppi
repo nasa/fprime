@@ -74,3 +74,11 @@ event SendStarted(
   severity activity high \
   id 0x08 \
   format "Downlink of {} bytes started from {} to {}"
+
+@ The File Downlink component stopped due to a zero-size file
+event DownlinkZeroSizeFile(
+                        sourceFileName: string size 100 @< The source file name
+                      ) \
+  severity warning high \
+  id 0x09 \
+  format "Downlink of file {} stopped due to zero-size."

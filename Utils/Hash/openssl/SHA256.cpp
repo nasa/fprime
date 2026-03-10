@@ -38,7 +38,7 @@ void Hash ::update(const void* const data, FwSizeType len) {
     FW_ASSERT(ret == 1);
 }
 
-void Hash ::final(HashBuffer& buffer) {
+void Hash ::finalize(HashBuffer& buffer) {
     U8 out[SHA256_DIGEST_LENGTH];
     int ret = SHA256_Final(out, &this->hash_handle);
     FW_ASSERT(ret == 1);

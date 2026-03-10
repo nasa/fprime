@@ -128,10 +128,6 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                 }  // if clear entry
             }  // if entry has ping enabled
         }  // for each entry
-
-        // do other specialized platform checks (e.g. VxWorks suspended tasks)
-        this->doOtherChecks();
-
     }  // If health checking is enabled
 
     // stroke watchdog.
