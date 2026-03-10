@@ -161,8 +161,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
 
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
-    // buffers for sending - will be copied from fill buffers
-    BufferEntry m_sendBuffers[MAX_PACKETIZER_PACKETS];
 
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot

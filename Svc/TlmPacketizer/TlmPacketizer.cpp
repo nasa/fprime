@@ -47,7 +47,6 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
     // clear packet buffers
     for (FwChanIdType buffer = 0; buffer < MAX_PACKETIZER_PACKETS; buffer++) {
         this->m_fillBuffers[buffer].updated = false;
-        this->m_sendBuffers[buffer].updated = false;
     }
 
     // enable sections
@@ -358,27 +357,23 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
-    // lock mutex long enough to copy fill buffers to send buffers
-    // so the data can be read without worrying about updates
-    this->m_lock.lock();
-    // copy buffers from fill side to send side
+    // For each packet, send if update, enable, and rate conditions are met
     for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
-        if (this->m_fillBuffers[pkt].updated == true) {
-            (void)(this->m_sendBuffers[pkt] = this->m_fillBuffers[pkt]);
-        }
-        this->m_fillBuffers[pkt].updated = false;
-    }
-    this->m_lock.unLock();
+        this->m_lock.lock();
 
-    // push all updated packet buffers
-    for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
-        FwChanIdType entryGroup = this->m_sendBuffers[pkt].level;
+        // Copy packet data to avoid concurrent updates
+        FwChanIdType entryGroup = this->m_fillBuffers[pkt].level;
+        Fw::ComBuffer sendBuffer = this->m_fillBuffers[pkt].buffer;
+        Fw::Time time = this->m_fillBuffers[pkt].latestTime;
+        bool updated = this->m_fillBuffers[pkt].updated;
+        this->m_fillBuffers[pkt].updated = false;
+
+        this->m_lock.unLock();
 
         // Iterate through output sections
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
             // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
-            if (this->m_sendBuffers[pkt].updated and
-                this->m_packetFlags[section][pkt].updateFlag != UpdateFlag::REQUESTED) {
+            if (updated and this->m_packetFlags[section][pkt].updateFlag != UpdateFlag::REQUESTED) {
                 this->m_packetFlags[section][pkt].updateFlag = UpdateFlag::NEW;
             }
 
@@ -450,17 +445,16 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             if (sendOutFlag) {
                 // serialize time into time offset in packet
                 Fw::ExternalSerializeBuffer buff(
-                    &this->m_sendBuffers[pkt]
-                         .buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
+                    &sendBuffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
                     Fw::Time::SERIALIZED_SIZE);
-                Fw::SerializeStatus stat = buff.serializeFrom(this->m_sendBuffers[pkt].latestTime);
+                Fw::SerializeStatus stat = buff.serializeFrom(time);
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-                this->PktSend_out(outIndex, this->m_sendBuffers[pkt].buffer, pktEntryFlags.prevSentCounter);
+                this->PktSend_out(outIndex, sendBuffer, pktEntryFlags.prevSentCounter);
+
                 pktEntryFlags.prevSentCounter = 0;
                 pktEntryFlags.updateFlag = UpdateFlag::PAST;
             }
         }
-        this->m_sendBuffers[pkt].updated = false;
     }
 }
 
