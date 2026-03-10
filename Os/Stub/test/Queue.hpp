@@ -119,7 +119,7 @@ class InjectableStlQueue : public QueueInterface {
 
     //! \brief teardown the queue
     //!
-    //! Allow for queues to deallocate resources as part of system shutdown. 
+    //! Allow for queues to deallocate resources as part of system shutdown.
     void teardown() override;
 
     //! \brief send a message into the queue
