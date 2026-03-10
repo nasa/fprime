@@ -14,6 +14,7 @@ alphanums
 ampcs
 ANamespace
 Aos
+APacket
 apid
 APIDOCS
 APPENDFILE
@@ -380,6 +381,7 @@ jobrestrictions
 jpl
 jplffs
 jre
+kessler
 kevin
 kermit
 kubiak
