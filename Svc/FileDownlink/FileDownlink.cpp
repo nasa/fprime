@@ -253,11 +253,10 @@ void FileDownlink ::sendResponse(SendFileStatus resp) {
     }
 }
 
-void FileDownlink ::sendFile(
-    const Fw::FileNameString& sourceFilename, 
-    const Fw::FileNameString& destFilename, 
-    U32 startOffset,
-    U32 length) {
+void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
+                             const Fw::FileNameString& destFilename,
+                             U32 startOffset,
+                             U32 length) {
     // Open file for downlink
     Os::File::Status status = this->m_file.open(sourceFilename, destFilename);
 

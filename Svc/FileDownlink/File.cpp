@@ -17,9 +17,8 @@
 
 namespace Svc {
 
-Os::File::Status FileDownlink::File ::open(
-    const Fw::FileNameString& sourceFileName, 
-    const Fw::FileNameString& destFileName) {
+Os::File::Status FileDownlink::File ::open(const Fw::FileNameString& sourceFileName,
+                                           const Fw::FileNameString& destFileName) {
     // Set source name
     Fw::LogStringArg sourceLogStringArg(sourceFileName);
     this->m_sourceName = sourceLogStringArg;

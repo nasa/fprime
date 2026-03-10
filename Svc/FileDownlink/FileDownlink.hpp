@@ -312,7 +312,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void sendFile(
         const Fw::FileNameString& sourceFilename,  //!< The name of the on-board file to send
         const Fw::FileNameString& destFilename,    //!< The name of the destination file on the ground
-        U32 startOffset,             //!< Starting offset of the source file
+        U32 startOffset,                           //!< Starting offset of the source file
         U32 length  //!< Number of bytes to send from starting offset. Length of 0 implies until the end of the file
     );
 
