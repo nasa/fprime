@@ -17,7 +17,8 @@
 
 namespace Svc {
 
-Os::File::Status FileDownlink::File ::open(const char* const sourceFileName, const char* const destFileName) {
+Os::File::Status FileDownlink::File ::open(const Fw::FileNameString& sourceFileName,
+                                           const Fw::FileNameString& destFileName) {
     // Set source name
     Fw::LogStringArg sourceLogStringArg(sourceFileName);
     this->m_sourceName = sourceLogStringArg;
@@ -28,7 +29,7 @@ Os::File::Status FileDownlink::File ::open(const char* const sourceFileName, con
 
     // Set size
     FwSizeType file_size;
-    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(sourceFileName, file_size);
+    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(sourceFileName.toChar(), file_size);
     if (status != Os::FileSystem::OP_OK) {
         return Os::File::BAD_SIZE;
     }
@@ -43,7 +44,7 @@ Os::File::Status FileDownlink::File ::open(const char* const sourceFileName, con
     this->m_checksum = checksum;
 
     // Open osFile for reading
-    return this->m_osFile.open(sourceFileName, Os::File::OPEN_READ);
+    return this->m_osFile.open(sourceFileName.toChar(), Os::File::OPEN_READ);
 }
 
 Os::File::Status FileDownlink::File ::read(U8* const data, const U32 byteOffset, const U32 size) {
