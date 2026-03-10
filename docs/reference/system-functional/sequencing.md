@@ -19,7 +19,7 @@ In Fprime this capability is handled by the Sequence Dispatcher and Command Sequ
 
 Prior to execution, sequences are simply files contained within the file system. They are managed via file system functionality and stored within the defined partitions of the file system. 
 
-Maximum Sequence Size is defined at compile time and is [configurable](https://github.com/nasa/fprime/blob/devel/default/config/FpySequencerCfg.fpp).
+Maximum Sequence Size is defined at compile time and is [configurable](https://github.com/nasa/fprime/blob/14b48734d0bb010526b2d31ca427c100c6615af6/Ref/Top/RefTopology.cpp#L55).
 
 ### Sequence Loading and Validation
 
