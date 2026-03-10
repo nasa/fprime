@@ -85,7 +85,7 @@ class QueueInterface {
     //! implementation.
     //!
     //! Note: the default implementation does nothing.
-    virtual void teardown() {}
+    virtual void teardown() = 0;
 
     //! \brief send a message into the queue
     //!
