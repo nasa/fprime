@@ -66,7 +66,9 @@ module Svc {
     #    bufferProducer1.bufferOut -> genericHub.bufferIn[1]
     #    genericHub.bufferInReturn[1] -> bufferProducer1.bufferIn
     #
-    #    command.cmdDispatch -> genericHub.cmdDispIn
+    #    commandSplitter.RemoteCmd[0] -> genericHub.cmdDispIn[0]
+    #    commandSplitter.RemoteCmd[1] -> genericHub.cmdDispIn[1]
+    #    ...
     #    genericHub.cmdRespOut -> command.cmdResponseIn
     # ----------------------------------------------------------------------
 
