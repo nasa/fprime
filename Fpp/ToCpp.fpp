@@ -15,7 +15,7 @@ module Fpp {
       stopTasks
       freeThreads
       tearDownComponents
-      deinit
+      deinitComponents
     }
 
   }

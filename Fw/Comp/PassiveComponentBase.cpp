@@ -32,7 +32,7 @@ void PassiveComponentBase::toString(char* buffer, FwSizeType size) {
 
 PassiveComponentBase::~PassiveComponentBase() {}
 
-void deinit() {}
+void PassiveComponentBase::deinit() {}
 
 void PassiveComponentBase::init(FwEnumStoreType instance) {
     ObjBase::init();
