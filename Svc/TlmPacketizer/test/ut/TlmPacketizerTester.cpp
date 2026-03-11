@@ -68,8 +68,10 @@ void TlmPacketizerTester ::stockConfiguration() {
         this->sendCmd_ENABLE_SECTION(0, 0, static_cast<Svc::TelemetrySection::T>(section), Fw::Enabled::ENABLED);
         this->dispatchCurrentMessages(this->component);
         for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-            this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<Svc::TelemetrySection::T>(section), group, RateLogic::ON_CHANGE_MIN, 0, 0);
-            this->sendCmd_ENABLE_GROUP(0, 0, static_cast<Svc::TelemetrySection::T>(section), group, Fw::Enabled::ENABLED);
+            this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<Svc::TelemetrySection::T>(section), group,
+                                                RateLogic::ON_CHANGE_MIN, 0, 0);
+            this->sendCmd_ENABLE_GROUP(0, 0, static_cast<Svc::TelemetrySection::T>(section), group,
+                                       Fw::Enabled::ENABLED);
             this->dispatchCurrentMessages(this->component);
         }
     }
@@ -1019,7 +1021,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
 //! Configured tlm groups test
 //!
 void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
-    this->stockConfiguration(); // Will be overridden
+    this->stockConfiguration();  // Will be overridden
     if (TelemetrySection::NUM_SECTIONS < 2) {
         GTEST_SKIP() << "This test requires 2 or more telemetry sections to function";
     }
@@ -1549,7 +1551,7 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
 //! Configure telemetry enable logic
 //!
 void TlmPacketizerTester ::advancedControlGroupTests() {
-    this->stockConfiguration(); // Will be overridden by test
+    this->stockConfiguration();  // Will be overridden by test
     this->component.setPacketList(packetList2, ignore, 4);
     Fw::Time time;
     Fw::TlmBuffer buffer;
@@ -1656,15 +1658,15 @@ void TlmPacketizerTester ::advancedControlGroupTests() {
 }
 
 void TlmPacketizerTester ::sectionEnabledParameterTest() {
-    this->stockConfiguration(); // Will be overridden by test
+    this->stockConfiguration();  // Will be overridden by test
 
     // First set up a parameter base that sets all sections to DISABLED so that the "loaded" parameter is a non-default
     // state (e.g. not ENABLED).
     Svc::TlmPacketizer_SectionEnabled param;
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        param[section] = Fw::Enabled::DISABLED; // Disable all sections on parameter load
+        param[section] = Fw::Enabled::DISABLED;  // Disable all sections on parameter load
     }
-    // Publish this non-default parameter and then load it via the "loadParameters" function 
+    // Publish this non-default parameter and then load it via the "loadParameters" function
     this->paramSet_SECTION_ENABLED(param, Fw::ParamValid::VALID);
     this->component.loadParameters();
 
@@ -1677,7 +1679,6 @@ void TlmPacketizerTester ::sectionEnabledParameterTest() {
     param[0] = Fw::Enabled::ENABLED;
     ASSERT_TLM_SectionEnabled(0, param);
 
-
     // Set the expected parameter to the updated param. This only updates the expected parameter, not the component.
     this->paramSet_SECTION_ENABLED(param, Fw::ParamValid::VALID);
 
@@ -1687,17 +1688,17 @@ void TlmPacketizerTester ::sectionEnabledParameterTest() {
 }
 
 void TlmPacketizerTester ::sectionConfigParameterTest() {
-    this->stockConfiguration(); // Will be overridden by test
+    this->stockConfiguration();  // Will be overridden by test
 
     // First set up a parameter base that sets all sections to DISABLED so that the "loaded" parameter is a non-default
     // state (e.g. not ENABLED).
     Svc::TlmPacketizer_SectionConfigs param;
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-         for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-            param[section][group].set_enabled(Fw::Enabled::DISABLED); // Disable all sections on parameter load
-         }
+        for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            param[section][group].set_enabled(Fw::Enabled::DISABLED);  // Disable all sections on parameter load
+        }
     }
-    // Publish this non-default parameter and then load it via the "loadParameters" function 
+    // Publish this non-default parameter and then load it via the "loadParameters" function
     this->paramSet_SECTION_CONFIGS(param, Fw::ParamValid::VALID);
     this->component.loadParameters();
 

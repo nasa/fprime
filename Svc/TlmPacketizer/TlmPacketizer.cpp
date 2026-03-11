@@ -635,7 +635,10 @@ void TlmPacketizer::missingChannel(FwChanIdType id) {
     }
 }
 
-Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id, const FwPrmIdType local_id, const Fw::ParamValid prmStat, Fw::SerialBufferBase& buff) {
+Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
+                                                    const FwPrmIdType local_id,
+                                                    const Fw::ParamValid prmStat,
+                                                    Fw::SerialBufferBase& buff) {
     // Autocoder always calls deserializeParam with VALID
     FW_ASSERT(prmStat == Fw::ParamValid::VALID);
     switch (local_id) {
@@ -649,7 +652,9 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id, c
     return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
 }
 
-Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id, const FwPrmIdType local_id, Fw::SerialBufferBase& buff) const {
+Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id,
+                                                  const FwPrmIdType local_id,
+                                                  Fw::SerialBufferBase& buff) const {
     switch (local_id) {
         case PARAMID_SECTION_ENABLED:
             return buff.serializeFrom(this->m_sectionEnabled);

@@ -14,7 +14,6 @@
 #include "Svc/TlmPacketizer/TlmPacketizer.hpp"
 #include "TlmPacketizerGTestBase.hpp"
 
-
 namespace Svc {
 
 class TlmPacketizerTester : public TlmPacketizerGTestBase {

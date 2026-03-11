@@ -11,15 +11,14 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "TlmPacketizerConfig/FppConstantsAc.hpp"
+#include "Fw/Prm/PrmExternalTypes.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
-#include <TlmPacketizerConfig/FppConstantsAc.hpp>
-#include "Fw/Prm/PrmExternalTypes.hpp"
-
 
 namespace Svc {
 
@@ -224,9 +223,14 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
 
   private:
-    Fw::SerializeStatus serializeParam(const FwPrmIdType base_id, const FwPrmIdType local_id, Fw::SerialBufferBase& buff) const override;
+    Fw::SerializeStatus serializeParam(const FwPrmIdType base_id,
+                                       const FwPrmIdType local_id,
+                                       Fw::SerialBufferBase& buff) const override;
 
-    Fw::SerializeStatus deserializeParam(const FwPrmIdType base_id, const FwPrmIdType local_id, const Fw::ParamValid prmStat, Fw::SerialBufferBase& buff) override;
+    Fw::SerializeStatus deserializeParam(const FwPrmIdType base_id,
+                                         const FwPrmIdType local_id,
+                                         const Fw::ParamValid prmStat,
+                                         Fw::SerialBufferBase& buff) override;
 
   private:
     //! Handler implementation for configureSectionGroupRate
