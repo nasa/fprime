@@ -47,8 +47,8 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     // Increment sequence count for next call
     U16 updatedSeqCount = this->calculateNextSeqCount(seqCount);
 
-    Fw::Success insert_status = m_apidSequences.insert(apid, updatedSeqCount);
-    if (insert_status == Fw::Success::SUCCESS) {
+    Fw::Success insertStatus = m_apidSequences.insert(apid, updatedSeqCount);
+    if (insertStatus == Fw::Success::SUCCESS) {
         return seqCount;  // Return the current sequence count
     }
 
@@ -57,8 +57,8 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
 }
 
 void ApidManager::setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount) {
-    Fw::Success insert_status = m_apidSequences.insert(apid, seqCount);
-    FW_ASSERT(insert_status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
+    Fw::Success insertStatus = m_apidSequences.insert(apid, seqCount);
+    FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
 }
 
 U16 ApidManager::calculateNextSeqCount(const U16 seqCount) const {
