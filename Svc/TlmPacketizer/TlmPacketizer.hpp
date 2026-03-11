@@ -11,13 +11,13 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
-#include "TlmPacketizerConfig/FppConstantsAc.hpp"
 #include "Fw/Prm/PrmExternalTypes.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
+#include "TlmPacketizerConfig/FppConstantsAc.hpp"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {
