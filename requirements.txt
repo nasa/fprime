@@ -32,7 +32,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 legacy-cgi==2.6.1; python_version >= "3.13"
 lxml==6.0.2
-Markdown==3.7
+Markdown==3.8.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
