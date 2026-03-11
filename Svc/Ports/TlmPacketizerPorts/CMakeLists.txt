@@ -8,5 +8,6 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerPorts.fpp"
     DEPENDS
         Fw_Types
+        Svc_Types_TlmPacketizerTypes
         Svc_TlmPacketizer_TlmPacketizerConfig
 )
