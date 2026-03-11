@@ -168,7 +168,9 @@ module Svc {
     #    genericHub.bufferOut[1] -> bufferConsumer1.bufferIn
     #    bufferConsumer1.bufferInReturn -> genericHub.bufferOutReturn[1]
     #
-    #    genericHub.cmdDispOut -> command.cmdDispatch
+    #    genericHub.cmdDispOut[0] -> commandDispatch.seqCmdBuff[0]
+    #    genericHub.cmdDispOut[1] -> commandDispatch.seqCmdBuff[1]
+    #    ...
     #    commandDispatch.seqCmdStatus[0] -> genericHub.cmdRespIn[0]
     #    commandDispatch.seqCmdStatus[1] -> genericHub.cmdRespIn[1]
     #    ...
