@@ -11,11 +11,11 @@ module Svc {
       rateLogic: RateLogic      @< Rate Logic Configuration
       min: U32                  @< Minimum Sched Ticks when in ON_CHANGE_MIN
       max: U32                  @< Maximum Sched Ticks when in EVERY_MAX
-    }
+    } default DEFAULT_GROUP_CONFIG
 
     array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs
-    array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default Fw.Enabled.ENABLED
+    array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
     # ----------------------------------------------------------------------
     # General ports
@@ -126,6 +126,7 @@ module Svc {
                                       ) \
       opcode 5
 
+    external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
     external param SECTION_CONFIGS: SectionConfigs default TELEMETRY_SECTION_DEFAULTS
 

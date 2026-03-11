@@ -62,11 +62,27 @@ TlmPacketizerChannelEntry ignoreList[] = {{25, 0}, {50, 0}};
 
 TlmPacketizerPacket ignore = {ignoreList, 0, 0, FW_NUM_ARRAY_ELEMENTS(ignoreList)};
 
+void TlmPacketizerTester ::stockConfiguration() {
+    // Stock configuration of telemetry packetizer is all channels and all groups enabled sending out all packets
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        this->sendCmd_ENABLE_SECTION(0, 0, static_cast<Svc::TelemetrySection::T>(section), Fw::Enabled::ENABLED);
+        this->dispatchCurrentMessages(this->component);
+        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, static_cast<Svc::TelemetrySection::T>(section), group, RateLogic::ON_CHANGE_MIN, 0, 0);
+            this->sendCmd_ENABLE_GROUP(0, 0, static_cast<Svc::TelemetrySection::T>(section), group, Fw::Enabled::ENABLED);
+            this->dispatchCurrentMessages(this->component);
+        }
+    }
+    this->clearHistory();
+}
+
 void TlmPacketizerTester ::initTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
 }
 
 void TlmPacketizerTester ::pushTlmTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -101,6 +117,7 @@ void TlmPacketizerTester ::pushTlmTest() {
 }
 
 void TlmPacketizerTester ::sendPacketsTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -173,6 +190,7 @@ void TlmPacketizerTester ::sendPacketsTest() {
 }
 
 void TlmPacketizerTester ::sendPacketLevelsTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 1);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -243,6 +261,7 @@ void TlmPacketizerTester ::sendPacketLevelsTest() {
 }
 
 void TlmPacketizerTester ::updatePacketsTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -600,6 +619,7 @@ void TlmPacketizerTester ::updatePacketsTest() {
 }
 
 void TlmPacketizerTester ::ignoreTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -671,6 +691,7 @@ void TlmPacketizerTester ::ignoreTest() {
 }
 
 void TlmPacketizerTester ::sendManualPacketTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -806,6 +827,7 @@ void TlmPacketizerTester ::sendManualPacketTest() {
 }
 
 void TlmPacketizerTester ::setPacketLevelTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 0);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -915,6 +937,7 @@ void TlmPacketizerTester ::setPacketLevelTest() {
 }
 
 void TlmPacketizerTester ::nonPacketizedChannelTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time ts;
     Fw::TlmBuffer buff;
@@ -945,6 +968,7 @@ void TlmPacketizerTester ::nonPacketizedChannelTest() {
 }
 
 void TlmPacketizerTester ::pingTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     // ping component
     this->clearFromPortHistory();
@@ -957,6 +981,7 @@ void TlmPacketizerTester ::pingTest() {
 //! get channel value test
 //!
 void TlmPacketizerTester ::getChannelValueTest() {
+    this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     Fw::Time time;
     Fw::TlmBuffer val;
@@ -994,6 +1019,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
 //! Configured tlm groups test
 //!
 void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
+    this->stockConfiguration(); // Will be overridden
     if (TelemetrySection::NUM_SECTIONS < 2) {
         GTEST_SKIP() << "This test requires 2 or more telemetry sections to function";
     }
@@ -1523,6 +1549,7 @@ void TlmPacketizerTester ::configuredTelemetryGroupsTests() {
 //! Configure telemetry enable logic
 //!
 void TlmPacketizerTester ::advancedControlGroupTests() {
+    this->stockConfiguration(); // Will be overridden by test
     this->component.setPacketList(packetList2, ignore, 4);
     Fw::Time time;
     Fw::TlmBuffer buffer;
@@ -1626,6 +1653,68 @@ void TlmPacketizerTester ::advancedControlGroupTests() {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     ASSERT_from_PktSend_SIZE(0);
     this->clearHistory();
+}
+
+void TlmPacketizerTester ::sectionEnabledParameterTest() {
+    this->stockConfiguration(); // Will be overridden by test
+
+    // First set up a parameter base that sets all sections to DISABLED so that the "loaded" parameter is a non-default
+    // state (e.g. not ENABLED).
+    Svc::TlmPacketizer_SectionEnabled param;
+    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+        param[section] = Fw::Enabled::DISABLED; // Disable all sections on parameter load
+    }
+    // Publish this non-default parameter and then load it via the "loadParameters" function 
+    this->paramSet_SECTION_ENABLED(param, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    // ENABLE section 0 such that we force an update of the parameter and thus cause the telemetry channel used to
+    // verify the loaded parameter to be output.
+    this->sendCmd_ENABLE_SECTION(0, 0, static_cast<TelemetrySection::T>(0), Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+
+    // Update the local truth and check against it
+    param[0] = Fw::Enabled::ENABLED;
+    ASSERT_TLM_SectionEnabled(0, param);
+
+
+    // Set the expected parameter to the updated param. This only updates the expected parameter, not the component.
+    this->paramSet_SECTION_ENABLED(param, Fw::ParamValid::VALID);
+
+    // Ask the component to send out its version. This call automatically verifies the stored parameter matches the
+    // test version!
+    this->paramSave_SECTION_ENABLED(0, 0);
+}
+
+void TlmPacketizerTester ::sectionConfigParameterTest() {
+    this->stockConfiguration(); // Will be overridden by test
+
+    // First set up a parameter base that sets all sections to DISABLED so that the "loaded" parameter is a non-default
+    // state (e.g. not ENABLED).
+    Svc::TlmPacketizer_SectionConfigs param;
+    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+         for (FwSizeType group = 0; group < Svc::NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+            param[section][group].set_enabled(Fw::Enabled::DISABLED); // Disable all sections on parameter load
+         }
+    }
+    // Publish this non-default parameter and then load it via the "loadParameters" function 
+    this->paramSet_SECTION_CONFIGS(param, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    // ENABLE group 0 on section 0  to force an update of the parameter
+    this->sendCmd_ENABLE_GROUP(0, 0, static_cast<TelemetrySection::T>(0), 0, Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+
+    // Update the local truth and check against it
+    param[0][0].set_enabled(Fw::Enabled::ENABLED);
+    ASSERT_TLM_GroupConfigs(0, param);
+
+    // Set the expected parameter to the updated param. This only updates the expected parameter, not the component.
+    this->paramSet_SECTION_CONFIGS(param, Fw::ParamValid::VALID);
+
+    // Ask the component to send out its version. This call automatically verifies the stored parameter matches the
+    // test version!
+    this->paramSave_SECTION_CONFIGS(0, 0);
 }
 
 // ----------------------------------------------------------------------
