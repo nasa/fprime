@@ -27,7 +27,7 @@ U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComC
         // Likely a packet was dropped or out of order
         this->log_WARNING_LO_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
         // Synchronize onboard count with received number so that count can keep going
-        this->setNextSeqCount(apid, static_cast<U16>(receivedSeqCount + 1));
+        this->setNextSeqCount(apid, this->calculateNextSeqCount(receivedSeqCount));
     }
     return receivedSeqCount;
 }
@@ -45,24 +45,24 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     // Find sequence count if exists, otherwise use 0
     (void)m_apidSequences.find(apid, seqCount);
     // Increment sequence count for next call
-    U16 updatedSeqCount = static_cast<U16>((seqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
-    
+    U16 updatedSeqCount = this->calculateNextSeqCount(seqCount);
+
     Fw::Success insert_status = m_apidSequences.insert(apid, updatedSeqCount);
     if (insert_status == Fw::Success::SUCCESS) {
         return seqCount;  // Return the current sequence count
     }
-    
+
     this->log_WARNING_HI_ApidTableFull(apid);
     return SEQUENCE_COUNT_ERROR;
 }
 
 void ApidManager::setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount) {
     Fw::Success insert_status = m_apidSequences.insert(apid, seqCount);
-    if (insert_status == Fw::Success::SUCCESS) {
-        return;
-    }
-    // This code should not be reachable with the if statement in validateApidSeqCountIn_handler
-    FW_ASSERT(false, static_cast<FwAssertArgType>(apid));
+    FW_ASSERT(insert_status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
+}
+
+U16 ApidManager::calculateNextSeqCount(const U16 seqCount) const {
+    return static_cast<U16>((seqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
 }
 
 }  // namespace Ccsds

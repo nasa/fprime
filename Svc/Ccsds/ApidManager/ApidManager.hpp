@@ -8,8 +8,8 @@
 #define Svc_Ccsds_ApidManager_HPP
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Svc/Ccsds/ApidManager/ApidManagerComponentAc.hpp"
 #include "Fw/DataStructures/ArrayMap.hpp"
+#include "Svc/Ccsds/ApidManager/ApidManagerComponentAc.hpp"
 
 namespace Svc {
 
@@ -75,9 +75,12 @@ class ApidManager final : public ApidManagerComponentBase {
     //! Set the next expected sequence count for a given APID
     void setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount);
 
+    //! Helper function for wrapping around at 14 bits when calculating the next sequence count
+    U16 calculateNextSeqCount(const U16 seqCount) const;
+
     //! ArrayMap with internal storage
-    //! Key: APID 
-    //! Value: sequence count 
+    //! Key: APID
+    //! Value: sequence count
     //! Capacity: MAX_TRACKED_APIDS
     using MapType = Fw::ArrayMap<ComCfg::Apid::T, U16, MAX_TRACKED_APIDS>;
 
