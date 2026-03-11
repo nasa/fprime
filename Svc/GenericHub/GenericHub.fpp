@@ -165,7 +165,9 @@ module Svc {
     #    bufferConsumer1.bufferInReturn -> genericHub.bufferOutReturn[1]
     #
     #    genericHub.cmdDispOut -> command.cmdDispatch
-    #    command.cmdResponseIn -> genericHub.cmdRespIn
+    #    commandDispatch.seqCmdStatus[0] -> genericHub.cmdRespIn[0]
+    #    commandDispatch.seqCmdStatus[1] -> genericHub.cmdRespIn[1]
+    #    ...
     # ----------------------------------------------------------------------
 
     @ Port for receiving events
