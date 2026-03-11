@@ -16,7 +16,7 @@ class PassiveComponentBase : public Fw::ObjBase {
     //! \return The ID base
     FwIdType getIdBase() const;
 
-    void deinit();  //!< Deinitialization function
+    virtual void deinit();  //!< Deinitialization function
 
   protected:
     PassiveComponentBase(const char* name);  //!< Named constructor
