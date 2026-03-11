@@ -8,4 +8,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.fpp"
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.hpp"
+    DEPENDS
+        Svc_Types_TlmPacketizerTypes
 )
