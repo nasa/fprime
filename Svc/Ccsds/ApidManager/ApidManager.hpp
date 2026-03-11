@@ -9,6 +9,7 @@
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/Ccsds/ApidManager/ApidManagerComponentAc.hpp"
+#include "Fw/DataStructures/ArrayMap.hpp"
 
 namespace Svc {
 
@@ -74,18 +75,17 @@ class ApidManager final : public ApidManagerComponentBase {
     //! Set the next expected sequence count for a given APID
     void setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount);
 
-    //! This struct helps track sequence counts per APID
-    //! Future work: update to using a map from Fw/DataStructures when available
-    struct ApidSequenceEntry {
-        ComCfg::Apid::T apid = ComCfg::Apid::INVALID_UNINITIALIZED;
-        U16 sequenceCount = 0;
-    };
+    //! ArrayMap with internal storage
+    //! Key: APID 
+    //! Value: sequence count 
+    //! Capacity: MAX_TRACKED_APIDS
+    using MapType = Fw::ArrayMap<ComCfg::Apid::T, U16, MAX_TRACKED_APIDS>;
 
   private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    ApidSequenceEntry m_apidSequences[MAX_TRACKED_APIDS];
+    MapType m_apidSequences;
 };
 
 }  // namespace Ccsds

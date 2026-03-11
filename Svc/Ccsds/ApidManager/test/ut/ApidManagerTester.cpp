@@ -26,7 +26,7 @@ ApidManagerTester ::ApidManagerTester()
     this->connectPorts();
     // Initialize existing sequence counts for common APIDs
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(TEST_REGISTERED_APIDS)); i++) {
-        this->component.m_apidSequences[i].apid = TEST_REGISTERED_APIDS[i];
+        this->component.m_apidSequences.insert(TEST_REGISTERED_APIDS[i], static_cast<U16>(0));
         this->shadow_seqCounts[TEST_REGISTERED_APIDS[i]] = 0;  // Initialize shadow sequence counts to 0
     }
 }
