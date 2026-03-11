@@ -15,17 +15,6 @@ module Svc {
     @ Port for receiving ownership back of buffers sent on allPacketsOut
     sync input port allPacketsReturnIn: Fw.BufferSend
 
-    @ Port for allocating buffers
-    output port bufferAllocate: Fw.BufferGet
-
-    @ Port for deallocating buffers
-    output port bufferDeallocate: Fw.BufferSend
-
-    @ An allocation error occurred
-    event AllocationError \
-      severity warning high \
-      format "Buffer allocation for Pass-Through failed"
-
     @ Port for requesting the current time
     time get port timeCaller
 
