@@ -45,6 +45,10 @@ jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
+    env:
+      FPRIME_LOCATION: ${{ inputs.fprime_location }}
+      TARGET_PLATFORM: ${{ inputs.target_platform }}
+      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -59,23 +63,27 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util generate ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Build"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
     runs-on: ${{ inputs.runs_on }}
     name: "Unit Tests"
+    env:
+      FPRIME_LOCATION: ${{ inputs.fprime_location }}
+      TARGET_PLATFORM: ${{ inputs.target_platform }}
+      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -90,21 +98,21 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util generate --ut ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Build UTs"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build --ut -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util build --ut -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util check -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
 

@@ -137,6 +137,17 @@ Fw::SerializeStatus CircularBuffer ::rotate(FwSizeType amount) {
     return Fw::FW_SERIALIZE_OK;
 }
 
+Fw::SerializeStatus CircularBuffer ::trim(FwSizeType amount) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
+    // Check there is sufficient data
+    if (amount > m_allocated_size) {
+        return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
+    }
+    // Simply reduce the allocated size without moving the head
+    m_allocated_size -= amount;
+    return Fw::FW_SERIALIZE_OK;
+}
+
 FwSizeType CircularBuffer ::get_capacity() const {
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     return m_store_size;

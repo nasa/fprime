@@ -298,7 +298,7 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
 
 //! Internal interface handler for directive_waitAbs
 Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < 10 + sizeof(FwTimeContextStoreType)) {
+    if (this->m_runtime.stack.size < 2 * sizeof(U32) + sizeof(FwTimeContextStoreType) + sizeof(FwTimeBaseStoreType)) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -306,7 +306,7 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
     U32 uSeconds = this->m_runtime.stack.pop<U32>();
     U32 seconds = this->m_runtime.stack.pop<U32>();
     FwTimeContextStoreType ctx = this->m_runtime.stack.pop<FwTimeContextStoreType>();
-    U16 base = this->m_runtime.stack.pop<U16>();
+    FwTimeBaseStoreType base = this->m_runtime.stack.pop<FwTimeBaseStoreType>();
 
     this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase::T>(base), ctx, seconds, uSeconds);
     return Signal::stmtResponse_beginSleep;

@@ -138,6 +138,7 @@ Drv::I2cStatus ImuManager::read(ImuData& output_data) {
 ### Step 4 - Expose Behavior to Application layer
 
 Once the device-specific helper functions are implemented, integrate them into your component's behavior. For example, we can configure our ImuManager to:
+
 - a) Emit telemetry on a schedule by connecting to a RateGroup
 - b) Expose data to the application layer through additional ports
 
@@ -272,6 +273,7 @@ Before starting development, understand the bus communication protocol you are t
 In our case, we need to understand how to perform I2C read and write operations using Zephyr's I2C API. We look to the [Zephyr I2C documentation](https://docs.zephyrproject.org/latest/reference/peripherals/i2c.html) and [Zephyr I2C API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html). It can also be useful to look at existing Zephyr code samples that use I2C.
 
 We learn the following:
+
 * Zephyr uses the [`device`](https://docs.zephyrproject.org/latest/doxygen/html/structdevice.html) struct to identify an I2C device. These can be retrieved from the Device Tree through macros (see [Zephyr Device Tree How-To](https://docs.zephyrproject.org/latest/build/dts/howtos.html)).
 * With a `device` instance, we can use the `i2c_write`, `i2c_read` and `i2c_write_read` functions to perform I2C write and read operations (see [API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html#ga2cc5f49493dce89e128ccbfa9d6149a0)).
 

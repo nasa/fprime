@@ -21,6 +21,11 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
+// Direct port calls (TODO)
+#ifndef FW_DIRECT_PORT_CALLS
+#define FW_DIRECT_PORT_CALLS 0
+#endif
+
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
 #define FW_OBJECT_NAMES \

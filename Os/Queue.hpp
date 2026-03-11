@@ -61,7 +61,7 @@ class QueueInterface {
     QueueInterface(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
-    virtual QueueInterface& operator=(const QueueInterface& other) = delete;
+    virtual QueueInterface& operator=(const QueueInterface& other) = delete;  // NO_CODESONAR (cpp:S3657)
 
     //! \brief create queue storage
     //!

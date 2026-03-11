@@ -6,7 +6,7 @@ struct WaitRelDirective {
 
 @ sleeps until an absolute time
 struct WaitAbsDirective {
-    # pops U32, U32, U8, U16 off stack
+    # pops U32, U32, FwTimeContextStoreType, FwTimeBaseStoreType off stack
     _empty: U8
 }
 

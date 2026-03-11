@@ -25,9 +25,10 @@ class CircularState {
     ~CircularState();
     /**
      * Generates a random buffer for input to various calls to the CircularBuffer.
+     * The size of the random buffer will be within min_size and max_size inclusive.
      * @return size of this buffer
      */
-    FwSizeType generateRandomBuffer();
+    FwSizeType generateRandomBuffer(U32 min_size = 0, U32 max_size = sizeof(m_buffer));
     /**
      * Sets the random settings
      * @param random: random size
@@ -51,6 +52,12 @@ class CircularState {
      * @return true if successful, false otherwise
      */
     bool rotate(FwSizeType size);
+    /**
+     * Trim the circular buffer (remove from the back).
+     * @param size: size to trim
+     * @return true if successful, false otherwise
+     */
+    bool trim(FwSizeType size);
     /**
      * Get the size of the random buffer data.
      * @return size of the buffer

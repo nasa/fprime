@@ -32,6 +32,7 @@ DpCatalogTester ::DpCatalogTester()
 
 DpCatalogTester ::~DpCatalogTester() {
     this->component.deinit();
+    std::system("rm -rf ./DpTest*");
 }
 
 // ----------------------------------------------------------------------

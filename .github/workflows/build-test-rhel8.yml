@@ -28,7 +28,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -69,7 +69,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
