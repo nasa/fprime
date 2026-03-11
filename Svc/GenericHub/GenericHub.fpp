@@ -69,7 +69,9 @@ module Svc {
     #    commandSplitter.RemoteCmd[0] -> genericHub.cmdDispIn[0]
     #    commandSplitter.RemoteCmd[1] -> genericHub.cmdDispIn[1]
     #    ...
-    #    genericHub.cmdRespOut -> command.cmdResponseIn
+    #    genericHub.cmdRespOut[0] -> commandSplitter.seqCmdStatus[0]
+    #    genericHub.cmdRespOut[1] -> commandSplitter.seqCmdStatus[1]
+    #    ...
     # ----------------------------------------------------------------------
 
     @ Port for sending events to the hub
