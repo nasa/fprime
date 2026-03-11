@@ -1,5 +1,8 @@
 # Module subdirectories
 
+# Types
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
+
 # Ports
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cycle/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Fatal/")
