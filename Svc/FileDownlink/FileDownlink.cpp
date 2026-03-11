@@ -107,8 +107,6 @@ Svc::SendFileResponse FileDownlink ::SendFile_handler(
     U32 offset,
     U32 length) {
     struct FileEntry entry;
-    entry.srcFilename[0] = 0;
-    entry.destFilename[0] = 0;
     entry.offset = offset;
     entry.length = length;
     entry.source = FileDownlink::PORT;
@@ -116,12 +114,10 @@ Svc::SendFileResponse FileDownlink ::SendFile_handler(
     entry.cmdSeq = 0;
     entry.context = m_cntxId++;
 
-    FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
-    FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void)Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.srcFilename)));
-    (void)Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.destFilename)));
+    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
+    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
+    entry.srcFilename = sourceFilename;
+    entry.destFilename = destFilename;
 
     Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
                                                 0, Os::Queue::BlockingType::NONBLOCKING);
@@ -167,8 +163,6 @@ void FileDownlink ::SendFile_cmdHandler(const FwOpcodeType opCode,
                                         const Fw::CmdStringArg& sourceFilename,
                                         const Fw::CmdStringArg& destFilename) {
     struct FileEntry entry;
-    entry.srcFilename[0] = 0;
-    entry.destFilename[0] = 0;
     entry.offset = 0;
     entry.length = 0;
     entry.source = FileDownlink::COMMAND;
@@ -176,12 +170,10 @@ void FileDownlink ::SendFile_cmdHandler(const FwOpcodeType opCode,
     entry.cmdSeq = cmdSeq;
     entry.context = std::numeric_limits<U32>::max();
 
-    FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
-    FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void)Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.srcFilename)));
-    (void)Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.destFilename)));
+    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
+    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
+    entry.srcFilename = sourceFilename;
+    entry.destFilename = destFilename;
 
     Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
                                                 0, Os::Queue::BlockingType::NONBLOCKING);
@@ -198,8 +190,6 @@ void FileDownlink ::SendPartial_cmdHandler(FwOpcodeType opCode,
                                            U32 startOffset,
                                            U32 length) {
     struct FileEntry entry;
-    entry.srcFilename[0] = 0;
-    entry.destFilename[0] = 0;
     entry.offset = startOffset;
     entry.length = length;
     entry.source = FileDownlink::COMMAND;
@@ -207,12 +197,10 @@ void FileDownlink ::SendPartial_cmdHandler(FwOpcodeType opCode,
     entry.cmdSeq = cmdSeq;
     entry.context = std::numeric_limits<U32>::max();
 
-    FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
-    FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    (void)Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.srcFilename)));
-    (void)Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(),
-                                       static_cast<FwSizeType>(sizeof(entry.destFilename)));
+    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
+    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
+    entry.srcFilename = sourceFilename;
+    entry.destFilename = destFilename;
 
     Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
                                                 0, Os::Queue::BlockingType::NONBLOCKING);
@@ -265,7 +253,10 @@ void FileDownlink ::sendResponse(SendFileStatus resp) {
     }
 }
 
-void FileDownlink ::sendFile(const char* sourceFilename, const char* destFilename, U32 startOffset, U32 length) {
+void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
+                             const Fw::FileNameString& destFilename,
+                             U32 startOffset,
+                             U32 length) {
     // Open file for downlink
     Os::File::Status status = this->m_file.open(sourceFilename, destFilename);
 
