@@ -32,7 +32,7 @@ PassThroughRouterTester::~PassThroughRouterTester() {}
 void PassThroughRouterTester::testRouteAPacket() {
     this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_COMMAND);
 
-    ASSERT_from_allPacketsOut_SIZE(1);      // one packet emitted
+    ASSERT_from_allPacketsOut_SIZE(1);  // one packet emitted
 }
 
 void PassThroughRouterTester::testAllPacketsReturn() {

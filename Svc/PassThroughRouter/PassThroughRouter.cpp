@@ -21,7 +21,7 @@ PassThroughRouter::~PassThroughRouter() {}
 // ----------------------------------------------------------------------
 
 void PassThroughRouter::allPacketsReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    ComCfg::FrameContext context = {}; // default context used to satisfy dataReturnOut port interface
+    ComCfg::FrameContext context = {};  // default context used to satisfy dataReturnOut port interface
     this->dataReturnOut_out(0, fwBuffer, context);
 }
 
