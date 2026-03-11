@@ -14,16 +14,10 @@ TEST(PassThroughRouter, TestRouteAPacket) {
     tester.testRouteAPacket();
 }
 
-TEST(PassThroughRouter, TestAllocationFailure) {
-    COMMENT("Test failure to allocate packet buffer");
+TEST(PassThroughRouter, TestAllPacketsReturn) {
+    COMMENT("Test returning a packet");
     Svc::PassThroughRouterTester tester;
-    tester.testAllocationFailure();
-}
-
-TEST(PassThroughRouter, TestBufferReturn) {
-    COMMENT("Test deallocate a returning buffer");
-    Svc::PassThroughRouterTester tester;
-    tester.testBufferReturn();
+    tester.testAllPacketsReturn();
 }
 
 int main(int argc, char** argv) {

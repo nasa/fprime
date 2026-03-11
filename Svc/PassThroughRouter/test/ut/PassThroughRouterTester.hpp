@@ -45,11 +45,8 @@ class PassThroughRouterTester final : public PassThroughRouterGTestBase {
     //! Route a packet
     void testRouteAPacket();
 
-    //! Allocation failure
-    void testAllocationFailure();
-
     //! Deallocate a returning buffer
-    void testBufferReturn();
+    void testAllPacketsReturn();
 
   private:
     // ----------------------------------------------------------------------
@@ -65,12 +62,6 @@ class PassThroughRouterTester final : public PassThroughRouterGTestBase {
     //! Mock the reception of a packet of a specific type
     void mockReceivePacketType(Fw::ComPacketType packetType);
 
-    // ----------------------------------------------------------------------
-    // Port handler overrides
-    // ----------------------------------------------------------------------
-    //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
-
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -78,10 +69,6 @@ class PassThroughRouterTester final : public PassThroughRouterGTestBase {
 
     //! The component under test
     PassThroughRouter component;
-
-    Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
-    U8 m_buffer_slot[64];
-    bool m_forceAllocationError = false;  // Flag to force allocation error
 };
 
 }  // namespace Svc
