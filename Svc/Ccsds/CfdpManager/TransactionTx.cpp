@@ -439,7 +439,19 @@ void Transaction::sSubstateSendFileData() {
     FileSize bytes_processed = 0;
     Status::T status = this->sSendFileData(this->m_foffs, (this->m_fsize - this->m_foffs), 1, &bytes_processed);
 
-    if(status != Cfdp::Status::SUCCESS)
+    // When SEND_PDU_NO_BUF_AVAIL_ERROR is returned, it means either:
+    // 1) The throttle limit (max_outgoing_pdus_per_cycle) was reached, OR
+    // 2) Buffer allocation failed
+    // In either case, we should stay in FILEDATA state and retry next cycle.
+    // This is NOT a file I/O error, so we should NOT transition to EOF.
+    // We also need to break the cycleTx loop by setting m_chan->m_currentTxn.
+    if(status == Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR)
+    {
+        // Throttle limit or buffer exhaustion - stay in FILEDATA, retry next cycle
+        // Set m_currentTxn to break the cycleTx loop for this cycle
+        this->m_chan->setCurrentTxn(this);
+    }
+    else if(status != Cfdp::Status::SUCCESS)
     {
         // IO error -- change state and send EOF
         this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
@@ -450,7 +462,7 @@ void Transaction::sSubstateSendFileData() {
         this->m_foffs += bytes_processed;
         if (this->m_foffs == this->m_fsize)
         {
-            // file is done
+            // file is done - transition to EOF state, which will be sent in next loop iteration
             this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
         }
     }
