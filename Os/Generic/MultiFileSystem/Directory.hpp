@@ -10,7 +10,10 @@
 namespace Os {
 namespace Generic {
 
-struct MultiDirectoryHandle : public DirectoryHandle {};
+struct MultiDirectoryHandle : public DirectoryHandle {
+    DirectoryInterface* m_directory_interface =
+        nullptr;  //!< Pointer to the underlying directory interface for this directory handle
+};
 
 //! \brief MultiFileSystem implementation of Os::Directory
 //!
@@ -95,10 +98,7 @@ class MultiDirectory : public DirectoryInterface {
 
     //! Pointer to the underlying DirectoryInterface implementation
     //! This is populated when open() is called and stored for use in subsequent calls
-    DirectoryInterface* m_directory_sub_delegate = nullptr;
-
-    //! Storage for placement-new of sub-delegate DirectoryInterface implementation
-    alignas(FW_HANDLE_ALIGNMENT) DirectoryHandleStorage2 m_sub_delegate_storage;
+    DirectoryInterface* m_directory_interface = nullptr;
 
 };  // class MultiDirectory
 

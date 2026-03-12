@@ -10,7 +10,9 @@
 namespace Os {
 namespace Generic {
 
-struct MultiFileHandle : public FileHandle {};
+struct MultiFileHandle : public FileHandle {
+    FileInterface* m_file_interface = nullptr;  //!< Pointer to the underlying file interface for this file handle
+};
 
 //! \brief MultiFileSystem implementation of Os::File
 //!
@@ -159,9 +161,7 @@ class MultiFile : public FileInterface {
 
     //! Pointer to the underlying FileInterface implementation
     //! This is populated when open() is called and stored for use in subsequent calls
-    FileInterface* m_file_sub_delegate = nullptr;
-
-    alignas(FW_HANDLE_ALIGNMENT) FileHandleStorage2 m_sub_delegate_storage;  //!< Storage for aligned FileHandle data
+    FileInterface* m_file_interface = nullptr;
 
 };  // class MultiFile
 

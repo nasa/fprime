@@ -3,23 +3,21 @@
 // \brief MultiFileSystem implementation for Os::File
 // ======================================================================
 #include "Os/Generic/MultiFileSystem/File.hpp"
-#include "Os/Delegate.hpp"
 #include "Os/Generic/MultiFileSystem/OsalRegistry.hpp"
 
 namespace Os {
 namespace Generic {
 
 // Copy constructor - delegates to the underlying file interface
-MultiFile::MultiFile(const MultiFile& other) : m_file_sub_delegate(other.m_file_sub_delegate) {
-    // NOTE: m_handle is just a container; the actual file operations
-    // are delegated to m_file_sub_delegate
-    // Should m_file_sub_delegate be INSIDE m_handle ??
+MultiFile::MultiFile(const MultiFile& other) : m_file_interface(other.m_file_interface) {
+    // Note: m_handle is just a container; the actual file operations
+    // are delegated to m_file_interface
 }
 
 // Assignment operator - delegates to the underlying file interface
 MultiFile& MultiFile::operator=(const MultiFile& other) {
     if (this != &other) {
-        this->m_file_sub_delegate = other.m_file_sub_delegate;
+        this->m_file_interface = other.m_file_interface;
     }
     return *this;
 }
@@ -37,78 +35,73 @@ MultiFile::Status MultiFile::open(const char* path, Mode mode, OverwriteType ove
         return Status::OTHER_ERROR;
     }
 
-    // Create independent instance via placement-new into local storage
-    if (impl->file_factory == nullptr) {
+    // Store pointer to routed File interface for use in subsequent operations
+    this->m_file_interface = impl->file;
+    if (this->m_file_interface == nullptr) {
         return Status::OTHER_ERROR;
     }
-    this->m_file_sub_delegate = impl->file_factory(this->m_sub_delegate_storage);
-    FW_ASSERT(this->m_file_sub_delegate != nullptr);
-
     const char* path_after_prefix = path + prefix_len;
-    Status status = this->m_file_sub_delegate->open(path_after_prefix, mode, overwrite);
+    Status status = this->m_file_interface->open(path_after_prefix, mode, overwrite);
     if (status != Status::OP_OK) {
-        this->m_file_sub_delegate->close();
-        this->m_file_sub_delegate->~FileInterface();
-        this->m_file_sub_delegate = nullptr;
+        this->m_file_interface = nullptr;
     }
     return status;
 }
 
 void MultiFile::close() {
-    if (this->m_file_sub_delegate != nullptr) {
-        this->m_file_sub_delegate->close();
-        this->m_file_sub_delegate->~FileInterface();
-        this->m_file_sub_delegate = nullptr;
+    if (this->m_file_interface != nullptr) {
+        this->m_file_interface->close();
+        this->m_file_interface = nullptr;
     }
 }
 
 MultiFile::Status MultiFile::size(FwSizeType& size_result) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->size(size_result);
+    return this->m_file_interface->size(size_result);
 }
 
 MultiFile::Status MultiFile::position(FwSizeType& position_result) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->position(position_result);
+    return this->m_file_interface->position(position_result);
 }
 
 MultiFile::Status MultiFile::preallocate(FwSizeType offset, FwSizeType length) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->preallocate(offset, length);
+    return this->m_file_interface->preallocate(offset, length);
 }
 
 MultiFile::Status MultiFile::seek(FwSignedSizeType offset, SeekType seekType) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->seek(offset, seekType);
+    return this->m_file_interface->seek(offset, seekType);
 }
 
 MultiFile::Status MultiFile::flush() {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->flush();
+    return this->m_file_interface->flush();
 }
 
 MultiFile::Status MultiFile::read(U8* buffer, FwSizeType& size, WaitType wait) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->read(buffer, size, wait);
+    return this->m_file_interface->read(buffer, size, wait);
 }
 
 MultiFile::Status MultiFile::write(const U8* buffer, FwSizeType& size, WaitType wait) {
-    if (this->m_file_sub_delegate == nullptr) {
+    if (this->m_file_interface == nullptr) {
         return Status::NOT_OPENED;
     }
-    return this->m_file_sub_delegate->write(buffer, size, wait);
+    return this->m_file_interface->write(buffer, size, wait);
 }
 
 FileHandle* MultiFile::getHandle() {
