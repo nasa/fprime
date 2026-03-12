@@ -160,7 +160,7 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
     this->m_abort = true;
     this->m_lock.unLock();
 
-    char fileName[FppConstant_MAX_STRING_BYTES::MAX_STRING_BYTES];
+    char fileName[Svc::MAX_STRING_BYTES];
     U64 length;
 
     FW_ASSERT(buffer.getData() != nullptr);
@@ -181,8 +181,8 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
 
     // Save filename
     // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than MAX_STRING_BYTES in any case
-    length = static_cast<U32>(strnlen(path.toChar(), FppConstant_MAX_STRING_BYTES::MAX_STRING_BYTES));
-    FW_ASSERT(length < FppConstant_MAX_STRING_BYTES::MAX_STRING_BYTES && length < sizeof(fileName), static_cast<FwAssertArgType>(length));
+    length = static_cast<U32>(strnlen(path.toChar(), Svc::MAX_STRING_BYTES));
+    FW_ASSERT(length < Svc::MAX_STRING_BYTES && length < sizeof(fileName), static_cast<FwAssertArgType>(length));
 
     (void)strncpy(fileName, path.toChar(), sizeof(fileName));
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination
@@ -372,7 +372,7 @@ bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Uti
         Utils::HashBuffer tmp(hashValuePtr, hashSize);
         hash.setHashValue(tmp);
         hash.update(data, size);
-        hash.final(hashBuffer);
+        has.finalize(hashBuffer);
 
     } else if(stat == Os::File::DOESNT_EXIST) {
         hash.hash(data, size, hashBuffer);
@@ -439,7 +439,7 @@ bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     // Construct hash filename
     const char* ext = Utils::Hash::getFileExtensionString();
     FW_ASSERT(ext != NULL);
-    char hashFileName[FppConstant_MAX_STRING_BYTES::MAX_STRING_BYTES];
+    char hashFileName[Svc::MAX_STRING_BYTES];
     U32 bytesCopied = snprintf(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext);
     FW_ASSERT(bytesCopied < sizeof(hashFileName));
 
