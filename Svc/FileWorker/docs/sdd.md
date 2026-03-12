@@ -3,6 +3,7 @@
 Svc::FileWorker is an active F' component used for writing and reading files on the filesystem. Other components needing to read or write files may use this component to perform large/slow file operations without missing their deadlines.
 
 ## Requirements
+
 | Name | Description | Validation |
 |---|---|---|
 |FileWorker-001|FileWorker shall provide an async interface to read contents from a file and return the data in a client-provided buffer|Unit Test|
@@ -10,20 +11,20 @@ Svc::FileWorker is an active F' component used for writing and reading files on 
 |FileWorker-003|FileWorker shall handle receiving read-done signals while in improper state|Unit Test|
 |FileWorker-004|FileWorker shall handle cancel for reads|Unit Test|
 
-
 ### Diagrams
+
 ![FileWorker component diagram](./FileWorker.png)
 
-
 ## States
+
 | State | Description |
 |---|---|
 | IDLE | FileWorker is ready to accept requests for transfer |
 | READING | In the read process |
 | WRITING | In the write process |
 
-
 ## Ports
+
 | Kind | Port Name | Port Type | Usage |
 |------|------|-----------|-------|
 |guarded input|`writeIn`|`Svc.FileReadWrite`|Initiates a file write|
@@ -34,8 +35,8 @@ Svc::FileWorker is an active F' component used for writing and reading files on 
 |async input|`verifyIn`|`Svc.VerifyStatus`|Initiates a verification of a file against an expected CRC checksum|
 |output|`verifyDoneOut`|`Svc.SignalDone`|File verification results|
 
-
 ## Events
+
 <table><thead><tr style = "border-right: 2px solid black; border-left: 2px solid black; border-top: 2px solid black;">	<th rowspan = "2">Event Name</th>	<th rowspan = "2">Severity</th>	<th rowspan = "2">Description</th>	<th rowspan = "2">Throttle</th>	<th rowspan = "1" colspan = "3" style="text-align: center">Arguments</th></tr><tr style = "border-right: 2px solid black; ">	<th>Name</th>	<th>Type</th>	<th>Description</th></tr></thead><tbody>
 <tr style = "border: 2px solid black;"><td rowspan="1"><code>NotInIdle</code></td><td rowspan="1">warning high</td><td rowspan="1">"Not in IDLE state, currently in state: {}"</td><td rowspan="1">2</td><td><code>currState</code></td><td><code>U32</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="1"><code>CrcFailed</code></td><td rowspan="1">warning high</td><td rowspan="1">"Failed CRC check with {} status"</td><td rowspan="1">2</td><td><code>crcStat</code></td><td><code>U32</code></td><td></td></tr>
@@ -64,8 +65,6 @@ bytesWritten</code></td><td><code>U32</code></td><td></td></tr><tr><td><code>has
 timeout</code></td><td><code>U64</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="3"><code>WriteAborted</code></td><td rowspan="3">warning low</td><td rowspan="3">"Aborted after {} of {} bytes written to {}"</td><td rowspan="3"></td><td><code>bytesWritten</code></td><td><code>U32</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>U32</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
 </tbody></table>
-
-
 
 ### 3.4 Functional Description
 
