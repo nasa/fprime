@@ -10,7 +10,7 @@ module Svc {
     port FileWrite(
         path: string size MAX_STRING_BYTES
         ref buffer: Fw.Buffer
-        offsetBytes: U32
+        offsetBytes: U64
     )
 
     port SignalDone(
