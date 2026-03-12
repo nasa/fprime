@@ -154,7 +154,7 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     this->verifyDoneOut_out(0, workerStat, static_cast<U32>(fileSize));
 }
 
-void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer, U64 offset) {
+void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer, U64 offsetBytes) {
     
     this->m_lock.lock();
     this->m_abort = true;
@@ -188,9 +188,9 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination
 
     // Write
-    if (this->writeBufferToFile(buffer, fileName, offset)) {
+    if (this->writeBufferToFile(buffer, fileName, offsetBytes)) {
         // Method will emit warning, it doesn't matter now whether hash file succeeded or not
-        (void)this->writeBufferHashToFile(buffer, fileName, offset);
+        (void)this->writeBufferHashToFile(buffer, fileName, offsetBytes);
     }
 
     this->writeDoneOut_out(0, FW_STATUS_DONE_WRITE, static_cast<U32>(buffer.getSize()));
