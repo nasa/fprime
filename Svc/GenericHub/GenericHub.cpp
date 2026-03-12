@@ -81,7 +81,7 @@ void GenericHub ::cmdRespIn_handler(FwIndexType portNum,
                                     U32 cmdSeq,
                                     const Fw::CmdResponse& response) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
-    U8 buffer[sizeof(opCode) + sizeof(cmdSeq) + sizeof(response)];
+    U8 buffer[sizeof(opCode) + sizeof(cmdSeq) + Fw::CmdResponse::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
 
