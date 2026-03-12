@@ -1,5 +1,4 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MultiFileSystem")
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
 #### Os/Generic/Queue Section ####
