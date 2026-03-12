@@ -24,7 +24,7 @@ RegistryStatus OsalRegistry::registerImplementation(OsalImplMapping* implementat
     return RegistryStatus::OTHER_ERROR;
 }
 
-OsalImplSet* OsalRegistry::routePathToImplementation(const char* path, FwIndexType& prefix_len) {
+OsalImplSet* OsalRegistry::routePathToImplementation(const char* path) {
     if (path == nullptr) {
         return nullptr;
     }
@@ -51,8 +51,6 @@ OsalImplSet* OsalRegistry::routePathToImplementation(const char* path, FwIndexTy
 
             // If we reached the end of prefix (null terminator), it's a match
             if (j < MAX_MULTIFS_PATH_PREFIX_LENGTH && prefix[j] == '\0') {
-                FW_ASSERT_NO_OVERFLOW(j, FwIndexType);     // Ensure no overflow in prefix length calculation
-                prefix_len = static_cast<FwIndexType>(j);  // Set the output parameter for prefix length
                 return impl;
             }
         }

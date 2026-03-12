@@ -28,9 +28,7 @@ MultiFile::Status MultiFile::open(const char* path, Mode mode, OverwriteType ove
     }
 
     // Route path to appropriate filesystem implementation
-    OsalImplSet* impl = nullptr;
-    FwIndexType prefix_len = 0;
-    impl = OsalRegistry::routePathToImplementation(path, prefix_len);
+    OsalImplSet* impl = OsalRegistry::routePathToImplementation(path);
     if (impl == nullptr) {
         return Status::OTHER_ERROR;
     }
@@ -40,8 +38,8 @@ MultiFile::Status MultiFile::open(const char* path, Mode mode, OverwriteType ove
     if (this->m_file_interface == nullptr) {
         return Status::OTHER_ERROR;
     }
-    const char* path_after_prefix = path + prefix_len;
-    Status status = this->m_file_interface->open(path_after_prefix, mode, overwrite);
+
+    Status status = this->m_file_interface->open(path, mode, overwrite);
     if (status != Status::OP_OK) {
         this->m_file_interface = nullptr;
     }

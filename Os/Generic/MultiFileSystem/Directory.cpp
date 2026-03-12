@@ -29,13 +29,10 @@ MultiDirectory::Status MultiDirectory::open(const char* path, OpenMode mode) {
     }
 
     // Route path to appropriate filesystem implementation
-    OsalImplSet* impl = nullptr;
-    FwIndexType prefix_len = 0;
-    impl = OsalRegistry::routePathToImplementation(path, prefix_len);
+    OsalImplSet* impl = OsalRegistry::routePathToImplementation(path);
     if (impl == nullptr) {
         return Status::OTHER_ERROR;
     }
-    const char* path_after_prefix = path + prefix_len;
 
     // Store pointer to routed Directory interface for use in subsequent operations
     this->m_directory_interface = impl->directory;
@@ -43,7 +40,7 @@ MultiDirectory::Status MultiDirectory::open(const char* path, OpenMode mode) {
         return Status::OTHER_ERROR;
     }
 
-    Status status = this->m_directory_interface->open(path_after_prefix, mode);
+    Status status = this->m_directory_interface->open(path, mode);
     if (status != Status::OP_OK) {
         this->m_directory_interface = nullptr;
     }
