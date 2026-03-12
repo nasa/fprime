@@ -453,6 +453,7 @@ mutexattr
 Mutexed
 muxed
 mycompany
+myos
 nasafprime
 nbits
 ncsl
@@ -489,7 +490,7 @@ optin
 optind
 orgslist
 ortega
-OSAL
+osal
 ostate
 OSTIME
 otherside

@@ -222,7 +222,7 @@ The `restrict_platforms(MyOs)` call ensures these implementations only build whe
 
 ## Step 5 - Unit Tests
 
-Thourough Unit Testing is outside the scope of this How-To guide, but is critical to ensure the correctness of your implementation. F´ provides OS-agnostic unit tests for most OSAL service under `Os/test/`. These tests can be run against your implementation to validate that it behaves correctly according to the interface contract. You may also add additional tests if desired.
+Thorough Unit Testing is outside the scope of this How-To guide, but is critical to ensure the correctness of your implementation. F´ provides OS-agnostic unit tests for most OSAL service under `fprime/Os/test/`. These tests can be run against your implementation to validate that it behaves correctly according to the interface contract. You may also add additional tests if desired.
 
 ---
 
@@ -238,7 +238,7 @@ The process described above for `Os::Mutex` is the same for every OSAL module. F
 > [!NOTE]
 > F´ provides `Os_Generic_PriorityQueue`, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.
 
-The full set of [OSAL modules](../../Os/docs/sdd.md#2-core-servicces) that can be implemented is:
+The full set of [OSAL modules](../../Os/docs/sdd.md#2-core-services) that can be implemented is:
 
 | Module | Interface | Key Methods |
 |---|---|---|
