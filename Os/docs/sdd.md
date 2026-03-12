@@ -8,11 +8,65 @@ The Operating System Abstraction Layer (OSAL) provides a portable interface to o
 ### 1.2 Scope
 This document describes the high-level architecture and design of the OSAL, including its abstraction patterns, supported features, and implementation strategy. It does not provide detailed API specifications or implementation details.
 
-## 2. Architecture
 
-### 2.1 Delegate Pattern
+## 2. Core Services
 
-Every OSAL service (e.g. File, Task, Mutex, etc.) follows a uniform three-layer pattern:
+Core services are those that directly wrap OS primitives and are implemented by each platform backend.  They form the foundation upon which derived and generic services are built.
+
+### 2.1 Concurrency
+
+| Service | Purpose |
+|---|---|
+| **Mutex** | Mutual-exclusion lock with RAII `ScopeLock` helper. |
+| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
+| **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
+
+### 2.2 File system
+
+| Service | Purpose |
+|---|---|
+| **File** | Open, read, write, seek, flush, and CRC computation on files. |
+| **Directory** | Open, iterate, and create directory entries. |
+| **FileSystem** | Higher-level operations: remove, move/rename, copy, stat, query free space, and working-directory management. |
+
+### 2.3 System Resources
+
+| Service | Purpose |
+|---|---|
+| **RawTime** | Access to the system clock for measuring time intervals. |
+| **Cpu** | CPU count and per-CPU usage statistics. |
+| **Memory** | System memory usage statistics. |
+
+### 2.4 Console
+
+| Service | Purpose |
+|---|---|
+| **Console** | Write messages to the system console. |
+
+## 3. Derived Services
+
+Derived services are built on top of core services, providing higher-level abstractions that are implemented through the usage of core services.
+
+| Service | Purpose | Core Services Used |
+|---|---|---|
+| **ConditionVariable** | Condition-variable signaling, paired with Mutex for producer/consumer patterns. | Mutex |
+| **ScopeLock** | RAII helper for automatically acquiring and releasing a Mutex. | Mutex |
+| **IntervalTimer** | Lightweight start/stop timer for measuring elapsed microseconds. | RawTime |
+
+## 4. Generic Services
+
+Generic services are implemented in the `Os::Generic` namespace and are not tied to platform-specific functionalities. They provide utilities or abstractions that are not tied to any specific OS, but are related to OS-level operations and are therefore included in the `Os` module.
+
+| Service | Purpose |
+|---|---|
+| **PriorityQueue** | Heap-based priority queue implementation |
+
+
+## 5. Implementation Architecture
+
+### 5.1 Delegate Pattern
+
+Every OSAL _core service_ (e.g. File, Task, Mutex, etc.) follows a uniform three-layer pattern:
 
 | Layer | Example | Description |
 |---|---|---|
@@ -53,7 +107,7 @@ classDiagram
 
 ```
 
-### 2.2 API usage
+### 5.2 API usage
 
 Application code interacts exclusively with the wrapper classes (e.g., `Os::File`) and never directly with the interfaces or implementations.  The wrapper forwards calls to the delegate interface, which is implemented by the platform-specific implementation class.
 
@@ -69,68 +123,16 @@ The full API for each service is documented in the header files in the [`Os/` mo
 > [!NOTE]
 > `Os::Task` exposes both usage patterns. `Os::Task::delay()` is a static method that blocks the current task for a specified duration, while `Os::Task` instances represent individual tasks that can be started and stopped.
 
-### 2.3 Initialization
+### 5.3 Initialization
 
 `Os::init()` is called once at system startup.  It initializes the singleton instances used by
 services that have global state (Console, FileSystem, Cpu, Memory, Task).
 
-### 2.4 Error Handling
+### 5.4 Error Handling
 
 All operations return a typed `Status` enumeration specific to each service.  Platform
 backends translate native error codes (e.g., `errno`) into these status values so that callers
 never need to interpret platform-specific errors.
-
-## 3. Core Capabilities
-
-Core capabilities are those that directly wrap OS primitives and are implemented by each platform backend.  They form the foundation upon which derived and generic capabilities are built.
-
-### 3.1 Concurrency
-
-| Component | Purpose |
-|---|---|
-| **Mutex** | Mutual-exclusion lock with RAII `ScopeLock` helper. |
-| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
-| **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
-
-### 3.2 File system
-
-| Component | Purpose |
-|---|---|
-| **File** | Open, read, write, seek, flush, and CRC computation on files. |
-| **Directory** | Open, iterate, and create directory entries. |
-| **FileSystem** | Higher-level operations: remove, move/rename, copy, stat, query free space, and working-directory management. |
-
-### 3.3 System Resources
-
-| Component | Purpose |
-|---|---|
-| **RawTime** | Access to the system clock for measuring time intervals. |
-| **Cpu** | CPU count and per-CPU usage statistics. |
-| **Memory** | System memory usage statistics. |
-
-### 3.4 Console
-
-| Component | Purpose |
-|---|---|
-| **Console** | Write messages to the system console. |
-
-## 4. Derived Capabilities
-
-Derived capabilities are built on top of core capabilities, providing higher-level abstractions that are implemented through the usage of core capabilities.
-
-| Component | Purpose | Core Capabilities Used |
-|---|---|---|
-| **ConditionVariable** | Condition-variable signaling, paired with Mutex for producer/consumer patterns. | Mutex |
-| **ScopeLock** | RAII helper for automatically acquiring and releasing a Mutex. | Mutex |
-| **IntervalTimer** | Lightweight start/stop timer for measuring elapsed microseconds. | RawTime |
-
-## 5. Generic Capabilities
-
-Generic capabilities are implemented in the `Os::Generic` namespace and are not tied to platform-specific functionalities. They provide utilities or abstractions that are not tied to any specific OS, but are related to OS-level operations and are therefore included in the `Os` module.
-
-| Component | Purpose |
-|---|---|
-| **PriorityQueue** | Heap-based priority queue implementation |
 
 ## 6. OSAL Implementations
 
@@ -143,4 +145,8 @@ The following OSAL implementations are available in the core F´ repository:
 
 Additional OSAL implementations are available through platform support packages. For more information, see [Supported Platforms](../../docs/user-manual/framework/supported-platforms.md) or search for a platform support package in the [fprime-community](https://github.com/fprime-community) GitHub organization.
 
-OSAL selection is controlled by the CMake build system.  Each backend provides a set of `Default<Component>.cpp` files; the build includes exactly one such file per component, giving the linker a single definition of each `getDelegate` factory method which initializes the wrapper's delegate reference to the appropriate implementation.
+OSAL selection is controlled by the CMake build system.  Each backend provides a set of `Default<ServiceName>.cpp` files; the build includes exactly one such file per service, giving the linker a single definition of each `getDelegate` factory method which initializes the wrapper's delegate reference to the appropriate implementation.
+
+## 7. Resources
+
+- [How-To: Implement an OSAL](../../docs/how-to/implement-osal.md) — Step-by-step guide to implementing a new OSAL backend.

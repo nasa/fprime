@@ -238,7 +238,7 @@ The process described above for `Os::Mutex` is the same for every OSAL module. F
 > [!NOTE]
 > F´ provides `Os_Generic_PriorityQueue`, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.
 
-The full set of [OSAL modules](../../Os/docs/sdd.md#3-core-capabilities) that can be implemented is:
+The full set of [OSAL modules](../../Os/docs/sdd.md#2-core-servicces) that can be implemented is:
 
 | Module | Interface | Key Methods |
 |---|---|---|
@@ -271,7 +271,7 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 
 ## Best Practices
 
-- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../Os/docs/sdd.md#6-osal-implementations) returns `NOT_SUPPORTED` for unimplemented capabilities, allowing you to bring up an OSAL incrementally.
+- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../Os/docs/sdd.md#6-osal-implementations) returns `NOT_SUPPORTED` for unimplemented services, allowing you to bring up an OSAL incrementally.
 - **Map error codes consistently.** Create a shared error-translation module (like `Os/Posix/error.hpp`) that converts your OS's native error codes to the F´ [`Status` enums](../../Os/docs/sdd.md#24-error-handling). This keeps error handling centralized and testable.
 - **Watch the handle size.** Each implementation object must fit in the fixed-size handle storage. If your native OS primitives are large, override `FW_MUTEX_HANDLE_MAX_SIZE` (or equivalent) in your platform configuration.
 - **Use other implementations as references.** The `Os/Posix/` directory is the most complete OSAL implementation in F´ and serves as the canonical example for all modules. Other implementations exist (see links above, or in the resources below)
