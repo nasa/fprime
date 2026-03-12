@@ -8,7 +8,7 @@ This guide provides step-by-step instructions for implementing a new OS Abstract
 
 Before starting, you should have:
 
-* An understanding of the [OSAL architecture](../../Os/docs/sdd.md#2-architecture), specifically the [delegate pattern](../../Os/docs/sdd.md#21-delegate-pattern).
+* An understanding of the [OSAL architecture](../../Os/docs/sdd.md#5-implementation-architecture), specifically the [delegate pattern](../../Os/docs/sdd.md#51-delegate-pattern).
 * A working F´ build environment for testing.
 * Familiarity with [F´ libraries](develop-fprime-libraries.md) and [F´ platform files](develop-fprime-libraries.md#optional-platform-folder-and-platform-files).
 * Knowledge of your target OS APIs (e.g., mutex, task creation, file I/O).
@@ -17,7 +17,7 @@ Before starting, you should have:
 
 ## Overview
 
-The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL _service_ (Mutex, File, Task, etc.) has three layers: an **interface class** defining the contract, a **wrapper class** (e.g., `Os::Mutex`) that application code uses, and a **platform-specific implementation** that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the [OSAL Software Design Document](../../Os/docs/sdd.md) — in particular the [delegate pattern](../../Os/docs/sdd.md#21-delegate-pattern) and [architecture](../../Os/docs/sdd.md#2-architecture) sections — as this guide assumes familiarity with those concepts.
+The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL _service_ (Mutex, File, Task, etc.) has three layers: an **interface class** defining the contract, a **wrapper class** (e.g., `Os::Mutex`) that application code uses, and a **platform-specific implementation** that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the [OSAL Software Design Document](../../Os/docs/sdd.md) — in particular the [delegate pattern](../../Os/docs/sdd.md#51-delegate-pattern) and [implementation architecture](../../Os/docs/sdd.md#5-implementation-architecture) sections — as this guide assumes familiarity with those concepts.
 
 This guide walks through implementing an OSAL for a hypothetical OS called **"MyOs"**, and walks through the implementation of the `Os::Mutex` service as the example. The same process applies for all other OSAL services.
 
@@ -271,8 +271,8 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 
 ## Best Practices
 
-- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../Os/docs/sdd.md#6-osal-implementations) returns `NOT_SUPPORTED` for unimplemented services, allowing you to bring up an OSAL incrementally.
-- **Map error codes consistently.** Create a shared error-translation module (like `Os/Posix/error.hpp`) that converts your OS's native error codes to the F´ [`Status` enums](../../Os/docs/sdd.md#24-error-handling). This keeps error handling centralized and testable.
+- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../Os/Stub) returns `NOT_SUPPORTED` for unimplemented services, allowing you to bring up an OSAL incrementally.
+- **Map error codes consistently.** Create a shared error-translation module (like `Os/Posix/error.hpp`) that converts your OS's native error codes to the F´ Os `Status` enums. This keeps error handling centralized and testable.
 - **Watch the handle size.** Each implementation object must fit in the fixed-size handle storage. If your native OS primitives are large, override `FW_MUTEX_HANDLE_MAX_SIZE` (or equivalent) in your platform configuration.
 - **Use other implementations as references.** The `Os/Posix/` directory is the most complete OSAL implementation in F´ and serves as the canonical example for all modules. Other implementations exist (see links above, or in the resources below)
 - **Test with the F´ OSAL unit tests.** The framework provides OS-agnostic unit tests under `Os/test/` that exercise the OSAL interfaces. Run these tests against your implementation to validate correctness.
