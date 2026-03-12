@@ -51,7 +51,7 @@ namespace Cfdp {
 Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager) :
     m_engine(engine),
     m_numCmdTx(0),
-    m_cur(nullptr),
+    m_currentTxn(nullptr),
     m_cfdpManager(cfdpManager),
     m_tickType(0),
     m_channelId(channelId),
@@ -209,8 +209,8 @@ void Channel::cycleTx()
 
         // NOTE: tick processing is higher priority than sending new filedata PDUs, so only send however many
         // PDUs that can be sent once we get to here
-        if (!this->m_cur)
-        { // don't enter if cur is set, since we need to pick up where we left off on tick processing next scheduler cycle
+        if (!this->m_currentTxn)
+        { // don't enter if currentTxn is set, since we need to pick up where we left off on tick processing next scheduler cycle
 
             // TODO BPC: refactor all while loops
             while (true)
@@ -252,7 +252,7 @@ void Channel::cycleTx()
         }
 
         // in case the loop exited due to no message buffers, clear it and start from the top next time
-        this->m_cur = NULL;
+        this->m_currentTxn = NULL;
     }
 }
 
@@ -702,10 +702,15 @@ void Channel::decrementCmdTxCounter()
 void Channel::clearCurrentIfMatch(Transaction* txn)
 {
     // Done with this TX transaction
-    if (this->m_cur == txn)
+    if (this->m_currentTxn == txn)
     {
-        this->m_cur = NULL;
+        this->m_currentTxn = NULL;
     }
+}
+
+void Channel::setCurrentTxn(const Transaction* txn)
+{
+    this->m_currentTxn = txn;
 }
 
 // ----------------------------------------------------------------------
@@ -859,10 +864,10 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context)
     {
         FW_ASSERT(txn->m_flags.com.q_index == QueueId::TXA); // huh?
 
-        // if no more messages, then chan->m_cur will be set.
+        // if no more messages, then chan->m_currentTxn will be set.
         // If the transaction sent the last filedata PDU and EOF, it will move itself
         // off the active queue. Run until either of these occur.
-        while (!this->m_cur && txn->m_flags.com.q_index == QueueId::TXA)
+        while (!this->m_currentTxn && txn->m_flags.com.q_index == QueueId::TXA)
         {
             m_engine->dispatchTx(txn);
         }
@@ -875,29 +880,29 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context)
 
 CListTraverseStatus Channel::doTick(CListNode* node, void* context)
 {
-    CListTraverseStatus ret  = CLIST_TRAVERSE_CONTINUE; // CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for cur
+    CListTraverseStatus ret  = CLIST_TRAVERSE_CONTINUE; // CLIST_TRAVERSE_CONTINUE means don't tick one, keep looking for currentTxn
     TickArgs*     args = static_cast<TickArgs*>(context);
     Transaction*        txn  = container_of_cpp(node, &Transaction::m_cl_node);
-    if (!this->m_cur || (this->m_cur == txn))
+    if (!this->m_currentTxn || (this->m_currentTxn == txn))
     {
         // found where we left off, so clear that and move on
-        this->m_cur = NULL;
+        this->m_currentTxn = NULL;
         if (!txn->m_flags.com.suspended)
         {
             (txn->*args->fn)(&args->cont);
         }
 
-        // if this->m_cur was set to not-NULL above, then exit early
+        // if this->m_currentTxn was set to not-NULL above, then exit early
         // NOTE: if channel is frozen, then tick processing won't have been entered.
         //     so there is no need to check it here
-        if (this->m_cur)
+        if (this->m_currentTxn)
         {
             ret              = CLIST_TRAVERSE_EXIT;
             args->early_exit = true;
         }
     }
 
-    return ret; // don't tick one, keep looking for cur
+    return ret; // don't tick one, keep looking for currentTxn
 }
 
 Transaction* Channel::getTransaction(U32 index)

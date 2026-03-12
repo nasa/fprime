@@ -204,6 +204,16 @@ class Channel {
     void clearCurrentIfMatch(Transaction* txn);
 
     /**
+     * @brief Set current transaction
+     *
+     * Used when a transaction cannot make progress this cycle
+     * (e.g., throttle limit reached, file transfer complete).
+     *
+     * @param txn Transaction to set as current
+     */
+    void setCurrentTxn(const Transaction* txn);
+
+    /**
      * @brief Set the flow state for this channel
      *
      * @param flowState New flow state (NORMAL or FROZEN)
@@ -438,7 +448,7 @@ class Channel {
     Playback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
     CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
 
-    const Transaction* m_cur;              //!< Current transaction during channel cycle
+    const Transaction* m_currentTxn;       //!< Current transaction during channel cycle
     CfdpManager* m_cfdpManager;                //!< Reference to F' component for parameters
 
     U8 m_tickType;                             //!< Type of tick being processed
