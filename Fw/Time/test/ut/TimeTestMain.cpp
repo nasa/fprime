@@ -12,11 +12,22 @@
 // Time tests
 TEST(TimeTestNominal, InstantiateTest) {
     Fw::TimeTester tester;
+    tester.test_InstantiateTest();
+}
+
+TEST(TimeTestNominal, InstantiateFromFloatTest) {
+    Fw::TimeTester tester;
+    tester.test_InstantiateFromFloatTest();
 }
 
 TEST(TimeTestNominal, MathTest) {
     Fw::TimeTester tester;
     tester.test_MathTest();
+}
+
+TEST(TimeTestNominal, FloatOperationsTest) {
+    Fw::TimeTester tester;
+    tester.test_FloatOperations();
 }
 
 TEST(TimeTestNominal, CopyTest) {
