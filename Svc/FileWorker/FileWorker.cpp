@@ -367,7 +367,7 @@ bool FileWorker ::getHash(const char* const hashFileName,
         Utils::HashBuffer tmp(hashValuePtr, hashSize);
         hash.setHashValue(tmp);
         hash.update(data, size);
-        hash.final(hashBuffer);
+        hash.finalize(hashBuffer);
 
     } else if (stat == Os::File::DOESNT_EXIST) {
         hash.hash(data, size, hashBuffer);
