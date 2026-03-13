@@ -12,16 +12,15 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-FileWorker ::FileWorker(const char* const compName) : FileWorkerComponentBase(compName),
-    m_state(FileWorkerState::FW_STATE_IDLE),
-    m_lock{},
-    m_abort(false),
-    m_chunkSize(0),
-    m_append(false) {
-}
+FileWorker ::FileWorker(const char* const compName)
+    : FileWorkerComponentBase(compName),
+      m_state(FileWorkerState::FW_STATE_IDLE),
+      m_lock{},
+      m_abort(false),
+      m_chunkSize(0),
+      m_append(false) {}
 
 void FileWorker ::configure(U64 chunkSize, bool append) {
-
     FW_ASSERT(chunkSize > 0);
     this->m_chunkSize = chunkSize;
     this->m_append = append;
@@ -34,7 +33,6 @@ FileWorker ::~FileWorker() {}
 // ----------------------------------------------------------------------
 
 I8 FileWorker ::cancelIn_handler(FwIndexType portNum) {
-
     // Cancel for reading
     this->m_lock.lock();
     this->m_abort = true;
@@ -43,7 +41,6 @@ I8 FileWorker ::cancelIn_handler(FwIndexType portNum) {
 }
 
 void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer) {
-
     const char* const fileNamePtr = path.toChar();
     U32 crcFromFile;
     U32 crcCalculated;
@@ -54,7 +51,7 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 
     FW_ASSERT(fileNamePtr != nullptr);
 
-    if(this->m_state != FW_STATE_IDLE) {
+    if (this->m_state != FW_STATE_IDLE) {
         this->log_WARNING_HI_NotInIdle(this->m_state);
         this->readDoneOut_out(0, FW_STATUS_NOT_IDLE, 0);
         return;
@@ -70,16 +67,16 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     // Check CRC
     crcStat = Utils::verify_checksum(fileNamePtr, crcFromFile, crcCalculated);
 
-    switch(crcStat) {
+    switch (crcStat) {
         case Utils::PASSED_FILE_CRC_CHECK:
             break;
 
-        case Utils::FAILED_FILE_SIZE:  // Fallthrough
+        case Utils::FAILED_FILE_SIZE:       // Fallthrough
         case Utils::FAILED_FILE_SIZE_CAST:  // Fallthrough
-        case Utils::FAILED_FILE_OPEN:  // Fallthrough
-        case Utils::FAILED_FILE_READ:  // Fallthrough
-        case Utils::FAILED_FILE_CRC_OPEN:  // Fallthrough
-        case Utils::FAILED_FILE_CRC_READ:  // Fallthrough
+        case Utils::FAILED_FILE_OPEN:       // Fallthrough
+        case Utils::FAILED_FILE_READ:       // Fallthrough
+        case Utils::FAILED_FILE_CRC_OPEN:   // Fallthrough
+        case Utils::FAILED_FILE_CRC_READ:   // Fallthrough
         case Utils::FAILED_FILE_CRC_CHECK:
             this->log_WARNING_HI_CrcFailed(crcStat);
             this->readDoneOut_out(0, FW_STATUS_FAILED_CRC, 0);
@@ -104,7 +101,6 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 }
 
 void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& path, U32 crc) {
-    
     const char* const fileNamePtr = path.toChar();
     Utils::crc_stat_t crcStat;
     U32 crcFromFile;
@@ -118,16 +114,16 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     // Get checksum
     crcStat = Utils::verify_checksum(fileNamePtr, crcFromFile, crcCalculated);
 
-    switch(crcStat) {
+    switch (crcStat) {
         case Utils::PASSED_FILE_CRC_CHECK:
             break;
 
-        case Utils::FAILED_FILE_SIZE:  // Fallthrough
+        case Utils::FAILED_FILE_SIZE:       // Fallthrough
         case Utils::FAILED_FILE_SIZE_CAST:  // Fallthrough
-        case Utils::FAILED_FILE_OPEN:  // Fallthrough
-        case Utils::FAILED_FILE_READ:  // Fallthrough
-        case Utils::FAILED_FILE_CRC_OPEN:  // Fallthrough
-        case Utils::FAILED_FILE_CRC_READ:  // Fallthrough
+        case Utils::FAILED_FILE_OPEN:       // Fallthrough
+        case Utils::FAILED_FILE_READ:       // Fallthrough
+        case Utils::FAILED_FILE_CRC_OPEN:   // Fallthrough
+        case Utils::FAILED_FILE_CRC_READ:   // Fallthrough
         case Utils::FAILED_FILE_CRC_CHECK:
             workerStat = FW_STATUS_FAILED_CRC;
             this->log_WARNING_HI_CrcFailed(crcStat);
@@ -138,15 +134,14 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
             break;
     }
 
-    if(crc != crcFromFile) {
+    if (crc != crcFromFile) {
         workerStat = FW_STATUS_FAILED_CRC;
         this->log_WARNING_LO_CrcVerificationError(crc, crcCalculated);
     }
 
     // Get filesize
     fsStat = Os::FileSystem::getFileSize(fileNamePtr, fileSize);
-    if(fsStat != Os::FileSystem::OP_OK)
-    {
+    if (fsStat != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_ReadFailedFileSize(fsStat);
         workerStat = FW_STATUS_FAILED_FILE_SIZE;
     }
@@ -154,8 +149,10 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     this->verifyDoneOut_out(0, workerStat, static_cast<U32>(fileSize));
 }
 
-void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer, U64 offsetBytes) {
-    
+void FileWorker ::writeIn_handler(FwIndexType portNum,
+                                  const Fw::StringBase& path,
+                                  Fw::Buffer& buffer,
+                                  U64 offsetBytes) {
     this->m_lock.lock();
     this->m_abort = true;
     this->m_lock.unLock();
@@ -166,7 +163,7 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
     FW_ASSERT(buffer.getData() != nullptr);
 
     // Make sure we are in IDLE state before proceeding
-    if(this->m_state != FW_STATE_IDLE) {
+    if (this->m_state != FW_STATE_IDLE) {
         this->log_WARNING_HI_NotInIdle(this->m_state);
         this->writeDoneOut_out(0, FW_STATUS_NOT_IDLE, 0);
         return;
@@ -180,7 +177,8 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
     this->m_lock.unLock();
 
     // Save filename
-    // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than MAX_STRING_BYTES in any case
+    // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than MAX_STRING_BYTES in any
+    // case
     length = static_cast<U32>(strnlen(path.toChar(), Svc::MAX_STRING_BYTES));
     FW_ASSERT(length < Svc::MAX_STRING_BYTES && length < sizeof(fileName), static_cast<FwAssertArgType>(length));
 
@@ -203,7 +201,6 @@ void FileWorker ::writeIn_handler(FwIndexType portNum, const Fw::StringBase& pat
 // ----------------------------------------------------------------------
 
 Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const char* const fileName) {
-
     Fw::LogStringArg fileNameStr(fileName);
     Os::File::Status fileStat;
     Os::File f;
@@ -214,7 +211,7 @@ Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const
 
     // Open file
     fileStat = f.open(fileName, Os::File::OPEN_READ);
-    if(fileStat != Os::File::OP_OK) {
+    if (fileStat != Os::File::OP_OK) {
         this->log_WARNING_HI_OpenFileError(fileNameStr, fileStat);
         return FW_STATUS_FAILED_TO_OPEN;
     }
@@ -233,7 +230,6 @@ Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const
 }
 
 void FileWorker ::readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::LogStringArg fileNameStr) {
-
     U64 bytesRead = 0;
     U64 numChunks = 0;
     U64 timeout = 0;
@@ -241,14 +237,13 @@ void FileWorker ::readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::L
 
     FW_ASSERT(buffer.getData() != nullptr);
 
-    if(!file.isOpen()) {
+    if (!file.isOpen()) {
         return;
     }
 
     readStat = this->readFileBytes(buffer, length, file, bytesRead);
-    
-    switch(readStat) {
 
+    switch (readStat) {
         case FW_READ_ERROR:
             // Some read error
             this->log_WARNING_HI_ReadError(bytesRead, length, fileNameStr);
@@ -266,7 +261,7 @@ void FileWorker ::readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::L
             // Determine true timeout
             static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
             numChunks = (length / BLOCK_SIZE_BYTES);
-            if(length % BLOCK_SIZE_BYTES > 0) {
+            if (length % BLOCK_SIZE_BYTES > 0) {
                 numChunks += 1;
             }
             timeout = static_cast<U64>(numChunks) * TIMEOUT_MS;
@@ -282,7 +277,6 @@ void FileWorker ::readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::L
 }
 
 Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 length, Os::File& file, U64& bytesRead) {
-
     FW_ASSERT(buffer.getData() != nullptr);
 
     U64 numChunks;
@@ -298,7 +292,7 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 le
     // Determine true timeout
     static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
     numChunks = (length / BLOCK_SIZE_BYTES);
-    if(length % BLOCK_SIZE_BYTES > 0) {
+    if (length % BLOCK_SIZE_BYTES > 0) {
         numChunks += 1;
     }
     timeout = static_cast<U64>(numChunks) * TIMEOUT_MS;
@@ -307,13 +301,12 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 le
     bytesRead = 0;
     start = this->getTime();
 
-    for(U32 counter = 0; counter < MAX_LOOP_ITERATIONS; counter++) {
-
+    for (U32 counter = 0; counter < MAX_LOOP_ITERATIONS; counter++) {
         readAmt = FW_MIN(length - bytesRead, BLOCK_SIZE_BYTES);
         readAmtActual = readAmt;
         ret = file.read(buffer.getData() + bytesRead, readAmtActual);
 
-        if(Os::File::OP_OK != ret || readAmt != readAmtActual) {
+        if (Os::File::OP_OK != ret || readAmt != readAmtActual) {
             return FW_READ_ERROR;
         }
 
@@ -321,23 +314,23 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 le
         bool currAbort = this->m_abort;
         this->m_lock.unLock();
 
-        if(currAbort) {
+        if (currAbort) {
             // Abort command was sent
             return FW_READ_ABORT;
         }
 
-        if(timeout > 0) {
+        if (timeout > 0) {
             // Only check timeout if > 0
             now = this->getTime();
             diff = Fw::Time::sub(now, start);
             elapsed = diff.getSeconds() * static_cast<U64>(1000000) + diff.getUSeconds();
-            if(elapsed >= timeout) {
+            if (elapsed >= timeout) {
                 return FW_READ_TIMEOUT;
             }
         }
 
         bytesRead += static_cast<U32>(readAmt);
-        if(bytesRead >= length) {
+        if (bytesRead >= length) {
             // Finished, break out
             return FW_READ_DONE;
         }
@@ -346,8 +339,11 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 le
     return FW_READ_UNKNOWN;
 }
 
-bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Utils::HashBuffer& hashBuffer, const U8* const data, const U64 size) {
-    
+bool FileWorker ::getHash(const char* const hashFileName,
+                          Utils::Hash& hash,
+                          Utils::HashBuffer& hashBuffer,
+                          const U8* const data,
+                          const U64 size) {
     FW_ASSERT(hashFileName);
     FW_ASSERT(data);
 
@@ -356,15 +352,14 @@ bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Uti
     Os::File::Status stat = file.open(hashFileName, Os::File::OPEN_READ);
 
     // Read value if it exists
-    if(stat == Os::File::OP_OK) {
-
+    if (stat == Os::File::OP_OK) {
         HASH_HANDLE_TYPE hashValue;
         FwSizeType hashSize = sizeof(hashValue);
-        U8 *hashValuePtr = reinterpret_cast<U8*>(&hashValue);
+        U8* hashValuePtr = reinterpret_cast<U8*>(&hashValue);
         FW_ASSERT(hashValuePtr);
 
         Os::File::Status readStat = file.read(hashValuePtr, hashSize);
-        if(readStat != Os::File::OP_OK) {
+        if (readStat != Os::File::OP_OK) {
             Fw::LogStringArg s(hashFileName);
             this->log_WARNING_HI_WriteValidationReadError(s, readStat);
             return false;
@@ -372,9 +367,9 @@ bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Uti
         Utils::HashBuffer tmp(hashValuePtr, hashSize);
         hash.setHashValue(tmp);
         hash.update(data, size);
-        hash.finalize(hashBuffer);
+        hash.final(hashBuffer);
 
-    } else if(stat == Os::File::DOESNT_EXIST) {
+    } else if (stat == Os::File::DOESNT_EXIST) {
         hash.hash(data, size, hashBuffer);
 
     } else {
@@ -387,7 +382,6 @@ bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Uti
 }
 
 bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U64 offset) {
-    
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(fileName != nullptr);
     Fw::LogStringArg logStringArg(fileName);
@@ -396,26 +390,26 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U6
     Os::File file;
     Os::File::Status stat = Os::File::OP_OK;
 
-    if(!this->m_append) {
+    if (!this->m_append) {
         stat = file.open(fileName, Os::File::Mode::OPEN_WRITE);
     } else {
         stat = file.open(fileName, Os::File::Mode::OPEN_APPEND);
     }
 
-    if(stat != Os::File::OP_OK) {
+    if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_OpenFileError(logStringArg, stat);
         return false;
     }
 
     // Get buffer data and size
     U64 size = static_cast<U64>(buffer.getSize());
-    U8 *const data = reinterpret_cast<U8*>(buffer.getData());
+    U8* const data = reinterpret_cast<U8*>(buffer.getData());
     FW_ASSERT(data != nullptr);
 
     // Apply offset
     FW_ASSERT(offset <= size);
     size -= offset;
-    U8 *const dataFromOffset = reinterpret_cast<U8*>(data + offset);
+    U8* const dataFromOffset = reinterpret_cast<U8*>(data + offset);
     FW_ASSERT(dataFromOffset != nullptr);
 
     // Write file
@@ -423,7 +417,7 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U6
     U32 writtenSize = this->writeToFile(dataFromOffset, size, file, fileName);
 
     // Check written size
-    if(writtenSize != size) {
+    if (writtenSize != size) {
         return false;
     }
 
@@ -432,7 +426,6 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U6
 }
 
 bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, U64 offset) {
-    
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(fileName != nullptr);
 
@@ -446,22 +439,22 @@ bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     // Compute hash
     Utils::HashBuffer hashBuffer;
     U64 size = static_cast<U32>(buffer.getSize());
-    U8 *const data = reinterpret_cast<U8*>(buffer.getData());
+    U8* const data = reinterpret_cast<U8*>(buffer.getData());
     FW_ASSERT(data != nullptr);
 
     // Apply offset
     FW_ASSERT(offset <= size);
     size -= offset;
-    U8 *const dataFromOffset = reinterpret_cast<U8*>(data + offset);
+    U8* const dataFromOffset = reinterpret_cast<U8*>(data + offset);
     FW_ASSERT(dataFromOffset != nullptr);
 
     Utils::Hash hash;
 
-    if(!this->m_append) {
-      hash.hash(dataFromOffset, size, hashBuffer);
+    if (!this->m_append) {
+        hash.hash(dataFromOffset, size, hashBuffer);
 
     } else {
-        if(!this->getHash(hashFileName, hash, hashBuffer, dataFromOffset, size)) {
+        if (!this->getHash(hashFileName, hash, hashBuffer, dataFromOffset, size)) {
             return false;
         }
     }
@@ -469,18 +462,19 @@ bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     // Open file
     Os::File file;
     Os::File::Status stat = file.open(hashFileName, Os::File::Mode::OPEN_WRITE);
-    if(stat != Os::File::OP_OK) {
+    if (stat != Os::File::OP_OK) {
         Fw::LogStringArg logStringArg(hashFileName);
         this->log_WARNING_HI_OpenFileError(logStringArg, stat);
         return false;
     }
 
     // Write hash
-    U32 writtenSize = this->writeToFile(hashBuffer.getBuffAddr(), static_cast<U32>(hashBuffer.getSize()), file, hashFileName);
+    U32 writtenSize =
+        this->writeToFile(hashBuffer.getBuffAddr(), static_cast<U32>(hashBuffer.getSize()), file, hashFileName);
 
     // Check written size
     U32 hashSize = static_cast<U32>(hashBuffer.getSize());
-    if(writtenSize != hashSize) {
+    if (writtenSize != hashSize) {
         Fw::LogStringArg logStringArg(hashFileName);
         this->log_WARNING_LO_WriteValidationError(logStringArg, writtenSize, hashSize);
         return false;
@@ -489,14 +483,13 @@ bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
 }
 
 U32 FileWorker ::writeToFile(const U8* data, U64 length, Os::File& file, const char* fileName) {
-    
     FW_ASSERT(data != nullptr);
     FW_ASSERT(file.isOpen());
 
     // Determine true timeout
     static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
     U64 numChunks = (length / BLOCK_SIZE_BYTES);
-    if(length % BLOCK_SIZE_BYTES > 0) {
+    if (length % BLOCK_SIZE_BYTES > 0) {
         numChunks += 1;
     }
     U64 timeout = static_cast<U64>(numChunks) * TIMEOUT_MS;
@@ -505,11 +498,10 @@ U32 FileWorker ::writeToFile(const U8* data, U64 length, Os::File& file, const c
     U32 bytesWritten = 0;
     Fw::Time start = this->getTime();
     for (U32 counter = 0; counter < MAX_LOOP_ITERATIONS; counter++) {
-
         FwSizeType writeAmt = FW_MIN(length - bytesWritten, BLOCK_SIZE_BYTES);
         Os::File::Status ret = file.write(data + bytesWritten, writeAmt);
 
-        if( Os::File::OP_OK != ret || writeAmt == 0 ) {
+        if (Os::File::OP_OK != ret || writeAmt == 0) {
             Fw::LogStringArg logStringArg(fileName);
             this->log_WARNING_HI_WriteFileError(bytesWritten, length, logStringArg, ret);
             break;
@@ -518,8 +510,8 @@ U32 FileWorker ::writeToFile(const U8* data, U64 length, Os::File& file, const c
         this->m_lock.lock();
         bool currAbort = this->m_abort;
         this->m_lock.unLock();
-        
-        if(currAbort) {
+
+        if (currAbort) {
             // Abort command was sent
             Fw::LogStringArg logStringArg(fileName);
             this->log_WARNING_LO_WriteAborted(bytesWritten, length, logStringArg);
