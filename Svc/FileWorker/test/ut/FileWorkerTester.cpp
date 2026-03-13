@@ -54,7 +54,7 @@ void FileWorkerTester ::testReadFile() {
   stat = file.open(fnameChar, Os::File::OPEN_READ);
   ASSERT_EQ(stat, Os::File::OP_OK);
 
-  for (U32 i = 0; i < dataSize; i += sizeof(buf)) {
+  for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
     FwSizeType amt = FW_MIN(sizeof(buf), dataSize - i);
     stat = file.read(dataBuf, amt);
     ASSERT_EQ(stat, Os::File::OP_OK);
@@ -229,7 +229,7 @@ void FileWorkerTester ::testWriting(void) {
   stat = file.open(fnameChar, Os::File::OPEN_READ);
   ASSERT_EQ(stat, Os::File::OP_OK);
   
-  for (U32 i = 0; i < dataSize; i += sizeof(buf)) {
+  for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
     amt = FW_MIN(sizeof(buf), dataSize - i);
     stat = file.read(buf, amt);
     ASSERT_EQ(stat, Os::File::OP_OK);
@@ -289,7 +289,7 @@ void FileWorkerTester ::testWritingOffset(void) {
   stat = file.open(fnameChar, Os::File::OPEN_READ);
   ASSERT_EQ(stat, Os::File::OP_OK);
   
-  for (U32 i = offsetBytes; i < dataSize; i += sizeof(buf)) {
+  for (U32 i = offsetBytes; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
     amt = FW_MIN(sizeof(buf), dataSize - i);
     stat = file.read(buf, amt);
     ASSERT_EQ(stat, Os::File::OP_OK);
@@ -354,7 +354,7 @@ void FileWorkerTester ::testAppending(void) {
   ASSERT_EQ(stat, Os::File::OP_OK);
   
   for(U32 j = 0; j < n; j++) {
-    for (U32 i = 0; i < dataSize; i += sizeof(buf)) {
+    for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
       amt = FW_MIN(sizeof(buf), dataSize - i);
       stat = file.read(buf, amt);
       ASSERT_EQ(stat, Os::File::OP_OK);

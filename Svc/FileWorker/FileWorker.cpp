@@ -17,7 +17,7 @@ FileWorker ::FileWorker(const char* const compName) : FileWorkerComponentBase(co
     m_lock{},
     m_abort(false),
     m_chunkSize(0),
-    m_append(0) {
+    m_append(false) {
 }
 
 void FileWorker ::configure(U64 chunkSize, bool append) {
@@ -52,7 +52,7 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     Utils::crc_stat_t crcStat;
     FileWorkerStatus workerStat;
 
-    FW_ASSERT(fileNamePtr != NULL);
+    FW_ASSERT(fileNamePtr != nullptr);
 
     if(this->m_state != FW_STATE_IDLE) {
         this->log_WARNING_HI_NotInIdle(this->m_state);
@@ -113,7 +113,7 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     FwSizeType fileSize;
     FileWorkerStatus workerStat = FW_STATUS_DONE;
 
-    FW_ASSERT(fileNamePtr != NULL);
+    FW_ASSERT(fileNamePtr != nullptr);
 
     // Get checksum
     crcStat = Utils::verify_checksum(fileNamePtr, crcFromFile, crcCalculated);
@@ -210,7 +210,7 @@ Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const
     U64 readSize;
 
     FW_ASSERT(buffer.getData() != nullptr);
-    FW_ASSERT(fileName != NULL);
+    FW_ASSERT(fileName != nullptr);
 
     // Open file
     fileStat = f.open(fileName, Os::File::OPEN_READ);
@@ -388,8 +388,8 @@ bool FileWorker ::getHash(const char* const hashFileName, Utils::Hash& hash, Uti
 
 bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U64 offset) {
     
-    FW_ASSERT(buffer.getData() != 0);
-    FW_ASSERT(fileName != NULL);
+    FW_ASSERT(buffer.getData() != nullptr);
+    FW_ASSERT(fileName != nullptr);
     Fw::LogStringArg logStringArg(fileName);
 
     // Open file
@@ -410,13 +410,13 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U6
     // Get buffer data and size
     U64 size = static_cast<U64>(buffer.getSize());
     U8 *const data = reinterpret_cast<U8*>(buffer.getData());
-    FW_ASSERT(data != NULL);
+    FW_ASSERT(data != nullptr);
 
     // Apply offset
     FW_ASSERT(offset <= size);
     size -= offset;
     U8 *const dataFromOffset = reinterpret_cast<U8*>(data + offset);
-    FW_ASSERT(dataFromOffset != NULL);
+    FW_ASSERT(dataFromOffset != nullptr);
 
     // Write file
     this->log_ACTIVITY_LO_WriteBegin(size, logStringArg);
@@ -433,27 +433,27 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U6
 
 bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, U64 offset) {
     
-    FW_ASSERT(buffer.getData() != 0);
-    FW_ASSERT(fileName != NULL);
+    FW_ASSERT(buffer.getData() != nullptr);
+    FW_ASSERT(fileName != nullptr);
 
     // Construct hash filename
     const char* ext = Utils::Hash::getFileExtensionString();
-    FW_ASSERT(ext != NULL);
+    FW_ASSERT(ext != nullptr);
     char hashFileName[Svc::MAX_STRING_BYTES];
-    U32 bytesCopied = snprintf(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext);
+    U32 bytesCopied = static_cast<U32>(snprintf(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext));
     FW_ASSERT(bytesCopied < sizeof(hashFileName));
 
     // Compute hash
     Utils::HashBuffer hashBuffer;
     U64 size = static_cast<U32>(buffer.getSize());
     U8 *const data = reinterpret_cast<U8*>(buffer.getData());
-    FW_ASSERT(data != NULL);
+    FW_ASSERT(data != nullptr);
 
     // Apply offset
     FW_ASSERT(offset <= size);
     size -= offset;
     U8 *const dataFromOffset = reinterpret_cast<U8*>(data + offset);
-    FW_ASSERT(dataFromOffset != NULL);
+    FW_ASSERT(dataFromOffset != nullptr);
 
     Utils::Hash hash;
 
@@ -490,7 +490,7 @@ bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
 
 U32 FileWorker ::writeToFile(const U8* data, U64 length, Os::File& file, const char* fileName) {
     
-    FW_ASSERT(data != NULL);
+    FW_ASSERT(data != nullptr);
     FW_ASSERT(file.isOpen());
 
     // Determine true timeout
