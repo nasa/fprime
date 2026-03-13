@@ -58,11 +58,21 @@ git checkout upstream/devel
 git checkout -b <desired branch name>
 ```
 
+**Develop, Format, and Test Your Changes**
+
+After you change code files, format them and Run Tests (see below under Helpful Tips) yourself to ensure that the post-submission automatic checks will complete smoothly.
+
+The F´ repository enforces formatting with `clang-format`. Most IDEs offer tools to format on demand or auto-format on "Save". To run formatting yourself, `fprime-util` provides a quick way to format all files that have been modified since you branched off of `devel`:
+
+```bash
+git diff --name-only devel...HEAD | fprime-util format --stdin
+```
+
 Once a pull request has been submitted the following process will begin.
 
 **Best practice: commit messages and PRs**
 
-We recommend users to use an [imperative-style phrasing](https://cbea.ms/git-commit/#imperative) when writing commit messages. F´ uses the "Squash & Merge" strategy, meaning that all commits made on a PR branch will be combined into one squashed commit when merged into F´. The commit message for the squashed commit defaults to use the title of the Pull Request, so we do ask contributors to please follow the imperative-style phrasing for the title of their Pull Requests.  
+We recommend users to use an [imperative-style phrasing](https://cbea.ms/git-commit/#imperative) when writing commit messages. F´ uses the "Squash & Merge" strategy, meaning that all commits made on a PR branch will be combined into one squashed commit when merged into F´. The commit message for the squashed commit defaults to use the title of the Pull Request, so we do ask contributors to please follow the imperative-style phrasing for the title of their Pull Requests.
 When opening a Pull Request, please fill in the given template, and link to any relevant issue on the repository.
 
 ### Submission Review
@@ -177,15 +187,6 @@ fprime-util build --all --ut
 # Run Unit Tests
 fprime-util check --all
 ```
-
-### Code formatting
-
-The F´ repository enforces formatting with `clang-format`. Most IDEs offer tools to format on demand or auto-format on "Save". To run formatting yourself, `fprime-util` provides a quick way to format all files that have been modified since you branched off of `devel`:
-
-```bash
-git diff --name-only devel...HEAD | fprime-util format --stdin
-```
-
 
 ### Development with modified FPP version
 
