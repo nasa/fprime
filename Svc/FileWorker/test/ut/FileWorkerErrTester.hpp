@@ -17,65 +17,65 @@
 namespace Svc {
 
 class FileWorkerTester final : public FileWorkerGTestBase {
-public:
-  // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
-  // Maximum size of histories storing events, telemetry, and port outputs
-  static const FwSizeType MAX_HISTORY_SIZE = 20;
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 20;
 
-  // Instance ID supplied to the component instance under test
-  static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
-  // Queue depth supplied to the component instance under test
-  static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 20;
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 20;
 
-public:
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-  //! Construct object FileWorkerTester
-  FileWorkerTester();
+    //! Construct object FileWorkerTester
+    FileWorkerTester();
 
-  //! Destroy object FileWorkerTester
-  ~FileWorkerTester();
+    //! Destroy object FileWorkerTester
+    ~FileWorkerTester();
 
-public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  void testReadErr();
-  void testVerifyErr();
-  void testWriteErr();
-  void testWriteHashErr();
+    void testReadErr();
+    void testVerifyErr();
+    void testWriteErr();
+    void testWriteHashErr();
 
-private:
-  // ----------------------------------------------------------------------
-  // Helper functions
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
 
-  //! Connect ports
-  void connectPorts();
+    //! Connect ports
+    void connectPorts();
 
-  //! Initialize components
-  void initComponents();
+    //! Initialize components
+    void initComponents();
 
-  Fw::Time getTestTime(void) const;
+    Fw::Time getTestTime(void) const;
 
-private:
-  // ----------------------------------------------------------------------
-  // Member variables
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
 
-  //! The component under test
-  FileWorker component;
+    //! The component under test
+    FileWorker component;
 
-  Svc::FileTester fTest;
+    Svc::FileTester fTest;
 };
 
-} // namespace Svc
+}  // namespace Svc
 
 #endif
