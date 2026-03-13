@@ -133,7 +133,7 @@ void Fw::TimeTester::test_FloatOperations() {
     // Rounding check
     EXPECT_EQ(1000000, Fw::Time::parseUSeconds(0.99999999999999));
     EXPECT_EQ(0, Fw::Time::parseUSeconds(0.00000011111111));
-    
+
     // Add float value
     time.add(2000.004000);
     EXPECT_EQ(time.getSeconds(), 3000);
@@ -154,7 +154,7 @@ void Fw::TimeTester::test_FloatOperations() {
     time = 1234.567890;
     EXPECT_EQ(time.getSeconds(), 1234);
     EXPECT_EQ(time.getUSeconds(), 567890);
-    
+
     // Convert to F64
     EXPECT_EQ(static_cast<F64>(time), 1234.567890);
 
