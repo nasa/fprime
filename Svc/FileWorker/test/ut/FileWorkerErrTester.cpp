@@ -110,7 +110,7 @@ void FileWorkerTester ::testWriteErr() {
     Fw::Buffer buf(data, dataSize);
 
     for (U32 i = 0; i < dataSize && i < maxSize; i++) {
-        data[i] = i % 256;
+        data[i] = static_cast<U8>(i % 256);
     }
     for (U32 i = dataSize; i < maxSize; i += dataSize) {
         amt = FW_MIN(dataSize, maxSize - i);
@@ -176,7 +176,7 @@ void FileWorkerTester ::testWriteHashErr() {
     const char* ext = Utils::Hash::getFileExtensionString();
     FW_ASSERT(ext != NULL);
     char hashFileName[128];
-    U32 bytesCopied = snprintf(hashFileName, sizeof(hashFileName), "%s%s", fnameChar, ext);
+    U32 bytesCopied = static_cast<U32>(snprintf(hashFileName, sizeof(hashFileName), "%s%s", fnameChar, ext));
     FW_ASSERT(bytesCopied < sizeof(hashFileName));
 
     // Compute hash

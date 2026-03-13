@@ -189,7 +189,7 @@ void FileWorkerTester ::testTransfer() {
     ASSERT_EVENTS_NotInIdle(0, FileWorkerState::FW_STATE_WRITING);
 }
 
-void FileWorkerTester ::testWriting(void) {
+void FileWorkerTester ::testWriting() {
     U32 maxSize = 4096;
     U32 dataSize = 1024;
     U8 data[maxSize];
@@ -248,7 +248,7 @@ void FileWorkerTester ::testWriting(void) {
     ASSERT_EVENTS_WriteTimeout_SIZE(0);
 }
 
-void FileWorkerTester ::testWritingOffset(void) {
+void FileWorkerTester ::testWritingOffset() {
     U32 maxSize = 4096;
     U32 dataSize = 1024;
     U8 data[maxSize];
@@ -307,7 +307,7 @@ void FileWorkerTester ::testWritingOffset(void) {
     ASSERT_EVENTS_WriteTimeout_SIZE(0);
 }
 
-void FileWorkerTester ::testAppending(void) {
+void FileWorkerTester ::testAppending() {
     U32 n = 3;  // Number of times to append
 
     U32 maxSize = 4096;
@@ -372,7 +372,7 @@ void FileWorkerTester ::testAppending(void) {
     ASSERT_EVENTS_WriteTimeout_SIZE(0);
 }
 
-void FileWorkerTester ::testTimeout(void) {
+void FileWorkerTester ::testTimeout() {
     Os::File f;
     Os::File::Status fsStat;
     const char* fnameChar = "nominalread.bin";
