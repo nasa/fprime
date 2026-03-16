@@ -174,7 +174,7 @@ void FileWorkerTester ::testWriteHashErr() {
 
     // Construct hash filename
     const char* ext = Utils::Hash::getFileExtensionString();
-    FW_ASSERT(ext != NULL);
+    FW_ASSERT(ext != nullptr);
     char hashFileName[128];
     U32 bytesCopied = static_cast<U32>(snprintf(hashFileName, sizeof(hashFileName), "%s%s", fnameChar, ext));
     FW_ASSERT(bytesCopied < sizeof(hashFileName));
@@ -183,11 +183,11 @@ void FileWorkerTester ::testWriteHashErr() {
     Utils::HashBuffer hashBuffer;
     U32 hashSize = static_cast<U32>(buf.getSize());
     U8* const hashData = reinterpret_cast<U8*>(buf.getData());
-    FW_ASSERT(hashData != NULL);
+    FW_ASSERT(hashData != nullptr);
 
     // Apply offset
     U8* const dataFromOffset = reinterpret_cast<U8*>(hashData);
-    FW_ASSERT(dataFromOffset != NULL);
+    FW_ASSERT(dataFromOffset != nullptr);
 
     Utils::Hash hash;
 

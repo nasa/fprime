@@ -98,13 +98,13 @@ void FileWorkerTester ::testCancel() {
     FileWorkerReadStatus rStat;
 
     fsStat = f.open(fnameChar, Os::File::OPEN_WRITE);
-    FW_ASSERT(fsStat == Os::File::OP_OK);
+    ASSERT_EQ(fsStat, Os::File::OP_OK);
     fsStat = f.write(data, size);
-    FW_ASSERT(fsStat == Os::File::OP_OK);
+    ASSERT_EQ(fsStat, Os::File::OP_OK);
     f.close();
 
     fsStat = f.open(fnameChar, Os::File::OPEN_READ);
-    FW_ASSERT(fsStat == Os::File::OP_OK);
+    ASSERT_EQ(fsStat, Os::File::OP_OK);
     ASSERT_EQ(false, this->component.m_abort);
     this->invoke_to_cancelIn(0);
     ASSERT_EQ(true, this->component.m_abort);
@@ -114,7 +114,7 @@ void FileWorkerTester ::testCancel() {
     f.close();
 
     fsStat = f.open(fnameChar, Os::File::OPEN_WRITE);
-    FW_ASSERT(fsStat == Os::File::OP_OK);
+    ASSERT_EQ(fsStat, Os::File::OP_OK);
     ASSERT_EQ(false, this->component.m_abort);
     this->invoke_to_cancelIn(0);
     ASSERT_EQ(true, this->component.m_abort);
@@ -385,7 +385,7 @@ void FileWorkerTester ::testTimeout() {
     FileWorkerReadStatus rStat;
 
     fsStat = f.open(fnameChar, Os::File::OPEN_READ);
-    FW_ASSERT(fsStat == Os::File::OP_OK);
+    ASSERT_EQ(fsStat, Os::File::OP_OK);
     rStat = this->component.readFileBytes(buf, static_cast<U32>(size), f, readBytes);
     ASSERT_EQ(0, rStat);
     f.close();

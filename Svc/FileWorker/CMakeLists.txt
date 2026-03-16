@@ -33,6 +33,8 @@ register_fprime_ut(
   DEPENDS
     STest
   UT_AUTO_HELPERS
+  WORKING_DIRECTORY
+    "${CMAKE_CURRENT_LIST_DIR}"
 )
 
 register_fprime_ut(
@@ -47,4 +49,6 @@ register_fprime_ut(
   DEPENDS
     STest
   UT_AUTO_HELPERS
+  WORKING_DIRECTORY
+    "${CMAKE_CURRENT_LIST_DIR}"
 )
