@@ -25,11 +25,11 @@ function fputil_action {
         if [[ "${TARGET}" != "generate" ]] && [[ "${TARGET}" != "generate --ut" ]]
         then
 	        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
-            fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+            fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         else
 	        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
-            fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+            fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         fi
     ) || exit 1
@@ -52,7 +52,7 @@ function integration_test {
     fprime-util "generate" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
         || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
     cd "${WORKDIR}/"
-    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET// /}.err.log" \
         || fail_and_stop "Failed to build before integration test"
 
     integration_test_run "${WORKDIR}"
