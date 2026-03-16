@@ -65,7 +65,10 @@ After you change code files, format them and Run Tests (see below under Helpful 
 The F´ repository enforces formatting with `clang-format`. Most IDEs offer tools to format on demand or auto-format on "Save". To run formatting yourself, `fprime-util` provides a quick way to format all files that have been modified since you branched off of `devel`:
 
 ```bash
+# All files modified since branching off devel
 git diff --name-only devel...HEAD | fprime-util format --stdin
+# A specific folder
+fprime-util format --dirs Svc/BufferManager
 ```
 
 Once a pull request has been submitted the following process will begin.
@@ -184,8 +187,12 @@ fprime-util generate --ut -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 # Build fprime with the static analyzer
 fprime-util build --all --ut
 
-# Run Unit Tests
+# Run ALL Unit Tests
 fprime-util check --all
+
+# Run UTs for a single module
+cd Svc/BufferManager
+fprime-util check
 ```
 
 ### Development with modified FPP version
