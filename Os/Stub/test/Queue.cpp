@@ -48,6 +48,8 @@ QueueInterface::Status InjectableStlQueue::create(FwEnumStoreType id,
     return StaticData::data.createStatus;
 }
 
+void InjectableStlQueue::teardown() {}
+
 QueueInterface::Status InjectableStlQueue::send(const U8* buffer,
                                                 FwSizeType size,
                                                 FwQueuePriorityType priority,

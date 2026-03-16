@@ -90,7 +90,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     for (FwSizeType i = 0; i < fieldToHashSize; i++) {
         hash.update(data.getData() + i, 1);
     }
-    hash.final(computedCrc);
+    hash.finalize(computedCrc);
     // Check that the CRC in the trailer of the frame matches the computed CRC
     if (trailer.get_crcField() != computedCrc.asBigEndianU32()) {
         this->log_WARNING_HI_InvalidChecksum();

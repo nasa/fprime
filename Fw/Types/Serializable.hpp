@@ -69,10 +69,6 @@ class Serializable {
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) = 0;
 
-    //! TODO: this operator should be deleted, this must be done after RawTime is modified though
-    // as it currently depends on this being defined
-    Serializable& operator=(const Serializable& src) = default;
-
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility
     // ----------------------------------------------------------------------

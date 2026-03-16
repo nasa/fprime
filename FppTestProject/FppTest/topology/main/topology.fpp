@@ -7,9 +7,11 @@ module FppTest {
 
   topology FppTest {
 
-    import Sync
-    import Guarded
-    import Async
+    instance Sync
+    instance Guarded
+    instance Async
+    instance TopPorts
+
   }
 
 }

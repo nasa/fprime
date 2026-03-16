@@ -83,9 +83,7 @@ class QueueInterface {
     //!
     //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
     //! implementation.
-    //!
-    //! Note: the default implementation does nothing.
-    virtual void teardown() {}
+    virtual void teardown() = 0;
 
     //! \brief send a message into the queue
     //!

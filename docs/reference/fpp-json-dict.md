@@ -322,7 +322,7 @@ module M1 {
 | `kind` | The kind of type | `struct` | true |
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `members` | The members of the struct | JSON dictionary of Member Name (key) to [Struct Member Descriptor](#struct-member-descriptor) (value) | true |
-| `default` | The default value of the struct | JSON dictionary of Member Name (key) to **[Struct Value](#struct-values)** (value) | true |
+| `default` | The default value of the struct | **[Struct Value](#struct-values)** | true |
 | `annotation` | User-defined annotation | **String** extracted from FPP model | false |
 
 #### Struct Member Descriptor
@@ -350,12 +350,13 @@ module M1 {
 {
     "kind": "struct",
     "qualifiedName": "M1.S",
-    "annotation": "Struct for wxy values",
     "members": {
-         "w": {
+        "w": {
             "type": {
-                "name": "M.S.w",
-                "kind": "qualifiedIdentifier"
+              "name": "U32",
+              "kind": "integer",
+              "size": 32,
+              "signed": false,
             },
             "index": 0,
             "size": 3,
@@ -368,8 +369,8 @@ module M1 {
                 "signed": false,
                 "size": 32
             },
+            "index": 1,
             "format": "the count is {}",
-            "index": 1
         },
         "y": {
             "type": {
@@ -385,6 +386,7 @@ module M1 {
         "x": 0,
         "y": 0
     },
+    "annotation": "Struct for wxy values"
 }
 ```
 
@@ -446,6 +448,8 @@ module M1 {
 
 ## Values
 
+The type of a value follows the same typing rules as [FPP](https://nasa.github.io/fpp/fpp-spec.html#Values), except for the type of struct values, which is described in the [Struct Values](#struct-values) section below.
+
 ### Primitive Integer Values
 **Number** representing integer value
 
@@ -486,7 +490,8 @@ Example JSON of type string with a value of "Hello World!"
 
 
 ### Array Values
-**Array** with elements
+
+**Array** of elements with type and array size corresponding to the element type and size specified in the [Array Type Definition](#array-type-definition).
 
 Example JSON of an array of type U32 consisting of 10 elements
 ```json
@@ -506,15 +511,31 @@ Example JSON of an enum
 ```
 
 ### Struct Values
-**JSON Dictionary** consisting of String qualified identifier names (keys) and values (values)
 
-Example JSON of a struct:
+**JSON Dictionary** mapping struct member names to their values. Each key in the dictionary corresponds to a struct member name. The type of the value associated with each key matches the type specified in the [Struct Member](#struct-member-descriptor). If the struct member does not specify a size, then the value is a single value of that type. If the struct member does specify a size, then the value is an array of *size* elements, where each element is a value of the type specified for the member.
+
+Example FPP struct:
+```
+struct S {
+  W: [3] U32 @< This is an array
+  X: U32
+  Y: string
+  Z: F32
+} default { 
+  W = 1, 
+  X = 20, 
+  Y = "Hello World!", 
+  Z = 15.5 
+}
+```
+
+Example JSON of a struct default value:
 ```json
 {
-    "S.w": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    "S.x": 20,
-    "S.y": "Hello World!",
-    "S.z": 15.5
+    "W": [1, 1, 1],
+    "X": 20,
+    "Y": "Hello World!",
+    "Z": 15.5
 }
 ```
 
@@ -1065,8 +1086,8 @@ module M {
 
   struct A {
     x: U32 format "The value of x is {}"
-    y: F32 format "The value of y is {}"
-  } default { x = 1, y = 1.15}
+    y: [2] F32 format "The value of y is {}"
+  } default { x = 1, y = 1.15 }
 
 
   active component Component1 { 
@@ -1201,12 +1222,13 @@ module M {
             "size" : 32
           },
           "index" : 1,
+          "size": 2,
           "format" : "The value of y is {}"
         }
       },
       "default" : {
         "x" : 1,
-        "y" : 1.15
+        "y" : [1.15, 1.15]
       }
     }
   ],

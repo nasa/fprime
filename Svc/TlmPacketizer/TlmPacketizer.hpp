@@ -20,6 +20,9 @@
 
 namespace Svc {
 
+//! Constant allowing users to ignore the omit list allowing a reduction in required buckets and thus storage
+constexpr Svc::TlmPacketizerPacket IGNORE_OMIT_LIST = {nullptr, 0, 0, 0};
+
 class TlmPacketizer final : public TlmPacketizerComponentBase {
     friend class TlmPacketizerTester;
 
