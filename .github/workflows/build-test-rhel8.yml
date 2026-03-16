@@ -88,5 +88,5 @@ jobs:
         su test-user -c "
           fprime-util generate --ut &&
           fprime-util build --all --ut -j4 &&
-          fprime-util check --all -j4
+          fprime-util check --all -j4 --pass-through --output-on-failure
         "
