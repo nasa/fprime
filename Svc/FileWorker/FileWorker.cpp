@@ -42,9 +42,9 @@ I8 FileWorker ::cancelIn_handler(FwIndexType portNum) {
 
 void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer) {
     const char* const fileNamePtr = path.toChar();
-    U32 crcFromFile;
-    U32 crcCalculated;
-    U64 fileSize;
+    U32 crcFromFile = 0;
+    U32 crcCalculated = 0;
+    U64 fileSize = 0;
     Os::FileSystem::Status fsStat;
     Utils::crc_stat_t crcStat;
     FileWorkerStatus workerStat;
@@ -103,10 +103,10 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& path, U32 crc) {
     const char* const fileNamePtr = path.toChar();
     Utils::crc_stat_t crcStat;
-    U32 crcFromFile;
-    U32 crcCalculated;
+    U32 crcFromFile = 0;
+    U32 crcCalculated = 0;
     Os::FileSystem::Status fsStat;
-    FwSizeType fileSize;
+    FwSizeType fileSize = 0;
     FileWorkerStatus workerStat = FW_STATUS_DONE;
 
     FW_ASSERT(fileNamePtr != nullptr);
@@ -158,7 +158,7 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     this->m_lock.unLock();
 
     char fileName[Svc::MAX_STRING_BYTES];
-    U64 length;
+    U64 length = 0;
 
     FW_ASSERT(buffer.getData() != nullptr);
 
@@ -204,7 +204,7 @@ Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const
     Fw::LogStringArg fileNameStr(fileName);
     Os::File::Status fileStat;
     Os::File f;
-    U64 readSize;
+    U64 readSize = 0;
 
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(fileName != nullptr);
@@ -279,15 +279,15 @@ void FileWorker ::readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::L
 Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, U64 length, Os::File& file, U64& bytesRead) {
     FW_ASSERT(buffer.getData() != nullptr);
 
-    U64 numChunks;
-    U64 timeout;
+    U64 numChunks = 0;
+    U64 timeout = 0;
     Fw::Time start;
-    FwSizeType readAmt;
-    FwSizeType readAmtActual;
+    FwSizeType readAmt = 0;
+    FwSizeType readAmtActual = 0;
     Os::File::Status ret;
     Fw::Time now;
     Fw::Time diff;
-    U64 elapsed;
+    U64 elapsed = 0;
 
     // Determine true timeout
     static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
