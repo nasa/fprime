@@ -28,7 +28,6 @@ Sequence validation is composed of the following checks:
 1. Confirm that the file data CRC matches the CRC in sequence file.
 2. Confirm that all opcodes in the sequence are valid based on the current fsw build
 3. Deserialized Argument Validation (confirming that the arguments are the correct size)
-4. For enumerated and boolean arguments, confirm that the values are within the valid range.
 
 If any of these validation checks fail, the sequence will not load and an error will be reported.
 
