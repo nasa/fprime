@@ -3,6 +3,7 @@
 // \brief common test implementations
 // ======================================================================
 #include "Os/test/ut/queue/CommonTests.hpp"
+#include <algorithm>
 #include <gtest/gtest.h>
 #include "Fw/Types/String.hpp"
 #include "Os/Queue.hpp"
@@ -60,16 +61,16 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
         return QueueInterface::Status::FULL;
     } else {
         this->shadow.queue.push(qm);
-        this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
+        this->shadow.highMark = std::max(this->shadow.highMark, this->shadow.queue.size());
         return QueueInterface::Status::OP_OK;
     }
     return QueueInterface::Status::OP_OK;
 }
 
 void Tester::shadow_send_unblock() {
-    // Send the shadow send buffered message
+    // send the shadow send buffered message
     this->shadow.queue.push(this->shadow.send_block);
-    this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
+    this->shadow.highMark = std::max(this->shadow.highMark, this->shadow.queue.size());
 }
 
 Os::QueueInterface::Status Tester::shadow_receive(U8* destination,

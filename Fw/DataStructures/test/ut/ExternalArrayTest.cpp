@@ -4,6 +4,7 @@
 // \brief  cpp file for ExternalArray tests
 // ======================================================================
 
+#include <algorithm>
 #include <gtest/gtest.h>
 
 #include "Fw/Buffer/Buffer.hpp"
@@ -71,7 +72,7 @@ void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
         a2[i] = 0;
     }
     a2.copyDataFrom(a1);
-    const FwSizeType size = FW_MIN(size1, size2);
+    const FwSizeType size = std::min(size1, size2);
     for (FwSizeType i = 0; i < size; i++) {
         ASSERT_EQ(a2[i], a1[i]);
     }

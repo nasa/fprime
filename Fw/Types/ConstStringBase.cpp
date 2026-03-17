@@ -12,6 +12,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <algorithm>
 #include <cstdarg>
 #include <cstring>
 
@@ -41,7 +42,7 @@ ConstStringBase::SizeType ConstStringBase::serializedSize() const {
 }
 
 ConstStringBase::SizeType ConstStringBase::serializedTruncatedSize(FwSizeType maxLength) const {
-    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(std::min(this->length(), maxLength));
 }
 
 bool ConstStringBase::operator==(const ConstStringBase& other) const {
@@ -77,7 +78,7 @@ SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer, Fw::Endia
 }
 
 SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer, SizeType maxLength, Fw::Endianness mode) const {
-    const FwSizeType len = FW_MIN(maxLength, this->length());
+    const FwSizeType len = std::min(maxLength, this->length());
     // Serialize length and then bytes
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
