@@ -385,7 +385,7 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
 
     // Apply offset
     FW_ASSERT(offset <= size);
-    size -= offset;  // chekced by assert
+    size -= offset;  // checked by assert
     U8* const dataFromOffset = reinterpret_cast<U8*>(data + offset);
     FW_ASSERT(dataFromOffset != nullptr);
 
