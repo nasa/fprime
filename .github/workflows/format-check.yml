@@ -45,8 +45,8 @@ jobs:
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS
         shell: bash
-      - name: "Post Formatting Fix Comment"
-        if: failure() && github.event_name == 'pull_request'
+      - name: "Comment on PR in case of Failure"
+        if: failure()
         uses: actions/github-script@v7
         with:
           script: |
