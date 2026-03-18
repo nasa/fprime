@@ -17,7 +17,7 @@ Core services are those that directly wrap OS primitives and are implemented by 
 
 | Service | Purpose |
 |---|---|
-| **Mutex** | Mutual-exclusion lock with RAII `ScopeLock` helper. |
+| **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
 | **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
@@ -50,7 +50,7 @@ Derived services are built on top of core services, providing higher-level abstr
 | Service | Purpose | Core Services Used |
 |---|---|---|
 | **ConditionVariable** | Condition-variable signaling, paired with Mutex for producer/consumer patterns. | Mutex |
-| **ScopeLock** | RAII helper for automatically acquiring and releasing a Mutex. | Mutex |
+ |**ScopeLock** | RAII helper for automatically acquiring and releasing a Mutex within a specific scope. | Mutex |
 | **IntervalTimer** | Lightweight start/stop timer for measuring elapsed microseconds. | RawTime |
 
 ## 4. Generic Services
@@ -127,6 +127,8 @@ The full API for each service is documented in the header files in the [`Os/` mo
 
 `Os::init()` is called once at system startup.  It initializes the singleton instances used by
 services that have global state (Console, FileSystem, Cpu, Memory, Task).
+
+While calling `Os::init()` is not strictly required, it does provide a deterministic place to initialize all singletons.  When not called, singletons are initialized at the time of their first use.
 
 ### 5.4 Error Handling
 
