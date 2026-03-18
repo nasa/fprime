@@ -7,10 +7,11 @@
 
 namespace {
 
-Fw::ScanStatus stringScanWithVaList( FwSizeType& count,char* source,
+Fw::ScanStatus stringScanWithVaList(FwSizeType& count,
+                                    char* source,
                                     const FwSizeType maximumSize,
                                     const char* formatString,
-                                   
+
                                     ...) {
     va_list args;
     va_start(args, formatString);
@@ -37,7 +38,8 @@ TEST(Nominal, scanIntegerAndWordWithVaListOverload) {
     char parsedWord[4] = {};
     FwSizeType count = 0;
 
-    const Fw::ScanStatus status = stringScanWithVaList(count, source, sizeof(source), "%d %3s", &parsedNumber, parsedWord);
+    const Fw::ScanStatus status =
+        stringScanWithVaList(count, source, sizeof(source), "%d %3s", &parsedNumber, parsedWord);
 
     EXPECT_EQ(status, Fw::ScanStatus::SUCCESS);
     EXPECT_EQ(count, 2);
@@ -97,8 +99,8 @@ TEST(Errors, overflowMaximumSizeReturnsSizeOverflow) {
     char source[] = "123";
     int parsed = 0;
     FwSizeType count = 0;
-    const FwSizeType overflowMaximumSize = static_cast<FwSizeType>(std::numeric_limits<size_t>::max()) +
-                                           static_cast<FwSizeType>(1);
+    const FwSizeType overflowMaximumSize =
+        static_cast<FwSizeType>(std::numeric_limits<size_t>::max()) + static_cast<FwSizeType>(1);
 
     const Fw::ScanStatus status = Fw::stringScan(count, source, overflowMaximumSize, "%d", &parsed);
 

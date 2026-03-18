@@ -3,12 +3,16 @@
 // \author mstarch
 // \brief  cpp file for c-string format function as a implementation using snprintf
 // ======================================================================
-#include <Fw/Types/scan.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Fw/Types/scan.hpp>
 #include <cstdio>
 #include <limits>
 
-Fw::ScanStatus Fw::stringScan(FwSizeType& count, char* source, const FwSizeType maximumSize, const char* formatString, ...) {
+Fw::ScanStatus Fw::stringScan(FwSizeType& count,
+                              char* source,
+                              const FwSizeType maximumSize,
+                              const char* formatString,
+                              ...) {
     va_list args;
     va_start(args, formatString);
     Fw::ScanStatus status = Fw::stringScan(count, source, maximumSize, formatString, args);
@@ -16,7 +20,11 @@ Fw::ScanStatus Fw::stringScan(FwSizeType& count, char* source, const FwSizeType 
     return status;
 }
 
-Fw::ScanStatus Fw::stringScan(FwSizeType& count, char* source, const FwSizeType maximumSize, const char* formatString, va_list args) {
+Fw::ScanStatus Fw::stringScan(FwSizeType& count,
+                              char* source,
+                              const FwSizeType maximumSize,
+                              const char* formatString,
+                              va_list args) {
     Fw::ScanStatus scanStatus = Fw::ScanStatus::SUCCESS;
     count = 0;
     // Check format string
@@ -28,15 +36,13 @@ Fw::ScanStatus Fw::stringScan(FwSizeType& count, char* source, const FwSizeType 
         scanStatus = Fw::ScanStatus::SIZE_OVERFLOW;
     }
     // Check for null-termination of the source string bounded by maximumSize
-    else if (StringUtils::string_length(source, maximumSize) >= maximumSize) { 
+    else if (StringUtils::string_length(source, maximumSize) >= maximumSize) {
         scanStatus = Fw::ScanStatus::UNTERMINATED_SOURCE_STRING;
-    }
-    else {
+    } else {
         const int scannedFields = vsscanf(source, formatString, args);
         if (scannedFields < 0) {
             scanStatus = Fw::ScanStatus::OTHER_ERROR;
-        }
-        else {
+        } else {
             count = static_cast<FwSizeType>(scannedFields);
         }
     }

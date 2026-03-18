@@ -16,11 +16,11 @@ namespace Fw {
 
 //! \brief status of string scan calls
 enum class ScanStatus {
-    SUCCESS,                //!< Scan worked
-    INVALID_FORMAT_STRING,  //!< Format provided invalid format string
-    SIZE_OVERFLOW,          //!< FwSizeType overflowed the range of size_t
-    UNTERMINATED_SOURCE_STRING, //!< The source string was not null-terminated within the maximum size
-    OTHER_ERROR             //!< An error was returned from an underlying call
+    SUCCESS,                     //!< Scan worked
+    INVALID_FORMAT_STRING,       //!< Format provided invalid format string
+    SIZE_OVERFLOW,               //!< FwSizeType overflowed the range of size_t
+    UNTERMINATED_SOURCE_STRING,  //!< The source string was not null-terminated within the maximum size
+    OTHER_ERROR                  //!< An error was returned from an underlying call
 };
 
 //! \brief scan a c-string
@@ -61,6 +61,10 @@ ScanStatus stringScan(FwSizeType& count, char* source, const FwSizeType maximumS
 //! \param formatString: format string to fill
 //! \param args: variable arguments list
 //! \return: SUCCESS on successful formatting, SIZE_OVERFLOW on overflow, and something else on any error
-ScanStatus stringScan(FwSizeType& count, char* source, const FwSizeType maximumSize, const char* formatString, va_list args);
+ScanStatus stringScan(FwSizeType& count,
+                      char* source,
+                      const FwSizeType maximumSize,
+                      const char* formatString,
+                      va_list args);
 }  // namespace Fw
 #endif  // FW_TYPES_SCAN_HPP_
