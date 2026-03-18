@@ -152,3 +152,7 @@ OSAL selection is controlled by the CMake build system.  Each backend provides a
 ## 7. Resources
 
 - [How-To: Implement an OSAL](../../docs/how-to/implement-osal.md) — Step-by-step guide to implementing a new OSAL backend.
+- [Posix OSAL implementation](https://github.com/nasa/fprime/tree/devel/Os/Posix) — Reference implementation for POSIX systems.
+- [fprime-zephyr](https://github.com/fprime-community/fprime-zephyr) — OSAL implementation for Zephyr RTOS.
+- [fprime-vxworks](https://github.com/fprime-community/fprime-vxworks) - OSAL implementation for VxWorks RTOS.
+- [fprime-freertos](https://github.com/fprime-community/fprime-freertos/tree/main/FreeRTOS/Os) - OSAL implementation for FreeRTOS.

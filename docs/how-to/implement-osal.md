@@ -19,7 +19,7 @@ Before starting, you should have:
 
 The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL _service_ (Mutex, File, Task, etc.) has three layers: an **interface class** defining the contract, a **wrapper class** (e.g., `Os::Mutex`) that application code uses, and a **platform-specific implementation** that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the [OSAL Software Design Document](../../Os/docs/sdd.md) — in particular the [delegate pattern](../../Os/docs/sdd.md#51-delegate-pattern) and [implementation architecture](../../Os/docs/sdd.md#5-implementation-architecture) sections — as this guide assumes familiarity with those concepts.
 
-This guide walks through implementing an OSAL for a hypothetical OS called **"MyOs"**, and walks through the implementation of the `Os::Mutex` service as the example. The same process applies for all other OSAL services.
+This guide walks through implementing an OSAL for a hypothetical OS called **"MyOs"**, and walks through the implementation of the `Os::Mutex` service as the example. The same process applies for all other OSAL services. Reference implementations are linked in the [Additional Resources](#additional-resources) section below.
 
 ---
 
@@ -287,3 +287,4 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 - [Posix OSAL implementation](https://github.com/nasa/fprime/tree/devel/Os/Posix) — Reference implementation for POSIX systems.
 - [fprime-zephyr](https://github.com/fprime-community/fprime-zephyr) — OSAL implementation for Zephyr RTOS.
 - [fprime-vxworks](https://github.com/fprime-community/fprime-vxworks) - OSAL implementation for VxWorks RTOS.
+- [fprime-freertos](https://github.com/fprime-community/fprime-freertos/tree/main/FreeRTOS/Os) - OSAL implementation for FreeRTOS.
