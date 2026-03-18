@@ -3,8 +3,8 @@
 // \brief common test implementations
 // ======================================================================
 #include "Os/test/ut/queue/CommonTests.hpp"
-#include <algorithm>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include "Fw/Types/String.hpp"
 #include "Os/Queue.hpp"
 #include "Os/test/ConcurrentRule.hpp"

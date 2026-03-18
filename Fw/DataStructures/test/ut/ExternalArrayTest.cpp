@@ -4,8 +4,8 @@
 // \brief  cpp file for ExternalArray tests
 // ======================================================================
 
-#include <algorithm>
 #include <gtest/gtest.h>
+#include <algorithm>
 
 #include "Fw/Buffer/Buffer.hpp"
 #include "Fw/DataStructures/ExternalArray.hpp"
