@@ -11,13 +11,13 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "Fw/DataStructures/RedBlackTreeMap.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "config/TlmPacketizerCfg.hpp"
-#include "Fw/DataStructures/RedBlackTreeMap.hpp"
 
 namespace Svc {
 
@@ -226,6 +226,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //! \param group The telemetry group number
     //! \return The output port index to send telemetry for the given section and group
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
+
   private:
     Fw::RedBlackTreeMap<FwChanIdType, TlmEntry, TLMPACKETIZER_HASH_BUCKETS> m_channels;
 };
