@@ -34,7 +34,7 @@ register_fprime_implementation(
 )
 
 register_fprime_implementation(
-    Fw_StringFormat_sscanf
+    Fw_StringScan_sscanf
   IMPLEMENTS
     Fw_StringScan
   DEPENDS
@@ -76,7 +76,7 @@ register_fprime_ut(
   DEPENDS
     Fw_Types
   CHOOSES_IMPLEMENTATIONS
-    Fw_StringFormat_sscanf
+    Fw_StringScan_sscanf
 )
 
 
