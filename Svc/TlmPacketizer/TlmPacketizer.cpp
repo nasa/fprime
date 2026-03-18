@@ -363,7 +363,7 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
     return Fw::TlmValid::INVALID;
 }
 
-void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
+void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
     for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
