@@ -370,7 +370,7 @@ void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
         // Local flags to track which sections require a packet dispatch
         bool sectionNeedsSend[TelemetrySection::NUM_SECTIONS] = {false};
         bool anySectionNeedsSend = false;
-        
+
         // Lock only to capture the update status and reset the fill buffer flag.
         this->m_lock.lock();
         bool isNewData = this->m_fillBuffers[pkt].updated;
@@ -380,7 +380,7 @@ void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
 
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
-            TlmPacketizer_GroupConfig& entryGroupConfig = 
+            TlmPacketizer_GroupConfig& entryGroupConfig =
                 this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
 
             // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
@@ -397,7 +397,7 @@ void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
             4. The rate logic is not SILENCED.
             5. The packet has data (marked updated in the past or new)
             */
-            if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))){
+            if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))) {
                 continue;
             }
 
@@ -442,7 +442,7 @@ void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
                 sectionNeedsSend[section] = true;
             }
 
-            if (sectionNeedsSend[section]){
+            if (sectionNeedsSend[section]) {
                 anySectionNeedsSend = true;
             }
         }
@@ -450,7 +450,7 @@ void TlmPacketizer::Run_handler(const FwIndexType portNum, U32 context) {
         // Only perform the buffer copy if at least one section needs to send.
         if (anySectionNeedsSend) {
             this->m_lock.lock();
-            BufferEntry sendBuffer = this->m_fillBuffers[pkt]; 
+            BufferEntry sendBuffer = this->m_fillBuffers[pkt];
             this->m_lock.unLock();
 
             // serialize time into time offset in packet
