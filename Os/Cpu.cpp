@@ -25,8 +25,6 @@ Cpu& Cpu::getSingleton() {
 Cpu::Status Cpu::_getCount(FwSizeType& cpu_count) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<CpuInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._getCount(cpu_count);
-
-    
 }
 
 Cpu::Status Cpu::_getTicks(Ticks& ticks, FwSizeType cpu_index) {
