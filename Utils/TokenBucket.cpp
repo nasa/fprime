@@ -73,7 +73,6 @@ bool TokenBucket ::trigger(const Fw::Time time) {
         Fw::Time nextTime = Fw::Time::add(this->m_time, replenishInterval);
         while (this->m_tokens < this->m_maxTokens && nextTime <= time) {
             // replenish by replenish rate, or up to maxTokens
-            // replenish tokens up to max capacity
             this->m_tokens += std::min(this->m_replenishRate, this->m_maxTokens - this->m_tokens);
             this->m_time = nextTime;
             nextTime = Fw::Time::add(this->m_time, replenishInterval);

@@ -298,7 +298,7 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
     for (copiedSize = 0; (copiedSize < size) && (i < maximum); copiedSize += chunkSize, i++) {
         // chunkSize is FILE_SYSTEM_FILE_CHUNK_SIZE unless size-copiedSize is less than that
         // in which case chunkSize is size-copiedSize, ensuring the last chunk reads the remaining data
-        chunkSize = std::min(FILE_SYSTEM_FILE_CHUNK_SIZE, size - copiedSize);
+        chunkSize = std::min(static_cast<FwSizeType>(FILE_SYSTEM_FILE_CHUNK_SIZE), size - copiedSize);
         file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
