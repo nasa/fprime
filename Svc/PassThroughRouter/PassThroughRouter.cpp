@@ -28,9 +28,8 @@ void PassThroughRouter::allPacketsReturnIn_handler(FwIndexType portNum, Fw::Buff
 void PassThroughRouter::dataIn_handler(FwIndexType portNum,
                                        Fw::Buffer& packetBuffer,
                                        const ComCfg::FrameContext& context) {
-    if (this->isConnected_allPacketsOut_OutputPort(0)) {
-        this->allPacketsOut_out(0, packetBuffer);
-    }
+    // allPacketsOut must always be connected. Users needing a null-router should write one explicitly.
+    this->allPacketsOut_out(0, packetBuffer);
 }
 
 }  // namespace Svc
