@@ -24,7 +24,7 @@ static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry 
 // ----------------------------------------------------------------------
 
 TlmPacketizer ::TlmPacketizer(const char* const compName)
-    : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false) {
+    : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false), m_numChannels(0) {
     // clear missing tlm channel check
     for (FwChanIdType entry = 0; entry < TLMPACKETIZER_MAX_MISSING_TLM_CHECK; entry++) {
         this->m_missTlmCheck[entry].checked = false;
@@ -58,6 +58,12 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     //     2. Ignore functionality is intentionally disabled by project where nullptr was intentionally supplied.
     FW_ASSERT(ignoreList.list || ignoreList.numEntries == 0);
     FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(packetList.numEntries));
+
+    // Reset key data members incase of reentrant calls
+    this->m_numChannels = 0;
+    this->m_channelIndices.clear();
+    this->m_configured = false;
+
     // validate packet sizes against maximum com buffer size and populate hash
     // table
     FwChanIdType maxLevel = 0;
@@ -69,16 +75,20 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // add up entries for each defined packet
         for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
             FwChanIdType id = packetList.list[pktEntry]->list[tlmEntry].id;
-            TlmEntry entry;
-            if (this->m_channels.find(id, entry) != Fw::Success::SUCCESS) {
-                // New channel - initialize offsets to -1 (not in any packet)
-                entry.id = id;
-                entry.hasValue = false;
+            FwSizeType entryIndex = 0;
+            if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
+                // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
+                entryIndex = this->m_numChannels++;
+                this->m_channels[entryIndex].id = id;
+                this->m_channels[entryIndex].hasValue = false;
                 for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
-                    entry.packetOffset[pktOffsetEntry] = -1;
+                    this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
                 }
+                const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
+                FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
             }
-            // not ignored channel
+            // not ignored channel - update entry in place via reference
+            TlmEntry& entry = this->m_channels[entryIndex];
             entry.ignored = false;
             entry.channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             // the offset into the buffer will be the current packet length
@@ -86,8 +96,6 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
                       static_cast<FwAssertArgType>(packetLen));
             entry.packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
-            const Fw::Success insertStatus = this->m_channels.insert(id, entry);
-            FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
 
             packetLen += entry.channelSize;
 
@@ -131,20 +139,22 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     // list with 0 length.
     for (FwChanIdType channelEntry = 0; channelEntry < ignoreList.numEntries; channelEntry++) {
         FwChanIdType id = ignoreList.list[channelEntry].id;
-        TlmEntry entry;
-        if (this->m_channels.find(id, entry) != Fw::Success::SUCCESS) {
-            // New channel - initialize offsets to -1 (not in any packet)
-            entry.id = id;
-            entry.hasValue = false;
+        FwSizeType entryIndex = 0;
+        if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
+            // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
+            entryIndex = this->m_numChannels++;
+            this->m_channels[entryIndex].id = id;
+            this->m_channels[entryIndex].hasValue = false;
             for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
-                entry.packetOffset[pktOffsetEntry] = -1;
+                this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
             }
+            const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
+            FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
         }
-        // is ignored channel
+        // is ignored channel - update entry in place via reference
+        TlmEntry& entry = this->m_channels[entryIndex];
         entry.ignored = true;
         entry.channelSize = ignoreList.list[channelEntry].size;
-        const Fw::Success insertStatus = this->m_channels.insert(id, entry);
-        FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
     }  // end ignore list
 
     // store number of packets
@@ -163,21 +173,23 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
                                      Fw::Time& timeTag,
                                      Fw::TlmBuffer& val) {
     FW_ASSERT(this->m_configured);
-    TlmEntry entry;
+    FwSizeType entryIndex = 0;
 
     // Search to see if the channel is being tracked
-    if (this->m_channels.find(id, entry) != Fw::Success::SUCCESS) {
+    if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
         // channel not part of a packet and not ignored
         this->missingChannel(id);
         return;
     }
+
+    TlmEntry& entry = this->m_channels[entryIndex];
 
     // check to see if the channel is ignored. If so, just return.
     if (entry.ignored) {
         return;
     }
 
-    // copy telemetry value into active buffers
+    // copy telemetry value into active buffers; hasValue written in-place via reference
     entry.hasValue = true;
     for (FwChanIdType pkt = 0; pkt < MAX_PACKETIZER_PACKETS; pkt++) {
         // check if current packet has this channel
@@ -191,9 +203,6 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_lock.unLock();
         }
     }
-    // Update hasValue in the map
-    const Fw::Success insertStatus = this->m_channels.insert(id, entry);
-    FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
 }
 
 void TlmPacketizer ::configureSectionGroupRate_handler(FwIndexType portNum,
@@ -213,15 +222,16 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
                                                                   //!< Size set to 0 if channel not found.
 ) {
     FW_ASSERT(this->m_configured);
-    TlmEntry entry;
+    FwSizeType entryIndex = 0;
 
     // Search to see if the channel is being tracked
-    if (this->m_channels.find(id, entry) != Fw::Success::SUCCESS) {
+    if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
         // channel not part of a packet and not ignored
         this->missingChannel(id);
         val.resetSer();
         return Fw::TlmValid::INVALID;
     }
+    const TlmEntry& entry = this->m_channels[entryIndex];
 
     // check to see if the channel is ignored. If so, just return, as
     // we don't store the bytes of ignored channels
