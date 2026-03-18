@@ -138,7 +138,8 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination
 
     // Write
-    if (this->writeBufferToFile(buffer, fileName, offsetBytes, append)) {
+    bool isWrite = this->writeBufferToFile(buffer, fileName, offsetBytes, append);
+    if (isWrite) {
         this->writeBufferHashToFile(buffer, fileName, offsetBytes, append);
     }
 
@@ -375,8 +376,8 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     const char* ext = Utils::Hash::getFileExtensionString();
     FW_ASSERT(ext != nullptr);
     char hashFileName[FileNameStringSize];
-    FwSizeType bytesCopied = snprintf(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext);
-    FW_ASSERT(bytesCopied < sizeof(hashFileName));  // prevents truncation
+    Fw::FormatStatus status = Fw::stringFormat(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext);
+    FW_ASSERT(status == Fw::FormatStatus::SUCCESS);
 
     // Compute hash
     Utils::HashBuffer hashBuffer;
