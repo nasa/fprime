@@ -169,8 +169,8 @@ void FileWorkerTester ::testWriteHashErr() {
     const char* ext = Utils::Hash::getFileExtensionString();
     FW_ASSERT(ext != nullptr);
     char hashFileName[128];
-    FwSizeType bytesCopied = snprintf(hashFileName, sizeof(hashFileName), "%s%s", fnameChar, ext);
-    FW_ASSERT(bytesCopied < sizeof(hashFileName));
+    Fw::FormatStatus status = Fw::stringFormat(hashFileName, sizeof(hashFileName), "%s%s", fnameChar, ext);
+    FW_ASSERT(status == Fw::FormatStatus::SUCCESS);
 
     // Compute hash
     Utils::HashBuffer hashBuffer;
