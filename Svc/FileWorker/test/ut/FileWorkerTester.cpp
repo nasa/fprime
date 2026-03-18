@@ -17,7 +17,7 @@ FileWorkerTester ::FileWorkerTester()
     this->initComponents();
     this->connectPorts();
 
-    this->component.configure(100, true);
+    this->component.configure(100);
 }
 
 FileWorkerTester ::~FileWorkerTester() {
@@ -29,8 +29,8 @@ FileWorkerTester ::~FileWorkerTester() {
 // ----------------------------------------------------------------------
 
 void FileWorkerTester ::testReadFile() {
-    U32 maxDataSize = 4096;
-    U32 dataSize = 1024;
+    FwSizeType maxDataSize = 4096;
+    FwSizeType dataSize = 1024;
     U8 data[maxDataSize];
     Fw::Buffer buf(data, dataSize);
     const char* fnameChar = "nominalread.bin";
@@ -53,11 +53,11 @@ void FileWorkerTester ::testReadFile() {
     stat = file.open(fnameChar, Os::File::OPEN_READ);
     ASSERT_EQ(stat, Os::File::OP_OK);
 
-    for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
+    for (FwSizeType i = 0; i < dataSize; i += sizeof(buf)) {
         FwSizeType amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(dataBuf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = static_cast<U32>(memcmp(data + i, dataBuf, amt));
+        U32 cmp = memcmp(data + i, dataBuf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -89,8 +89,8 @@ void FileWorkerTester ::testCancel() {
     Os::File::Status fsStat;
     const char* fnameChar = "testfile.txt";
     Fw::String fname = fnameChar;
-    U64 readBytes = 0;
-    U32 writeBytes = 0;
+    FwSizeType readBytes = 0;
+    FwSizeType writeBytes = 0;
     FwSizeType maxSize = 20 << 20;
     FwSizeType size = 1024 * 100;
     U8 data[size];
@@ -105,23 +105,23 @@ void FileWorkerTester ::testCancel() {
 
     fsStat = f.open(fnameChar, Os::File::OPEN_READ);
     ASSERT_EQ(fsStat, Os::File::OP_OK);
-    ASSERT_EQ(false, this->component.m_abort);
+    ASSERT_EQ(false, this->component.m_abort.load());
     this->invoke_to_cancelIn(0);
-    ASSERT_EQ(true, this->component.m_abort);
-    rStat = this->component.readFileBytes(buf, static_cast<U32>(maxSize), f, readBytes);
+    ASSERT_EQ(true, this->component.m_abort.load());
+    rStat = this->component.readFileBytes(buf, maxSize, f, readBytes);
     ASSERT_EQ(FileWorkerReadStatus::FW_READ_ABORT, rStat);
-    this->component.m_abort = false;
+    this->component.m_abort.store(false);
     f.close();
 
     fsStat = f.open(fnameChar, Os::File::OPEN_WRITE);
     ASSERT_EQ(fsStat, Os::File::OP_OK);
-    ASSERT_EQ(false, this->component.m_abort);
+    ASSERT_EQ(false, this->component.m_abort.load());
     this->invoke_to_cancelIn(0);
-    ASSERT_EQ(true, this->component.m_abort);
-    writeBytes = this->component.writeToFile(data, static_cast<U32>(maxSize), f, fnameChar);
+    ASSERT_EQ(true, this->component.m_abort.load());
+    writeBytes = this->component.writeToFile(data, maxSize, f, fnameChar);
     ASSERT_EQ(0, writeBytes);
     ASSERT_EVENTS_WriteAborted_SIZE(1);
-    this->component.m_abort = false;
+    this->component.m_abort.store(false);
     f.close();
 }
 
@@ -133,7 +133,7 @@ void FileWorkerTester ::testFileError() {
     U8 data[size];
     Fw::Buffer buf(data, size);
 
-    this->component.readFile(buf, static_cast<U32>(size), f, fname);
+    this->component.readFile(buf, size, f, fname);
 }
 
 void FileWorkerTester ::testVerify() {
@@ -172,7 +172,7 @@ void FileWorkerTester ::testVerify() {
 
 void FileWorkerTester ::testTransfer() {
     Fw::String fname;
-    U32 offsetBytes = 0;
+    FwSizeType offsetBytes = 0;
     U8 data[1024];
     Fw::Buffer buf(data, sizeof(data));
 
@@ -180,7 +180,7 @@ void FileWorkerTester ::testTransfer() {
     fname = "nominalwrite.bin";
     this->component.m_state = FileWorkerState::FW_STATE_WRITING;
     ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_WRITING);
-    this->invoke_to_writeIn(0, fname, buf, offsetBytes);
+    this->invoke_to_writeIn(0, fname, buf, offsetBytes, true);
     this->component.doDispatch();
     ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_WRITING);
     ASSERT_from_writeDoneOut_SIZE(1);
@@ -190,17 +190,17 @@ void FileWorkerTester ::testTransfer() {
 }
 
 void FileWorkerTester ::testWriting() {
-    U32 maxSize = 4096;
-    U32 dataSize = 1024;
+    FwSizeType maxSize = 4096;
+    FwSizeType dataSize = 1024;
     U8 data[maxSize];
     U8* dataPtr = data;
     FwSizeType amt = 0;
 
     // Make data
-    for (U32 i = 0; i < dataSize && i < maxSize; i++) {
+    for (FwSizeType i = 0; i < dataSize && i < maxSize; i++) {
         data[i] = static_cast<U8>(i % 256);
     }
-    for (U32 i = dataSize; i < maxSize; i += dataSize) {
+    for (FwSizeType i = dataSize; i < maxSize; i += dataSize) {
         amt = FW_MIN(dataSize, maxSize - i);
         (void)memcpy(dataPtr + i, data, amt);
     }
@@ -209,10 +209,10 @@ void FileWorkerTester ::testWriting() {
     Fw::Buffer buffer(data, dataSize);
     const char* fnameChar = "testwrite.txt";
     Fw::String fname = fnameChar;
-    U32 offsetBytes = 0;
+    FwSizeType offsetBytes = 0;
 
     // Write
-    this->invoke_to_writeIn(0, fname, buffer, offsetBytes);
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, true);
     this->component.doDispatch();
 
     // Verify file contents
@@ -223,11 +223,11 @@ void FileWorkerTester ::testWriting() {
     stat = file.open(fnameChar, Os::File::OPEN_READ);
     ASSERT_EQ(stat, Os::File::OP_OK);
 
-    for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
+    for (FwSizeType i = 0; i < dataSize; i += sizeof(buf)) {
         amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(buf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = static_cast<U32>(memcmp(data + i, buf, amt));
+        U32 cmp = memcmp(data + i, buf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -249,17 +249,17 @@ void FileWorkerTester ::testWriting() {
 }
 
 void FileWorkerTester ::testWritingOffset() {
-    U32 maxSize = 4096;
-    U32 dataSize = 1024;
+    FwSizeType maxSize = 4096;
+    FwSizeType dataSize = 1024;
     U8 data[maxSize];
     U8* dataPtr = data;
     FwSizeType amt = 0;
 
     // Make data
-    for (U32 i = 0; i < dataSize && i < maxSize; i++) {
+    for (FwSizeType i = 0; i < dataSize && i < maxSize; i++) {
         data[i] = static_cast<U8>(i % 256);
     }
-    for (U32 i = dataSize; i < maxSize; i += dataSize) {
+    for (FwSizeType i = dataSize; i < maxSize; i += dataSize) {
         amt = FW_MIN(dataSize, maxSize - i);
         (void)memcpy(dataPtr + i, data, amt);
     }
@@ -268,10 +268,10 @@ void FileWorkerTester ::testWritingOffset() {
     Fw::Buffer buffer(data, dataSize);
     const char* fnameChar = "testwriteoffset.txt";
     Fw::String fname = fnameChar;
-    U32 offsetBytes = 12;
+    FwSizeType offsetBytes = 12;
 
     // Write
-    this->invoke_to_writeIn(0, fname, buffer, offsetBytes);
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, true);
     this->component.doDispatch();
 
     // Verify file contents
@@ -282,11 +282,11 @@ void FileWorkerTester ::testWritingOffset() {
     stat = file.open(fnameChar, Os::File::OPEN_READ);
     ASSERT_EQ(stat, Os::File::OP_OK);
 
-    for (U32 i = offsetBytes; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
+    for (FwSizeType i = offsetBytes; i < dataSize; i += sizeof(buf)) {
         amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(buf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = static_cast<U32>(memcmp(data + i, buf, amt));
+        U32 cmp = memcmp(data + i, buf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -310,17 +310,17 @@ void FileWorkerTester ::testWritingOffset() {
 void FileWorkerTester ::testAppending() {
     U32 n = 3;  // Number of times to append
 
-    U32 maxSize = 4096;
-    U32 dataSize = 1024;
+    FwSizeType maxSize = 4096;
+    FwSizeType dataSize = 1024;
     U8 data[maxSize];
     U8* dataPtr = data;
     FwSizeType amt = 0;
 
     // Make data
-    for (U32 i = 0; i < dataSize && i < maxSize; i++) {
+    for (FwSizeType i = 0; i < dataSize && i < maxSize; i++) {
         data[i] = static_cast<U8>(i % 256);
     }
-    for (U32 i = dataSize; i < maxSize; i += dataSize) {
+    for (FwSizeType i = dataSize; i < maxSize; i += dataSize) {
         amt = FW_MIN(dataSize, maxSize - i);
         (void)memcpy(dataPtr + i, data, amt);
     }
@@ -329,11 +329,11 @@ void FileWorkerTester ::testAppending() {
     Fw::Buffer buffer(data, dataSize);
     const char* fnameChar = "testwrite.txt";
     Fw::String fname = fnameChar;
-    U32 offsetBytes = 0;
+    FwSizeType offsetBytes = 0;
 
     // Write
     for (U32 i = 0; i < n; i++) {
-        this->invoke_to_writeIn(0, fname, buffer, offsetBytes);
+        this->invoke_to_writeIn(0, fname, buffer, offsetBytes, true);
         this->component.doDispatch();
     }
 
@@ -346,11 +346,11 @@ void FileWorkerTester ::testAppending() {
     ASSERT_EQ(stat, Os::File::OP_OK);
 
     for (U32 j = 0; j < n; j++) {
-        for (U32 i = 0; i < dataSize; i += static_cast<U32>(sizeof(buf))) {
+        for (FwSizeType i = 0; i < dataSize; i += sizeof(buf)) {
             amt = FW_MIN(sizeof(buf), dataSize - i);
             stat = file.read(buf, amt);
             ASSERT_EQ(stat, Os::File::OP_OK);
-            U32 cmp = static_cast<U32>(memcmp(data + i, buf, amt));
+            U32 cmp = memcmp(data + i, buf, amt);
             ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
         }
     }
@@ -377,7 +377,7 @@ void FileWorkerTester ::testTimeout() {
     Os::File::Status fsStat;
     const char* fnameChar = "nominalread.bin";
     Fw::String fname = fnameChar;
-    U64 readBytes = 0;
+    FwSizeType readBytes = 0;
     FwSizeType maxSize = 4096;
     FwSizeType size = 32;
     U8 data[size];
@@ -386,7 +386,7 @@ void FileWorkerTester ::testTimeout() {
 
     fsStat = f.open(fnameChar, Os::File::OPEN_READ);
     ASSERT_EQ(fsStat, Os::File::OP_OK);
-    rStat = this->component.readFileBytes(buf, static_cast<U32>(size), f, readBytes);
+    rStat = this->component.readFileBytes(buf, size, f, readBytes);
     ASSERT_EQ(0, rStat);
     f.close();
 }

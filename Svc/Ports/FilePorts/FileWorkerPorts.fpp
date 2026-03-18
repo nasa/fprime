@@ -1,28 +1,27 @@
 module Svc {
 
-    constant MAX_STRING_BYTES = 120
-
     port FileRead(
-        path: string size MAX_STRING_BYTES
+        path: string size FileNameStringSize
         ref buffer: Fw.Buffer
     )
 
     port FileWrite(
-        path: string size MAX_STRING_BYTES
+        path: string size FileNameStringSize
         ref buffer: Fw.Buffer
-        offsetBytes: U64
+        offsetBytes: FwSizeType
+        append: bool
     )
 
     port SignalDone(
         status: U32
-        arg: U32
+        sizeBytes: FwSizeType
     )
 
     port CancelStatus(
-    ) -> I8
+    )
 
     port VerifyStatus(
-        path: string size MAX_STRING_BYTES
+        path: string size FileNameStringSize
         crc: U32
     )
 

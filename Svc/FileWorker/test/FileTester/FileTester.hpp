@@ -37,6 +37,7 @@ class FileTester : public Os::FileInterface {
     void close() override { return; }
 
     Status size(FwSizeType& size_result) override {
+        (void)size_result;
         size_result = m_size;
         return m_statSize;
     }

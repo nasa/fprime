@@ -6,16 +6,26 @@ module Svc {
         # Ports
         # ----------------------------------------------------------------------
 
+        @ Request to write to a file
         async input port writeIn: Svc.FileWrite
+
+        @ Returns that file write has completed
         output port writeDoneOut: Svc.SignalDone
 
+        @ Request to read a file
         async input port readIn: Svc.FileRead
+
+        @ Returns that file read has completed
         output port readDoneOut: Svc.SignalDone
 
-        guarded input port cancelIn: Svc.CancelStatus
-
+        @ Verifies a file against a given CRC
         async input port verifyIn: Svc.VerifyStatus
+
+        @ Returns that file verification has completed
         output port verifyDoneOut: Svc.SignalDone
+
+        @ Cancels a current operation
+        guarded input port cancelIn: Svc.CancelStatus
 
         # ----------------------------------------------------------------------
         # Standard ports
@@ -97,7 +107,7 @@ module Svc {
 
         @ Getting file open failed
         event OpenFileError(
-            fileName: string size MAX_STRING_BYTES
+            fileName: string size FileNameStringSize
             fsStat: U32
         ) severity warning high \
         format "Failed to open file {} with stat {}" \
@@ -106,62 +116,62 @@ module Svc {
 
         @ Inform we are reading from file
         event ReadBegin(
-            fileSize: U64
-            fileName: string size MAX_STRING_BYTES
+            fileSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity activity low \
         format "Reading {} bytes from {}"
 
         @ Inform we are done reading from file
         event ReadCompleted(
-            fileSize: U64
-            fileName: string size MAX_STRING_BYTES
+            fileSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity activity low \
         format "Finished reading {} bytes from {}"
 
         @ Error encountered reading to file
         event ReadError(
-            bytesRead: U64
-            readSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesRead: FwSizeType
+            readSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity warning high \
         format "Failed after {} of {} bytes read to {}"
 
         @ Completed the read operation and will return buffer
         event ReadAborted(
-            bytesRead: U64
-            readSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesRead: FwSizeType
+            readSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity warning low \
         format "Aborted after {} of {} bytes read to {}"
 
         @ Reading to file was too slow
         event ReadTimeout(
-            bytesRead: U64
-            readSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesRead: FwSizeType
+            readSize: FwSizeType
+            fileName: string size FileNameStringSize
             timeout: U64
         ) severity warning high \
         format "Failed after {} of {} bytes read to {} after exceeding timeout of {} microseconds"
 
         @ Received a buffer and initiating write operation
         event WriteBegin(
-            writeSize: U64
-            fileName: string size MAX_STRING_BYTES
+            writeSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity activity low \
         format "Beginning write of size {} to {}"
 
         @ Completed the write operation and will return buffer
         event WriteCompleted(
-            writeSize: U64
-            fileName: string size MAX_STRING_BYTES
+            writeSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity activity low \
         format "Completed write of size {} to {}"
 
         @ Error encountered writing to file
         event WriteFileError(
-            bytesWritten: U64
-            writeSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesWritten: FwSizeType
+            writeSize: FwSizeType
+            fileName: string size FileNameStringSize
             status: I32
         ) severity warning high \
         format "Failed after {} of {} bytes written to {} with write status {}" \
@@ -170,7 +180,7 @@ module Svc {
 
         @ Error encountered while opening validation file
         event WriteValidationOpenError(
-            hashFileName: string size MAX_STRING_BYTES
+            hashFileName: string size FileNameStringSize
             status: I32
         ) severity warning high \
         format "Failed to open validation file {} with status {}" \
@@ -179,7 +189,7 @@ module Svc {
 
         @ Error encountered while reading validation file
         event WriteValidationReadError(
-            hashFileName: string size MAX_STRING_BYTES
+            hashFileName: string size FileNameStringSize
             status: I32
         ) severity warning high \
         format "Failed to read validation file {} with status {}" \
@@ -188,26 +198,26 @@ module Svc {
 
         @ Error encountered while creating validation file
         event WriteValidationError(
-            hashFileName: string size MAX_STRING_BYTES
-            bytesWritten: U64
-            hashSize: U32
+            hashFileName: string size FileNameStringSize
+            bytesWritten: FwSizeType
+            hashSize: FwSizeType
         ) severity warning low \
         format "Failed to create hash file {}. Wrote {} bytes when expected to write {} bytes to hash file"
 
         @ Writing to file was too slow
         event WriteTimeout(
-            bytesWritten: U64
-            writeSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesWritten: FwSizeType
+            writeSize: FwSizeType
+            fileName: string size FileNameStringSize
             timeout: U64
         ) severity warning high \
         format "Failed after {} of {} bytes written to {} after exceeding timeout of {} microseconds"
 
         @ Completed the write operation and will return buffer
         event WriteAborted(
-            bytesWritten: U64
-            writeSize: U64
-            fileName: string size MAX_STRING_BYTES
+            bytesWritten: FwSizeType
+            writeSize: FwSizeType
+            fileName: string size FileNameStringSize
         ) severity warning low \
         format "Aborted after {} of {} bytes written to {}"
     }

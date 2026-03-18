@@ -7,7 +7,9 @@
 #ifndef Svc_FileWorker_HPP
 #define Svc_FileWorker_HPP
 
+#include <atomic>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 #include "Os/Mutex.hpp"
@@ -34,7 +36,7 @@ class FileWorker : public FileWorkerComponentBase {
     //! Destroy FileWorker object
     ~FileWorker();
 
-    void configure(U64 chunkSize, bool append);
+    void configure(U64 chunkSize);
 
   private:
     static constexpr U64 BLOCK_SIZE_BYTES = 4096;
@@ -42,19 +44,16 @@ class FileWorker : public FileWorkerComponentBase {
     static constexpr U32 MAX_LOOP_ITERATIONS = 32;
 
     Svc::FileWorkerState m_state;
-    Os::Mutex m_lock;
-    bool m_abort;
-
+    std::atomic<bool> m_abort;
     U64 m_chunkSize;
-    bool m_append;
 
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
     //! Handler implementation for cancelIn
-    I8 cancelIn_handler(FwIndexType portNum  //!< The port number
-                        ) override;
+    void cancelIn_handler(FwIndexType portNum  //!< The port number
+                          ) override;
 
     //! Handler implementation for readIn
     void readIn_handler(FwIndexType portNum,  //!< The port number
@@ -70,24 +69,25 @@ class FileWorker : public FileWorkerComponentBase {
     void writeIn_handler(FwIndexType portNum,  //!< The port number
                          const Fw::StringBase& path,
                          Fw::Buffer& buffer,
-                         U64 offsetBytes) override;
+                         U64 offsetBytes,
+                         bool append) override;
 
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
 
     Svc::FileWorkerStatus readBufferFromFile(Fw::Buffer& buffer, const char* const fileName);
-    void readFile(Fw::Buffer& buffer, U64 length, Os::File& file, Fw::LogStringArg fileNameStr);
-    Svc::FileWorkerReadStatus readFileBytes(Fw::Buffer& buffer, U64 length, Os::File& file, U64& bytesRead);
+    void readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, const Fw::LogStringArg& fileNameStr);
+    Svc::FileWorkerReadStatus readFileBytes(Fw::Buffer& buffer, FwSizeType size, Os::File& file, FwSizeType& bytesRead);
 
     bool getHash(const char* const hashFileName,
                  Utils::Hash& hash,
                  Utils::HashBuffer& hashBuffer,
                  const U8* const data,
-                 const U64 size);
-    bool writeBufferToFile(Fw::Buffer& buffer, const char* fileName, U64 offset);
-    bool writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, U64 offset);
-    U32 writeToFile(const U8* data, U64 length, Os::File& file, const char* fileName);
+                 const FwSizeType size);
+    bool writeBufferToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
+    void writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
+    FwSizeType writeToFile(const U8* data, FwSizeType size, Os::File& file, const char* fileName);
 };
 
 }  // namespace Svc
