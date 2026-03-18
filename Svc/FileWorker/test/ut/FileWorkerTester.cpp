@@ -57,7 +57,7 @@ void FileWorkerTester ::testReadFile() {
         FwSizeType amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(dataBuf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = memcmp(data + i, dataBuf, amt);
+        I32 cmp = memcmp(data + i, dataBuf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -227,7 +227,7 @@ void FileWorkerTester ::testWriting() {
         amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(buf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = memcmp(data + i, buf, amt);
+        I32 cmp = memcmp(data + i, buf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -286,7 +286,7 @@ void FileWorkerTester ::testWritingOffset() {
         amt = FW_MIN(sizeof(buf), dataSize - i);
         stat = file.read(buf, amt);
         ASSERT_EQ(stat, Os::File::OP_OK);
-        U32 cmp = memcmp(data + i, buf, amt);
+        I32 cmp = memcmp(data + i, buf, amt);
         ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
     }
 
@@ -350,7 +350,7 @@ void FileWorkerTester ::testAppending() {
             amt = FW_MIN(sizeof(buf), dataSize - i);
             stat = file.read(buf, amt);
             ASSERT_EQ(stat, Os::File::OP_OK);
-            U32 cmp = memcmp(data + i, buf, amt);
+            I32 cmp = memcmp(data + i, buf, amt);
             ASSERT_EQ(cmp, 0) << "at i=" << i << "\n";
         }
     }
