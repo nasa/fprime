@@ -13,10 +13,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FileWorker ::FileWorker(const char* const compName)
-    : FileWorkerComponentBase(compName),
-      m_state(FileWorkerState::FW_STATE_IDLE),
-      m_abort(false),
-      m_chunkSize(0) {}
+    : FileWorkerComponentBase(compName), m_state(FileWorkerState::FW_STATE_IDLE), m_abort(false), m_chunkSize(0) {}
 
 void FileWorker ::configure(U64 chunkSize) {
     FW_ASSERT(chunkSize > 0);
@@ -56,7 +53,7 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     U32 crcFromFile = 0;
     U32 crcCalculated = 0;
     Utils::crc_stat_t crcStat = Utils::verify_checksum(fileName, crcFromFile, crcCalculated);
-    if(crcStat != Utils::PASSED_FILE_CRC_CHECK) {
+    if (crcStat != Utils::PASSED_FILE_CRC_CHECK) {
         this->log_WARNING_HI_CrcFailed(crcStat);
         this->readDoneOut_out(0, FW_STATUS_FAILED_CRC, 0);
         this->m_state = FW_STATE_IDLE;
@@ -87,7 +84,7 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     U32 crcCalculated = 0;
     Utils::crc_stat_t crcStat = Utils::verify_checksum(fileName, crcFromFile, crcCalculated);
 
-    if(crcStat != Utils::PASSED_FILE_CRC_CHECK) {
+    if (crcStat != Utils::PASSED_FILE_CRC_CHECK) {
         this->log_WARNING_HI_CrcFailed(crcStat);
         workerStat = FW_STATUS_FAILED_CRC;
     }
@@ -132,7 +129,8 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     this->m_abort.store(false, std::memory_order_relaxed);
 
     // Save file name
-    // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than FileNameStringSize in any case
+    // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than FileNameStringSize in any
+    // case
     FwSizeType length = Fw::StringUtils::string_length(path.toChar(), FileNameStringSize);
     FW_ASSERT(length < FileNameStringSize && length < sizeof(fileName));
 
@@ -228,13 +226,16 @@ void FileWorker ::readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, 
     return;
 }
 
-Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer, FwSizeType size, Os::File& file, FwSizeType& bytesRead) {
+Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
+                                                      FwSizeType size,
+                                                      Os::File& file,
+                                                      FwSizeType& bytesRead) {
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(size > 0);
 
     // Determine true timeout
     static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-    FwSizeType  numChunks = (size / BLOCK_SIZE_BYTES);
+    FwSizeType numChunks = (size / BLOCK_SIZE_BYTES);
     if (size % BLOCK_SIZE_BYTES > 0) {
         numChunks += 1;
     }
