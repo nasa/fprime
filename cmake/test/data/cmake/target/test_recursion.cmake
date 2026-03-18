@@ -19,7 +19,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Port
     Fw_Prm
     Fw_StringFormat_snprintf
-    Fw_StringFormat_sscanf
+    Fw_StringScan_sscanf
     Fw_Time
     Fw_Tlm
     Fw_Types
