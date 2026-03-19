@@ -231,7 +231,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized
     Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, TLMPACKETIZER_HASH_BUCKETS> m_channelIndices;
-    Fw::Array<TlmEntry, TLMPACKETIZER_HASH_BUCKETS> m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
+    Fw::Array<TlmEntry, TLMPACKETIZER_HASH_BUCKETS>
+        m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
 };
 
 }  // end namespace Svc
