@@ -44,6 +44,7 @@ set(MOD_DEPS
     ${PROJECT_NAME}/state_machine/internal_instance/state
     ${PROJECT_NAME}/struct
     ${PROJECT_NAME}/topology/ports
+    ${PROJECT_NAME}/topology/components/Comp
     ${PROJECT_NAME}/topology/components/Sender
     ${PROJECT_NAME}/topology/components/Receiver
 )
