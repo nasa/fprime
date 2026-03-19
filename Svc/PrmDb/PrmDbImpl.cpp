@@ -88,6 +88,7 @@ Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw
             return Fw::ParamValid::VALID;
         default:
             FW_ASSERT(0, success.e);
+            return Fw::ParamValid::INVALID;
     }
 }
 
