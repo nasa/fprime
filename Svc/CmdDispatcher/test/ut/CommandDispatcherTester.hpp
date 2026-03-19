@@ -28,6 +28,8 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runClearCommandTracking();
     void runCommandQueueOverflow();
 
+    void registerBuiltinCommands();
+
   private:
     Svc::CommandDispatcherImpl& m_impl;
 

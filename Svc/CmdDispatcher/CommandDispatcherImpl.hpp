@@ -13,6 +13,7 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
+#include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
@@ -142,22 +143,12 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
 
-    //! \struct DispatchEntry
-    //! \brief table used to store opcode to port mappings
+    //! \brief map from opcode to output port index
     //!
-    //! The DispatchEntry table is used to map incoming opcodes to the port
-    //! connected to the component that implements the opcode.
-    //! As each command opcode is registered, a new entry is found
-    //! in the table by checking for the "used" flag. The opcode
-    //! member is set to the opcode, and the port member set to the
-    //! port to dispatch to. When a new opcode is received for
-    //! execution, the table is traversed until the opcode is located.
-
-    struct DispatchEntry {
-        bool used;                                       //!< if entry has been used yet
-        FwOpcodeType opcode;                             //!< opcode of entry
-        FwIndexType port;                                //!< which port the entry invokes
-    } m_entryTable[CMD_DISPATCHER_DISPATCH_TABLE_SIZE];  //!< table of dispatch entries
+    //! Maps each registered command opcode to the output port index of the
+    //! component that implements it. Replaces the former linear DispatchEntry
+    //! array with an O(log n) red-black tree lookup.
+    Fw::RedBlackTreeMap<FwOpcodeType, FwIndexType, CMD_DISPATCHER_DISPATCH_TABLE_SIZE> m_entryTable;
 
     //! \struct SequenceTracker
     //! \brief table used to store opcode that are being executed
