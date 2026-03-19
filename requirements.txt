@@ -18,8 +18,8 @@ et-xmlfile==1.1.0
 Flask==3.1.3
 Flask-Compress==1.15
 Flask-RESTful==0.3.10
-fprime-fpl-layout==1.0.3
-fprime-fpl-write-pic==1.0.3
+fprime-fpl-layout==1.0.4
+fprime-fpl-write-pic==1.0.4
 fprime-fpp==3.2.0a2
 fprime-gds==4.1.1a4
 fprime-tools==4.1.0
