@@ -84,9 +84,7 @@ void CommandDispatcherTester::registerBuiltinCommands() {
 
 void CommandDispatcherTester::runNominalDispatch() {
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     REQUIREMENT("CD-003");
@@ -127,10 +125,10 @@ void CommandDispatcherTester::runNominalDispatch() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq, 0u);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -147,12 +145,8 @@ void CommandDispatcherTester::runNominalDispatch() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
-    // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq, 0u);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    // verify sequence table entry has been removed
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -171,9 +165,7 @@ void CommandDispatcherTester::runNominalDispatch() {
 void CommandDispatcherTester::runNopCommands() {
     // verify sequence tracker table is empty
 
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     // send NO_OP command
@@ -301,10 +293,7 @@ void CommandDispatcherTester::runCommandReregister() {
 
 void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     // register our own command
@@ -351,10 +340,7 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
 
 void CommandDispatcherTester::runFailedCommand() {
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
     // register our own command
     FwOpcodeType testOpCode = 0x50;
@@ -391,11 +377,11 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -412,11 +398,8 @@ void CommandDispatcherTester::runFailedCommand() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
-    // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    // Check dispatch table to ensure that the tracking entry was removed
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -445,11 +428,10 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -466,10 +448,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -499,11 +478,10 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -520,10 +498,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -539,9 +514,7 @@ void CommandDispatcherTester::runFailedCommand() {
 
 void CommandDispatcherTester::runInvalidCommand() {
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     // clear reg events
     this->clearEvents();
 
@@ -568,9 +541,7 @@ void CommandDispatcherTester::runInvalidCommand() {
 
 void CommandDispatcherTester::runOverflowCommands() {
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     // verify event
@@ -617,11 +588,11 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
             // verify sequence table entry
-            ASSERT_TRUE(this->m_impl.m_sequenceTracker[disp].used);
-            ASSERT_EQ(disp, this->m_impl.m_sequenceTracker[disp].seq);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].opCode, testOpCode);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].context, testContext);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].callerPort, 0);
+            CommandDispatcherImpl::SequenceTrackerEntry entry;
+            ASSERT_EQ(this->m_impl.m_sequenceTracker.find(disp, entry), Fw::Success::SUCCESS);
+            ASSERT_EQ(entry.opCode, testOpCode);
+            ASSERT_EQ(entry.context, testContext);
+            ASSERT_EQ(entry.callerPort, 0);
 
             // verify command received
             ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -641,9 +612,7 @@ void CommandDispatcherTester::runOverflowCommands() {
 
 void CommandDispatcherTester::runClearCommandTracking() {
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     // register our own command
@@ -679,11 +648,11 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(0u, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -714,9 +683,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // dispatch command from dispatcher to command handler
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     // verify tracking table empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
 
     clearHistory();
     // send command complete
@@ -731,9 +698,7 @@ void CommandDispatcherTester::runCommandQueueOverflow() {
     U8 testNumCmdsToSend = 19;
 
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
 
     // register our own command
