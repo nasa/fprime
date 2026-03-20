@@ -1,93 +1,10 @@
 module FppTest {
-
-    module FrameworkPortData {
-        @ An extension of Fw.Buffer but with `==` overridden to not compare
-        @ address but rather just compare the memory.
-        type DataBuffer
-
-        struct CmdReg {
-            opCode: FwOpcodeType @< Command Op Code
-        }
-
-        struct CmdResponse {
-            opCode: FwOpcodeType @< Command Op Code
-            cmdSeq: U32 @< Command Sequence
-            response: Fw.CmdResponse @< The command response argument
-        }
-
-        struct Log {
-            $id: FwEventIdType @< Log ID
-            timeTag: Fw.Time @< Time Tag
-            $severity: Fw.LogSeverity @< The severity argument
-            args: DataBuffer @< Buffer containing serialized log entry
-        }
-
-        struct LogText {
-            $id: FwEventIdType @< Log ID
-            timeTag: Fw.Time @< Time Tag
-            $severity: Fw.LogSeverity @< The severity argument
-            $text: Fw.TextLogString @< Text of log message
-        }
-
-        struct Tlm {
-            $id: FwChanIdType @< Telemetry Channel ID
-            timeTag: Fw.Time @< Time Tag
-            val: DataBuffer @< Buffer containing serialized telemetry value
-        }
-
-        struct PrmGet {
-            $id: FwPrmIdType @< Parameter ID
-            @ Buffer containing serialized parameter value.
-            @ Unmodified if param not found.
-            val: DataBuffer
-        }
-
-        struct PrmSet {
-            $id: FwPrmIdType @< Parameter ID
-            val: DataBuffer @< Buffer containing serialized parameter value
-        }
-
-        struct Time {
-            $time: Fw.Time @< Reference to Time object
-        }
-
-        struct DpGet {
-            @ The container ID (input)
-            $id: FwDpIdType
-            @ The data size of the requested buffer (input)
-            dataSize: FwSizeType
-            @ The buffer (output)
-            buffer: DataBuffer
-        }
-
-        struct DpRequest {
-            @ The container ID
-            $id: FwDpIdType
-            @ The data size of the requested buffer
-            dataSize: FwSizeType
-        }
-
-        struct DpResponse {
-            @ The container ID
-            $id: FwDpIdType
-            @ The buffer
-            buffer: DataBuffer
-            @ The status
-            status: Fw.Success
-        }
-
-        struct Ping {
-            key: U32 @< Value to return to pinger
-        }
-    }
-
     active component Framework {
-
         @ Command dispatch port
-        output port compCmdSend: Fw.Cmd
+        output port compCmdSend: [2] Fw.Cmd
 
         @ Command Registration Port. max_number should match dispatch port.
-        guarded input port compCmdReg: Fw.CmdReg
+        guarded input port compCmdReg: [2] Fw.CmdReg
 
         @ Input Command Status Port
         sync input port compCmdStat: Fw.CmdResponse
@@ -111,29 +28,42 @@ module FppTest {
         sync input port timeGetIn: Fw.Time
 
         @ Ports for responding to a data product get from a client component
-        sync input port productGetIn: Fw.DpGet
+        sync input port productGetIn: [2] Fw.DpGet
 
         @ Ports for receiving data product buffer requests from a client component
-        async input port productRequestIn: Fw.DpRequest
+        async input port productRequestIn: [2] Fw.DpRequest
 
         @ Ports for sending requested data product buffers to a client component
-        output port productResponseOut: Fw.DpResponse
+        output port productResponseOut: [2] Fw.DpResponse
+
+        @ Ports for getting buffers from a Buffer Manager
+        output port bufferGetOut: [2] Fw.BufferGet
+
+        # ----------------------------------------------------------------------
+        # Ports for forwarding filled data products
+        # ----------------------------------------------------------------------
+
+        @ Ports for receiving filled data product buffers from a client component
+        async input port productSendIn: [2] Fw.DpSend
+
+        @ Ports for sending filled data product buffers to a downstream component
+        output port productSendOut: [2] Fw.BufferSend
 
         @ Ping output port
-        output port PingSend: Svc.Ping
+        output port PingSend: [2] Svc.Ping
 
         @ Ping return port
-        async input port PingReturn: Svc.Ping
+        async input port PingReturn: [2] Svc.Ping
 
-        @ Signal from component that this test has finished
-        async input port Finish: Svc.Sched
+        output port syncOut: [2] Svc.Sched
+        async input port syncIn: [2] Svc.Sched
 
         # ----------------------------------------------------------------------
         # Port matching specifiers
         # ----------------------------------------------------------------------
 
         match compCmdSend with compCmdReg
+        match syncOut with syncIn
 
     }
-
 }

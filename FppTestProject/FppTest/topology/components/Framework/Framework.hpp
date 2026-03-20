@@ -10,18 +10,20 @@
 #include <Fw/DataStructures/FifoQueue.hpp>
 #include "FppTest/topology/components/Framework/FrameworkComponentAc.hpp"
 
-#include "FppTest/topology/components/Framework/CmdRegSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/CmdResponseSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/DpGetSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/DpRequestSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/DpResponseSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/LogSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/LogTextSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/PingSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/PrmGetSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/PrmSetSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/TimeSerializableAc.hpp"
-#include "FppTest/topology/components/Framework/TlmSerializableAc.hpp"
+#include "FppTest/topology/types/CmdRegSerializableAc.hpp"
+#include "FppTest/topology/types/CmdResponseSerializableAc.hpp"
+#include "FppTest/topology/types/DpGetSerializableAc.hpp"
+#include "FppTest/topology/types/DpRequestSerializableAc.hpp"
+#include "FppTest/topology/types/DpResponseSerializableAc.hpp"
+#include "FppTest/topology/types/DpSendSerializableAc.hpp"
+#include "FppTest/topology/types/LogSerializableAc.hpp"
+#include "FppTest/topology/types/LogTextSerializableAc.hpp"
+#include "FppTest/topology/types/PingSerializableAc.hpp"
+#include "FppTest/topology/types/PrmGetSerializableAc.hpp"
+#include "FppTest/topology/types/PrmSetSerializableAc.hpp"
+#include "FppTest/topology/types/TlmSerializableAc.hpp"
+
+#include "Fw/DataStructures/ArrayMap.hpp"
 
 namespace FppTest {
 
@@ -42,17 +44,20 @@ class Framework final : public FrameworkComponentBase {
               FwEnumStoreType instance = 0  //!< The instance number
     );
 
-    void wait();
     void clear();
     void setTime(const Fw::Time& time);
+    Fw::CmdResponse sendCommand(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
+    void ping(U32 key);
+    void sync();
+    void syncFor(FwIndexType portNum);
 
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler for input port Finish
-    void Finish_handler(FwIndexType portNum,  //!< The port number
+    //! Handler for input port syncIn
+    void syncIn_handler(FwIndexType portNum,  //!< The port number
                         U32 context           //!< The call order
                         ) override;
 
@@ -149,20 +154,33 @@ class Framework final : public FrameworkComponentBase {
                            Fw::Time& time        //!< Reference to Time object
                            ) override;
 
+    //! Handler for input port productSendIn
+    void productSendIn_handler(FwIndexType portNum,      //!< The port number
+                               FwDpIdType id,            //!< The container ID
+                               const Fw::Buffer& buffer  //!< The buffer
+                               ) override;
+
+  private:
+
+    Fw::ArrayMap<FwOpcodeType, FwIndexType, 10> m_opcode_registrations;
     Os::Queue m_completion_queue;
     Fw::Time m_time;
+    Fw::Array<U8[1024], 5> m_memory_pool;
+    Fw::FifoQueue<Fw::Buffer, 5> m_memory_queue;
 
   public:
-    Fw::FifoQueue<FrameworkPortData::CmdReg, 5> cmd_reg_queue;
-    Fw::FifoQueue<FrameworkPortData::CmdResponse, 5> cmd_response;
-    Fw::FifoQueue<FrameworkPortData::Log, 5> log_queue;
-    Fw::FifoQueue<FrameworkPortData::LogText, 5> log_text_queue;
-    Fw::FifoQueue<FrameworkPortData::Tlm, 5> tlm_queue;
-    Fw::FifoQueue<FrameworkPortData::PrmGet, 5> prm_get_queue;
-    Fw::FifoQueue<FrameworkPortData::PrmSet, 5> prm_set_queue;
-    Fw::FifoQueue<FrameworkPortData::DpGet, 5> dp_get_queue;
-    Fw::FifoQueue<FrameworkPortData::DpRequest, 5> dp_request_queue;
-    Fw::FifoQueue<FrameworkPortData::Ping, 5> ping_queue;
+    constexpr static U32 QueueLength = 10;
+    Fw::FifoQueue<FrameworkPortData::CmdReg, QueueLength> cmd_reg_queue;
+    Fw::FifoQueue<FrameworkPortData::CmdResponse, QueueLength> cmd_response_queue;
+    Fw::FifoQueue<FrameworkPortData::Log, QueueLength> log_queue;
+    Fw::FifoQueue<FrameworkPortData::LogText, QueueLength> log_text_queue;
+    Fw::FifoQueue<FrameworkPortData::Tlm, QueueLength> tlm_queue;
+    Fw::FifoQueue<FrameworkPortData::PrmGet, QueueLength> prm_get_queue;
+    Fw::FifoQueue<FrameworkPortData::PrmSet, QueueLength> prm_set_queue;
+    Fw::FifoQueue<FrameworkPortData::DpGet, QueueLength> dp_get_queue;
+    Fw::FifoQueue<FrameworkPortData::DpRequest, QueueLength> dp_request_queue;
+    Fw::FifoQueue<FrameworkPortData::DpSend, QueueLength> dp_send_queue;
+    Fw::FifoQueue<FrameworkPortData::Ping, QueueLength> ping_queue;
 };
 
 }  // namespace FppTest

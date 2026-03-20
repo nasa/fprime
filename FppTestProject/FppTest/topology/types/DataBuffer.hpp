@@ -7,13 +7,12 @@
 #ifndef FPPTEST_DATABUFFER_HPP
 #define FPPTEST_DATABUFFER_HPP
 
-#include "Fw/Buffer/Buffer.hpp"
+#include "Fw/Types/Serializable.hpp"
 
 namespace FppTest {
 namespace FrameworkPortData {
 class DataBuffer final : public Fw::Serializable {
   public:
-
     enum {
         SERIALIZED_SIZE = sizeof(U32) + sizeof(U8*),  //!< Size of Fw::Buffer when serialized
     };
@@ -34,14 +33,13 @@ class DataBuffer final : public Fw::Serializable {
     void toString(Fw::StringBase& text) const override;
 #endif
 
-
 #ifdef BUILD_UT
     //! Supports GTest framework for outputting this type to a stream
     //!
     friend std::ostream& operator<<(std::ostream& os, const DataBuffer& obj);
 #endif
 
-private:
+  private:
     U8 m_data[1024];
     FwSizeType m_size;
 };

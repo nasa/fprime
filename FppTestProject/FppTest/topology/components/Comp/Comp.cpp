@@ -39,8 +39,9 @@ U32 Comp ::getParameter() {
     return out;
 }
 
-void Comp ::finish() {
-    Finish_out(0, 0);
+void Comp::parameterUpdated(FwPrmIdType id) {
+    CompComponentBase::parameterUpdated(id);
+    tlmWrite_ParamUpdated({id, getParameter()});
 }
 
 void Comp ::PingIn_handler(FwIndexType portNum, U32 key) {
@@ -66,7 +67,7 @@ void Comp ::Start_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 nRecords) {
 void Comp ::Data_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 a, F32 b, const Fw::CmdStringArg& c) {
     if (m_dpInProgress) {
         const auto status = m_dpContainer.serializeRecord_FixedSizeDataRecord(FixedSizeData(a, b, c));
-        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
@@ -83,14 +84,23 @@ void Comp ::End_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 }
 
+void Comp::syncIn_handler(FwIndexType portNum, U32 context) {
+    syncOut_out(portNum, context);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for data products
 // ----------------------------------------------------------------------
 
 void Comp ::dpRecv_Product_handler(DpContainer& container, Fw::Success::T status) {
-    FW_ASSERT(status == Fw::Success::SUCCESS, status);
-    container.serializeHeader();
-    this->cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
+    if (status == Fw::Success::SUCCESS) {
+        m_dpContainer = container;
+        m_dpContainer.serializeHeader();
+        this->cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        m_dpInProgress = false;
+        this->cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
 }
 
 }  // namespace FppTest

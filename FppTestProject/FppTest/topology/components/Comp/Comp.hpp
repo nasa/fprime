@@ -8,6 +8,7 @@
 #define FppTest_Comp_HPP
 
 #include "FppTest/topology/components/Comp/CompComponentAc.hpp"
+#include "Fw/DataStructures/FifoQueue.hpp"
 #include "Fw/Types/StringTemplate.hpp"
 
 namespace FppTest {
@@ -26,21 +27,18 @@ class Comp final : public CompComponentBase {
     ~Comp();
 
   public:
-
-    void emitEvent(U32 a,
-                   F32 b,
-                   const Fw::StringBase& c);
+    void emitEvent(U32 a, F32 b, const Fw::StringBase& c);
 
     void emitTelemetry(U32 a);
 
     U32 getParameter();
 
-    void finish();
-
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
+
+    void parameterUpdated(FwPrmIdType id) override;
 
     //! Handler implementation for PingIn
     void PingIn_handler(FwIndexType portNum,  //!< The port number
@@ -54,9 +52,8 @@ class Comp final : public CompComponentBase {
 
     //! Handler implementation for command Start
     void Start_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                          U32 cmdSeq,            //!< The command sequence number
-                          U32 nRecords
-                          ) override;
+                          U32 cmdSeq,           //!< The command sequence number
+                          U32 nRecords) override;
 
     //! Handler implementation for command Data
     void Data_cmdHandler(FwOpcodeType opCode,  //!< The opcode
@@ -70,6 +67,11 @@ class Comp final : public CompComponentBase {
                         U32 cmdSeq            //!< The command sequence number
                         ) override;
 
+    //! Handler for input port syncIn
+    void syncIn_handler(FwIndexType portNum,  //!< The port number
+                        U32 context           //!< The call order
+                        ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for data products
@@ -80,8 +82,7 @@ class Comp final : public CompComponentBase {
                                 Fw::Success::T status    //!< The container status
                                 ) override;
 
-    private:
-
+  private:
     DpContainer m_dpContainer;
     bool m_dpInProgress;
     FwOpcodeType m_opcode;

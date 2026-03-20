@@ -14,8 +14,9 @@ module FppTest {
 
     import SpecialPorts
 
-    @ Signal to the framework that this test has finished
-    output port Finish: Svc.Sched
+    @ Signal from the framework to synchronize with the testing context
+    async input port syncIn: Svc.Sched
+    output port syncOut: Svc.Sched
 
     async input port PingIn: Svc.Ping
     output port PingOut: Svc.Ping
@@ -37,6 +38,13 @@ module FppTest {
     telemetry Telemetry: U32
 
     param Param: U32 default 0
+
+    struct ParamUpdateEvent {
+        $id: FwPrmIdType
+        value: U32
+    }
+
+    telemetry ParamUpdated: ParamUpdateEvent
 
     @ A record containing fixed-size data
     product record FixedSizeDataRecord: FixedSizeData id 0x00
