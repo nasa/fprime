@@ -15,6 +15,7 @@ set(UT_MOD_DEPS
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EmptyTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/NonPrimitiveTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PrimitiveTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
