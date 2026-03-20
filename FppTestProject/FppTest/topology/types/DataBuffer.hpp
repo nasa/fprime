@@ -4,8 +4,8 @@
 // \brief  hpp file for DataBuffer implementation class
 // ======================================================================
 
-#ifndef FPPTEST_DATABUFFER_HPP
-#define FPPTEST_DATABUFFER_HPP
+#ifndef FPPTEST_DATA_BUFFER_HPP
+#define FPPTEST_DATA_BUFFER_HPP
 
 #include "Fw/Types/Serializable.hpp"
 
@@ -46,4 +46,4 @@ class DataBuffer final : public Fw::Serializable {
 }  // namespace FrameworkPortData
 }  // namespace FppTest
 
-#endif  // FPPTEST_DATABUFFER_HPP
+#endif  // FPPTEST_DATA_BUFFER_HPP
