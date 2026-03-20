@@ -1,5 +1,4 @@
 module FppTest {
-
     module FrameworkPortData {
         @ An extension of Fw.Buffer but with `==` overridden to not compare
         @ address but rather just compare the memory.
@@ -95,5 +94,4 @@ module FppTest {
             key: U32 @< Value to return to pinger
         }
     }
-
 }

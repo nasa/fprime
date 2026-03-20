@@ -64,6 +64,5 @@ module FppTest {
 
         match compCmdSend with compCmdReg
         match syncOut with syncIn
-
     }
 }
