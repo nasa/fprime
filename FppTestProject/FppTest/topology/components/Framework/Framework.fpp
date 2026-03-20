@@ -1,6 +1,10 @@
 module FppTest {
 
     module FrameworkPortData {
+        @ An extension of Fw.Buffer but with `==` overridden to not compare
+        @ address but rather just compare the memory.
+        type DataBuffer
+
         struct CmdReg {
             opCode: FwOpcodeType @< Command Op Code
         }
@@ -15,7 +19,7 @@ module FppTest {
             $id: FwEventIdType @< Log ID
             timeTag: Fw.Time @< Time Tag
             $severity: Fw.LogSeverity @< The severity argument
-            args: Fw.Buffer @< Buffer containing serialized log entry
+            args: DataBuffer @< Buffer containing serialized log entry
         }
 
         struct LogText {
@@ -28,19 +32,19 @@ module FppTest {
         struct Tlm {
             $id: FwChanIdType @< Telemetry Channel ID
             timeTag: Fw.Time @< Time Tag
-            val: Fw.Buffer @< Buffer containing serialized telemetry value
+            val: DataBuffer @< Buffer containing serialized telemetry value
         }
 
         struct PrmGet {
             $id: FwPrmIdType @< Parameter ID
             @ Buffer containing serialized parameter value.
             @ Unmodified if param not found.
-            val: Fw.Buffer
+            val: DataBuffer
         }
 
         struct PrmSet {
             $id: FwPrmIdType @< Parameter ID
-            val: Fw.Buffer @< Buffer containing serialized parameter value
+            val: DataBuffer @< Buffer containing serialized parameter value
         }
 
         struct Time {
@@ -53,7 +57,7 @@ module FppTest {
             @ The data size of the requested buffer (input)
             dataSize: FwSizeType
             @ The buffer (output)
-            buffer: Fw.Buffer
+            buffer: DataBuffer
         }
 
         struct DpRequest {
@@ -67,7 +71,7 @@ module FppTest {
             @ The container ID
             $id: FwDpIdType
             @ The buffer
-            buffer: Fw.Buffer
+            buffer: DataBuffer
             @ The status
             status: Fw.Success
         }

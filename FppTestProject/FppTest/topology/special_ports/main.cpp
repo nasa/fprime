@@ -25,23 +25,34 @@ class FrameworkTester : public testing::Test {
 
     void SetUp() override { framework.clear(); }
 
-    void check_log(std::initializer_list<FppTest::FrameworkPortData::Log> logs) {
+    static void check_log(const std::initializer_list<FrameworkPortData::Log> logs) {
         EXPECT_EQ(framework.log_queue.getSize(), logs.size());
 
         for (const auto& expected : logs) {
-            FppTest::FrameworkPortData::Log got;
+            FrameworkPortData::Log got;
             auto status = framework.log_queue.dequeue(got);
             EXPECT_EQ(status, Fw::Success::SUCCESS);
             EXPECT_EQ(expected, got);
         }
     }
 
-    void check_log_text(std::initializer_list<FppTest::FrameworkPortData::LogText> logs) {
+    static void check_log_text(const std::initializer_list<FrameworkPortData::LogText> logs) {
         EXPECT_EQ(framework.log_text_queue.getSize(), logs.size());
 
         for (const auto& expected : logs) {
-            FppTest::FrameworkPortData::LogText got;
+            FrameworkPortData::LogText got;
             auto status = framework.log_text_queue.dequeue(got);
+            EXPECT_EQ(status, Fw::Success::SUCCESS);
+            EXPECT_EQ(expected, got);
+        }
+    }
+
+    static void check_tlm(const std::initializer_list<FrameworkPortData::Tlm> tlms) {
+        EXPECT_EQ(framework.tlm_queue.getSize(), tlms.size());
+
+        for (const auto& expected : tlms) {
+            FrameworkPortData::Tlm got;
+            auto status = framework.tlm_queue.dequeue(got);
             EXPECT_EQ(status, Fw::Success::SUCCESS);
             EXPECT_EQ(expected, got);
         }
@@ -56,7 +67,6 @@ class FrameworkTester : public testing::Test {
         EXPECT_EQ(framework.tlm_queue.getSize(), 0);
         EXPECT_EQ(framework.prm_get_queue.getSize(), 0);
         EXPECT_EQ(framework.prm_set_queue.getSize(), 0);
-        EXPECT_EQ(framework.time_queue.getSize(), 0);
         EXPECT_EQ(framework.dp_get_queue.getSize(), 0);
         EXPECT_EQ(framework.dp_request_queue.getSize(), 0);
         EXPECT_EQ(framework.ping_queue.getSize(), 0);
@@ -64,20 +74,39 @@ class FrameworkTester : public testing::Test {
 };
 
 TEST_F(FrameworkTester, LogRecv) {
-    Fw::String arg = "three";
+    framework.setTime(Fw::Time(10, 10));
+
+    const Fw::String arg = "three";
     comp.emitEvent(1, 2.0, arg);
     comp.finish();
     framework.wait();
 
-    check_log({
-        FppTest::FrameworkPortData::Log (
-            0,
-            Fw::Time()
-        )
-    })
+    Fw::LogBuffer buf;
+    buf.serializeFrom(static_cast<U32>(1));
+    buf.serializeFrom(static_cast<F32>(2.0));
+    buf.serializeFrom(arg);
 
-    FppTest::FrameworkPortData::Log l;
-    auto status = framework.log_queue.dequeue(l);
-    EXPECT_EQ(status, Fw::Success::SUCCESS);
+    check_log({
+        {comp.getIdBase() + 0, Fw::Time(10, 10), Fw::LogSeverity::ACTIVITY_HI, buf},
+    });
+
+    check_log_text({
+        {comp.getIdBase() + 0, Fw::Time(10, 10), Fw::LogSeverity::ACTIVITY_HI,
+         Fw::String("(comp) Event : a: 1, b: 2.000000, c: three")},
+    });
 }
+
+TEST_F(FrameworkTester, TlmRecv) {
+    framework.setTime(Fw::Time(10, 11));
+
+    comp.emitTelemetry(0x1);
+    comp.finish();
+    framework.wait();
+
+    Fw::TlmBuffer buf;
+    buf.serializeFrom(static_cast<U32>(0x1));
+
+    check_tlm({{comp.getIdBase() + 0, Fw::Time(10, 11), buf}});
+}
+
 }  // namespace FppTest

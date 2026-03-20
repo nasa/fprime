@@ -40,10 +40,13 @@ void Framework::clear() {
     tlm_queue.clear();
     prm_get_queue.clear();
     prm_set_queue.clear();
-    time_queue.clear();
     dp_get_queue.clear();
     dp_request_queue.clear();
     ping_queue.clear();
+}
+
+void Framework::setTime(const Fw::Time& time) {
+    m_time = time;
 }
 
 // ----------------------------------------------------------------------
@@ -71,14 +74,14 @@ void Framework ::LogRecv_handler(FwIndexType portNum,
     log.set_id(id);
     log.set_timeTag(timeTag);
     log.set_severity(severity);
-    log.set_args(Fw::Buffer(args.getBuffAddr(), args.getSize()));
+    log.set_args(FrameworkPortData::DataBuffer(args.getBuffAddr(), args.getSize()));
     log_queue.enqueue(log);
 }
 
 Fw::ParamValid Framework ::ParamGetIn_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     FrameworkPortData::PrmGet prmGet;
     prmGet.set_id(id);
-    prmGet.set_val(Fw::Buffer(val.getBuffAddr(), val.getSize()));
+    prmGet.set_val(FrameworkPortData::DataBuffer(val.getBuffAddr(), val.getSize()));
     prm_get_queue.enqueue(prmGet);
     return Fw::ParamValid::VALID;
 }
@@ -86,7 +89,7 @@ Fw::ParamValid Framework ::ParamGetIn_handler(FwIndexType portNum, FwPrmIdType i
 void Framework ::ParamSetIn_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     FrameworkPortData::PrmSet prmSet;
     prmSet.set_id(id);
-    prmSet.set_val(Fw::Buffer(val.getBuffAddr(), val.getSize()));
+    prmSet.set_val(FrameworkPortData::DataBuffer(val.getBuffAddr(), val.getSize()));
     prm_set_queue.enqueue(prmSet);
 }
 
@@ -113,7 +116,7 @@ void Framework ::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time&
     FrameworkPortData::Tlm tlm;
     tlm.set_id(id);
     tlm.set_timeTag(timeTag);
-    tlm.set_val(Fw::Buffer(val.getBuffAddr(), val.getSize()));
+    tlm.set_val(FrameworkPortData::DataBuffer(val.getBuffAddr(), val.getSize()));
     tlm_queue.enqueue(tlm);
 }
 
@@ -141,7 +144,7 @@ Fw::Success Framework ::productGetIn_handler(FwIndexType portNum,
     FrameworkPortData::DpGet dpGet;
     dpGet.set_id(id);
     dpGet.set_dataSize(dataSize);
-    dpGet.set_buffer(buffer);
+    dpGet.set_buffer({buffer.getData(), buffer.getSize()});
     dp_get_queue.enqueue(dpGet);
     return Fw::Success::SUCCESS;
 }
@@ -154,11 +157,7 @@ void Framework ::productRequestIn_handler(FwIndexType portNum, FwDpIdType id, Fw
 }
 
 void Framework ::timeGetIn_handler(FwIndexType portNum, Fw::Time& time) {
-    time.set(0);
-
-    FrameworkPortData::Time timeData;
-    timeData.set_time(time);
-    time_queue.enqueue(timeData);
+    time = m_time;
 }
 
 }  // namespace FppTest

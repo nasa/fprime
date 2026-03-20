@@ -43,8 +43,8 @@ class Framework final : public FrameworkComponentBase {
     );
 
     void wait();
-
     void clear();
+    void setTime(const Fw::Time& time);
 
   private:
     // ----------------------------------------------------------------------
@@ -150,6 +150,7 @@ class Framework final : public FrameworkComponentBase {
                            ) override;
 
     Os::Queue m_completion_queue;
+    Fw::Time m_time;
 
   public:
     Fw::FifoQueue<FrameworkPortData::CmdReg, 5> cmd_reg_queue;
@@ -159,7 +160,6 @@ class Framework final : public FrameworkComponentBase {
     Fw::FifoQueue<FrameworkPortData::Tlm, 5> tlm_queue;
     Fw::FifoQueue<FrameworkPortData::PrmGet, 5> prm_get_queue;
     Fw::FifoQueue<FrameworkPortData::PrmSet, 5> prm_set_queue;
-    Fw::FifoQueue<FrameworkPortData::Time, 5> time_queue;
     Fw::FifoQueue<FrameworkPortData::DpGet, 5> dp_get_queue;
     Fw::FifoQueue<FrameworkPortData::DpRequest, 5> dp_request_queue;
     Fw::FifoQueue<FrameworkPortData::Ping, 5> ping_queue;
