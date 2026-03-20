@@ -6,6 +6,7 @@
 
 #include "DataBuffer.hpp"
 
+#include <cstring>
 #include <iomanip>
 
 #include "Fw/Types/Assert.hpp"

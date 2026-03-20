@@ -161,7 +161,6 @@ class Framework final : public FrameworkComponentBase {
                                ) override;
 
   private:
-
     Fw::ArrayMap<FwOpcodeType, FwIndexType, 10> m_opcode_registrations;
     Os::Queue m_completion_queue;
     Fw::Time m_time;
