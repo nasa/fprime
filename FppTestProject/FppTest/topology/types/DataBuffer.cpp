@@ -88,23 +88,22 @@ void DataBuffer::toString(Fw::StringBase& text) const {
     Fw::StringTemplate<10> scratch;
 
     for (FwSizeType i = 0; i < m_size; i++) {
+        if (i % 10 == 0) {
+            text += "\n    ";
+        }
         scratch.format(" 0x%02X", this->m_data[i]);
         text += scratch;
     }
+    text += "\n";
 }
 #endif
 
 #ifdef BUILD_UT
 std::ostream& operator<<(std::ostream& os, const DataBuffer& obj) {
-    os << "DataBuffer [" << obj.m_size << "]";
-
-    os << std::uppercase     // Use uppercase letters (A-F)
-       << std::setfill('0')  // Pad with leading zeros
-       << std::setw(2);
+    os << "[" << obj.m_size << "]";
 
     for (FwSizeType i = 0; i < obj.m_size; i++) {
-        os << " 0x";
-        os << static_cast<int>(obj.m_data[i]);
+        os << " 0x" << std::hex << static_cast<int>(obj.m_data[i]);
     }
 
     return os;

@@ -6,9 +6,6 @@
 
 #include "FppTest/topology/components/Comp/Comp.hpp"
 
-namespace Fw {
-class SerialBuffer;
-}
 namespace FppTest {
 
 // ----------------------------------------------------------------------
@@ -95,7 +92,6 @@ void Comp::syncIn_handler(FwIndexType portNum, U32 context) {
 void Comp ::dpRecv_Product_handler(DpContainer& container, Fw::Success::T status) {
     if (status == Fw::Success::SUCCESS) {
         m_dpContainer = container;
-        m_dpContainer.serializeHeader();
         this->cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
     } else {
         m_dpInProgress = false;

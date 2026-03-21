@@ -25,19 +25,6 @@ void Framework ::init(FwSizeType queueDepth, FwEnumStoreType instance) {
     m_completion_queue.create(0, Fw::String("Framework completion queue"), 1, 4);
 }
 
-void Framework::clear() {
-    cmd_reg_queue.clear();
-    cmd_response_queue.clear();
-    log_queue.clear();
-    log_text_queue.clear();
-    tlm_queue.clear();
-    prm_get_queue.clear();
-    prm_set_queue.clear();
-    dp_get_queue.clear();
-    dp_request_queue.clear();
-    ping_queue.clear();
-}
-
 void Framework::setTime(const Fw::Time& time) {
     m_time = time;
 }

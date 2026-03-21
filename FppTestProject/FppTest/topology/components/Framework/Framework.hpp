@@ -44,7 +44,6 @@ class Framework final : public FrameworkComponentBase {
               FwEnumStoreType instance = 0  //!< The instance number
     );
 
-    void clear();
     void setTime(const Fw::Time& time);
     Fw::CmdResponse sendCommand(FwOpcodeType opcode, U32 cmdSeq, Fw::CmdArgBuffer& args);
     void ping(U32 key);

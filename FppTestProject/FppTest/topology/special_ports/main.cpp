@@ -7,6 +7,7 @@
 #include "gtest/gtest.h"
 
 #include "FppTest/topology/special_ports/SpecialPortsTopologyAc.hpp"
+#include "Fw/Com/ComPacket.hpp"
 #include "SpecialPortsTopologyDefs.hpp"
 
 #include "Os/Os.hpp"
@@ -63,7 +64,19 @@ class FrameworkTester : public CompTester, public testing::Test {
 #undef CHECK_QUEUE
 
   protected:
-    void SetUp() override { framework.clear(); }
+    void SetUp() override {
+        framework.cmd_reg_queue.clear();
+        framework.cmd_response_queue.clear();
+        framework.log_queue.clear();
+        framework.log_text_queue.clear();
+        framework.tlm_queue.clear();
+        framework.prm_get_queue.clear();
+        framework.prm_set_queue.clear();
+        framework.dp_get_queue.clear();
+        framework.dp_request_queue.clear();
+        framework.dp_send_queue.clear();
+        framework.ping_queue.clear();
+    }
 
     void TearDown() override {
         // Validate that all the data queues are empty
@@ -76,6 +89,7 @@ class FrameworkTester : public CompTester, public testing::Test {
         EXPECT_EQ(framework.prm_set_queue.getSize(), 0);
         EXPECT_EQ(framework.dp_get_queue.getSize(), 0);
         EXPECT_EQ(framework.dp_request_queue.getSize(), 0);
+        EXPECT_EQ(framework.dp_send_queue.getSize(), 0);
         EXPECT_EQ(framework.ping_queue.getSize(), 0);
     }
 };
@@ -166,16 +180,16 @@ TEST_F(FrameworkTester, CmdDp) {
     EXPECT_EQ(status, Fw::CmdResponse::OK);
 
     args.resetSer();
-    args.serializeFrom(static_cast<U32>(0xA));   // a
-    args.serializeFrom(static_cast<F32>(12.6));  // b
-    args.serializeFrom(Fw::String("c"));         // c
+    args.serializeFrom(static_cast<U32>(0xA));
+    args.serializeFrom(static_cast<F32>(12.5));
+    args.serializeFrom(Fw::String("c"));
     status = framework.sendCommand(comp1.getIdBase() + OPCODE_DATA, 0, args);
     EXPECT_EQ(status, Fw::CmdResponse::OK);
 
     args.resetSer();
-    args.serializeFrom(static_cast<U32>(0xB));   // a
-    args.serializeFrom(static_cast<F32>(15.3));  // b
-    args.serializeFrom(Fw::String("cc"));        // c
+    args.serializeFrom(static_cast<U32>(0xB));
+    args.serializeFrom(static_cast<F32>(15.125));
+    args.serializeFrom(Fw::String("cc"));
     status = framework.sendCommand(comp1.getIdBase() + OPCODE_DATA, 0, args);
     EXPECT_EQ(status, Fw::CmdResponse::OK);
 
@@ -183,6 +197,10 @@ TEST_F(FrameworkTester, CmdDp) {
     status = framework.sendCommand(comp1.getIdBase() + OPCODE_END, 0, args);
     EXPECT_EQ(status, Fw::CmdResponse::OK);
 
+    framework.sync();
+
+    framework.setTime(Fw::Time(10, 14));
+
     args.resetSer();
     args.serializeFrom(static_cast<U32>(2));
     status = framework.sendCommand(comp2.getIdBase() + OPCODE_START, 0, args);
@@ -200,6 +218,8 @@ TEST_F(FrameworkTester, CmdDp) {
     args.resetSer();
     status = framework.sendCommand(comp2.getIdBase() + OPCODE_END, 0, args);
     EXPECT_EQ(status, Fw::CmdResponse::BUSY);
+
+    framework.sync();
 
     check_cmd_res({
         {0, comp1.getIdBase() + OPCODE_START, 0, Fw::CmdResponse::OK},
@@ -217,6 +237,61 @@ TEST_F(FrameworkTester, CmdDp) {
         {0, comp1.getIdBase(), 121},
         {1, comp2.getIdBase(), 121},
     });
+
+    Fw::TlmBuffer buf1;
+    // Serialize the packet type
+    buf1.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_DP));
+    // Serialize the container id
+    buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase()));
+    buf1.serializeFrom(static_cast<FwDpPriorityType>(0));
+    // Serialize the time tag
+    buf1.serializeFrom(Fw::Time(10, 13));
+    // Serialize the processing types
+    buf1.serializeFrom(static_cast<Fw::DpCfg::ProcType::SerialType>(0));
+    // Serialize the user data
+    U8 userData[Fw::DpCfg::CONTAINER_USER_DATA_SIZE]{};
+    buf1.serializeFrom(userData, static_cast<FwSizeType>(sizeof userData), Fw::Serialization::OMIT_LENGTH);
+    // Serialize the data product state
+    buf1.serializeFrom(Fw::DpState(Fw::DpState::UNTRANSMITTED));
+    // Serialize the data size
+    buf1.serializeSize(47);
+    // Serialize the header CRC
+    buf1.serializeFrom(static_cast<U32>(0x06B77648));
+
+    // Serialize the first record
+    buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase() + 0));
+    buf1.serializeFrom(FixedSizeData(0xA, 12.5, Fw::String("c")));
+
+    // Serialize the second record
+    buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase() + 0));
+    buf1.serializeFrom(FixedSizeData(0xB, 15.125, Fw::String("cc")));
+    // Empty data hash
+    buf1.serializeFrom(static_cast<U32>(0));
+
+    // DP from the second component does not have any records
+    // Just serialize the header
+    Fw::TlmBuffer buf2;
+    // Serialize the packet type
+    buf2.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_DP));
+    // Serialize the container id
+    buf2.serializeFrom(static_cast<FwDpIdType>(comp2.getIdBase()));
+    buf2.serializeFrom(static_cast<FwDpPriorityType>(0));
+    // Serialize the time tag
+    buf2.serializeFrom(Fw::Time(10, 14));
+    // Serialize the processing types
+    buf2.serializeFrom(static_cast<Fw::DpCfg::ProcType::SerialType>(0));
+    // Serialize the user data
+    buf2.serializeFrom(userData, static_cast<FwSizeType>(sizeof userData), Fw::Serialization::OMIT_LENGTH);
+    // Serialize the data product state
+    buf2.serializeFrom(Fw::DpState(Fw::DpState::UNTRANSMITTED));
+    // Serialize the data size
+    buf2.serializeSize(0);
+    // Serialize the CRC
+    buf2.serializeFrom(static_cast<U32>(0xC0082b9f));
+    // Empty data hash
+    buf2.serializeFrom(static_cast<U32>(0));
+
+    check_dp_send({{0, comp1.getIdBase(), buf1}, {1, comp2.getIdBase(), buf2}});
 }
 
 TEST_F(FrameworkTester, Ping) {
