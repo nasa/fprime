@@ -36,9 +36,10 @@ void ComLoggerTester ::connectPorts() {
     comLogger.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
     comLogger.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
     this->connect_to_cmdIn(0, comLogger.get_cmdIn_InputPort(0));
-    this->connect_to_comIn(0, comLogger.get_comIn_InputPort(0));
+    this->connect_to_bufferSendIn(0, comLogger.get_bufferSendIn_InputPort(0));
     comLogger.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
     comLogger.set_logOut_OutputPort(0, this->get_from_logOut(0));
+    comLogger.set_bufferSendOut_OutputPort(0, this->get_from_bufferSendOut(0));
 }
 
 void ComLoggerTester ::initComponents() {
@@ -73,7 +74,7 @@ void ComLoggerTester ::testLogging() {
     ASSERT_EVENTS_SIZE(0);
 
     U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data), 0);
 
     Fw::SerializeStatus stat;
 
@@ -106,7 +107,7 @@ void ComLoggerTester ::testLogging() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_bufferSendIn(0, buffer);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -114,7 +115,7 @@ void ComLoggerTester ::testLogging() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -197,7 +198,7 @@ void ComLoggerTester ::testLoggingNoLength() {
     ASSERT_EVENTS_SIZE(0);
 
     U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data), 0);
 
     // Make sure that noLengthMode is enabled:
     comLogger.m_storeBufferLength = false;
@@ -232,7 +233,7 @@ void ComLoggerTester ::testLoggingNoLength() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_bufferSendIn(0, buffer);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -240,7 +241,7 @@ void ComLoggerTester ::testLoggingNoLength() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -313,7 +314,7 @@ void ComLoggerTester ::openError() {
     ASSERT_EVENTS_SIZE(0);
 
     const U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(data, sizeof(data));
+    Fw::Buffer buffer(const_cast<U8*>(data), sizeof(data), 0);
 
     Fw::Time testTime(TimeBase::TB_NONE, 4, 987654);
     setTestTime(testTime);
@@ -322,7 +323,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
@@ -346,7 +347,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -369,7 +370,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
@@ -385,13 +386,13 @@ void ComLoggerTester ::writeError() {
     ASSERT_EVENTS_SIZE(0);
 
     const U8 data[4] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(data, sizeof(data));
+    Fw::Buffer buffer(const_cast<U8*>(data), sizeof(data), 0);
 
     Fw::Time testTime(TimeBase::TB_NONE, 5, 987654);
     setTestTime(testTime);
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -401,7 +402,7 @@ void ComLoggerTester ::writeError() {
 
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -426,7 +427,7 @@ void ComLoggerTester ::writeError() {
     // Try to write and make sure it succeeds:
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -440,7 +441,7 @@ void ComLoggerTester ::writeError() {
 
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -487,10 +488,10 @@ void ComLoggerTester ::closeFileCommand() {
     }
 
     const U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(data, sizeof(data));
+    Fw::Buffer buffer(const_cast<U8*>(data), sizeof(data), 0);
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -538,7 +539,7 @@ void ComLoggerTester ::testLoggingWithInit() {
     ASSERT_EVENTS_SIZE(0);
 
     U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
 
     Fw::SerializeStatus stat;
 
@@ -571,7 +572,7 @@ void ComLoggerTester ::testLoggingWithInit() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_bufferSendIn(0, buffer);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -579,7 +580,7 @@ void ComLoggerTester ::testLoggingWithInit() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_bufferSendIn(0, buffer);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -647,9 +648,9 @@ void ComLoggerTester ::testLoggingWithInit() {
 
 void ComLoggerTester ::noInitError() {
     U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
-    Fw::ComBuffer buffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
 
-    this->invoke_to_comIn(0, buffer, 0);
+    this->invoke_to_bufferSendIn(0, buffer);
     dispatchAll();
     ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_FileNotInitialized_SIZE(1);
@@ -657,7 +658,7 @@ void ComLoggerTester ::noInitError() {
     this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
 
     this->clearHistory();
-    this->invoke_to_comIn(0, buffer, 0);
+    this->invoke_to_bufferSendIn(0, buffer);
     dispatchAll();
     ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     ASSERT_EVENTS_FileNotInitialized_SIZE(0);
@@ -666,4 +667,14 @@ void ComLoggerTester ::noInitError() {
 void ComLoggerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
+
+void ComLoggerTester ::from_bufferSendOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Handle returned buffer - in test, just acknowledge
+    this->pushFromPortEntry_bufferSendOut(fwBuffer);
+}
 }  // namespace Svc
+
+
+
+
+

@@ -46,6 +46,12 @@ class ComLoggerTester : public ComLoggerGTestBase {
                               U32 key                    /*!< Value to return to pinger*/
     );
 
+    //! Handler for from_bufferSendOut
+    //!
+    void from_bufferSendOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                    Fw::Buffer& fwBuffer       /*!< Returned buffer*/
+    );
+
     ComLogger comLogger;
 };
 

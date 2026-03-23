@@ -80,8 +80,8 @@ class BufferLoggerTester : public BufferLoggerGTestBase {
     void setTestTimeSeconds(const U32 seconds  //!< The seconds value
     );
 
-    //! Send com buffers to comIn
-    void sendComBuffers(const U32 n  //!< The number of buffers to send
+    //! Send buffers to bufferSendIn
+    void sendBuffers(const U32 n  //!< The number of buffers to send
     );
 
     //! Send managed buffers to bufferSendIn

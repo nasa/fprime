@@ -7,8 +7,11 @@ module Svc {
     # General ports
     # ----------------------------------------------------------------------
 
-    @ Com input port
-    async input port comIn: Fw.Com
+    @ Buffer input port
+    async input port bufferSendIn: Fw.BufferSend
+
+    @ Buffer output port
+    output port bufferSendOut: Fw.BufferSend
 
     @ Ping input port
     async input port pingIn: Svc.Ping

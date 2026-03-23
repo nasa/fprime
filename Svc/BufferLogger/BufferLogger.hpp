@@ -185,13 +185,6 @@ class BufferLogger final : public BufferLoggerComponentBase {
     void bufferSendIn_handler(const FwIndexType portNum,  //!< The port number
                               Fw::Buffer& fwBuffer);
 
-    //! Handler implementation for comIn
-    //!
-    void comIn_handler(const FwIndexType portNum,  //!< The port number
-                       Fw::ComBuffer& data,        //!< Buffer containing packet data
-                       U32 context                 //!< Call context value; meaning chosen by user
-    );
-
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum,  //!< The port number

@@ -188,7 +188,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
 
 void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     // Only write packets if connected
-    if (not this->isConnected_PktSend_OutputPort(0)) {
+    if (not this->isConnected_bufferSendOut_OutputPort(0)) {
         return;
     }
 
@@ -213,7 +213,8 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
 
             // check to see if this packet is full, if so, send it
             if (Fw::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
-                this->PktSend_out(0, pkt.getBuffer(), 0);
+                Fw::Buffer buffer(pkt.getBuffer().getBuffAddr(), pkt.getBuffer().getSize(), 0);
+                this->bufferSendOut_out(0, buffer);
                 // reset packet for more entries
                 pkt.resetPktSer();
                 // add entry to new packet
@@ -234,8 +235,13 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
 
     // send remnant entries
     if (pkt.getNumEntries() > 0) {
-        this->PktSend_out(0, pkt.getBuffer(), 0);
+        Fw::Buffer buffer(pkt.getBuffer().getBuffAddr(), pkt.getBuffer().getSize(), 0);
+        this->bufferSendOut_out(0, buffer);
     }
 }  // end run handler
+
+void TlmChan::bufferSendInReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Buffer returned, no action needed as ComBuffer is owned by pkt
+}
 
 }  // namespace Svc

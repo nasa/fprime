@@ -12,8 +12,11 @@ module Svc {
     @ Run port for starting packet send cycle
     async input port Run: Svc.Sched
 
-    @ Packet send port
-    output port PktSend: Fw.Com
+    @ Buffer send port
+    output port bufferSendOut: Fw.BufferSend
+
+    @ Buffer return port
+    async input port bufferSendInReturn: Fw.BufferSend
 
     @ Ping input port
     async input port pingIn: Svc.Ping

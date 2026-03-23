@@ -55,7 +55,7 @@ void BufferLoggerTester ::LogNoInit() {
     this->component.m_file.m_baseName = Fw::String("LogNoInit");
     // NOTE (mereweth) - make something sensible happen when no-one calls initLog()
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
     ASSERT_EVENTS_SIZE(3);
     ASSERT_EVENTS_BL_NoLogFileOpenInitError_SIZE(3);
 }
@@ -82,9 +82,6 @@ void BufferLoggerTester ::connectPorts() {
 
     // cmdIn
     this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
-
-    // comIn
-    this->connect_to_comIn(0, this->component.get_comIn_InputPort(0));
 
     // pingIn
     this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
@@ -142,10 +139,10 @@ void BufferLoggerTester ::setTestTimeSeconds(const U32 seconds) {
     this->setTestTime(time);
 }
 
-void BufferLoggerTester ::sendComBuffers(const U32 n) {
-    Fw::ComBuffer buffer(data, sizeof(data));
+void BufferLoggerTester ::sendBuffers(const U32 n) {
+    Fw::Buffer buffer(data, sizeof(data));
     for (U32 i = 0; i < n; ++i) {
-        this->invoke_to_comIn(0, buffer, 0);
+        this->invoke_to_bufferSendIn(0, buffer);
         this->dispatchOne();
     }
 }

@@ -40,11 +40,16 @@ class TlmChanTester : public TlmChanGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_PktSend
+    //! Handler for from_bufferSendOut
     //!
-    void from_PktSend_handler(const FwIndexType portNum,  //!< The port number
-                              Fw::ComBuffer& data,        //!< Buffer containing packet data
-                              U32 context                 //!< Call context value; meaning chosen by user
+    void from_bufferSendOut_handler(const FwIndexType portNum,  //!< The port number
+                                    Fw::Buffer& fwBuffer        //!< Buffer containing packet data
+    );
+
+    //! Handler for from_bufferSendInReturn
+    //!
+    void from_bufferSendInReturn_handler(const FwIndexType portNum,  //!< The port number
+                                         Fw::Buffer& fwBuffer        //!< Returned buffer
     );
 
     //! Handler for from_pingOut
@@ -86,7 +91,7 @@ class TlmChanTester : public TlmChanGTestBase {
     TlmChan component;
     // Keep a history
     FwChanIdType m_numBuffs;
-    Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
+    Fw::Buffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
     bool m_bufferRecv;
 };
 

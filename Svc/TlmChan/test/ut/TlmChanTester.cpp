@@ -139,11 +139,14 @@ void TlmChanTester::runOffNominal() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_PktSend(data, context);
+void TlmChanTester ::from_bufferSendOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->m_bufferRecv = true;
-    this->m_rcvdBuffer[this->m_numBuffs] = data;
+    this->m_rcvdBuffer[this->m_numBuffs] = fwBuffer;
     this->m_numBuffs++;
+}
+
+void TlmChanTester ::from_bufferSendInReturn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Handle returned buffer if needed
 }
 
 void TlmChanTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
@@ -183,27 +186,28 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
     // Search for channel ID
     for (FwChanIdType packet = 0; packet < this->m_numBuffs; packet++) {
         // Look at packet descriptor for current packet
-        this->m_rcvdBuffer[packet].resetDeser();
+        auto deser = this->m_rcvdBuffer[packet].getDeserializer();
+        deser.resetDeser();
         // first piece should be tlm packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_rcvdBuffer[packet].deserializeTo(desc);
+        stat = deser.deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
         ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID
             FwEventIdType sentId;
-            stat = this->m_rcvdBuffer[packet].deserializeTo(sentId);
+            stat = deser.deserializeTo(sentId);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             // next piece is time tag
             Fw::Time recTimeTag(TimeBase::TB_NONE, 0, 0);
-            stat = this->m_rcvdBuffer[packet].deserializeTo(recTimeTag);
+            stat = deser.deserializeTo(recTimeTag);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
             ASSERT_TRUE(timeTag == recTimeTag);
             // next piece is event argument
             U32 readVal;
-            stat = this->m_rcvdBuffer[packet].deserializeTo(readVal);
+            stat = deser.deserializeTo(readVal);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             if (chanNum == currentChan) {
@@ -220,7 +224,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
         }
 
         // packet should be empty
-        ASSERT_EQ(0, this->m_rcvdBuffer[packet].getDeserializeSizeLeft());
+        ASSERT_EQ(0, deser.getDeserializeSizeLeft());
     }
 }
 
@@ -263,7 +267,8 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
 void TlmChanTester::clearBuffs() {
     this->m_numBuffs = 0;
     for (FwChanIdType n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
-        this->m_rcvdBuffer[n].resetSer();
+        auto ser = this->m_rcvdBuffer[n].getSerializer();
+        ser.resetSer();
     }
 }
 
@@ -335,8 +340,11 @@ void TlmChanTester ::connectPorts() {
     // pingIn
     this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
 
-    // PktSend
-    this->component.set_PktSend_OutputPort(0, this->get_from_PktSend(0));
+    // bufferSendOut
+    this->component.set_bufferSendOut_OutputPort(0, this->get_from_bufferSendOut(0));
+
+    // bufferSendInReturn
+    this->connect_to_bufferSendInReturn(0, this->component.get_bufferSendInReturn_InputPort(0));
 
     // pingOut
     this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));

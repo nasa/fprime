@@ -30,7 +30,7 @@ void BufferLoggerTester ::LogFileOpen() {
     ASSERT_EVENTS_SIZE(0);
 
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
 
     // Check events
     // NOTE(mereweth) - not throttled
@@ -45,7 +45,7 @@ void BufferLoggerTester ::LogFileOpen() {
     ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
 
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
 
     // Check events
     // NOTE(mereweth) - should have no more events than we did before
@@ -58,7 +58,7 @@ void BufferLoggerTester ::LogFileOpen() {
     ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.m_mode);
 
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
 
     // Check events
     // We expect 3 more; not throttled
@@ -76,13 +76,13 @@ void BufferLoggerTester ::LogFileWrite() {
     this->component.m_file.m_baseName = Fw::String("LogFileWrite");
 
     // Send data
-    this->sendComBuffers(1);
+    this->sendBuffers(1);
 
     // Force close the file
     this->component.m_file.m_osFile.close();
 
     // Send data
-    this->sendComBuffers(1);
+    this->sendBuffers(1);
 
     // Construct file name
     Fw::String fileName;
@@ -110,7 +110,7 @@ void BufferLoggerTester ::LogFileWrite() {
 
     // Try to write and make sure it succeeds
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
 
     // Expect no new errors
     ASSERT_EVENTS_SIZE(1);
@@ -120,7 +120,7 @@ void BufferLoggerTester ::LogFileWrite() {
     component.m_file.m_osFile.close();
 
     // Send data
-    this->sendComBuffers(3);
+    this->sendBuffers(3);
 
     // Check events
     // NOTE(mereweth) - not throttled; 3 more events
@@ -135,7 +135,7 @@ void BufferLoggerTester ::LogFileValidation() {
     this->component.m_file.m_baseName = Fw::String("LogFileValidation");
 
     // Send data
-    this->sendComBuffers(1);
+    this->sendBuffers(1);
     // Remove permission to buf directory
     (void)system("chmod -w buf");
     // Send close file command
@@ -146,7 +146,7 @@ void BufferLoggerTester ::LogFileValidation() {
     Fw::String fileName;
     fileName.format("%s%s%s", this->component.m_file.m_prefix.toChar(), this->component.m_file.m_baseName.toChar(),
                     this->component.m_file.m_suffix.toChar());
-    ASSERT_EVENTS_BL_LogFileClosed(0, fileName.toChar());
+    ASSERT_EVENTS_BL_LogFileClosed(0,fileName.toChar());
     Os::ValidatedFile validatedFile(fileName.toChar());
     const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
     ASSERT_EVENTS_BL_LogFileValidationError(0, hashFileName.toChar(), Os::ValidateFile::VALIDATION_FILE_NO_PERMISSION);

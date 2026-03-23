@@ -50,7 +50,7 @@ class CloseFileTester : public Logging::BufferLoggerTester {
         this->component.m_file.m_baseName = Fw::String("CloseFileTester");
         ASSERT_EVENTS_SIZE(0);
         this->sendCloseFileCommands(3);
-        this->sendComBuffers(3);
+        this->sendBuffers(3);
         this->sendCloseFileCommands(3);
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_BL_LogFileClosed_SIZE(1);
@@ -129,7 +129,10 @@ class SendBuffersTester : public Logging::BufferLoggerTester {
 };
 
 class ComInTester : public SendBuffersTester {
-    void sendBuffers(const U32 n) { this->sendComBuffers(n); }
+  protected:
+    void sendBuffers(const U32 n) override { BufferLoggerTester::sendBuffers(n); }
+
+  public:
 };
 
 void BufferLoggerTester ::ComIn() {
@@ -149,7 +152,7 @@ void BufferLoggerTester ::BufferSendIn() {
 class OnOffTester : Logging::BufferLoggerTester {
   private:
     //! Send data
-    void sendData() { this->sendComBuffers(MAX_ENTRIES_PER_FILE); }
+    void sendData() { this->sendBuffers(MAX_ENTRIES_PER_FILE); }
 
   public:
     //! Set the state
