@@ -46,6 +46,8 @@ jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
+    env:
+      CI_CONFIG_FILE: ${{ inputs.ci_config_file }}
     steps:
       - name: "Make Space"
         uses: nasa/fprime-actions/make-space@devel
@@ -58,7 +60,7 @@ jobs:
           stage: build
       - name: "Build Binary"
         run: |
-          CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
+          CCACHE_DISABLE=1 fprime-ci -c ${CI_CONFIG_FILE} --add-stage build
       - name: Archive Results
         uses: actions/upload-artifact@v4
         with:
@@ -68,6 +70,8 @@ jobs:
     needs: build
     name: "Integration Tests"
     runs-on: ${{ inputs.runs_on_int }}
+    env:
+      CI_CONFIG_FILE: ${{ inputs.ci_config_file }}
     steps:
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
@@ -82,4 +86,4 @@ jobs:
           name: archive.tar.gz
       - name: "Integration tests"
         run: |
-            fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
+            fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build

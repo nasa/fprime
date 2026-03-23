@@ -64,6 +64,9 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
     U8* data = nullptr;
     U8* heap_pointer = nullptr;
 
+    // Prevent integer overflow when computing allocation size (depth * sizeof(FwSizeType))
+    FW_ASSERT(depth < std::numeric_limits<FwSizeType>::max() / sizeof(FwSizeType));
+
     // Allocate indices list and construct it when valid
     size = depth * sizeof(FwSizeType);
     allocation = allocator.allocate(identifier, size, alignof(FwSizeType));

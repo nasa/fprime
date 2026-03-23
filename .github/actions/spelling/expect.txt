@@ -13,6 +13,8 @@ ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
+Aos
+APacket
 apid
 APIDOCS
 APPENDFILE
@@ -41,6 +43,7 @@ Bies
 binaryfile
 BINDIR
 bitfield
+Bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -160,6 +163,7 @@ deframe
 deframed
 deframer
 deframing
+Deinitialization
 deployables
 DEPRECATEDLIST
 deser
@@ -214,6 +218,7 @@ endfunction
 endmacro
 endraw
 enduml
+EPP
 ERRORCHECK
 errornum
 ert
@@ -248,6 +253,9 @@ FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEMANAGERCONFIG
 FILEOPENERROR
+FILETESTER
+FILEWORKER
+FILEWORKERTYPES
 FILEWRITEERROR
 fio
 fle
@@ -288,6 +296,7 @@ getty
 ghprb
 gitmodules
 gmock
+GNC
 Gnd
 gnueabihf
 googletest
@@ -376,6 +385,8 @@ jobrestrictions
 jpl
 jplffs
 jre
+kessler
+kevin
 kermit
 kubiak
 Lammert
@@ -402,6 +413,7 @@ llu
 LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
+Lsb
 lseek
 LTK
 lvar
@@ -434,6 +446,7 @@ MML
 modbus
 MOVEFILE
 Mpu
+Msb
 msc
 mscfile
 mseconds
@@ -444,7 +457,9 @@ multiarch
 multitool
 mutexattr
 Mutexed
+muxed
 mycompany
+myos
 nasafprime
 nbits
 ncsl
@@ -455,6 +470,9 @@ NODELABEL
 noinline
 NOLINT
 NOLINTNEXTLINE
+nominaldne
+nominalread
+nominalwrite
 noparent
 norecords
 NOSPEC
@@ -481,7 +499,7 @@ optin
 optind
 orgslist
 ortega
-OSAL
+osal
 ostate
 OSTIME
 otherside
@@ -509,6 +527,8 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+pdu
+Peet
 penv
 PERLMOD
 PHASERMEMBEROUT
@@ -554,12 +574,13 @@ ptbool
 ptf
 pthread
 ptrt
-Pvn
+pvn
 qch
 qhelpgenerator
 QHG
 qhp
 qsf
+racheljt
 RAII
 randtbl
 raspberrypi
@@ -590,6 +611,7 @@ rhel
 RHH
 Rizvi
 ROOTDIR
+rowspan
 rpi
 rptr
 SAlias
@@ -602,6 +624,7 @@ scid
 scm
 sdd
 sdiv
+sdls
 searchdata
 SENDPARTIAL
 seqgen
@@ -695,6 +718,9 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+testwrite
+testwriteoffset
+tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
@@ -702,6 +728,7 @@ timebase
 timerfd
 timetag
 timeval
+timcanham
 Tinternal
 tions
 tjh
@@ -724,6 +751,7 @@ TPP
 trinomials
 tts
 Tumbar
+tumbar
 typedef
 typedef'ed
 uart
@@ -740,12 +768,15 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+USLP
 valdaarhun
 valgrind
 vbai
+vc
 VCA
 vcid
 VCP
+vcs
 VFILE
 VID
 vla

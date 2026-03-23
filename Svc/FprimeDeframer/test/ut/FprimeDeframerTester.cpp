@@ -148,7 +148,7 @@ void FprimeDeframerTester::injectChecksum(U8* data, FwSizeType size) {
     Utils::Hash crc_calculator;
     Utils::HashBuffer crc_result;
     crc_calculator.update(data, size - 4);
-    crc_calculator.final(crc_result);
+    crc_calculator.finalize(crc_result);
     // Inject the checksum into the data
     for (FwSizeType i = 0; i < 4; i++) {
         data[size - 4 + i] = static_cast<U8>(crc_result.asBigEndianU32() >> (8 * (3 - i)) & 0xFF);

@@ -58,6 +58,7 @@ The diagram below shows the `Svc::ComQueue` component.
 
 ### 4.2. State
 `Svc::ComQueue` maintains the following state:
+
 1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
 2. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
 3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
@@ -81,6 +82,7 @@ Buffers are queued when in `WAITING` state.
 
 ### 4.3 Model Configuration
 `Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
+
 1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comPacketQueueIn` port array.
 2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `bufferQueueIn` port array.
 
@@ -101,6 +103,7 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
 #### 4.5.1 bufferQueueIn
 The `bufferQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
 It does the following:
+
 1. Ensures that the port number is between zero and the value of the buffer size 
 2. Enqueue the buffer onto the `m_queues` instance 
 3. Returns a warning if `m_queues` is full
@@ -111,6 +114,7 @@ is added to the queue.
 #### 4.5.2 comPacketQueueIn
 The `comPacketQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
 It does the following:
+
 1. Ensures that the port number is between zero and the value of the com buffer size
 2. Enqueue the com buffer onto the `m_queues` instance
 3. Returns a warning if `m_queues` is full
@@ -136,16 +140,18 @@ The `run` port handler does the following:
 
 ### 4.7 Events
 
-| Name           | Description                                                                     |
-|----------------|---------------------------------------------------------------------------------|
-| QueueOverflow  | WARNING_HI event triggered when a queue can no longer hold the incoming message |
+| Name                  | Description                                                        |
+|-----------------------|--------------------------------------------------------------------|
+| QueueOverflow         | WARNING_HI event triggered when a queue discards data              |
+| QueuePriorityChanged  | ACTIVITY_HI event triggered when a user changes a queue's priority |
 
 ### 4.8 Commands
 
-| Name             | Description                                                                                     |
-|------------------|-------------------------------------------------------------------------------------------------|
-| FLUSH_QUEUE      | Flushes all queued items from the specified queue type and index, returning ownership of any buffers.      |
-| FLUSH_ALL_QUEUES | Flushes all queued items from all queues, returning ownership of any buffers. |
+| Name               | Description                                                                                           |
+|--------------------|-------------------------------------------------------------------------------------------------------|
+| FLUSH_QUEUE        | Flushes all queued items from the specified queue type and index, returning ownership of any buffers. |
+| FLUSH_ALL_QUEUES   | Flushes all queued items from all queues, returning ownership of any buffers.                         |
+| SET_QUEUE_PRIORITY | Changes a queue's priority and re-sorts all queues                           |
 
 
 ### 4.9 Helper Functions
@@ -157,13 +163,25 @@ Stores the com buffer message, sends the com buffer message on the output port, 
 Stores the buffer message, sends the buffer message on the output port, and then sets the send state to waiting.
 
 #### 4.9.3 processQueue
-In a bounded loop that is constrained by the total size of the queue that contains both 
+In a bounded loop that is constrained by the total size of the queue that contains both
 buffer and com buffer data, do:
 
-   1. Check if there are any items on the queue, and continue with the loop if there are none. 
+   1. Check if there are any items on the queue, and continue with the loop if there are none.
    2. Store the entry point of the queue based on the index of the array that contains the prioritized data.
    3. Compare the entry index with the value of the size of the queue that contains com buffer data.
       1. If it is less than the size value, then invoke the sendComBuffer function.
-      2. If it is greater than the size value, then invoke the sendBuffer function. 
+      2. If it is greater than the size value, then invoke the sendBuffer function.
    4. Break out of the loop, but enter a new loop that starts at the next entry and linearly swap the remaining items in
 the prioritized list.
+
+#### 4.9.4 enqueue
+
+Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`.
+
+#### 4.9.5 drainQueue
+
+Pops all messages out of the queue at queueIndex, `index`.
+
+#### 4.9.6 getQueueNum
+
+Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one.

@@ -94,7 +94,7 @@ TEST_F(NonPrimitiveTest, Default) {
     Primitive defaultStruct2(true, 0, 0, 1.16);
 
     // Constants
-    ASSERT_EQ(NonPrimitive::SERIALIZED_SIZE, Fw::StringBase::STATIC_SERIALIZED_SIZE(80) + StructEnum::SERIALIZED_SIZE +
+    ASSERT_EQ(NonPrimitive::SERIALIZED_SIZE, Fw::String::SERIALIZED_SIZE + StructEnum::SERIALIZED_SIZE +
                                                  StructArray::SERIALIZED_SIZE + StructArrAlias::SERIALIZED_SIZE +
                                                  Primitive::SERIALIZED_SIZE + StructSAlias::SERIALIZED_SIZE +
                                                  (3 * sizeof(U32)) + (3 * Primitive::SERIALIZED_SIZE));
@@ -245,8 +245,8 @@ TEST_F(NonPrimitiveTest, Serialization) {
     NonPrimitive sCopy;
 
     U32 stringSerializedSize = static_cast<U32>(testString.length() + sizeof(FwBuffSizeType));
-    U32 serializedSize = static_cast<U32>(NonPrimitive::SERIALIZED_SIZE - Fw::StringBase::STATIC_SERIALIZED_SIZE(80) +
-                                          stringSerializedSize);
+    U32 serializedSize =
+        static_cast<U32>(NonPrimitive::SERIALIZED_SIZE - Fw::String::SERIALIZED_SIZE + stringSerializedSize);
     Fw::SerializeStatus status;
 
     // Test successful serialization

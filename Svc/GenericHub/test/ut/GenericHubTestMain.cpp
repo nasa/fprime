@@ -29,6 +29,11 @@ TEST(Nominal, TestTelemetry) {
     tester.test_telemetry();
 }
 
+TEST(Nominal, TestCommands) {
+    Svc::GenericHubTester tester;
+    tester.test_commands();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -26,7 +26,7 @@ class Hash {
     // ----------------------------------------------------------------------
     // Types
     // ----------------------------------------------------------------------
-  public:
+
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -39,7 +39,6 @@ class Hash {
     //!
     ~Hash();
 
-  public:
     // ----------------------------------------------------------------------
     // Public static methods
     // ----------------------------------------------------------------------
@@ -50,7 +49,6 @@ class Hash {
     //! \param buffer: filled with resulting hash value
     static void hash(const void* data, const FwSizeType len, HashBuffer& buffer);
 
-  public:
     // ----------------------------------------------------------------------
     // Public instance methods
     // ----------------------------------------------------------------------
@@ -71,12 +69,12 @@ class Hash {
 
     //! Finalize an incremental computation and return the result
     //!
-    void final(HashBuffer& buffer  //! The result
+    void finalize(HashBuffer& buffer  //! The result
     );
 
     //! Finalize an incremental computation and return the result
     //!
-    void final(U32& hashvalue);
+    void finalize(U32& hashvalue);
 
     //! Get the file extension for the supported hash type
     //! E.g., could return "SHA256"

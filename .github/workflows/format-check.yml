@@ -45,3 +45,15 @@ jobs:
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS
         shell: bash
+
+      - name: "Comment on PR in case of Failure"
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Formatting checks failed on the submitted code. To fix, you can run this command on your branch:\n\n```bash\ngit diff --name-only devel...HEAD | fprime-util format --stdin\n```'
+            })

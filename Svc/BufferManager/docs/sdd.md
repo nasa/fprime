@@ -145,6 +145,7 @@ namespace Svc {
 ### 4.2 Runtime Setup
 
 To configure an instance of `BufferManager`, the following needs to be supplied to its `setup()` method:
+
 - `mgrID`: A unique manager ID for buffer checking
 - `memID`: ID passed to the memory allocator
 - `allocator`: An `Fw::MemAllocator` instance
@@ -155,6 +156,7 @@ The `setup` method configures the buffer bins, allocates memory for all buffers,
 ### 4.3 Buffer Bins Configuration
 
 Buffer bins are defined using the `BufferBins` structure, which contains an array of `BufferBin` entries. Each bin entry specifies:
+
 - `bufferSize`: The size of each buffer in the bin (in bytes)
 - `numBuffers`: number of buffers of `bufferSize` to allocate for this bin
 

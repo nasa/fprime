@@ -69,6 +69,7 @@ core
 *TopologyAppAi_IDTableLog.txt
 
 .vscode
+.windsurf
 py_dict
 .settings
 build-fprime-automatic*

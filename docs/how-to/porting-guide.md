@@ -17,5 +17,6 @@ developed to run on a new platform:
 
 4.  OSAL support. Should a non-Linux operating system be needed to run
     on the platform, OSAL support files must be developed.
+    See [How-To: Implement an OS Abstraction Layer](implement-osal.md) for guidance.
 
 Once these areas are implemented, the user should be able to run on a new system or platform.
