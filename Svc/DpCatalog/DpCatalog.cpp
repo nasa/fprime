@@ -1402,13 +1402,105 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
 
     // Check if DP already exists in the catalog tree
     DpBtreeNode* existingNode = this->findTreeNode(id, tSec, tSub);
+
+    // If DP is already in catalog, update its priority instead
     if (existingNode != nullptr) {
-        this->log_WARNING_LO_DpAlreadyInCatalog(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        // Determine the new priority
+        U32 newPriority;
+        if (priorityOverride == 0xFFFFFFFF) {
+            // Need to read file to get its priority
+            Os::File dpFile;
+            U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+            Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+            Fw::DpContainer container;
+
+            Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
+            if (stat != Os::File::OP_OK) {
+                this->log_WARNING_HI_FileOpenError(dpFileName, stat);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+            }
+
+            FwSizeType size = Fw::DpContainer::Header::SIZE;
+            stat = dpFile.read(dpBuff, size);
+            dpFile.close();
+
+            if (stat != Os::File::OP_OK) {
+                this->log_WARNING_HI_FileReadError(dpFileName, stat);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+            }
+
+            if (size != Fw::DpContainer::Header::SIZE) {
+                this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+            }
+
+            container.setBuffer(hdrBuff);
+            Fw::SerializeStatus desStat = container.deserializeHeader();
+            if (desStat != Fw::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+            }
+
+            newPriority = container.getPriority();
+        } else {
+            newPriority = priorityOverride;
+        }
+
+        // Get old priority
+        U32 oldPriority = existingNode->entry.record.get_priority();
+
+        // If priority is the same, no work needed
+        if (oldPriority == newPriority) {
+            this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            return;
+        }
+
+        // Copy the entry before removing from tree
+        DpStateEntry updatedEntry = existingNode->entry;
+
+        // If this was our current exploration node, move to parent or right
+        if (this->m_currentNode == existingNode) {
+            if (existingNode->right != nullptr) {
+                this->m_currentNode = existingNode->right;
+            } else {
+                this->m_currentNode = existingNode->parent;
+            }
+        }
+
+        // Remove from tree (but don't update counters - we're re-inserting)
+        this->deallocateNode(existingNode);
+
+        // Update the priority in the entry
+        updatedEntry.record.set_priority(newPriority);
+
+        // Re-insert with updated priority
+        DpBtreeNode* newNode = this->insertEntry(updatedEntry);
+        if (newNode == nullptr) {
+            this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // Update the state file entry if catalog is built
+        if (this->m_catalogBuilt) {
+            FwSignedSizeType stateIndex = this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
+            if (stateIndex >= 0) {
+                this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
+                this->pruneAndWriteStateFile();
+            }
+        }
+
+        this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
-    // Read the DP file to get metadata
+    // DP not in catalog - read the DP file to get metadata and add it
     Os::File dpFile;
     U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
     Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));

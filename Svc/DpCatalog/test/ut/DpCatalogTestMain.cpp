@@ -369,6 +369,11 @@ TEST(RetransmitDp, AlreadyInCatalog) {
     tester.test_RetransmitDp_AlreadyInCatalog();
 }
 
+TEST(RetransmitDp, AlreadyInCatalog_FilePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_AlreadyInCatalog_FilePriority();
+}
+
 TEST(RetransmitDp, CurrentlyTransmitting) {
     Svc::DpCatalogTester tester;
     tester.test_RetransmitDp_CurrentlyTransmitting();

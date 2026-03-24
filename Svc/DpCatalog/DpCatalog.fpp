@@ -504,15 +504,17 @@ module Svc {
       id 54 \
       format "Re-added DP file {} for retransmission with priority {}"
 
-    @ DP already in catalog
-    event DpAlreadyInCatalog(
+    @ DP priority updated for pending transmission
+    event DpPriorityUpdated(
                           $id: FwDpIdType @< The ID
                           tSec: U32 @< time seconds
                           tSub: U32 @< time subseconds
+                          oldPriority: U32 @< old priority
+                          newPriority: U32 @< new priority
       ) \
-      severity warning low \
+      severity activity high \
       id 55 \
-      format "DP {}_{}_{}already in catalog"
+      format "Updated priority for pending DP {}_{}_{}from {} to {}"
 
     @ DP currently being transmitted
     event DpRetransmitInProgress(

@@ -1344,7 +1344,7 @@ void DpCatalogTester::test_RetransmitDp_AlreadyInCatalog() {
     this->makeDpDir(dir.toChar());
 
     Fw::Time time1(1000, 100);
-    // Generate DP with UNTRANSMITTED state (still in catalog)
+    // Generate DP with UNTRANSMITTED state (still in catalog) with priority 10
     this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
 
     Fw::MallocAllocator alloc;
@@ -1359,14 +1359,62 @@ void DpCatalogTester::test_RetransmitDp_AlreadyInCatalog() {
 
     this->clearHistory();
 
-    // Try to retransmit DP that's already in catalog
+    // Retransmit DP that's already in catalog with new priority
+    this->sendCmd_RETRANSMIT_DP(0, 11, 1, 1000, 100, 5);
+    this->component.doDispatch();
+
+    // Should succeed and update priority
+    ASSERT_EVENTS_DpPriorityUpdated_SIZE(1);
+    ASSERT_EVENTS_DpPriorityUpdated(0, 1, 1000, 100, 10, 5);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify DP priority was updated in catalog
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 5);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_RetransmitDp_AlreadyInCatalog_FilePriority() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitAlreadyFile";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    // Generate DP with UNTRANSMITTED state (still in catalog) with priority 10
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Retransmit DP that's already in catalog using file priority (0xFFFFFFFF)
+    // Since file has priority 10 and catalog has priority 10, should be no change
     this->sendCmd_RETRANSMIT_DP(0, 11, 1, 1000, 100, 0xFFFFFFFF);
     this->component.doDispatch();
 
-    // Should fail
-    ASSERT_EVENTS_DpAlreadyInCatalog_SIZE(1);
+    // Should succeed with same priority (no actual change)
+    ASSERT_EVENTS_DpPriorityUpdated_SIZE(1);
+    ASSERT_EVENTS_DpPriorityUpdated(0, 1, 1000, 100, 10, 10);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify DP priority unchanged in catalog
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 10);
 
     // Cleanup
     this->component.shutdown();

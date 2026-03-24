@@ -162,6 +162,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitDp_Success_FilePriority();
     void test_RetransmitDp_Success_OverridePriority();
     void test_RetransmitDp_AlreadyInCatalog();
+    void test_RetransmitDp_AlreadyInCatalog_FilePriority();
     void test_RetransmitDp_CurrentlyTransmitting();
     void test_RetransmitDp_AfterTransmission();
 };
