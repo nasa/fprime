@@ -935,6 +935,58 @@ DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
     return found;
 }
 
+DpCatalog::DpBtreeNode* DpCatalog::findTreeNode(FwDpIdType id, U32 tSec, U32 tSub) {
+    if (this->m_dpTree == nullptr) {
+        return nullptr;
+    }
+
+    // Since tree is not sorted by ID+timestamp alone, we must traverse entire tree
+    // Use iterative depth-first search with explicit stack to avoid recursion
+
+    DpBtreeNode* stack[DP_MAX_FILES];
+    FwSizeType stackTop = 0;
+    stack[stackTop++] = this->m_dpTree;
+
+    while (stackTop > 0) {
+        DpBtreeNode* current = stack[--stackTop];
+
+        // Check if this node matches
+        if (current->entry.record.get_id() == id &&
+            current->entry.record.get_tSec() == tSec &&
+            current->entry.record.get_tSub() == tSub) {
+            return current;
+        }
+
+        // Add children to stack for exploration
+        if (current->right != nullptr && stackTop < DP_MAX_FILES) {
+            stack[stackTop++] = current->right;
+        }
+        if (current->left != nullptr && stackTop < DP_MAX_FILES) {
+            stack[stackTop++] = current->left;
+        }
+    }
+
+    return nullptr;
+}
+
+void DpCatalog::removeFromStateFile(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir) {
+    FW_ASSERT(this->m_stateFileData);
+
+    // Search state file data for matching entry and mark as unused
+    for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
+        if (this->m_stateFileData[entry].used &&
+            this->m_stateFileData[entry].entry.dir == dir &&
+            this->m_stateFileData[entry].entry.record.get_id() == id &&
+            this->m_stateFileData[entry].entry.record.get_tSec() == tSec &&
+            this->m_stateFileData[entry].entry.record.get_tSub() == tSub) {
+
+            this->m_stateFileData[entry].used = false;
+            this->m_stateFileData[entry].visited = false;
+            return;
+        }
+    }
+}
+
 bool DpCatalog::checkInit() {
     if (not this->m_initialized) {
         this->log_WARNING_HI_ComponentNotInitialized();
@@ -1137,6 +1189,88 @@ void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->resetBinaryTree();
     this->resetStateFileData();
 
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Search all managed directories for the file
+    Fw::FileNameString dpFileName;
+    FwSizeType foundDir = DP_MAX_DIRECTORIES;
+
+    for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
+        dpFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), id, tSec, tSub);
+
+        // Check if file exists
+        FwSizeType fileSize = 0;
+        Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
+        if (sizeStat == Os::FileSystem::OP_OK) {
+            foundDir = dir;
+            break;
+        }
+    }
+
+    // File not found in any managed directory
+    if (foundDir == DP_MAX_DIRECTORIES) {
+        this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Check if this DP is currently being transmitted
+    if (this->m_currentXmitNode != nullptr &&
+        this->m_currentXmitNode->entry.record.get_id() == id &&
+        this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
+        this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
+        this->log_WARNING_LO_DpDeleteXmitInProgress(dpFileName);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Search and remove from binary tree if present
+    DpBtreeNode* node = this->findTreeNode(id, tSec, tSub);
+    if (node != nullptr) {
+        // Update counters before deallocating
+        this->m_pendingFiles--;
+        this->m_pendingDpBytes -= node->entry.record.get_size();
+
+        // If this was our current exploration node, move to parent or right
+        if (this->m_currentNode == node) {
+            if (node->right != nullptr) {
+                this->m_currentNode = node->right;
+            } else {
+                this->m_currentNode = node->parent;
+            }
+        }
+
+        // Remove from tree
+        this->deallocateNode(node);
+    }
+
+    // Remove from state file data if present
+    if (this->m_catalogBuilt) {
+        this->removeFromStateFile(id, tSec, tSub, static_cast<FwIndexType>(foundDir));
+    }
+
+    // Delete the physical file
+    Os::FileSystem::Status status = Os::FileSystem::removeFile(dpFileName.toChar());
+    if (status != Os::FileSystem::OP_OK) {
+        this->log_WARNING_HI_DpDeleteError(dpFileName, status);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Update state file if catalog was modified
+    if (node != nullptr && this->m_catalogBuilt) {
+        this->pruneAndWriteStateFile();
+    }
+
+    this->log_ACTIVITY_HI_DpDeleted(dpFileName);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

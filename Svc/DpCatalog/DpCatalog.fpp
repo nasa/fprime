@@ -94,6 +94,14 @@ module Svc {
     async command CLEAR_CATALOG \
       opcode 3
 
+    @ Delete a data product from catalog and filesystem
+    async command DELETE_DP (
+                                    $id: FwDpIdType @< The ID of the data product
+                                    tSec: U32 @< Generation time in seconds
+                                    tSub: U32 @< Generation time in subseconds
+                                  ) \
+      opcode 4
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -401,6 +409,41 @@ module Svc {
       severity warning high \
       id 46 \
       format "Cannot Transmit a Catalog before Building"
+
+    @ DP deleted successfully
+    event DpDeleted(
+                          file: string size FileNameStringSize @< The file
+      ) \
+      severity activity high \
+      id 47 \
+      format "Deleted DP file {}"
+
+    @ DP file not found
+    event DpNotFound(
+                            $id: FwDpIdType @< The ID
+                            tSec: U32 @< time seconds
+                            tSub: U32 @< time subseconds
+    ) \
+      severity warning low \
+      id 48 \
+      format "DP {}_{}_{} not found"
+
+    @ Cannot delete DP currently being transmitted
+    event DpDeleteXmitInProgress(
+                          file: string size FileNameStringSize @< The file
+      ) \
+      severity warning low \
+      id 49 \
+      format "Cannot delete DP {} while it is being transmitted"
+
+    @ File deletion error
+    event DpDeleteError(
+                          file: string size FileNameStringSize @< The file
+                          stat: I32 @< status
+      ) \
+      severity warning high \
+      id 50 \
+      format "Error deleting DP file {}, stat: {}"
 
     # ----------------------------------------------------------------------
     # Telemetry

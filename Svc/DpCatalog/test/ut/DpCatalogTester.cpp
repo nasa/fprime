@@ -744,4 +744,263 @@ void DpCatalogTester ::test_BadFileDone() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_DeleteDp_NotFound() {
+    // Create some DPs and build catalog
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteNotFound";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    this->clearHistory();
+
+    // Try to delete a non-existent DP
+    this->sendCmd_DELETE_DP(0, 11, 999, 9999, 9999);
+    this->component.doDispatch();
+
+    // Should get DpNotFound event and EXECUTION_ERROR response
+    ASSERT_EVENTS_DpNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_DeleteDp_Success() {
+    // Create 3 DPs and build catalog
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteSuccess";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(1000, 200);
+    Fw::Time time3(1000, 300);
+
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 10, time2, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(3, 10, time3, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    this->clearHistory();
+
+    // Delete the middle DP (ID=2)
+    this->sendCmd_DELETE_DP(0, 11, 2, 1000, 200);
+    this->component.doDispatch();
+
+    // Should get DpDeleted event and OK response
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify file no longer exists
+    Fw::String fileName;
+    fileName.format(DP_FILENAME_FORMAT, dir.toChar(), 2, 1000, 200);
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status stat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
+    ASSERT_NE(stat, Os::FileSystem::OP_OK);
+
+    // Verify counters updated (should have 2 pending files now)
+    ASSERT_EQ(this->component.m_pendingFiles, 2);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(3, time3, dir.toChar());
+}
+
+void DpCatalogTester::test_DeleteDp_CurrentlyTransmitting() {
+    // Create 2 DPs and start transmission
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteXmit";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(1000, 200);
+
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 10, time2, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Start transmission
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();  // Process START_XMIT command
+
+    // Verify first file is being transmitted
+    ASSERT_from_fileOut_SIZE(1);
+    // m_currentXmitNode should be set (test class is friend, can access)
+    ASSERT_TRUE(this->component.m_currentXmitNode != nullptr);
+
+    // Try to delete the currently transmitting DP (ID=1) before fileDone is processed
+    this->sendCmd_DELETE_DP(0, 12, 1, 1000, 100);
+    // Process queued messages: fileDone and DELETE_DP
+    this->component.doDispatch();  // Process fileDone (completes file 1, starts file 2)
+    this->component.doDispatch();  // Process DELETE_DP command (tries to delete file 1)
+
+    // Note: file 1 has completed by the time DELETE_DP is processed,
+    // so it's no longer "currently transmitting". File 2 is now current.
+    // Therefore, the deletion should SUCCEED since file 1 is done.
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(2);  // START_XMIT and DELETE_DP responses
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::OK);
+
+    // Verify file no longer exists (was deleted)
+    Fw::String fileName;
+    fileName.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status stat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
+    ASSERT_NE(stat, Os::FileSystem::OP_OK);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(2, time2, dir.toChar());
+}
+
+void DpCatalogTester::test_DeleteDp_DuringTransmission() {
+    // Create 3 DPs and start transmission
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteDuring";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(1000, 200);
+    Fw::Time time3(1000, 300);
+
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 10, time2, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(3, 10, time3, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Start transmission
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();  // Process START_XMIT and send first file
+
+    // First file should be sent
+    ASSERT_from_fileOut_SIZE(1);
+
+    // Delete third DP while first is still pending (fileDone not yet processed)
+    this->sendCmd_DELETE_DP(0, 12, 3, 1000, 300);
+    // Process all queued messages: fileDone for file 1, DELETE_DP command
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // Should succeed - verify event and response
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    // 2 responses: START_XMIT and DELETE_DP
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::OK);
+
+    // Verify file 3 no longer exists
+    Fw::String fileName;
+    fileName.format(DP_FILENAME_FORMAT, dir.toChar(), 3, 1000, 300);
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status stat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
+    ASSERT_NE(stat, Os::FileSystem::OP_OK);
+
+    // Continue transmission - should only transmit 2 files total (not 3)
+    // File 1 already transmitted, now transmit file 2
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // Should have transmitted only 2 files (1 and 2, not 3)
+    ASSERT_from_fileOut_SIZE(2);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(2, time2, dir.toChar());
+    // Note: file 3 already deleted by DELETE_DP command
+}
+
+void DpCatalogTester::test_DeleteDp_AlreadyTransmitted() {
+    // Create a DP with TRANSMITTED state
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteTransmitted";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+
+    // Generate DP with TRANSMITTED state
+    this->genDP(1, 10, time1, 100, Fw::DpState::TRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Delete the transmitted DP - it won't be in the tree but file exists
+    this->sendCmd_DELETE_DP(0, 11, 1, 1000, 100);
+    this->component.doDispatch();
+
+    // Should succeed (file removed even though not in catalog tree)
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify file no longer exists
+    Fw::String fileName;
+    fileName.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status stat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
+    ASSERT_NE(stat, Os::FileSystem::OP_OK);
+
+    // Cleanup
+    this->component.shutdown();
+}
+
 }  // namespace Svc

@@ -117,6 +117,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command DELETE_DP
+    //!
+    //! Delete a data product from catalog and filesystem
+    void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,            //!< The command sequence number
+                              FwDpIdType id,         //!< The ID of the data product
+                              U32 tSec,              //!< Generation time in seconds
+                              U32 tSub               //!< Generation time in subseconds
+                              ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -239,6 +249,20 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief send a cmdResponse to the start xmit cmd if user waited
     /// @param response the command response for pass/fail
     void dispatchWaitedResponse(Fw::CmdResponse response);
+
+    /// @brief Search the binary tree for an entry matching id and timestamp
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @return pointer to node if found, nullptr otherwise
+    DpBtreeNode* findTreeNode(FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief Remove an entry from the state file data
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param dir Directory index
+    void removeFromStateFile(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir);
 
     // ----------------------------------
     // Private data

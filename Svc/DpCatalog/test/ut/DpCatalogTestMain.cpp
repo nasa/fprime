@@ -299,6 +299,31 @@ TEST(NominalManual, BadFileDone) {
     tester.test_BadFileDone();
 }
 
+TEST(DeleteDp, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_NotFound();
+}
+
+TEST(DeleteDp, Success) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_Success();
+}
+
+TEST(DeleteDp, CurrentlyTransmitting) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_CurrentlyTransmitting();
+}
+
+TEST(DeleteDp, DuringTransmission) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_DuringTransmission();
+}
+
+TEST(DeleteDp, AlreadyTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_AlreadyTransmitted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
