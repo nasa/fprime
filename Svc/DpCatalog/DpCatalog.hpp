@@ -264,6 +264,14 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param dir Directory index
     void removeFromStateFile(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir);
 
+    /// @brief Find a state file entry index by ID and timestamp
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param dir Directory index
+    /// @return index if found, -1 otherwise
+    FwSignedSizeType findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir);
+
     // ----------------------------------
     // Private data
     // ----------------------------------

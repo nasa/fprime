@@ -219,19 +219,38 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
     return Fw::CmdResponse::OK;
 }
 
-void DpCatalog::getFileState(DpStateEntry& entry) {
+FwSignedSizeType DpCatalog::findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir) {
     FW_ASSERT(this->m_stateFileData);
-    // search the file state data for the entry
-    for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
-        // check for a match (compare dir, then id, priority, & time)
-        if (this->m_stateFileData[line].entry.dir == entry.dir && this->m_stateFileData[line].entry == entry) {
-            // update the transmitted state
-            entry.record.set_state(this->m_stateFileData[line].entry.record.get_state());
-            entry.record.set_blocks(this->m_stateFileData[line].entry.record.get_blocks());
-            // mark it as visited for later pruning if necessary
-            this->m_stateFileData[line].visited = true;
-            return;
+
+    // Search state file data for matching entry
+    for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
+        if (this->m_stateFileData[entry].used &&
+            this->m_stateFileData[entry].entry.dir == dir &&
+            this->m_stateFileData[entry].entry.record.get_id() == id &&
+            this->m_stateFileData[entry].entry.record.get_tSec() == tSec &&
+            this->m_stateFileData[entry].entry.record.get_tSub() == tSub) {
+            return static_cast<FwSignedSizeType>(entry);
         }
+    }
+
+    return -1;  // Not found
+}
+
+void DpCatalog::getFileState(DpStateEntry& entry) {
+    FwSignedSizeType index = this->findStateFileEntryIndex(
+        entry.record.get_id(),
+        entry.record.get_tSec(),
+        entry.record.get_tSub(),
+        entry.dir
+    );
+
+    if (index >= 0) {
+        FwSizeType idx = static_cast<FwSizeType>(index);
+        // update the transmitted state
+        entry.record.set_state(this->m_stateFileData[idx].entry.record.get_state());
+        entry.record.set_blocks(this->m_stateFileData[idx].entry.record.get_blocks());
+        // mark it as visited for later pruning if necessary
+        this->m_stateFileData[idx].visited = true;
     }
 }
 
@@ -970,20 +989,12 @@ DpCatalog::DpBtreeNode* DpCatalog::findTreeNode(FwDpIdType id, U32 tSec, U32 tSu
 }
 
 void DpCatalog::removeFromStateFile(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir) {
-    FW_ASSERT(this->m_stateFileData);
+    FwSignedSizeType index = this->findStateFileEntryIndex(id, tSec, tSub, dir);
 
-    // Search state file data for matching entry and mark as unused
-    for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
-        if (this->m_stateFileData[entry].used &&
-            this->m_stateFileData[entry].entry.dir == dir &&
-            this->m_stateFileData[entry].entry.record.get_id() == id &&
-            this->m_stateFileData[entry].entry.record.get_tSec() == tSec &&
-            this->m_stateFileData[entry].entry.record.get_tSub() == tSub) {
-
-            this->m_stateFileData[entry].used = false;
-            this->m_stateFileData[entry].visited = false;
-            return;
-        }
+    if (index >= 0) {
+        FwSizeType idx = static_cast<FwSizeType>(index);
+        this->m_stateFileData[idx].used = false;
+        this->m_stateFileData[idx].visited = false;
     }
 }
 
