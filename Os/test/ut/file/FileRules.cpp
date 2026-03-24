@@ -97,7 +97,7 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
     SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
-    const FwSizeType bound = std::min(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
+    const FwSizeType bound = std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
         this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));

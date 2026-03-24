@@ -74,7 +74,7 @@ QueueInterface::Status InjectableStlQueue::send(const U8* buffer,
     message.size = size;
     message.order = InjectableStlQueueHandle::Message::order_counter++;
     this->m_handle.m_storage.push(message);
-    this->m_handle.m_high_water = std::max(this->m_handle.m_high_water, this->m_handle.m_storage.size());
+    this->m_handle.m_high_water = std::max(this->m_handle.m_high_water, static_cast<FwSizeType>(this->m_handle.m_storage.size()));
     return QueueInterface::Status::OP_OK;
 }
 
