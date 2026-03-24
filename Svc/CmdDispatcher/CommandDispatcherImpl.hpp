@@ -14,6 +14,7 @@
 #define COMMANDDISPATCHERIMPL_HPP_
 
 #include <Fw/DataStructures/RedBlackTreeMap.hpp>
+#include <Fw/DataStructures/ArrayMap.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
@@ -163,7 +164,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     };
 
     //! \brief map from command sequence number to pending command state
-    Fw::RedBlackTreeMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
+    Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
     U32 m_seq;  //!< current command sequence number
 
