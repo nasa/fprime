@@ -111,6 +111,15 @@ module Svc {
                                   ) \
       opcode 5
 
+    @ Re-add a transmitted data product to catalog for retransmission
+    async command RETRANSMIT_DP (
+                                    $id: FwDpIdType @< The ID of the data product
+                                    tSec: U32 @< Generation time in seconds
+                                    tSub: U32 @< Generation time in subseconds
+                                    priorityOverride: U32 @< Priority (0xFFFFFFFF = use priority from file)
+                                  ) \
+      opcode 6
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -485,6 +494,35 @@ module Svc {
       severity warning low \
       id 53 \
       format "Cannot change priority of DP {}_{}_{}while it is being transmitted"
+
+    @ DP re-added for retransmission
+    event DpRetransmitted(
+                          file: string size FileNameStringSize @< The file
+                          $priority: U32 @< The priority
+      ) \
+      severity activity high \
+      id 54 \
+      format "Re-added DP file {} for retransmission with priority {}"
+
+    @ DP already in catalog
+    event DpAlreadyInCatalog(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+      ) \
+      severity warning low \
+      id 55 \
+      format "DP {}_{}_{}already in catalog"
+
+    @ DP currently being transmitted
+    event DpRetransmitInProgress(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+      ) \
+      severity warning low \
+      id 56 \
+      format "Cannot retransmit DP {}_{}_{}while it is being transmitted"
 
     # ----------------------------------------------------------------------
     # Telemetry

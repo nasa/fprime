@@ -1360,6 +1360,143 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Search all managed directories for the file
+    Fw::FileNameString dpFileName;
+    FwSizeType foundDir = DP_MAX_DIRECTORIES;
+
+    for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
+        dpFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), id, tSec, tSub);
+
+        // Check if file exists
+        FwSizeType fileSize = 0;
+        Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
+        if (sizeStat == Os::FileSystem::OP_OK) {
+            foundDir = dir;
+            break;
+        }
+    }
+
+    // File not found in any managed directory
+    if (foundDir == DP_MAX_DIRECTORIES) {
+        this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Check if this DP is currently being transmitted
+    if (this->m_currentXmitNode != nullptr &&
+        this->m_currentXmitNode->entry.record.get_id() == id &&
+        this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
+        this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
+        this->log_WARNING_LO_DpRetransmitInProgress(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Check if DP already exists in the catalog tree
+    DpBtreeNode* existingNode = this->findTreeNode(id, tSec, tSub);
+    if (existingNode != nullptr) {
+        this->log_WARNING_LO_DpAlreadyInCatalog(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Read the DP file to get metadata
+    Os::File dpFile;
+    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+    Fw::DpContainer container;
+
+    // Get file size
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
+    if (sizeStat != Os::FileSystem::OP_OK) {
+        this->log_WARNING_HI_FileSizeError(dpFileName, sizeStat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Open file
+    Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileOpenError(dpFileName, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Read DP header
+    FwSizeType size = Fw::DpContainer::Header::SIZE;
+    stat = dpFile.read(dpBuff, size);
+    dpFile.close();
+
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileReadError(dpFileName, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    if (size != Fw::DpContainer::Header::SIZE) {
+        this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Deserialize header
+    container.setBuffer(hdrBuff);
+    Fw::SerializeStatus desStat = container.deserializeHeader();
+    if (desStat != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Create entry for catalog
+    DpStateEntry entry;
+    entry.dir = static_cast<FwIndexType>(foundDir);
+    entry.record.set_id(container.getId());
+    entry.record.set_tSec(container.getTimeTag().getSeconds());
+    entry.record.set_tSub(container.getTimeTag().getUSeconds());
+    entry.record.set_size(static_cast<U64>(fileSize));
+    entry.record.set_state(Fw::DpState::UNTRANSMITTED);
+
+    // Use priority override if provided (0xFFFFFFFF means use file priority)
+    U32 usedPriority;
+    if (priorityOverride == 0xFFFFFFFF) {
+        usedPriority = container.getPriority();
+    } else {
+        usedPriority = priorityOverride;
+    }
+    entry.record.set_priority(usedPriority);
+
+    // Insert entry into catalog tree
+    DpBtreeNode* addedEntry = this->insertEntry(entry);
+    if (addedEntry == nullptr) {
+        this->log_WARNING_HI_DpCatalogFull(entry.record);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Update pending counters
+    this->m_pendingFiles++;
+    this->m_pendingDpBytes += fileSize;
+
+    // Update state file if catalog is built
+    if (this->m_catalogBuilt) {
+        this->appendFileState(entry);
+        this->pruneAndWriteStateFile();
+    }
+
+    this->log_ACTIVITY_HI_DpRetransmitted(dpFileName, usedPriority);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {
     if (this->m_xmitCmdWait) {
         this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, response);

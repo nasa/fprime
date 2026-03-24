@@ -138,6 +138,17 @@ class DpCatalog final : public DpCatalogComponentBase {
                                        U32 newPriority        //!< The new priority value
                                        ) override;
 
+    //! Handler implementation for command RETRANSMIT_DP
+    //!
+    //! Re-add a transmitted data product to catalog for retransmission
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,     //!< The opcode
+                                  U32 cmdSeq,               //!< The command sequence number
+                                  FwDpIdType id,            //!< The ID of the data product
+                                  U32 tSec,                 //!< Generation time in seconds
+                                  U32 tSub,                 //!< Generation time in subseconds
+                                  U32 priorityOverride      //!< Priority override (0xFFFFFFFF = use file priority)
+                                  ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------

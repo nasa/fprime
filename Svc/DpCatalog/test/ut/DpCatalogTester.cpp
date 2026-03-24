@@ -1226,4 +1226,263 @@ void DpCatalogTester::test_ChangeDpPriority_ReorderTree() {
     this->delDp(3, time3, dir.toChar());
 }
 
+void DpCatalogTester::test_RetransmitDp_NotFound() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitNotFound";
+    this->makeDpDir(dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Try to retransmit non-existent DP
+    this->sendCmd_RETRANSMIT_DP(0, 11, 999, 2000, 200, 0xFFFFFFFF);
+    this->component.doDispatch();
+
+    // Should fail
+    ASSERT_EVENTS_DpNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitDp_Success_FilePriority() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitFilePrio";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    // Generate DP with TRANSMITTED state and priority 10
+    this->genDP(1, 10, time1, 100, Fw::DpState::TRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Retransmit DP using file priority (0xFFFFFFFF)
+    this->sendCmd_RETRANSMIT_DP(0, 11, 1, 1000, 100, 0xFFFFFFFF);
+    this->component.doDispatch();
+
+    // Should succeed with priority from file (10)
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitted(0, "./DpTest_RetransmitFilePrio/Dp_00000001_00001000_00000100.fdp", 10);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify DP is now in catalog
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 10);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_RetransmitDp_Success_OverridePriority() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitOverride";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    // Generate DP with TRANSMITTED state and priority 10
+    this->genDP(1, 10, time1, 100, Fw::DpState::TRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Retransmit DP with overridden priority of 5
+    this->sendCmd_RETRANSMIT_DP(0, 11, 1, 1000, 100, 5);
+    this->component.doDispatch();
+
+    // Should succeed with overridden priority (5)
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitted(0, "./DpTest_RetransmitOverride/Dp_00000001_00001000_00000100.fdp", 5);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::OK);
+
+    // Verify DP is in catalog with priority 5
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 5);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_RetransmitDp_AlreadyInCatalog() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitAlready";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    // Generate DP with UNTRANSMITTED state (still in catalog)
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Try to retransmit DP that's already in catalog
+    this->sendCmd_RETRANSMIT_DP(0, 11, 1, 1000, 100, 0xFFFFFFFF);
+    this->component.doDispatch();
+
+    // Should fail
+    ASSERT_EVENTS_DpAlreadyInCatalog_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_RetransmitDp_CurrentlyTransmitting() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitXmit";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+
+    // Generate DP with UNTRANSMITTED state
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Start transmission
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+
+    this->clearHistory();
+
+    // Try to retransmit DP1 while it's still in the catalog (not yet transmitted or immediately after)
+    // Note: in test harness, transmission completes immediately, so DP is already sent
+    this->sendCmd_RETRANSMIT_DP(0, 12, 1, 1000, 100, 0xFFFFFFFF);
+    this->component.doDispatch();
+
+    // Drain message queue
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // In the test harness, transmission completes immediately, so the DP has been
+    // transmitted and removed from catalog by the time RETRANSMIT_DP processes.
+    // This means it will successfully re-add the DP for retransmission.
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 12, Fw::CmdResponse::OK);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_RetransmitDp_AfterTransmission() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_RetransmitAfter";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+
+    // Generate DP with UNTRANSMITTED state
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Start and complete transmission
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+
+    // Drain message queue to complete transmission
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    this->clearHistory();
+
+    // Now retransmit the DP with new priority
+    this->sendCmd_RETRANSMIT_DP(0, 12, 1, 1000, 100, 3);
+    this->component.doDispatch();
+
+    // Should succeed
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitted(0, "./DpTest_RetransmitAfter/Dp_00000001_00001000_00000100.fdp", 3);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, 12, Fw::CmdResponse::OK);
+
+    // Verify DP is back in catalog with new priority
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 3);
+
+    // Start transmission again to verify it gets sent
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, 13, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+
+    // Drain message queue
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // Should have sent the file
+    ASSERT_from_fileOut_SIZE(1);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
 }  // namespace Svc

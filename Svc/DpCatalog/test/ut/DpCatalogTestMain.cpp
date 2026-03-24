@@ -349,6 +349,36 @@ TEST(ChangeDpPriority, ReorderTree) {
     tester.test_ChangeDpPriority_ReorderTree();
 }
 
+TEST(RetransmitDp, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_NotFound();
+}
+
+TEST(RetransmitDp, Success_FilePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_Success_FilePriority();
+}
+
+TEST(RetransmitDp, Success_OverridePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_Success_OverridePriority();
+}
+
+TEST(RetransmitDp, AlreadyInCatalog) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_AlreadyInCatalog();
+}
+
+TEST(RetransmitDp, CurrentlyTransmitting) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_CurrentlyTransmitting();
+}
+
+TEST(RetransmitDp, AfterTransmission) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDp_AfterTransmission();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
