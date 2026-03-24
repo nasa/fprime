@@ -384,6 +384,41 @@ TEST(RetransmitDp, AfterTransmission) {
     tester.test_RetransmitDp_AfterTransmission();
 }
 
+TEST(ProcessDpFile, InvalidFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_InvalidFile();
+}
+
+TEST(ProcessDpFile, InvalidSize) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_InvalidSize();
+}
+
+TEST(ProcessDpFile, InvalidOp) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_InvalidOp();
+}
+
+TEST(ProcessDpFile, DeleteOps) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_DeleteOps();
+}
+
+TEST(ProcessDpFile, ReprioritizeOps) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_ReprioritizeOps();
+}
+
+TEST(ProcessDpFile, RetransmitOps) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_RetransmitOps();
+}
+
+TEST(ProcessDpFile, MixedOps) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessDpFile_MixedOps();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

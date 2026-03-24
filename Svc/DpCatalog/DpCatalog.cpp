@@ -1210,6 +1210,135 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         return;
     }
 
+    // Use helper function to perform deletion
+    bool success = this->deleteDpHelper(id, tSec, tSub);
+
+    this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Use helper function to perform priority change
+    bool success = this->changeDpPriorityHelper(id, tSec, tSub, newPriority);
+
+    this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Use helper function to perform retransmission
+    bool success = this->retransmitDpHelper(id, tSec, tSub, priorityOverride);
+
+    this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::StringBase& fileName) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Open the operations file
+    Os::File opFile;
+    Os::File::Status stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_DpFileOpenError(fileName.toChar(), stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Get file size
+    FwSignedSizeType fileSize = 0;
+    Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
+    if (sizeStat != Os::FileSystem::OP_OK) {
+        opFile.close();
+        this->log_WARNING_HI_DpFileOpenError(fileName.toChar(), sizeStat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Verify file size is a multiple of 17 bytes
+    const FwSignedSizeType RECORD_SIZE = 17;
+    if (fileSize % RECORD_SIZE != 0) {
+        opFile.close();
+        this->log_WARNING_HI_DpFileInvalidSize(fileName.toChar(), fileSize);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    U32 numRecords = static_cast<U32>(fileSize / RECORD_SIZE);
+
+    this->log_ACTIVITY_HI_DpFileProcessingStarted(fileName.toChar());
+
+    // Process each record
+    for (U32 recordNum = 0; recordNum < numRecords; recordNum++) {
+        U8 recordBuf[RECORD_SIZE];
+        FwSizeType readSize = RECORD_SIZE;
+
+        stat = opFile.read(recordBuf, readSize);
+        if (stat != Os::File::OP_OK || readSize != RECORD_SIZE) {
+            opFile.close();
+            this->log_WARNING_HI_DpFileReadError(fileName.toChar(), stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // Parse record fields (big-endian format)
+        U8 opCode = recordBuf[0];
+        U32 id = (static_cast<U32>(recordBuf[1]) << 24) |
+                 (static_cast<U32>(recordBuf[2]) << 16) |
+                 (static_cast<U32>(recordBuf[3]) << 8) |
+                 static_cast<U32>(recordBuf[4]);
+        U32 tSec = (static_cast<U32>(recordBuf[5]) << 24) |
+                   (static_cast<U32>(recordBuf[6]) << 16) |
+                   (static_cast<U32>(recordBuf[7]) << 8) |
+                   static_cast<U32>(recordBuf[8]);
+        U32 tSub = (static_cast<U32>(recordBuf[9]) << 24) |
+                   (static_cast<U32>(recordBuf[10]) << 16) |
+                   (static_cast<U32>(recordBuf[11]) << 8) |
+                   static_cast<U32>(recordBuf[12]);
+        U32 priority = (static_cast<U32>(recordBuf[13]) << 24) |
+                       (static_cast<U32>(recordBuf[14]) << 16) |
+                       (static_cast<U32>(recordBuf[15]) << 8) |
+                       static_cast<U32>(recordBuf[16]);
+
+        // Dispatch based on operation code
+        switch (opCode) {
+            case 1:  // DELETE
+                (void)this->deleteDpHelper(id, tSec, tSub);
+                break;
+            case 2:  // REPRIORITIZE
+                (void)this->changeDpPriorityHelper(id, tSec, tSub, priority);
+                break;
+            case 3:  // RETRANSMIT
+                (void)this->retransmitDpHelper(id, tSec, tSub, priority);
+                break;
+            default:
+                // Invalid operation code
+                opFile.close();
+                this->log_WARNING_HI_DpFileInvalidOp(fileName.toChar(), recordNum, opCode);
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+        }
+    }
+
+    opFile.close();
+    this->log_ACTIVITY_HI_DpFileProcessingComplete(fileName.toChar(), numRecords);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
     // Search all managed directories for the file
     Fw::FileNameString dpFileName;
     FwSizeType foundDir = DP_MAX_DIRECTORIES;
@@ -1229,8 +1358,7 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     // File not found in any managed directory
     if (foundDir == DP_MAX_DIRECTORIES) {
         this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Check if this DP is currently being transmitted
@@ -1239,8 +1367,7 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpDeleteXmitInProgress(dpFileName);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Search and remove from binary tree if present
@@ -1272,8 +1399,7 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     Os::FileSystem::Status status = Os::FileSystem::removeFile(dpFileName.toChar());
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_DpDeleteError(dpFileName, status);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Update state file if catalog was modified
@@ -1282,22 +1408,15 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     }
 
     this->log_ACTIVITY_HI_DpDeleted(dpFileName);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    return true;
 }
 
-void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
-    // Check initialization
-    if (not this->checkInit()) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
-
+bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
     // Find the DP in the binary tree
     DpBtreeNode* node = this->findTreeNode(id, tSec, tSub);
     if (node == nullptr) {
         this->log_WARNING_LO_DpPriorityNotFound(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Check if this DP is currently being transmitted
@@ -1306,8 +1425,7 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpPriorityXmitInProgress(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Save the old priority
@@ -1316,8 +1434,7 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     // If priority is the same, no work needed
     if (oldPriority == newPriority) {
         this->log_ACTIVITY_HI_DpPriorityChanged(id, tSec, tSub, oldPriority, newPriority);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-        return;
+        return true;
     }
 
     // Copy the entry before removing from tree
@@ -1343,8 +1460,7 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     if (newNode == nullptr) {
         // This should not happen since we just freed a slot, but handle it
         this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Update the state file entry if catalog is built
@@ -1357,16 +1473,10 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     }
 
     this->log_ACTIVITY_HI_DpPriorityChanged(id, tSec, tSub, oldPriority, newPriority);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    return true;
 }
 
-void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
-    // Check initialization
-    if (not this->checkInit()) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
-
+bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
     // Search all managed directories for the file
     Fw::FileNameString dpFileName;
     FwSizeType foundDir = DP_MAX_DIRECTORIES;
@@ -1386,8 +1496,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
     // File not found in any managed directory
     if (foundDir == DP_MAX_DIRECTORIES) {
         this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Check if this DP is currently being transmitted
@@ -1396,8 +1505,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpRetransmitInProgress(id, tSec, tSub);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Check if DP already exists in the catalog tree
@@ -1417,8 +1525,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
             Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_FileOpenError(dpFileName, stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
+                return false;
             }
 
             FwSizeType size = Fw::DpContainer::Header::SIZE;
@@ -1427,22 +1534,19 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
 
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_FileReadError(dpFileName, stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
+                return false;
             }
 
             if (size != Fw::DpContainer::Header::SIZE) {
                 this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
+                return false;
             }
 
             container.setBuffer(hdrBuff);
             Fw::SerializeStatus desStat = container.deserializeHeader();
             if (desStat != Fw::FW_SERIALIZE_OK) {
                 this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
+                return false;
             }
 
             newPriority = container.getPriority();
@@ -1456,8 +1560,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
         // If priority is the same, no work needed
         if (oldPriority == newPriority) {
             this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-            return;
+            return true;
         }
 
         // Copy the entry before removing from tree
@@ -1482,8 +1585,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
         DpBtreeNode* newNode = this->insertEntry(updatedEntry);
         if (newNode == nullptr) {
             this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            return;
+            return false;
         }
 
         // Update the state file entry if catalog is built
@@ -1496,8 +1598,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
         }
 
         this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-        return;
+        return true;
     }
 
     // DP not in catalog - read the DP file to get metadata and add it
@@ -1511,16 +1612,14 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(dpFileName, sizeStat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Open file
     Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileOpenError(dpFileName, stat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Read DP header
@@ -1530,14 +1629,12 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
 
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(dpFileName, stat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     if (size != Fw::DpContainer::Header::SIZE) {
         this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Deserialize header
@@ -1545,8 +1642,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Create entry for catalog
@@ -1571,8 +1667,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
     DpBtreeNode* addedEntry = this->insertEntry(entry);
     if (addedEntry == nullptr) {
         this->log_WARNING_HI_DpCatalogFull(entry.record);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Update pending counters
@@ -1586,7 +1681,7 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpI
     }
 
     this->log_ACTIVITY_HI_DpRetransmitted(dpFileName, usedPriority);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    return true;
 }
 
 void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {

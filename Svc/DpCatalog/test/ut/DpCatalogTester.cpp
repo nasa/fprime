@@ -1533,4 +1533,374 @@ void DpCatalogTester::test_RetransmitDp_AfterTransmission() {
     this->delDp(1, time1, dir.toChar());
 }
 
+void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Try to process non-existent file
+    Fw::FileNameString opFile("./nonexistent_ops.dat");
+    this->sendCmd_PROCESS_DP_FILE(0, 10, opFile);
+    this->component.doDispatch();
+
+    // Should get error event and response
+    ASSERT_EVENTS_DpFileOpenError_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create file with invalid size (not multiple of 17)
+    Fw::FileNameString opFile("./DpTest/invalid_size_ops.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+    U8 data[10] = {0};  // 10 bytes, not a multiple of 17
+    FwSizeType size = 10;
+    file.write(data, size);
+    file.close();
+
+    this->sendCmd_PROCESS_DP_FILE(0, 11, opFile);
+    this->component.doDispatch();
+
+    // Should get invalid size event and error response
+    ASSERT_EVENTS_DpFileInvalidSize_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create file with invalid operation code
+    Fw::FileNameString opFile("./DpTest/invalid_op.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+    U8 data[17] = {0};
+    data[0] = 99;  // Invalid operation code
+    // ID, tSec, tSub, priority all zeros
+    FwSizeType size = 17;
+    file.write(data, size);
+    file.close();
+
+    this->sendCmd_PROCESS_DP_FILE(0, 12, opFile);
+    this->component.doDispatch();
+
+    // Should get invalid op event and error response
+    ASSERT_EVENTS_DpFileInvalidOp_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 12, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create 3 DPs
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(2000, 200);
+    Fw::Time time3(3000, 300);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 15, time2, 150, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(3, 20, time3, 200, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    // Build catalog
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // Create operations file with DELETE operations for DP 1 and 3
+    Fw::FileNameString opFile("./DpTest/delete_ops.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+
+    // Record 1: DELETE DP 1
+    U8 rec1[17] = {
+        1,  // DELETE operation
+        0, 0, 0, 1,  // ID = 1
+        0, 0, 0x03, 0xE8,  // tSec = 1000
+        0, 0, 0, 0x64,  // tSub = 100
+        0, 0, 0, 0  // priority (ignored for DELETE)
+    };
+    FwSizeType size = 17;
+    file.write(rec1, size);
+
+    // Record 2: DELETE DP 3
+    U8 rec2[17] = {
+        1,  // DELETE operation
+        0, 0, 0, 3,  // ID = 3
+        0, 0, 0x0B, 0xB8,  // tSec = 3000
+        0, 0, 0x01, 0x2C,  // tSub = 300
+        0, 0, 0, 0  // priority (ignored for DELETE)
+    };
+    file.write(rec2, size);
+    file.close();
+
+    // Process the file
+    this->sendCmd_PROCESS_DP_FILE(0, 13, opFile);
+    this->component.doDispatch();
+
+    // Should get processing started/complete events and success response
+    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpDeleted_SIZE(2);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 13, Fw::CmdResponse::OK);
+
+    // Verify DP 1 and 3 are deleted, DP 2 still exists
+    Fw::FileNameString dp1File;
+    dp1File.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
+    Fw::FileNameString dp2File;
+    dp2File.format(DP_FILENAME_FORMAT, dir.toChar(), 2, 2000, 200);
+    Fw::FileNameString dp3File;
+    dp3File.format(DP_FILENAME_FORMAT, dir.toChar(), 3, 3000, 300);
+
+    FwSizeType fileSize;
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp2File.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp3File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->delDp(2, time2, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create 2 DPs
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(2000, 200);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 15, time2, 150, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    // Build catalog
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    this->clearHistory();
+
+    // Create operations file with REPRIORITIZE operations
+    Fw::FileNameString opFile("./DpTest/reprioritize_ops.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+
+    // Record: REPRIORITIZE DP 1 to priority 5
+    U8 rec[17] = {
+        2,  // REPRIORITIZE operation
+        0, 0, 0, 1,  // ID = 1
+        0, 0, 0x03, 0xE8,  // tSec = 1000
+        0, 0, 0, 0x64,  // tSub = 100
+        0, 0, 0, 5  // new priority = 5
+    };
+    FwSizeType size = 17;
+    file.write(rec, size);
+    file.close();
+
+    // Process the file
+    this->sendCmd_PROCESS_DP_FILE(0, 14, opFile);
+    this->component.doDispatch();
+
+    // Should get success events
+    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 14, Fw::CmdResponse::OK);
+
+    // Verify priority was changed
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 5);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(2, time2, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create 1 DP
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::TRANSMITTED, false, dir.toChar());
+
+    // Build catalog (won't include TRANSMITTED DP)
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    this->clearHistory();
+
+    // Create operations file with RETRANSMIT operation
+    Fw::FileNameString opFile("./DpTest/retransmit_ops.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+
+    // Record: RETRANSMIT DP 1 with priority 5
+    U8 rec[17] = {
+        3,  // RETRANSMIT operation
+        0, 0, 0, 1,  // ID = 1
+        0, 0, 0x03, 0xE8,  // tSec = 1000
+        0, 0, 0, 0x64,  // tSub = 100
+        0, 0, 0, 5  // priority = 5
+    };
+    FwSizeType size = 17;
+    file.write(rec, size);
+    file.close();
+
+    // Process the file
+    this->sendCmd_PROCESS_DP_FILE(0, 15, opFile);
+    this->component.doDispatch();
+
+    // Should get success events
+    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 15, Fw::CmdResponse::OK);
+
+    // Verify DP was added to catalog
+    DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
+    ASSERT_TRUE(node != nullptr);
+    ASSERT_EQ(node->entry.record.get_priority(), 5);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->delDp(1, time1, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_ProcessDpFile_MixedOps() {
+    // Initialize component
+    Fw::FileNameString dir;
+    dir = "./DpTest_ProcessFile";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
+    this->component.initObjects(10);
+
+    // Create 4 DPs: 3 UNTRANSMITTED, 1 TRANSMITTED
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(2000, 200);
+    Fw::Time time3(3000, 300);
+    Fw::Time time4(4000, 400);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 15, time2, 150, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(3, 20, time3, 200, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(4, 25, time4, 250, Fw::DpState::TRANSMITTED, false, dir.toChar());
+
+    // Build catalog
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    this->clearHistory();
+
+    // Create operations file with mixed operations
+    Fw::FileNameString opFile("./DpTest/mixed_ops.dat");
+    Os::File file;
+    file.open(opFile.toChar(), Os::File::OPEN_CREATE);
+
+    // Record 1: DELETE DP 1
+    U8 rec1[17] = {1, 0, 0, 0, 1, 0, 0, 0x03, 0xE8, 0, 0, 0, 0x64, 0, 0, 0, 0};
+    FwSizeType size = 17;
+    file.write(rec1, size);
+
+    // Record 2: REPRIORITIZE DP 2 to priority 5
+    U8 rec2[17] = {2, 0, 0, 0, 2, 0, 0, 0x07, 0xD0, 0, 0, 0, 0xC8, 0, 0, 0, 5};
+    file.write(rec2, size);
+
+    // Record 3: RETRANSMIT DP 4 with priority 3
+    U8 rec3[17] = {3, 0, 0, 0, 4, 0, 0, 0x0F, 0xA0, 0, 0, 0x01, 0x90, 0, 0, 0, 3};
+    file.write(rec3, size);
+
+    file.close();
+
+    // Process the file
+    this->sendCmd_PROCESS_DP_FILE(0, 16, opFile);
+    this->component.doDispatch();
+
+    // Should get success events
+    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 16, Fw::CmdResponse::OK);
+
+    // Verify results
+    // DP 1 should be deleted
+    Fw::FileNameString dp1File;
+    dp1File.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
+    FwSizeType fileSize;
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+
+    // DP 2 should have new priority
+    DpCatalog::DpBtreeNode* node2 = this->component.findTreeNode(2, 2000, 200);
+    ASSERT_TRUE(node2 != nullptr);
+    ASSERT_EQ(node2->entry.record.get_priority(), 5);
+
+    // DP 4 should be in catalog with priority 3
+    DpCatalog::DpBtreeNode* node4 = this->component.findTreeNode(4, 4000, 400);
+    ASSERT_TRUE(node4 != nullptr);
+    ASSERT_EQ(node4->entry.record.get_priority(), 3);
+
+    // Cleanup
+    Os::FileSystem::removeFile(opFile.toChar());
+    this->delDp(2, time2, dir.toChar());
+    this->delDp(3, time3, dir.toChar());
+    this->delDp(4, time4, dir.toChar());
+    this->component.shutdown();
+}
+
 }  // namespace Svc

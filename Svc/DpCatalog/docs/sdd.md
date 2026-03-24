@@ -146,5 +146,49 @@ When data products are downlinked, the tree is traversed in priority order. As e
 
 When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory.
 
+### 3.8 Batch Operations File
+
+The `PROCESS_DP_FILE` command allows operators to perform multiple catalog operations atomically by specifying them in a file. This is useful for automated ground tools that need to delete, reprioritize, or retransmit multiple data products without requiring individual commands for each operation.
+
+#### 3.8.1 File Format
+
+The batch operations file uses a binary format with fixed-size records for robustness and efficiency. Each record is 17 bytes with the following structure:
+
+Offset | Size | Field | Description
+---- | ---- | ---- | ----
+0 | 1 | Operation | Operation code: 1=DELETE, 2=REPRIORITIZE, 3=RETRANSMIT
+1 | 4 | ID | Data product ID (U32, big-endian)
+5 | 4 | tSec | Generation time in seconds (U32, big-endian)
+9 | 4 | tSub | Generation time in subseconds (U32, big-endian)
+13 | 4 | Priority | Priority value (U32, big-endian). Used for REPRIORITIZE and RETRANSMIT. For RETRANSMIT, 0xFFFFFFFF means use priority from file.
+
+#### 3.8.2 Operation Semantics
+
+**DELETE (0x01)**: Removes the specified data product from the catalog and deletes the file from the filesystem. The Priority field is ignored.
+
+**REPRIORITIZE (0x02)**: Changes the priority of the specified data product in the catalog tree and state file. The Priority field specifies the new priority value.
+
+**RETRANSMIT (0x03)**: Re-adds a transmitted data product to the catalog for retransmission. If the data product is already pending transmission, its priority is updated. The Priority field specifies the priority (0xFFFFFFFF means use the priority stored in the file).
+
+#### 3.8.3 Processing Behavior
+
+Operations are processed sequentially in the order they appear in the file. If an operation fails (e.g., data product not found), an event is emitted but processing continues with the next operation. The command completion status indicates success if the file was successfully parsed and all operations were attempted, regardless of individual operation success.
+
+The command will fail immediately with an error if:
+
+- The file cannot be opened
+- The file size is not a multiple of 17 bytes
+- An invalid operation code is encountered
+
+#### 3.8.4 Implementation
+
+The batch operations command reuses the core logic from individual commands (DELETE_DP, CHANGE_DP_PRIORITY, RETRANSMIT_DP) by calling shared helper functions:
+
+- `deleteDpHelper()` - Core logic for deleting a data product
+- `changeDpPriorityHelper()` - Core logic for changing priority
+- `retransmitDpHelper()` - Core logic for retransmitting a data product
+
+This ensures consistent behavior between individual commands and batch operations.
+
 ## 6 Unit Testing
 

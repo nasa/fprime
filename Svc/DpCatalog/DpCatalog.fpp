@@ -120,6 +120,12 @@ module Svc {
                                   ) \
       opcode 6
 
+    @ Process a file containing batch DP operations
+    async command PROCESS_DP_FILE (
+                                    fileName: string size FileNameStringSize @< The operations file name
+                                  ) \
+      opcode 7
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -525,6 +531,60 @@ module Svc {
       severity warning low \
       id 56 \
       format "Cannot retransmit DP {}_{}_{}while it is being transmitted"
+
+    @ DP operations file processing started
+    event DpFileProcessingStarted(
+                          file: string size FileNameStringSize @< The file
+      ) \
+      severity activity high \
+      id 57 \
+      format "Processing DP operations file {}"
+
+    @ DP operations file processing complete
+    event DpFileProcessingComplete(
+                          file: string size FileNameStringSize @< The file
+                          numRecords: U32 @< number of records processed
+      ) \
+      severity activity high \
+      id 58 \
+      format "Completed processing DP operations file {} with {} records"
+
+    @ Error opening DP operations file
+    event DpFileOpenError(
+                          file: string size FileNameStringSize @< The file
+                          stat: I32 @< status
+      ) \
+      severity warning high \
+      id 59 \
+      format "Error opening DP operations file {}, stat: {}"
+
+    @ Error reading DP operations file
+    event DpFileReadError(
+                          file: string size FileNameStringSize @< The file
+                          stat: I32 @< status
+      ) \
+      severity warning high \
+      id 60 \
+      format "Error reading DP operations file {}, stat: {}"
+
+    @ Invalid DP operations file size
+    event DpFileInvalidSize(
+                          file: string size FileNameStringSize @< The file
+                          $size: I32 @< file size
+      ) \
+      severity warning high \
+      id 61 \
+      format "Invalid DP operations file {} size: {} (not a multiple of 17 bytes)"
+
+    @ Invalid operation code in DP operations file
+    event DpFileInvalidOp(
+                          file: string size FileNameStringSize @< The file
+                          record: U32 @< record number
+                          opCode: U8 @< invalid operation code
+      ) \
+      severity warning high \
+      id 62 \
+      format "DP operations file {} has invalid operation code {} at record {}"
 
     # ----------------------------------------------------------------------
     # Telemetry

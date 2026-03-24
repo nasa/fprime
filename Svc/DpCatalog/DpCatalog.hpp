@@ -149,6 +149,14 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 priorityOverride      //!< Priority override (0xFFFFFFFF = use file priority)
                                   ) override;
 
+    //! Handler implementation for command PROCESS_DP_FILE
+    //!
+    //! Process a file containing batch DP operations
+    void PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                    U32 cmdSeq,             //!< The command sequence number
+                                    const Fw::StringBase& fileName  //!< The operations file name
+                                    ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -293,6 +301,29 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param dir Directory index
     /// @return index if found, -1 otherwise
     FwSignedSizeType findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir);
+
+    /// @brief Helper function to delete a data product (shared by DELETE_DP command and batch file processing)
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @return true if successful, false otherwise
+    bool deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief Helper function to change DP priority (shared by CHANGE_DP_PRIORITY command and batch file processing)
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param newPriority The new priority value
+    /// @return true if successful, false otherwise
+    bool changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority);
+
+    /// @brief Helper function to retransmit a data product (shared by RETRANSMIT_DP command and batch file processing)
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param priorityOverride Priority (0xFFFFFFFF = use priority from file)
+    /// @return true if successful, false otherwise
+    bool retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride);
 
     // ----------------------------------
     // Private data
