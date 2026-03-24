@@ -102,6 +102,15 @@ module Svc {
                                   ) \
       opcode 4
 
+    @ Change the priority of a data product in the catalog
+    async command CHANGE_DP_PRIORITY (
+                                    $id: FwDpIdType @< The ID of the data product
+                                    tSec: U32 @< Generation time in seconds
+                                    tSub: U32 @< Generation time in subseconds
+                                    newPriority: U32 @< The new priority value
+                                  ) \
+      opcode 5
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -444,6 +453,38 @@ module Svc {
       severity warning high \
       id 50 \
       format "Error deleting DP file {}, stat: {}"
+
+    @ DP priority changed successfully
+    event DpPriorityChanged(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+                          oldPriority: U32 @< old priority
+                          newPriority: U32 @< new priority
+      ) \
+      severity activity high \
+      id 51 \
+      format "Changed priority for DP {}_{}_{}from {} to {}"
+
+    @ DP not found for priority change
+    event DpPriorityNotFound(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+      ) \
+      severity warning low \
+      id 52 \
+      format "DP {}_{}_{} not found for priority change"
+
+    @ Cannot change priority of DP currently being transmitted
+    event DpPriorityXmitInProgress(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+      ) \
+      severity warning low \
+      id 53 \
+      format "Cannot change priority of DP {}_{}_{}while it is being transmitted"
 
     # ----------------------------------------------------------------------
     # Telemetry

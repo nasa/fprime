@@ -1285,6 +1285,81 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Find the DP in the binary tree
+    DpBtreeNode* node = this->findTreeNode(id, tSec, tSub);
+    if (node == nullptr) {
+        this->log_WARNING_LO_DpPriorityNotFound(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Check if this DP is currently being transmitted
+    if (this->m_currentXmitNode != nullptr &&
+        this->m_currentXmitNode->entry.record.get_id() == id &&
+        this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
+        this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
+        this->log_WARNING_LO_DpPriorityXmitInProgress(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Save the old priority
+    U32 oldPriority = node->entry.record.get_priority();
+
+    // If priority is the same, no work needed
+    if (oldPriority == newPriority) {
+        this->log_ACTIVITY_HI_DpPriorityChanged(id, tSec, tSub, oldPriority, newPriority);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        return;
+    }
+
+    // Copy the entry before removing from tree
+    DpStateEntry updatedEntry = node->entry;
+
+    // If this was our current exploration node, move to parent or right
+    if (this->m_currentNode == node) {
+        if (node->right != nullptr) {
+            this->m_currentNode = node->right;
+        } else {
+            this->m_currentNode = node->parent;
+        }
+    }
+
+    // Remove from tree (but don't update counters - we're re-inserting)
+    this->deallocateNode(node);
+
+    // Update the priority in the entry
+    updatedEntry.record.set_priority(newPriority);
+
+    // Re-insert with updated priority
+    DpBtreeNode* newNode = this->insertEntry(updatedEntry);
+    if (newNode == nullptr) {
+        // This should not happen since we just freed a slot, but handle it
+        this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Update the state file entry if catalog is built
+    if (this->m_catalogBuilt) {
+        FwSignedSizeType stateIndex = this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
+        if (stateIndex >= 0) {
+            this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
+            this->pruneAndWriteStateFile();
+        }
+    }
+
+    this->log_ACTIVITY_HI_DpPriorityChanged(id, tSec, tSub, oldPriority, newPriority);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {
     if (this->m_xmitCmdWait) {
         this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, response);

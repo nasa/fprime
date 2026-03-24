@@ -153,6 +153,11 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_DeleteDp_CurrentlyTransmitting();
     void test_DeleteDp_DuringTransmission();
     void test_DeleteDp_AlreadyTransmitted();
+    void test_ChangeDpPriority_NotFound();
+    void test_ChangeDpPriority_Success();
+    void test_ChangeDpPriority_CurrentlyTransmitting();
+    void test_ChangeDpPriority_SamePriority();
+    void test_ChangeDpPriority_ReorderTree();
 };
 
 }  // namespace Svc

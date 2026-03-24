@@ -1003,4 +1003,227 @@ void DpCatalogTester::test_DeleteDp_AlreadyTransmitted() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_ChangeDpPriority_NotFound() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_ChangePrioNotFound";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Try to change priority of non-existent DP
+    this->sendCmd_CHANGE_DP_PRIORITY(0, 11, 999, 2000, 200, 5);
+    this->component.doDispatch();
+
+    // Should fail
+    ASSERT_EVENTS_DpPriorityNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_CHANGE_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_ChangeDpPriority_Success() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_ChangePrioSuccess";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Change priority
+    this->sendCmd_CHANGE_DP_PRIORITY(0, 11, 1, 1000, 100, 5);
+    this->component.doDispatch();
+
+    // Should succeed
+    ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
+    ASSERT_EVENTS_DpPriorityChanged(0, 1, 1000, 100, 10, 5);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_CHANGE_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_ChangeDpPriority_CurrentlyTransmitting() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_ChangePrioXmit";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Start transmission
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+
+    this->clearHistory();
+
+    // Try to change priority while/after transmitting
+    // Note: In the test harness, file transmission completes immediately,
+    // so the file is removed from the catalog tree by the time this command executes
+    this->sendCmd_CHANGE_DP_PRIORITY(0, 12, 1, 1000, 100, 5);
+    this->component.doDispatch();
+
+    // Drain message queue
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // Should fail because file has been transmitted and removed from catalog
+    ASSERT_EVENTS_DpPriorityNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_CHANGE_DP_PRIORITY, 12, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_ChangeDpPriority_SamePriority() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_ChangePrioSame";
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time1(1000, 100);
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Change priority to same value
+    this->sendCmd_CHANGE_DP_PRIORITY(0, 11, 1, 1000, 100, 10);
+    this->component.doDispatch();
+
+    // Should succeed (but no actual change)
+    ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
+    ASSERT_EVENTS_DpPriorityChanged(0, 1, 1000, 100, 10, 10);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_CHANGE_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+}
+
+void DpCatalogTester::test_ChangeDpPriority_ReorderTree() {
+    Fw::FileNameString dir;
+    dir = "./DpTest_ChangePrioReorder";
+    this->makeDpDir(dir.toChar());
+
+    // Create 3 DPs with different priorities
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(2000, 200);
+    Fw::Time time3(3000, 300);
+
+    // DP1: priority 10 (should be sent 2nd)
+    // DP2: priority 5 (should be sent 1st)
+    // DP3: priority 15 (should be sent 3rd)
+    this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(2, 5, time2, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->genDP(3, 15, time3, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->clearHistory();
+
+    // Change DP1 priority from 10 to 20 (should move it to last position)
+    this->sendCmd_CHANGE_DP_PRIORITY(0, 11, 1, 1000, 100, 20);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
+    ASSERT_EVENTS_DpPriorityChanged(0, 1, 1000, 100, 10, 20);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_CHANGE_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+
+    this->clearHistory();
+
+    // Now transmit and verify order: DP2 (prio 5), DP3 (prio 15), DP1 (prio 20)
+    this->sendCmd_START_XMIT_CATALOG(0, 12, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+
+    // Drain message queue
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+
+    // Verify transmission order
+    ASSERT_from_fileOut_SIZE(3);
+
+    // First should be DP2 (priority 5)
+    Fw::String expectedFile2;
+    expectedFile2.format(DP_FILENAME_FORMAT, dir.toChar(), 2, 2000, 200);
+    ASSERT_from_fileOut(0, expectedFile2, expectedFile2, 0, 0);
+
+    // Second should be DP3 (priority 15)
+    Fw::String expectedFile3;
+    expectedFile3.format(DP_FILENAME_FORMAT, dir.toChar(), 3, 3000, 300);
+    ASSERT_from_fileOut(1, expectedFile3, expectedFile3, 0, 0);
+
+    // Third should be DP1 (priority 20, changed from 10)
+    Fw::String expectedFile1;
+    expectedFile1.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
+    ASSERT_from_fileOut(2, expectedFile1, expectedFile1, 0, 0);
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(2, time2, dir.toChar());
+    this->delDp(3, time3, dir.toChar());
+}
+
 }  // namespace Svc

@@ -127,6 +127,17 @@ class DpCatalog final : public DpCatalogComponentBase {
                               U32 tSub               //!< Generation time in subseconds
                               ) override;
 
+    //! Handler implementation for command CHANGE_DP_PRIORITY
+    //!
+    //! Change the priority of a data product in the catalog
+    void CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                       U32 cmdSeq,            //!< The command sequence number
+                                       FwDpIdType id,         //!< The ID of the data product
+                                       U32 tSec,              //!< Generation time in seconds
+                                       U32 tSub,              //!< Generation time in subseconds
+                                       U32 newPriority        //!< The new priority value
+                                       ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------

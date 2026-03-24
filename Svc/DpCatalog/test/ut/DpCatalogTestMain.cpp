@@ -324,6 +324,31 @@ TEST(DeleteDp, AlreadyTransmitted) {
     tester.test_DeleteDp_AlreadyTransmitted();
 }
 
+TEST(ChangeDpPriority, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_ChangeDpPriority_NotFound();
+}
+
+TEST(ChangeDpPriority, Success) {
+    Svc::DpCatalogTester tester;
+    tester.test_ChangeDpPriority_Success();
+}
+
+TEST(ChangeDpPriority, CurrentlyTransmitting) {
+    Svc::DpCatalogTester tester;
+    tester.test_ChangeDpPriority_CurrentlyTransmitting();
+}
+
+TEST(ChangeDpPriority, SamePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_ChangeDpPriority_SamePriority();
+}
+
+TEST(ChangeDpPriority, ReorderTree) {
+    Svc::DpCatalogTester tester;
+    tester.test_ChangeDpPriority_ReorderTree();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
