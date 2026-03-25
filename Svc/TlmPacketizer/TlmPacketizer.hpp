@@ -11,6 +11,7 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/RedBlackTreeMap.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
@@ -228,7 +229,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 
   private:
-    Fw::RedBlackTreeMap<FwChanIdType, TlmEntry, TLMPACKETIZER_HASH_BUCKETS> m_channels;
+    FwSizeType m_numChannels;  //!< number of channels being packetized
+    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, TLMPACKETIZER_HASH_BUCKETS> m_channelIndices;
+    Fw::Array<TlmEntry, TLMPACKETIZER_HASH_BUCKETS>
+        m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
 };
 
 }  // end namespace Svc
