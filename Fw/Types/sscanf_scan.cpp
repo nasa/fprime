@@ -9,8 +9,8 @@
 #include <limits>
 
 Fw::ScanStatus Fw::stringScan(FwSizeType& count,
-                              char* source,
-                              const FwSizeType maximumSize,
+                              const char* source,
+                              FwSizeType maximumSize,
                               const char* formatString,
                               ...) {
     va_list args;
@@ -21,8 +21,8 @@ Fw::ScanStatus Fw::stringScan(FwSizeType& count,
 }
 
 Fw::ScanStatus Fw::stringScan(FwSizeType& count,
-                              char* source,
-                              const FwSizeType maximumSize,
+                              const char* source,
+                              FwSizeType maximumSize,
                               const char* formatString,
                               va_list args) {
     Fw::ScanStatus scanStatus = Fw::ScanStatus::SUCCESS;
