@@ -40,7 +40,7 @@ enum class ScanStatus {
 //! \param formatString: format string to fill
 //! \param ...: variable arguments inputs
 //! \return: SUCCESS on successful formatting, SIZE_OVERFLOW on overflow, and something else on any error
-ScanStatus stringScan(FwSizeType& count, char* source, const FwSizeType maximumSize, const char* formatString, ...);
+ScanStatus stringScan(FwSizeType& count, const char* source, FwSizeType maximumSize, const char* formatString, ...);
 
 //! \brief scan a c-string using a variable argument list
 //!
@@ -62,8 +62,8 @@ ScanStatus stringScan(FwSizeType& count, char* source, const FwSizeType maximumS
 //! \param args: variable arguments list
 //! \return: SUCCESS on successful formatting, SIZE_OVERFLOW on overflow, and something else on any error
 ScanStatus stringScan(FwSizeType& count,
-                      char* source,
-                      const FwSizeType maximumSize,
+                      const char* source,
+                      FwSizeType maximumSize,
                       const char* formatString,
                       va_list args);
 }  // namespace Fw
