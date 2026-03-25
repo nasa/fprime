@@ -40,7 +40,7 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     Utils::HashBuffer crc_result;
     crc_calculator.update(frame_header, FRAME_HEADER_SIZE);
     crc_calculator.update(packet_data, packet_size);
-    crc_calculator.final(crc_result);
+    crc_calculator.finalize(crc_result);
     // printf("crc: %08X\n", crc);
 
     // Concatenate all packet_data to create the full frame (byte array)

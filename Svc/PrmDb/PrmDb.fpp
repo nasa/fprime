@@ -34,6 +34,10 @@ module Svc {
       PARAMETER_ID_SIZE
       PARAMETER_VALUE
       PARAMETER_VALUE_SIZE
+      CRC
+      CRC_SIZE
+      CRC_BUFFER
+      SEEK_ZERO
     }
 
     @ Parameter write error
@@ -47,6 +51,11 @@ module Svc {
       PARAMETER_ID_SIZE
       PARAMETER_VALUE
       PARAMETER_VALUE_SIZE
+      CRC_PLACE
+      CRC_REAL
+      CURR_POSITION
+      SEEK_ZERO
+      SEEK_POSITION
     }
 
     # ----------------------------------------------------------------------

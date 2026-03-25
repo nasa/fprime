@@ -27,7 +27,7 @@ class CpuInterface {
     CpuInterface(const CpuInterface& other) = delete;
 
     //! \brief assignment operator is forbidden
-    virtual CpuInterface& operator=(const CpuInterface& other) = delete;
+    virtual CpuInterface& operator=(const CpuInterface& other) = delete;  //  NO_CODESONAR (cpp:S3657)
 
     //! \brief Request the count of the CPUs detected by the system
     //!

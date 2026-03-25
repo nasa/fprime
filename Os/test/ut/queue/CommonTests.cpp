@@ -19,6 +19,12 @@ U64 Tester::QueueMessage::order_counter = 0;
 
 PriorityCompare const Tester::QueueMessageComparer::HELPER = PriorityCompare();
 
+Tester::Tester() {
+#if FW_QUEUE_REGISTRATION
+    Os::Queue::setRegistry(this);
+#endif
+}
+
 Os::QueueInterface::Status Tester::shadow_create(FwSizeType depth, FwSizeType messageSize) {
     Os::QueueInterface::Status status = Os::QueueInterface::ALREADY_CREATED;
     if (not this->shadow.created) {
@@ -108,6 +114,10 @@ void Tester::shadow_receive_unblock() {
     this->shadow.receive_block.destination = nullptr;
     this->shadow.receive_block.size = nullptr;
     this->shadow.receive_block.priority = nullptr;
+}
+
+void Tester::registerQueue(Os::Queue* q) {
+    this->m_all_queues.push_back(q);
 }
 
 }  // namespace Queue
@@ -229,6 +239,9 @@ TEST(BasicRules, Create) {
     create_rule.action(tester);
     // Repetitive create
     create_rule.action(tester);
+#if FW_QUEUE_REGISTRATION
+    EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
+#endif
 }
 
 TEST(BasicRules, Send) {

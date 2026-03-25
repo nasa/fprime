@@ -59,11 +59,11 @@ void Choice::testTrue() {
 void Choice::checkActionsAndGuards(FwIndexType expectedActionSize, FwIndexType expectedGuardSize) {
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedActionSize);
     for (FwIndexType i = 0; i < expectedActionSize; i++) {
-        ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_INITIAL_TRANSITION);
     }
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), expectedGuardSize);
     for (FwIndexType i = 0; i < expectedGuardSize; i++) {
-        ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(i), Signal::__FPRIME_INITIAL_TRANSITION);
     }
 }
 

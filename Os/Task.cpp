@@ -196,12 +196,12 @@ FwSizeType Task::getNumTasks() {
     return num_tasks;
 }
 
-Os::TaskInterface::Status Task::_delay(Fw::TimeInterval interval) {
+Os::TaskInterface::Status Task::_delay(const Fw::TimeInterval& interval) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate._delay(interval);
 }
 
-Os::TaskInterface::Status Task::delay(Fw::TimeInterval interval) {
+Os::TaskInterface::Status Task::delay(const Fw::TimeInterval& interval) {
     return Task::getSingleton()._delay(interval);
 }
 

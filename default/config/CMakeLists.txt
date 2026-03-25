@@ -15,9 +15,11 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/GenericHubCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/OsCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PlatformCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.fpp"
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"

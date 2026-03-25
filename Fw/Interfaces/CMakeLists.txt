@@ -10,6 +10,8 @@ register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Channel.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Command.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/DataProductSync.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/DataProductAsync.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Event.fpp"
   INTERFACE
 )

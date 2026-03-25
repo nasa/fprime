@@ -66,7 +66,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     } else {
         // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
         // and let downstream components (e.g. custom router) handle it
-        FwPacketDescriptorType packetDescriptor;
+        FwPacketDescriptorType packetDescriptor = 0;
         status = deserializer.deserializeTo(packetDescriptor);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
         // If a valid descriptor is deserialized, set it in the context
@@ -90,7 +90,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     for (FwSizeType i = 0; i < fieldToHashSize; i++) {
         hash.update(data.getData() + i, 1);
     }
-    hash.final(computedCrc);
+    hash.finalize(computedCrc);
     // Check that the CRC in the trailer of the frame matches the computed CRC
     if (trailer.get_crcField() != computedCrc.asBigEndianU32()) {
         this->log_WARNING_HI_InvalidChecksum();

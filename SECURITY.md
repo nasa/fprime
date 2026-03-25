@@ -7,8 +7,7 @@ verification. We welcome general bug reports and vulnerability reports from the 
 
 For general defects, please submit a [Bug Report](https://github.com/nasa/fprime/issues/new/choose)
 
-To report a vulnerability for F´ please use the [vulnerability report form](https://github.com/nasa/fprime/security/advisories/new) or send a detailed
-report to [fprime@jpl.nasa.gov](mailto:fprime@jpl.nasa.gov). 
+To report a vulnerability for F´ please use the [vulnerability report form](https://github.com/nasa/fprime/security/advisories/new). 
 
 ### Static Analysis Checks
 

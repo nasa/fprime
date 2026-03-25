@@ -6,10 +6,10 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 ## Functionality
 
-- Maintains a table of APIDs and their associated 14-bit sequence counts.
+- Maintains a `Fw::ArrayMap` of APIDs and their associated 14-bit sequence counts.
 - Handles a fixed maximum number of tracked APIDs (as configured in the project).
 - Provides a way to retrieve the current sequence count for a given APID through a port call.
-- Provides a way to validate a received sequence counts for a given APID through a port call.
+- Provides a way to validate a received sequence count for a given APID through a port call.
 
 ## Port Descriptions
 
@@ -46,4 +46,4 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 - [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md)
 - [`Svc::Ccsds::SpacePacketDeframer`](../../SpacePacketDeframer/docs/sdd.md)
-- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf)
+- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)

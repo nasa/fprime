@@ -71,6 +71,7 @@ classes also define a properly decorated class method for the registration funct
 methods used for CLI interaction.
 
 A basic framing plugin skeleton would thus look like:
+
 **`src/my_plugin.py`:**
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer

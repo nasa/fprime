@@ -328,12 +328,12 @@ void FpySequencerTester::add_STORE_REL(const FpySequencer_StoreRelDirective dir)
 }
 
 void FpySequencerTester::add_CALL() {
-    add_CALL(FpySequencer_CallDirective(0));  // empty U8 field
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::CALL, buf);
 }
 
 void FpySequencerTester::add_CALL(FpySequencer_CallDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CALL, buf);
 }
 

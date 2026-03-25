@@ -46,9 +46,14 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
         static_cast<FwSizeType>((header.get_vcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
     const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE);
 
+    // If the full frame is not yet available, report that more data is needed
     if (data.get_allocated_size() < expected_frame_length) {
         size_out = expected_frame_length;
         return Status::MORE_DATA_NEEDED;
+    }
+    // If the deserialized length is too small to even hold the header and trailer, we don't have a valid frame
+    if (expected_frame_length < Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE) {
+        return Status::NO_FRAME_DETECTED;
     }
 
     // ---------------- Frame Trailer ----------------

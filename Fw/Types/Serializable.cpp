@@ -247,6 +247,10 @@ SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
+    if (length > 0) {
+        FW_ASSERT(buff);
+    }
+    FW_ASSERT(this->getBuffAddr());
     // copy buffer to our buffer
     (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
@@ -352,7 +356,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(I16& val, Endianness mode) {
-    U16 unsignVal;
+    U16 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
         val = static_cast<I16>(unsignVal);
@@ -394,7 +398,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(I32& val, Endianness mode) {
-    U32 unsignVal;
+    U32 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
         val = static_cast<I32>(unsignVal);
@@ -501,7 +505,7 @@ SerializeStatus LinearBufferBase::deserializeTo(void*& val, Endianness mode) {
 
 SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
     // deserialize as 64-bit int to handle endianness
-    U32 tempVal;
+    U32 tempVal = 0;
     SerializeStatus stat = this->deserializeTo(tempVal, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -525,7 +529,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
     FW_ASSERT(this->getBuffAddr());
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
-        FwSizeStoreType storedLength;
+        FwSizeStoreType storedLength = 0;
 
         SerializeStatus stat = this->deserializeTo(storedLength, endianMode);
 
@@ -538,6 +542,9 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
+        if (storedLength > 0) {
+            FW_ASSERT(buff);
+        }
         (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
 
         length = static_cast<FwSizeType>(storedLength);
@@ -548,6 +555,9 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
+        if (length > 0) {
+            FW_ASSERT(buff);
+        }
         (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(length));
     }
 
@@ -563,7 +573,7 @@ SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endiannes
     FW_ASSERT(val.getBuffAddr());
     SerializeStatus stat = FW_SERIALIZE_OK;
 
-    FwSizeStoreType storedLength;
+    FwSizeStoreType storedLength = 0;
 
     stat = this->deserializeTo(storedLength, mode);
 
@@ -725,11 +735,13 @@ SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest, Serializ
 // return address of buffer not yet deserialized. This is used
 // to copy the remainder of a buffer.
 const U8* LinearBufferBase::getBuffAddrLeft() const {
+    FW_ASSERT(this->getBuffAddr());
     return &this->getBuffAddr()[this->m_deserLoc];
 }
 
 //!< gets address of end of serialization. Used to manually place data at the end
 U8* LinearBufferBase::getBuffAddrSer() {
+    FW_ASSERT(this->getBuffAddr());
     return &this->getBuffAddr()[this->m_serLoc];
 }
 

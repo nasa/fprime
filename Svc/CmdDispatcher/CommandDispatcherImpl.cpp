@@ -20,31 +20,23 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::m
 namespace Svc {
 CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
     : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0), m_numCmdsDropped(0) {
-    memset(this->m_entryTable, 0, sizeof(this->m_entryTable));
     memset(this->m_sequenceTracker, 0, sizeof(this->m_sequenceTracker));
 }
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
 
 void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) {
-    // search for an empty slot
-    bool slotFound = false;
-    for (FwOpcodeType slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
-        if ((not this->m_entryTable[slot].used) and (not slotFound)) {
-            this->m_entryTable[slot].opcode = opCode;
-            this->m_entryTable[slot].port = portNum;
-            this->m_entryTable[slot].used = true;
-            this->log_DIAGNOSTIC_OpCodeRegistered(opCode, portNum, static_cast<I32>(slot));
-            slotFound = true;
-        } else if ((this->m_entryTable[slot].used) && (this->m_entryTable[slot].opcode == opCode) &&
-                   (this->m_entryTable[slot].port == portNum) && (not slotFound)) {
-            slotFound = true;
-            this->log_DIAGNOSTIC_OpCodeReregistered(opCode, portNum);
-        } else if (this->m_entryTable[slot].used) {  // make sure no duplicates
-            FW_ASSERT(this->m_entryTable[slot].opcode != opCode, static_cast<FwAssertArgType>(opCode));
-        }
+    FwIndexType existingPort;
+    if (this->m_entryTable.find(opCode, existingPort) == Fw::Success::SUCCESS) {
+        // Opcode already present — must be the same port (re-registration)
+        FW_ASSERT(existingPort == portNum, static_cast<FwAssertArgType>(opCode));
+        this->log_DIAGNOSTIC_OpCodeReregistered(opCode, portNum);
+    } else {
+        const I32 slot = static_cast<I32>(this->m_entryTable.getSize());
+        const Fw::Success status = this->m_entryTable.insert(opCode, portNum);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(opCode));
+        this->log_DIAGNOSTIC_OpCodeRegistered(opCode, portNum, slot);
     }
-    FW_ASSERT(slotFound, static_cast<FwAssertArgType>(opCode));
 }
 
 void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
@@ -97,17 +89,10 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         return;
     }
 
-    // search for opcode in dispatch table
-    FwOpcodeType entry;
-    bool entryFound = false;
-
-    for (entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); entry++) {
-        if ((this->m_entryTable[entry].used) and (cmdPkt.getOpCode() == this->m_entryTable[entry].opcode)) {
-            entryFound = true;
-            break;
-        }
-    }
-    if (entryFound and this->isConnected_compCmdSend_OutputPort(this->m_entryTable[entry].port)) {
+    // look up opcode in dispatch map
+    FwIndexType entryPort;
+    Fw::Success findStatus = this->m_entryTable.find(cmdPkt.getOpCode(), entryPort);
+    if (findStatus == Fw::Success::SUCCESS and this->isConnected_compCmdSend_OutputPort(entryPort)) {
         // register command in command tracker only if response port is connect
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             bool pendingFound = false;
@@ -134,9 +119,9 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             }
         }  // end if status port connected
         // pass arguments to argument buffer
-        this->compCmdSend_out(this->m_entryTable[entry].port, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
+        this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
         // log dispatched command
-        this->log_COMMAND_OpCodeDispatched(cmdPkt.getOpCode(), this->m_entryTable[entry].port);
+        this->log_COMMAND_OpCodeDispatched(cmdPkt.getOpCode(), entryPort);
 
         // increment command count
         this->m_numCmdsDispatched++;

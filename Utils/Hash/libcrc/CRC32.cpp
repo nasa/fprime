@@ -20,7 +20,7 @@ Hash ::Hash() {
     this->init();
 }
 
-Hash ::~Hash() {}
+Hash ::~Hash() = default;
 
 void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffer) {
     HASH_HANDLE_TYPE local_hash_handle;
@@ -44,14 +44,14 @@ void Hash ::init() {
 
 void Hash ::update(const void* const data, FwSizeType len) {
     FW_ASSERT(data);
-    char c;
+    char c = 0;
     for (FwSizeType index = 0; index < len; index++) {
         c = static_cast<const char*>(data)[index];
         this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
     }
 }
 
-void Hash ::final(HashBuffer& buffer) {
+void Hash ::finalize(HashBuffer& buffer) {
     HashBuffer bufferOut;
     // For CRC32 we need to return the one's complement of the result:
     Fw::SerializeStatus status = bufferOut.serializeFrom(~(this->hash_handle));
@@ -59,7 +59,7 @@ void Hash ::final(HashBuffer& buffer) {
     buffer = bufferOut;
 }
 
-void Hash ::final(U32& hashvalue) {
+void Hash ::finalize(U32& hashvalue) {
     FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
     // For CRC32 we need to return the one's complement of the result:
     hashvalue = ~(this->hash_handle);

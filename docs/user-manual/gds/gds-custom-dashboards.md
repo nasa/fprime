@@ -44,6 +44,7 @@ used to display our components.  HTML may be used to help the user achieve the d
 display can be configured from our custom components and thus no HTML knowledge is required.
 
 Here are some basic rules on how the layout will be displayed:
+
 - Components will stack top to bottom using 100% width, unless components are inside a `dashboard-row`
 - Components inside a `dashboard-row` will instead layout horizontally left to right.
     - If multiple components are inside a `dashboard-row` the elements will split the width. e.g. Four components each

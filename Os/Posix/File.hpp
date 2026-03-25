@@ -6,6 +6,8 @@
 #ifndef OS_POSIX_FILE_HPP
 #define OS_POSIX_FILE_HPP
 
+#include <sys/stat.h>
+
 namespace Os {
 namespace Posix {
 namespace File {
@@ -169,6 +171,16 @@ class PosixFile : public FileInterface {
     //! \return raw file handle
     //!
     FileHandle* getHandle() override;
+
+  private:
+    //! \brief Maps FILE_MODE_ constants in config/OsCfg.fpp to mode_t type for open
+    //!
+    //! \param create_mode: Bitmask of file permissions derived from the FILE_MODE_
+    //!                     constants in OsCfg.fpp
+    //!
+    //! \return mode_t value that corresponds to the provided create_mode bitmask
+    //!
+    static mode_t map_open_create_mode(const U32 create_mode);
 
   private:
     //! File handle for PosixFile

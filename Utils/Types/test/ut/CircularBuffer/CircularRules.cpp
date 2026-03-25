@@ -14,14 +14,17 @@
 
 namespace Types {
 
-RandomizeRule::RandomizeRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
+RandomizeRule::RandomizeRule(const char* const name, U32 min_buffer_size, U32 max_buffer_size)
+    : STest::Rule<MockTypes::CircularState>(name),
+      m_min_buffer_size(min_buffer_size),
+      m_max_buffer_size(max_buffer_size) {}
 
 bool RandomizeRule::precondition(const MockTypes::CircularState& state) {
     return true;
 }
 
 void RandomizeRule::action(MockTypes::CircularState& truth) {
-    (void)truth.generateRandomBuffer();
+    (void)truth.generateRandomBuffer(m_min_buffer_size, m_max_buffer_size);
 }
 
 SerializeOkRule::SerializeOkRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
@@ -42,7 +45,7 @@ void SerializeOkRule::action(MockTypes::CircularState& state) {
 SerializeOverflowRule::SerializeOverflowRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
 
 bool SerializeOverflowRule::precondition(const MockTypes::CircularState& state) {
-    return state.getRemainingSize() < state.getRandomSize();
+    return (state.getRemainingSize() < state.getRandomSize()) && (state.getRandomSize() != 0);
 }
 
 void SerializeOverflowRule::action(MockTypes::CircularState& state) {
@@ -165,5 +168,31 @@ bool RotateBadRule::precondition(const MockTypes::CircularState& state) {
 
 void RotateBadRule::action(MockTypes::CircularState& state) {
     ASSERT_EQ(state.getTestBuffer().rotate(state.getRandomSize()), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+}
+
+TrimOkRule::TrimOkRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
+
+bool TrimOkRule::precondition(const MockTypes::CircularState& state) {
+    FwSizeType trim_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+    return trim_available >= state.getRandomSize();
+}
+
+void TrimOkRule::action(MockTypes::CircularState& state) {
+    state.checkSizes();
+    ASSERT_EQ(state.getTestBuffer().trim(state.getRandomSize()), Fw::FW_SERIALIZE_OK);
+    ASSERT_TRUE(state.trim(state.getRandomSize()));
+    state.setRemainingSize(state.getRemainingSize() + state.getRandomSize());
+    state.checkSizes();
+}
+
+TrimBadRule::TrimBadRule(const char* const name) : STest::Rule<MockTypes::CircularState>(name) {}
+
+bool TrimBadRule::precondition(const MockTypes::CircularState& state) {
+    FwSizeType trim_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+    return trim_available < state.getRandomSize();
+}
+
+void TrimBadRule::action(MockTypes::CircularState& state) {
+    ASSERT_EQ(state.getTestBuffer().trim(state.getRandomSize()), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
 }
 }  // namespace Types
