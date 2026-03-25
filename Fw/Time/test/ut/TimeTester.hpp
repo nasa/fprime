@@ -17,7 +17,9 @@ class TimeTester {
     // Tests
     // ----------------------------------------------------------------------
     void test_InstantiateTest();
+    void test_InstantiateFromFloatTest();
     void test_MathTest();
+    void test_FloatOperations();
     void test_CopyTest();
     void test_ZeroTimeEquality();
     void test_TimeToTimeValue();

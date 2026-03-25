@@ -48,4 +48,11 @@ For more details see buffer data transfer sequence diagram below
 
 ![Top Level Generic Hub](./img/buffer_data_transfer.svg)
 
+### Scenario for Command-In/Command-Out Testing
+
+![Top Level Generic Hub](./img/command_dispatch.svg)
+
+### Scenario for Response-In/Response-Out Testing
+
+![Top Level Generic Hub](./img/command_response.svg)
 

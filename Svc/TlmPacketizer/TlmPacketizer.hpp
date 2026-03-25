@@ -11,6 +11,8 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "Fw/DataStructures/Array.hpp"
+#include "Fw/DataStructures/RedBlackTreeMap.hpp"
 #include "Fw/Prm/PrmExternalTypes.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
@@ -165,8 +167,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
 
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
-    // buffers for sending - will be copied from fill buffers
-    BufferEntry m_sendBuffers[MAX_PACKETIZER_PACKETS];
 
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
@@ -174,21 +174,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         // -1 means that channel is not in that packet
         FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
         FwSizeType channelSize;  //!< max serialized size of the channel in bytes
-        TlmEntry* next;          //!< pointer to next bucket in table
-        bool used;               //!< if entry has been used
         bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once
-        FwChanIdType bucketNo;   //!< for testing
     };
-
-    struct TlmSet {
-        TlmEntry* slots[TLMPACKETIZER_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
-        TlmEntry buckets[TLMPACKETIZER_HASH_BUCKETS];       //!< set of buckets used in hash table
-        FwChanIdType free;                                  //!< next free bucket
-    } m_tlmEntries;
-
-    // hash function for looking up telemetry channel
-    FwChanIdType doHash(FwChanIdType id);
 
     Os::Mutex m_lock;  //!< used to lock access to packet buffers
 
@@ -200,8 +188,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     } m_missTlmCheck[TLMPACKETIZER_MAX_MISSING_TLM_CHECK];
 
     void missingChannel(FwChanIdType id);  //!< Helper to check to see if missing channel warning was sent
-
-    TlmEntry* findBucket(FwChanIdType id);
 
     TlmPacketizer_SectionEnabled m_sectionEnabled{};
 
@@ -252,6 +238,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \param group The telemetry group number
     //! \return The output port index to send telemetry for the given section and group
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
+
+  private:
+    FwSizeType m_numChannels;  //!< number of channels being packetized
+    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, TLMPACKETIZER_HASH_BUCKETS> m_channelIndices;
+    Fw::Array<TlmEntry, TLMPACKETIZER_HASH_BUCKETS>
+        m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
 };
 
 }  // end namespace Svc

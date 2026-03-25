@@ -50,13 +50,50 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
 // ----------------------------------------------------------------------
 
 void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
+    this->send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
     bufferInReturn_out(portNum, fwBuffer);
 }
 
 void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Return the buffer
     fromBufferDriverReturn_out(0, fwBuffer);
+}
+
+void GenericHub ::cmdDispIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    Fw::SerializeStatus status;
+    // Buffer to send and a buffer used to write to it
+    U8 buffer[Fw::ComBuffer::SERIALIZED_SIZE];
+
+    Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
+    serializer.resetSer();
+
+    status = serializer.serializeFrom(data.getBuffAddr(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    status = serializer.serializeFrom(context);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    FwSizeType size = serializer.getSize();
+
+    this->send_data(HUB_TYPE_CMD_DISP, portNum, buffer, size);
+}
+
+void GenericHub ::cmdRespIn_handler(FwIndexType portNum,
+                                    FwOpcodeType opCode,
+                                    U32 cmdSeq,
+                                    const Fw::CmdResponse& response) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    U8 buffer[sizeof(opCode) + sizeof(cmdSeq) + Fw::CmdResponse::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
+    serializer.resetSer();
+
+    status = serializer.serializeFrom(opCode);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serializeFrom(cmdSeq);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    status = serializer.serializeFrom(response);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FwSizeType size = serializer.getSize();
+
+    this->send_data(HUB_TYPE_CMD_RESP, portNum, buffer, size);
 }
 
 void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -129,6 +166,40 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
 
         // Send it!
         this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
+
+        // Return the received buffer
+        fromBufferDriverReturn_out(0, fwBuffer);
+    } else if (type == HUB_TYPE_CMD_DISP) {
+        U32 context;
+
+        // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
+        Fw::ComBuffer wrapper(rawData, (rawSize - sizeof(U32)));
+        status = wrapper.setBuffLen(rawSize - sizeof(U32));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+
+        incoming.deserializeSkip(rawSize - sizeof(U32));
+        status = incoming.deserializeTo(context);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+
+        this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, context);
+
+        // Deallocate the existing buffer
+        fromBufferDriverReturn_out(0, fwBuffer);
+    } else if (type == HUB_TYPE_CMD_RESP) {
+        FwOpcodeType opCode;
+        U32 cmdSeq;
+        Fw::CmdResponse response;
+
+        // Deserialize tokens for channels
+        status = incoming.deserializeTo(opCode);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+        status = incoming.deserializeTo(cmdSeq);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+        status = incoming.deserializeTo(response);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+
+        // Send it!
+        this->cmdRespOut_out(static_cast<FwIndexType>(port), opCode, cmdSeq, response);
 
         // Return the received buffer
         fromBufferDriverReturn_out(0, fwBuffer);

@@ -43,7 +43,7 @@ TEST(ApidManager, RandomizedTesting) {
     STest::RandomScenario<Svc::Ccsds::ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Svc::Ccsds::ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 1000);
+    STest::BoundedScenario<Svc::Ccsds::ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 10000);
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);

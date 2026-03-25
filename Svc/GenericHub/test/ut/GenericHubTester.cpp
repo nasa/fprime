@@ -148,6 +148,38 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     m_buffer_in++;
 }
 
+void GenericHubTester ::test_command_dispatch() {
+    Fw::ComBuffer buffer;
+    clearFromPortHistory();
+    random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
+
+    invoke_to_cmdDispIn(0, buffer, 279);
+
+    // **must** return buffer
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_cmdDispOut_SIZE(1);
+    ASSERT_from_cmdDispOut(0, buffer, 279);
+    clearFromPortHistory();
+}
+
+void GenericHubTester ::test_command_response() {
+    FwOpcodeType opCode = 0x3A56BF8C;
+    U32 cmdSeq = 825;
+    Fw::CmdResponse response = Fw::CmdResponse::VALIDATION_ERROR;
+
+    invoke_to_cmdRespIn(0, opCode, cmdSeq, response);
+
+    ASSERT_from_cmdRespOut_SIZE(1);
+    ASSERT_from_cmdRespOut(0, 0x3A56BF8C, 825, Fw::CmdResponse::VALIDATION_ERROR);
+    clearFromPortHistory();
+}
+
+void GenericHubTester ::test_commands() {
+    this->test_command_dispatch();
+
+    this->test_command_response();
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -251,6 +283,12 @@ void GenericHubTester ::connectPorts() {
     // tlmIn
     this->connect_to_tlmIn(0, this->componentIn.get_tlmIn_InputPort(0));
 
+    // cmdDispIn
+    this->connect_to_cmdDispIn(0, this->componentIn.get_cmdDispIn_InputPort(0));
+
+    // cmdRespIn
+    this->connect_to_cmdRespIn(0, this->componentIn.get_cmdRespIn_InputPort(0));
+
     // fromBufferDriver
     this->connect_to_fromBufferDriver(0, this->componentOut.get_fromBufferDriver_InputPort(0));
 
@@ -264,6 +302,12 @@ void GenericHubTester ::connectPorts() {
 
     // tlmOut
     this->componentOut.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
+
+    // cmdDispOut
+    this->componentOut.set_cmdDispOut_OutputPort(0, this->get_from_cmdDispOut(0));
+
+    // cmdRespOut
+    this->componentOut.set_cmdRespOut_OutputPort(0, this->get_from_cmdRespOut(0));
 
     // toBufferDriver
     this->componentIn.set_toBufferDriver_OutputPort(0, this->get_from_toBufferDriver(0));
