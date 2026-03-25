@@ -39,6 +39,7 @@ BDV
 bfree
 BHn
 bibtex
+BIIII
 Bies
 binaryfile
 BINDIR
@@ -605,7 +606,9 @@ REFTOPOLOGYDEFS
 regexs
 REMOVEDIRECTORY
 REMOVEFILE
+reprio
 reprioritize
+retx
 RGD
 rhel
 RHH
