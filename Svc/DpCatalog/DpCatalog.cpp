@@ -1252,30 +1252,24 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName) {
-    // Check initialization
-    if (not this->checkInit()) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
+// ----------------------------------------------------------------------
+// Helper functions for command handlers
+// ----------------------------------------------------------------------
 
+bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& opFile, FwSizeType& fileSize, FwOpcodeType opCode, U32 cmdSeq) {
     // Open the operations file
-    Os::File opFile;
     Os::File::Status stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_DpFileOpenError(fileName, stat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Get file size
-    FwSizeType fileSize = 0;
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         opFile.close();
         this->log_WARNING_HI_DpFileOpenError(fileName, sizeStat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return false;
     }
 
     // Verify file size is a multiple of 17 bytes
@@ -1283,12 +1277,200 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
     if (fileSize % RECORD_SIZE != 0) {
         opFile.close();
         this->log_WARNING_HI_DpFileInvalidSize(fileName, static_cast<I32>(fileSize));
+        return false;
+    }
+
+    return true;
+}
+
+void DpCatalog::parseFileOperationRecord(const U8* recordBuf, U8& operationCode, U32& id, U32& tSec, U32& tSub, U32& priority) {
+    const FwSizeType RECORD_SIZE = 17;
+    Fw::ExternalSerializeBuffer serialBuffer(const_cast<U8*>(recordBuf), RECORD_SIZE);
+    serialBuffer.setBuffLen(RECORD_SIZE);
+
+    Fw::SerializeStatus desStat = serialBuffer.deserializeTo(operationCode);
+    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+
+    desStat = serialBuffer.deserializeTo(id, Fw::Endianness::BIG);
+    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+
+    desStat = serialBuffer.deserializeTo(tSec, Fw::Endianness::BIG);
+    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+
+    desStat = serialBuffer.deserializeTo(tSub, Fw::Endianness::BIG);
+    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+
+    desStat = serialBuffer.deserializeTo(priority, Fw::Endianness::BIG);
+    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+}
+
+bool DpCatalog::readDpHeader(const Fw::FileNameString& dpFileName, Fw::DpContainer& container) {
+    Os::File dpFile;
+    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+
+    Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileOpenError(dpFileName, stat);
+        return false;
+    }
+
+    FwSizeType size = Fw::DpContainer::Header::SIZE;
+    stat = dpFile.read(dpBuff, size);
+    dpFile.close();
+
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileReadError(dpFileName, stat);
+        return false;
+    }
+
+    if (size != Fw::DpContainer::Header::SIZE) {
+        this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
+        return false;
+    }
+
+    container.setBuffer(hdrBuff);
+    Fw::SerializeStatus desStat = container.deserializeHeader();
+    if (desStat != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
+        return false;
+    }
+
+    return true;
+}
+
+bool DpCatalog::updateNodePriority(DpBtreeNode* node, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority, U32 oldPriority) {
+    // Copy the entry before removing from tree
+    DpStateEntry updatedEntry = node->entry;
+
+    // If this was our current exploration node, move to parent or right
+    if (this->m_currentNode == node) {
+        if (node->right != nullptr) {
+            this->m_currentNode = node->right;
+        } else {
+            this->m_currentNode = node->parent;
+        }
+    }
+
+    // Remove from tree (but don't update counters - we're re-inserting)
+    this->deallocateNode(node);
+
+    // Update the priority in the entry
+    updatedEntry.record.set_priority(newPriority);
+
+    // Re-insert with updated priority
+    DpBtreeNode* newNode = this->insertEntry(updatedEntry);
+    if (newNode == nullptr) {
+        this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
+        return false;
+    }
+
+    // Update the state file entry if catalog is built
+    if (this->m_catalogBuilt) {
+        FwSignedSizeType stateIndex =
+            this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
+        if (stateIndex >= 0) {
+            this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
+            this->pruneAndWriteStateFile();
+        }
+    }
+
+    return true;
+}
+
+bool DpCatalog::addDpToCatalog(const Fw::FileNameString& dpFileName, FwSizeType foundDir, FwSizeType fileSize, U32 usedPriority) {
+    // Read the DP header
+    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+    Fw::DpContainer container;
+
+    if (!this->readDpHeader(dpFileName, container)) {
+        return false;
+    }
+
+    // Create entry for catalog
+    DpStateEntry entry;
+    entry.dir = static_cast<FwIndexType>(foundDir);
+    entry.record.set_id(container.getId());
+    entry.record.set_tSec(container.getTimeTag().getSeconds());
+    entry.record.set_tSub(container.getTimeTag().getUSeconds());
+    entry.record.set_size(static_cast<U64>(fileSize));
+    entry.record.set_state(Fw::DpState::UNTRANSMITTED);
+    entry.record.set_priority(usedPriority);
+
+    // Insert entry into catalog tree
+    DpBtreeNode* addedEntry = this->insertEntry(entry);
+    if (addedEntry == nullptr) {
+        this->log_WARNING_HI_DpCatalogFull(entry.record);
+        return false;
+    }
+
+    // Update pending counters
+    this->m_pendingFiles++;
+    this->m_pendingDpBytes += fileSize;
+
+    // Update state file if catalog is built
+    if (this->m_catalogBuilt) {
+        this->appendFileState(entry);
+        this->pruneAndWriteStateFile();
+    }
+
+    this->log_ACTIVITY_HI_DpRetransmitted(dpFileName, usedPriority);
+    return true;
+}
+
+bool DpCatalog::updateExistingDpForRetransmit(DpBtreeNode* existingNode, const Fw::FileNameString& dpFileName, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+    // Determine the new priority
+    U32 newPriority;
+    if (priorityOverride == 0xFFFFFFFF) {
+        // Need to read file to get its priority
+        U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+        Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+        Fw::DpContainer container;
+
+        if (!this->readDpHeader(dpFileName, container)) {
+            return false;
+        }
+        newPriority = container.getPriority();
+    } else {
+        newPriority = priorityOverride;
+    }
+
+    // Get old priority
+    U32 oldPriority = existingNode->entry.record.get_priority();
+
+    // If priority is the same, no work needed
+    if (oldPriority == newPriority) {
+        this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
+        return true;
+    }
+
+    // Update the node priority
+    if (!this->updateNodePriority(existingNode, id, tSec, tSub, newPriority, oldPriority)) {
+        return false;
+    }
+
+    this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
+    return true;
+}
+
+void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName) {
+    // Check initialization
+    if (not this->checkInit()) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
-    U32 numRecords = static_cast<U32>(fileSize / RECORD_SIZE);
+    // Open and validate the operations file
+    Os::File opFile;
+    FwSizeType fileSize = 0;
+    if (!this->openAndValidateOpFile(fileName, opFile, fileSize, opCode, cmdSeq)) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
+    const FwSizeType RECORD_SIZE = 17;
+    U32 numRecords = static_cast<U32>(fileSize / RECORD_SIZE);
     this->log_ACTIVITY_HI_DpFileProcessingStarted(fileName);
 
     // Process each record
@@ -1296,7 +1478,7 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
         U8 recordBuf[RECORD_SIZE];
         FwSizeType readSize = RECORD_SIZE;
 
-        stat = opFile.read(recordBuf, readSize);
+        Os::File::Status stat = opFile.read(recordBuf, readSize);
         if (stat != Os::File::OP_OK || readSize != RECORD_SIZE) {
             opFile.close();
             this->log_WARNING_HI_DpFileReadError(fileName, stat);
@@ -1304,30 +1486,10 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
             return;
         }
 
-        // Parse record fields using F' serialization helpers (big-endian format)
-        Fw::ExternalSerializeBuffer serialBuffer(recordBuf, RECORD_SIZE);
-        serialBuffer.setBuffLen(RECORD_SIZE);
-
+        // Parse record fields
         U8 operationCode;
-        U32 id;
-        U32 tSec;
-        U32 tSub;
-        U32 priority;
-
-        Fw::SerializeStatus desStat = serialBuffer.deserializeTo(operationCode);
-        FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-        desStat = serialBuffer.deserializeTo(id, Fw::Endianness::BIG);
-        FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-        desStat = serialBuffer.deserializeTo(tSec, Fw::Endianness::BIG);
-        FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-        desStat = serialBuffer.deserializeTo(tSub, Fw::Endianness::BIG);
-        FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-        desStat = serialBuffer.deserializeTo(priority, Fw::Endianness::BIG);
-        FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
+        U32 id, tSec, tSub, priority;
+        this->parseFileOperationRecord(recordBuf, operationCode, id, tSec, tSub, priority);
 
         // Dispatch based on operation code
         switch (operationCode) {
@@ -1341,7 +1503,6 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
                 (void)this->retransmitDpHelper(id, tSec, tSub, priority);
                 break;
             default:
-                // Invalid operation code
                 opFile.close();
                 this->log_WARNING_HI_DpFileInvalidOp(fileName, recordNum, operationCode);
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1451,40 +1612,9 @@ bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 ne
         return true;
     }
 
-    // Copy the entry before removing from tree
-    DpStateEntry updatedEntry = node->entry;
-
-    // If this was our current exploration node, move to parent or right
-    if (this->m_currentNode == node) {
-        if (node->right != nullptr) {
-            this->m_currentNode = node->right;
-        } else {
-            this->m_currentNode = node->parent;
-        }
-    }
-
-    // Remove from tree (but don't update counters - we're re-inserting)
-    this->deallocateNode(node);
-
-    // Update the priority in the entry
-    updatedEntry.record.set_priority(newPriority);
-
-    // Re-insert with updated priority
-    DpBtreeNode* newNode = this->insertEntry(updatedEntry);
-    if (newNode == nullptr) {
-        // This should not happen since we just freed a slot, but handle it
-        this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
+    // Update the node priority
+    if (!this->updateNodePriority(node, id, tSec, tSub, newPriority, oldPriority)) {
         return false;
-    }
-
-    // Update the state file entry if catalog is built
-    if (this->m_catalogBuilt) {
-        FwSignedSizeType stateIndex =
-            this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
-        if (stateIndex >= 0) {
-            this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
-            this->pruneAndWriteStateFile();
-        }
     }
 
     this->log_ACTIVITY_HI_DpPriorityChanged(id, tSec, tSub, oldPriority, newPriority);
@@ -1498,17 +1628,13 @@ bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priori
 
     for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
         dpFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), id, tSec, tSub);
-
-        // Check if file exists
         FwSizeType fileSize = 0;
-        Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
-        if (sizeStat == Os::FileSystem::OP_OK) {
+        if (Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize) == Os::FileSystem::OP_OK) {
             foundDir = dir;
             break;
         }
     }
 
-    // File not found in any managed directory
     if (foundDir == DP_MAX_DIRECTORIES) {
         this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
         return false;
@@ -1524,179 +1650,32 @@ bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priori
 
     // Check if DP already exists in the catalog tree
     DpBtreeNode* existingNode = this->findTreeNode(id, tSec, tSub);
-
-    // If DP is already in catalog, update its priority instead
     if (existingNode != nullptr) {
-        // Determine the new priority
-        U32 newPriority;
-        if (priorityOverride == 0xFFFFFFFF) {
-            // Need to read file to get its priority
-            Os::File dpFile;
-            U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
-            Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
-            Fw::DpContainer container;
-
-            Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
-            if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_FileOpenError(dpFileName, stat);
-                return false;
-            }
-
-            FwSizeType size = Fw::DpContainer::Header::SIZE;
-            stat = dpFile.read(dpBuff, size);
-            dpFile.close();
-
-            if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_FileReadError(dpFileName, stat);
-                return false;
-            }
-
-            if (size != Fw::DpContainer::Header::SIZE) {
-                this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
-                return false;
-            }
-
-            container.setBuffer(hdrBuff);
-            Fw::SerializeStatus desStat = container.deserializeHeader();
-            if (desStat != Fw::FW_SERIALIZE_OK) {
-                this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
-                return false;
-            }
-
-            newPriority = container.getPriority();
-        } else {
-            newPriority = priorityOverride;
-        }
-
-        // Get old priority
-        U32 oldPriority = existingNode->entry.record.get_priority();
-
-        // If priority is the same, no work needed
-        if (oldPriority == newPriority) {
-            this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
-            return true;
-        }
-
-        // Copy the entry before removing from tree
-        DpStateEntry updatedEntry = existingNode->entry;
-
-        // If this was our current exploration node, move to parent or right
-        if (this->m_currentNode == existingNode) {
-            if (existingNode->right != nullptr) {
-                this->m_currentNode = existingNode->right;
-            } else {
-                this->m_currentNode = existingNode->parent;
-            }
-        }
-
-        // Remove from tree (but don't update counters - we're re-inserting)
-        this->deallocateNode(existingNode);
-
-        // Update the priority in the entry
-        updatedEntry.record.set_priority(newPriority);
-
-        // Re-insert with updated priority
-        DpBtreeNode* newNode = this->insertEntry(updatedEntry);
-        if (newNode == nullptr) {
-            this->log_WARNING_HI_DpCatalogFull(updatedEntry.record);
-            return false;
-        }
-
-        // Update the state file entry if catalog is built
-        if (this->m_catalogBuilt) {
-            FwSignedSizeType stateIndex =
-                this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
-            if (stateIndex >= 0) {
-                this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
-                this->pruneAndWriteStateFile();
-            }
-        }
-
-        this->log_ACTIVITY_HI_DpPriorityUpdated(id, tSec, tSub, oldPriority, newPriority);
-        return true;
+        return this->updateExistingDpForRetransmit(existingNode, dpFileName, id, tSec, tSub, priorityOverride);
     }
 
-    // DP not in catalog - read the DP file to get metadata and add it
-    Os::File dpFile;
-    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
-    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
-    Fw::DpContainer container;
-
-    // Get file size
+    // DP not in catalog - get file size and priority, then add to catalog
     FwSizeType fileSize = 0;
-    Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize);
-    if (sizeStat != Os::FileSystem::OP_OK) {
-        this->log_WARNING_HI_FileSizeError(dpFileName, sizeStat);
+    if (Os::FileSystem::getFileSize(dpFileName.toChar(), fileSize) != Os::FileSystem::OP_OK) {
+        this->log_WARNING_HI_FileSizeError(dpFileName, Os::FileSystem::OTHER_ERROR);
         return false;
     }
 
-    // Open file
-    Os::File::Status stat = dpFile.open(dpFileName.toChar(), Os::File::OPEN_READ);
-    if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_FileOpenError(dpFileName, stat);
-        return false;
-    }
-
-    // Read DP header
-    FwSizeType size = Fw::DpContainer::Header::SIZE;
-    stat = dpFile.read(dpBuff, size);
-    dpFile.close();
-
-    if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_FileReadError(dpFileName, stat);
-        return false;
-    }
-
-    if (size != Fw::DpContainer::Header::SIZE) {
-        this->log_WARNING_HI_FileReadError(dpFileName, Os::File::BAD_SIZE);
-        return false;
-    }
-
-    // Deserialize header
-    container.setBuffer(hdrBuff);
-    Fw::SerializeStatus desStat = container.deserializeHeader();
-    if (desStat != Fw::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_FileHdrDesError(dpFileName, desStat);
-        return false;
-    }
-
-    // Create entry for catalog
-    DpStateEntry entry;
-    entry.dir = static_cast<FwIndexType>(foundDir);
-    entry.record.set_id(container.getId());
-    entry.record.set_tSec(container.getTimeTag().getSeconds());
-    entry.record.set_tSub(container.getTimeTag().getUSeconds());
-    entry.record.set_size(static_cast<U64>(fileSize));
-    entry.record.set_state(Fw::DpState::UNTRANSMITTED);
-
-    // Use priority override if provided (0xFFFFFFFF means use file priority)
+    // Determine priority to use
     U32 usedPriority;
     if (priorityOverride == 0xFFFFFFFF) {
+        U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
+        Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
+        Fw::DpContainer container;
+        if (!this->readDpHeader(dpFileName, container)) {
+            return false;
+        }
         usedPriority = container.getPriority();
     } else {
         usedPriority = priorityOverride;
     }
-    entry.record.set_priority(usedPriority);
 
-    // Insert entry into catalog tree
-    DpBtreeNode* addedEntry = this->insertEntry(entry);
-    if (addedEntry == nullptr) {
-        this->log_WARNING_HI_DpCatalogFull(entry.record);
-        return false;
-    }
-
-    // Update pending counters
-    this->m_pendingFiles++;
-    this->m_pendingDpBytes += fileSize;
-
-    // Update state file if catalog is built
-    if (this->m_catalogBuilt) {
-        this->appendFileState(entry);
-        this->pruneAndWriteStateFile();
-    }
-
-    this->log_ACTIVITY_HI_DpRetransmitted(dpFileName, usedPriority);
-    return true;
+    return this->addDpToCatalog(dpFileName, foundDir, fileSize, usedPriority);
 }
 
 void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {

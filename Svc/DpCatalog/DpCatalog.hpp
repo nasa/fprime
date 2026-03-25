@@ -16,6 +16,14 @@
 #include <config/DpCatalogCfg.hpp>
 #include <config/DpCfg.hpp>
 
+namespace Fw {
+    class DpContainer;
+}
+
+namespace Os {
+    class File;
+}
+
 #define DIRECTORY_DELIMITER "/"
 
 namespace Svc {
@@ -301,6 +309,56 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param dir Directory index
     /// @return index if found, -1 otherwise
     FwSignedSizeType findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32 tSub, FwIndexType dir);
+
+    /// @brief Open and validate DP operations file
+    /// @param fileName The file name
+    /// @param opFile The file object to open
+    /// @param fileSize Output: the file size
+    /// @return true if successful, false on error (events logged)
+    bool openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& opFile, FwSizeType& fileSize, FwOpcodeType opCode, U32 cmdSeq);
+
+    /// @brief Parse a single operation record from buffer
+    /// @param recordBuf Buffer containing the record
+    /// @param operationCode Output: the operation code
+    /// @param id Output: DP ID
+    /// @param tSec Output: time seconds
+    /// @param tSub Output: time subseconds
+    /// @param priority Output: priority
+    void parseFileOperationRecord(const U8* recordBuf, U8& operationCode, U32& id, U32& tSec, U32& tSub, U32& priority);
+
+    /// @brief Read DP header from file
+    /// @param dpFileName The DP file name
+    /// @param container Output: the container with deserialized header
+    /// @return true if successful, false on error (events logged)
+    bool readDpHeader(const Fw::FileNameString& dpFileName, Fw::DpContainer& container);
+
+    /// @brief Update priority of existing node in tree
+    /// @param node The node to update
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param newPriority The new priority
+    /// @param oldPriority The old priority
+    /// @return true if successful, false otherwise
+    bool updateNodePriority(DpBtreeNode* node, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority, U32 oldPriority);
+
+    /// @brief Add a DP file to the catalog
+    /// @param dpFileName The DP file name
+    /// @param foundDir The directory index
+    /// @param fileSize The file size
+    /// @param usedPriority The priority to use
+    /// @return true if successful, false otherwise
+    bool addDpToCatalog(const Fw::FileNameString& dpFileName, FwSizeType foundDir, FwSizeType fileSize, U32 usedPriority);
+
+    /// @brief Update priority of existing DP in catalog for retransmit
+    /// @param existingNode The existing node in the catalog
+    /// @param dpFileName The DP file name
+    /// @param id The DP ID
+    /// @param tSec Time in seconds
+    /// @param tSub Time in subseconds
+    /// @param priorityOverride Priority override (0xFFFFFFFF = use file priority)
+    /// @return true if successful, false otherwise
+    bool updateExistingDpForRetransmit(DpBtreeNode* existingNode, const Fw::FileNameString& dpFileName, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride);
 
     /// @brief Helper function to delete a data product (shared by DELETE_DP command and batch file processing)
     /// @param id The DP ID
