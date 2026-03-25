@@ -1654,22 +1654,22 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
 
     // Record 1: DELETE DP 1
     U8 rec1[17] = {
-        1,  // DELETE operation
-        0, 0, 0, 1,  // ID = 1
+        1,                 // DELETE operation
+        0, 0, 0,    1,     // ID = 1
         0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0, 0x64,  // tSub = 100
-        0, 0, 0, 0  // priority (ignored for DELETE)
+        0, 0, 0,    0x64,  // tSub = 100
+        0, 0, 0,    0      // priority (ignored for DELETE)
     };
     FwSizeType size = 17;
     file.write(rec1, size);
 
     // Record 2: DELETE DP 3
     U8 rec2[17] = {
-        1,  // DELETE operation
-        0, 0, 0, 3,  // ID = 3
+        1,                 // DELETE operation
+        0, 0, 0,    3,     // ID = 3
         0, 0, 0x0B, 0xB8,  // tSec = 3000
         0, 0, 0x01, 0x2C,  // tSub = 300
-        0, 0, 0, 0  // priority (ignored for DELETE)
+        0, 0, 0,    0      // priority (ignored for DELETE)
     };
     file.write(rec2, size);
     file.close();
@@ -1733,11 +1733,11 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
 
     // Record: REPRIORITIZE DP 1 to priority 5
     U8 rec[17] = {
-        2,  // REPRIORITIZE operation
-        0, 0, 0, 1,  // ID = 1
+        2,                 // REPRIORITIZE operation
+        0, 0, 0,    1,     // ID = 1
         0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0, 0x64,  // tSub = 100
-        0, 0, 0, 5  // new priority = 5
+        0, 0, 0,    0x64,  // tSub = 100
+        0, 0, 0,    5      // new priority = 5
     };
     FwSizeType size = 17;
     file.write(rec, size);
@@ -1793,11 +1793,11 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
 
     // Record: RETRANSMIT DP 1 with priority 5
     U8 rec[17] = {
-        3,  // RETRANSMIT operation
-        0, 0, 0, 1,  // ID = 1
+        3,                 // RETRANSMIT operation
+        0, 0, 0,    1,     // ID = 1
         0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0, 0x64,  // tSub = 100
-        0, 0, 0, 5  // priority = 5
+        0, 0, 0,    0x64,  // tSub = 100
+        0, 0, 0,    5      // priority = 5
     };
     FwSizeType size = 17;
     file.write(rec, size);

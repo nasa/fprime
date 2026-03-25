@@ -121,39 +121,39 @@ class DpCatalog final : public DpCatalogComponentBase {
     //!
     //! Delete a data product from catalog and filesystem
     void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                              U32 cmdSeq,            //!< The command sequence number
-                              FwDpIdType id,         //!< The ID of the data product
-                              U32 tSec,              //!< Generation time in seconds
-                              U32 tSub               //!< Generation time in subseconds
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwDpIdType id,        //!< The ID of the data product
+                              U32 tSec,             //!< Generation time in seconds
+                              U32 tSub              //!< Generation time in subseconds
                               ) override;
 
     //! Handler implementation for command CHANGE_DP_PRIORITY
     //!
     //! Change the priority of a data product in the catalog
     void CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                       U32 cmdSeq,            //!< The command sequence number
-                                       FwDpIdType id,         //!< The ID of the data product
-                                       U32 tSec,              //!< Generation time in seconds
-                                       U32 tSub,              //!< Generation time in subseconds
-                                       U32 newPriority        //!< The new priority value
+                                       U32 cmdSeq,           //!< The command sequence number
+                                       FwDpIdType id,        //!< The ID of the data product
+                                       U32 tSec,             //!< Generation time in seconds
+                                       U32 tSub,             //!< Generation time in subseconds
+                                       U32 newPriority       //!< The new priority value
                                        ) override;
 
     //! Handler implementation for command RETRANSMIT_DP
     //!
     //! Re-add a transmitted data product to catalog for retransmission
-    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,     //!< The opcode
-                                  U32 cmdSeq,               //!< The command sequence number
-                                  FwDpIdType id,            //!< The ID of the data product
-                                  U32 tSec,                 //!< Generation time in seconds
-                                  U32 tSub,                 //!< Generation time in subseconds
-                                  U32 priorityOverride      //!< Priority override (0xFFFFFFFF = use file priority)
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  FwDpIdType id,        //!< The ID of the data product
+                                  U32 tSec,             //!< Generation time in seconds
+                                  U32 tSub,             //!< Generation time in subseconds
+                                  U32 priorityOverride  //!< Priority override (0xFFFFFFFF = use file priority)
                                   ) override;
 
     //! Handler implementation for command PROCESS_DP_FILE
     //!
     //! Process a file containing batch DP operations
-    void PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                    U32 cmdSeq,             //!< The command sequence number
+    void PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                    U32 cmdSeq,                       //!< The command sequence number
                                     const Fw::CmdStringArg& fileName  //!< The operations file name
                                     ) override;
 

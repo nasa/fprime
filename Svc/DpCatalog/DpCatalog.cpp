@@ -230,8 +230,7 @@ FwSignedSizeType DpCatalog::findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32
 
     // Search state file data for matching entry
     for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
-        if (this->m_stateFileData[entry].used &&
-            this->m_stateFileData[entry].entry.dir == dir &&
+        if (this->m_stateFileData[entry].used && this->m_stateFileData[entry].entry.dir == dir &&
             this->m_stateFileData[entry].entry.record.get_id() == id &&
             this->m_stateFileData[entry].entry.record.get_tSec() == tSec &&
             this->m_stateFileData[entry].entry.record.get_tSub() == tSub) {
@@ -243,12 +242,8 @@ FwSignedSizeType DpCatalog::findStateFileEntryIndex(FwDpIdType id, U32 tSec, U32
 }
 
 void DpCatalog::getFileState(DpStateEntry& entry) {
-    FwSignedSizeType index = this->findStateFileEntryIndex(
-        entry.record.get_id(),
-        entry.record.get_tSec(),
-        entry.record.get_tSub(),
-        entry.dir
-    );
+    FwSignedSizeType index = this->findStateFileEntryIndex(entry.record.get_id(), entry.record.get_tSec(),
+                                                           entry.record.get_tSub(), entry.dir);
 
     if (index >= 0) {
         FwSizeType idx = static_cast<FwSizeType>(index);
@@ -976,8 +971,7 @@ DpCatalog::DpBtreeNode* DpCatalog::findTreeNode(FwDpIdType id, U32 tSec, U32 tSu
         DpBtreeNode* current = stack[--stackTop];
 
         // Check if this node matches
-        if (current->entry.record.get_id() == id &&
-            current->entry.record.get_tSec() == tSec &&
+        if (current->entry.record.get_id() == id && current->entry.record.get_tSec() == tSec &&
             current->entry.record.get_tSub() == tSub) {
             return current;
         }
@@ -1222,7 +1216,12 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
+void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               FwDpIdType id,
+                                               U32 tSec,
+                                               U32 tSub,
+                                               U32 newPriority) {
     // Check initialization
     if (not this->checkInit()) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1235,7 +1234,12 @@ void DpCatalog ::CHANGE_DP_PRIORITY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     this->cmdResponse_out(opCode, cmdSeq, success ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,
+                                          U32 cmdSeq,
+                                          FwDpIdType id,
+                                          U32 tSec,
+                                          U32 tSub,
+                                          U32 priorityOverride) {
     // Check initialization
     if (not this->checkInit()) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1374,8 +1378,7 @@ bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
     }
 
     // Check if this DP is currently being transmitted
-    if (this->m_currentXmitNode != nullptr &&
-        this->m_currentXmitNode->entry.record.get_id() == id &&
+    if (this->m_currentXmitNode != nullptr && this->m_currentXmitNode->entry.record.get_id() == id &&
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpDeleteXmitInProgress(dpFileName);
@@ -1432,8 +1435,7 @@ bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 ne
     }
 
     // Check if this DP is currently being transmitted
-    if (this->m_currentXmitNode != nullptr &&
-        this->m_currentXmitNode->entry.record.get_id() == id &&
+    if (this->m_currentXmitNode != nullptr && this->m_currentXmitNode->entry.record.get_id() == id &&
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpPriorityXmitInProgress(id, tSec, tSub);
@@ -1477,7 +1479,8 @@ bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 ne
 
     // Update the state file entry if catalog is built
     if (this->m_catalogBuilt) {
-        FwSignedSizeType stateIndex = this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
+        FwSignedSizeType stateIndex =
+            this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
         if (stateIndex >= 0) {
             this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
             this->pruneAndWriteStateFile();
@@ -1512,8 +1515,7 @@ bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priori
     }
 
     // Check if this DP is currently being transmitted
-    if (this->m_currentXmitNode != nullptr &&
-        this->m_currentXmitNode->entry.record.get_id() == id &&
+    if (this->m_currentXmitNode != nullptr && this->m_currentXmitNode->entry.record.get_id() == id &&
         this->m_currentXmitNode->entry.record.get_tSec() == tSec &&
         this->m_currentXmitNode->entry.record.get_tSub() == tSub) {
         this->log_WARNING_LO_DpRetransmitInProgress(id, tSec, tSub);
@@ -1602,7 +1604,8 @@ bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priori
 
         // Update the state file entry if catalog is built
         if (this->m_catalogBuilt) {
-            FwSignedSizeType stateIndex = this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
+            FwSignedSizeType stateIndex =
+                this->findStateFileEntryIndex(id, tSec, tSub, static_cast<FwIndexType>(updatedEntry.dir));
             if (stateIndex >= 0) {
                 this->m_stateFileData[stateIndex].entry.record.set_priority(newPriority);
                 this->pruneAndWriteStateFile();
