@@ -13,8 +13,8 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
-#include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Fw/DataStructures/ArrayMap.hpp>
+#include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
