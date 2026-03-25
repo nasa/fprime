@@ -39,7 +39,9 @@ void PriorityQueueHandle ::load_data(FwSizeType index, U8* destination, FwSizeTy
     (void)::memcpy(destination, this->m_data + offset, static_cast<size_t>(size));
 }
 
-PriorityQueue::~PriorityQueue() {}
+PriorityQueue::~PriorityQueue() {
+    this->teardownInternal();
+}
 
 QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
                                              const Fw::ConstStringBase& name,
