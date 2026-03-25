@@ -1535,12 +1535,12 @@ void DpCatalogTester::test_RetransmitDp_AfterTransmission() {
 
 void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Try to process non-existent file
     Fw::FileNameString opFile("./nonexistent_ops.dat");
@@ -1558,12 +1558,12 @@ void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
 
 void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create file with invalid size (not multiple of 17)
     Fw::FileNameString opFile("./DpTest/invalid_size_ops.dat");
@@ -1589,12 +1589,12 @@ void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
 
 void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create file with invalid operation code
     Fw::FileNameString opFile("./DpTest/invalid_op.dat");
@@ -1622,12 +1622,12 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
 
 void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create 3 DPs
     Fw::Time time1(1000, 100);
@@ -1691,9 +1691,9 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     dp3File.format(DP_FILENAME_FORMAT, dir.toChar(), 3, 3000, 300);
 
     FwSizeType fileSize;
-    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::DOESNT_EXIST);
     ASSERT_EQ(Os::FileSystem::getFileSize(dp2File.toChar(), fileSize), Os::FileSystem::OP_OK);
-    ASSERT_EQ(Os::FileSystem::getFileSize(dp3File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp3File.toChar(), fileSize), Os::FileSystem::DOESNT_EXIST);
 
     // Cleanup
     Os::FileSystem::removeFile(opFile.toChar());
@@ -1703,12 +1703,12 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
 
 void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create 2 DPs
     Fw::Time time1(1000, 100);
@@ -1764,12 +1764,12 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
 
 void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create 1 DP
     Fw::Time time1(1000, 100);
@@ -1822,12 +1822,12 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
 
 void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     // Initialize component
+    Fw::MallocAllocator alloc;
     Fw::FileNameString dir;
     dir = "./DpTest_ProcessFile";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->makeDpDir(dir.toChar());
-    this->component.configure(&dir, 1, stateFile, 0, this->mallocator);
-    this->component.initObjects(10);
+    this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create 4 DPs: 3 UNTRANSMITTED, 1 TRANSMITTED
     Fw::Time time1(1000, 100);
@@ -1883,7 +1883,7 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     Fw::FileNameString dp1File;
     dp1File.format(DP_FILENAME_FORMAT, dir.toChar(), 1, 1000, 100);
     FwSizeType fileSize;
-    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::NOT_FOUND);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dp1File.toChar(), fileSize), Os::FileSystem::DOESNT_EXIST);
 
     // DP 2 should have new priority
     DpCatalog::DpBtreeNode* node2 = this->component.findTreeNode(2, 2000, 200);

@@ -579,7 +579,7 @@ module Svc {
     @ Invalid operation code in DP operations file
     event DpFileInvalidOp(
                           file: string size FileNameStringSize @< The file
-                          record: U32 @< record number
+                          recordNum: U32 @< record number
                           opCode: U8 @< invalid operation code
       ) \
       severity warning high \

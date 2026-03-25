@@ -154,7 +154,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     //! Process a file containing batch DP operations
     void PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                     U32 cmdSeq,             //!< The command sequence number
-                                    const Fw::StringBase& fileName  //!< The operations file name
+                                    const Fw::CmdStringArg& fileName  //!< The operations file name
                                     ) override;
 
     // ----------------------------------
