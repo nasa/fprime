@@ -47,9 +47,9 @@ set(MOD_DEPS
     ${PROJECT_NAME}/topology/components/Comp
     ${PROJECT_NAME}/topology/components/Sender
     ${PROJECT_NAME}/topology/components/Receiver
-    ${PROJECT_NAME}/topology/components/main
-    ${PROJECT_NAME}/topology/components/special_ports
-    ${PROJECT_NAME}/topology/components/top_ports
+    ${PROJECT_NAME}/topology/main
+    ${PROJECT_NAME}/topology/special_ports
+    ${PROJECT_NAME}/topology/top_ports
 )
 
 register_fprime_deployment()
