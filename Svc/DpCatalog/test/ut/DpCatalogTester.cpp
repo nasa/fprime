@@ -1566,7 +1566,8 @@ void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
     this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create file with invalid size (not multiple of 17)
-    Fw::FileNameString opFile("./DpTest/invalid_size_ops.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/inv_size.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
     U8 data[10] = {0};  // 10 bytes, not a multiple of 17
@@ -1597,7 +1598,8 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     this->component.configure(&dir, 1, stateFile, 0, alloc);
 
     // Create file with invalid operation code
-    Fw::FileNameString opFile("./DpTest/invalid_op.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/inv_op.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
     U8 data[17] = {0};
@@ -1645,7 +1647,8 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     this->clearHistory();
 
     // Create operations file with DELETE operations for DP 1 and 3
-    Fw::FileNameString opFile("./DpTest/delete_ops.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/del.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
@@ -1723,7 +1726,8 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     this->clearHistory();
 
     // Create operations file with REPRIORITIZE operations
-    Fw::FileNameString opFile("./DpTest/reprioritize_ops.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/reprio.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
@@ -1782,7 +1786,8 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     this->clearHistory();
 
     // Create operations file with RETRANSMIT operation
-    Fw::FileNameString opFile("./DpTest/retransmit_ops.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/retx.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
@@ -1846,7 +1851,8 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     this->clearHistory();
 
     // Create operations file with mixed operations
-    Fw::FileNameString opFile("./DpTest/mixed_ops.dat");
+    Fw::FileNameString opFile;
+    opFile.format("%s/mixed.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
