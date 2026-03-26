@@ -53,8 +53,9 @@ void Os::Test::FileTest::Tester::shadow_write(const std::vector<U8>& write_data)
     if (write_data.data() != nullptr) {
         status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
     }
-    // If in APPEND mode, need to set position to the end
-    if (this->m_mode == Os::File::Mode::OPEN_APPEND) {
+    // For append writes with data, mirror file pointer movement to EOF.
+    // Zero-byte writes should not force the pointer to EOF.
+    if ((this->m_mode == Os::File::Mode::OPEN_APPEND) && (original_size > 0)) {
         FwSizeType shadow_size = 0;
         ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
         this->shadow_seek(shadow_size, Os::File::SeekType::ABSOLUTE);
