@@ -41,8 +41,8 @@ module Cfdp {
 
     @ Suspend/resume action
     enum SuspendResume: U8 {
-        RESUME = 0 @< Resume transaction
-        SUSPEND = 1 @< Suspend transaction
+        SUSPEND = 0 @< Suspend transaction
+        RESUME  = 1 @< Resume transaction
     }
 
     @ CFDP queue identifiers
