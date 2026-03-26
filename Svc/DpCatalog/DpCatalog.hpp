@@ -165,6 +165,14 @@ class DpCatalog final : public DpCatalogComponentBase {
                                     const Fw::CmdStringArg& fileName  //!< The operations file name
                                     ) override;
 
+    //! Handler implementation for command SEND_CATALOG_DP
+    //!
+    //! Generate a data product containing catalog entries
+    void SEND_CATALOG_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                    U32 cmdSeq,           //!< The command sequence number
+                                    U32 catalogPriority   //!< Priority for catalog data product
+                                    ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------

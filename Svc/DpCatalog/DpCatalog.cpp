@@ -1601,6 +1601,90 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void DpCatalog::SEND_CATALOG_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 catalogPriority) {
+    // Check initialization
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Check if product port is connected
+    if (not this->isConnected_productGetOut_OutputPort(0)) {
+        this->log_WARNING_HI_ComponentNoMemory();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Count entries in the tree by traversing
+    U32 numEntries = 0;
+    if (this->m_dpTree != nullptr) {
+        // Use iterative traversal to count nodes
+        DpBtreeNode* stack[DP_MAX_FILES];
+        FwSizeType stackTop = 0;
+        stack[stackTop++] = this->m_dpTree;
+
+        while (stackTop > 0) {
+            DpBtreeNode* current = stack[--stackTop];
+            numEntries++;
+
+            if (current->right != nullptr && stackTop < DP_MAX_FILES) {
+                stack[stackTop++] = current->right;
+            }
+            if (current->left != nullptr && stackTop < DP_MAX_FILES) {
+                stack[stackTop++] = current->left;
+            }
+        }
+    }
+
+    // Calculate size needed for container
+    FwSizeType dpSize = numEntries * (DpRecord::SERIALIZED_SIZE + sizeof(FwDpIdType));
+
+    // Request container buffer
+    DpContainer container;
+    Fw::Success::T stat = this->dpGet_Catalog(dpSize, container);
+    if (Fw::Success::FAILURE == stat) {
+        this->log_WARNING_HI_ComponentNoMemory();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Set priority - use provided priority if not default marker
+    if (catalogPriority != 0xFFFFFFFF) {
+        container.setPriority(static_cast<FwDpPriorityType>(catalogPriority));
+    }
+
+    // Traverse tree and serialize each entry
+    if (this->m_dpTree != nullptr && numEntries > 0) {
+        DpBtreeNode* stack[DP_MAX_FILES];
+        FwSizeType stackTop = 0;
+        stack[stackTop++] = this->m_dpTree;
+
+        while (stackTop > 0) {
+            DpBtreeNode* current = stack[--stackTop];
+
+            // Serialize the record into the container
+            Fw::SerializeStatus serStat = container.serializeRecord_CatalogEntry(current->entry.record);
+            if (serStat != Fw::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_ComponentNoMemory();
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+                return;
+            }
+
+            // Add children to stack for continued traversal
+            if (current->right != nullptr && stackTop < DP_MAX_FILES) {
+                stack[stackTop++] = current->right;
+            }
+            if (current->left != nullptr && stackTop < DP_MAX_FILES) {
+                stack[stackTop++] = current->left;
+            }
+        }
+    }
+
+    // Send the container
+    this->dpSend(container);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
     this->log_ACTIVITY_LO_DpFileOpDelete(id, tSec, tSub);
 

@@ -419,6 +419,26 @@ TEST(ProcessDpFile, MixedOps) {
     tester.test_ProcessDpFile_MixedOps();
 }
 
+TEST(SendCatalogDp, EmptyCatalog) {
+    Svc::DpCatalogTester tester;
+    tester.test_SendCatalogDp_EmptyCatalog();
+}
+
+TEST(SendCatalogDp, WithEntries) {
+    Svc::DpCatalogTester tester;
+    tester.test_SendCatalogDp_WithEntries();
+}
+
+TEST(SendCatalogDp, DefaultPriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_SendCatalogDp_DefaultPriority();
+}
+
+TEST(SendCatalogDp, CustomPriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_SendCatalogDp_CustomPriority();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

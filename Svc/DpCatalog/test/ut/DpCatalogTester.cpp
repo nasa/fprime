@@ -376,6 +376,16 @@ void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
 
+Fw::Success::T DpCatalogTester::productGet_handler(FwDpIdType id, FwSizeType dataSize, Fw::Buffer& buffer) {
+    buffer.set(this->m_dpBuff, dataSize);
+    this->pushProductGetEntry(id, dataSize);
+    return Fw::Success::SUCCESS;
+}
+
+void DpCatalogTester::productSend_handler(FwDpIdType id, const Fw::Buffer& buffer) {
+    this->pushProductSendEntry(id, buffer);
+}
+
 // ----------------------------------------------------------------------
 // Moved Tests due to private/protected access
 // ----------------------------------------------------------------------
@@ -1951,6 +1961,160 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     this->delDp(2, time2, dir.toChar());
     this->delDp(3, time3, dir.toChar());
     this->delDp(4, time4, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_SendCatalogDp_EmptyCatalog() {
+    Fw::FileNameString dir("./DpTest_SendCatalog");
+    this->makeDpDir(dir.toChar());
+
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+
+    Fw::FileNameString stateFile("./DpTest_SendCatalog/dpState.dat");
+    Fw::MallocAllocator alloc;
+
+    // Initialize with no DPs
+    this->component.configure(dirs, 1, stateFile, 0, alloc);
+
+    // Build empty catalog
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::OK);
+
+    // Send catalog DP command
+    this->sendCmd_SEND_CATALOG_DP(0, 1, 100);
+    this->component.doDispatch();
+
+    // Should succeed with empty container (0 entries)
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::OK);
+
+    // Should have called productGet and productSend handlers
+    ASSERT_EQ(this->productGetHistory->size(), 1);
+    ASSERT_EQ(this->productSendHistory->size(), 1);
+
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_SendCatalogDp_WithEntries() {
+    Fw::FileNameString dir("./DpTest_SendCatalog");
+    this->makeDpDir(dir.toChar());
+
+    // Create 3 test DPs
+    Fw::Time time1(1000, 100);
+    Fw::Time time2(2000, 200);
+    Fw::Time time3(3000, 300);
+
+    Fw::String dp1 = this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    Fw::String dp2 = this->genDP(2, 15, time2, 150, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    Fw::String dp3 = this->genDP(3, 5, time3, 200, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+
+    Fw::FileNameString stateFile("./DpTest_SendCatalog/dpState.dat");
+    Fw::MallocAllocator alloc;
+
+    // Initialize and build catalog
+    this->component.configure(dirs, 1, stateFile, 0, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::OK);
+
+    // Send catalog DP command
+    this->sendCmd_SEND_CATALOG_DP(0, 1, 100);
+    this->component.doDispatch();
+
+    // Should succeed
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::OK);
+
+    // Should have called productGet and productSend handlers
+    ASSERT_EQ(this->productGetHistory->size(), 1);
+    ASSERT_EQ(this->productSendHistory->size(), 1);
+
+    // Cleanup
+    this->delDp(1, time1, dir.toChar());
+    this->delDp(2, time2, dir.toChar());
+    this->delDp(3, time3, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_SendCatalogDp_DefaultPriority() {
+    Fw::FileNameString dir("./DpTest_SendCatalog");
+    this->makeDpDir(dir.toChar());
+
+    // Create 1 test DP
+    Fw::Time time1(1000, 100);
+    Fw::String dp1 = this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+
+    Fw::FileNameString stateFile("./DpTest_SendCatalog/dpState.dat");
+    Fw::MallocAllocator alloc;
+
+    // Initialize and build catalog
+    this->component.configure(dirs, 1, stateFile, 0, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+
+    // Send catalog DP with 0xFFFFFFFF (use default priority)
+    this->sendCmd_SEND_CATALOG_DP(0, 1, 0xFFFFFFFF);
+    this->component.doDispatch();
+
+    // Should succeed
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::OK);
+
+    // Should have called productGet and productSend handlers
+    ASSERT_EQ(this->productGetHistory->size(), 1);
+    ASSERT_EQ(this->productSendHistory->size(), 1);
+
+    // Cleanup
+    this->delDp(1, time1, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_SendCatalogDp_CustomPriority() {
+    Fw::FileNameString dir("./DpTest_SendCatalog");
+    this->makeDpDir(dir.toChar());
+
+    // Create 1 test DP
+    Fw::Time time1(1000, 100);
+    Fw::String dp1 = this->genDP(1, 10, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+
+    Fw::FileNameString stateFile("./DpTest_SendCatalog/dpState.dat");
+    Fw::MallocAllocator alloc;
+
+    // Initialize and build catalog
+    this->component.configure(dirs, 1, stateFile, 0, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+
+    // Send catalog DP with custom priority 50
+    this->sendCmd_SEND_CATALOG_DP(0, 1, 50);
+    this->component.doDispatch();
+
+    // Should succeed
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::OK);
+
+    // Should have called productGet and productSend handlers
+    ASSERT_EQ(this->productGetHistory->size(), 1);
+    ASSERT_EQ(this->productSendHistory->size(), 1);
+
+    // Cleanup
+    this->delDp(1, time1, dir.toChar());
     this->component.shutdown();
 }
 

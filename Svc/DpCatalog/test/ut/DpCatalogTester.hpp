@@ -108,6 +108,19 @@ class DpCatalogTester : public DpCatalogGTestBase {
                    const Fw::TextLogString& text    //!< The event string
                    ) override;
 
+    //! Handler implementation for productGet
+    Fw::Success::T productGet_handler(
+        FwDpIdType id,           //!< The container ID
+        FwSizeType dataSize,     //!< The data size
+        Fw::Buffer& buffer       //!< The buffer
+    ) override;
+
+    //! Handler implementation for productSend
+    void productSend_handler(
+        FwDpIdType id,           //!< The container ID
+        const Fw::Buffer& buffer //!< The buffer
+    ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -126,6 +139,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! The component under test
     DpCatalog component;
+
+    //! Buffer for data product storage
+    U8 m_dpBuff[10000];
 
   public:
     // ----------------------------------------------------------------------
@@ -172,6 +188,10 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_ProcessDpFile_ReprioritizeOps();
     void test_ProcessDpFile_RetransmitOps();
     void test_ProcessDpFile_MixedOps();
+    void test_SendCatalogDp_EmptyCatalog();
+    void test_SendCatalogDp_WithEntries();
+    void test_SendCatalogDp_DefaultPriority();
+    void test_SendCatalogDp_CustomPriority();
 };
 
 }  // namespace Svc

@@ -46,6 +46,18 @@ module Svc {
     @ DP Writer Add File to Cat
     async input port addToCat: DpWritten
 
+    @ Data product get port
+    product get port productGetOut
+
+    @ Data product send port
+    product send port productSendOut
+
+    @ Catalog entry data product record
+    product record CatalogEntry: DpRecord id 0
+
+    @ Catalog data product container
+    product container Catalog id 0 default priority 100
+
     # ----------------------------------------------------------------------
     # F Prime infrastructure ports
     # ----------------------------------------------------------------------
@@ -125,6 +137,12 @@ module Svc {
                                     fileName: string size FileNameStringSize @< The operations file name
                                   ) \
       opcode 7
+
+    @ Generate a data product containing catalog entries
+    async command SEND_CATALOG_DP (
+                                    catalogPriority: U32 @< Priority for catalog data product (0xFFFFFFFF = use default)
+                                  ) \
+      opcode 8
 
     # ----------------------------------------------------------------------
     # Events
