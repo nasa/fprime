@@ -205,7 +205,7 @@ class Engine {
      * @param transactionSeq Transaction sequence number
      * @param entityId Entity ID
      * @param action Suspend or resume action
-     * @return Status::SUCCESS if transaction was found and state changed, Status::ERROR otherwise
+     * @return Status::SUCCESS if transaction was found and suspended/resumed, Status::ERROR otherwise
      */
     Status::T setSuspendResumeTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId, SuspendResume::T action);
 
