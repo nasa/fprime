@@ -162,6 +162,8 @@ Offset | Size | Field | Description
 9 | 4 | tSub | Generation time in subseconds (U32, big-endian)
 13 | 4 | Priority | Priority value (U32, big-endian). Used for REPRIORITIZE and RETRANSMIT. For RETRANSMIT, 0xFFFFFFFF means use priority from file.
 
+After all records, a single 4-byte CRC32 checksum (U32, big-endian) is appended to provide file integrity validation. The checksum is calculated over all record data using the CRC-32 algorithm.
+
 #### 3.8.2 Operation Semantics
 
 **DELETE (0x01)**: Removes the specified data product from the catalog and deletes the file from the filesystem. The Priority field is ignored.
@@ -177,7 +179,8 @@ Operations are processed sequentially in the order they appear in the file. If a
 The command will fail immediately with an error if:
 
 - The file cannot be opened
-- The file size is not a multiple of 17 bytes
+- The file size is less than 4 bytes or the data portion (file size - 4 bytes) is not a multiple of 17 bytes
+- The CRC32 checksum is invalid
 - An invalid operation code is encountered
 
 #### 3.8.4 Implementation

@@ -15,7 +15,56 @@
 #include "Os/FileSystem.hpp"
 #include "config/DpCfg.hpp"
 
+// Include CRC32 library for test record generation
+extern "C" {
+#include <Utils/Hash/libcrc/lib_crc.h>
+}
+
 namespace Svc {
+
+// ----------------------------------------------------------------------
+// Helper function to create DP operation records
+// ----------------------------------------------------------------------
+
+// Helper function to pack a 17-byte operation record (big-endian)
+static void packOpRecord(U8* buffer, U8 op, U32 id, U32 tSec, U32 tSub, U32 priority) {
+    buffer[0] = op;
+    buffer[1] = static_cast<U8>((id >> 24) & 0xFF);
+    buffer[2] = static_cast<U8>((id >> 16) & 0xFF);
+    buffer[3] = static_cast<U8>((id >> 8) & 0xFF);
+    buffer[4] = static_cast<U8>(id & 0xFF);
+    buffer[5] = static_cast<U8>((tSec >> 24) & 0xFF);
+    buffer[6] = static_cast<U8>((tSec >> 16) & 0xFF);
+    buffer[7] = static_cast<U8>((tSec >> 8) & 0xFF);
+    buffer[8] = static_cast<U8>(tSec & 0xFF);
+    buffer[9] = static_cast<U8>((tSub >> 24) & 0xFF);
+    buffer[10] = static_cast<U8>((tSub >> 16) & 0xFF);
+    buffer[11] = static_cast<U8>((tSub >> 8) & 0xFF);
+    buffer[12] = static_cast<U8>(tSub & 0xFF);
+    buffer[13] = static_cast<U8>((priority >> 24) & 0xFF);
+    buffer[14] = static_cast<U8>((priority >> 16) & 0xFF);
+    buffer[15] = static_cast<U8>((priority >> 8) & 0xFF);
+    buffer[16] = static_cast<U8>(priority & 0xFF);
+}
+
+// Helper function to calculate and append CRC32 for all data
+static void appendCrc32(Os::File& file, const U8* data, FwSizeType dataSize) {
+    // Calculate CRC32 over all data
+    unsigned long crc = 0xFFFFFFFF;
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        crc = update_crc_32(crc, static_cast<char>(data[i]));
+    }
+    U32 crc32 = static_cast<U32>(crc ^ 0xFFFFFFFF);
+
+    // Write CRC32 as big-endian U32
+    U8 crcBuf[4];
+    crcBuf[0] = static_cast<U8>((crc32 >> 24) & 0xFF);
+    crcBuf[1] = static_cast<U8>((crc32 >> 16) & 0xFF);
+    crcBuf[2] = static_cast<U8>((crc32 >> 8) & 0xFF);
+    crcBuf[3] = static_cast<U8>(crc32 & 0xFF);
+    FwSizeType size = 4;
+    file.write(crcBuf, size);
+}
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -1565,12 +1614,12 @@ void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
     this->makeDpDir(dir.toChar());
     this->component.configure(&dir, 1, stateFile, 0, alloc);
 
-    // Create file with invalid size (not multiple of 17)
+    // Create file with invalid size (data portion not multiple of 17, and too small for CRC32)
     Fw::FileNameString opFile;
     opFile.format("%s/inv_size.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
-    U8 data[10] = {0};  // 10 bytes, not a multiple of 17
+    U8 data[10] = {0};  // 10 bytes: too small for even CRC32 (need at least 4)
     FwSizeType size = 10;
     file.write(data, size);
     file.close();
@@ -1597,16 +1646,22 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     this->makeDpDir(dir.toChar());
     this->component.configure(&dir, 1, stateFile, 0, alloc);
 
-    // Create file with invalid operation code
+    // Create file with invalid operation code but valid CRC32
     Fw::FileNameString opFile;
     opFile.format("%s/inv_op.dat", dir.toChar());
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
-    U8 data[17] = {0};
-    data[0] = 99;  // Invalid operation code
-    // ID, tSec, tSub, priority all zeros
+
+    // Pack record with invalid operation code
+    U8 data[17];
+    packOpRecord(data, 99, 0, 0, 0, 0);  // Invalid operation code 99
+
+    // Write record
     FwSizeType size = 17;
     file.write(data, size);
+
+    // Append valid CRC32
+    appendCrc32(file, data, 17);
     file.close();
 
     this->sendCmd_PROCESS_DP_FILE(0, 12, opFile);
@@ -1652,26 +1707,17 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
-    // Record 1: DELETE DP 1
-    U8 rec1[17] = {
-        1,                 // DELETE operation
-        0, 0, 0,    1,     // ID = 1
-        0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0,    0x64,  // tSub = 100
-        0, 0, 0,    0      // priority (ignored for DELETE)
-    };
-    FwSizeType size = 17;
-    file.write(rec1, size);
+    // Pack records into buffer
+    U8 allData[34];  // 2 records * 17 bytes
+    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
+    packOpRecord(&allData[17], 1, 3, 3000, 300, 0);  // DELETE DP 3
 
-    // Record 2: DELETE DP 3
-    U8 rec2[17] = {
-        1,                 // DELETE operation
-        0, 0, 0,    3,     // ID = 3
-        0, 0, 0x0B, 0xB8,  // tSec = 3000
-        0, 0, 0x01, 0x2C,  // tSub = 300
-        0, 0, 0,    0      // priority (ignored for DELETE)
-    };
-    file.write(rec2, size);
+    // Write all records
+    FwSizeType size = 34;
+    file.write(allData, size);
+
+    // Append CRC32
+    appendCrc32(file, allData, 34);
     file.close();
 
     // Process the file
@@ -1731,16 +1777,16 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
-    // Record: REPRIORITIZE DP 1 to priority 5
-    U8 rec[17] = {
-        2,                 // REPRIORITIZE operation
-        0, 0, 0,    1,     // ID = 1
-        0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0,    0x64,  // tSub = 100
-        0, 0, 0,    5      // new priority = 5
-    };
+    // Pack record
+    U8 rec[17];
+    packOpRecord(rec, 2, 1, 1000, 100, 5);  // REPRIORITIZE DP 1 to priority 5
+
+    // Write record
     FwSizeType size = 17;
     file.write(rec, size);
+
+    // Append CRC32
+    appendCrc32(file, rec, 17);
     file.close();
 
     // Process the file
@@ -1791,16 +1837,16 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
-    // Record: RETRANSMIT DP 1 with priority 5
-    U8 rec[17] = {
-        3,                 // RETRANSMIT operation
-        0, 0, 0,    1,     // ID = 1
-        0, 0, 0x03, 0xE8,  // tSec = 1000
-        0, 0, 0,    0x64,  // tSub = 100
-        0, 0, 0,    5      // priority = 5
-    };
+    // Pack record
+    U8 rec[17];
+    packOpRecord(rec, 3, 1, 1000, 100, 5);  // RETRANSMIT DP 1 with priority 5
+
+    // Write record
     FwSizeType size = 17;
     file.write(rec, size);
+
+    // Append CRC32
+    appendCrc32(file, rec, 17);
     file.close();
 
     // Process the file
@@ -1856,19 +1902,18 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     Os::File file;
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
-    // Record 1: DELETE DP 1
-    U8 rec1[17] = {1, 0, 0, 0, 1, 0, 0, 0x03, 0xE8, 0, 0, 0, 0x64, 0, 0, 0, 0};
-    FwSizeType size = 17;
-    file.write(rec1, size);
+    // Pack all records into buffer
+    U8 allData[51];  // 3 records * 17 bytes
+    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
+    packOpRecord(&allData[17], 2, 2, 2000, 200, 5);  // REPRIORITIZE DP 2 to priority 5
+    packOpRecord(&allData[34], 3, 4, 4000, 400, 3);  // RETRANSMIT DP 4 with priority 3
 
-    // Record 2: REPRIORITIZE DP 2 to priority 5
-    U8 rec2[17] = {2, 0, 0, 0, 2, 0, 0, 0x07, 0xD0, 0, 0, 0, 0xC8, 0, 0, 0, 5};
-    file.write(rec2, size);
+    // Write all records
+    FwSizeType size = 51;
+    file.write(allData, size);
 
-    // Record 3: RETRANSMIT DP 4 with priority 3
-    U8 rec3[17] = {3, 0, 0, 0, 4, 0, 0, 0x0F, 0xA0, 0, 0, 0x01, 0x90, 0, 0, 0, 3};
-    file.write(rec3, size);
-
+    // Append CRC32
+    appendCrc32(file, allData, 51);
     file.close();
 
     // Process the file

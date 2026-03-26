@@ -586,6 +586,48 @@ module Svc {
       id 62 \
       format "DP operations file {} has invalid operation code {} at record {}"
 
+    @ Invalid checksum in DP operations file
+    event DpFileChecksumError(
+                          file: string size FileNameStringSize @< The file
+                          computed: U32 @< computed checksum
+                          expected: U32 @< expected checksum
+      ) \
+      severity warning high \
+      id 63 \
+      format "DP operations file {} has invalid checksum: computed 0x{x}, expected 0x{x}"
+
+    @ Executing DELETE operation from file
+    event DpFileOpDelete(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+      ) \
+      severity activity low \
+      id 64 \
+      format "File op: DELETE DP {}_{}_{}"
+
+    @ Executing REPRIORITIZE operation from file
+    event DpFileOpReprioritize(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+                          $priority: U32 @< new priority
+      ) \
+      severity activity low \
+      id 65 \
+      format "File op: REPRIORITIZE DP {}_{}_{} to priority {}"
+
+    @ Executing RETRANSMIT operation from file
+    event DpFileOpRetransmit(
+                          $id: FwDpIdType @< The ID
+                          tSec: U32 @< time seconds
+                          tSub: U32 @< time subseconds
+                          $priority: U32 @< priority
+      ) \
+      severity activity low \
+      id 66 \
+      format "File op: RETRANSMIT DP {}_{}_{} with priority {}"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------

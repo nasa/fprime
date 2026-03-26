@@ -17,11 +17,11 @@
 #include <config/DpCfg.hpp>
 
 namespace Fw {
-    class DpContainer;
+class DpContainer;
 }
 
 namespace Os {
-    class File;
+class File;
 }
 
 #define DIRECTORY_DELIMITER "/"
@@ -315,7 +315,11 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param opFile The file object to open
     /// @param fileSize Output: the file size
     /// @return true if successful, false on error (events logged)
-    bool openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& opFile, FwSizeType& fileSize, FwOpcodeType opCode, U32 cmdSeq);
+    bool openAndValidateOpFile(const Fw::StringBase& fileName,
+                               Os::File& opFile,
+                               FwSizeType& fileSize,
+                               FwOpcodeType opCode,
+                               U32 cmdSeq);
 
     /// @brief Parse a single operation record from buffer
     /// @param recordBuf Buffer containing the record
@@ -348,7 +352,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param fileSize The file size
     /// @param usedPriority The priority to use
     /// @return true if successful, false otherwise
-    bool addDpToCatalog(const Fw::FileNameString& dpFileName, FwSizeType foundDir, FwSizeType fileSize, U32 usedPriority);
+    bool addDpToCatalog(const Fw::FileNameString& dpFileName,
+                        FwSizeType foundDir,
+                        FwSizeType fileSize,
+                        U32 usedPriority);
 
     /// @brief Update priority of existing DP in catalog for retransmit
     /// @param existingNode The existing node in the catalog
@@ -358,7 +365,12 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param tSub Time in subseconds
     /// @param priorityOverride Priority override (0xFFFFFFFF = use file priority)
     /// @return true if successful, false otherwise
-    bool updateExistingDpForRetransmit(DpBtreeNode* existingNode, const Fw::FileNameString& dpFileName, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride);
+    bool updateExistingDpForRetransmit(DpBtreeNode* existingNode,
+                                       const Fw::FileNameString& dpFileName,
+                                       FwDpIdType id,
+                                       U32 tSec,
+                                       U32 tSub,
+                                       U32 priorityOverride);
 
     /// @brief Helper function to delete a data product (shared by DELETE_DP command and batch file processing)
     /// @param id The DP ID

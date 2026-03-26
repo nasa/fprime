@@ -8,11 +8,17 @@
 #include "Svc/DpCatalog/DpCatalog.hpp"
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "Utils/Hash/libcrc/CRC32.hpp"
 
 #include <new>  // placement new
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
+
+// Include the libcrc C library
+extern "C" {
+#include <Utils/Hash/libcrc/lib_crc.h>
+}
 
 namespace Svc {
 static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
@@ -1256,7 +1262,11 @@ void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,
 // Helper functions for command handlers
 // ----------------------------------------------------------------------
 
-bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& opFile, FwSizeType& fileSize, FwOpcodeType opCode, U32 cmdSeq) {
+bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
+                                      Os::File& opFile,
+                                      FwSizeType& fileSize,
+                                      FwOpcodeType opCode,
+                                      U32 cmdSeq) {
     // Open the operations file
     Os::File::Status stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
@@ -1272,9 +1282,17 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& 
         return false;
     }
 
-    // Verify file size is a multiple of 17 bytes
+    // Verify file size: must be at least 4 bytes (for CRC32) and data portion must be multiple of 17 bytes
     const FwSizeType RECORD_SIZE = 17;
-    if (fileSize % RECORD_SIZE != 0) {
+    const FwSizeType CRC_SIZE = 4;
+    if (fileSize < CRC_SIZE) {
+        opFile.close();
+        this->log_WARNING_HI_DpFileInvalidSize(fileName, static_cast<I32>(fileSize));
+        return false;
+    }
+
+    FwSizeType dataSize = fileSize - CRC_SIZE;
+    if (dataSize % RECORD_SIZE != 0) {
         opFile.close();
         this->log_WARNING_HI_DpFileInvalidSize(fileName, static_cast<I32>(fileSize));
         return false;
@@ -1283,10 +1301,15 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName, Os::File& 
     return true;
 }
 
-void DpCatalog::parseFileOperationRecord(const U8* recordBuf, U8& operationCode, U32& id, U32& tSec, U32& tSub, U32& priority) {
-    const FwSizeType RECORD_SIZE = 17;
-    Fw::ExternalSerializeBuffer serialBuffer(const_cast<U8*>(recordBuf), RECORD_SIZE);
-    serialBuffer.setBuffLen(RECORD_SIZE);
+void DpCatalog::parseFileOperationRecord(const U8* recordBuf,
+                                         U8& operationCode,
+                                         U32& id,
+                                         U32& tSec,
+                                         U32& tSub,
+                                         U32& priority) {
+    const FwSizeType DATA_SIZE = 17;  // Size of data fields (excludes CRC32)
+    Fw::ExternalSerializeBuffer serialBuffer(const_cast<U8*>(recordBuf), DATA_SIZE);
+    serialBuffer.setBuffLen(DATA_SIZE);
 
     Fw::SerializeStatus desStat = serialBuffer.deserializeTo(operationCode);
     FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
@@ -1339,7 +1362,12 @@ bool DpCatalog::readDpHeader(const Fw::FileNameString& dpFileName, Fw::DpContain
     return true;
 }
 
-bool DpCatalog::updateNodePriority(DpBtreeNode* node, FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority, U32 oldPriority) {
+bool DpCatalog::updateNodePriority(DpBtreeNode* node,
+                                   FwDpIdType id,
+                                   U32 tSec,
+                                   U32 tSub,
+                                   U32 newPriority,
+                                   U32 oldPriority) {
     // Copy the entry before removing from tree
     DpStateEntry updatedEntry = node->entry;
 
@@ -1378,7 +1406,10 @@ bool DpCatalog::updateNodePriority(DpBtreeNode* node, FwDpIdType id, U32 tSec, U
     return true;
 }
 
-bool DpCatalog::addDpToCatalog(const Fw::FileNameString& dpFileName, FwSizeType foundDir, FwSizeType fileSize, U32 usedPriority) {
+bool DpCatalog::addDpToCatalog(const Fw::FileNameString& dpFileName,
+                               FwSizeType foundDir,
+                               FwSizeType fileSize,
+                               U32 usedPriority) {
     // Read the DP header
     U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];
     Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));
@@ -1419,7 +1450,12 @@ bool DpCatalog::addDpToCatalog(const Fw::FileNameString& dpFileName, FwSizeType 
     return true;
 }
 
-bool DpCatalog::updateExistingDpForRetransmit(DpBtreeNode* existingNode, const Fw::FileNameString& dpFileName, FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+bool DpCatalog::updateExistingDpForRetransmit(DpBtreeNode* existingNode,
+                                              const Fw::FileNameString& dpFileName,
+                                              FwDpIdType id,
+                                              U32 tSec,
+                                              U32 tSub,
+                                              U32 priorityOverride) {
     // Determine the new priority
     U32 newPriority;
     if (priorityOverride == 0xFFFFFFFF) {
@@ -1470,15 +1506,65 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
     }
 
     const FwSizeType RECORD_SIZE = 17;
-    U32 numRecords = static_cast<U32>(fileSize / RECORD_SIZE);
+    const FwSizeType CRC_SIZE = 4;
+    FwSizeType dataSize = fileSize - CRC_SIZE;
+    U32 numRecords = static_cast<U32>(dataSize / RECORD_SIZE);
+
     this->log_ACTIVITY_HI_DpFileProcessingStarted(fileName);
 
-    // Process each record
-    for (U32 recordNum = 0; recordNum < numRecords; recordNum++) {
-        U8 recordBuf[RECORD_SIZE];
-        FwSizeType readSize = RECORD_SIZE;
+    // First pass: validate CRC32 by scanning file byte by byte
+    unsigned long crc = 0xFFFFFFFF;
+    U8 byteBuf;
+    FwSizeType readSize;
 
-        Os::File::Status stat = opFile.read(recordBuf, readSize);
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        readSize = 1;
+        Os::File::Status stat = opFile.read(&byteBuf, readSize);
+        if (stat != Os::File::OP_OK || readSize != 1) {
+            opFile.close();
+            this->log_WARNING_HI_DpFileReadError(fileName, stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        crc = update_crc_32(crc, static_cast<char>(byteBuf));
+    }
+    U32 computedCrc = static_cast<U32>(crc ^ 0xFFFFFFFF);
+
+    // Read CRC32 from end of file (big-endian)
+    U8 crcBuf[CRC_SIZE];
+    readSize = CRC_SIZE;
+    Os::File::Status stat = opFile.read(crcBuf, readSize);
+    opFile.close();
+
+    if (stat != Os::File::OP_OK || readSize != CRC_SIZE) {
+        this->log_WARNING_HI_DpFileReadError(fileName, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    U32 expectedCrc = (static_cast<U32>(crcBuf[0]) << 24) | (static_cast<U32>(crcBuf[1]) << 16) |
+                      (static_cast<U32>(crcBuf[2]) << 8) | static_cast<U32>(crcBuf[3]);
+
+    // Validate checksum
+    if (computedCrc != expectedCrc) {
+        this->log_WARNING_HI_DpFileChecksumError(fileName, computedCrc, expectedCrc);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Second pass: reopen file and process records one at a time
+    stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_DpFileOpenError(fileName, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Process each record
+    U8 recordBuf[RECORD_SIZE];
+    for (U32 recordNum = 0; recordNum < numRecords; recordNum++) {
+        readSize = RECORD_SIZE;
+        stat = opFile.read(recordBuf, readSize);
         if (stat != Os::File::OP_OK || readSize != RECORD_SIZE) {
             opFile.close();
             this->log_WARNING_HI_DpFileReadError(fileName, stat);
@@ -1516,6 +1602,8 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
 }
 
 bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
+    this->log_ACTIVITY_LO_DpFileOpDelete(id, tSec, tSub);
+
     // Search all managed directories for the file
     Fw::FileNameString dpFileName;
     FwSizeType foundDir = DP_MAX_DIRECTORIES;
@@ -1588,6 +1676,8 @@ bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
 }
 
 bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
+    this->log_ACTIVITY_LO_DpFileOpReprioritize(id, tSec, tSub, newPriority);
+
     // Find the DP in the binary tree
     DpBtreeNode* node = this->findTreeNode(id, tSec, tSub);
     if (node == nullptr) {
@@ -1622,6 +1712,8 @@ bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 ne
 }
 
 bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+    this->log_ACTIVITY_LO_DpFileOpRetransmit(id, tSec, tSub, priorityOverride);
+
     // Search all managed directories for the file
     Fw::FileNameString dpFileName;
     FwSizeType foundDir = DP_MAX_DIRECTORIES;

@@ -77,6 +77,8 @@ Each record in the output file is exactly 17 bytes:
 | 9      | 4    | tSub      | Time subseconds (U32, big-endian)             |
 | 13     | 4    | Priority  | Priority value (U32, big-endian)              |
 
+After all records, a single 4-byte CRC32 checksum (U32, big-endian) is appended. The CRC32 is calculated over all record data and provides file integrity validation.
+
 ### Error Handling
 
 The script validates:
@@ -95,7 +97,7 @@ To test the utility with the example file:
 # Create binary file
 ./csv_to_dp_ops.py -v example_operations.csv test_ops.dat
 
-# Verify file size (should be 68 bytes for 4 records)
+# Verify file size (should be 72 bytes: 68 bytes data + 4 bytes CRC32)
 ls -l test_ops.dat
 
 # View binary content (hexdump)
