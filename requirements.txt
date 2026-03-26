@@ -51,7 +51,7 @@ python-slugify==8.0.4
 pytz==2024.2
 PyYAML==6.0.3
 pyzmq==27.1.0
-requests==2.32.4
+requests==2.33.0
 rich==13.9.2
 setuptools==78.1.1
 six==1.16.0
