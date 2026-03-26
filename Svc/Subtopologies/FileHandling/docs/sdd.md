@@ -44,23 +44,22 @@ Focused on **file transfer and on-board file ops** only. It does **not** provide
 
 ```fpp
 topology Flight {
-  import FileHandling.Subtopology
+  instance FileHandling.Subtopology
 
   param connections instance FileHandling.prmDb
 
-  # Schedule the active/queued file components (example)
-  connections RateGroups {
-    rg.RateGroupMemberOut[0] -> FileHandling.fileDownlinkRun
+  # Schedule the active/queued file components (exampctions RateGroups {
+    rg.RateGroupMemberOut[0] -> FileHandling.Subtopology.fileDownlinkRun
   }
 
   connections ComCcsds_FileHandling {
     # File Downlink <-> ComQueue
-    FileHandling.fileDownlinkBufferSendOut -> ComCcsds.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-    ComCcsds.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlinkBufferReturn
+    FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
     
     # Router <-> FileUplink
-    ComCcsds.fileOut                     -> FileHandling.fileUplinkBufferSendIn
-    FileHandling.fileUplinkBufferSendOut -> ComCcsds.fileBufferReturnIn
+    ComCcsds.Subtopology.fileOut                         -> FileHandling.Subtopology.fileUplinkBufferSendIn
+    FileHandling.Subtopology.fileUplinkBufferSendOut     -> ComCcsds.Subtopology.fileBufferReturnIn
   }
 ```
 
