@@ -498,7 +498,7 @@ event TransactionResumed(
     severity activity low \
     format "Transaction ({}, {}) resumed"
 
-@ Transaction cancel initiated
+@ Transaction canceled
 event TransactionCanceled(
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
     entityId: Cfdp.EntityId @< Entity ID
