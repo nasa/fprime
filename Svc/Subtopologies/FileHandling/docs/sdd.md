@@ -48,7 +48,8 @@ topology Flight {
 
   param connections instance FileHandling.prmDb
 
-  # Schedule the active/queued file components (exampctions RateGroups {
+  # Schedule the active/queued file components (example)
+  connections RateGroups {
     rg.RateGroupMemberOut[0] -> FileHandling.Subtopology.fileDownlinkRun
   }
 
