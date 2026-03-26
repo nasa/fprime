@@ -199,6 +199,34 @@ module ComCcsds {
             comStub.dataOut -> ComCcsds.frameAccumulator.dataIn
             ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
+
+        # Topology ports
+        # Command routing
+        port commandOut         = fprimeRouter.commandOut
+        port cmdResponseIn      = fprimeRouter.cmdResponseIn
+        port fileOut            = fprimeRouter.fileOut
+        port fileBufferReturnIn = fprimeRouter.fileBufferReturnIn
+
+        # Telemetry/events/file queuing (array ports - index at connection site)
+        port comPacketQueueIn = comQueue.comPacketQueueIn
+        port bufferQueueIn    = comQueue.bufferQueueIn
+        port bufferReturnOut  = comQueue.bufferReturnOut
+
+        # ComDriver interface (via ComStub)
+        port drvReceiveIn        = comStub.drvReceiveIn
+        port drvReceiveReturnOut = comStub.drvReceiveReturnOut
+        port drvSendOut          = comStub.drvSendOut
+        port drvConnected        = comStub.drvConnected
+
+        # Buffer management for ComDriver
+        port commsBufferGetCallee = commsBufferManager.bufferGetCallee
+        port commsBufferSendIn    = commsBufferManager.bufferSendIn
+
+        # Scheduling
+        port comQueueRun          = comQueue.run
+        port aggregatorTimeout    = aggregator.timeout
+        port bufferManagerSchedIn = commsBufferManager.schedIn
+
     } # end Subtopology
 
 } # end ComCcsds

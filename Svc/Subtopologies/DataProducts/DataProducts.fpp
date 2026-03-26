@@ -74,5 +74,19 @@ module DataProducts{
 
             dpWriter.dpWrittenOut -> dpCat.addToCat
         }
+
+        # Topology ports
+        port productGetIn       = dpMgr.productGetIn
+        port productRequestIn   = dpMgr.productRequestIn
+        port productSendIn      = dpMgr.productSendIn
+        port productResponseOut = dpMgr.productResponseOut
+
+        port dpCatFileOut  = dpCat.fileOut
+        port dpCatFileDone = dpCat.fileDone
+
+        port dpBufferManagerSchedIn = dpBufferManager.schedIn
+        port dpWriterSchedIn        = dpWriter.schedIn
+        port dpMgrSchedIn           = dpMgr.schedIn
+
     } # end topology
 } # end DataProducts Subtopology

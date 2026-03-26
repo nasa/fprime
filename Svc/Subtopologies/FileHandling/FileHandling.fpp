@@ -47,5 +47,20 @@ module FileHandling {
         instance fileManager
         instance prmDb
 
+        # Pattern graph specifiers
+        param connections instance prmDb
+
+        # Topology ports
+        port fileDownlinkBufferSendOut = fileDownlink.bufferSendOut
+        port fileDownlinkBufferReturn  = fileDownlink.bufferReturn
+        port fileDownlinkSendFile      = fileDownlink.SendFile
+        port fileDownlinkFileComplete  = fileDownlink.FileComplete
+        port fileDownlinkRun           = fileDownlink.Run
+
+        port fileUplinkBufferSendIn  = fileUplink.bufferSendIn
+        port fileUplinkBufferSendOut = fileUplink.bufferSendOut
+
+        port fileManagerSchedIn = fileManager.schedIn
+
     } # end topology
 } # end FileHandling Subtopology

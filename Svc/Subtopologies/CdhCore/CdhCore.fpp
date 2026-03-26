@@ -66,6 +66,17 @@ module CdhCore {
         connections FaultProtection {
             events.FatalAnnounce -> fatalHandler.FatalReceive
         }
-        
+
+        # Topology ports
+        port seqCmdBuff   = cmdDisp.seqCmdBuff
+        port seqCmdStatus = cmdDisp.seqCmdStatus
+
+        port eventsPktSend  = events.PktSend
+        port tlmSendPktSend = tlmSend.PktSend
+
+        port tlmSendRun = tlmSend.Run
+        port cmdDispRun = cmdDisp.run
+        port healthRun  = $health.Run
+
     } # end topology
 } # end CdhCore Subtopology
