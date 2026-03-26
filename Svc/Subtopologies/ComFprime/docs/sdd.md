@@ -70,20 +70,20 @@ topology Flight {
 
   # (A2) Schedule ComQueue
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComFprime.comQueue.run
+    rg.RateGroupMemberOut[0] -> ComFprime.comQueueRun
   }
 
   # (A3) Wire ByteStream driver <-> ComStub supplied by the subtopology
-      comDriver.$recv                     -> ComFprime.comStub.drvReceiveIn
-      ComFprime.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
-      ComFprime.comStub.drvSendOut      -> comDriver.$send
-      comDriver.ready         -> ComFprime.comStub.drvConnected
+      comDriver.$recv                     -> ComFprime.drvReceiveIn
+      ComFprime.drvReceiveReturnOut       -> comDriver.recvReturnIn
+      ComFprime.drvSendOut              -> comDriver.$send
+      comDriver.ready                     -> ComFprime.drvConnected
   }
 }
 ```
 
 > [!TIP]
-> `ComFprime.commsBufferManager` can be reused if the `ByteStreamDriver` requires buffer management.
+> `ComFprime.commsBufferGetCallee` and `ComFprime.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComFprime **without** `Svc::ComStub`
 

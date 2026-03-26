@@ -236,14 +236,14 @@ topology ... {
 
     # Connect producers to DpManager
     connections DataProducers {
-        producer.productGetOut  -> DataProducts.dpMgr.productGetIn
-        producer.productSendOut -> DataProducts.dpMgr.productSendIn
+        producer.productGetOut  -> DataProducts.productGetIn
+        producer.productSendOut -> DataProducts.productSendIn
     }
 
     # For connecting the catalog to the file downlink
     connections FileHandling_DataProducts{
-        DataProducts.dpCat.fileOut             -> FileHandling.fileDownlink.SendFile
-        FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
+        DataProducts.dpCatFileOut              -> FileHandling.fileDownlinkSendFile
+        FileHandling.fileDownlinkFileComplete  -> DataProducts.dpCatFileDone
     }
 }
 ```

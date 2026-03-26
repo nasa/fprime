@@ -73,21 +73,21 @@ instance comDriver: <ByteStreamDriverInterface>
 
 # (A1) Schedule ComQueue telemetry downlink (optional)
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComCcsds.comQueue.run
+    rg.RateGroupMemberOut[0] -> ComCcsds.comQueueRun
   }
 
   # (A2) Wire ByteStream driver <-> ComStub supplied by the subtopology
   connections Link {
-    comDriver.$recv                        -> ComCcsds.comStub.drvReceiveIn
-    ComCcsds.comStub.drvReceiveReturnOut   -> comDriver.recvReturnIn
-    ComCcsds.comStub.drvSendOut            -> comDriver.$send
-    comDriver.ready                        -> ComCcsds.comStub.drvConnected
+    comDriver.$recv                        -> ComCcsds.drvReceiveIn
+    ComCcsds.drvReceiveReturnOut           -> comDriver.recvReturnIn
+    ComCcsds.drvSendOut                    -> comDriver.$send
+    comDriver.ready                        -> ComCcsds.drvConnected
   }
 }
 ```
 
 > [!TIP]
-> `ComCcsds.commsBufferManager` can be reused if the `ByteStreamDriver` requires buffer management.
+> `ComCcsds.commsBufferGetCallee` and `ComCcsds.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComCcsds **without** `Svc::ComStub`
 

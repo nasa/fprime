@@ -92,20 +92,20 @@ topology Flight {
 
   connections RateGroups {
     # Connect rate groups to active components inside CdhCore
-    rg.RateGroupMemberOut[0] -> CdhCore.tlmSend.Run
-    rg.RateGroupMemberOut[1] -> CdhCore.$health.Run
+    rg.RateGroupMemberOut[0] -> CdhCore.tlmSendRun
+    rg.RateGroupMemberOut[1] -> CdhCore.healthRun
   }
 
   connections ComCcsds_CdhCore{
       # events and telemetry to comQueue
-      CdhCore.events.PktSend        -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.tlmSend.PktSend       -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.eventsPktSend  -> ComCcsds.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.tlmSendPktSend -> ComCcsds.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
-      ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
-      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+      ComCcsds.commandOut    -> CdhCore.seqCmdBuff
+      CdhCore.seqCmdStatus   -> ComCcsds.cmdResponseIn
+      cmdSeq.comCmdOut       -> CdhCore.seqCmdBuff
+      CdhCore.seqCmdStatus   -> cmdSeq.cmdResponseIn
   }
 }
 ```

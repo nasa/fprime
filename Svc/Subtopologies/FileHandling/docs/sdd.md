@@ -50,17 +50,17 @@ topology Flight {
 
   # Schedule the active/queued file components (example)
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> FileHandling.fileDownlink.Run
+    rg.RateGroupMemberOut[0] -> FileHandling.fileDownlinkRun
   }
 
   connections ComCcsds_FileHandling {
     # File Downlink <-> ComQueue
-    FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-    ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
+    FileHandling.fileDownlinkBufferSendOut -> ComCcsds.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+    ComCcsds.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlinkBufferReturn
     
     # Router <-> FileUplink
-    ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
-    FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn
+    ComCcsds.fileOut                     -> FileHandling.fileUplinkBufferSendIn
+    FileHandling.fileUplinkBufferSendOut -> ComCcsds.fileBufferReturnIn
   }
 ```
 
