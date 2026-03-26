@@ -135,71 +135,50 @@ FW_ASSERT_NORETURN void defaultSwAssert(FILE_NAME_ARG file,
 #endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5,
-            FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwAssertArgType arg5,
+              FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5,
-            FwAssertArgType arg6,
-            FwSizeType lineNo) {
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwAssertArgType arg5,
+              FwAssertArgType arg6,
+              FwSizeType lineNo) {
     defaultSwAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
-#if !FW_ASSERTIONS_ALWAYS_ABORT
-    return 0;
-#endif
 }
 }  // namespace Fw
 
