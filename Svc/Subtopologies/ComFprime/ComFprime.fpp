@@ -176,11 +176,11 @@ module ComFprime {
         @ Input port receiving command response messages back into the router
         port cmdResponseIn      = fprimeRouter.cmdResponseIn
 
-        @ Output port sending file packets
-        port fileOut            = fprimeRouter.fileOut
+        @ Output port sending uplinked file packets to the file handling stack
+        port fileUplinkOut          = fprimeRouter.fileOut
 
-        @ Input port receiving returned file buffers to FprimeRouter (ownership restored)
-        port fileBufferReturnIn = fprimeRouter.fileBufferReturnIn
+        @ Input port receiving back buffer ownership from the file handling stack
+        port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
 
         # Telemetry/events/file queuing (array ports - index at connection site)
         @ Input port array for queueing Fw::ComBuffers
