@@ -47,9 +47,6 @@ module FileHandling {
         instance fileManager
         instance prmDb
 
-        # Pattern graph specifiers
-        param connections instance prmDb
-
         # Topology ports
         port fileDownlinkBufferSendOut = fileDownlink.bufferSendOut
         port fileDownlinkBufferReturn  = fileDownlink.bufferReturn
