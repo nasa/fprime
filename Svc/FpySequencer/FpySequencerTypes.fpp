@@ -138,6 +138,7 @@ module Svc {
             ARITHMETIC_UNDERFLOW = 14
             FRAME_START_OUT_OF_BOUNDS = 15
             STACK_UNDERFLOW = 16
+            CMD_FAIL = 17
         }
 
         struct Header {

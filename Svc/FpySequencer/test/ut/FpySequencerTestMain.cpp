@@ -3328,6 +3328,24 @@ TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
     ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::OK);
 }
 
+TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL_setsDirectiveError) {
+    // test that when a cmd fails with EXIT_ON_CMD_FAIL, the directive error fields are updated
+    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(true, Fw::ParamValid::VALID);
+    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
+    this->clearHistory();
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // send in a failure
+    invoke_to_cmdResponseIn(0, 123, 0x00010001, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    // verify directive error fields were updated
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::CMD_FAIL);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->directiveErrorIndex, 0);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->directiveErrorId, Fpy::DirectiveId::CONST_CMD);
+}
+
 // ----------------------------------------------------------------------
 // Stack Unit Tests
 // ----------------------------------------------------------------------

@@ -382,6 +382,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
         // cmd failed and we want to exit. raise a statement failure
+        this->handleDirectiveErrorCode(static_cast<Fpy::DirectiveId::T>(this->m_runtime.currentStatementOpcode),
+                                       DirectiveError::CMD_FAIL);
         this->log_WARNING_HI_CommandFailed(opCode, this->currentStatementIdx(), this->m_sequenceFilePath, response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
