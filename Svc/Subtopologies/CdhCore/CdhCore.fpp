@@ -71,25 +71,25 @@ module CdhCore {
         # Topology ports
         # ----------------------------------------------------------------------
 
-        @ Incoming command buffers from sequencers or other command buffer sources
+        @ Input port for receiving command buffers from sequencers or other command buffer sources
         port seqCmdBuff   = cmdDisp.seqCmdBuff
 
-        @ Outgoing command status responses from the command dispatcher
+        @ Output port returning command execution status to the command source
         port seqCmdStatus = cmdDisp.seqCmdStatus
 
         @ Output port for sending event packets from the EventManager
         port eventsPktSend  = events.PktSend
 
-        @ Output port for packetized telemetry, ordered by Section/Group
+        @ Output port sending packetized telemetry to the comm stack for downlink
         port tlmSendPktSend = tlmSend.PktSend
 
         @ Input port to trigger a telemetry packet send cycle
         port tlmSendRun = tlmSend.Run
 
-        @ Input run port for scheduling the command dispatcher
+        @ Input port for scheduling the command dispatcher
         port cmdDispRun = cmdDisp.run
 
-        @ Input Run port for scheduling the Health component
+        @ Input port for scheduling the Health component
         port healthRun  = $health.Run
 
     } # end topology
