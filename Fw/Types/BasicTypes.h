@@ -88,8 +88,10 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
-#define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))                 //!< MAX macro
-#define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))                 //!< MIN macro
+// Deprecated: prefer std::max/std::min from <algorithm> in C++ code.
+// Kept for C compatibility only.
+#define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))  //!< MAX macro (deprecated in C++, use std::max)
+#define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))  //!< MIN macro (deprecated in C++, use std::min)
 
 #define FW_NO_ASSERT (1)  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
