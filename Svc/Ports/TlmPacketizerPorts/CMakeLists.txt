@@ -9,5 +9,5 @@ register_fprime_module(
     DEPENDS
         Fw_Types
         Svc_Types_TlmPacketizerTypes
-        Svc_TlmPacketizer_TlmPacketizerConfig
+        Svc_TlmPacketizer_config_TlmPacketizerConfig
 )

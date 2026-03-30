@@ -6,7 +6,7 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerConfig")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/TlmPacketizerConfig")
 
 register_fprime_module(
   AUTOCODER_INPUTS
@@ -14,7 +14,7 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer.cpp"
   DEPENDS
-    Svc_TlmPacketizer_TlmPacketizerConfig
+    Svc_TlmPacketizer_config_TlmPacketizerConfig
 )
 
 
