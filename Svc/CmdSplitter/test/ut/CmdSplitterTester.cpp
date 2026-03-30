@@ -5,10 +5,10 @@
 // ======================================================================
 
 #include "CmdSplitterTester.hpp"
-#include <algorithm>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <STest/Pick/Pick.hpp>
+#include <algorithm>
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
