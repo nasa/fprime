@@ -12,4 +12,8 @@ topology Subtopology{
     connections ComSplitter{
         comSplitter.comOut -> comLog.comIn
     }
+
+    # Topology ports
+    port comIn = comSplitter.comIn
+
 }

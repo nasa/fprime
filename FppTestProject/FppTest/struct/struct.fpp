@@ -10,6 +10,8 @@ module FppTest {
 
     type StructSAlias = Primitive
 
+    struct Empty { }
+
     struct NonPrimitive {
       mString: string
       mEnum: StructEnum

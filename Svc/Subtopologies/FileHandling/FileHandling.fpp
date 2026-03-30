@@ -47,5 +47,33 @@ module FileHandling {
         instance fileManager
         instance prmDb
 
+        # ----------------------------------------------------------------------
+        # Topology ports
+        # ----------------------------------------------------------------------
+
+        @ Output port for sending file buffers to a downlink component
+        port fileDownlinkBufferSendOut = fileDownlink.bufferSendOut
+
+        @ Input port for returning ownership of buffers sent on fileDownlinkBufferSendOut
+        port fileDownlinkBufferReturn  = fileDownlink.bufferReturn
+
+        @ Mutex-locked input port for requesting a file downlink
+        port fileDownlinkSendFile      = fileDownlink.SendFile
+
+        @ Output port for notifying that a file downlink has completed
+        port fileDownlinkFileComplete  = fileDownlink.FileComplete
+
+        @ Input port for scheduling fileDownlink
+        port fileDownlinkRun           = fileDownlink.Run
+
+        @ Input port for receiving uplinked file packets
+        port fileUplinkBufferSendIn  = fileUplink.bufferSendIn
+
+        @ Output port for returning ownership of received uplink buffers
+        port fileUplinkBufferSendOut = fileUplink.bufferSendOut
+
+        @ Input port for scheduling fileManager operations
+        port fileManagerSchedIn = fileManager.schedIn
+
     } # end topology
 } # end FileHandling Subtopology
