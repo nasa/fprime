@@ -11,8 +11,7 @@
 // ======================================================================
 
 #include <Utils/Hash/Hash.hpp>
-
-static_assert(sizeof(unsigned long) >= sizeof(U32), "CRC32 cannot fit in CRC32 library chosen types");
+#include "Crc32.hpp"
 
 namespace Utils {
 
@@ -23,19 +22,9 @@ Hash ::Hash() {
 Hash ::~Hash() {}
 
 void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffer) {
-    HASH_HANDLE_TYPE local_hash_handle;
-    local_hash_handle = 0xffffffffL;
-    FW_ASSERT(data);
-    char c;
-    for (FwSizeType index = 0; index < len; index++) {
-        c = static_cast<const char*>(data)[index];
-        local_hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(local_hash_handle, c));
-    }
-    HashBuffer bufferOut;
-    // For CRC32 we need to return the one's complement of the result:
-    Fw::SerializeStatus status = bufferOut.serializeFrom(~(local_hash_handle));
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
-    buffer = bufferOut;
+    Hash crc32;
+    crc32.update(data, len);
+    crc32.final(buffer);
 }
 
 void Hash ::init() {
@@ -43,12 +32,9 @@ void Hash ::init() {
 }
 
 void Hash ::update(const void* const data, FwSizeType len) {
+    static_assert(sizeof(Utils::Hash::hash_handle) == sizeof(U32), "hash handle size must match CRC32 size");
     FW_ASSERT(data);
-    char c;
-    for (FwSizeType index = 0; index < len; index++) {
-        c = static_cast<const char*>(data)[index];
-        this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
-    }
+    this->hash_handle = crc32_ieee802_3_update(static_cast<const U8*>(data), len, this->hash_handle);
 }
 
 void Hash ::final(HashBuffer& buffer) {
@@ -60,7 +46,6 @@ void Hash ::final(HashBuffer& buffer) {
 }
 
 void Hash ::final(U32& hashvalue) {
-    FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
     // For CRC32 we need to return the one's complement of the result:
     hashvalue = ~(this->hash_handle);
 }
@@ -72,4 +57,5 @@ void Hash ::setHashValue(HashBuffer& value) {
     // here for correct hash updates
     this->hash_handle = ~this->hash_handle;
 }
+
 }  // namespace Utils

@@ -5,9 +5,7 @@
 #include <cstdio>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
-}
+#include "Utils/Hash/Hash.hpp"
 
 // For testing, limit files to 32K
 const FwSizeType FILE_DATA_MAXIMUM = 32 * 1024;

@@ -11,6 +11,7 @@
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
 
+#include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComBuffer.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/File.hpp"
@@ -297,11 +298,8 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                         FwSizeType bufferSize  //!< The buffer size
             );
 
-            //! Finalize computed CRC
-            void finalize();
-
             //! Computed CRC
-            U32 m_computed;
+            Utils::Hash m_computed;
 
             //! Stored CRC
             U32 m_stored;

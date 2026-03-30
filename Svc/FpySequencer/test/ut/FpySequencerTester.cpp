@@ -549,7 +549,7 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 }
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
-    this->cmp.m_computedCRC = crc;
+    this->cmp.m_computedCRC.setHashValue(~crc);
 }
 
 // Get cmp member pointers
