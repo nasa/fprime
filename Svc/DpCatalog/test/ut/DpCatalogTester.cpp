@@ -825,7 +825,7 @@ void DpCatalogTester::test_DeleteDp_NotFound() {
 
     this->clearHistory();
 
-    // Try to delete a non-existent DP
+    // Try to delete a nonexistent DP
     this->sendCmd_DELETE_DP(0, 11, 999, 9999, 9999);
     this->component.doDispatch();
 
@@ -1082,7 +1082,7 @@ void DpCatalogTester::test_ChangeDpPriority_NotFound() {
 
     this->clearHistory();
 
-    // Try to change priority of non-existent DP
+    // Try to change priority of nonexistent DP
     this->sendCmd_CHANGE_DP_PRIORITY(0, 11, 999, 2000, 200, 5);
     this->component.doDispatch();
 
@@ -1302,7 +1302,7 @@ void DpCatalogTester::test_RetransmitDp_NotFound() {
 
     this->clearHistory();
 
-    // Try to retransmit non-existent DP
+    // Try to retransmit nonexistent DP
     this->sendCmd_RETRANSMIT_DP(0, 11, 999, 2000, 200, 0xFFFFFFFF);
     this->component.doDispatch();
 
@@ -1601,7 +1601,7 @@ void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
     this->makeDpDir(dir.toChar());
     this->component.configure(&dir, 1, stateFile, 0, alloc);
 
-    // Try to process non-existent file
+    // Try to process nonexistent file
     Fw::FileNameString opFile("./nonexistent_ops.dat");
     this->sendCmd_PROCESS_DP_FILE(0, 10, opFile);
     this->component.doDispatch();
@@ -1718,7 +1718,7 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack records into buffer
-    U8 allData[34];  // 2 records * 17 bytes
+    U8 allData[34];                                  // 2 records * 17 bytes
     packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
     packOpRecord(&allData[17], 1, 3, 3000, 300, 0);  // DELETE DP 3
 
@@ -1913,7 +1913,7 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack all records into buffer
-    U8 allData[51];  // 3 records * 17 bytes
+    U8 allData[51];                                  // 3 records * 17 bytes
     packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
     packOpRecord(&allData[17], 2, 2, 2000, 200, 5);  // REPRIORITIZE DP 2 to priority 5
     packOpRecord(&allData[34], 3, 4, 4000, 400, 3);  // RETRANSMIT DP 4 with priority 3
