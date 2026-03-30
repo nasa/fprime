@@ -64,7 +64,7 @@ The `Svc::TlmPacketizer` component has an input port `TlmRecv` that receives cha
 
 The implementation uses a hashing function to find the location of telemetry channels that is tuned in the configuration file `TlmPacketizerImplCfg.hpp`. See section 3.5 for description.
 
-When a call to the `Run()` interface is called, the packet writes are locked and all the packets are copied to a second set of packets. Once the copy is complete, the packets writes are unlocked. The destination packet set gets updated with the current time tag and are sent out the `pktSend` port.
+When a call to the `Run()` interface is called, each packet's update status and group level are read under a lock. The send conditions for each section are then evaluated, and the sections that need to send are recorded. If any section requires sending, the packet buffer is copied under a second lock, updated with the current time tag, and sent out the `pktSend` port for all recorded sections.
 
 Each telemetry group, depending on section and group configurations, are sent out on the `pktSend` port array. Since each group is evaluated for each section, a packet with group 1 (and a configuration of 3 sections), will be sent up to 3 times based on the section/group configuration. Each of these sends (section/group) will run through a configurable map to determine which output port to use. Should the output port index be repeated for different section/group pairs, the packet will be sent to that port multiple times.
 

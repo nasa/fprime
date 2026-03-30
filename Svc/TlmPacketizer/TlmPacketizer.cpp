@@ -280,32 +280,27 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
-    // For each packet, send if update, enable, and rate conditions are met
     for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
+        // Local flags to track which sections require a packet dispatch
+        bool sectionNeedsSend[TelemetrySection::NUM_SECTIONS] = {false};
+        bool anySectionNeedsSend = false;
+
+        // Lock only to capture the update status and reset the fill buffer flag.
         this->m_lock.lock();
-
-        // Copy packet data to avoid concurrent updates
+        bool isNewData = this->m_fillBuffers[pkt].updated;
         FwChanIdType entryGroup = this->m_fillBuffers[pkt].level;
-        Fw::ComBuffer sendBuffer = this->m_fillBuffers[pkt].buffer;
-        Fw::Time time = this->m_fillBuffers[pkt].latestTime;
-        bool updated = this->m_fillBuffers[pkt].updated;
         this->m_fillBuffers[pkt].updated = false;
-
         this->m_lock.unLock();
 
-        // Iterate through output sections
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-            // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
-            if (updated and this->m_packetFlags[section][pkt].updateFlag != UpdateFlag::REQUESTED) {
-                this->m_packetFlags[section][pkt].updateFlag = UpdateFlag::NEW;
-            }
-
-            bool sendOutFlag = false;
-            const FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
-
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
             TlmPacketizer_GroupConfig& entryGroupConfig =
                 this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
+
+            // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
+            if (isNewData && pktEntryFlags.updateFlag != UpdateFlag::REQUESTED) {
+                pktEntryFlags.updateFlag = UpdateFlag::NEW;
+            }
 
             /* Base conditions for sending
             1. Output port is connected
@@ -316,11 +311,12 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             4. The rate logic is not SILENCED.
             5. The packet has data (marked updated in the past or new)
             */
-            if (not this->isConnected_PktSend_OutputPort(outIndex)) {
+            if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))) {
                 continue;
             }
+
             if (pktEntryFlags.updateFlag == UpdateFlag::REQUESTED) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             } else {
                 if (not((entryGroupConfig.get_enabled() and
                          this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED) or
@@ -348,7 +344,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             if (pktEntryFlags.updateFlag == UpdateFlag::NEW and
                 entryGroupConfig.get_rateLogic() != Svc::RateLogic::EVERY_MAX and
                 pktEntryFlags.prevSentCounter >= entryGroupConfig.get_min()) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             }
 
             /*
@@ -357,25 +353,36 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             */
             if (entryGroupConfig.get_rateLogic() != Svc::RateLogic::ON_CHANGE_MIN and
                 pktEntryFlags.prevSentCounter >= entryGroupConfig.get_max()) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             }
 
-            // Send under the following conditions:
-            // 1. Packet received updates and it has been past delta min counts since last packet (min enabled)
-            // 2. Packet has passed delta max counts since last packet (max enabled)
-            // With the above, the group must be either enabled or force enabled.
-            // 3. If the packet was requested.
-            if (sendOutFlag) {
-                // serialize time into time offset in packet
-                Fw::ExternalSerializeBuffer buff(
-                    &sendBuffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
-                    Fw::Time::SERIALIZED_SIZE);
-                Fw::SerializeStatus stat = buff.serializeFrom(time);
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-                this->PktSend_out(outIndex, sendBuffer, pktEntryFlags.prevSentCounter);
+            if (sectionNeedsSend[section]) {
+                anySectionNeedsSend = true;
+            }
+        }
 
-                pktEntryFlags.prevSentCounter = 0;
-                pktEntryFlags.updateFlag = UpdateFlag::PAST;
+        // Only perform the buffer copy if at least one section needs to send.
+        if (anySectionNeedsSend) {
+            this->m_lock.lock();
+            BufferEntry sendBuffer = this->m_fillBuffers[pkt];
+            this->m_lock.unLock();
+
+            // serialize time into time offset in packet
+            Fw::ExternalSerializeBuffer buff(
+                &sendBuffer.buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
+                Fw::Time::SERIALIZED_SIZE);
+            (void)buff.serializeFrom(sendBuffer.latestTime);
+
+            for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+                if (sectionNeedsSend[section]) {
+                    PktSendCounters& pktEntryFlags = this->m_packetFlags[section][pkt];
+                    FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
+
+                    this->PktSend_out(outIndex, sendBuffer.buffer, pktEntryFlags.prevSentCounter);
+
+                    pktEntryFlags.prevSentCounter = 0;
+                    pktEntryFlags.updateFlag = UpdateFlag::PAST;
+                }
             }
         }
     }

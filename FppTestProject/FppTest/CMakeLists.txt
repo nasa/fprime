@@ -46,8 +46,12 @@ set(MOD_DEPS
     ${PROJECT_NAME}/sizeof
     ${PROJECT_NAME}/struct
     ${PROJECT_NAME}/topology/ports
+    ${PROJECT_NAME}/topology/components/Comp
     ${PROJECT_NAME}/topology/components/Sender
     ${PROJECT_NAME}/topology/components/Receiver
+    ${PROJECT_NAME}/topology/main
+    ${PROJECT_NAME}/topology/special_ports
+    ${PROJECT_NAME}/topology/top_ports
 )
 
 register_fprime_deployment()

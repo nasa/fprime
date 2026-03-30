@@ -63,27 +63,27 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 
 ```fpp
 topology Flight {
-  import ComFprime.Subtopology
+  instance ComFprime.Subtopology
 
   # (A1) Provide a ByteStreamDriver interface (e.g. Drv.TcpClient)
   instance comDriver: ...
 
   # (A2) Schedule ComQueue
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComFprime.comQueue.run
+    rg.RateGroupMemberOut[0] -> ComFprime.Subtopology.comQueueRun
   }
 
   # (A3) Wire ByteStream driver <-> ComStub supplied by the subtopology
-      comDriver.$recv                     -> ComFprime.comStub.drvReceiveIn
-      ComFprime.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
-      ComFprime.comStub.drvSendOut      -> comDriver.$send
-      comDriver.ready         -> ComFprime.comStub.drvConnected
+      comDriver.$recv                            -> ComFprime.Subtopology.drvReceiveIn
+      ComFprime.Subtopology.drvReceiveReturnOut  -> comDriver.recvReturnIn
+      ComFprime.Subtopology.drvSendOut           -> comDriver.$send
+      comDriver.ready                            -> ComFprime.Subtopology.drvConnected
   }
 }
 ```
 
 > [!TIP]
-> `ComFprime.commsBufferManager` can be reused if the `ByteStreamDriver` requires buffer management.
+> `ComFprime.Subtopology.commsBufferGetCallee` and `ComFprime.Subtopology.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComFprime **without** `Svc::ComStub`
 

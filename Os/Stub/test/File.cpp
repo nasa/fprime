@@ -1,4 +1,5 @@
 #include "Os/Stub/test/File.hpp"
+#include <algorithm>
 #include <new>
 #include "Os/File.hpp"
 namespace Os {
@@ -108,7 +109,7 @@ FileInterface::Status TestFile::read(U8* buffer, FwSizeType& size, WaitType wait
     StaticData::data.lastCalled = StaticData::READ_FN;
     // Copy read data if set
     if (nullptr != StaticData::data.readResult) {
-        size = FW_MIN(size, StaticData::data.readResultSize - StaticData::data.pointer);
+        size = std::min(size, StaticData::data.readResultSize - StaticData::data.pointer);
         (void)::memcpy(buffer, StaticData::data.readResult + StaticData::data.pointer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
         StaticData::data.positionResult = StaticData::data.pointer;
@@ -125,7 +126,7 @@ FileInterface::Status TestFile::write(const U8* buffer, FwSizeType& size, WaitTy
     StaticData::data.lastCalled = StaticData::WRITE_FN;
     // Copy read data if set
     if (nullptr != StaticData::data.writeResult) {
-        size = FW_MIN(size, StaticData::data.writeResultSize - StaticData::data.pointer);
+        size = std::min(size, StaticData::data.writeResultSize - StaticData::data.pointer);
         (void)::memcpy(StaticData::data.writeResult + StaticData::data.pointer, buffer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
         StaticData::data.positionResult = StaticData::data.pointer;
