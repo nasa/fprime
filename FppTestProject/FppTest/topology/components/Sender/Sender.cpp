@@ -237,6 +237,27 @@ void Sender::replyIn_handler(FwIndexType portNum,
     done_internalInterfaceInvoke();
 }
 
+void Sender::testSerialToSerial(const TestDeploymentPort& portId) {
+    auto args = initTestCase<Types::PrimitiveTypes>(
+        /* We expect this message will eventually reach index 2 Ï(serial) handler */ 2,
+        portId
+    );
+
+    // Send serial data directly through serialOut at SERIAL index
+    Fw::ExternalSerializeBuffer buffer(m_expectedData, sizeof(m_expectedData));
+    buffer.moveSerToOffset(m_expected.getSize());
+    auto status = serialOut_out(TestDeploymentPort::SERIAL, buffer);
+    EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    wait();
+
+    // Verify serial reply was received
+    EXPECT_TRUE(m_serialReplyReceived);
+    EXPECT_EQ(m_serialReplyPortId, portId);
+
+    m_expectedPortNum = -1;
+}
+
 void Sender::serialReplyIn_handler(FwIndexType portNum,
                                    FwIndexType handlerPortNum,
                                    const TestDeploymentPort& portId,

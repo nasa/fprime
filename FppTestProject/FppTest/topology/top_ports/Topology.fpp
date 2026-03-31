@@ -72,6 +72,11 @@ module FppTest {
         SenderTop.serialOut1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync1[2]
         SenderTop.serialOut2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync2[2]
     }
+
+    connections SerialToSerialTest {
+      SenderTop.serialOut1[TestDeploymentPort.SERIAL] -> ReceiverTop.serialIn1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+      SenderTop.serialOut2[TestDeploymentPort.SERIAL] -> ReceiverTop.serialIn2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+    }
   }
 
 }

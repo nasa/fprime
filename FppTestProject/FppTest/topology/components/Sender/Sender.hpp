@@ -43,6 +43,7 @@ class Sender final : public SenderComponentBase {
     void testArrayReturn(const TestDeploymentPort& portId);
     void testArrayStringAliasReturn(const TestDeploymentPort& portId);
     void testStructReturn(const TestDeploymentPort& portId);
+    void testSerialToSerial(const TestDeploymentPort& portId);
 
   private:
     void replyIn_handlerImpl(FwIndexType portNum,

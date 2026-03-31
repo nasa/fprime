@@ -15,7 +15,7 @@ while the third is meant for [serial port tests](#serial-port-tests).
 Typed port tests represent the connections between
 typed-port -> typed-port. There are two for each typed port.
 The receiver will implement a handler to serialize the values
-coming in on the port and send out a replyOut back to the sender
+coming in on the port and send out a `replyOut` back to the sender
 which will verify that what the receiver got was the same as
 what the sender sent.
 
