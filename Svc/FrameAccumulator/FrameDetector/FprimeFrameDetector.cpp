@@ -50,9 +50,9 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         return Status::NO_FRAME_DETECTED;
     }
     // Validate size before proceeding
-    const FwSizeType max_payload_size =std::numeric_limits<FwSizeType>::max() - 
-        FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
-        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    const FwSizeType max_payload_size = std::numeric_limits<FwSizeType>::max() -
+                                        FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
+                                        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     // If the header length is larger than size can store, then frame is invalid
     if (max_payload_size < header.get_lengthField()) {
         // Size overflow - frame is invalid
