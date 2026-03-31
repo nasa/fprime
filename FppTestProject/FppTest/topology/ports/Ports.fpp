@@ -6,6 +6,9 @@ module FppTest {
     SYNC,
     GUARDED,
     ASYNC,
+    SERIAL_SYNC,
+    SERIAL_GUARDED,
+    SERIAL_ASYNC,
     N
   }
 
@@ -58,6 +61,8 @@ module FppTest {
     STRUCT_ARGS_SYNC,
     STRUCT_RETURN_GUARDED,
     STRUCT_RETURN_SYNC,
+    SERIAL,
+    N
   }
 
 }

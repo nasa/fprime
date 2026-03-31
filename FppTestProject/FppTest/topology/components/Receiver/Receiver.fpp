@@ -8,6 +8,8 @@ module FppTest {
 
     output port replyOut: [SenderId.N] Reply
 
+    async input port serialIn : [TestDeploymentPort.N] serial
+
   }
 
 }

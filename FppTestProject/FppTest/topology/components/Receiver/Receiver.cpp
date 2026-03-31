@@ -448,6 +448,49 @@ FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
     return s;
 }
 
+void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    // Determine the appropriate SERIAL_* SenderId from TestDeploymentPort
+    SenderId::T senderId;
+    TestDeploymentPort::T portId = static_cast<TestDeploymentPort::T>(portNum);
+
+    // Map TestDeploymentPort to SERIAL_* SenderId based on the port type suffix
+    switch (portId) {
+        case TestDeploymentPort::ARRAY_ARGS_ASYNC:
+        case TestDeploymentPort::ENUM_ARGS_ASYNC:
+        case TestDeploymentPort::NO_ARGS_ASYNC:
+        case TestDeploymentPort::PRIMITIVE_ARGS_ASYNC:
+        case TestDeploymentPort::STRING_ARGS_ASYNC:
+        case TestDeploymentPort::STRUCT_ARGS_ASYNC:
+            senderId = SenderId::SERIAL_ASYNC;
+            break;
+        case TestDeploymentPort::ARRAY_ARGS_GUARDED:
+        case TestDeploymentPort::ENUM_ARGS_GUARDED:
+        case TestDeploymentPort::NO_ARGS_GUARDED:
+        case TestDeploymentPort::PRIMITIVE_ARGS_GUARDED:
+        case TestDeploymentPort::STRING_ARGS_GUARDED:
+        case TestDeploymentPort::STRUCT_ARGS_GUARDED:
+            senderId = SenderId::SERIAL_GUARDED;
+            break;
+        case TestDeploymentPort::ARRAY_ARGS_SYNC:
+        case TestDeploymentPort::ENUM_ARGS_SYNC:
+        case TestDeploymentPort::NO_ARGS_SYNC:
+        case TestDeploymentPort::PRIMITIVE_ARGS_SYNC:
+        case TestDeploymentPort::STRING_ARGS_SYNC:
+        case TestDeploymentPort::STRUCT_ARGS_SYNC:
+            senderId = SenderId::SERIAL_SYNC;
+            break;
+        default:
+            FW_ASSERT(0, portId);
+            return;
+    }
+
+    // Create Fw::Buffer from the serialized data
+    Fw::Buffer data(buffer.getBuffAddr(), buffer.getSize());
+
+    // Reply with the serialized data using the appropriate SERIAL_* SenderId and handlerPortNum=3
+    replyOut_out(senderId, 3, portId, data);
+}
+
 // ----------------------------------------------------------------------
 // Overflow hook implementations for typed input ports
 // ----------------------------------------------------------------------

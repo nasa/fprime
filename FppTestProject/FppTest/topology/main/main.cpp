@@ -10,14 +10,97 @@
 #include "FppTest/topology/main/FppTestTopologyAc.hpp"
 #include "FppTest/topology/ports/SenderIdEnumAc.hpp"
 #include "FppTestTopologyDefs.hpp"
+#include "Fw/Types/Assert.hpp"
 #include "Os/Os.hpp"
+
+// For stack trace printing
+#if defined(__linux__) || defined(__APPLE__)
+#include <cxxabi.h>
+#include <dlfcn.h>
+#include <execinfo.h>
+#include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
+#endif
 
 namespace FppTest {
 static TopologyState state;
 
+// Custom assertion hook that prints stack trace
+class StackTraceAssertHook : public Fw::AssertHook {
+  public:
+    void reportAssert(FILE_NAME_ARG file,
+                      FwSizeType lineNo,
+                      FwSizeType numArgs,
+                      FwAssertArgType arg1,
+                      FwAssertArgType arg2,
+                      FwAssertArgType arg3,
+                      FwAssertArgType arg4,
+                      FwAssertArgType arg5,
+                      FwAssertArgType arg6) override {
+        // Call base class to print the assertion message
+        Fw::AssertHook::reportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+
+        // Print stack trace
+#if defined(__linux__) || defined(__APPLE__)
+        void* callstack[128];
+        int frames = backtrace(callstack, 128);
+        fprintf(stderr, "\nStack trace:\n");
+
+        for (int i = 0; i < frames; i++) {
+            Dl_info info;
+            if (dladdr(callstack[i], &info)) {
+                // Demangle C++ symbol name
+                char* demangled = nullptr;
+                int status = -1;
+                if (info.dli_sname) {
+                    demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
+                }
+
+                // Calculate offset from symbol
+                ptrdiff_t offset = reinterpret_cast<char*>(callstack[i]) - reinterpret_cast<char*>(info.dli_saddr);
+
+                fprintf(stderr, "  [%d] %p %s + %td", i, callstack[i],
+                        (status == 0 && demangled) ? demangled : (info.dli_sname ? info.dli_sname : "???"), offset);
+
+#ifdef __APPLE__
+                // On macOS, use atos to get file:line information
+                char cmd[1024];
+                snprintf(cmd, sizeof(cmd), "atos -o %s -l %p %p 2>/dev/null", info.dli_fname, info.dli_fbase,
+                         callstack[i]);
+                FILE* pipe = popen(cmd, "r");
+                if (pipe) {
+                    char atos_output[512];
+                    if (fgets(atos_output, sizeof(atos_output), pipe)) {
+                        // Remove trailing newline
+                        size_t len = strlen(atos_output);
+                        if (len > 0 && atos_output[len - 1] == '\n') {
+                            atos_output[len - 1] = '\0';
+                        }
+                        fprintf(stderr, " (%s)", atos_output);
+                    }
+                    pclose(pipe);
+                }
+#endif
+                fprintf(stderr, "\n");
+
+                if (demangled) {
+                    free(demangled);
+                }
+            } else {
+                fprintf(stderr, "  [%d] %p ???\n", i, callstack[i]);
+            }
+        }
+#endif
+    }
+};
+
+static StackTraceAssertHook assertHook;
+
 class SenderTester : public testing::Test {
   public:
     static void SetUpTestSuite() {
+        assertHook.registerHook();
         Os::init();
         setup(state);
     }

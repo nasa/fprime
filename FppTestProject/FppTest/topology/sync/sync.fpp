@@ -9,6 +9,9 @@ module FppTest {
         connections SyncReply {
             receiver1.replyOut[SenderId.SYNC] -> sender1Sync.replyIn
             receiver2.replyOut[SenderId.SYNC] -> sender2Sync.replyIn
+
+            receiver1.replyOut[SenderId.SERIAL_SYNC] -> sender1Sync.serialReplyIn
+            receiver2.replyOut[SenderId.SERIAL_SYNC] -> sender2Sync.serialReplyIn
         }
 
         connections SyncInstance1 {
@@ -97,6 +100,38 @@ module FppTest {
 
             sender2Sync.structReturnOut[0] -> receiver2.structReturnSync[0]
             sender2Sync.structReturnOut[1] -> receiver2.structReturnSync[1]
+        }
+
+        connections SyncSerialInstance1 {
+            sender1Sync.serialOut[TestDeploymentPort.NO_ARGS_SYNC] -> receiver1.noArgsSync[SenderId.SYNC]
+            sender1Sync.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> receiver1.primitiveArgsSync[SenderId.SYNC]
+            sender1Sync.serialOut[TestDeploymentPort.STRING_ARGS_SYNC] -> receiver1.stringArgsSync[SenderId.SYNC]
+            sender1Sync.serialOut[TestDeploymentPort.ENUM_ARGS_SYNC] -> receiver1.enumArgsSync[SenderId.SYNC]
+            sender1Sync.serialOut[TestDeploymentPort.ARRAY_ARGS_SYNC] -> receiver1.arrayArgsSync[SenderId.SYNC]
+            sender1Sync.serialOut[TestDeploymentPort.STRUCT_ARGS_SYNC] -> receiver1.structArgsSync[SenderId.SYNC]
+
+            sender1Sync.noArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.NO_ARGS_SYNC]
+            sender1Sync.primitiveArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+            sender1Sync.stringArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.STRING_ARGS_SYNC]
+            sender1Sync.enumArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.ENUM_ARGS_SYNC]
+            sender1Sync.arrayArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.ARRAY_ARGS_SYNC]
+            sender1Sync.structArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.STRUCT_ARGS_SYNC]
+        }
+
+        connections SyncSerialInstance2 {
+            sender2Sync.serialOut[TestDeploymentPort.NO_ARGS_SYNC] -> receiver2.noArgsSync[SenderId.SYNC]
+            sender2Sync.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> receiver2.primitiveArgsSync[SenderId.SYNC]
+            sender2Sync.serialOut[TestDeploymentPort.STRING_ARGS_SYNC] -> receiver2.stringArgsSync[SenderId.SYNC]
+            sender2Sync.serialOut[TestDeploymentPort.ENUM_ARGS_SYNC] -> receiver2.enumArgsSync[SenderId.SYNC]
+            sender2Sync.serialOut[TestDeploymentPort.ARRAY_ARGS_SYNC] -> receiver2.arrayArgsSync[SenderId.SYNC]
+            sender2Sync.serialOut[TestDeploymentPort.STRUCT_ARGS_SYNC] -> receiver2.structArgsSync[SenderId.SYNC]
+
+            sender2Sync.noArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.NO_ARGS_SYNC]
+            sender2Sync.primitiveArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+            sender2Sync.stringArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.STRING_ARGS_SYNC]
+            sender2Sync.enumArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.ENUM_ARGS_SYNC]
+            sender2Sync.arrayArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.ARRAY_ARGS_SYNC]
+            sender2Sync.structArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.STRUCT_ARGS_SYNC]
         }
     }
 
