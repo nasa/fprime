@@ -123,9 +123,11 @@ register_fprime_module(
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileUtils.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileUtils.hpp"
     DEPENDS
       Fw_Time
       Fw_Types
@@ -146,6 +148,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileUtilsTest.cpp"
 )
 register_fprime_ut()
 
