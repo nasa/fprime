@@ -52,7 +52,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // 16b - Frame Error Control Field (FECF): CRC16
     if (data.getSize() <= TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
-        this->log_WARNING_HI_InvalidPacket();
+        this->log_WARNING_LO_InvalidPacket();
         this->dataReturnOut_out(0, data, context);
         return;
     }

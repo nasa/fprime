@@ -19,6 +19,7 @@ register_fprime_library(
     Svc_FprimeProtocol
     Svc_Ccsds_Types
 )
+target_compile_options(${FPRIME_CURRENT_MODULE} PRIVATE -Wno-tautological-constant-out-of-range-compare)
 
 #### UTs ####
 register_fprime_ut(
