@@ -10,55 +10,14 @@
 #include "FppTest/topology/main/FppTestTopologyAc.hpp"
 #include "FppTest/topology/ports/SenderIdEnumAc.hpp"
 #include "FppTestTopologyDefs.hpp"
-#include "Fw/Types/Assert.hpp"
 #include "Os/Os.hpp"
-
-// For stack trace printing
-#if defined(__linux__) || defined(__APPLE__)
-#include <cxxabi.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#include <unistd.h>
-#include <cstdio>
-#include <cstdlib>
-#endif
 
 namespace FppTest {
 static TopologyState state;
 
-// Custom assertion hook that prints stack trace
-class StackTraceAssertHook : public Fw::AssertHook {
-  public:
-    void reportAssert(FILE_NAME_ARG file,
-                      FwSizeType lineNo,
-                      FwSizeType numArgs,
-                      FwAssertArgType arg1,
-                      FwAssertArgType arg2,
-                      FwAssertArgType arg3,
-                      FwAssertArgType arg4,
-                      FwAssertArgType arg5,
-                      FwAssertArgType arg6) override {
-        // Call base class to print the assertion message
-        Fw::AssertHook::reportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
-
-        // Print stack trace
-        void* callstack[128];
-        int frames = backtrace(callstack, 128);
-        char** strs = backtrace_symbols(callstack, frames);
-        fprintf(stderr, "\nStack trace:\n");
-        for (int i = 0; i < frames; i++) {
-            fprintf(stderr, "  [%d] %s\n", i, strs[i]);
-        }
-        free(strs);
-    }
-};
-
-static StackTraceAssertHook assertHook;
-
 class SenderTester : public testing::Test {
   public:
     static void SetUpTestSuite() {
-        assertHook.registerHook();
         Os::init();
         setup(state);
     }
