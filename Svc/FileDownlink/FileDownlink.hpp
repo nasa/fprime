@@ -13,6 +13,7 @@
 #define Svc_FileDownlink_HPP
 
 #include <Fw/FilePacket/FilePacket.hpp>
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/File.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Queue.hpp>
@@ -91,8 +92,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
       public:
         //! Open the OS file for reading and initialize the checksum
-        Os::File::Status open(const char* const sourceFileName,  //!< The source file name
-                              const char* const destFileName     //!< The destination file name
+        Os::File::Status open(const Fw::FileNameString& sourceFileName,  //!< The source file name
+                              const Fw::FileNameString& destFileName     //!< The destination file name
         );
 
         //! Read bytes from the OS file and update the checksum
@@ -175,6 +176,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Issue a File Read Error warning
         void fileRead(const Os::File::Status status);
 
+        //! Issue a Zero-Size File warning
+        void zeroSize();
+
       private:
         //! Record a warning
         void warning() {
@@ -193,12 +197,10 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! Sources of send file requests
     enum CallerSource { COMMAND, PORT };
 
-#define FILE_ENTRY_FILENAME_LEN 101
-
     //! Used to track a single file downlink request
     struct FileEntry {
-        char srcFilename[FILE_ENTRY_FILENAME_LEN];   // Name of requested file
-        char destFilename[FILE_ENTRY_FILENAME_LEN];  // Name of requested file
+        Fw::FileNameString srcFilename;   // Name of requested file
+        Fw::FileNameString destFilename;  // Name of requested file
         U32 offset;
         U32 length;
         CallerSource source;  // Source of the downlink request
@@ -223,11 +225,13 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Configure FileDownlink component
     //!
-    void configure(U32 timeout,        //!< Timeout threshold (milliseconds) while in WAIT state
-                   U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
+    void configure(U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
                    U32 cycleTime,      //!< Rate at which we are running
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );
+
+    //! Cleans up file queue before dispatching to underlying component
+    void deinit();
 
     //! Start FileDownlink component
     //! The component must be configured with configure() before starting.
@@ -306,9 +310,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
     // ----------------------------------------------------------------------
 
     void sendFile(
-        const char* sourceFilename,  //!< The name of the on-board file to send
-        const char* destFilename,    //!< The name of the destination file on the ground
-        U32 startOffset,             //!< Starting offset of the source file
+        const Fw::FileNameString& sourceFilename,  //!< The name of the on-board file to send
+        const Fw::FileNameString& destFilename,    //!< The name of the destination file on the ground
+        U32 startOffset,                           //!< Starting offset of the source file
         U32 length  //!< Number of bytes to send from starting offset. Length of 0 implies until the end of the file
     );
 

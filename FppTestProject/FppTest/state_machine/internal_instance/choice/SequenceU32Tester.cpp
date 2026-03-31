@@ -24,7 +24,9 @@ SequenceU32Tester::SequenceU32Tester(const char* const compName)
       m_smChoiceSequenceU32_guard_g1(),
       m_smChoiceSequenceU32_guard_g2() {}
 
-SequenceU32Tester::~SequenceU32Tester() {}
+SequenceU32Tester::~SequenceU32Tester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

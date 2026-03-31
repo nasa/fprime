@@ -44,6 +44,16 @@ void Time::set(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U
     this->m_val.set(timeBase, context, seconds, useconds);
 }
 
+Fw::Time::Time(F64 seconds) {
+    this->set(seconds);
+}
+
+void Fw::Time::set(F64 seconds) {
+    U32 parsedSeconds = this->parseSeconds(seconds);
+    U32 parsedUseconds = this->parseUSeconds(seconds);
+    this->set(parsedSeconds, parsedUseconds);
+}
+
 Time& Time::operator=(const Time& other) {
     if (this != &other) {
         this->m_val = other.m_val;
@@ -51,30 +61,50 @@ Time& Time::operator=(const Time& other) {
     return *this;
 }
 
+Time& Fw::Time::operator=(F64 seconds) {
+    this->set(seconds);
+    return *this;
+}
+
+Time& Fw::Time::operator+=(F64 seconds) {
+    this->add(seconds);
+    return *this;
+}
+
 bool Time::operator==(const Time& other) const {
-    return (Time::compare(*this, other) == EQ);
+    return (Time::compare(*this, other) == TimeComparison::EQ);
 }
 
 bool Time::operator!=(const Time& other) const {
-    return (Time::compare(*this, other) != EQ);
+    return (Time::compare(*this, other) != TimeComparison::EQ);
 }
 
 bool Time::operator>(const Time& other) const {
-    return (Time::compare(*this, other) == GT);
+    return (Time::compare(*this, other) == TimeComparison::GT);
 }
 
 bool Time::operator<(const Time& other) const {
-    return (Time::compare(*this, other) == LT);
+    return (Time::compare(*this, other) == TimeComparison::LT);
 }
 
 bool Time::operator>=(const Time& other) const {
-    Time::Comparison c = Time::compare(*this, other);
-    return ((GT == c) or (EQ == c));
+    TimeComparison c = Time::compare(*this, other);
+    return ((TimeComparison::GT == c) or (TimeComparison::EQ == c));
 }
 
 bool Time::operator<=(const Time& other) const {
-    Time::Comparison c = Time::compare(*this, other);
-    return ((LT == c) or (EQ == c));
+    TimeComparison c = Time::compare(*this, other);
+    return ((TimeComparison::LT == c) or (TimeComparison::EQ == c));
+}
+
+Fw::Time::operator F64() const {
+    const U32 seconds = this->m_val.get_seconds();
+    const U32 useconds = this->m_val.get_useconds();
+    return static_cast<F64>(seconds) + (static_cast<F64>(useconds) / 1000000.0);
+}
+
+TimeValue Time::asTimeValue() const {
+    return this->m_val;
 }
 
 SerializeStatus Time::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
@@ -106,9 +136,9 @@ Time Time ::zero(TimeBase timeBase) {
     return time;
 }
 
-Time::Comparison Time ::compare(const Time& time1, const Time& time2) {
+TimeComparison Time ::compare(const Time& time1, const Time& time2) {
     if (time1.getTimeBase() != time2.getTimeBase()) {
-        return INCOMPARABLE;
+        return TimeComparison::INCOMPARABLE;
     }
 
     // Do not compare time context
@@ -119,15 +149,15 @@ Time::Comparison Time ::compare(const Time& time1, const Time& time2) {
     const U32 us2 = time2.getUSeconds();
 
     if (s1 < s2) {
-        return LT;
+        return TimeComparison::LT;
     } else if (s1 > s2) {
-        return GT;
+        return TimeComparison::GT;
     } else if (us1 < us2) {
-        return LT;
+        return TimeComparison::LT;
     } else if (us1 > us2) {
-        return GT;
+        return TimeComparison::GT;
     } else {
-        return EQ;
+        return TimeComparison::EQ;
     }
 }
 
@@ -181,6 +211,22 @@ Time Time ::sub(const Time& minuend,    //!< Time minuend
     return Time(minuend.getTimeBase(), context, seconds, static_cast<U32>(uSeconds));
 }
 
+U32 Fw::Time::parseSeconds(F64 seconds) {
+    // Assert negative value
+    FW_ASSERT(seconds >= static_cast<F64>(0.0));
+    return static_cast<U32>(seconds);
+}
+
+U32 Fw::Time::parseUSeconds(F64 seconds) {
+    // Assert negative value
+    FW_ASSERT(seconds >= static_cast<F64>(0.0));
+    U32 parsedSeconds = static_cast<U32>(seconds);
+    const F64 fractionalPart = seconds - static_cast<F64>(parsedSeconds);
+    // Add 0.5 to round to nearest microsecond (e.g, 999999.9999 = 1000000)
+    U32 parsedUSeconds = static_cast<U32>(fractionalPart * static_cast<F64>(1000000.0) + static_cast<F64>(0.5));
+    return parsedUSeconds;
+}
+
 void Time::add(U32 seconds, U32 useconds) {
     U32 newSeconds = this->m_val.get_seconds() + seconds;
     U32 newUSeconds = this->m_val.get_useconds() + useconds;
@@ -190,6 +236,13 @@ void Time::add(U32 seconds, U32 useconds) {
         newUSeconds -= 1000000;
     }
     this->set(newSeconds, newUSeconds);
+}
+
+void Time::add(F64 seconds) {
+    U32 parsedSeconds = this->parseSeconds(seconds);
+    U32 parsedUseconds = this->parseUSeconds(seconds);
+    // Add parsed seconds and useconds
+    this->add(parsedSeconds, parsedUseconds);
 }
 
 void Time::setTimeBase(TimeBase timeBase) {

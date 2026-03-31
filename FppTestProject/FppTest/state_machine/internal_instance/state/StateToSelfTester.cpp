@@ -19,7 +19,9 @@ namespace SmInstanceState {
 StateToSelfTester::StateToSelfTester(const char* const compName)
     : StateToSelfComponentBase(compName), m_smStateStateToSelf_actionHistory() {}
 
-StateToSelfTester::~StateToSelfTester() {}
+StateToSelfTester::~StateToSelfTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
@@ -79,7 +81,7 @@ void StateToSelfTester::testInit() {
     const auto& signals = this->m_smStateStateToSelf_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToSelf_actionHistory.getValues();
     for (FwIndexType i = 0; i < expectedSize; i++) {
-        ASSERT_EQ(signals.getItemAt(i), SmState_StateToSelf::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToSelf::Signal::__FPRIME_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S2);

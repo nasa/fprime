@@ -22,7 +22,9 @@ BasicStringTester ::BasicStringTester(const char* const compName)
       m_smStateBasicString_action_a_history(),
       m_smStateBasicString_action_b_history() {}
 
-BasicStringTester ::~BasicStringTester() {}
+BasicStringTester ::~BasicStringTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
@@ -49,7 +51,7 @@ void BasicStringTester::test() {
     ASSERT_EQ(this->smStateBasicString_getState(), SmState_BasicString::State::S);
     ASSERT_EQ(this->m_smStateBasicString_action_a_history.getSize(), 0);
     Fw::String value;
-    SmHarness::Pick::string(value, SmState::basicStringSize);
+    SmHarness::Pick::string(value, SmState::BasicString_stringSize);
     this->smStateBasicString_sendSignal_s(value);
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);

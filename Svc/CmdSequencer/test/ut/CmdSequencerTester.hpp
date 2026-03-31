@@ -185,20 +185,20 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
                               FwOpcodeType opCode,             //!< Command Op Code
                               U32 cmdSeq,                      //!< Command Sequence
                               const Fw::CmdResponse& response  //!< The command response argument
-    );
+                              ) override;
 
     //! Handler for from_comCmdOut
     //!
     void from_comCmdOut_handler(const FwIndexType portNum,  //!< The port number
                                 Fw::ComBuffer& data,        //!< Buffer containing packet data
                                 U32 context                 //!< Call context value; meaning chosen by user
-    );
+                                ) override;
 
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum,  //!< The port number
                               U32 key                     //!< Value to return to pinger
-    );
+                              ) override;
 
 #if VERBOSE
   protected:
@@ -334,6 +334,10 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     void runSequenceByPortCall(const char* const fileName  //!< The file name
     );
 
+    //! Run a sequence by the file dispatcher port call
+    void runSequenceByFileDispatcherPortCall(const char* const fileName  //!< The file name
+    );
+
     //! Send a step command
     void stepSequence(const U32 cmdSeq  //!< The command sequence number
     );
@@ -374,6 +378,12 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
 
     //! Open/Read interceptor
     Interceptor interceptor;
+
+    void textLogIn(FwEventIdType id,                //!< The event ID
+                   const Fw::Time& timeTag,         //!< The time
+                   const Fw::LogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text    //!< The event string
+                   ) override;
 };
 
 }  // namespace Svc

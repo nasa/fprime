@@ -21,7 +21,9 @@ BasicTestEnumTester::BasicTestEnumTester(const char* const compName)
       m_smStateBasicTestEnum_action_a_history(),
       m_smStateBasicTestEnum_action_b_history() {}
 
-BasicTestEnumTester::~BasicTestEnumTester() {}
+BasicTestEnumTester::~BasicTestEnumTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions

@@ -5,6 +5,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <algorithm>
 
 namespace Os {
 
@@ -263,7 +264,7 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
         size = 0;
         return File::Status::INVALID_MODE;
     }
-    FwSizeType original_location;
+    FwSizeType original_location = 0;
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
@@ -273,7 +274,8 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
     FwSizeType read = 0;
     // Loop reading chunk by chunk
     for (FwSizeType i = 0; i < size; i += read) {
-        FwSizeType current_chunk_size = FW_MIN(size - i, static_cast<FwSizeType>(FW_FILE_CHUNK_SIZE));
+        // read in chunks to avoid large buffer allocations
+        FwSizeType current_chunk_size = std::min(size - i, static_cast<FwSizeType>(FW_FILE_CHUNK_SIZE));
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {

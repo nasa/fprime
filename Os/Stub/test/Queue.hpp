@@ -107,11 +107,20 @@ class InjectableStlQueue : public QueueInterface {
     //! \brief create queue storage
     //!
     //! Creates a queue ensuring sufficient storage to hold `depth` messages of `messageSize` size each.
+    //! \param id: identifier of queue
     //! \param name: name of queue
     //! \param depth: depth of queue in number of messages
     //! \param messageSize: size of an individual message
     //! \return: status of the creation
-    Status create(const Fw::ConstStringBase& name, FwSizeType depth, FwSizeType messageSize) override;
+    Status create(FwEnumStoreType id,
+                  const Fw::ConstStringBase& name,
+                  FwSizeType depth,
+                  FwSizeType messageSize) override;
+
+    //! \brief teardown the queue
+    //!
+    //! Allow for queues to deallocate resources as part of system shutdown.
+    void teardown() override;
 
     //! \brief send a message into the queue
     //!

@@ -55,12 +55,12 @@
 extern "C" {
 #endif
 
-#define CRC_VERSION     "1.16"
+#define CRC_VERSION     "1.16"  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 
 
 
-#define CRC_FALSE           0
-#define CRC_TRUE            1
+#define CRC_FALSE           (0)
+#define CRC_TRUE            (1)
 
 
 

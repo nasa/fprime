@@ -48,3 +48,10 @@ async command ListDirectory(
                               dirName: string size FileNameStringSize @< The directory to list
                             ) \
   opcode 0x07
+
+
+@ List the contents of a directory
+async command CalculateCrc(
+                              filename: string size FileNameStringSize @< The file to CRC
+                            ) \
+  opcode 0x08

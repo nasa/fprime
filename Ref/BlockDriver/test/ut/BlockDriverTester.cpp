@@ -18,7 +18,9 @@ BlockDriverTester ::BlockDriverTester()
     this->connectPorts();
 }
 
-BlockDriverTester ::~BlockDriverTester() {}
+BlockDriverTester ::~BlockDriverTester() {
+    this->component.deinit();
+}
 
 // ----------------------------------------------------------------------
 // Tests

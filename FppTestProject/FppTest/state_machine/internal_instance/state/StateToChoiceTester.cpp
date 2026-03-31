@@ -20,7 +20,9 @@ namespace SmInstanceState {
 StateToChoiceTester::StateToChoiceTester(const char* const compName)
     : StateToChoiceComponentBase(compName), m_smStateStateToChoice_actionHistory(), m_smStateStateToChoice_guard_g() {}
 
-StateToChoiceTester::~StateToChoiceTester() {}
+StateToChoiceTester::~StateToChoiceTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
@@ -97,7 +99,7 @@ void StateToChoiceTester::testInit() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwIndexType i = 0; i < expectedSize; i++) {
-        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::__FPRIME_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S2);

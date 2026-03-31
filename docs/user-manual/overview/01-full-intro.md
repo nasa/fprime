@@ -12,7 +12,7 @@ more complete "story". This document contains the following sections:
 
 ## The Origins of F´
 
-F´ is an embedded systems framework developed build to meet certain goals expanded upon below.
+F´ is an embedded systems framework developed to meet certain goals expanded upon below.
 These goals make it particularly well suited for small embedded missions (and projects) that need
 reliable components and infrastructure provided by the framework in
 order to minimize development cost, schedule, or effort. These missions
@@ -82,9 +82,9 @@ communication such that the system can function.
 ## Threads, Multi-Core Architectures and F´
 
 F´ was built for use on platforms running an Operating System (OS) and executing on a single core. Notably, these systems
-come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system, or a multi-core
+come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system , or a multi-core
 system, however; some care should be taken when designing for such systems an understanding of execution context is
-required.  See: [F´ On Baremetal and Multi-Core Systems](../framework/baremetal-multicore.md)
+required.  See: [F´ on Multi-Core Systems](../framework/run-multi-core.md) and [F´ on Baremetal](../framework/run-baremetal.md)
 
 ## Conclusion
 

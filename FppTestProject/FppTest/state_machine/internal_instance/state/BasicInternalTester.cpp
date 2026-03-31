@@ -19,7 +19,9 @@ namespace SmInstanceState {
 BasicInternalTester::BasicInternalTester(const char* const compName)
     : BasicInternalComponentBase(compName), m_smStateBasicInternal_action_a_history() {}
 
-BasicInternalTester::~BasicInternalTester() {}
+BasicInternalTester::~BasicInternalTester() {
+    this->deinit();
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
@@ -41,7 +43,7 @@ void BasicInternalTester::test() {
     ASSERT_EQ(this->smStateBasicInternal_getState(), SmState_BasicInternal::State::S);
     ASSERT_EQ(this->m_smStateBasicInternal_action_a_history.getSize(), 1);
     ASSERT_EQ(this->m_smStateBasicInternal_action_a_history.getItemAt(0),
-              SmState_BasicInternal::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+              SmState_BasicInternal::Signal::__FPRIME_INITIAL_TRANSITION);
     this->m_smStateBasicInternal_action_a_history.clear();
     this->smStateBasicInternal_sendSignal_s();
     const auto status = this->doDispatch();

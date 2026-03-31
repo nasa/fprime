@@ -8,7 +8,6 @@ module Svc {
     @ Array of queue depths for Fw::Buffer types
     array BuffQueueDepth = [ComQueueBufferPorts] U32
 
-
     @ Component used to queue buffer types
     active component ComQueue {
 
@@ -41,6 +40,15 @@ module Svc {
       # Special ports
       # ----------------------------------------------------------------------
 
+      @ Command receive port
+      command recv port CmdDisp
+
+      @ Command registration port
+      command reg port CmdReg
+
+      @ Command response port
+      command resp port CmdStatus
+
       @ Port for emitting events
       event port Log
 
@@ -53,26 +61,8 @@ module Svc {
       @ Port for emitting telemetry
       telemetry port Tlm
 
-      # ----------------------------------------------------------------------
-      # Events
-      # ----------------------------------------------------------------------
-
-      @ Queue overflow event
-      event QueueOverflow(
-            queueType: QueueType @< The Queue data type
-            index: U32 @< index of overflowed queue
-       ) \
-        severity warning high \
-        format "The {} queue at index {} overflowed"
-
-      # ----------------------------------------------------------------------
-      # Telemetry
-      # ----------------------------------------------------------------------
-
-      @ Depth of queues of Fw::ComBuffer type
-      telemetry comQueueDepth: ComQueueDepth id 0
-
-      @ Depth of queues of Fw::Buffer type
-      telemetry buffQueueDepth: BuffQueueDepth id 1
+      include "ComQueueCommands.fppi"
+      include "ComQueueEvents.fppi"
+      include "ComQueueTelemetry.fppi"
     }
 }

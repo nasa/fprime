@@ -15,8 +15,7 @@
 using namespace Svc::Ccsds;
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
-constexpr U16 EXPECTED_START_TOKEN =
-    0x1 << TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+constexpr U16 EXPECTED_START_TOKEN = (0x1 << TCSubfields::BypassFlagOffset) | (ComCfg::SpacecraftId);
 
 // Test fixture to set up the detector under test and circular buffer
 class CcsdsFrameDetectorTest : public ::testing::Test {

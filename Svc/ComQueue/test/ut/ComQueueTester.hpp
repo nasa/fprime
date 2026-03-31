@@ -65,6 +65,10 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testQueueSend();
 
+    void testQueueFlush();
+
+    void testQueueFlushAll();
+
     void testQueuePause();
 
     void testPrioritySend();
@@ -76,6 +80,32 @@ class ComQueueTester : public ComQueueGTestBase {
     void testReadyFirst();
 
     void testContextData();
+
+    void testFIFOMode();
+
+    void testLIFOMode();
+
+    void testDropNewestMode();
+
+    void testDropOldestMode();
+
+    void testLIFOWithDropOldest();
+
+    void testBufferQueueFIFOMode();
+
+    void testBufferQueueLIFOMode();
+
+    void testBufferQueueDropOldestMode();
+
+    void testSetQueuePriorityCommand();
+
+    void testSetQueuePriorityInvalidIndex();
+
+    void testSetQueuePriorityNegativeIndex();
+
+    void testSetQueuePriorityInvalidPriority();
+
+    void testSetQueuePriorityNegativePriority();
 
   private:
     // ----------------------------------------------------------------------

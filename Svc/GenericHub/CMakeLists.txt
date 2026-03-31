@@ -10,7 +10,7 @@ register_fprime_module(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/GenericHub.fpp"
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/GenericHubComponentImpl.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/GenericHub.cpp"
     EXCLUDE_FROM_ALL
 )
 ### UTs ###

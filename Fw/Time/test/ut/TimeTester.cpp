@@ -24,6 +24,15 @@ void TimeTester::test_InstantiateTest() {
     std::cout << time << std::endl;
 }
 
+void Fw::TimeTester::test_InstantiateFromFloatTest() {
+    Fw::Time time(static_cast<F64>(1.000002));
+    ASSERT_EQ(time.getTimeBase(), TimeBase::TB_NONE);
+    ASSERT_EQ(time.getContext(), 0);
+    ASSERT_EQ(time.getSeconds(), 1);
+    ASSERT_EQ(time.getUSeconds(), 2);
+    std::cout << time << std::endl;
+}
+
 void TimeTester::test_MathTest() {
     Fw::Time time1;
     Fw::Time time2;
@@ -110,6 +119,53 @@ void TimeTester::test_MathTest() {
     EXPECT_EQ(time_sum.getSeconds(), 1500);
 }
 
+void Fw::TimeTester::test_FloatOperations() {
+    Fw::Time time;
+
+    // Set float
+    time.set(1000.002000);
+    EXPECT_EQ(1000, time.getSeconds());
+    EXPECT_EQ(2000, time.getUSeconds());
+
+    // Parse seconds and microseconds
+    EXPECT_EQ(1234, Fw::Time::parseSeconds(1234.567890));
+    EXPECT_EQ(567890, Fw::Time::parseUSeconds(1234.567890));
+    // Rounding check
+    EXPECT_EQ(1000000, Fw::Time::parseUSeconds(0.99999999999999));
+    EXPECT_EQ(0, Fw::Time::parseUSeconds(0.00000011111111));
+
+    // Add float value
+    time.add(2000.004000);
+    EXPECT_EQ(time.getSeconds(), 3000);
+    EXPECT_EQ(time.getUSeconds(), 6000);
+    time.add(0.99999999999999);
+    EXPECT_EQ(time.getSeconds(), 3001);
+    EXPECT_EQ(time.getUSeconds(), 6000);
+    time.add(0.00000011111111);
+    EXPECT_EQ(time.getSeconds(), 3001);
+    EXPECT_EQ(time.getUSeconds(), 6000);
+
+    // Add assign float value
+    time += 1000.005000;
+    EXPECT_EQ(time.getSeconds(), 4001);
+    EXPECT_EQ(time.getUSeconds(), 11000);
+
+    // Assign float value
+    time = 1234.567890;
+    EXPECT_EQ(time.getSeconds(), 1234);
+    EXPECT_EQ(time.getUSeconds(), 567890);
+
+    // Convert to F64
+    EXPECT_EQ(static_cast<F64>(time), 1234.567890);
+
+    // Assert negative value
+    ASSERT_DEATH_IF_SUPPORTED(Fw::Time::parseSeconds(-1.0), "Assert:.*Time\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(Fw::Time::parseUSeconds(-1.0), "Assert:.*Time\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(time.add(-1.0), "Assert:.*Time\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(time.operator=(-1.0), "Assert:.*Time\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(time.operator+=(-1.0), "Assert:.*Time\\.cpp");
+}
+
 void TimeTester::test_CopyTest() {
     Fw::Time time0;
 
@@ -147,6 +203,25 @@ void TimeTester::test_ZeroTimeEquality() {
     ASSERT_NE(time, Fw::ZERO_TIME);
     Fw::Time time2;
     ASSERT_EQ(time2, Fw::ZERO_TIME);
+}
+
+void TimeTester::test_TimeToTimeValue() {
+    U32 seconds = 5;
+    U32 useconds = 500000;
+    TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
+    FwTimeContextStoreType context = 3;
+
+    Fw::Time time(timeBase, context, seconds, useconds);
+
+    Fw::TimeValue time_value = time.asTimeValue();
+
+    // Alter the original
+    time.set(TimeBase::TB_NONE, 0, 0, 0);
+
+    ASSERT_EQ(time_value.get_timeBase(), timeBase);
+    ASSERT_EQ(time_value.get_timeContext(), context);
+    ASSERT_EQ(time_value.get_seconds(), seconds);
+    ASSERT_EQ(time_value.get_useconds(), useconds);
 }
 
 }  // namespace Fw

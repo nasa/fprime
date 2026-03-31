@@ -8,7 +8,7 @@
 # Note: some deployments may specify their own `-D` cmake flags and these deployments should take care to ensure there
 # is no collision with the arguments described here.
 #
-# Users need not specified any of the options to build F prime, however; when non-standard build behavior is desired,
+# Users need not specify any of the options to build F prime, however; when non-standard build behavior is desired,
 # then these options can be used. These options are specified with the -D<OPTION>=<VALUE> flag. Usually the value is
 # "ON" or "OFF". Other values are documented along side the option.
 #
@@ -54,7 +54,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 #
 # Turns off the F Prime CMake status messages to reduce output. This include messages: module registration, target
 # registration, autocoder registration, etc. This does not affect error nor warning messages. It also does not quiet
-# build-in CMake messages.
+# built-in CMake messages.
 #
 # **Values:**
 # - ON: quiet the F Prime CMake output
@@ -148,6 +148,20 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
 ####
+# `FPRIME_ENABLE_DIRECT_PORT_CALLS`:
+#
+# Enable F Prime topology direct port calls. Enabling this will disable unit test builds as UTs are not supported
+# with direct port calls.
+#
+# **Values:**
+# - ON: generate topology port connections using direct function calls
+# - OFF: (default) generate topology port connections through a pointer call
+#
+# e.g. `-FPRIME_ENABLE_DIRECT_PORT_CALLS
+####
+option(FPRIME_ENABLE_DIRECT_PORT_CALLS "Call port connections through symbols rather than function pointers" OFF)
+
+####
 # `FPRIME_ENABLE_TEXT_LOGGERS`:
 #
 # When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
@@ -184,7 +198,7 @@ option(FPRIME_ENABLE_JSON_MODEL_GENERATION "Enable JSON model generation" OFF)
 # of their tools is appropriate and the system would otherwise detect the tool version as an incompatible version. This
 # can be used, specifically, to enable user maintained variants of standard tools.
 #
-# Note: no version checking will be done and as such version miss-matches will not be reported at all. Errors that
+# Note: no version checking will be done and as such version mis-matches will not be reported at all. Errors that
 # result from version incompatibilities will be up to the user to resolve.
 #
 # **Values:**

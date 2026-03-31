@@ -19,7 +19,7 @@ Hash ::Hash() {
     this->init();
 }
 
-Hash ::~Hash() {}
+Hash ::~Hash() = default;
 
 void Hash ::hash(const void* const data, const FwSizeType len, HashBuffer& buffer) {
     Hash crc32;
@@ -37,7 +37,7 @@ void Hash ::update(const void* const data, FwSizeType len) {
     this->hash_handle = crc32_ieee802_3_update(static_cast<const U8*>(data), len, this->hash_handle);
 }
 
-void Hash ::final(HashBuffer& buffer) {
+void Hash ::finalize(HashBuffer& buffer) {
     HashBuffer bufferOut;
     // For CRC32 we need to return the one's complement of the result:
     Fw::SerializeStatus status = bufferOut.serializeFrom(~(this->hash_handle));
@@ -45,7 +45,8 @@ void Hash ::final(HashBuffer& buffer) {
     buffer = bufferOut;
 }
 
-void Hash ::final(U32& hashvalue) {
+void Hash ::finalize(U32& hashvalue) {
+    FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
     // For CRC32 we need to return the one's complement of the result:
     hashvalue = ~(this->hash_handle);
 }

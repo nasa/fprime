@@ -52,6 +52,20 @@ FwSignedSizeType substring_find(const CHAR* source_string,
                                 const CHAR* sub_string,
                                 FwSizeType sub_size);
 
+/**
+ * \brief find the last occurrence of a substring
+ *
+ * \param source_string: string to search for the substring
+ * \param source_size: the size of the source string
+ * \param substring: string to search for
+ * \param sub_size: the size of the string to search for
+ * \return index of substring, -1 if not found
+ */
+FwSignedSizeType substring_find_last(const CHAR* source_string,
+                                     FwSizeType source_size,
+                                     const CHAR* sub_string,
+                                     FwSizeType sub_size);
+
 enum StringToNumberStatus {
     SUCCESSFUL_CONVERSION,  //!< Output should be valid
     NULL_INPUT,             //!< A null string was supplied

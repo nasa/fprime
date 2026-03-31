@@ -62,12 +62,12 @@
     *                                                                   *
     \*******************************************************************/
 
-#define                 P_16        0xA001
-#define                 P_32        0xEDB88320L
-#define                 P_CCITT     0x1021
-#define                 P_DNP       0xA6BC
-#define                 P_KERMIT    0x8408
-#define                 P_SICK      0x8005
+#define                 P_16        (0xA001)
+#define                 P_32        (0xEDB88320L)
+#define                 P_CCITT     (0x1021)
+#define                 P_DNP       (0xA6BC)
+#define                 P_KERMIT    (0x8408)
+#define                 P_SICK      (0x8005)
 
 
 

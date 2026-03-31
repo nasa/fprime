@@ -21,6 +21,7 @@ Requirement | Description | Rationale | Verification Method
 FD-001 | `FileDownlink` shall queue up a list of files to downlink | The requirement provides the ability to simultaneously queue up multiple files for downlink from different sources | Test
 FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
 FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
+FD-004 | `FileDownlink` shall issue a warning if a file with zero size is encountered | Ensures that operators are aware of invalid file sizes | Test
 
 ## 3 Design
 
@@ -65,10 +66,8 @@ Name | Type | Kind | Purpose
 at component instantiation time:
 
 * *downlinkPacketSize*: The size of the packets to use on downlink.
-* *timeout*: Max amount of time in ms to wait for a buffer return before aborting downlink
 * *cooldown*: The amount of time in ms to wait in a cooldown state before starting next downlink.
-* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for timing timeouts and
-  cooldown.
+* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for cooldown.
 * *file queue depth*: The maximum number of files that can be held in the internal file downlink
   queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
   in a busy error response.
@@ -123,7 +122,3 @@ Checklist |
 [Design](Checklist/design.xlsx) |
 [Code](Checklist/code.xlsx) |
 [Unit Test](Checklist/unit_test.xls) |
-
-## 6 Unit Testing
-
-TODO

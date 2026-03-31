@@ -79,6 +79,9 @@ module Svc {
     @ Port for requests to run sequences
     async input port seqRunIn: Svc.CmdSeqIn
 
+    @ Port for file dispatches to run sequences
+    async input port seqDispatchIn: Svc.FileDispatch
+
     @ Port for sending sequence commands
     output port comCmdOut: Fw.Com
 

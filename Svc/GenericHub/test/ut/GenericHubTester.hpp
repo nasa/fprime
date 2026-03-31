@@ -14,7 +14,7 @@
 #define TESTER_HPP
 #include <Fw/Com/ComBuffer.hpp>
 #include "GenericHubGTestBase.hpp"
-#include "Svc/GenericHub/GenericHubComponentImpl.hpp"
+#include "Svc/GenericHub/GenericHub.hpp"
 
 // Larger than com buffer size
 #define DATA_SIZE (FW_COM_BUFFER_MAX_SIZE * 10 + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType))
@@ -60,62 +60,66 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_events();
 
+    //! Test of commands in-out
+    //!
+    void test_commands();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_LogSend
+    //! Handler for from_eventOut
     //!
-    void from_LogSend_handler(const FwIndexType portNum,       /*!< The port number*/
-                              FwEventIdType id,                /*!< Log ID */
-                              Fw::Time& timeTag,               /*!< Time Tag  */
-                              const Fw::LogSeverity& severity, /*!< The severity argument */
-                              Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
+    void from_eventOut_handler(const FwIndexType portNum,       /*!< The port number*/
+                               FwEventIdType id,                /*!< Log ID */
+                               Fw::Time& timeTag,               /*!< Time Tag  */
+                               const Fw::LogSeverity& severity, /*!< The severity argument */
+                               Fw::LogBuffer& args              /*!< Buffer containing serialized log entry */
     );
 
-    //! Handler for from_TlmSend
+    //! Handler for from_tlmOut
     //!
-    void from_TlmSend_handler(const FwIndexType portNum, /*!< The port number*/
-                              FwChanIdType id,           /*!< Telemetry Channel ID */
-                              Fw::Time& timeTag,         /*!< Time Tag */
-                              Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
+    void from_tlmOut_handler(const FwIndexType portNum, /*!< The port number*/
+                             FwChanIdType id,           /*!< Telemetry Channel ID */
+                             Fw::Time& timeTag,         /*!< Time Tag */
+                             Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
     );
 
-    //! Handler for from_buffersOut
+    //! Handler for from_bufferOut
     //!
-    void from_buffersOut_handler(const FwIndexType portNum, /*!< The port number*/
-                                 Fw::Buffer& fwBuffer);
+    void from_bufferOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                Fw::Buffer& fwBuffer);
 
-    //! Handler for from_bufferDeallocate
+    //! Handler for from_bufferInReturn
     //!
-    void from_bufferDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
+    void from_bufferInReturn_handler(const FwIndexType portNum, /*!< The port number*/
+                                     Fw::Buffer& fwBuffer);
 
-    //! Handler for from_dataOutAllocate
+    //! Handler for from_allocate
     //!
-    Fw::Buffer from_dataOutAllocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                            FwSizeType size);
+    Fw::Buffer from_allocate_handler(const FwIndexType portNum, /*!< The port number*/
+                                     FwSizeType size);
 
-    //! Handler for from_dataOut
+    //! Handler for from_toBufferDriver
     //!
-    void from_dataOut_handler(const FwIndexType portNum, /*!< The port number*/
-                              Fw::Buffer& fwBuffer);
+    void from_toBufferDriver_handler(const FwIndexType portNum, /*!< The port number*/
+                                     Fw::Buffer& fwBuffer);
 
     //! Handler for from_dataDeallocate
     //!
-    void from_dataInDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
+    void from_fromBufferDriverReturn_handler(const FwIndexType portNum, /*!< The port number*/
+                                             Fw::Buffer& fwBuffer);
 
   private:
     // ----------------------------------------------------------------------
     // Handlers for serial from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_portOut
+    //! Handler for from_serialOut
     //!
-    void from_portOut_handler(FwIndexType portNum,            /*!< The port number*/
-                              Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
+                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 
   private:
@@ -124,6 +128,10 @@ class GenericHubTester : public GenericHubGTestBase {
     void send_random_buffer(U32 port);
 
     void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+
+    void test_command_dispatch();
+
+    void test_command_response();
 
     // ----------------------------------------------------------------------
     // Helper methods
@@ -144,8 +152,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! The component under test
     //!
-    GenericHubComponentImpl componentIn;
-    GenericHubComponentImpl componentOut;
+    GenericHub componentIn;
+    GenericHub componentOut;
     Fw::ComBuffer m_comm;
     Fw::Buffer m_buffer;
     Fw::Buffer m_allocate;

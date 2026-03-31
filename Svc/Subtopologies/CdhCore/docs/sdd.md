@@ -80,8 +80,8 @@ Example of integrating `CdhCore` in a deployment topology:
 
 ```fpp
 topology Flight {
-  import CdhCore.Subtopology
-  import ComCcsds.Subtopology  # Used as an example communication subtopology
+  instance CdhCore.Subtopology
+  instance ComCcsds.Subtopology  # Used as an example communication subtopology
 
   # Use CdhCore handler components
   command connections instance CdhCore.cmdDisp
@@ -92,20 +92,20 @@ topology Flight {
 
   connections RateGroups {
     # Connect rate groups to active components inside CdhCore
-    rg.RateGroupMemberOut[0] -> CdhCore.tlmSend.Run
-    rg.RateGroupMemberOut[1] -> CdhCore.$health.Run
+    rg.RateGroupMemberOut[0] -> CdhCore.Subtopology.tlmSendRun
+    rg.RateGroupMemberOut[1] -> CdhCore.Subtopology.healthRun
   }
 
   connections ComCcsds_CdhCore{
       # events and telemetry to comQueue
-      CdhCore.events.PktSend        -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.tlmSend.PktSend       -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
-      ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
-      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+      ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
+      cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
   }
 }
 ```
