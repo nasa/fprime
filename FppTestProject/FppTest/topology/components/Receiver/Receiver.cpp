@@ -449,11 +449,11 @@ FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
 }
 
 void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
-    // Determine the appropriate SERIAL_* SenderId from TestDeploymentPort
+    // The port number will map to the typed port ID this serial data represents
     SenderId::T senderId;
     const auto portId = static_cast<TestDeploymentPort::T>(portNum);
 
-    // Map TestDeploymentPort to SERIAL_* SenderId based on the port type suffix
+    // Determine which instance to reply to based on the port they send to
     switch (portId) {
         case TestDeploymentPort::ARRAY_ARGS_ASYNC:
         case TestDeploymentPort::ENUM_ARGS_ASYNC:
@@ -484,6 +484,7 @@ void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buff
             return;
     }
 
+    // Copy the data into out receiver buffer
     m_recv.resetSer();
     if (buffer.getDeserializeSizeLeft() > 0) {
         buffer.copyRaw(m_recv, buffer.getDeserializeSizeLeft());
@@ -492,7 +493,8 @@ void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buff
     Fw::Buffer data(m_data, m_recv.getSize());
 
     // Reply over the serial reply
-    // This will trigger the serialReplyIn on the sender which send a signal out on the serial output to typedPort[2]
+    // This will trigger the serialReplyIn on the sender which send a
+    // signal out on the serial output to typedPort[2]
     serialReplyOut_out(senderId, 2, portId, data);
 }
 
