@@ -241,13 +241,17 @@ void Sender::serialReplyIn_handler(FwIndexType portNum,
                                    FwIndexType handlerPortNum,
                                    const TestDeploymentPort& portId,
                                    const Fw::Buffer& inputData) {
+    FW_ASSERT(inputData.getData() != nullptr);
+
     // Mark that we received a serial reply
     m_serialReplyReceived = true;
     m_serialReplyPortId = portId;
 
     // Relay the serialized data through serialOut at the corresponding TestDeploymentPort index
     Fw::ExternalSerializeBuffer buffer(inputData.getData(), inputData.getSize());
-    serialOut_out(portId, buffer);
+    buffer.moveSerToOffset(inputData.getSize());
+    auto status = serialOut_out(portId, buffer);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 
 void Sender::done_internalInterfaceHandler() {

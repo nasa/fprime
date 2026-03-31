@@ -6,9 +6,6 @@ module FppTest {
     SYNC,
     GUARDED,
     ASYNC,
-    SERIAL_SYNC,
-    SERIAL_GUARDED,
-    SERIAL_ASYNC,
     N
   }
 

@@ -10,8 +10,8 @@ module FppTest {
             receiver1.replyOut[SenderId.ASYNC] -> sender1Async.replyIn
             receiver2.replyOut[SenderId.ASYNC] -> sender2Async.replyIn
 
-            receiver1.replyOut[SenderId.SERIAL_ASYNC] -> sender1Async.serialReplyIn
-            receiver2.replyOut[SenderId.SERIAL_ASYNC] -> sender2Async.serialReplyIn
+            receiver1.serialReplyOut[SenderId.ASYNC] -> sender1Async.serialReplyIn
+            receiver2.serialReplyOut[SenderId.ASYNC] -> sender2Async.serialReplyIn
         }
 
         connections AsyncInstance1 {
@@ -55,12 +55,12 @@ module FppTest {
         }
 
         connections AsyncSerialInstance1 {
-            sender1Async.serialOut[TestDeploymentPort.NO_ARGS_ASYNC] -> receiver1.noArgsAsync[SenderId.ASYNC]
-            sender1Async.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC] -> receiver1.primitiveArgsAsync[SenderId.ASYNC]
-            sender1Async.serialOut[TestDeploymentPort.STRING_ARGS_ASYNC] -> receiver1.stringArgsAsync[SenderId.ASYNC]
-            sender1Async.serialOut[TestDeploymentPort.ENUM_ARGS_ASYNC] -> receiver1.enumArgsAsync[SenderId.ASYNC]
-            sender1Async.serialOut[TestDeploymentPort.ARRAY_ARGS_ASYNC] -> receiver1.arrayArgsAsync[SenderId.ASYNC]
-            sender1Async.serialOut[TestDeploymentPort.STRUCT_ARGS_ASYNC] -> receiver1.structArgsAsync[SenderId.ASYNC]
+            sender1Async.serialOut[TestDeploymentPort.NO_ARGS_ASYNC] -> receiver1.noArgsAsync[2]
+            sender1Async.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC] -> receiver1.primitiveArgsAsync[2]
+            sender1Async.serialOut[TestDeploymentPort.STRING_ARGS_ASYNC] -> receiver1.stringArgsAsync[2]
+            sender1Async.serialOut[TestDeploymentPort.ENUM_ARGS_ASYNC] -> receiver1.enumArgsAsync[2]
+            sender1Async.serialOut[TestDeploymentPort.ARRAY_ARGS_ASYNC] -> receiver1.arrayArgsAsync[2]
+            sender1Async.serialOut[TestDeploymentPort.STRUCT_ARGS_ASYNC] -> receiver1.structArgsAsync[2]
 
             sender1Async.noArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.NO_ARGS_ASYNC]
             sender1Async.primitiveArgsOut[2] -> receiver1.serialIn[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC]
@@ -71,12 +71,12 @@ module FppTest {
         }
 
         connections AsyncSerialInstance2 {
-            sender2Async.serialOut[TestDeploymentPort.NO_ARGS_ASYNC] -> receiver2.noArgsAsync[SenderId.ASYNC]
-            sender2Async.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC] -> receiver2.primitiveArgsAsync[SenderId.ASYNC]
-            sender2Async.serialOut[TestDeploymentPort.STRING_ARGS_ASYNC] -> receiver2.stringArgsAsync[SenderId.ASYNC]
-            sender2Async.serialOut[TestDeploymentPort.ENUM_ARGS_ASYNC] -> receiver2.enumArgsAsync[SenderId.ASYNC]
-            sender2Async.serialOut[TestDeploymentPort.ARRAY_ARGS_ASYNC] -> receiver2.arrayArgsAsync[SenderId.ASYNC]
-            sender2Async.serialOut[TestDeploymentPort.STRUCT_ARGS_ASYNC] -> receiver2.structArgsAsync[SenderId.ASYNC]
+            sender2Async.serialOut[TestDeploymentPort.NO_ARGS_ASYNC] -> receiver2.noArgsAsync[2]
+            sender2Async.serialOut[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC] -> receiver2.primitiveArgsAsync[2]
+            sender2Async.serialOut[TestDeploymentPort.STRING_ARGS_ASYNC] -> receiver2.stringArgsAsync[2]
+            sender2Async.serialOut[TestDeploymentPort.ENUM_ARGS_ASYNC] -> receiver2.enumArgsAsync[2]
+            sender2Async.serialOut[TestDeploymentPort.ARRAY_ARGS_ASYNC] -> receiver2.arrayArgsAsync[2]
+            sender2Async.serialOut[TestDeploymentPort.STRUCT_ARGS_ASYNC] -> receiver2.structArgsAsync[2]
 
             sender2Async.noArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.NO_ARGS_ASYNC]
             sender2Async.primitiveArgsOut[2] -> receiver2.serialIn[TestDeploymentPort.PRIMITIVE_ARGS_ASYNC]

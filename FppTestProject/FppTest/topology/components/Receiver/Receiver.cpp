@@ -451,7 +451,7 @@ FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
 void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
     // Determine the appropriate SERIAL_* SenderId from TestDeploymentPort
     SenderId::T senderId;
-    TestDeploymentPort::T portId = static_cast<TestDeploymentPort::T>(portNum);
+    const auto portId = static_cast<TestDeploymentPort::T>(portNum);
 
     // Map TestDeploymentPort to SERIAL_* SenderId based on the port type suffix
     switch (portId) {
@@ -461,7 +461,7 @@ void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buff
         case TestDeploymentPort::PRIMITIVE_ARGS_ASYNC:
         case TestDeploymentPort::STRING_ARGS_ASYNC:
         case TestDeploymentPort::STRUCT_ARGS_ASYNC:
-            senderId = SenderId::SERIAL_ASYNC;
+            senderId = SenderId::ASYNC;
             break;
         case TestDeploymentPort::ARRAY_ARGS_GUARDED:
         case TestDeploymentPort::ENUM_ARGS_GUARDED:
@@ -469,7 +469,7 @@ void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buff
         case TestDeploymentPort::PRIMITIVE_ARGS_GUARDED:
         case TestDeploymentPort::STRING_ARGS_GUARDED:
         case TestDeploymentPort::STRUCT_ARGS_GUARDED:
-            senderId = SenderId::SERIAL_GUARDED;
+            senderId = SenderId::GUARDED;
             break;
         case TestDeploymentPort::ARRAY_ARGS_SYNC:
         case TestDeploymentPort::ENUM_ARGS_SYNC:
@@ -477,18 +477,23 @@ void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buff
         case TestDeploymentPort::PRIMITIVE_ARGS_SYNC:
         case TestDeploymentPort::STRING_ARGS_SYNC:
         case TestDeploymentPort::STRUCT_ARGS_SYNC:
-            senderId = SenderId::SERIAL_SYNC;
+            senderId = SenderId::SYNC;
             break;
         default:
             FW_ASSERT(0, portId);
             return;
     }
 
-    // Create Fw::Buffer from the serialized data
-    Fw::Buffer data(buffer.getBuffAddr(), buffer.getSize());
+    m_recv.resetSer();
+    if (buffer.getDeserializeSizeLeft() > 0) {
+        buffer.copyRaw(m_recv, buffer.getDeserializeSizeLeft());
+    }
 
-    // Reply with the serialized data using the appropriate SERIAL_* SenderId and handlerPortNum=3
-    replyOut_out(senderId, 3, portId, data);
+    Fw::Buffer data(m_data, m_recv.getSize());
+
+    // Reply over the serial reply
+    // This will trigger the serialReplyIn on the sender which send a signal out on the serial output to typedPort[2]
+    serialReplyOut_out(senderId, 2, portId, data);
 }
 
 // ----------------------------------------------------------------------
