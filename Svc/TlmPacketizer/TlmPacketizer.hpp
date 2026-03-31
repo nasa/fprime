@@ -241,8 +241,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
 
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized
-    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, MAX_PACKETIZER_PACKETS> m_channelIndices;
-    Fw::Array<TlmEntry, MAX_PACKETIZER_PACKETS>
+    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, MAX_PACKETIZER_CHANNELS> m_channelIndices;
+    Fw::Array<TlmEntry, MAX_PACKETIZER_CHANNELS>
         m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
 };
 
