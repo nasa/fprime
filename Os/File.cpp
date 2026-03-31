@@ -227,7 +227,7 @@ File::Status File::calculateCrc(U32& crc) {
 
 File::Status File::incrementalCrc(FwSizeType& size) {
     File::Status status = File::Status::OP_OK;
-    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, size);
+    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
     if (OPEN_NO_MODE == this->m_mode) {
         status = File::Status::NOT_OPENED;
     } else if (OPEN_READ != this->m_mode) {
@@ -236,9 +236,14 @@ File::Status File::incrementalCrc(FwSizeType& size) {
         // Read data without waiting for additional data to be available
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
-            FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, size);
-            // FIXME: Use Utils::Hash wrapper instead of directly using CRC-32 implementation
-            this->m_crc = Utils::crc32_ieee802_3_update(this->m_crc_buffer, size, this->m_crc);
+            FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
+            // FIXME: Utils::Hash should be integrated more carefully into File
+            Utils::Hash hash;
+            hash.setHashValue(U32(~this->m_crc));
+            hash.update(this->m_crc_buffer, size);
+            U32 crc;
+            hash.finalize(crc);
+            this->m_crc = ~crc;
         }
     }
     return status;

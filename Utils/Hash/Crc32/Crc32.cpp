@@ -170,9 +170,9 @@ static const U32 crc32_ieee802_3_lookup3[256] = {
 };
 
 U32 crc32_ieee802_3_update(const U8* data, FwSizeType length, U32 crc) {
-    FW_ASSERT(data != nullptr, length);
+    FW_ASSERT(data != nullptr, FwAssertArgType(length));
 
-    U32 i = 0;
+    FwSizeType i = 0;
     if (length >= 4) {
         constexpr U32 step_size = 4;
 
@@ -187,7 +187,8 @@ U32 crc32_ieee802_3_update(const U8* data, FwSizeType length, U32 crc) {
 
         // Double check alignment. (This should be optimized away, since the compiler can prove
         // this is always true.)
-        FW_ASSERT(((data_address + i) & (step_size - 1)) == 0, FwAssertArgType(data_address), i, step_size);
+        FW_ASSERT(((data_address + i) & (step_size - 1)) == 0, FwAssertArgType(data_address), FwAssertArgType(i),
+                  FwAssertArgType(step_size));
 
         // Once we are aligned, we can apply a faster algorithm, where we read 4 bytes of
         // data at once. (This relies on the compiler applying a straightforward optimization
@@ -195,7 +196,7 @@ U32 crc32_ieee802_3_update(const U8* data, FwSizeType length, U32 crc) {
         // we'd need the complexity of considering endianness.)
         FwSizeType stop_at = length - 3;
         for (; i < stop_at; i += 4) {
-            crc ^= data[i + 0] | (data[i + 1] << 8) | (data[i + 2] << 16) | (data[i + 3] << 24);
+            crc ^= U32(data[i + 0] | (data[i + 1] << 8) | (data[i + 2] << 16) | (data[i + 3] << 24));
             crc = crc32_ieee802_3_lookup3[crc & 0xFF] ^ crc32_ieee802_3_lookup2[(crc >> 8) & 0xFF] ^
                   crc32_ieee802_3_lookup1[(crc >> 16) & 0xFF] ^ crc32_ieee802_3_lookup0[crc >> 24];
         }

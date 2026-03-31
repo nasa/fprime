@@ -30,7 +30,7 @@ CmdSequencerComponentImpl::FPrimeSequence ::FPrimeSequence(CmdSequencerComponent
 bool CmdSequencerComponentImpl::FPrimeSequence ::validateCRC() {
     bool result = true;
     U32 computed;
-    this->m_crc.m_computed.final(computed);
+    this->m_crc.m_computed.finalize(computed);
     if (this->m_crc.m_stored != computed) {
         this->m_events.fileCRCFailure(this->m_crc.m_stored, computed);
         result = false;

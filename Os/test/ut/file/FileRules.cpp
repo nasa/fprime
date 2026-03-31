@@ -80,14 +80,22 @@ void Os::Test::FileTest::Tester::shadow_flush() {
 }
 
 void Os::Test::FileTest::Tester::shadow_crc(U32& crc) {
-    crc = this->m_independent_crc;
+    Utils::Hash hash;
+    hash.setHashValue(U32(~this->m_independent_crc));
+
     SyntheticFileData& data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
     for (FwSizeType i = data.m_pointer; i < data.m_data.size();
          i++, this->m_shadow.seek(1, Os::File::SeekType::RELATIVE)) {
-        crc = update_crc_32(crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+        hash.update(&byte, sizeof(byte));
     }
+
+    U32 crcFinal;
+    hash.finalize(crcFinal);
+    crc = ~crcFinal;
+
     // Update tracking variables
     this->m_independent_crc = Os::File::INITIAL_CRC;
 }
@@ -100,7 +108,16 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
         std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
-        this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+
+        Utils::Hash hash;
+        hash.setHashValue(U32(~this->m_independent_crc));
+        hash.update(&byte, sizeof(byte));
+
+        U32 crcFinal;
+        hash.finalize(crcFinal);
+        this->m_independent_crc = ~crcFinal;
+
         this->m_shadow.seek(1, Os::File::SeekType::RELATIVE);
     }
 }

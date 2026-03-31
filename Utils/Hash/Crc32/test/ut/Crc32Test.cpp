@@ -36,7 +36,7 @@ TEST(Crc32Test, testHelloWorld) {
 TEST(Crc32Test, testBinary) {
     U8 input[256];
     for (U32 i = 0; i < sizeof(input); i++) {
-        input[i] = i;
+        input[i] = U8(i);
     }
 
     Utils::HashBuffer hb;
@@ -71,17 +71,17 @@ static const U8 sample_input[] =
     "purposes for the benefit of all mankind.\n"
     "\n"
     "(b) The Congress declares that the general welfare and security of\n"
-    "the United States require that adequate provision be made for aero-\n"
-    "nautical and space activities. The Congress further declares that\n"
+    "the United States require that adequate provision be made for aeronautical\n"
+    "and space activities. The Congress further declares that\n"
     "such activities shall be the responsibility of, and shall be directed by,\n"
-    "a civilian agency exercising control over aeronautical and space ac-\n"
-    "tivities sponsored by the United States, except that activities peculiar\n"
+    "a civilian agency exercising control over aeronautical and space activities\n"
+    "sponsored by the United States, except that activities peculiar\n"
     "to or primarily associated with the development of weapons systems,\n"
     "military operations, or the defense of the United States (including\n"
     "the research and development necessary to make effective provision for\n"
     "the defense of the United States) shall be the responsibility of, and\n"
-    "shall be directed by, the Department of Defense; and that determina-\n"
-    "tion as to which such agency has responsibility for and direction of\n"
+    "shall be directed by, the Department of Defense; and that determination\n"
+    "as to which such agency has responsibility for and direction of\n"
     "any such activity shall be made by the President in conformity with\n"
     "section 201 (e).\n"
     "\n"
@@ -104,8 +104,8 @@ static const U8 sample_input[] =
     "the application thereof to the conduct of peaceful activities within\n"
     "and outside the atmosphere;\n"
     "(6) The making available to agencies directly concerned with\n"
-    "national defense of discoveries that have military value or signifi-\n"
-    "cance, and the furnishing by such agencies, to the civilian agency\n"
+    "national defense of discoveries that have military value or significance,\n"
+    "and the furnishing by such agencies, to the civilian agency\n"
     "established to direct and control nonmilitary aeronautical and\n"
     "space activities, of information as to discoveries which have value\n"
     "or significance to that agency;\n"
@@ -126,8 +126,8 @@ static const U8 sample_input[] =
     "\n"
     "(1) the term \"aeronautical and space activities\" means (A)\n"
     "research into, and the solution of, problems of flight within and\n"
-    "outside the earth's atmosphere, (B) the development, construc-\n"
-    "tion, testing, and operation for research purposes of aeronautical\n"
+    "outside the earth's atmosphere, (B) the development, construction,\n"
+    "testing, and operation for research purposes of aeronautical\n"
     "and space vehicles, and (C) such other activities as may be\n"
     "required for the exploration of space; and\n"
     "\n"
@@ -136,7 +136,7 @@ static const U8 sample_input[] =
     "unmanned, together with related equipment, devices, components,\n"
     "and parts.\n";
 
-constexpr U32 sample_input_hash = 0x15717527;
+constexpr U32 sample_input_hash = 0x5E6BB4BD;
 constexpr U32 sample_input_length = sizeof(sample_input) - 1 /* null terminator */;
 
 TEST(Crc32Test, testLongText) {
@@ -147,7 +147,7 @@ TEST(Crc32Test, testLongText) {
 }
 
 const U32 varyingSizeVectors[] = {0xB969BE79, 0xB02D9F38, 0x620C7FA4, 0x8091341E, 0x55FE1940, 0x2978FC8E,
-                                  0x16C9BBDA, 0x35075533, 0x2D058B95, 0x2183B447, 0xB5B1305F, 0x302F44CF};
+                                  0x16C9BBDA, 0x35075533, 0x2D058B95, 0x6EBD4DD1, 0xD6CCCFCA, 0xFF4A3832};
 
 TEST(Crc32Test, testVaryingSizes) {
     Utils::Hash hash;
@@ -157,7 +157,7 @@ TEST(Crc32Test, testVaryingSizes) {
         hash.init();
         hash.update(sample_input + offset, length);
         U32 output;
-        hash.final(output);
+        hash.finalize(output);
         EXPECT_EQ(output, varyingSizeVectors[i]);
     }
 }
@@ -167,7 +167,7 @@ TEST(Crc32Test, testSimpleMultiUpdate) {
     hash.update(sample_input, sizeof(sample_input) / 2);
     hash.update(sample_input + sizeof(sample_input) / 2, sample_input_length - sizeof(sample_input) / 2);
     U32 output;
-    hash.final(output);
+    hash.finalize(output);
     EXPECT_EQ(output, sample_input_hash);
 }
 
@@ -178,7 +178,7 @@ TEST(Crc32Test, testMultiUpdatePartitions) {
         hash.update(sample_input, i);
         hash.update(sample_input + i, sample_input_length - i);
         U32 output;
-        hash.final(output);
+        hash.finalize(output);
         EXPECT_EQ(output, sample_input_hash);
     }
 }
@@ -209,7 +209,7 @@ TEST(Crc32Test, testVeryLargeInput) {
     }
     hash.update(largeInput + limit, largeSize - limit);
     U32 output;
-    hash.final(output);
+    hash.finalize(output);
 
     EXPECT_EQ(output, allAtOnce.asBigEndianU32());
 

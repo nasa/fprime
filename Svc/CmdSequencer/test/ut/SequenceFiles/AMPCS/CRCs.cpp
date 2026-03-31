@@ -55,7 +55,9 @@ void writeFile(Os::File& file,    //!< The file
 void createFile(Fw::SerializeBufferBase& buffer, const char* const fileName) {
     CRC crc;
     computeCRC(buffer, crc);
-    writeCRC(crc.m_computed, fileName);
+    U32 crcFinal;
+    crc.m_computed.finalize(crcFinal);
+    writeCRC(crcFinal, fileName);
 }
 
 void computeCRC(Fw::SerializeBufferBase& buffer, CRC& crc) {
@@ -63,7 +65,6 @@ void computeCRC(Fw::SerializeBufferBase& buffer, CRC& crc) {
     const U8* const addr = buffer.getBuffAddr();
     const U32 size = buffer.getSize();
     crc.update(addr, size);
-    crc.finalize();
 }
 
 void removeFile(const char* const fileName) {
