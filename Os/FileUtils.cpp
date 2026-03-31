@@ -102,11 +102,14 @@ Status resolveUnixPath(const char* source, char* destination, FwSizeType destina
 }
 
 Status resolveUnixPath(const Fw::StringBase& source, Fw::StringBase& destination) {
-    // Resolve using the char* implementation with the destination's internal buffer capacity
+    // Resolve using the char* implementation with a local buffer
     char buffer[Fw::String::BUFFER_SIZE(Fw::String::STRING_SIZE)];
     FwSizeType bufferSize = static_cast<FwSizeType>(sizeof(buffer));
 
-    Status status = resolveUnixPath(source.toChar(), buffer, bufferSize);
+    // Use the smaller of the local buffer and destination capacity to ensure the result fits
+    FwSizeType effectiveSize = (destination.getCapacity() < bufferSize) ? destination.getCapacity() : bufferSize;
+
+    Status status = resolveUnixPath(source.toChar(), buffer, effectiveSize);
     if (status == OP_OK) {
         destination = buffer;
     }
