@@ -11,7 +11,7 @@ module Svc {
       rateLogic: RateLogic      @< Rate Logic Configuration
       min: U32                  @< Minimum Sched Ticks when in ON_CHANGE_MIN
       max: U32                  @< Maximum Sched Ticks when in EVERY_MAX
-    } default DEFAULT_GROUP_CONFIG
+    }
 
     array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs
@@ -125,7 +125,7 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
-
+    @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
     external param SECTION_CONFIGS: SectionConfigs default TELEMETRY_SECTION_DEFAULTS

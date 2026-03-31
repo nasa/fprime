@@ -49,7 +49,11 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
                                   const FwChanIdType startLevel) {
     FW_ASSERT(packetList.list);
-    FW_ASSERT(ignoreList.list);
+    // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
+    // functionality for two reasons:
+    //     1. There are no ignored channels as configured by FPP.
+    //     2. Ignore functionality is intentionally disabled by project where nullptr was intentionally supplied.
+    FW_ASSERT(ignoreList.list || ignoreList.numEntries == 0);
     FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(packetList.numEntries));
 
     // Reset key data members incase of reentrant calls
