@@ -58,7 +58,7 @@ contain a portion of the state. e.g. an **Event** might be "Established Communic
 "Current Temperature: 3C".
 
 All projects using F´ are composed of **Components**, **Ports**, and **Topologies**. Although F´ does not require the user to control the system using **Commands**, **Events**, and **Channels**, these constructs represent the typical
-use case for F´projects and such constructs are built-in. Thus helpful to understand both **Components**, **Ports**, and
+use case for F´ projects and such constructs are built-in. Thus helpful to understand both **Components**, **Ports**, and
 **Topologies**, as well as **Command**, **Events**, and **Channels** in order to fully understand the power of the F´
 framework.
 
