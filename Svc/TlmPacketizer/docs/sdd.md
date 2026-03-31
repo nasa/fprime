@@ -115,6 +115,7 @@ A configuration value in `TlmPacketizerImplCfg.h` defines a set of hash buckets 
 The `Svc::TlmPacketizer` component has the following configuration parameters:
 
 - `MAX_PACKETIZER_PACKETS` (TlmPacketizerCfg.hpp): Maximum allowed packets
+- `MAX_PACKETIZER_CHANNELS` (TlmPacketizerCfg.hpp): Maximum allowed telemetry channels
 - `TLMPACKETIZER_MAX_MISSING_TLM_CHECK` (TlmPacketizerCfg.hpp): Maximum reported missing telemetry channels
 - `TelemetrySection` (TlmPacketizerCfg.fpp): An enumeration of the telemetry sections used by the project. Must end with `NUM_SECTIONS` to specify the number of sections.
 - `MAX_CONFIGURABLE_TLMPACKETIZER_GROUP` (TlmPacketizerCfg.fpp): Maximum value allowed for a packet's group/level identifier
@@ -124,9 +125,11 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 
 ### 4.1 Sizing
 
-Overall memory usage of the `Svc::TlmPacketizer` is determined by the following configuration parameters: `MAX_PACKETIZER_PACKETS`, and `TLMPACKETIZER_MAX_MISSING_TLM_CHECK`.
+Overall memory usage of the `Svc::TlmPacketizer` is determined by the following configuration parameters: `MAX_PACKETIZER_PACKETS`, `MAX_PACKETIZER_CHANNELS`, and `TLMPACKETIZER_MAX_MISSING_TLM_CHECK`.
 
 `MAX_PACKETIZER_PACKETS` determines the size of storage for the telemetry packets registered by components. It should be set to at least the number of packets defined in the system, but may be larger to allow for a project's packet growth over time without incurring additional memory usage.
+
+`MAX_PACKETIZER_CHANNELS` determines the size of storage for the telemetry channels registered by components. It should be set to at least the number of non-omitted channels defined in the system, but may be larger to allow for a project's channel growth over time without incurring additional memory usage.
 
 `TLMPACKETIZER_MAX_MISSING_TLM_CHECK` determines the size of the data structure used to track and event on missing telemetry channels. Most projects should set this to a low number since missing channels are a rarity with FPP defined telemetry channels.
 
