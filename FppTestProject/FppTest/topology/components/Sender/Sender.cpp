@@ -47,6 +47,8 @@ void Sender::testNoArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
@@ -62,6 +64,8 @@ void Sender::testPrimitiveArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
@@ -77,6 +81,8 @@ void Sender::testStringArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
@@ -92,6 +98,8 @@ void Sender::testEnumArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
@@ -107,6 +115,8 @@ void Sender::testArrayArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
@@ -122,6 +132,8 @@ void Sender::testStructArgs(const TestDeploymentPort& portId) {
         if (i == 2) {
             EXPECT_TRUE(m_serialReplyReceived);
             EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
         }
     }
 
