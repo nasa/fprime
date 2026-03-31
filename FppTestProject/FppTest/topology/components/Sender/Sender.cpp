@@ -251,9 +251,7 @@ void Sender::replyIn_handler(FwIndexType portNum,
 
 void Sender::testSerialToSerial(const TestDeploymentPort& portId) {
     auto args = initTestCase<Types::PrimitiveTypes>(
-        /* We expect this message will eventually reach index 2 Ï(serial) handler */ 2,
-        portId
-    );
+        /* We expect this message will eventually reach index 2 Ï(serial) handler */ 2, portId);
 
     // Send serial data directly through serialOut at SERIAL index
     Fw::ExternalSerializeBuffer buffer(m_expectedData, sizeof(m_expectedData));
