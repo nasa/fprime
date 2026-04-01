@@ -31,9 +31,6 @@ FwSizeType TlmBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-FwSizeType TlmBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* TlmBuffer::getBuffAddr() const {
     return this->m_bufferData;

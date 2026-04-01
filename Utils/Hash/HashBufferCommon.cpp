@@ -55,9 +55,6 @@ FwSizeType HashBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-FwSizeType HashBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 U32 HashBuffer::asBigEndianU32() const {
     U32 result = 0;

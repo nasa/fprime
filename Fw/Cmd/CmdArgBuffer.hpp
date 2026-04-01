@@ -31,7 +31,6 @@ class CmdArgBuffer final : public LinearBufferBase {
     virtual ~CmdArgBuffer();                             //!< destructor
     CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;  //!< return capacity of buffer (how much it can hold)
 
     U8* getBuffAddr();              //!< return address of buffer (non const version)

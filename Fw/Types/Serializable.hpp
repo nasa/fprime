@@ -1142,10 +1142,6 @@ class LinearBufferBase : public SerialBufferBase {
     //! \return SerializeStatus indicating the result of the operation
     SerializeStatus deserializeSkip(FwSizeType numBytesToSkip) override;
 
-    DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
-    DEPRECATED(Serializable::SizeType getBuffLength() const, "Use getSize() instead");
-    DEPRECATED(Serializable::SizeType getBuffLeft(), "Use getDeserializeSizeLeft() instead");
-
     //! \brief Get buffer capacity
     //!
     //! This method returns the total capacity of the buffer, which is the maximum
@@ -1433,8 +1429,6 @@ class ExternalSerializeBuffer : public LinearBufferBase {
     //! ExternalSerializeBuffer, as this could lead to issues with buffer
     //! management.
     ExternalSerializeBuffer(const ExternalSerializeBuffer& src) = delete;
-
-    DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
 
     //! \brief Get buffer capacity
     //!

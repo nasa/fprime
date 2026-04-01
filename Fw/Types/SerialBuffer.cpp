@@ -21,10 +21,6 @@ FwSizeType SerialBuffer ::getCapacity() const {
     return m_capacity;
 }
 
-FwSizeType SerialBuffer ::getBuffCapacity() const {
-    return this->getCapacity();
-}
-
 U8* SerialBuffer ::getBuffAddr() {
     return m_data;
 }

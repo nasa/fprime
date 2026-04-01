@@ -31,9 +31,6 @@ FwSizeType ComBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-FwSizeType ComBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* ComBuffer::getBuffAddr() const {
     return this->m_bufferData;

@@ -31,9 +31,6 @@ FwSizeType LogBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-FwSizeType LogBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* LogBuffer::getBuffAddr() const {
     return this->m_bufferData;

@@ -38,7 +38,6 @@ class SerialBuffer final : public LinearBufferBase {
     // Pure virtual methods from LinearBufferBase
     // ----------------------------------------------------------------------
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;
 
     U8* getBuffAddr();

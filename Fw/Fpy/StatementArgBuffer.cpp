@@ -32,9 +32,6 @@ Serializable::SizeType StatementArgBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* StatementArgBuffer::getBuffAddr() const {
     return this->m_bufferData;

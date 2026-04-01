@@ -817,14 +817,6 @@ const U8* ExternalSerializeBuffer::getBuffAddr() const {
 // Deprecated method implementations for backward compatibility
 // ----------------------------------------------------------------------
 
-Serializable::SizeType LinearBufferBase::getBuffLength() const {
-    return this->getSize();
-}
-
-Serializable::SizeType LinearBufferBase::getBuffLeft() {
-    return this->getDeserializeSizeLeft();
-}
-
 SerializeStatus LinearBufferBase::serialize(U8 val) {
     return this->serializeFrom(val);
 }
@@ -949,10 +941,6 @@ SerializeStatus LinearBufferBase::deserialize(Serializable& val) {
 }
 SerializeStatus LinearBufferBase::deserialize(LinearBufferBase& val) {
     return this->deserializeTo(val);
-}
-
-Serializable::SizeType ExternalSerializeBuffer::getBuffCapacity() const {
-    return this->getCapacity();
 }
 
 }  // namespace Fw

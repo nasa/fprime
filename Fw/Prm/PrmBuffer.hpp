@@ -36,7 +36,6 @@ class ParamBuffer final : public LinearBufferBase {
     virtual ~ParamBuffer();
     ParamBuffer& operator=(const ParamBuffer& other);
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
 
     U8* getBuffAddr();

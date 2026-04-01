@@ -39,9 +39,6 @@ Serializable::SizeType SmSignalBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-Serializable::SizeType SmSignalBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* SmSignalBuffer::getBuffAddr() const {
     return this->m_bufferData;

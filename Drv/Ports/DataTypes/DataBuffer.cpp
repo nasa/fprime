@@ -31,10 +31,6 @@ FwSizeType DataBuffer::getCapacity() const {
     return sizeof(this->m_data);
 }
 
-FwSizeType DataBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
-
 const U8* DataBuffer::getBuffAddr() const {
     return this->m_data;
 }

@@ -23,10 +23,6 @@ FwSizeType FileBuffer ::getCapacity() const {
     return sizeof(m_buff);
 }
 
-FwSizeType FileBuffer ::getBuffCapacity() const {
-    return this->getCapacity();
-}
-
 U8* FileBuffer ::getBuffAddr() {
     return m_buff;
 }

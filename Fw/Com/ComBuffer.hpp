@@ -30,7 +30,6 @@ class ComBuffer final : public LinearBufferBase {
     virtual ~ComBuffer();
     ComBuffer& operator=(const ComBuffer& other);
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
 
     U8* getBuffAddr();

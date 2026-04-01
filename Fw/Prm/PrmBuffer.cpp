@@ -31,9 +31,6 @@ FwSizeType ParamBuffer::getCapacity() const {
     return sizeof(this->m_bufferData);
 }
 
-FwSizeType ParamBuffer::getBuffCapacity() const {
-    return this->getCapacity();
-}
 
 const U8* ParamBuffer::getBuffAddr() const {
     return this->m_bufferData;

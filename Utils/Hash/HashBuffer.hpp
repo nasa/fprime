@@ -57,7 +57,6 @@ class HashBuffer : public Fw::LinearBufferBase {
 
     //! Get the total buffer length of a hash buffer
     //!
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const override;  // !< returns capacity, not current size, of buffer
 
     //! Get a pointer to the buffer within the hash buffer

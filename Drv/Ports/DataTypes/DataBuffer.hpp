@@ -20,7 +20,6 @@ class DataBuffer : public Fw::LinearBufferBase {
     virtual ~DataBuffer();
     DataBuffer& operator=(const DataBuffer& other);
 
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const;
 
     U8* getBuffAddr();
