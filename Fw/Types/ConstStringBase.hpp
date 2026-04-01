@@ -72,16 +72,6 @@ class ConstStringBase : public Serializable {
     // status since ConstStringBase is immutable and deserializeFrom is not a read-only operation
     SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
-    DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
-               "Use serializeTo(LinearBufferBase& buffer) instead") {
-        return this->serializeTo(buffer);
-    }
-
-    DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer, SizeType maxLen) const,
-               "Use serializeTo(LinearBufferBase& buffer, SizeType maxLen) instead") {
-        return this->serializeTo(buffer, maxLen);
-    }
-
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests
     friend std::ostream& operator<<(std::ostream& os, const ConstStringBase& str);
