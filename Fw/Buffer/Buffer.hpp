@@ -101,14 +101,6 @@ class Buffer : public Fw::Serializable {
     // Serialization functions
     // ----------------------------------------------------------------------
 
-    //! Returns a LinearBufferBase representation of the wrapped data for serializing
-    //!
-    //! Returns a LinearBufferBase representation of the wrapped data allowing for serializing other types of data
-    //! to the wrapped buffer. Once obtained the user should call one of two functions: `sbb.resetSer();` to setup for
-    //! serialization, or `sbb.setBuffLen(buffer.getSize());` to setup for deserializing.
-    //! \return representation of the wrapped data to aid in serializing to it
-    DEPRECATED(LinearBufferBase& getSerializeRepr(), "Switch to .getSerializer() and .getDeserializer()");
-
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
     //! \warning The serialization pointer of the returned ExternalSerializeBufferWithMemberCopy object is set to zero
