@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "BufferRepeaterTester.hpp"
+#include <algorithm>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -49,7 +50,7 @@ void BufferRepeaterTester ::testRepeater() {
         ASSERT_EQ(i, port_index);
         Fw::Buffer buffer_under_test = this->fromPortHistory_portOut->at(i).fwBuffer;
         ASSERT_EQ(buffer_under_test.getSize(), m_initial_buffer.getSize());
-        for (U32 j = 0; j < FW_MIN(buffer_under_test.getSize(), m_initial_buffer.getSize()); j++) {
+        for (U32 j = 0; j < std::min(buffer_under_test.getSize(), m_initial_buffer.getSize()); j++) {
             ASSERT_EQ(buffer_under_test.getData()[j], m_initial_buffer.getData()[j])
                 << "Data not copied correctly at offset: " << j;
         }

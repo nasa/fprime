@@ -19,7 +19,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/PlatformCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.fpp"
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"
@@ -38,7 +37,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplTesterCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplCfg.hpp"
-        "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CRCCheckerConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileManagerConfig.hpp"
     BASE_CONFIG

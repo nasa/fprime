@@ -20,28 +20,27 @@
 // the FW_ASSERT_NO_FIRST_ARG macro will never have an empty variadic variable
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT && defined ASSERT_FILE_ID
 #define FILE_NAME_ARG U32
-#define FW_ASSERT(...)                            \
-    ((void)((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
-                ? (0)                             \
-                : (Fw::SwAssert(ASSERT_FILE_ID, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
+#define FW_ASSERT(...)                     \
+    ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
+         ? ((void)0)                       \
+         : (Fw::SwAssert(ASSERT_FILE_ID, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
 #elif FW_ASSERT_LEVEL == FW_FILEID_ASSERT && !defined ASSERT_FILE_ID
 #define FILE_NAME_ARG U32
-#define FW_ASSERT(...)                            \
-    ((void)((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
-                ? (0)                             \
-                : (Fw::SwAssert(static_cast<U32>(0), FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
+#define FW_ASSERT(...)                     \
+    ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
+         ? ((void)0)                       \
+         : (Fw::SwAssert(static_cast<U32>(0), FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
 #elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT && defined ASSERT_RELATIVE_PATH
 #define FILE_NAME_ARG const CHAR*
-#define FW_ASSERT(...)                            \
-    ((void)((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
-                ? (0)                             \
-                : (Fw::SwAssert(ASSERT_RELATIVE_PATH, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
+#define FW_ASSERT(...)                     \
+    ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
+         ? ((void)0)                       \
+         : (Fw::SwAssert(ASSERT_RELATIVE_PATH, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
 #else
 #define FILE_NAME_ARG const CHAR*
-#define FW_ASSERT(...)                            \
-    ((void)((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
-                ? (0)                             \
-                : (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)))))
+#define FW_ASSERT(...)                                 \
+    ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? ((void)0) \
+                                           : (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
 #endif
 #endif  // if ASSERT is defined
 
@@ -49,17 +48,21 @@
 #define FW_ASSERT_NO_OVERFLOW(value, T) \
     FW_ASSERT((value) <= std::numeric_limits<T>::max(), static_cast<FwAssertArgType>(value))
 
+#if FW_ASSERTIONS_ALWAYS_ABORT
+#define FW_ASSERT_NORETURN __attribute__((noreturn))
+#endif
+
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the
 // program. This breaks static analysis depending on assertions, since the analyzer has to assume the assertion will
 // return. When supported, annotate assertion functions as noreturn when statically analyzing.
-#ifndef CLANG_ANALYZER_NORETURN
+#ifndef FW_ASSERT_NORETURN
 #ifndef __has_feature
 #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 #if __has_feature(attribute_analyzer_noreturn)
-#define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
+#define FW_ASSERT_NORETURN __attribute__((analyzer_noreturn))
 #else
-#define CLANG_ANALYZER_NORETURN
+#define FW_ASSERT_NORETURN
 #endif
 #endif
 
@@ -79,50 +82,50 @@
 
 namespace Fw {
 //! Assert with no arguments
-I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with one argument
-I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with two arguments
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with three arguments
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with four arguments
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with five arguments
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwAssertArgType arg5,
+              FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 
 //! Assert with six arguments
-I8 SwAssert(FILE_NAME_ARG file,
-            FwAssertArgType arg1,
-            FwAssertArgType arg2,
-            FwAssertArgType arg3,
-            FwAssertArgType arg4,
-            FwAssertArgType arg5,
-            FwAssertArgType arg6,
-            FwSizeType lineNo) NOINLINE CLANG_ANALYZER_NORETURN;
+void SwAssert(FILE_NAME_ARG file,
+              FwAssertArgType arg1,
+              FwAssertArgType arg2,
+              FwAssertArgType arg3,
+              FwAssertArgType arg4,
+              FwAssertArgType arg5,
+              FwAssertArgType arg6,
+              FwSizeType lineNo) NOINLINE FW_ASSERT_NORETURN;
 }  // namespace Fw
 
 // Base class for declaring an assert hook

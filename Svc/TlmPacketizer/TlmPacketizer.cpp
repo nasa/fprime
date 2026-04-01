@@ -11,6 +11,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
+#include <TlmPacketizerConfig/FppConstantsAc.hpp>
 #include <cstring>
 
 namespace Svc {
@@ -25,6 +26,8 @@ static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry 
 
 TlmPacketizer ::TlmPacketizer(const char* const compName)
     : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false), m_numChannels(0) {
+    // Register self as parameter delegate
+    this->registerExternalParameters(this);
     // clear missing tlm channel check
     for (FwChanIdType entry = 0; entry < TLMPACKETIZER_MAX_MISSING_TLM_CHECK; entry++) {
         this->m_missTlmCheck[entry].checked = false;
@@ -36,11 +39,6 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
         this->m_fillBuffers[buffer].updated = false;
     }
 
-    // enable sections
-    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = Fw::Enabled::ENABLED);
-    }
-
     static_assert(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS == MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1,
                   "NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS MUST BE MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1");
 }
@@ -49,8 +47,7 @@ TlmPacketizer ::~TlmPacketizer() {}
 
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
-                                  const FwChanIdType startLevel,
-                                  const TlmPacketizer_GroupConfig& defaultGroupConfig) {
+                                  const FwChanIdType startLevel) {
     FW_ASSERT(packetList.list);
     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
     // functionality for two reasons:
@@ -124,15 +121,6 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
 
     }  // end packet list
     FW_ASSERT(maxLevel <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(maxLevel));
-
-    // Enable and set group configurations
-    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-            Fw::Enabled groupEnabled = group <= startLevel ? Fw::Enabled::ENABLED : Fw::Enabled::DISABLED;
-            this->m_groupConfigs[static_cast<FwSizeType>(section)][group] = defaultGroupConfig;
-            this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_enabled(groupEnabled);
-        }
-    }
 
     // This section adds entries in the map for channels that are intended to be ignored. When the user supplies
     // a list with no length, this loop is skipped. To turn-off ignoring of channels, the user can provide a null
@@ -280,32 +268,27 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
-    // For each packet, send if update, enable, and rate conditions are met
     for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
+        // Local flags to track which sections require a packet dispatch
+        bool sectionNeedsSend[TelemetrySection::NUM_SECTIONS] = {false};
+        bool anySectionNeedsSend = false;
+
+        // Lock only to capture the update status and reset the fill buffer flag.
         this->m_lock.lock();
-
-        // Copy packet data to avoid concurrent updates
+        bool isNewData = this->m_fillBuffers[pkt].updated;
         FwChanIdType entryGroup = this->m_fillBuffers[pkt].level;
-        Fw::ComBuffer sendBuffer = this->m_fillBuffers[pkt].buffer;
-        Fw::Time time = this->m_fillBuffers[pkt].latestTime;
-        bool updated = this->m_fillBuffers[pkt].updated;
         this->m_fillBuffers[pkt].updated = false;
-
         this->m_lock.unLock();
 
-        // Iterate through output sections
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-            // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
-            if (updated and this->m_packetFlags[section][pkt].updateFlag != UpdateFlag::REQUESTED) {
-                this->m_packetFlags[section][pkt].updateFlag = UpdateFlag::NEW;
-            }
-
-            bool sendOutFlag = false;
-            const FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
-
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
             TlmPacketizer_GroupConfig& entryGroupConfig =
                 this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
+
+            // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
+            if (isNewData && pktEntryFlags.updateFlag != UpdateFlag::REQUESTED) {
+                pktEntryFlags.updateFlag = UpdateFlag::NEW;
+            }
 
             /* Base conditions for sending
             1. Output port is connected
@@ -316,11 +299,12 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             4. The rate logic is not SILENCED.
             5. The packet has data (marked updated in the past or new)
             */
-            if (not this->isConnected_PktSend_OutputPort(outIndex)) {
+            if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))) {
                 continue;
             }
+
             if (pktEntryFlags.updateFlag == UpdateFlag::REQUESTED) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             } else {
                 if (not((entryGroupConfig.get_enabled() and
                          this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED) or
@@ -348,7 +332,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             if (pktEntryFlags.updateFlag == UpdateFlag::NEW and
                 entryGroupConfig.get_rateLogic() != Svc::RateLogic::EVERY_MAX and
                 pktEntryFlags.prevSentCounter >= entryGroupConfig.get_min()) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             }
 
             /*
@@ -357,25 +341,36 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             */
             if (entryGroupConfig.get_rateLogic() != Svc::RateLogic::ON_CHANGE_MIN and
                 pktEntryFlags.prevSentCounter >= entryGroupConfig.get_max()) {
-                sendOutFlag = true;
+                sectionNeedsSend[section] = true;
             }
 
-            // Send under the following conditions:
-            // 1. Packet received updates and it has been past delta min counts since last packet (min enabled)
-            // 2. Packet has passed delta max counts since last packet (max enabled)
-            // With the above, the group must be either enabled or force enabled.
-            // 3. If the packet was requested.
-            if (sendOutFlag) {
-                // serialize time into time offset in packet
-                Fw::ExternalSerializeBuffer buff(
-                    &sendBuffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
-                    Fw::Time::SERIALIZED_SIZE);
-                Fw::SerializeStatus stat = buff.serializeFrom(time);
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-                this->PktSend_out(outIndex, sendBuffer, pktEntryFlags.prevSentCounter);
+            if (sectionNeedsSend[section]) {
+                anySectionNeedsSend = true;
+            }
+        }
 
-                pktEntryFlags.prevSentCounter = 0;
-                pktEntryFlags.updateFlag = UpdateFlag::PAST;
+        // Only perform the buffer copy if at least one section needs to send.
+        if (anySectionNeedsSend) {
+            this->m_lock.lock();
+            BufferEntry sendBuffer = this->m_fillBuffers[pkt];
+            this->m_lock.unLock();
+
+            // serialize time into time offset in packet
+            Fw::ExternalSerializeBuffer buff(
+                &sendBuffer.buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
+                Fw::Time::SERIALIZED_SIZE);
+            (void)buff.serializeFrom(sendBuffer.latestTime);
+
+            for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
+                if (sectionNeedsSend[section]) {
+                    PktSendCounters& pktEntryFlags = this->m_packetFlags[section][pkt];
+                    FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
+
+                    this->PktSend_out(outIndex, sendBuffer.buffer, pktEntryFlags.prevSentCounter);
+
+                    pktEntryFlags.prevSentCounter = 0;
+                    pktEntryFlags.updateFlag = UpdateFlag::PAST;
+                }
             }
         }
     }
@@ -557,6 +552,37 @@ void TlmPacketizer::missingChannel(FwChanIdType id) {
             return;
         }
     }
+}
+
+Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
+                                                    const FwPrmIdType local_id,
+                                                    const Fw::ParamValid prmStat,
+                                                    Fw::SerialBufferBase& buff) {
+    // Autocoder always calls deserializeParam with VALID
+    FW_ASSERT(prmStat == Fw::ParamValid::VALID);
+    switch (local_id) {
+        case PARAMID_SECTION_ENABLED:
+            return buff.deserializeTo(this->m_sectionEnabled);
+        case PARAMID_SECTION_CONFIGS:
+            return buff.deserializeTo(this->m_groupConfigs);
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+    }
+    return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
+}
+
+Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id,
+                                                  const FwPrmIdType local_id,
+                                                  Fw::SerialBufferBase& buff) const {
+    switch (local_id) {
+        case PARAMID_SECTION_ENABLED:
+            return buff.serializeFrom(this->m_sectionEnabled);
+        case PARAMID_SECTION_CONFIGS:
+            return buff.serializeFrom(this->m_groupConfigs);
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+    }
+    return Fw::SerializeStatus::FW_SERIALIZE_FORMAT_ERROR;
 }
 
 }  // end namespace Svc

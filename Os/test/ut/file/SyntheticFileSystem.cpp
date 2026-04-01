@@ -3,6 +3,7 @@
 // \brief standard template library driven synthetic file system implementation
 // ======================================================================
 #include "Os/test/ut/file/SyntheticFileSystem.hpp"
+#include <algorithm>
 #include "Fw/Types/Assert.hpp"
 
 namespace Os {
@@ -130,9 +131,10 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSizeType& size, WaitType wait
     size = i;
     // Checks on the shadow data to ensure consistency
     FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(original_size));
-    FW_ASSERT(this->m_data->m_pointer ==
-              ((original_pointer > original_size) ? original_pointer : FW_MIN(original_pointer + size, original_size)));
-    FW_ASSERT(size == ((original_pointer > original_size) ? 0 : FW_MIN(size, original_size - original_pointer)));
+    FW_ASSERT(
+        this->m_data->m_pointer ==
+        ((original_pointer > original_size) ? original_pointer : std::min(original_pointer + size, original_size)));
+    FW_ASSERT(size == ((original_pointer > original_size) ? 0 : std::min(size, original_size - original_pointer)));
     return Os::File::Status::OP_OK;
 }
 
@@ -169,7 +171,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitTy
     FW_ASSERT(static_cast<size_t>(this->m_data->m_pointer) <= this->m_data->m_data.size());
     FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode)
                                                                      ? original_size
-                                                                     : FW_MAX(original_position, original_size)));
+                                                                     : std::max(original_position, original_size)));
 
     FwSizeType pre_write_position = this->m_data->m_pointer;
     FwSizeType pre_write_size = static_cast<FwSizeType>(this->m_data->m_data.size());
@@ -188,7 +190,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitTy
     }
     size = i;
     // Checks on the shadow data to ensure consistency
-    FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(FW_MAX(pre_write_position + size, pre_write_size)));
+    FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(std::max(pre_write_position + size, pre_write_size)));
     FW_ASSERT(this->m_data->m_pointer ==
               ((Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) ? pre_write_size : pre_write_position) + size);
     return Os::File::Status::OP_OK;
@@ -242,7 +244,7 @@ Os::File::Status SyntheticFile::preallocate(const FwSizeType offset, const FwSiz
         for (FwSizeType i = static_cast<FwSizeType>(this->m_data->m_data.size()); i < new_length; i++) {
             this->m_data->m_data.push_back(0);
         }
-        FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(FW_MAX(offset + length, original_size)));
+        FW_ASSERT(this->m_data->m_data.size() == static_cast<size_t>(std::max(offset + length, original_size)));
     }
     return status;
 }

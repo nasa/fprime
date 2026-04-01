@@ -40,10 +40,19 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     // 16b - n/a - Packet Data Length
     // ################################
 
-    FW_ASSERT(data.getSize() > SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
+    // Check size and drop packets that are too-small
+    if (data.getSize() <= SpacePacketHeader::SERIALIZED_SIZE) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
 
     SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
+    // Length is valid, so deserialization here should succeed
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Space Packet protocol defines the Data Length as number of bytes minus 1

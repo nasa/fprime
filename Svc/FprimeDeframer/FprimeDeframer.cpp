@@ -52,7 +52,8 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
     const FwSizeType expectedFrameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
                                          FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    if (data.getSize() < expectedFrameSize) {
+    // Reject packets whose data does not match the header
+    if (data.getSize() != expectedFrameSize) {
         this->log_WARNING_HI_InvalidLengthReceived();
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
