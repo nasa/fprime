@@ -120,7 +120,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
         type = static_cast<HubType>(type_in);
         status = incoming.deserializeTo(port);
     }
-    // If the deserialization was good and the port was valid, move onto size deserialization
+    // If the deserialization was good, move onto size deserialization
     if (status == Fw::FW_SERIALIZE_OK) {
         status = incoming.deserializeTo(size);
     }
@@ -149,6 +149,9 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             if (port < this->getNum_bufferOut_OutputPorts() &&
                 this->isConnected_bufferOut_OutputPort(static_cast<FwIndexType>(port))) {
                 bufferOut_out(static_cast<FwIndexType>(port), fwBuffer);
+            } else {
+                // Return the buffer if the port is invalid or not connected to avoid leaks
+                fromBufferDriverReturn_out(0, fwBuffer);
             }
         } else if (type == HUB_TYPE_EVENT) {
             FwEventIdType id;
@@ -169,7 +172,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             }
 
             // Send it!
-            if (status == Fw::FW_SERIALIZE_OK &&
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_eventOut_OutputPorts()) &&
                 this->isConnected_eventOut_OutputPort(static_cast<FwIndexType>(port))) {
                 this->eventOut_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
             }
@@ -188,7 +191,8 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             if (status == Fw::FW_SERIALIZE_OK) {
                 status = incoming.deserializeTo(val);
             }
-            if (status == Fw::FW_SERIALIZE_OK && this->isConnected_tlmOut_OutputPort(static_cast<FwIndexType>(port))) {
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_tlmOut_OutputPorts()) &&
+                this->isConnected_tlmOut_OutputPort(static_cast<FwIndexType>(port))) {
                 // Send it!
                 this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
             }
@@ -198,7 +202,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
         } else if (type == HUB_TYPE_CMD_DISP) {
             U32 context;
             // Check that the size is sufficient for the context
-            if (rawSize < sizeof(U32)) {
+            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > Fw::ComBuffer::SERIALIZED_SIZE) {
                 status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
             }
             // Shift the command buffer out and deserialize the context
@@ -206,10 +210,12 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
                 Fw::ComBuffer wrapper(rawData, (rawSize - sizeof(U32)));
                 status = wrapper.setBuffLen(rawSize - sizeof(U32));
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-                incoming.deserializeSkip(rawSize - sizeof(U32));
+                // Skip the command buffer that has already been wrapped
+                status = incoming.deserializeSkip(rawSize - sizeof(U32));
+                FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
                 status = incoming.deserializeTo(context);
                 // Send it!
-                if (status == Fw::FW_SERIALIZE_OK &&
+                if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_cmdDispOut_OutputPorts()) &&
                     this->isConnected_cmdDispOut_OutputPort(static_cast<FwIndexType>(port))) {
                     this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, context);
                 }
@@ -230,7 +236,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
                 status = incoming.deserializeTo(response);
             }
             // Send it!
-            if (status == Fw::FW_SERIALIZE_OK &&
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_cmdRespOut_OutputPorts()) &&
                 this->isConnected_cmdRespOut_OutputPort(static_cast<FwIndexType>(port))) {
                 this->cmdRespOut_out(static_cast<FwIndexType>(port), opCode, cmdSeq, response);
             }
