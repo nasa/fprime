@@ -8,8 +8,8 @@
 #ifndef Svc_EventManager_HPP_
 #define Svc_EventManager_HPP_
 
-#include <Fw/Log/LogPacket.hpp>
 #include <Fw/DataStructures/ArraySet.hpp>
+#include <Fw/Log/LogPacket.hpp>
 #include <Svc/EventManager/EventManagerComponentAc.hpp>
 #include <config/EventManagerCfg.hpp>
 
