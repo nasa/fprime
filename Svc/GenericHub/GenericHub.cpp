@@ -143,7 +143,8 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             // Deallocate the existing buffer
             fromBufferDriverReturn_out(0, fwBuffer);
         } else if (type == HUB_TYPE_BUFFER) {
-            U8 my_new = new U8[rawSize];
+            U8* my_new = new U8[rawSize];
+            memcpy(my_new, rawData, rawSize); 
             // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
             fwBuffer.set(my_new, rawSize, fwBuffer.getContext());
             // Confirm that the port is valid and connected before calling out
