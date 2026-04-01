@@ -6,7 +6,6 @@
 #endif
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include "Fw/Deprecate.hpp"
 
 namespace Fw {
 
