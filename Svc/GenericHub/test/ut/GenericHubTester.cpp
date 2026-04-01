@@ -207,7 +207,6 @@ void GenericHubTester ::send_from_driver_packet(U32 type,
 }
 
 void GenericHubTester ::test_invalid_deserialization_paths() {
-
     // Header too short to deserialize
     clearFromPortHistory();
     Fw::Buffer shortBuffer(m_data_for_allocation, sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType) - 1);
@@ -219,7 +218,6 @@ void GenericHubTester ::test_invalid_deserialization_paths() {
     ASSERT_from_tlmOut_SIZE(0);
     ASSERT_from_cmdDispOut_SIZE(0);
     ASSERT_from_cmdRespOut_SIZE(0);
-
 
     // Invalid type should be dropped
     clearFromPortHistory();
@@ -246,10 +244,7 @@ void GenericHubTester ::test_invalid_deserialization_paths() {
     // Invalid serialOut destination port should not invoke output
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_PORT),
-                                  this->componentOut.getNum_serialOut_OutputPorts(),
-                                  0,
-                                  nullptr,
-                                  0);
+                                  this->componentOut.getNum_serialOut_OutputPorts(), 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
     ASSERT_EQ(m_comm_out, 0U);
     ASSERT_from_bufferOut_SIZE(0);
@@ -261,10 +256,7 @@ void GenericHubTester ::test_invalid_deserialization_paths() {
     // Invalid bufferOut destination port should return the buffer
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_BUFFER),
-                                  this->componentOut.getNum_bufferOut_OutputPorts(),
-                                  0,
-                                  nullptr,
-                                  0);
+                                  this->componentOut.getNum_bufferOut_OutputPorts(), 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
     ASSERT_EQ(m_comm_out, 0U);
     ASSERT_from_bufferOut_SIZE(0);
@@ -286,11 +278,9 @@ void GenericHubTester ::test_invalid_deserialization_paths() {
 
     // Command dispatch path: raw payload larger than ComBuffer supports
     clearFromPortHistory();
-    const FwBuffSizeType tooLargeCmdSize = static_cast<FwBuffSizeType>(Fw::ComBuffer::SERIALIZED_SIZE + sizeof(U32) + 1);
-    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP),
-                                  0,
-                                  tooLargeCmdSize,
-                                  m_data_store,
+    const FwBuffSizeType tooLargeCmdSize =
+        static_cast<FwBuffSizeType>(Fw::ComBuffer::SERIALIZED_SIZE + sizeof(U32) + 1);
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP), 0, tooLargeCmdSize, m_data_store,
                                   tooLargeCmdSize);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
     ASSERT_EQ(m_comm_out, 0U);
