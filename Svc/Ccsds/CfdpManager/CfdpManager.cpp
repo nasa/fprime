@@ -7,6 +7,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Fw/Com/ComPacket.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -73,9 +74,38 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     FW_ASSERT(portNum < Cfdp::NumChannels, portNum, Cfdp::NumChannels);
     FW_ASSERT(portNum >= 0, portNum);
 
-    // Pass buffer to the engine to deserialize
+    // TODO JMP Is there a more efficient way of doing this? Look into receivePdu()
+    // Strip FW_PACKET_FILE descriptor (first 2 bytes) from buffer
+    // FprimeRouter sends the entire Space Packet data field, which includes the packet type descriptor
+    if (fwBuffer.getSize() < sizeof(FwPacketDescriptorType)) {
+        // Buffer too small - silently ignore
+        this->dataInReturn_out(portNum, fwBuffer);
+        return;
+    }
+
+    // Read and verify packet type descriptor
+    FwPacketDescriptorType packetType = 0;
+    Fw::SerializeStatus status = fwBuffer.getDeserializer().deserializeTo(packetType);
+    if (status != Fw::FW_SERIALIZE_OK || packetType != Fw::ComPacketType::FW_PACKET_FILE) {
+        // Invalid packet type - silently ignore (consistent with FileUplink behavior)
+        this->dataInReturn_out(portNum, fwBuffer);
+        return;
+    }
+
+    // Create a new buffer view that skips the descriptor
+    // The deserializer advanced past the 2-byte descriptor, but Engine::receivePdu
+    // calls getData() which returns the raw pointer from byte 0. We need to create
+    // a buffer that starts after the descriptor.
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    Fw::Buffer pduBuffer(
+        fwBuffer.getData() + descriptorSize,
+        fwBuffer.getSize() - descriptorSize,
+        fwBuffer.getContext()
+    );
+
+    // Pass the adjusted buffer to the engine
     FW_ASSERT(this->m_engine != NULL);
-    this->m_engine->receivePdu(static_cast<U8>(portNum), fwBuffer);
+    this->m_engine->receivePdu(static_cast<U8>(portNum), pduBuffer);
 
     // Return buffer
     this->dataInReturn_out(portNum, fwBuffer);
