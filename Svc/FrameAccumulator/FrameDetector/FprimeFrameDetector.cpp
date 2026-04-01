@@ -19,10 +19,10 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     // NOTE: it is understood and accepted that the following code is not as efficient as it could technically be
     // We are leveraging the FPP autocoded types to do the deserialization for us.
-    // In its current implementation, CircularBuffer is not a SerializeBufferBase, which prevents us from deserializing
+    // In its current implementation, CircularBuffer is not a LinearBufferBase, which prevents us from deserializing
     // directly from the CircularBuffer into FrameHeader/FrameTrailer. Instead, we have to copy the data into
     // a temporary SerializeBuffer, and then deserialize from that buffer into the FrameHeader/FrameTrailer objects.
-    // A better implementation would be to have CircularBuffer implement a shared interface with SerializeBufferBase,
+    // A better implementation would be to have CircularBuffer implement a shared interface with LinearBufferBase,
     // and then we could pass the CircularBuffer directly into the FrameHeader/FrameTrailer deserializers. This is left
     // as a TODO for future improvement as it is a significant refactor
 

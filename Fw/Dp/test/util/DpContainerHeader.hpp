@@ -157,7 +157,7 @@ struct DpContainerHeader {
     }
 
     //! Check that the serialize repr is at the specified deserialization offset
-    static void checkDeserialAtOffset(SerializeBufferBase& serialRepr,  //!< The serialize repr
+    static void checkDeserialAtOffset(LinearBufferBase& serialRepr,  //!< The serialize repr
                                       FwSizeType offset                 //!< The offset
     ) {
         const U8* buffAddr = serialRepr.getBuffAddr();

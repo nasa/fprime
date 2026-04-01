@@ -64,7 +64,7 @@ class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAda
     //! Initialize components
     void initComponents();
 
-    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::LinearBufferBase& buffer, U32 max_size);
 
   private:
     // ----------------------------------------------------------------------

@@ -25,7 +25,7 @@ ImmediateEOSFile ::ImmediateEOSFile(const U32 a_n, const Format::t a_format) : F
     this->setName(s.toChar());
 }
 
-void ImmediateEOSFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void ImmediateEOSFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     ASSERT_GE(this->n, 2U);
     // Header
     const U32 recordDataSize =

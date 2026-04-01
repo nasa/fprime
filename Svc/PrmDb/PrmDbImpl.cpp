@@ -23,7 +23,7 @@ namespace Svc {
 
 // anonymous namespace for buffer declaration
 namespace {
-class WorkingBuffer : public Fw::SerializeBufferBase {
+class WorkingBuffer : public Fw::LinearBufferBase {
   public:
     FwSizeType getCapacity() const { return sizeof(m_buff); }
 

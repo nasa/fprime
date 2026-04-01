@@ -27,7 +27,7 @@ class MissingFile : public File {
 
   public:
     //! Serialize the file in AMPCS format
-    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeAMPCS(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 };
 

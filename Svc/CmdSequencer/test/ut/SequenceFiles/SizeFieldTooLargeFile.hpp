@@ -28,7 +28,7 @@ class SizeFieldTooLargeFile : public File {
 
   public:
     //! Serialize the file in F Prime format
-    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeFPrime(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 
   public:

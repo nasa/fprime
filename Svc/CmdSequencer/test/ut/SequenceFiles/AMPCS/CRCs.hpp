@@ -25,12 +25,12 @@ namespace CRCs {
 typedef CmdSequencerComponentImpl::FPrimeSequence::CRC CRC;
 
 //! Compute a CRC
-void computeCRC(Fw::SerializeBufferBase& buffer,  //!< Buffer containing the data
+void computeCRC(Fw::LinearBufferBase& buffer,  //!< Buffer containing the data
                 CRC& crc                          //!< The CRC
 );
 
 //! Create a CRC32 file
-void createFile(Fw::SerializeBufferBase& buffer,  //!< Buffer containing the data
+void createFile(Fw::LinearBufferBase& buffer,  //!< Buffer containing the data
                 const char* const fileName        //!< The source file name
 );
 

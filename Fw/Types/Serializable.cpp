@@ -746,7 +746,7 @@ U8* LinearBufferBase::getBuffAddrSer() {
 }
 
 #ifdef BUILD_UT
-bool LinearBufferBase::operator==(const SerializeBufferBase& other) const {
+bool LinearBufferBase::operator==(const LinearBufferBase& other) const {
     if (this->getSize() != other.getSize()) {
         return false;
     }

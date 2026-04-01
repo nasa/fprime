@@ -253,7 +253,7 @@ void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::T
 // ----------------------------------------------------------------------
 
 void GenericHub::serialIn_handler(FwIndexType portNum,            /*!< The port number*/
-                                  Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+                                  Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }

@@ -26,8 +26,6 @@ typedef enum {
 class SerialBufferBase;  //!< forward declaration
 class LinearBufferBase;  //!< forward declaration
 
-// TODO: Temporary backwards-compatibility hack. Remove this when all references to SerializeBufferBase are migrated.
-using SerializeBufferBase = LinearBufferBase;
 
 struct Serialization {
     enum t {
@@ -667,7 +665,7 @@ class SerialBufferBase {
 };
 
 class LinearBufferBase : public SerialBufferBase {
-    friend class SerializeBufferBaseTester;
+    friend class LinearBufferBaseTester;
 
   protected:
     //! \brief Copy assignment operator

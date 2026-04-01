@@ -22,7 +22,7 @@ namespace Records {
 void serialize(Records::Descriptor desc,
                const Fw::Time& time,
                const Fw::ComBuffer& opcodeAndArgument,
-               Fw::SerializeBufferBase& destBuffer) {
+               Fw::LinearBufferBase& destBuffer) {
     const U8 descU8 = desc;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(descU8));
     if (desc != CmdSequencerComponentImpl::Sequence::Record::END_OF_SEQUENCE) {
@@ -44,14 +44,14 @@ void serialize(Descriptor desc,
                const Fw::Time& time,
                const FwOpcodeType opcode,
                const U32 argument,
-               Fw::SerializeBufferBase& destBuffer) {
+               Fw::LinearBufferBase& destBuffer) {
     Fw::ComBuffer opcodeAndArgument;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serializeFrom(opcode));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, opcodeAndArgument.serializeFrom(argument));
     Records::serialize(desc, time, opcodeAndArgument, destBuffer);
 }
 
-void serialize(Descriptor desc, const Fw::Time& time, Fw::SerializeBufferBase& destBuffer) {
+void serialize(Descriptor desc, const Fw::Time& time, Fw::LinearBufferBase& destBuffer) {
     Fw::ComBuffer opcodeAndArgument;
     Records::serialize(desc, time, opcodeAndArgument, destBuffer);
 }

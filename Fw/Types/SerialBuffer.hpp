@@ -21,7 +21,7 @@ namespace Fw {
 //! \class SerialBuffer
 //! \brief A variable-length serializable buffer
 //!
-class SerialBuffer final : public SerializeBufferBase {
+class SerialBuffer final : public LinearBufferBase {
   public:
     // ----------------------------------------------------------------------
     // Construction
@@ -35,7 +35,7 @@ class SerialBuffer final : public SerializeBufferBase {
 
   public:
     // ----------------------------------------------------------------------
-    // Pure virtual methods from SerializeBufferBase
+    // Pure virtual methods from LinearBufferBase
     // ----------------------------------------------------------------------
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");

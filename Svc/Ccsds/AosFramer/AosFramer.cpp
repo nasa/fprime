@@ -340,7 +340,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     }
 }
 
-void AosFramer ::serialize_idle_spp_packet(Fw::SerializeBufferBase& serializer, U16 length) {
+void AosFramer ::serialize_idle_spp_packet(Fw::LinearBufferBase& serializer, U16 length) {
     // APID to use for this Idle Packet
     constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
 

@@ -9,15 +9,15 @@ namespace Utils {
 
 HashBuffer::HashBuffer() = default;
 
-HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
+HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase() {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
 HashBuffer::~HashBuffer() = default;
 
-HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
+HashBuffer::HashBuffer(const HashBuffer& other) : Fw::LinearBufferBase() {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -26,7 +26,7 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
