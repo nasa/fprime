@@ -4,11 +4,19 @@
 # README:
 #
 # This script is a convenience tool for building and serving the docs part
-# of the website locally. It will NOT look like the actual fprime website
-# since themes and other content is no included in the core fprime repository
+# of the F´ website locally. It will NOT look like the actual F´ website
+# since themes and other content is no included in the core F´ repository
 #
-# How-To run:
-# 1. Change working directory to the parent of the 
+# DISCLAIMER: This script is experimental and has been authored by AI, 
+#             then reviewed and edited by a human
+#
+# How-To Run:
+# 0. Side effects: this script will create a Python virtual environment at `docs/docs-venv`
+#       and an output directory at `../fprime-docs-site-local` relative to the fprime/ root.
+# 1. Change working directory to the parent of the root of the fprime repository
+#    e.g. `cd path/to/fprime && cd ..`
+# 2. Run this script: `./fprime/docs/local-website-build.sh`
+# 
 ########################################################################
 
 set -euo pipefail
