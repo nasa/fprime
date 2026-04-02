@@ -24,6 +24,9 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestState/TestState.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/GetSeqCount.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/ValidateSeqCount.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/ApidManager.fpp"
   DEPENDS

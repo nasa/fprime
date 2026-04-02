@@ -18,6 +18,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/state_machine/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/interfaces/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/sizeof/")
 
 if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
     # Re-enable unit testing for the topology since it uses direct port calls
@@ -42,10 +43,15 @@ set(MOD_DEPS
     ${PROJECT_NAME}/state_machine/internal_instance/choice
     ${PROJECT_NAME}/state_machine/internal_instance/initial
     ${PROJECT_NAME}/state_machine/internal_instance/state
+    ${PROJECT_NAME}/sizeof
     ${PROJECT_NAME}/struct
     ${PROJECT_NAME}/topology/ports
+    ${PROJECT_NAME}/topology/components/Comp
     ${PROJECT_NAME}/topology/components/Sender
     ${PROJECT_NAME}/topology/components/Receiver
+    ${PROJECT_NAME}/topology/main
+    ${PROJECT_NAME}/topology/special_ports
+    ${PROJECT_NAME}/topology/top_ports
 )
 
 register_fprime_deployment()

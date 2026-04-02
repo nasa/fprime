@@ -34,6 +34,11 @@ TEST(Nominal, TestCommands) {
     tester.test_commands();
 }
 
+TEST(Invalid, TestDeserializationGuards) {
+    Svc::GenericHubTester tester;
+    tester.test_invalid_deserialization_paths();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

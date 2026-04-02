@@ -5,8 +5,6 @@
 // ======================================================================
 
 #include "PassThroughRouterTester.hpp"
-#include "PassThroughRouterGTestBase.hpp"
-#include "Svc/FprimeRouter/FprimeRouterGTestBase.hpp"
 
 namespace Svc {
 

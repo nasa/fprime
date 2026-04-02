@@ -1,5 +1,8 @@
 # Module subdirectories
 
+# Types
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
+
 # Ports
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cycle/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Fatal/")
@@ -38,6 +41,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileDownlinkPorts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileDownlink/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileManager/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileUplink/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileWorker/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeFramer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol/")

@@ -171,6 +171,7 @@ Deserial
 DEVICESM
 DHTML
 diafile
+diffs
 diles
 dinkel
 dnf
@@ -230,6 +231,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exploitability
 externalproject
 FAKELOGGER
 fbuild
@@ -253,6 +255,9 @@ FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEMANAGERCONFIG
 FILEOPENERROR
+FILETESTER
+FILEWORKER
+FILEWORKERTYPES
 FILEWRITEERROR
 fio
 fle
@@ -408,6 +413,7 @@ LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR
+lockfiles
 LOGGERRULES
 LOGPACKET
 Lsb
@@ -467,6 +473,9 @@ NODELABEL
 noinline
 NOLINT
 NOLINTNEXTLINE
+nominaldne
+nominalread
+nominalwrite
 noparent
 norecords
 NOSPEC
@@ -574,6 +583,7 @@ qhelpgenerator
 QHG
 qhp
 qsf
+racheljt
 RAII
 randtbl
 raspberrypi
@@ -596,6 +606,7 @@ refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
 regexs
+remediations
 REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
@@ -604,6 +615,7 @@ rhel
 RHH
 Rizvi
 ROOTDIR
+rowspan
 rpi
 rptr
 SAlias
@@ -710,6 +722,8 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+testwrite
+testwriteoffset
 tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
@@ -767,6 +781,7 @@ VCA
 vcid
 VCP
 vcs
+vendored
 VFILE
 VID
 vla

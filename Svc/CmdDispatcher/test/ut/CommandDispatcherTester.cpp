@@ -46,46 +46,46 @@ void CommandDispatcherTester::from_seqCmdStatus_handler(FwIndexType portNum,
     this->m_seqStatusCmdResponse = response;
 }
 
-void CommandDispatcherTester::runNominalDispatch() {
+void CommandDispatcherTester::registerBuiltinCommands() {
     // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
-    // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 0);
     this->clearEvents();
     // register built-in commands
     this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
 
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 4);
 
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
+    FwIndexType port;
+    Fw::Success exists = Fw::Success::FAILURE;
+    exists = this->m_impl.m_entryTable.find(CommandDispatcherImpl::OPCODE_CMD_NO_OP, port);
+    ASSERT_EQ(exists, Fw::Success::SUCCESS);
+    ASSERT_EQ(port, 1);
 
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
+    exists = this->m_impl.m_entryTable.find(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, port);
+    ASSERT_EQ(exists, Fw::Success::SUCCESS);
+    ASSERT_EQ(port, 1);
+
+    exists = this->m_impl.m_entryTable.find(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, port);
+    ASSERT_EQ(exists, Fw::Success::SUCCESS);
+    ASSERT_EQ(port, 1);
+
+    exists = this->m_impl.m_entryTable.find(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, port);
+    ASSERT_EQ(exists, Fw::Success::SUCCESS);
+    ASSERT_EQ(port, 1);
 
     // verify event
-    printTextLogHistory(stdout);
     ASSERT_EVENTS_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
     ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
     ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
     ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+}
+
+void CommandDispatcherTester::runNominalDispatch() {
+    // verify sequence tracker table is empty
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     REQUIREMENT("CD-003");
     // register our own command
@@ -93,9 +93,10 @@ void CommandDispatcherTester::runNominalDispatch() {
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -124,10 +125,10 @@ void CommandDispatcherTester::runNominalDispatch() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq, 0u);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -144,12 +145,8 @@ void CommandDispatcherTester::runNominalDispatch() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
-    // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq, 0u);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    // verify sequence table entry has been removed
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -166,46 +163,10 @@ void CommandDispatcherTester::runNominalDispatch() {
 }
 
 void CommandDispatcherTester::runNopCommands() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
 
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
-
-    // verify event
-
-    ASSERT_EVENTS_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     // send NO_OP command
     this->m_seqStatusRcvd = false;
@@ -298,17 +259,17 @@ void CommandDispatcherTester::runNopCommands() {
 }
 
 void CommandDispatcherTester::runCommandReregister() {
-    // register built-in commands
-    this->m_impl.regCommands();
+    this->registerBuiltinCommands();
     // clear reg events
     this->clearEvents();
 
     // register our own command
     FwOpcodeType testOpCode = 0x50;
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -320,9 +281,9 @@ void CommandDispatcherTester::runCommandReregister() {
 
     // verify we can call cmdReg port again with the same opcode
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify re-registration event
     ASSERT_EVENTS_SIZE(1);
@@ -331,53 +292,19 @@ void CommandDispatcherTester::runCommandReregister() {
 }
 
 void CommandDispatcherTester::runInvalidOpcodeDispatch() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
-
-    // verify event
-    ASSERT_EVENTS_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     // register our own command
     FwOpcodeType testOpCode = 0x50;
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -412,52 +339,18 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
 }
 
 void CommandDispatcherTester::runFailedCommand() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
-
-    // verify event
-    ASSERT_EVENTS_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
     // register our own command
     FwOpcodeType testOpCode = 0x50;
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -484,11 +377,11 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -505,11 +398,8 @@ void CommandDispatcherTester::runFailedCommand() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
-    // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    // Check dispatch table to ensure that the tracking entry was removed
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -538,11 +428,10 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -559,10 +448,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -592,11 +478,10 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -613,10 +498,7 @@ void CommandDispatcherTester::runFailedCommand() {
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // Check dispatch table
-    ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(currSeq, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::FAILURE);
 
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
@@ -631,16 +513,8 @@ void CommandDispatcherTester::runFailedCommand() {
 }
 
 void CommandDispatcherTester::runInvalidCommand() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     // clear reg events
     this->clearEvents();
 
@@ -666,35 +540,9 @@ void CommandDispatcherTester::runInvalidCommand() {
 }
 
 void CommandDispatcherTester::runOverflowCommands() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     // verify event
     ASSERT_EVENTS_SIZE(4);
@@ -709,9 +557,10 @@ void CommandDispatcherTester::runOverflowCommands() {
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -739,11 +588,11 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
             // verify sequence table entry
-            ASSERT_TRUE(this->m_impl.m_sequenceTracker[disp].used);
-            ASSERT_EQ(disp, this->m_impl.m_sequenceTracker[disp].seq);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].opCode, testOpCode);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].context, testContext);
-            ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].callerPort, 0);
+            CommandDispatcherImpl::SequenceTrackerEntry entry;
+            ASSERT_EQ(this->m_impl.m_sequenceTracker.find(disp, entry), Fw::Success::SUCCESS);
+            ASSERT_EQ(entry.opCode, testOpCode);
+            ASSERT_EQ(entry.context, testContext);
+            ASSERT_EQ(entry.callerPort, 0);
 
             // verify command received
             ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -762,43 +611,9 @@ void CommandDispatcherTester::runOverflowCommands() {
 }
 
 void CommandDispatcherTester::runClearCommandTracking() {
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
-
-    // verify event
-    ASSERT_EVENTS_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     // register our own command
     FwOpcodeType testOpCode = 0x50;
@@ -806,9 +621,10 @@ void CommandDispatcherTester::runClearCommandTracking() {
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, testOpCode);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
@@ -832,11 +648,11 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
 
     // verify sequence table entry
-    ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-    ASSERT_EQ(0u, this->m_impl.m_sequenceTracker[0].seq);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context, testContext);
-    ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
+    CommandDispatcherImpl::SequenceTrackerEntry entry;
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(0, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, testOpCode);
+    ASSERT_EQ(entry.context, testContext);
+    ASSERT_EQ(entry.callerPort, 0);
 
     // verify command received
     ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -867,9 +683,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // dispatch command from dispatcher to command handler
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     // verify tracking table empty
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
 
     clearHistory();
     // send command complete
@@ -883,54 +697,19 @@ void CommandDispatcherTester::runClearCommandTracking() {
 void CommandDispatcherTester::runCommandQueueOverflow() {
     U8 testNumCmdsToSend = 19;
 
-    // verify dispatch table is empty
-    for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
-        ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
-    }
-
     // verify sequence tracker table is empty
-
-    for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
-        ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
-    }
-    // clear reg events
-    this->clearEvents();
-    // register built-in commands
-    this->m_impl.regCommands();
-    // verify registrations
-    ASSERT_TRUE(this->m_impl.m_entryTable[0].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP);
-    ASSERT_EQ(this->m_impl.m_entryTable[0].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[1].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].opcode, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING);
-    ASSERT_EQ(this->m_impl.m_entryTable[1].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[2].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].opcode, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1);
-    ASSERT_EQ(this->m_impl.m_entryTable[2].port, 1);
-
-    ASSERT_TRUE(this->m_impl.m_entryTable[3].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].opcode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
-    ASSERT_EQ(this->m_impl.m_entryTable[3].port, 1);
-
-    // verify event
-    printTextLogHistory(stdout);
-    ASSERT_EVENTS_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
 
     // register our own command
     FwOpcodeType testOpCode = 0x50;
 
     this->clearEvents();
     this->invoke_to_compCmdReg(0, 0x50);
-    ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].opcode, testOpCode);
-    ASSERT_EQ(this->m_impl.m_entryTable[4].port, 0);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
 
     // verify registration event
     ASSERT_EVENTS_SIZE(1);

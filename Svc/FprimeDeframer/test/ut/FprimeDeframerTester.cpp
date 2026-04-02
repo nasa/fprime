@@ -94,8 +94,8 @@ void FprimeDeframerTester ::testIncorrectStartWord() {
 }
 
 void FprimeDeframerTester ::testIncorrectCrc() {
-    // Frame:     |   F´ start word      |      Length = 1       |Data (2bytes)| INCORRECT Checksum  |
-    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // Frame:     |   F´ start word      |      Length = 2       |Data (2bytes)| INCORRECT Checksum  |
+    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     this->mockReceiveData(data, sizeof(data));
     ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated

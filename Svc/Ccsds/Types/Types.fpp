@@ -3,11 +3,12 @@ module Ccsds {
 
     @ Enum representing an error during framing/deframing in the CCSDS protocols
     enum FrameError: U8 {
-        SP_INVALID_LENGTH = 0
-        TC_INVALID_SCID = 1
-        TC_INVALID_LENGTH = 2
-        TC_INVALID_VCID = 3
-        TC_INVALID_CRC = 4
+        SP_INVALID_PACKET = 0
+        SP_INVALID_LENGTH = 1
+        TC_INVALID_SCID = 2
+        TC_INVALID_LENGTH = 3
+        TC_INVALID_VCID = 4
+        TC_INVALID_CRC = 5
     }
 
     # ------------------------------------------------

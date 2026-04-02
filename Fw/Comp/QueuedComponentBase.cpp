@@ -43,4 +43,15 @@ void QueuedComponentBase::incNumMsgDropped() {
     this->m_msgsDropped++;
 }
 
+Fw::QueuedComponentBase::MsgDispatchStatus QueuedComponentBase::dispatchAvailableMessages() {
+    MsgDispatchStatus status = MSG_DISPATCH_OK;
+    const FwSizeType num_messages = this->m_queue.getMessagesAvailable();
+    for (FwSizeType i = 0; i < num_messages; i++) {
+        status = this->doDispatch();
+        if (status != MSG_DISPATCH_OK) {
+            break;
+        }
+    }
+    return status;
+}
 }  // namespace Fw

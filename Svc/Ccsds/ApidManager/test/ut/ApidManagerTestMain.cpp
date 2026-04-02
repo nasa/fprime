@@ -4,50 +4,65 @@
 // \brief  cpp file for ApidManager component test main function
 // ======================================================================
 
-#include "ApidManagerTester.hpp"
+#include "STest/Random/Random.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
+#include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
+#include "Svc/Ccsds/ApidManager/test/ut/Rules/Rules.hpp"
 
+namespace Svc {
+
+namespace Ccsds {
+
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
+
+// Verify that getApidSeqCountIn registers a new APID and returns
+// incrementing counts on subsequent calls.
 TEST(ApidManager, GetSequenceCounts) {
-    Svc::Ccsds::ApidManagerTester tester;
-    Svc::Ccsds::ApidManagerTester::GetExistingSeqCount getExistingSeqCount;
-    Svc::Ccsds::ApidManagerTester::GetNewSeqCountOk getNewSeqCountOk;
-    getExistingSeqCount.apply(tester);
-    getNewSeqCountOk.apply(tester);
+    ApidManagerTester state;
+    Rules::GetSeqCount::NewOk ruleNewOk;
+    Rules::GetSeqCount::Existing ruleExisting;
+    ruleNewOk.apply(state);     // register a new APID; expect count 0
+    ruleExisting.apply(state);  // retrieve count for the same APID; expect count 1
 }
 
+// Verify that validateApidSeqCountIn fires no event on a matching count
+// and fires UnexpectedSequenceCount on a mismatch.
 TEST(ApidManager, ValidateSequenceCounts) {
-    Svc::Ccsds::ApidManagerTester tester;
-    Svc::Ccsds::ApidManagerTester::ValidateSeqCountOk validateSeqCountOkRule;
-    Svc::Ccsds::ApidManagerTester::ValidateSeqCountFailure validateSeqCountFailureRule;
-    validateSeqCountOkRule.apply(tester);
-    validateSeqCountFailureRule.apply(tester);
+    ApidManagerTester state;
+    Rules::GetSeqCount::NewOk ruleNewOk;
+    Rules::ValidateSeqCount::Ok ruleValidateOk;
+    Rules::ValidateSeqCount::Failure ruleValidateFailure;
+    ruleNewOk.apply(state);            // register an APID so validate rules can fire
+    ruleValidateOk.apply(state);       // validate correct count; no event expected
+    ruleValidateFailure.apply(state);  // validate wrong count; event expected
 }
 
-// Randomized testing
+// Randomized test: apply rules in a bounded random sequence to exercise
+// all state transitions across the APID sequence-count lifecycle.
 TEST(ApidManager, RandomizedTesting) {
-    Svc::Ccsds::ApidManagerTester tester;
+    ApidManagerTester state;
+    Rules::GetSeqCount::Existing ruleGetExisting;
+    Rules::GetSeqCount::NewOk ruleGetNewOk;
+    Rules::GetSeqCount::NewTableFull ruleGetNewTableFull;
+    Rules::ValidateSeqCount::Ok ruleValidateOk;
+    Rules::ValidateSeqCount::Failure ruleValidateFailure;
 
-    Svc::Ccsds::ApidManagerTester::GetExistingSeqCount getExistingSeqCountRule;
-    Svc::Ccsds::ApidManagerTester::GetNewSeqCountOk getNewSeqCountOkRule;
-    Svc::Ccsds::ApidManagerTester::GetNewSeqCountTableFull getNewSeqCountTableFullRule;
-    Svc::Ccsds::ApidManagerTester::ValidateSeqCountOk validateSeqCountOkRule;
-    Svc::Ccsds::ApidManagerTester::ValidateSeqCountFailure validateSeqCountFailureRule;
+    STest::Rule<ApidManagerTester>* rules[] = {
+        &ruleGetExisting, &ruleGetNewOk, &ruleGetNewTableFull, &ruleValidateOk, &ruleValidateFailure,
+    };
 
-    // Place these rules into a list of rules
-    STest::Rule<Svc::Ccsds::ApidManagerTester>* rules[] = {&getExistingSeqCountRule, &getNewSeqCountOkRule,
-                                                           &getNewSeqCountTableFullRule, &validateSeqCountOkRule,
-                                                           &validateSeqCountFailureRule};
-
-    // Take the rules and place them into a random scenario
-    STest::RandomScenario<Svc::Ccsds::ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
-
-    // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Svc::Ccsds::ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 10000);
-    // Run!
-    const U32 numSteps = bounded.run(tester);
+    STest::RandomScenario<ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::BoundedScenario<ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 10000);
+    const U32 numSteps = bounded.run(state);
     printf("Ran %u steps.\n", numSteps);
 }
+
+}  // namespace Ccsds
+
+}  // namespace Svc
 
 int main(int argc, char** argv) {
     STest::Random::seed();

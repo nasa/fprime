@@ -39,9 +39,9 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serialize.serializeFrom(static_cast<U32>(port));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    status = serialize.serializeFrom(data, size);
+    status = serialize.serializeFrom(data, static_cast<FwBuffSizeType>(size));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    outgoing.setSize(static_cast<U32>(serialize.getSize()));
+    outgoing.setSize(serialize.getSize());
     toBufferDriver_out(0, outgoing);
 }
 
@@ -105,103 +105,146 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
 
     // Representation of incoming data prepped for serialization
     auto incoming = fwBuffer.getDeserializer();
-    status = incoming.deserializeTo(type_in);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    type = static_cast<HubType>(type_in);
-    FW_ASSERT(type < HUB_TYPE_MAX, type);
-    status = incoming.deserializeTo(port);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    status = incoming.deserializeTo(size);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    // Check the size of the data first
+    if (fwBuffer.getSize() < (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType))) {
+        status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    } else {
+        status = incoming.deserializeTo(type_in);
+    }
+    // If the deserialization was good, but the type is invalid, set invalid data
+    if ((status == Fw::FW_SERIALIZE_OK) && (type_in >= HUB_TYPE_MAX)) {
+        status = Fw::FW_DESERIALIZE_INVALID_DATA;
+    }
+    // If the deserialization was good and the type was valid, set the type and move onto port deserialization
+    else if (status == Fw::FW_SERIALIZE_OK) {
+        type = static_cast<HubType>(type_in);
+        status = incoming.deserializeTo(port);
+    }
+    // If the deserialization was good, move onto size deserialization
+    if (status == Fw::FW_SERIALIZE_OK) {
+        status = incoming.deserializeTo(size);
+    }
+    // All deserialization looks good, check that the size matches the buffer size before calling the appropriate ports
+    if (status == Fw::FW_SERIALIZE_OK &&
+        (size == (fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType)))) {
+        // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
+        U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
+        FwSizeType rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType);
+        if (type == HUB_TYPE_PORT) {
+            // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
+            Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
+            status = wrapper.setBuffLen(rawSize);
+            FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+            // Confirm that the port is valid and connected before calling out
+            if (port < this->getNum_serialOut_OutputPorts() &&
+                this->isConnected_serialOut_OutputPort(static_cast<FwIndexType>(port))) {
+                serialOut_out(static_cast<FwIndexType>(port), wrapper);
+            }
+            // Deallocate the existing buffer
+            fromBufferDriverReturn_out(0, fwBuffer);
+        } else if (type == HUB_TYPE_BUFFER) {
+            // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
+            fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
+            // Confirm that the port is valid and connected before calling out
+            if (port < this->getNum_bufferOut_OutputPorts() &&
+                this->isConnected_bufferOut_OutputPort(static_cast<FwIndexType>(port))) {
+                bufferOut_out(static_cast<FwIndexType>(port), fwBuffer);
+            } else {
+                // Return the buffer if the port is invalid or not connected to avoid leaks
+                fromBufferDriverReturn_out(0, fwBuffer);
+            }
+        } else if (type == HUB_TYPE_EVENT) {
+            FwEventIdType id;
+            Fw::Time timeTag;
+            Fw::LogSeverity severity;
+            Fw::LogBuffer args;
 
-    // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
-    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
-    U32 rawSize = static_cast<U32>(fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType));
-    FW_ASSERT(rawSize == static_cast<U32>(size));
-    if (type == HUB_TYPE_PORT) {
-        // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
-        Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
-        status = wrapper.setBuffLen(rawSize);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        serialOut_out(static_cast<FwIndexType>(port), wrapper);
-        // Deallocate the existing buffer
-        fromBufferDriverReturn_out(0, fwBuffer);
-    } else if (type == HUB_TYPE_BUFFER) {
-        // Fw::Buffers can reuse the existing data buffer as the storage type!  No deallocation done.
-        fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
-        bufferOut_out(static_cast<FwIndexType>(port), fwBuffer);
-    } else if (type == HUB_TYPE_EVENT) {
-        FwEventIdType id;
-        Fw::Time timeTag;
-        Fw::LogSeverity severity;
-        Fw::LogBuffer args;
+            // Deserialize tokens for events
+            status = incoming.deserializeTo(id);
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(timeTag);
+            }
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(severity);
+            }
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(args);
+            }
 
-        // Deserialize tokens for events
-        status = incoming.deserializeTo(id);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(timeTag);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(severity);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(args);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+            // Send it!
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_eventOut_OutputPorts()) &&
+                this->isConnected_eventOut_OutputPort(static_cast<FwIndexType>(port))) {
+                this->eventOut_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
+            }
+            // Deallocate the existing buffer
+            fromBufferDriverReturn_out(0, fwBuffer);
+        } else if (type == HUB_TYPE_CHANNEL) {
+            FwChanIdType id;
+            Fw::Time timeTag;
+            Fw::TlmBuffer val;
 
-        // Send it!
-        this->eventOut_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
+            // Deserialize tokens for channels
+            status = incoming.deserializeTo(id);
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(timeTag);
+            }
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(val);
+            }
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_tlmOut_OutputPorts()) &&
+                this->isConnected_tlmOut_OutputPort(static_cast<FwIndexType>(port))) {
+                // Send it!
+                this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
+            }
 
-        // Deallocate the existing buffer
-        fromBufferDriverReturn_out(0, fwBuffer);
-    } else if (type == HUB_TYPE_CHANNEL) {
-        FwChanIdType id;
-        Fw::Time timeTag;
-        Fw::TlmBuffer val;
+            // Return the received buffer
+            fromBufferDriverReturn_out(0, fwBuffer);
+        } else if (type == HUB_TYPE_CMD_DISP) {
+            U32 context;
+            // Check that the size is sufficient for the context
+            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > Fw::ComBuffer::SERIALIZED_SIZE) {
+                status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+            }
+            // Shift the command buffer out and deserialize the context
+            if (status == Fw::FW_SERIALIZE_OK) {
+                Fw::ComBuffer wrapper(rawData, (rawSize - sizeof(U32)));
+                status = wrapper.setBuffLen(rawSize - sizeof(U32));
+                FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+                // Skip the command buffer that has already been wrapped
+                status = incoming.deserializeSkip(rawSize - sizeof(U32));
+                FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+                status = incoming.deserializeTo(context);
+                // Send it!
+                if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_cmdDispOut_OutputPorts()) &&
+                    this->isConnected_cmdDispOut_OutputPort(static_cast<FwIndexType>(port))) {
+                    this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, context);
+                }
+            }
+            // Deallocate the existing buffer
+            fromBufferDriverReturn_out(0, fwBuffer);
+        } else if (type == HUB_TYPE_CMD_RESP) {
+            FwOpcodeType opCode;
+            U32 cmdSeq;
+            Fw::CmdResponse response;
 
-        // Deserialize tokens for channels
-        status = incoming.deserializeTo(id);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(timeTag);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(val);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-
-        // Send it!
-        this->tlmOut_out(static_cast<FwIndexType>(port), id, timeTag, val);
-
-        // Return the received buffer
-        fromBufferDriverReturn_out(0, fwBuffer);
-    } else if (type == HUB_TYPE_CMD_DISP) {
-        U32 context;
-
-        // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
-        Fw::ComBuffer wrapper(rawData, (rawSize - sizeof(U32)));
-        status = wrapper.setBuffLen(rawSize - sizeof(U32));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-
-        incoming.deserializeSkip(rawSize - sizeof(U32));
-        status = incoming.deserializeTo(context);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-
-        this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, context);
-
-        // Deallocate the existing buffer
-        fromBufferDriverReturn_out(0, fwBuffer);
-    } else if (type == HUB_TYPE_CMD_RESP) {
-        FwOpcodeType opCode;
-        U32 cmdSeq;
-        Fw::CmdResponse response;
-
-        // Deserialize tokens for channels
-        status = incoming.deserializeTo(opCode);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(cmdSeq);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-        status = incoming.deserializeTo(response);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-
-        // Send it!
-        this->cmdRespOut_out(static_cast<FwIndexType>(port), opCode, cmdSeq, response);
-
-        // Return the received buffer
+            // Deserialize tokens for channels
+            status = incoming.deserializeTo(opCode);
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(cmdSeq);
+            }
+            if (status == Fw::FW_SERIALIZE_OK) {
+                status = incoming.deserializeTo(response);
+            }
+            // Send it!
+            if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_cmdRespOut_OutputPorts()) &&
+                this->isConnected_cmdRespOut_OutputPort(static_cast<FwIndexType>(port))) {
+                this->cmdRespOut_out(static_cast<FwIndexType>(port), opCode, cmdSeq, response);
+            }
+            // Return the received buffer
+            fromBufferDriverReturn_out(0, fwBuffer);
+        }
+    } else {
+        // On deserialization failure, return the buffer to avoid leaks
         fromBufferDriverReturn_out(0, fwBuffer);
     }
 }

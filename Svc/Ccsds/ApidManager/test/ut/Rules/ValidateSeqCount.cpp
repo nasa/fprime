@@ -1,0 +1,72 @@
+// ======================================================================
+// \title  ValidateSeqCount.cpp
+// \author thomas-bc
+// \brief  Rule implementations for the ValidateSeqCount rule group
+//
+// These rules exercise the validateApidSeqCountIn port.
+//
+//   ValidateSeqCount.Ok
+//     Precondition: at least one APID is tracked in the shadow.
+//     Action:       invoke validateApidSeqCountIn with the correct
+//                   (shadow-expected) count; verify no event is fired.
+//
+//   ValidateSeqCount.Failure
+//     Precondition: at least one APID is tracked in the shadow.
+//     Action:       invoke validateApidSeqCountIn with a deliberately
+//                   wrong count; verify UnexpectedSequenceCount fires
+//                   with the transmitted and expected values.
+// ======================================================================
+
+#include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+
+namespace Svc {
+
+namespace Ccsds {
+
+// ----------------------------------------------------------------------
+// ValidateSeqCount.Ok
+// ----------------------------------------------------------------------
+
+bool ApidManagerTester::precondition__ValidateSeqCount__Ok() const {
+    return !this->shadow.shadow_seqCounts.empty();
+}
+
+void ApidManagerTester::action__ValidateSeqCount__Ok() {
+    this->clearHistory();
+
+    ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
+    U16 expected = this->shadow.shadow_seqCounts.at(apid);
+    this->invoke_to_validateApidSeqCountIn(0, apid, expected);
+    this->shadow.shadow_validateApidSeqCount(apid, expected);
+
+    ASSERT_EVENTS_UnexpectedSequenceCount_SIZE(0);
+}
+
+// ----------------------------------------------------------------------
+// ValidateSeqCount.Failure
+// ----------------------------------------------------------------------
+
+bool ApidManagerTester::precondition__ValidateSeqCount__Failure() const {
+    return !this->shadow.shadow_seqCounts.empty();
+}
+
+void ApidManagerTester::action__ValidateSeqCount__Failure() {
+    this->clearHistory();
+
+    ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
+    U16 correctCount = this->shadow.shadow_seqCounts.at(apid);
+
+    // Increment by 1 (mod 14-bit counter width) to produce a provably wrong count
+    U16 wrongCount = static_cast<U16>((correctCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
+
+    this->invoke_to_validateApidSeqCountIn(0, apid, wrongCount);
+    this->shadow.shadow_validateApidSeqCount(apid, wrongCount);
+
+    ASSERT_EVENTS_UnexpectedSequenceCount_SIZE(1);
+    ASSERT_EVENTS_UnexpectedSequenceCount(0, wrongCount, correctCount);
+}
+
+}  // namespace Ccsds
+
+}  // namespace Svc

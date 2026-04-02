@@ -82,3 +82,15 @@ event DownlinkZeroSizeFile(
   severity warning high \
   id 0x09 \
   format "Downlink of file {} stopped due to zero-size."
+
+@ Supplied filename has overflowed. This intentionally discards the filename to avoid cascading overflows.
+event FilenameSourceOverflow() \
+  severity warning high \
+  id 0x10 \
+  format "Commanded source filename too long"
+
+@ Supplied filename has overflowed
+event FilenameDestinationOverflow() \
+  severity warning high \
+  id 0x11 \
+  format "Commanded destination filename too long"

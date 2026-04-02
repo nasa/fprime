@@ -114,18 +114,26 @@ Svc::SendFileResponse FileDownlink ::SendFile_handler(
     entry.cmdSeq = 0;
     entry.context = m_cntxId++;
 
-    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
-    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
-    entry.srcFilename = sourceFilename;
-    entry.destFilename = destFilename;
-
-    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
-                                                0, Os::Queue::BlockingType::NONBLOCKING);
-
-    if (status != Os::Queue::Status::OP_OK) {
+    // Guard against filename overflow
+    if (sourceFilename.length() >= entry.srcFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameSourceOverflow();
         return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
+    } else if (destFilename.length() >= entry.destFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameDestinationOverflow();
+        return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
+    } else {
+        entry.srcFilename = sourceFilename;
+        entry.destFilename = destFilename;
+
+        Os::Queue::Status status =
+            m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0,
+                             Os::Queue::BlockingType::NONBLOCKING);
+
+        if (status != Os::Queue::Status::OP_OK) {
+            return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
+        }
+        return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
     }
-    return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
 }
 
 void FileDownlink ::pingIn_handler(const FwIndexType portNum, U32 key) {
@@ -170,16 +178,24 @@ void FileDownlink ::SendFile_cmdHandler(const FwOpcodeType opCode,
     entry.cmdSeq = cmdSeq;
     entry.context = std::numeric_limits<U32>::max();
 
-    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
-    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
-    entry.srcFilename = sourceFilename;
-    entry.destFilename = destFilename;
+    // Guard against filename overflow
+    if (sourceFilename.length() >= entry.srcFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameSourceOverflow();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    } else if (destFilename.length() >= entry.destFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameDestinationOverflow();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    } else {
+        entry.srcFilename = sourceFilename;
+        entry.destFilename = destFilename;
 
-    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
-                                                0, Os::Queue::BlockingType::NONBLOCKING);
+        Os::Queue::Status status =
+            m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0,
+                             Os::Queue::BlockingType::NONBLOCKING);
 
-    if (status != Os::Queue::Status::OP_OK) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (status != Os::Queue::Status::OP_OK) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        }
     }
 }
 
@@ -197,16 +213,24 @@ void FileDownlink ::SendPartial_cmdHandler(FwOpcodeType opCode,
     entry.cmdSeq = cmdSeq;
     entry.context = std::numeric_limits<U32>::max();
 
-    FW_ASSERT(sourceFilename.length() < entry.srcFilename.getCapacity());
-    FW_ASSERT(destFilename.length() < entry.destFilename.getCapacity());
-    entry.srcFilename = sourceFilename;
-    entry.destFilename = destFilename;
+    // Guard against filename overflow
+    if (sourceFilename.length() >= entry.srcFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameSourceOverflow();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    } else if (destFilename.length() >= entry.destFilename.getCapacity()) {
+        this->log_WARNING_HI_FilenameDestinationOverflow();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    } else {
+        entry.srcFilename = sourceFilename;
+        entry.destFilename = destFilename;
 
-    Os::Queue::Status status = m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
-                                                0, Os::Queue::BlockingType::NONBLOCKING);
+        Os::Queue::Status status =
+            m_fileQueue.send(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)), 0,
+                             Os::Queue::BlockingType::NONBLOCKING);
 
-    if (status != Os::Queue::Status::OP_OK) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (status != Os::Queue::Status::OP_OK) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        }
     }
 }
 

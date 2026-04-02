@@ -17,6 +17,7 @@ register_fprime_config(
         Os_Generic_PriorityQueue
         Os_RawTime_Posix
         Fw_StringFormat_snprintf
+        Fw_StringScan_sscanf
         # No posix API
         Os_Cpu_Stub
         Os_Memory_Stub

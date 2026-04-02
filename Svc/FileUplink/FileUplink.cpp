@@ -132,7 +132,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
-    if (byteOffset + dataSize > this->m_file.size) {
+    if ((std::numeric_limits<U32>::max() - byteOffset < dataSize) || (byteOffset + dataSize > this->m_file.size)) {
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
