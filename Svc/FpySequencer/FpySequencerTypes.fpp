@@ -1,17 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 4;
-
-        @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
-        # should be equal to (last flag id) + 1
-        constant FLAG_COUNT = 1
-
-        dictionary enum FlagId : U8 {
-            # must start at 0 and increment by 1 each time
-            @ if true, the sequence will exit with an error if a command fails
-            EXIT_ON_CMD_FAIL = 0
-        }
+        constant SCHEMA_VERSION = 5;
 
         @ the type which everything referencing a size or offset on the stack is represented in
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
@@ -108,16 +98,14 @@ module Svc {
             STACK_CMD = 64
             PUSH_TLM_VAL_AND_TIME = 65
             PUSH_TIME = 66
-            SET_FLAG = 67
-            GET_FLAG = 68
-            GET_FIELD = 69
-            PEEK = 70
-            STORE_REL = 71
-            CALL = 72
-            RETURN = 73
-            LOAD_ABS = 74
-            STORE_ABS = 75
-            STORE_ABS_CONST_OFFSET = 76
+            GET_FIELD = 67
+            PEEK = 68
+            STORE_REL = 69
+            CALL = 70
+            RETURN = 71
+            LOAD_ABS = 72
+            STORE_ABS = 73
+            STORE_ABS_CONST_OFFSET = 74
         }
 
         enum DirectiveErrorCode : U8 {
@@ -132,12 +120,12 @@ module Svc {
             STACK_ACCESS_OUT_OF_BOUNDS = 8
             STACK_OVERFLOW = 9
             DOMAIN_ERROR = 10
-            FLAG_IDX_OUT_OF_BOUNDS = 11
-            ARRAY_OUT_OF_BOUNDS = 12
-            ARITHMETIC_OVERFLOW = 13
-            ARITHMETIC_UNDERFLOW = 14
-            FRAME_START_OUT_OF_BOUNDS = 15
-            STACK_UNDERFLOW = 16
+            ARRAY_OUT_OF_BOUNDS = 11
+            ARITHMETIC_OVERFLOW = 12
+            ARITHMETIC_UNDERFLOW = 13
+            FRAME_START_OUT_OF_BOUNDS = 14
+            STACK_UNDERFLOW = 15
+            CMD_FAIL = 16
         }
 
         struct Header {
