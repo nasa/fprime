@@ -1109,15 +1109,17 @@ Stores a value to an absolute address in the stack (used for global variables), 
 **Requirement:**  FPY-SEQ-009
 
 ## POP_EVENT (77)
-Pops a severity and message from the stack and emits an F Prime event.
+Pops a message size, message, and severity from the stack and emits an F Prime event.
 
 **Preconditions:**
-- `len(stack) >= message_size + 1`
+- `len(stack) >= sizeof(StackSizeType)` (to pop message_size)
+- After popping message_size: `len(stack) >= message_size + sizeof(Fw.LogSeverity)`
 
 **Semantics:**
-1. Pop `message_size` bytes from the stack — this is the UTF-8 encoded message.
-2. Pop `Fw.LogSeverity` (rep type U8) from the stack — this is the severity.
-3. The runtime raises an F Prime event whose severity is determined by the popped value and whose payload is the popped message bytes.
+1. Pop `StackSizeType` from the stack — this is `message_size`.
+2. Pop `message_size` bytes from the stack — this is the UTF-8 encoded message.
+3. Pop `Fw.LogSeverity` (rep type U8) from the stack — this is the severity.
+4. The runtime raises an F Prime event whose severity is determined by the popped value and whose payload is the popped message bytes.
 
 **Severity values:**
 | Value | FPP Severity   |
@@ -1131,10 +1133,12 @@ Pops a severity and message from the stack and emits an F Prime event.
 | 7     | DIAGNOSTIC     |
 
 **Error Conditions:**
-- If `len(stack) < message_size + 1`: `STACK_UNDERFLOW`
+- If `len(stack) < sizeof(StackSizeType)`: `STACK_UNDERFLOW`
+- If `len(stack) < message_size + sizeof(Fw.LogSeverity)` (after popping message_size): `STACK_UNDERFLOW`
+- If severity is not a valid `Fw.LogSeverity` value: `INVALID_ARG`
 
-| Arg Name     | Arg Type      | Source    | Description |
-|--------------|---------------|----------|-------------|
-| message_size | StackSizeType | hardcoded | Number of bytes to pop for the message. |
-| severity     | Fw.LogSeverity| stack     | The event severity level (popped after message). |
-| message      | bytes         | stack     | UTF-8 encoded message string (popped first). |
+| Arg Name     | Arg Type       | Source | Description |
+|--------------|----------------|--------|-------------|
+| message_size | StackSizeType  | stack  | Number of bytes to pop for the message. |
+| message      | bytes          | stack  | UTF-8 encoded message string. |
+| severity     | Fw.LogSeverity | stack  | The event severity level. |

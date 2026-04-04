@@ -132,6 +132,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STORE_ABS(FpySequencer_StoreAbsDirective dir);
     void add_STORE_ABS_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size);
     void add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOffsetDirective dir);
+    void add_POP_EVENT();
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event

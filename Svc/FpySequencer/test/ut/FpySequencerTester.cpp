@@ -376,6 +376,11 @@ void FpySequencerTester::add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOf
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, buf);
 }
+
+void FpySequencerTester::add_POP_EVENT() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::POP_EVENT, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time

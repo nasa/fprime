@@ -460,9 +460,10 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         }
         case Fpy::DirectiveId::POP_EVENT: {
             new (&deserializedDirective.popEvent) FpySequencer_PopEventDirective();
-            status = argBuf.deserializeTo(deserializedDirective.popEvent);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+            // pop event has no hardcoded args
+            if (argBuf.getDeserializeSizeLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
                                                                argBuf.getDeserializeSizeLeft(), argBuf.getSize());
                 return Fw::Success::FAILURE;
             }
