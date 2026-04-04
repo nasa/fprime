@@ -458,6 +458,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::POP_EVENT: {
+            new (&deserializedDirective.popEvent) FpySequencer_PopEventDirective();
+            status = argBuf.deserializeTo(deserializedDirective.popEvent);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getDeserializeSizeLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.get_opCode(), this->currentStatementIdx(),
@@ -638,6 +648,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::STORE_ABS_CONST_OFFSET: {
             this->directive_storeAbsConstOffset_internalInterfaceInvoke(directive.storeAbsConstOffset);
+            return;
+        }
+        case Fpy::DirectiveId::POP_EVENT: {
+            this->directive_popEvent_internalInterfaceInvoke(directive.popEvent);
             return;
         }
     }

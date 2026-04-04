@@ -189,6 +189,12 @@ struct StoreAbsConstOffsetDirective {
     $size: Fpy.StackSizeType
 }
 
+@ pops a severity and message from the stack and emits an F Prime event
+struct PopEventDirective {
+    # pops U8 severity, then message_size bytes off the stack
+    messageSize: Fpy.StackSizeType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -246,3 +252,5 @@ internal port directive_loadAbs(directive: LoadAbsDirective) priority 6 assert
 internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
 
 internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert
+
+internal port directive_popEvent(directive: PopEventDirective) priority 6 assert

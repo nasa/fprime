@@ -185,6 +185,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& err);
     Signal tester_storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                        DirectiveError& err);
+    Signal tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     Signal tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& err);
     Signal tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& err);

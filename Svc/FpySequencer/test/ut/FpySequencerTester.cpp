@@ -552,6 +552,11 @@ Signal FpySequencerTester::tester_storeAbsConstOffset_directiveHandler(
     return this->cmp.storeAbsConstOffset_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.popEvent_directiveHandler(directive, err);
+}
+
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,
                                                             Svc::FpySequencer::DirectiveUnion& deserializedDirective) {
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
