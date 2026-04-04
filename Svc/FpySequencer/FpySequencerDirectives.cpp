@@ -1568,7 +1568,12 @@ void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySeq
 }
 
 Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error) {
-    Fpy::StackSizeType messageSize = directive.get_messageSize();
+    // Pop messageSize from the stack
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    Fpy::StackSizeType messageSize = this->m_runtime.stack.pop<Fpy::StackSizeType>();
 
     // Need message_size bytes + sizeof(LogSeverity serial type) for severity
     if (this->m_runtime.stack.size < messageSize + sizeof(Fw::LogSeverity::SerialType)) {

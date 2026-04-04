@@ -191,8 +191,8 @@ struct StoreAbsConstOffsetDirective {
 
 @ pops a severity and message from the stack and emits an F Prime event
 struct PopEventDirective {
-    # pops U8 severity, then message_size bytes off the stack
-    messageSize: Fpy.StackSizeType
+    # pops StackSizeType message_size, then message_size bytes, then U8 severity off the stack
+    _empty: U8
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert

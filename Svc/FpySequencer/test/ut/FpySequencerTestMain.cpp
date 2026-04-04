@@ -4280,6 +4280,8 @@ TEST_F(FpySequencerTester, popEvent) {
     const char* testMsg = "hello world";
     Fpy::StackSizeType msgLen = static_cast<Fpy::StackSizeType>(strlen(testMsg));
 
+    FpySequencer_PopEventDirective directive;
+
     // Test each severity level emits the correct event
     // FATAL (1)
     {
@@ -4288,7 +4290,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4304,7 +4306,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4320,7 +4322,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4336,7 +4338,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4352,7 +4354,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4368,7 +4370,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4384,7 +4386,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -4400,7 +4402,7 @@ TEST_F(FpySequencerTester, popEvent) {
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
             tester_push<U8>(static_cast<U8>(testMsg[i]));
         }
-        FpySequencer_PopEventDirective directive(msgLen);
+        tester_push<Fpy::StackSizeType>(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -4411,9 +4413,9 @@ TEST_F(FpySequencerTester, popEvent) {
 
     // Test stack underflow - not enough bytes for message + severity
     {
-        // Push only the severity, no message bytes
+        // Push only the severity, no message bytes, then push messageSize claiming 10 bytes
         tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
-        FpySequencer_PopEventDirective directive(10);  // claims 10 bytes of message
+        tester_push<Fpy::StackSizeType>(10);  // claims 10 bytes of message
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -4422,9 +4424,8 @@ TEST_F(FpySequencerTester, popEvent) {
         tester_get_m_runtime_ptr()->stack.size = 0;
     }
 
-    // Test empty stack underflow
+    // Test empty stack underflow (can't even pop messageSize)
     {
-        FpySequencer_PopEventDirective directive(1);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -4434,7 +4435,7 @@ TEST_F(FpySequencerTester, popEvent) {
     // Test empty message
     {
         tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
-        FpySequencer_PopEventDirective directive(0);
+        tester_push<Fpy::StackSizeType>(0);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_success);
