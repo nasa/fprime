@@ -4394,7 +4394,7 @@ TEST_F(FpySequencerTester, popEvent) {
         clearEvents();
     }
 
-    // Test unknown severity falls back to WARNING_HI
+    // Test unknown severity returns error
     {
         tester_push<Fw::LogSeverity::SerialType>(0);  // 0 is not a valid severity
         for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
@@ -4403,11 +4403,10 @@ TEST_F(FpySequencerTester, popEvent) {
         FpySequencer_PopEventDirective directive(msgLen);
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
-        ASSERT_EQ(result, Signal::stmtResponse_success);
-        ASSERT_EQ(err, DirectiveError::NO_ERROR);
-        ASSERT_EVENTS_LogWarningHi_SIZE(1);
-        ASSERT_EVENTS_LogWarningHi(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
-        clearEvents();
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::INVALID_SEVERITY);
+        // Clean up stack
+        tester_get_m_runtime_ptr()->stack.size = 0;
     }
 
     // Test stack underflow - not enough bytes for message + severity

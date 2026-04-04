@@ -1619,9 +1619,8 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
             this->log_DIAGNOSTIC_LogDiagnostic(this->m_sequenceFilePath, messageStr);
             break;
         default:
-            // Unknown severity — emit as warning high with the message anyway
-            this->log_WARNING_HI_LogWarningHi(this->m_sequenceFilePath, messageStr);
-            break;
+            error = DirectiveError::INVALID_SEVERITY;
+            return Signal::stmtResponse_failure;
     }
 
     return Signal::stmtResponse_success;
