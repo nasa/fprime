@@ -200,12 +200,12 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // add delimiter to CRC
         crc = this->computeCrc(crc, &delim, sizeof(delim));
 
-        // serialize record size = id field + data
-        U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + entry.getValue().getSize());
+        // serialize record size = id field + data using the canonical F Prime size format
+        FwSizeType recordSize = static_cast<FwSizeType>(sizeof(FwPrmIdType) + entry.getValue().getSize());
 
         // reset buffer
         buff.resetSer();
-        Fw::SerializeStatus serStat = buff.serializeFrom(recordSize);
+        Fw::SerializeStatus serStat = buff.serializeSize(recordSize);
         // should always work
         FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
@@ -218,7 +218,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
-        if (writeSize != sizeof(recordSize)) {
+        if (writeSize != static_cast<FwSizeType>(sizeof(FwSizeStoreType))) {
             this->unLock();
             this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE, static_cast<I32>(numRecords),
                                                    static_cast<I32>(writeSize));
@@ -477,17 +477,17 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
             return PrmLoadStatus::ERROR;
         }
 
-        U32 recordSize = 0;
+        FwSizeType recordSize = 0;
 
-        // read record size
-        readSize = sizeof(recordSize);
+        // read canonical record size field
+        readSize = static_cast<FwSizeType>(sizeof(FwSizeStoreType));
 
         fStat = paramFile.read(buff.getBuffAddr(), readSize, Os::File::WaitType::WAIT);
         if (fStat != Os::File::OP_OK) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE, static_cast<I32>(recordNumTotal), fStat);
             return PrmLoadStatus::ERROR;
         }
-        if (sizeof(recordSize) != readSize) {
+        if (static_cast<FwSizeType>(sizeof(FwSizeStoreType)) != readSize) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(readSize));
             return PrmLoadStatus::ERROR;
@@ -499,12 +499,13 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         // reset deserialization
         buff.resetDeser();
         // deserialize, since record size is serialized in file
-        desStat = buff.deserializeTo(recordSize);
+        desStat = buff.deserializeSize(recordSize);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat);
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or
+            (recordSize < static_cast<FwSizeType>(sizeof(FwPrmIdType)))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;

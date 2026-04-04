@@ -9,6 +9,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
+#include <Fw/Types/Serializable.hpp>
 #include <Os/Delegate.hpp>
 #include <Os/Stub/test/File.hpp>
 #include <Svc/PrmDb/test/ut/PrmDbTester.hpp>
@@ -138,6 +139,97 @@ void PrmDbTester::runNominalSaveFile() {
     ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
     ASSERT_EVENTS_PrmFileSaveComplete(0, 2);
 }
+
+#if FW_HAS_16_BIT == 1
+void PrmDbTester::runPrmFileLoad16BitRoundTrip() {
+    // Populate the database with a 16-bit payload to exercise the size-field serialization path.
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    this->m_impl.clearDb(PrmDbType::DB_STAGING);
+
+    Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+
+    const U16 value = static_cast<U16>(0x1234);
+    const FwPrmIdType id = static_cast<FwPrmIdType>(0x42);
+
+    Fw::ParamBuffer pBuff;
+    Fw::SerializeStatus stat = pBuff.serializeFrom(value);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+
+    this->clearEvents();
+    this->clearHistory();
+    this->invoke_to_setPrm(0, id, pBuff);
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmIdAdded_SIZE(1);
+    ASSERT_EVENTS_PrmIdAdded(0, id);
+
+    // Save the database to disk so we can validate the serialized file layout.
+    Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_SAVE_FILE(0, 12);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_SAVE_FILE, 12, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete(0, 1);
+
+    // Verify the on-disk layout is canonical and can be parsed independently of the host type sizes.
+    Fw::ExternalSerializeBuffer fileBuff(m_io_data,
+                                        static_cast<Fw::Serializable::SizeType>(Os::Stub::File::Test::StaticData::data.pointer));
+    fileBuff.resetDeser();
+
+    U32 crc = 0;
+    stat = fileBuff.deserializeTo(crc);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+
+    U8 delim = 0;
+    stat = fileBuff.deserializeTo(delim);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    EXPECT_EQ(PRMDB_ENTRY_DELIMITER, delim);
+
+    FwSizeType recordSize = 0;
+    stat = fileBuff.deserializeSize(recordSize);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    EXPECT_EQ(recordSize, static_cast<FwSizeType>(sizeof(FwPrmIdType) + sizeof(U16)));
+
+    FwPrmIdType decodedId = 0;
+    stat = fileBuff.deserializeTo(decodedId);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    EXPECT_EQ(id, decodedId);
+
+    U16 decodedValue = 0;
+    stat = fileBuff.deserializeTo(decodedValue);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    EXPECT_EQ(value, decodedValue);
+
+    // Re-load the saved file and verify that the 16-bit parameter round-trips successfully.
+    Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+
+    this->clearEvents();
+    this->m_impl.readParamFile();
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmFileLoadComplete_SIZE(1);
+    ASSERT_EVENTS_PrmFileLoadComplete(0, "ACTIVE", 1, 1, 0);
+
+    pBuff.resetSer();
+    this->invoke_to_getPrm(0, id, pBuff);
+    U16 verifyValue = 0;
+    stat = pBuff.deserializeTo(verifyValue);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    EXPECT_EQ(value, verifyValue);
+}
+#endif
 
 void PrmDbTester::runNominalLoadFile() {
     // Preconditions to populate the write file
@@ -371,11 +463,11 @@ void PrmDbTester::runFileReadError() {
                 break;
             case 2:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(U32) + 1);
+                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(FwSizeStoreType) + 1);
                 break;
             case 3:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::PARAMETER_ID_SIZE, 0, sizeof(FwPrmIdType) + 1);
+                ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(FwSizeStoreType) + 1);
                 break;
             case 4:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
@@ -460,9 +552,9 @@ void PrmDbTester::runFileReadError() {
                 break;
             case 2: {
                 // Data in this test is corrupted by adding 1 to the first data byte read. Since data is stored in
-                // big-endian format the highest order byte of the record size (U32) must have one added to it.
-                // Expected result of '8' inherited from original design of test.
-                U32 expected_error_value = sizeof(FwPrmIdType) + 4 + (1 << ((sizeof(U32) - 1) * 8));
+                // big-endian format the highest order byte of the record size field must have one added to it.
+                FwSizeType expected_error_value = static_cast<FwSizeType>(sizeof(FwPrmIdType) + 4) +
+                                                  (static_cast<FwSizeType>(1) << ((sizeof(FwSizeStoreType) - 1) * 8));
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_VALUE, 0, expected_error_value);
                 break;
@@ -516,7 +608,7 @@ void PrmDbTester::runFileWriteError() {
                 break;
             case 1:
                 ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-                ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::RECORD_SIZE_SIZE, 0, sizeof(U32) + 1);
+                ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::RECORD_SIZE_SIZE, 0, sizeof(FwSizeStoreType) + 1);
                 break;
             case 2:
                 ASSERT_EVENTS_PrmFileWriteError_SIZE(1);

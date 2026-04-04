@@ -32,6 +32,9 @@ class PrmDbTester : public PrmDbGTestBase {
     void runPrmFileLoadNominal();
     void runPrmFileLoadWithErrors();
     void runPrmFileLoadIllegal();
+#if FW_HAS_16_BIT == 1
+    void runPrmFileLoad16BitRoundTrip();
+#endif
 
     void runRefPrmFile();
 

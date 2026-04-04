@@ -271,6 +271,27 @@ TEST(ParameterDbTest, PrmFileLoadIllegalActions) {
     tester.runPrmFileLoadIllegal();
 }
 
+#if FW_HAS_16_BIT == 1
+TEST(ParameterDbTest, PrmFileLoad16BitRoundTrip) {
+    TEST_CASE(105.1.4, "16-bit file load/save round trip");
+    COMMENT("Verify parameter database file format round-trips a 16-bit parameter value and canonical size field.");
+
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmFileLoad16BitRoundTrip();
+}
+#endif
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
