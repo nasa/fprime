@@ -4404,7 +4404,7 @@ TEST_F(FpySequencerTester, popEvent) {
         DirectiveError err = DirectiveError::NO_ERROR;
         Signal result = tester_popEvent_directiveHandler(directive, err);
         ASSERT_EQ(result, Signal::stmtResponse_failure);
-        ASSERT_EQ(err, DirectiveError::INVALID_SEVERITY);
+        ASSERT_EQ(err, DirectiveError::INVALID_ARG);
         // Clean up stack
         tester_get_m_runtime_ptr()->stack.size = 0;
     }

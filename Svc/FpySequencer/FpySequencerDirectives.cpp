@@ -1619,7 +1619,7 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
             this->log_DIAGNOSTIC_LogDiagnostic(this->m_sequenceFilePath, messageStr);
             break;
         default:
-            error = DirectiveError::INVALID_SEVERITY;
+            error = DirectiveError::INVALID_ARG;
             return Signal::stmtResponse_failure;
     }
 
