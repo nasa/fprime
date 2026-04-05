@@ -21,7 +21,7 @@ Fw::FormatStatus Fw::stringFormat(char* destination,
                                   va_list args) {
     Fw::FormatStatus formatStatus = Fw::FormatStatus::SUCCESS;
     // Check destination pointer
-    if (destination == nullptr) {
+    if (destination == nullptr || maximumSize == 0) {
         return Fw::FormatStatus::OTHER_ERROR;
     }
     // Force null termination in error cases
