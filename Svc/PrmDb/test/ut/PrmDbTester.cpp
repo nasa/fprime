@@ -445,7 +445,6 @@ void PrmDbTester::runFileReadError() {
         this->m_waits = i + xa;
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
-        printf("DEBUG: PrmFileBadCrc case %d: m_waits=%d\n", static_cast<I32>(i), static_cast<I32>(i + xa));
 
         switch (i) {
             case 0:
