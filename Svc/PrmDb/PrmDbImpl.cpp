@@ -34,6 +34,7 @@ class WorkingBuffer : public Fw::SerializeBufferBase {
   private:
     // Set to max of parameter buffer + id
     U8 m_buff[FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)];
+    static_assert(sizeof(m_buff) >= sizeof(U32), "Size of parameter buffer storage must be >= sizeof(U32)");
 };
 }  // namespace
 
