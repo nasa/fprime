@@ -1019,6 +1019,9 @@ Status::T Transaction::r2CalcCrcChunk() {
                     this->m_state_data.receive.r2.rx_crc_calc_bytes += static_cast<FileSize>(read_size);
                     this->m_state_data.receive.cached_pos = this->m_state_data.receive.r2.rx_crc_calc_bytes;
                     count_bytes += static_cast<FileSize>(read_size);
+
+                    // Reset inactivity timer to indicate transaction is actively processing
+                    this->m_engine->armInactTimer(this);
                 }
             }
         }
