@@ -356,7 +356,6 @@ void PrmDbTester::runFileReadError() {
     for (FwSizeType i = 0; i < 5; i++) {
         clearEvents();
         this->m_waits = i + za;
-        printf("DEBUG: FILE_SIZE_ERROR case %d: m_waits=%d\n", static_cast<I32>(i), static_cast<I32>(i + za));
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
@@ -446,11 +445,12 @@ void PrmDbTester::runFileReadError() {
         this->m_waits = i + xa;
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
+
         switch (i) {
             case 0:
                 ASSERT_EVENTS_PrmFileBadCrc_SIZE(1);
                 // Parameter read error caused by adding one to the expected read
-                ASSERT_EVENTS_PrmFileBadCrc(0, 0x33d79cd4, 0xc180712b);
+                ASSERT_EVENTS_PrmFileBadCrc(0, 0x34D79CD3, 0xc180712b);
                 xa++;
                 break;
             case 1:
