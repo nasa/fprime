@@ -208,20 +208,6 @@ void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TIME, error);
 }
 
-//! Internal interface handler for directive_setFlag
-void FpySequencer::directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->setFlag_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::SET_FLAG, error);
-}
-
-//! Internal interface handler for directive_getFlag
-void FpySequencer::directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->getFlag_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::GET_FLAG, error);
-}
-
 //! Internal interface handler for directive_getField
 void FpySequencer::directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -1293,39 +1279,6 @@ Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirect
 
     // push time to end of stack
     this->m_runtime.stack.push(timeEsb.getBuffAddr(), static_cast<Fpy::StackSizeType>(timeEsb.getSize()));
-    return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < 1) {
-        error = DirectiveError::STACK_UNDERFLOW;
-        return Signal::stmtResponse_failure;
-    }
-    if (directive.get_flagIdx() >= Fpy::FLAG_COUNT) {
-        error = DirectiveError::FLAG_IDX_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    // 1 if the stack bool is nonzero, 0 otherwise
-    U8 flagVal = this->m_runtime.stack.pop<U8>() != 0;
-
-    this->m_runtime.flags[directive.get_flagIdx()] = flagVal == 1;
-    return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error) {
-    if (Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size < 1) {
-        error = DirectiveError::STACK_OVERFLOW;
-        return Signal::stmtResponse_failure;
-    }
-    if (directive.get_flagIdx() >= Fpy::FLAG_COUNT) {
-        error = DirectiveError::FLAG_IDX_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    bool flagVal = this->m_runtime.flags[directive.get_flagIdx()];
-    this->m_runtime.stack.push<U8>(flagVal ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE)
-                                           : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE));
     return Signal::stmtResponse_success;
 }
 
