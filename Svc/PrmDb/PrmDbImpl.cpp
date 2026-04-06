@@ -200,11 +200,12 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // add delimiter to CRC
         crc = this->computeCrc(crc, &delim, sizeof(delim));
 
-        // serialize record size = id field + data using the canonical F Prime size format
+        // serialize record size = id field + data
         FwSizeType recordSize = static_cast<FwSizeType>(sizeof(FwPrmIdType) + entry.getValue().getSize());
 
         // reset buffer
         buff.resetSer();
+        // Persist this field as FwSizeStoreType (via serializeSize) for canonical on-disk encoding.
         Fw::SerializeStatus serStat = buff.serializeSize(recordSize);
         // should always work
         FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
