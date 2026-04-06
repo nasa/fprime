@@ -85,6 +85,18 @@ TEST(TestNominal, advancedControlGroupTests) {
     tester.advancedControlGroupTests();
 }
 
+TEST(TestNominal, sectionEnabledParameterTest) {
+    TEST_CASE(100.1.11, "Test Section Enabled Parameter");
+    Svc::TlmPacketizerTester tester;
+    tester.sectionEnabledParameterTest();
+}
+
+TEST(TestNominal, sectionConfigParameterTest) {
+    TEST_CASE(100.1.12, "Test Section Config Parameter");
+    Svc::TlmPacketizerTester tester;
+    tester.sectionConfigParameterTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -8,6 +8,12 @@ module Ccsds {
         @ Port to notify of a deframing error
         output port errorNotify: Ccsds.ErrorNotify
 
+
+        @ Invalid packet received that will be dropped
+        event InvalidPacket() \
+            severity warning low \
+            format "Invalid packet received refusing to deframe"
+
         @ Deframing received an invalid SCID
         event InvalidSpacecraftId(transmitted: U16, configured: U16) \
             severity warning low \ 

@@ -49,11 +49,25 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (header.get_startWord() != default_value.get_startWord()) {
         return Status::NO_FRAME_DETECTED;
     }
+    // Validate size before proceeding
+    const FwSizeType max_payload_size = std::numeric_limits<FwSizeType>::max() -
+                                        FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
+                                        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // If the header length is larger than size can store, then frame is invalid
+    if (max_payload_size < header.get_lengthField()) {
+        // Size overflow - frame is invalid
+        return Status::NO_FRAME_DETECTED;
+    }
+
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
     const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
                                            FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    // If the current allocated size can't hold the expected_frame_size -> MORE_DATA_NEEDED
-    if (data.get_allocated_size() < expected_frame_size) {
+    // If the frame will never fit, then report NO_FRAME_DETECTED to drop the erroneous frame
+    if (data.get_capacity() < expected_frame_size) {
+        return Status::NO_FRAME_DETECTED;
+    }
+    // If the frame could fit but we haven't received enough data yet, report MORE_DATA_NEEDED
+    else if (data.get_allocated_size() < expected_frame_size) {
         size_out = expected_frame_size;
         return Status::MORE_DATA_NEEDED;
     }

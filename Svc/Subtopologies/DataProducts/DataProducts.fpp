@@ -74,5 +74,37 @@ module DataProducts{
 
             dpWriter.dpWrittenOut -> dpCat.addToCat
         }
+
+        # ----------------------------------------------------------------------
+        # Topology ports
+        # ----------------------------------------------------------------------
+
+        @ Input port array for responding to data product get requests from client components
+        port productGetIn       = dpMgr.productGetIn
+
+        @ Input port array for receiving data product buffer requests from client components
+        port productRequestIn   = dpMgr.productRequestIn
+
+        @ Input port array for receiving filled data product buffers from client components
+        port productSendIn      = dpMgr.productSendIn
+
+        @ Output port array for sending requested data product buffers to client components
+        port productResponseOut = dpMgr.productResponseOut
+
+        @ Output port for sending file downlink requests to a file downlink component
+        port dpCatFileOut  = dpCat.fileOut
+
+        @ Input port for receiving file downlink completion notifications
+        port dpCatFileDone = dpCat.fileDone
+
+        @ Input port for scheduling dpBufferManager telemetry output
+        port dpBufferManagerSchedIn = dpBufferManager.schedIn
+
+        @ Input port for scheduling dpWriter telemetry output
+        port dpWriterSchedIn        = dpWriter.schedIn
+
+        @ Input port for scheduling dpMgr telemetry output
+        port dpMgrSchedIn           = dpMgr.schedIn
+
     } # end topology
 } # end DataProducts Subtopology

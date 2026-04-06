@@ -57,9 +57,8 @@ taken by the system, and channels representing the current state of the system b
 contain a portion of the state. e.g. an **Event** might be "Established Communications" and a **Channel** might be
 "Current Temperature: 3C".
 
-All projects using F´ are composed of **Components**, **Ports**, and **Topologies**. Although F´ does not require the
-the user to control the system using **Commands**, **Events**, and **Channels**, these constructs represent the typical
-use case for F´projects and such constructs are built-in. Thus helpful to understand both **Components**, **Ports**, and
+All projects using F´ are composed of **Components**, **Ports**, and **Topologies**. Although F´ does not require the user to control the system using **Commands**, **Events**, and **Channels**, these constructs represent the typical
+use case for F´ projects and such constructs are built-in. Thus helpful to understand both **Components**, **Ports**, and
 **Topologies**, as well as **Command**, **Events**, and **Channels** in order to fully understand the power of the F´
 framework.
 
@@ -82,12 +81,12 @@ communication such that the system can function.
 ## Threads, Multi-Core Architectures and F´
 
 F´ was built for use on platforms running an Operating System (OS) and executing on a single core. Notably, these systems
-come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system , or a multi-core
+come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system, or a multi-core
 system, however; some care should be taken when designing for such systems an understanding of execution context is
 required.  See: [F´ on Multi-Core Systems](../framework/run-multi-core.md) and [F´ on Baremetal](../framework/run-baremetal.md)
 
 ## Conclusion
 
 The F′ software framework is released as open source and has been ported to Linux, macOS, Windows (WSL), VxWorks, ARINC
- 653, Baremetal(No OS), PPC, Leon3, x86, ARM (A15/A7), and MSP430. Mature sets of CD&H components are available
+ 653, Baremetal (No OS), PPC, Leon3, x86, ARM (A15/A7), and MSP430. Mature sets of CD&H components are available
 following flight process, such as code inspections, static analysis, and full-coverage unit testing.

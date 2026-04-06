@@ -64,6 +64,10 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_commands();
 
+    //! Test invalid input/deserialization guard paths
+    //!
+    void test_invalid_deserialization_paths();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -132,6 +136,12 @@ class GenericHubTester : public GenericHubGTestBase {
     void test_command_dispatch();
 
     void test_command_response();
+
+    void send_from_driver_packet(U32 type,
+                                 U32 port,
+                                 FwBuffSizeType declaredSize,
+                                 const U8* payload,
+                                 FwBuffSizeType payloadSize);
 
     // ----------------------------------------------------------------------
     // Helper methods

@@ -87,6 +87,18 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //!
     void advancedControlGroupTests(void);
 
+    //! Parameter test: SECTIONS_ENABLED
+    //!
+    void sectionEnabledParameterTest(void);
+
+    //! Parameter test: SECTIONS_CONFIG
+    //!
+    void sectionConfigParameterTest(void);
+
+    //! Helper to set the component into a stock-configuration regardless of default config
+    //!
+    void stockConfiguration();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
