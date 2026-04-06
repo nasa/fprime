@@ -431,9 +431,10 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     }
 
     // Deserialize the CRC in a portable way
-    buff.setBuffLen(readSize);
+    Fw::SerializeStatus serStat = buff.setBuffLen(readSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     buff.resetDeser();
-    Fw::SerializeStatus serStat = buff.deserializeTo(fileCrc);
+    serStat = buff.deserializeTo(fileCrc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
     U32 crc = 0xFFFFFFFF;
