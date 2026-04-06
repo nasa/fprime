@@ -307,11 +307,8 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     buff.resetSer();
     serStat = buff.serializeFrom(crc);
 
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));  
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     writeSize = static_cast<FwSizeType>(buff.getSize());
-
-    printf("DEBUG: file: %s, line: %d CINDY PRM_SAVE_FILE_cmdHandler: crc=0x%08x, writeSize=%llu\n ", 
-                __FILE__, __LINE__,  crc, static_cast<unsigned long long>(writeSize));
 
     stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
     if (stat != Os::File::OP_OK) {
@@ -433,15 +430,11 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         return PrmLoadStatus::ERROR;
     }
 
-    // Deserialize the CRC in a portable way  
+    // Deserialize the CRC in a portable way
     buff.setBuffLen(readSize);
-    buff.resetDeser();  
-    Fw::SerializeStatus serStat = buff.deserializeTo(fileCrc);  
+    buff.resetDeser();
+    Fw::SerializeStatus serStat = buff.deserializeTo(fileCrc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
-
-     printf("DEBUG: file: %s, line: %d readParamFileImpl: fileCrc=0x%08x, readSize=%llu\n ", 
-                __FILE__, __LINE__,  fileCrc, static_cast<unsigned long long>(readSize));
-
 
     U32 crc = 0xFFFFFFFF;
     // read into CRC buffer for checking
