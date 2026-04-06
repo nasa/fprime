@@ -111,10 +111,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STACK_CMD(FpySequencer_StackCmdDirective dir);
     void add_MEMCMP(Fpy::StackSizeType size);
     void add_MEMCMP(FpySequencer_MemCmpDirective dir);
-    void add_SET_FLAG(U8 flagIdx);
-    void add_SET_FLAG(FpySequencer_SetFlagDirective dir);
-    void add_GET_FLAG(U8 flagIdx);
-    void add_GET_FLAG(FpySequencer_GetFlagDirective dir);
     void add_PUSH_TIME();
     void add_GET_FIELD(Fpy::StackSizeType parentSize, Fpy::StackSizeType memberSize);
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
@@ -174,8 +170,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err);
     Signal tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err);
     Signal tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err);
-    Signal tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& err);
-    Signal tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& err);
     Signal tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& err);
     Signal tester_peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& err);
     Signal tester_storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& err);
@@ -298,9 +292,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
     //! Get the OPCODE_BREAK value
     static FwOpcodeType get_OPCODE_BREAK() { return FpySequencerComponentBase::OPCODE_BREAK; }
-
-    //! Get the OPCODE_SET_FLAG value
-    static FwOpcodeType get_OPCODE_SET_FLAG() { return FpySequencerComponentBase::OPCODE_SET_FLAG; }
 
     //! Get the OPCODE_CONTINUE value
     static FwOpcodeType get_OPCODE_CONTINUE() { return FpySequencerComponentBase::OPCODE_CONTINUE; }

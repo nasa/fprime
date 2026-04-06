@@ -132,7 +132,7 @@ SerializeStatus FilePacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
             status = FW_DESERIALIZE_TYPE_MISMATCH;
             break;
         default:
-            FW_ASSERT(0, status);
+            status = FW_DESERIALIZE_INVALID_DATA;
             break;
     }
     return status;
