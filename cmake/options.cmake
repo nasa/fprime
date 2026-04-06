@@ -150,8 +150,9 @@ option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 ####
 # `FPRIME_ENABLE_DIRECT_PORT_CALLS`:
 #
-# Enable F Prime topology direct port calls. Enabling this will disable unit test builds as UTs are not supported
-# with direct port calls.
+# Enable F Prime topology direct port calls by defining `FW_DIRECT_PORT_CALLS=1`.
+# This switch enables alternate generated dispatch paths for constrained targets while preserving
+# the default indirection path when disabled.
 #
 # **Values:**
 # - ON: generate topology port connections using direct function calls

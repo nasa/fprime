@@ -29,3 +29,9 @@ endif()
 if (BUILD_TESTING)
     add_compile_options(-g -DBUILD_UT)
 endif()
+
+# Standardize direct port call mode across all framework targets.
+if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
+    add_compile_definitions(FW_DIRECT_PORT_CALLS=1)
+endif()
+

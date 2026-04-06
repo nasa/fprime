@@ -10,10 +10,6 @@ project(FppTest C CXX)
 
 include(CheckCXXCompilerFlag)
 
-if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
-    set(FPRIME_ENABLE_FRAMEWORK_UTS OFF)
-    add_compile_options(-DFW_DIRECT_PORT_CALLS=1)
-endif ()
 
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 

@@ -4,13 +4,6 @@
 # Builds unit tests for FPP autocoder
 ###
 
-# FIXME(tumbar) This seems fairly brittle to disable certain UTs with direct port calls
-if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
-    # Disable unit testing for components that require
-    # indirect port calls
-    set(__FPRIME_NO_UT_GEN__ ON)
-endif ()
-
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/component/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/dp/")
@@ -20,10 +13,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/interfaces/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/sizeof/")
 
-if (FPRIME_ENABLE_DIRECT_PORT_CALLS)
-    # Re-enable unit testing for the topology since it uses direct port calls
-    set(__FPRIME_NO_UT_GEN__ OFF)
-endif ()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/topology/")
 

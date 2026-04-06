@@ -5,8 +5,9 @@
 // ======================================================================
 
 #include "FppTest/topology/components/Sender/Sender.hpp"
+#include <Fw/Types/Assert.hpp>
+#include <cstring>
 #include "FppTest/component/types/FormalParamTypes.hpp"
-#include "gtest/gtest.h"
 
 namespace FppTest {
 
@@ -97,7 +98,7 @@ void Sender::testNoArgsReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::Empty>(i, portId);
         auto out = noArgsReturnOut_out(m_expectedPortNum);
-        EXPECT_EQ(out, true);
+        FW_ASSERT(out == true);
         wait();
     }
 
@@ -109,7 +110,7 @@ void Sender::testPrimitiveReturn(const TestDeploymentPort& portId) {
         auto args = initTestCase<Types::PrimitiveTypes>(i, portId);
         auto out =
             primitiveReturnOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4, args.val5, args.val6);
-        EXPECT_EQ(out, args.val1);
+        FW_ASSERT(out == args.val1);
         wait();
     }
 
@@ -120,7 +121,7 @@ void Sender::testStringReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::StringTypes>(i, portId);
         auto out = stringReturnOut_out(m_expectedPortNum, args.val1, args.val2);
-        ASSERT_EQ(out, args.val1);
+        FW_ASSERT(out == args.val1);
         wait();
     }
 
@@ -131,7 +132,7 @@ void Sender::testStringAliasReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::StringTypes>(i, portId);
         auto out = stringAliasReturnOut_out(m_expectedPortNum, args.val1, args.val2);
-        ASSERT_EQ(out, args.val1);
+        FW_ASSERT(out == args.val1);
         wait();
     }
 
@@ -142,7 +143,7 @@ void Sender::testEnumReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::EnumTypesShort>(i, portId);
         auto out = enumReturnOut_out(m_expectedPortNum, args.val1, args.val2);
-        ASSERT_EQ(out, args.val1);
+        FW_ASSERT(out == args.val1);
         wait();
     }
 
@@ -153,7 +154,7 @@ void Sender::testArrayReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::ArrayTypesShort>(i, portId);
         auto out = arrayReturnOut_out(m_expectedPortNum, args.val1, args.val2);
-        ASSERT_EQ(out, args.val1);
+        FW_ASSERT(out == args.val1);
         wait();
     }
 
@@ -164,7 +165,7 @@ void Sender::testArrayStringAliasReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::ArrayTypesShort>(i, portId);
         auto out = arrayStringAliasReturnOut_out(m_expectedPortNum, args.val1, args.val2);
-        ASSERT_EQ(out, FormalAliasStringArray({"a", "b", "c"}));
+        FW_ASSERT(out == FormalAliasStringArray({"a", "b", "c"}));
         wait();
     }
 
@@ -175,7 +176,7 @@ void Sender::testStructReturn(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 2; i++) {
         auto args = initTestCase<Types::StructType>(i, portId);
         auto out = structReturnOut_out(m_expectedPortNum, args.val, args.val);
-        ASSERT_EQ(out, args.val);
+        FW_ASSERT(out == args.val);
         wait();
     }
 
@@ -186,12 +187,11 @@ void Sender::replyIn_handlerImpl(FwIndexType portNum,
                                  FwIndexType handlerPortNum,
                                  const FppTest::TestDeploymentPort& portId,
                                  const Fw::Buffer& inputData) {
-    EXPECT_EQ(m_expectedPortNum, handlerPortNum);
-    EXPECT_EQ(m_expectedPortId, portId);
+    FW_ASSERT(m_expectedPortNum == handlerPortNum);
+    FW_ASSERT(m_expectedPortId == portId);
 
-    Fw::ExternalSerializeBuffer inputDataSer(inputData.getData(), inputData.getSize());
-    inputDataSer.moveSerToOffset(inputData.getSize());
-    EXPECT_EQ(inputDataSer, m_expected);
+    FW_ASSERT(inputData.getSize() == m_expected.getSize());
+    FW_ASSERT(std::memcmp(inputData.getData(), m_expected.getBuffAddr(), inputData.getSize()) == 0);
 }
 
 void Sender::replyIn_handler(FwIndexType portNum,
