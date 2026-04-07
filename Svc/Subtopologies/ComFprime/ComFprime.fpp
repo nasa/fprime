@@ -164,6 +164,58 @@ module ComFprime {
             comStub.dataOut -> ComFprime.frameAccumulator.dataIn
             ComFprime.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
+
+        # ----------------------------------------------------------------------
+        # Topology ports
+        # ----------------------------------------------------------------------
+        
+        # Command routing
+        @ Output port sending routed command packets to the command dispatcher
+        port commandOut         = fprimeRouter.commandOut
+
+        @ Input port receiving command response messages back into the router
+        port cmdResponseIn      = fprimeRouter.cmdResponseIn
+
+        @ Output port sending uplinked file packets to the file handling stack
+        port fileUplinkOut          = fprimeRouter.fileOut
+
+        @ Input port receiving back buffer ownership from the file handling stack
+        port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
+
+        # Telemetry/events/file queuing (array ports - index at connection site)
+        @ Input port array for queueing Fw::ComBuffers
+        port comPacketQueueIn = comQueue.comPacketQueueIn
+
+        @ Input port array for queueing Fw::Buffers
+        port bufferQueueIn    = comQueue.bufferQueueIn
+
+        @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
+        port bufferReturnOut  = comQueue.bufferReturnOut
+
+        # ComDriver interface (via ComStub)
+        @ Input port receiving data read from the ByteStream driver 
+        port drvReceiveIn        = comStub.drvReceiveIn
+
+        @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
+        port drvReceiveReturnOut = comStub.drvReceiveReturnOut
+
+        @ Output port sending framed data to the ByteStream driver for transmission
+        port drvSendOut          = comStub.drvSendOut
+
+        @ Input port receiving the ready signal when the ByteStream driver has connected
+        port drvConnected        = comStub.drvConnected
+
+        # Buffer management for ComDriver
+        @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
+        port commsBufferGetCallee = commsBufferManager.bufferGetCallee
+
+        @ Input port for deallocating Fw::Buffers back into the comms buffer pool
+        port commsBufferSendIn    = commsBufferManager.bufferSendIn
+
+        # Scheduling
+        @ Input port for scheduling ComQueue telemetry output
+        port comQueueRun = comQueue.run
+
     } # end Subtopology
 
 } # end ComFprime

@@ -1145,10 +1145,11 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
     // Print the tree structure before deletion
     printf("\n=== Tree structure BEFORE deletion ===\n");
     auto printTree = [](DpCatalog::DpBtreeNode* node, int depth, const char* side) {
-        if (node == nullptr) return;
-        for (int i = 0; i < depth; i++) printf("  ");
-        printf("%s: prio=%u parent_prio=%u\n", side,
-               node->entry.record.get_priority(),
+        if (node == nullptr)
+            return;
+        for (int i = 0; i < depth; i++)
+            printf("  ");
+        printf("%s: prio=%u parent_prio=%u\n", side, node->entry.record.get_priority(),
                node->parent ? node->parent->entry.record.get_priority() : 999);
     };
 
@@ -1204,10 +1205,8 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
         // Check if rightmost has a left child and isn't the immediate left child
         if (rightmost->left != nullptr && rightmost != rootNode->left) {
             printf("✓ Root node will expose Bug 1: rightmost of left (ID=%u prio=%u) has left child (ID=%u prio=%u)\n",
-                   rightmost->entry.record.get_id(),
-                   rightmost->entry.record.get_priority(),
-                   rightmost->left->entry.record.get_id(),
-                   rightmost->left->entry.record.get_priority());
+                   rightmost->entry.record.get_id(), rightmost->entry.record.get_priority(),
+                   rightmost->left->entry.record.get_id(), rightmost->left->entry.record.get_priority());
             idToDelete = rootNode->entry.record.get_id();
             tsecToDelete = rootNode->entry.record.get_tSec();
             tsubToDelete = rootNode->entry.record.get_tSub();
@@ -1273,16 +1272,21 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
 
     // Helper lambda to validate a node's parent pointers
     auto validateNode = [](DpCatalog::DpBtreeNode* node, const char* desc) {
-        if (node == nullptr) return;
+        if (node == nullptr)
+            return;
 
         // If node has a parent, verify parent's child pointer points back to this node
         if (node->parent != nullptr) {
             bool validParentLink = (node->parent->left == node) || (node->parent->right == node);
             if (!validParentLink) {
-                printf("PARENT POINTER BUG: Node %s (priority %u) has parent (priority %u), but parent doesn't point back to node!\n",
-                       desc, node->entry.record.get_priority(), node->parent->entry.record.get_priority());
-                printf("  Parent->left priority: %u\n", node->parent->left ? node->parent->left->entry.record.get_priority() : 0);
-                printf("  Parent->right priority: %u\n", node->parent->right ? node->parent->right->entry.record.get_priority() : 0);
+                printf(
+                    "PARENT POINTER BUG: Node %s (priority %u) has parent (priority %u), but parent doesn't point back "
+                    "to node!\n",
+                    desc, node->entry.record.get_priority(), node->parent->entry.record.get_priority());
+                printf("  Parent->left priority: %u\n",
+                       node->parent->left ? node->parent->left->entry.record.get_priority() : 0);
+                printf("  Parent->right priority: %u\n",
+                       node->parent->right ? node->parent->right->entry.record.get_priority() : 0);
             }
             ASSERT_TRUE(validParentLink);
         }
@@ -1307,8 +1311,7 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
         DpCatalog::DpBtreeNode* current = stack[--stackTop];
 
         char desc[64];
-        snprintf(desc, sizeof(desc), "ID=%u prio=%u",
-                 current->entry.record.get_id(),
+        snprintf(desc, sizeof(desc), "ID=%u prio=%u", current->entry.record.get_id(),
                  current->entry.record.get_priority());
         validateNode(current, desc);
 

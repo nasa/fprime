@@ -11,17 +11,11 @@ module Svc {
       rateLogic: RateLogic      @< Rate Logic Configuration
       min: U32                  @< Minimum Sched Ticks when in ON_CHANGE_MIN
       max: U32                  @< Maximum Sched Ticks when in EVERY_MAX
-    } default {
-      enabled = Fw.Enabled.ENABLED
-      forceEnabled = Fw.Enabled.DISABLED
-      rateLogic =  RateLogic.ON_CHANGE_MIN
-      min = 0
-      max = 0
     }
 
     array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs
-    array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default Fw.Enabled.ENABLED
+    array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
     # ----------------------------------------------------------------------
     # General ports
@@ -75,6 +69,12 @@ module Svc {
 
     @ Time get
     time get port timeGetOut
+    
+    @ Parameter get port
+    param get port paramGetOut
+
+    @ Parameter set port
+    param set port paramSetOut
 
     # ----------------------------------------------------------------------
     # Commands
@@ -125,8 +125,10 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
-
-    
+    @ Parameter to control section enable flags
+    external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
+    @ Parameter to control section configuration
+    external param SECTION_CONFIGS: SectionConfigs default TELEMETRY_SECTION_DEFAULTS
 
     # ----------------------------------------------------------------------
     # Events

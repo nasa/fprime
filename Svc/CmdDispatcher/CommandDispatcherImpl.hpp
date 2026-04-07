@@ -13,6 +13,7 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
+#include <Fw/DataStructures/ArrayMap.hpp>
 #include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
@@ -150,26 +151,20 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //! array with an O(log n) red-black tree lookup.
     Fw::RedBlackTreeMap<FwOpcodeType, FwIndexType, CMD_DISPATCHER_DISPATCH_TABLE_SIZE> m_entryTable;
 
-    //! \struct SequenceTracker
-    //! \brief table used to store opcode that are being executed
+    //! \struct SequenceTrackerEntry
+    //! \brief data tracked for commands that are currently executing
     //!
-    //! The SequenceTracker table is used to track commands that are being executed
-    //! but are not yet complete. When a new command opcode is received,
-    //! the status port that would be used to report the completion status
-    //! is checked. If it is connected, then an entry is placed in this table.
-    //! The "used" flag is set, and the "seq" member is set to the
-    //! assigned sequence number for the command. The "opCode" field is
-    //! used for the opcode, and the "callerPort" field is used to store
-    //! the port number of the caller so the status can be reported back to
-    //! correct port.
+    //! A sequence number key is mapped to this value for each dispatched
+    //! command that expects a completion callback.
 
-    struct SequenceTracker {
-        bool used;                                             //!< if this slot is used
-        U32 seq;                                               //!< command sequence number
-        FwOpcodeType opCode;                                   //!< opcode being tracked
-        U32 context;                                           //!< context passed by user
-        FwIndexType callerPort;                                //!< port command source port
-    } m_sequenceTracker[CMD_DISPATCHER_SEQUENCER_TABLE_SIZE];  //!< sequence tracking port for command completions;
+    struct SequenceTrackerEntry {
+        FwOpcodeType opCode;     //!< opcode being tracked
+        U32 context;             //!< context passed by user
+        FwIndexType callerPort;  //!< port command source port
+    };
+
+    //! \brief map from command sequence number to pending command state
+    Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
     U32 m_seq;  //!< current command sequence number
 

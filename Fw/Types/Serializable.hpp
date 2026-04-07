@@ -20,6 +20,7 @@ typedef enum {
     FW_DESERIALIZE_SIZE_MISMATCH,     //!< Data was left in the buffer, but not enough to deserialize
     FW_DESERIALIZE_TYPE_MISMATCH,     //!< Deserialized type ID didn't match
     FW_DESERIALIZE_IMMUTABLE,         //!< Attempted to deserialize into an immutable buffer
+    FW_DESERIALIZE_INVALID_DATA,      //!< Data failed validation
     FW_SERIALIZE_DISCARDED_EXISTING,  //!< Serialization succeeded, but deleted old data
 } SerializeStatus;
 

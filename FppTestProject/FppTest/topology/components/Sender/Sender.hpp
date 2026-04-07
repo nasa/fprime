@@ -43,6 +43,7 @@ class Sender final : public SenderComponentBase {
     void testArrayReturn(const TestDeploymentPort& portId);
     void testArrayStringAliasReturn(const TestDeploymentPort& portId);
     void testStructReturn(const TestDeploymentPort& portId);
+    void testSerialToSerial(const TestDeploymentPort& portId);
 
   private:
     void replyIn_handlerImpl(FwIndexType portNum,
@@ -53,6 +54,10 @@ class Sender final : public SenderComponentBase {
                          FwIndexType handlerPortNum,
                          const FppTest::TestDeploymentPort& portId,
                          const Fw::Buffer& inputData) override;
+    void serialReplyIn_handler(FwIndexType portNum,
+                               FwIndexType handlerPortNum,
+                               const FppTest::TestDeploymentPort& portId,
+                               const Fw::Buffer& inputData) override;
 
     void done_internalInterfaceHandler() override;
     void wait();
@@ -65,6 +70,9 @@ class Sender final : public SenderComponentBase {
 
     FwIndexType m_expectedPortNum;
     TestDeploymentPort m_expectedPortId;
+
+    bool m_serialReplyReceived;
+    TestDeploymentPort m_serialReplyPortId;
 };
 
 }  // namespace FppTest

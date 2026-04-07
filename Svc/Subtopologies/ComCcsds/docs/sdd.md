@@ -67,27 +67,27 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 
 ```fpp
 topology Flight {
-  import ComCcsds.Subtopology
+  instance ComCcsds.Subtopology
 
 instance comDriver: <ByteStreamDriverInterface>
 
 # (A1) Schedule ComQueue telemetry downlink (optional)
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComCcsds.comQueue.run
+    rg.RateGroupMemberOut[0] -> ComCcsds.Subtopology.comQueueRun
   }
 
   # (A2) Wire ByteStream driver <-> ComStub supplied by the subtopology
   connections Link {
-    comDriver.$recv                        -> ComCcsds.comStub.drvReceiveIn
-    ComCcsds.comStub.drvReceiveReturnOut   -> comDriver.recvReturnIn
-    ComCcsds.comStub.drvSendOut            -> comDriver.$send
-    comDriver.ready                        -> ComCcsds.comStub.drvConnected
+    comDriver.$recv                                -> ComCcsds.Subtopology.drvReceiveIn
+    ComCcsds.Subtopology.drvReceiveReturnOut       -> comDriver.recvReturnIn
+    ComCcsds.Subtopology.drvSendOut                -> comDriver.$send
+    comDriver.ready                                -> ComCcsds.Subtopology.drvConnected
   }
 }
 ```
 
 > [!TIP]
-> `ComCcsds.commsBufferManager` can be reused if the `ByteStreamDriver` requires buffer management.
+> `ComCcsds.commsBufferManager` and `ComCcsds.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComCcsds **without** `Svc::ComStub`
 

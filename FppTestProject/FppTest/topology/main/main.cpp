@@ -187,6 +187,11 @@ TEST_F(SenderTester, SenderTop) {
     sender2Top.testPrimitiveArgs(TestDeploymentPort::PRIMITIVE_ARGS_SYNC);
 }
 
+TEST_F(SenderTester, SerialToSerial) {
+    sender1Top.testSerialToSerial(TestDeploymentPort::PRIMITIVE_ARGS_SYNC);
+    sender2Top.testSerialToSerial(TestDeploymentPort::PRIMITIVE_ARGS_SYNC);
+}
+
 TEST_F(SenderTester, IsReceiverConnected) {
     ReceiverTester::testIsConnected();
 }
