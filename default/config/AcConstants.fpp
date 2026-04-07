@@ -60,4 +60,5 @@ constant FwAssertTextSize = 256
 @ in FpConfig.h.
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
+@ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
 constant SequenceArgumentsMaxSize = 512

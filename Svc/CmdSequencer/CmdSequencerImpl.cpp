@@ -330,7 +330,7 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
     if (this->isConnected_seqStartOut_OutputPort(0)) {
         // Create empty SeqArgs as placeholder
-        Svc::SeqArgs emptyArgs;
+        Svc::SeqArgs emptyArgs(0, 0);
         this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
     }
     this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);

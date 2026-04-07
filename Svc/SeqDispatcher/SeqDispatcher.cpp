@@ -26,7 +26,7 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block, const Svc::SeqArgs& args) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -47,11 +47,7 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
 
     this->m_dispatchedCount++;
     this->tlmWrite_dispatchedCount(this->m_dispatchedCount);
-
-    // Create empty SeqArgs (no arguments for command-initiated sequences)
-    // Use parameterized constructor to ensure m_size is initialized to 0
-    Svc::SeqArgs emptyArgs(0, 0);
-    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, emptyArgs);
+    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, args);
 }
 
 void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,            //!< The port number
@@ -128,7 +124,6 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
 
 //! Handler for input port seqRunIn
 void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName, const Svc::SeqArgs& args) {
-    (void)args;  // Suppress unused parameter warning
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -136,7 +131,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
         return;
     }
 
-    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT);
+    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT, args);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
@@ -154,7 +149,9 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
         return;
     }
 
-    this->runSequence(idx, fileName, block);
+    // Empty Args Placeholder
+    Svc::SeqArgs emptyArgs(0, 0);
+    this->runSequence(idx, fileName, block, emptyArgs);
 
     if (block == Fw::Wait::NO_WAIT) {
         // return instantly
