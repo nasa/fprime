@@ -1697,6 +1697,9 @@ void DpCatalog::SEND_CATALOG_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 
 }
 
 bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
+    FW_ASSERT(this->m_initialized);
+    FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES);
+
     this->log_ACTIVITY_LO_DpFileOpDelete(id, tSec, tSub);
 
     // Search all managed directories for the file
@@ -1771,6 +1774,9 @@ bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
 }
 
 bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 newPriority) {
+    FW_ASSERT(this->m_initialized);
+    FW_ASSERT(this->m_catalogBuilt);
+
     this->log_ACTIVITY_LO_DpFileOpReprioritize(id, tSec, tSub, newPriority);
 
     // Find the DP in the binary tree
@@ -1807,6 +1813,9 @@ bool DpCatalog::changeDpPriorityHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 ne
 }
 
 bool DpCatalog::retransmitDpHelper(FwDpIdType id, U32 tSec, U32 tSub, U32 priorityOverride) {
+    FW_ASSERT(this->m_initialized);
+    FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES);
+
     this->log_ACTIVITY_LO_DpFileOpRetransmit(id, tSec, tSub, priorityOverride);
 
     // Search all managed directories for the file
