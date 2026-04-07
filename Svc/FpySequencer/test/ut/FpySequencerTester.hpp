@@ -128,6 +128,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STORE_ABS(FpySequencer_StoreAbsDirective dir);
     void add_STORE_ABS_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size);
     void add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOffsetDirective dir);
+    void add_POP_EVENT();
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -179,6 +180,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& err);
     Signal tester_storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                        DirectiveError& err);
+    Signal tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
     Signal tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& err);
     Signal tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& err);

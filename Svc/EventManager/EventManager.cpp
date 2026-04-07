@@ -5,12 +5,9 @@
  *      Author: tcanham
  */
 
-#include <cstdio>
-
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Svc/EventManager/EventManager.hpp>
-#include <cstring>
 
 namespace Svc {
 static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE,
@@ -32,8 +29,6 @@ EventManager::EventManager(const char* name) : EventManagerComponentBase(name) {
         FILTER_ACTIVITY_LO_DEFAULT ? Enabled::ENABLED : Enabled::DISABLED;
     this->m_filterState[FilterSeverity::DIAGNOSTIC].enabled =
         FILTER_DIAGNOSTIC_DEFAULT ? Enabled::ENABLED : Enabled::DISABLED;
-
-    memset(m_filteredIDs, 0, sizeof(m_filteredIDs));
 }
 
 EventManager::~EventManager() {}
@@ -43,9 +38,6 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
                                    Fw::LogBuffer& args) {
-    // make sure ID is not zero. Zero is reserved for ID filter.
-    FW_ASSERT(id != 0);
-
     switch (severity.e) {
         case Fw::LogSeverity::FATAL:  // always pass FATAL
             break;
@@ -85,10 +77,9 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
     }
 
     // check ID filters
-    for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
-        if ((m_filteredIDs[entry] == id) && (severity != Fw::LogSeverity::FATAL)) {
-            return;
-        }
+    Fw::Success findStatus = m_filteredIDs.find(id);
+    if ((findStatus == Fw::Success::SUCCESS) && (severity != Fw::LogSeverity::FATAL)) {
+        return;
     }
 
     // send event to the logger thread
@@ -133,39 +124,23 @@ void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcod
                                             Enabled idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
-        // search list for existing entry
-        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
-            if (this->m_filteredIDs[entry] == ID) {
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-                this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
-                return;
-            }
+        if (m_filteredIDs.insert(ID) == Fw::Success::SUCCESS) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
+        } else {
+            // if an empty slot was not found, send an error event
+            this->log_WARNING_LO_ID_FILTER_LIST_FULL(ID);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
-        // if not already a match, search for an open slot
-        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
-            if (this->m_filteredIDs[entry] == 0) {
-                this->m_filteredIDs[entry] = ID;
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-                this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
-                return;
-            }
-        }
-        // if an empty slot was not found, send an error event
-        this->log_WARNING_LO_ID_FILTER_LIST_FULL(ID);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     } else {  // remove ID
-        // search list for existing entry
-        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
-            if (this->m_filteredIDs[entry] == ID) {
-                this->m_filteredIDs[entry] = 0;  // zero entry
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-                this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
-                return;
-            }
+        if (m_filteredIDs.remove(ID) == Fw::Success::SUCCESS) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
+        } else {
+            // Entry wasn't found
+            this->log_WARNING_LO_ID_FILTER_NOT_FOUND(ID);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
-        // if it gets here, wasn't found
-        this->log_WARNING_LO_ID_FILTER_NOT_FOUND(ID);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
 
@@ -180,10 +155,8 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     }
 
     // iterate through ID filter
-    for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
-        if (this->m_filteredIDs[entry] != 0) {
-            this->log_ACTIVITY_HI_ID_FILTER_ENABLED(this->m_filteredIDs[entry]);
-        }
+    for (FwEventIdType ID : m_filteredIDs) {
+        this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
     }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

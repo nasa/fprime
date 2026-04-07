@@ -106,6 +106,7 @@ module Svc {
             LOAD_ABS = 72
             STORE_ABS = 73
             STORE_ABS_CONST_OFFSET = 74
+            POP_EVENT = 75
         }
 
         enum DirectiveErrorCode : U8 {
@@ -125,7 +126,8 @@ module Svc {
             ARITHMETIC_UNDERFLOW = 13
             FRAME_START_OUT_OF_BOUNDS = 14
             STACK_UNDERFLOW = 15
-            CMD_FAIL = 16
+            INVALID_ARG = 16
+            CMD_FAIL = 17
         }
 
         struct Header {

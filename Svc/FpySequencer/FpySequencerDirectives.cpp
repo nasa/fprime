@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <type_traits>
@@ -1511,6 +1512,77 @@ Signal FpySequencer::storeAbs_directiveHandler(const FpySequencer_StoreAbsDirect
 Signal FpySequencer::storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                           DirectiveError& error) {
     return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
+}
+
+//! Internal interface handler for directive_popEvent
+void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popEvent_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
+}
+
+Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error) {
+    // Pop messageSize from the stack
+    if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    Fpy::StackSizeType messageSize = this->m_runtime.stack.pop<Fpy::StackSizeType>();
+
+    // Need message_size bytes + sizeof(LogSeverity serial type) for severity
+    if (this->m_runtime.stack.size < messageSize + sizeof(Fw::LogSeverity::SerialType)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Pop message bytes first
+    U8 messageBuf[FW_LOG_STRING_MAX_SIZE] = {};
+    // don't read in more than (log string size) - 1 bytes
+    Fpy::StackSizeType clampedSize = std::min(messageSize, static_cast<Fpy::StackSizeType>(FW_LOG_STRING_MAX_SIZE - 1));
+    // If message is larger than buffer, discard the excess bytes first (from top of stack, which is the end of the
+    // message)
+    if (messageSize > clampedSize) {
+        Fpy::StackSizeType excess = messageSize - clampedSize;
+        this->m_runtime.stack.size -= excess;
+    }
+    this->m_runtime.stack.pop(messageBuf, clampedSize);
+    messageBuf[clampedSize] = '\0';
+
+    // Pop severity
+    Fw::LogSeverity::SerialType severity = this->m_runtime.stack.pop<Fw::LogSeverity::SerialType>();
+
+    // Construct the message string
+    Fw::String messageStr(reinterpret_cast<const char*>(messageBuf));
+
+    // Emit the appropriate event based on severity
+    switch (severity) {
+        case Fw::LogSeverity::FATAL:
+            this->log_FATAL_LogFatal(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::WARNING_HI:
+            this->log_WARNING_HI_LogWarningHi(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::WARNING_LO:
+            this->log_WARNING_LO_LogWarningLo(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::COMMAND:
+            this->log_COMMAND_LogCommand(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::ACTIVITY_HI:
+            this->log_ACTIVITY_HI_LogActivityHi(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::ACTIVITY_LO:
+            this->log_ACTIVITY_LO_LogActivityLo(this->m_sequenceFilePath, messageStr);
+            break;
+        case Fw::LogSeverity::DIAGNOSTIC:
+            this->log_DIAGNOSTIC_LogDiagnostic(this->m_sequenceFilePath, messageStr);
+            break;
+        default:
+            error = DirectiveError::INVALID_ARG;
+            return Signal::stmtResponse_failure;
+    }
+
+    return Signal::stmtResponse_success;
 }
 
 }  // namespace Svc
