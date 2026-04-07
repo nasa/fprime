@@ -820,6 +820,11 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             // we can stitch its left branch onto its parent in its place
             rightmostNode->parent->right = rightmostNode->left;
 
+            // Update parent pointer of the moved left child
+            if (rightmostNode->left != nullptr) {
+                rightmostNode->left->parent = rightmostNode->parent;
+            }
+
             // Now connect the deallocated node's left branch onto rightmostNode
             rightmostNode->left = node->left;
             node->left->parent = rightmostNode;
