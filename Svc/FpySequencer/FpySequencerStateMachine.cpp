@@ -346,7 +346,10 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStart
 ) {
     if (this->isConnected_seqStartOut_OutputPort(0)) {
         // report that the sequence started to internal callers
-        this->seqStartOut_out(0, this->m_sequenceFilePath);
+        // Create empty SeqArgs as placeholder
+        // Use parameterized constructor to ensure m_size is initialized to 0
+        Svc::SeqArgs emptyArgs(0, 0);
+        this->seqStartOut_out(0, this->m_sequenceFilePath, emptyArgs);
     }
 }
 // ----------------------------------------------------------------------

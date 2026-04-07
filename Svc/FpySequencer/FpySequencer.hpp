@@ -481,7 +481,7 @@ class FpySequencer : public FpySequencerComponentBase {
                                ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) override;
+    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
 
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number

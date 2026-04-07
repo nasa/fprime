@@ -85,9 +85,10 @@ void SeqDispatcherTester::testLogStatus() {
 }
 
 void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,            //!< The port number
-                                            const Fw::StringBase& filename  //!< The sequence file
+                                            const Fw::StringBase& filename, //!< The sequence file
+                                            const Svc::SeqArgs& args        //!< Sequence arguments
 ) {
-    this->pushFromPortEntry_seqRunOut(filename);
+    this->pushFromPortEntry_seqRunOut(filename, args);
 }
 
 }  // namespace Svc

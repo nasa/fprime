@@ -391,7 +391,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 }
 
 //! Handler for input port seqRunIn
-void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
+void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
+    (void)args;  // Suppress unused parameter warning
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidSeqRunCall(static_cast<I32>(sequencer_getState()));

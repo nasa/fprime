@@ -59,3 +59,5 @@ constant FwAssertTextSize = 256
 @ the constants FW_ASSERT_TEXT_SIZE and FW_LOG_STRING_MAX_SIZE, set
 @ in FpConfig.h.
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
+
+constant SequenceArgumentsMaxSize = 512

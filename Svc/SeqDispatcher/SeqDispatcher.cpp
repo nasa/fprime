@@ -47,12 +47,18 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
 
     this->m_dispatchedCount++;
     this->tlmWrite_dispatchedCount(this->m_dispatchedCount);
-    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning);
+
+    // Create empty SeqArgs (no arguments for command-initiated sequences)
+    // Use parameterized constructor to ensure m_size is initialized to 0
+    Svc::SeqArgs emptyArgs(0, 0);
+    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, emptyArgs);
 }
 
 void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                                       const Fw::StringBase& fileName  //!< The sequence file name
+                                       const Fw::StringBase& fileName, //!< The sequence file name
+                                       const Svc::SeqArgs& args        //!< Sequence arguments (not currently used)
 ) {
+    (void)args;  // Suppress unused parameter warning
     FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, static_cast<FwAssertArgType>(portNum));
     if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK ||
         this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
@@ -121,7 +127,8 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
 }
 
 //! Handler for input port seqRunIn
-void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName) {
+void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName, const Svc::SeqArgs& args) {
+    (void)args;  // Suppress unused parameter warning
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {

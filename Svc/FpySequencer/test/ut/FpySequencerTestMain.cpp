@@ -2134,7 +2134,7 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
     dispatchUntilState(State::IDLE);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
@@ -2151,7 +2151,7 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_from_seqDoneOut_SIZE(0);
     dispatchUntilState(State::VALIDATING);
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -3277,14 +3277,15 @@ TEST_F(FpySequencerTester, seqRunIn) {
     add_NO_OP();
     writeToFile("test.bin");
 
-    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    Svc::SeqArgs emptyArgs;
+    invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
     this->tester_doDispatch();
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
 
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
 
@@ -3292,7 +3293,7 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
     // try running while already running
     this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
-    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
     // dispatch cmd
     this->tester_doDispatch();
     ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);

@@ -40,12 +40,14 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     //! Handler for input port seqStartIn
     void seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                            const Fw::StringBase& fileName  //!< The sequence file
+                            const Fw::StringBase& fileName, //!< The sequence file
+                            const Svc::SeqArgs& args        //!< Optional sequence arguments
     );
 
     //! Handler for input port seqRunIn
     void seqRunIn_handler(FwIndexType portNum,            //!< The port number
-                          const Fw::StringBase& fileName  //!< The sequence file
+                          const Fw::StringBase& fileName, //!< The sequence file
+                          const Svc::SeqArgs& args        //!< Optional sequence arguments
     );
 
   private:
