@@ -226,6 +226,7 @@ errornum
 ert
 esb
 etl
+euo
 EVENTARRAY
 EVENTBOOL
 eventflags
@@ -458,6 +459,7 @@ mstarch
 mstat
 MState
 multiarch
+multirepo
 multitool
 mutexattr
 Mutexed
@@ -538,6 +540,7 @@ PERLMOD
 PHASERMEMBEROUT
 PINGENTRIES
 PINGSEND
+pipefail
 pkill
 PKTS
 plainnat
@@ -652,6 +655,7 @@ SGN
 sgt
 shahab
 SHAREDSTATEDIR
+shellcheck
 SHELLCOMMAND
 showinitializer
 sideeffect
@@ -756,6 +760,8 @@ totalram
 tparam
 TPP
 trinomials
+tsec
+tsub
 tts
 Tumbar
 tumbar
