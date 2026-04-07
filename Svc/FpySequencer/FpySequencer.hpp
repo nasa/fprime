@@ -71,6 +71,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_LoadAbsDirective loadAbs;
         FpySequencer_StoreAbsDirective storeAbs;
         FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
+        FpySequencer_PopEventDirective popEvent;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -565,6 +566,9 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_storeAbsConstOffset_internalInterfaceHandler(
         const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) override;
 
+    //! Internal interface handler for directive_popEvent
+    void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -843,6 +847,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error);
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                 DirectiveError& error);
+    Signal popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

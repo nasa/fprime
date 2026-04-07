@@ -2993,6 +2993,25 @@ TEST_F(FpySequencerTester, deserialize_peek) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
+TEST_F(FpySequencerTester, deserialize_popEvent) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_PopEventDirective popEvent;
+    add_POP_EVENT();
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.popEvent, popEvent);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, should succeed
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+}
+
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();
@@ -4105,6 +4124,176 @@ TEST_F(FpySequencerTester, IntegrationStackCmd) {
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, popEvent) {
+    const char* testMsg = "hello world";
+    Fpy::StackSizeType msgLen = static_cast<Fpy::StackSizeType>(strlen(testMsg));
+
+    FpySequencer_PopEventDirective directive;
+
+    // Test each severity level emits the correct event
+    // FATAL (1)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::FATAL);
+        // Push message bytes (raw, no endian conversion)
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogFatal_SIZE(1);
+        ASSERT_EVENTS_LogFatal(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // WARNING_HI (2)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::WARNING_HI);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogWarningHi_SIZE(1);
+        ASSERT_EVENTS_LogWarningHi(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // WARNING_LO (3)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::WARNING_LO);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogWarningLo_SIZE(1);
+        ASSERT_EVENTS_LogWarningLo(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // COMMAND (4)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::COMMAND);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogCommand_SIZE(1);
+        ASSERT_EVENTS_LogCommand(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // ACTIVITY_HI (5)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogActivityHi_SIZE(1);
+        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // ACTIVITY_LO (6)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_LO);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogActivityLo_SIZE(1);
+        ASSERT_EVENTS_LogActivityLo(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // DIAGNOSTIC (7)
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::DIAGNOSTIC);
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogDiagnostic_SIZE(1);
+        ASSERT_EVENTS_LogDiagnostic(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        clearEvents();
+    }
+
+    // Test unknown severity returns error
+    {
+        tester_push<Fw::LogSeverity::SerialType>(0);  // 0 is not a valid severity
+        for (Fpy::StackSizeType i = 0; i < msgLen; i++) {
+            tester_push<U8>(static_cast<U8>(testMsg[i]));
+        }
+        tester_push<Fpy::StackSizeType>(msgLen);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::INVALID_ARG);
+        // Clean up stack
+        tester_get_m_runtime_ptr()->stack.size = 0;
+    }
+
+    // Test stack underflow - not enough bytes for message + severity
+    {
+        // Push only the severity, no message bytes, then push messageSize claiming 10 bytes
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
+        tester_push<Fpy::StackSizeType>(10);  // claims 10 bytes of message
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+        // Clean up stack
+        tester_get_m_runtime_ptr()->stack.size = 0;
+    }
+
+    // Test empty stack underflow (can't even pop messageSize)
+    {
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+    }
+
+    // Test empty message
+    {
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
+        tester_push<Fpy::StackSizeType>(0);
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EVENTS_LogActivityHi_SIZE(1);
+        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), "");
+        clearEvents();
+    }
 }
 
 }  // namespace Svc

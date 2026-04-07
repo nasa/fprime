@@ -19,7 +19,9 @@ Sender ::Sender(const char* const compName)
       m_expected(m_expectedData, sizeof(m_expectedData)),
       m_expectedData{},
       m_expectedPortNum{-1},
-      m_expectedPortId(TestDeploymentPort::INVALID) {}
+      m_expectedPortId(TestDeploymentPort::INVALID),
+      m_serialReplyReceived(false),
+      m_serialReplyPortId(TestDeploymentPort::INVALID) {}
 
 Sender ::~Sender() = default;
 
@@ -28,66 +30,111 @@ ArgTy Sender::initTestCase(FwIndexType portNum, const TestDeploymentPort& portId
     auto args = ArgTy();
     m_expectedPortNum = portNum;
     m_expectedPortId = portId;
+    m_serialReplyReceived = false;
+    m_serialReplyPortId = TestDeploymentPort::INVALID;
     m_expected.resetSer();
     args.serializeTo(m_expected, Fw::Endianness::BIG);
     return args;
 }
 
 void Sender::testNoArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::Empty>(i, portId);
         noArgsOut_out(m_expectedPortNum);
         wait();
+
+        // Verify serial reply was received for i=2
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
 }
 
 void Sender::testPrimitiveArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::PrimitiveTypes>(i, portId);
         primitiveArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4, args.val5, args.val6);
         wait();
+
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
 }
 
 void Sender::testStringArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::PortStringTypes>(i, portId);
         stringArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4);
         wait();
+
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
 }
 
 void Sender::testEnumArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::EnumTypes>(i, portId);
         enumArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4);
         wait();
+
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
 }
 
 void Sender::testArrayArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::ArrayTypes>(i, portId);
         arrayArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4, args.val5, args.val6);
         wait();
+
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
 }
 
 void Sender::testStructArgs(const TestDeploymentPort& portId) {
-    for (FwIndexType i = 0; i < 2; i++) {
+    for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::StructTypes>(i, portId);
         structArgsOut_out(m_expectedPortNum, args.val1, args.val2);
         wait();
+
+        if (i == 2) {
+            EXPECT_TRUE(m_serialReplyReceived);
+            EXPECT_EQ(m_serialReplyPortId, portId);
+        } else {
+            EXPECT_FALSE(m_serialReplyReceived);
+        }
     }
 
     m_expectedPortNum = -1;
@@ -201,6 +248,43 @@ void Sender::replyIn_handler(FwIndexType portNum,
     replyIn_handlerImpl(portNum, handlerPortNum, portId, inputData);
     done_internalInterfaceInvoke();
 }
+
+void Sender::testSerialToSerial(const TestDeploymentPort& portId) {
+    auto args = initTestCase<Types::PrimitiveTypes>(
+        /* We expect this message will eventually reach index 2 Ï(serial) handler */ 2, portId);
+
+    // Send serial data directly through serialOut at SERIAL index
+    Fw::ExternalSerializeBuffer buffer(m_expectedData, sizeof(m_expectedData));
+    buffer.moveSerToOffset(m_expected.getSize());
+    auto status = serialOut_out(TestDeploymentPort::SERIAL, buffer);
+    EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    wait();
+
+    // Verify serial reply was received
+    EXPECT_TRUE(m_serialReplyReceived);
+    EXPECT_EQ(m_serialReplyPortId, portId);
+
+    m_expectedPortNum = -1;
+}
+
+void Sender::serialReplyIn_handler(FwIndexType portNum,
+                                   FwIndexType handlerPortNum,
+                                   const TestDeploymentPort& portId,
+                                   const Fw::Buffer& inputData) {
+    FW_ASSERT(inputData.getData() != nullptr);
+
+    // Mark that we received a serial reply
+    m_serialReplyReceived = true;
+    m_serialReplyPortId = portId;
+
+    // Relay the serialized data through serialOut at the corresponding TestDeploymentPort index
+    Fw::ExternalSerializeBuffer buffer(inputData.getData(), inputData.getSize());
+    buffer.moveSerToOffset(inputData.getSize());
+    auto status = serialOut_out(portId, buffer);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+}
+
 void Sender::done_internalInterfaceHandler() {
     // This message is just sent to unblock to internal queue to signal the test
     // to continue. This handler should never be called via `doDispatch`
