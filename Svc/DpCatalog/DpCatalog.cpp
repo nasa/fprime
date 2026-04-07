@@ -140,6 +140,9 @@ void DpCatalog::resetBinaryTree() {
     }
     // clear binary tree
     this->m_dpTree = nullptr;
+    // clear navigation pointers to prevent dangling references
+    this->m_currentNode = nullptr;
+    this->m_currentXmitNode = nullptr;
     // reset number of records
     this->m_pendingFiles = 0;
     this->m_pendingDpBytes = 0;
@@ -1060,6 +1063,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
     // deallocate this node
     this->deallocateNode(this->m_currentXmitNode);
+    // clear the pointer to prevent dangling reference
+    this->m_currentXmitNode = nullptr;
     // send the next entry, if it exists
     this->sendNextEntry();
 }

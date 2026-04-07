@@ -324,6 +324,11 @@ TEST(DeleteDp, AlreadyTransmitted) {
     tester.test_DeleteDp_AlreadyTransmitted();
 }
 
+TEST(DeleteDp, ParentPointerIntegrity) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp_ParentPointerIntegrity();
+}
+
 TEST(ChangeDpPriority, NotFound) {
     Svc::DpCatalogTester tester;
     tester.test_ChangeDpPriority_NotFound();

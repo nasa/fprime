@@ -169,6 +169,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_DeleteDp_CurrentlyTransmitting();
     void test_DeleteDp_DuringTransmission();
     void test_DeleteDp_AlreadyTransmitted();
+    void test_DeleteDp_ParentPointerIntegrity();
     void test_ChangeDpPriority_NotFound();
     void test_ChangeDpPriority_Success();
     void test_ChangeDpPriority_CurrentlyTransmitting();

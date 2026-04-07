@@ -1062,6 +1062,273 @@ void DpCatalogTester::test_DeleteDp_AlreadyTransmitted() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
+    // This test verifies Bug 1: parent pointer not updated in deallocateNode()
+    // when rightmostNode->left is stitched into the tree.
+    //
+    // We create a specific tree structure where deleting the root will trigger
+    // the bug. The tree (by priority, lower = higher priority = left):
+    //        50 (root, to be deleted)
+    //       /   (backslash)
+    //     30    70
+    //    /   (backslash)
+    //   10  40
+    //      /
+    //     35
+    //
+    // When 50 is deleted:
+    // - rightmostNode = 40 (rightmost of left subtree)
+    // - rightmostNode->left = 35
+    // - Bug: 35->parent is not updated when 35 is moved up
+    //
+    // After deletion, tree should be:
+    //       40
+    //      /   (backslash)
+    //    30    70
+    //   /   (backslash)
+    //  10  35
+    //
+    // And 35->parent should point to 30, not 40.
+
+    Fw::FileNameString dir;
+    dir = "./DpTest_DeleteParentPointer";
+    this->makeDpDir(dir.toChar());
+
+    // Create DPs with specific priorities to build the desired tree structure
+    // Tree is sorted by (priority, timestamp, id) - lower priority goes left
+    Fw::Time time1(1000, 50);
+    Fw::Time time2(1000, 10);
+    Fw::Time time3(1000, 70);
+    Fw::Time time4(1000, 30);
+    Fw::Time time5(1000, 45);
+    Fw::Time time6(1000, 42);
+
+    // Build this tree (priorities shown):
+    //        50 (root, to be deleted)
+    //       /   (backslash)
+    //     10    70
+    //       (backslash)
+    //        30
+    //          (backslash)
+    //           45
+    //           /
+    //         42
+    //
+    // When 50 is deleted:
+    // - node->left = 10
+    // - Find rightmost: 10->right = 30, 30->right = 45, 45->right = null, so rightmost = 45
+    // - rightmost (45) != node->left (10), so takes the ELSE branch with the bug
+    // - rightmost->left = 42
+    // Bug at line 820: 42->parent is not updated when moved up to replace 45
+
+    // Insert in specific order to create this tree structure
+    this->genDP(1, 50, time1, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Root: prio=50
+    this->genDP(2, 10, time2, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Left of root: prio=10
+    this->genDP(3, 70, time3, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Right of root: prio=70
+    this->genDP(4, 30, time4, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Right of 10: prio=30
+    this->genDP(5, 45, time5, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Right of 30: prio=45
+    this->genDP(6, 42, time6, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());  // Left of 45: prio=42
+
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = dir;
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    this->clearHistory();
+
+    // Print the tree structure before deletion
+    printf("\n=== Tree structure BEFORE deletion ===\n");
+    auto printTree = [](DpCatalog::DpBtreeNode* node, int depth, const char* side) {
+        if (node == nullptr) return;
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("%s: prio=%u parent_prio=%u\n", side,
+               node->entry.record.get_priority(),
+               node->parent ? node->parent->entry.record.get_priority() : 999);
+    };
+
+    DpCatalog::DpBtreeNode* treeStack[DP_MAX_FILES];
+    int depths[DP_MAX_FILES];
+    const char* sides[DP_MAX_FILES];
+    FwSizeType treeStackTop = 0;
+    treeStack[treeStackTop] = this->component.m_dpTree;
+    depths[treeStackTop] = 0;
+    sides[treeStackTop] = "ROOT";
+    treeStackTop++;
+
+    while (treeStackTop > 0) {
+        treeStackTop--;
+        DpCatalog::DpBtreeNode* current = treeStack[treeStackTop];
+        int depth = depths[treeStackTop];
+        const char* side = sides[treeStackTop];
+
+        printTree(current, depth, side);
+
+        if (current->right != nullptr && treeStackTop < DP_MAX_FILES) {
+            treeStack[treeStackTop] = current->right;
+            depths[treeStackTop] = depth + 1;
+            sides[treeStackTop] = "R";
+            treeStackTop++;
+        }
+        if (current->left != nullptr && treeStackTop < DP_MAX_FILES) {
+            treeStack[treeStackTop] = current->left;
+            depths[treeStackTop] = depth + 1;
+            sides[treeStackTop] = "L";
+            treeStackTop++;
+        }
+    }
+
+    // Check if tree structure exposes Bug 1
+    DpCatalog::DpBtreeNode* rootNode = this->component.m_dpTree;
+    ASSERT_NE(rootNode, nullptr);
+
+    // Find a node to delete that will expose Bug 1
+    // We need: node with left child, rightmost of left has its own left child
+    U32 idToDelete = 0;
+    U32 tsecToDelete = 0;
+    U32 tsubToDelete = 0;
+    bool foundBugTrigger = false;
+
+    // Check the root first
+    if (rootNode->left != nullptr && rootNode->right != nullptr) {
+        // Find rightmost of left subtree
+        DpCatalog::DpBtreeNode* rightmost = rootNode->left;
+        while (rightmost->right != nullptr) {
+            rightmost = rightmost->right;
+        }
+        // Check if rightmost has a left child and isn't the immediate left child
+        if (rightmost->left != nullptr && rightmost != rootNode->left) {
+            printf("✓ Root node will expose Bug 1: rightmost of left (ID=%u prio=%u) has left child (ID=%u prio=%u)\n",
+                   rightmost->entry.record.get_id(),
+                   rightmost->entry.record.get_priority(),
+                   rightmost->left->entry.record.get_id(),
+                   rightmost->left->entry.record.get_priority());
+            idToDelete = rootNode->entry.record.get_id();
+            tsecToDelete = rootNode->entry.record.get_tSec();
+            tsubToDelete = rootNode->entry.record.get_tSub();
+            foundBugTrigger = true;
+        }
+    }
+
+    if (!foundBugTrigger) {
+        // Just delete any node and check parent pointers
+        printf("Note: Tree structure doesn't perfectly expose Bug 1, but will still check parent integrity\n");
+        idToDelete = rootNode->entry.record.get_id();
+        tsecToDelete = rootNode->entry.record.get_tSec();
+        tsubToDelete = rootNode->entry.record.get_tSub();
+    }
+
+    // Delete the selected node
+    this->sendCmd_DELETE_DP(0, 11, idToDelete, tsecToDelete, tsubToDelete);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 11, Fw::CmdResponse::OK);
+
+    printf("\n=== Tree structure AFTER deletion ===\n");
+    treeStackTop = 0;
+    if (this->component.m_dpTree) {
+        treeStack[treeStackTop] = this->component.m_dpTree;
+        depths[treeStackTop] = 0;
+        sides[treeStackTop] = "ROOT";
+        treeStackTop++;
+
+        while (treeStackTop > 0) {
+            treeStackTop--;
+            DpCatalog::DpBtreeNode* current = treeStack[treeStackTop];
+            int depth = depths[treeStackTop];
+            const char* side = sides[treeStackTop];
+
+            printTree(current, depth, side);
+
+            if (current->right != nullptr && treeStackTop < DP_MAX_FILES) {
+                treeStack[treeStackTop] = current->right;
+                depths[treeStackTop] = depth + 1;
+                sides[treeStackTop] = "R";
+                treeStackTop++;
+            }
+            if (current->left != nullptr && treeStackTop < DP_MAX_FILES) {
+                treeStack[treeStackTop] = current->left;
+                depths[treeStackTop] = depth + 1;
+                sides[treeStackTop] = "L";
+                treeStackTop++;
+            }
+        }
+    }
+
+    // Now verify parent pointer integrity throughout the tree
+    // We need to walk the tree and verify that for every node:
+    // - If node->parent != nullptr: node->parent->left == node OR node->parent->right == node
+    // - If node->left != nullptr: node->left->parent == node
+    // - If node->right != nullptr: node->right->parent == node
+
+    DpCatalog::DpBtreeNode* root = this->component.m_dpTree;
+    ASSERT_NE(root, nullptr);
+
+    // Helper lambda to validate a node's parent pointers
+    auto validateNode = [](DpCatalog::DpBtreeNode* node, const char* desc) {
+        if (node == nullptr) return;
+
+        // If node has a parent, verify parent's child pointer points back to this node
+        if (node->parent != nullptr) {
+            bool validParentLink = (node->parent->left == node) || (node->parent->right == node);
+            if (!validParentLink) {
+                printf("PARENT POINTER BUG: Node %s (priority %u) has parent (priority %u), but parent doesn't point back to node!\n",
+                       desc, node->entry.record.get_priority(), node->parent->entry.record.get_priority());
+                printf("  Parent->left priority: %u\n", node->parent->left ? node->parent->left->entry.record.get_priority() : 0);
+                printf("  Parent->right priority: %u\n", node->parent->right ? node->parent->right->entry.record.get_priority() : 0);
+            }
+            ASSERT_TRUE(validParentLink);
+        }
+
+        // If node has a left child, verify its parent pointer
+        if (node->left != nullptr) {
+            ASSERT_EQ(node->left->parent, node);
+        }
+
+        // If node has a right child, verify its parent pointer
+        if (node->right != nullptr) {
+            ASSERT_EQ(node->right->parent, node);
+        }
+    };
+
+    // Traverse tree and validate all parent pointers using iterative DFS
+    DpCatalog::DpBtreeNode* stack[DP_MAX_FILES];
+    FwSizeType stackTop = 0;
+    stack[stackTop++] = root;
+
+    while (stackTop > 0) {
+        DpCatalog::DpBtreeNode* current = stack[--stackTop];
+
+        char desc[64];
+        snprintf(desc, sizeof(desc), "ID=%u prio=%u",
+                 current->entry.record.get_id(),
+                 current->entry.record.get_priority());
+        validateNode(current, desc);
+
+        if (current->right != nullptr && stackTop < DP_MAX_FILES) {
+            stack[stackTop++] = current->right;
+        }
+        if (current->left != nullptr && stackTop < DP_MAX_FILES) {
+            stack[stackTop++] = current->left;
+        }
+    }
+
+    // Cleanup
+    this->component.shutdown();
+    this->delDp(2, time2, dir.toChar());  // ID=2 prio=10
+    this->delDp(3, time3, dir.toChar());  // ID=3 prio=70
+    this->delDp(4, time4, dir.toChar());  // ID=4 prio=30
+    this->delDp(5, time5, dir.toChar());  // ID=5 prio=45
+    this->delDp(6, time6, dir.toChar());  // ID=6 prio=42
+}
+
 void DpCatalogTester::test_ChangeDpPriority_NotFound() {
     Fw::FileNameString dir;
     dir = "./DpTest_ChangePrioNotFound";
