@@ -162,7 +162,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_CompareEntries();
     void test_PingIn();
     void test_BadFileDone();
-    void test_ProcessFileInvalidDir();                         
+    void test_ProcessFileInvalidDir();
     void test_DeleteDp_NotFound();
     void test_DeleteDp_Success();
     void test_DeleteDp_CurrentlyTransmitting();
