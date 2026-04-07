@@ -1145,10 +1145,12 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
     // Print the tree structure before deletion
     printf("\n=== Tree structure BEFORE deletion ===\n");
     auto printTree = [](DpCatalog::DpBtreeNode* node, int depth, const char* side) {
-        if (node == nullptr)
+        if (node == nullptr) {
             return;
-        for (int i = 0; i < depth; i++)
+        }
+        for (int i = 0; i < depth; i++) {
             printf("  ");
+        }
         printf("%s: prio=%u parent_prio=%u\n", side, node->entry.record.get_priority(),
                node->parent ? node->parent->entry.record.get_priority() : 999);
     };
@@ -1272,8 +1274,9 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
 
     // Helper lambda to validate a node's parent pointers
     auto validateNode = [](DpCatalog::DpBtreeNode* node, const char* desc) {
-        if (node == nullptr)
+        if (node == nullptr) {
             return;
+        }
 
         // If node has a parent, verify parent's child pointer points back to this node
         if (node->parent != nullptr) {
@@ -1309,6 +1312,11 @@ void DpCatalogTester::test_DeleteDp_ParentPointerIntegrity() {
 
     while (stackTop > 0) {
         DpCatalog::DpBtreeNode* current = stack[--stackTop];
+
+        // Null check to satisfy clang static analyzer
+        if (current == nullptr) {
+            continue;
+        }
 
         char desc[64];
         snprintf(desc, sizeof(desc), "ID=%u prio=%u", current->entry.record.get_id(),
