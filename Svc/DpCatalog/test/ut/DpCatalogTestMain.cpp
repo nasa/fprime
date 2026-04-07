@@ -299,6 +299,11 @@ TEST(NominalManual, BadFileDone) {
     tester.test_BadFileDone();
 }
 
+TEST(OffNominal, ProcessFileInvalidDir) {
+    Svc::DpCatalogTester tester;
+    tester.test_ProcessFileInvalidDir();
+}
+
 TEST(DeleteDp, NotFound) {
     Svc::DpCatalogTester tester;
     tester.test_DeleteDp_NotFound();
