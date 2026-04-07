@@ -109,17 +109,15 @@ class DpCatalogTester : public DpCatalogGTestBase {
                    ) override;
 
     //! Handler implementation for productGet
-    Fw::Success::T productGet_handler(
-        FwDpIdType id,           //!< The container ID
-        FwSizeType dataSize,     //!< The data size
-        Fw::Buffer& buffer       //!< The buffer
-    ) override;
+    Fw::Success::T productGet_handler(FwDpIdType id,        //!< The container ID
+                                      FwSizeType dataSize,  //!< The data size
+                                      Fw::Buffer& buffer    //!< The buffer
+                                      ) override;
 
     //! Handler implementation for productSend
-    void productSend_handler(
-        FwDpIdType id,           //!< The container ID
-        const Fw::Buffer& buffer //!< The buffer
-    ) override;
+    void productSend_handler(FwDpIdType id,            //!< The container ID
+                             const Fw::Buffer& buffer  //!< The buffer
+                             ) override;
 
   private:
     // ----------------------------------------------------------------------
