@@ -35,6 +35,13 @@ class QueuedComponentBase : public PassiveComponentBase {
     Os::Queue m_queue;                      //!< queue object for active component
     Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
     virtual MsgDispatchStatus doDispatch() = 0;  //!< method to dispatch a single message in the queue.
+
+    //!\brief dispatches all messages currently in the queue, returning status of the dispatch
+    //!
+    //! This method will dispatch once for each of the messages in the queue at the time of the call. It will continue
+    //! to dispatch until all messages have been dispatched or a dispatch returns a status other than MSG_DISPATCH_OK.
+    //! \return status of the dispatch
+    MsgDispatchStatus dispatchAvailableMessages();
 #if FW_OBJECT_TO_STRING == 1
     const char* getToStringFormatString() override;  //!< Format string for toString function
 #endif

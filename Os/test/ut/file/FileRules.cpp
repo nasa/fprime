@@ -2,6 +2,7 @@
 // \title Os/test/ut/file/MyRules.cpp
 // \brief rule implementations for common testing
 // ======================================================================
+#include <algorithm>
 #include <cstdio>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
@@ -53,8 +54,9 @@ void Os::Test::FileTest::Tester::shadow_write(const std::vector<U8>& write_data)
     if (write_data.data() != nullptr) {
         status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
     }
-    // If in APPEND mode, need to set position to the end
-    if (this->m_mode == Os::File::Mode::OPEN_APPEND) {
+    // For append writes with data, mirror file pointer movement to EOF.
+    // Zero-byte writes should not force the pointer to EOF.
+    if ((this->m_mode == Os::File::Mode::OPEN_APPEND) && (original_size > 0)) {
         FwSizeType shadow_size = 0;
         ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
         this->shadow_seek(shadow_size, Os::File::SeekType::ABSOLUTE);
@@ -96,7 +98,8 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
     SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
-    const FwSizeType bound = FW_MIN(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
+    const FwSizeType bound =
+        std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
         this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
@@ -534,7 +537,7 @@ void Os::Test::FileTest::Tester::Preallocate::action(Os::Test::FileTest::Tester&
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
     FileState final_file_state = state.current_file_state();
-    ASSERT_EQ(final_file_state.size, FW_MAX(original_file_state.size, offset + length));
+    ASSERT_EQ(final_file_state.size, std::max(original_file_state.size, offset + length));
     ASSERT_EQ(final_file_state.position, original_file_state.position);
     state.assert_file_consistent();
 }
