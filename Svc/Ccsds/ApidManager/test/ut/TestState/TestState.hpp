@@ -1,9 +1,9 @@
 // ======================================================================
-// \title  TestState.hpp
+// \title  ApidManagerTestState.hpp
 // \author thomas-bc
 // \brief  Shadow state model for ApidManager rule-based testing
 //
-// TestState contains only shadow-model data and state-only helpers.
+// ApidManagerTestState contains only shadow-model data and state-only helpers.
 // Rule preconditions/actions are implemented on ApidManagerTester.
 //
 // Shadow state
@@ -14,8 +14,8 @@
 // component.  After every action the shadow and the component must agree.
 // ======================================================================
 
-#ifndef Svc_Ccsds_ApidManager_TestState_HPP
-#define Svc_Ccsds_ApidManager_TestState_HPP
+#ifndef Svc_Ccsds_ApidManager_ApidManagerTestState_HPP
+#define Svc_Ccsds_ApidManager_ApidManagerTestState_HPP
 
 #include <map>
 
@@ -25,7 +25,7 @@ namespace Svc {
 
 namespace Ccsds {
 
-class TestState {
+class ApidManagerTestState {
   public:
     // ----------------------------------------------------------------------
     // Shadow state
@@ -43,7 +43,7 @@ class TestState {
 
   public:
     // ----------------------------------------------------------------------
-    // Shadow helpers (implemented in TestState/TestState.cpp)
+    // Shadow helpers (implemented in ApidManagerTestState/ApidManagerTestState.cpp)
     // ----------------------------------------------------------------------
 
     //! Return the current expected sequence count for apid and advance the

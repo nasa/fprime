@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  TestState.cpp
+// \title  ApidManagerTestState.cpp
 // \author thomas-bc
 // \brief  Shadow helper implementations for ApidManager test state
 // ======================================================================
@@ -18,7 +18,7 @@ namespace Ccsds {
 // Shadow helpers
 // ----------------------------------------------------------------------
 
-U16 TestState::shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid) {
+U16 ApidManagerTestState::shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     auto it = this->shadow_seqCounts.find(apid);
     if (it != this->shadow_seqCounts.end()) {
         // APID already tracked: return current count and advance to the next
@@ -34,20 +34,20 @@ U16 TestState::shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     return ApidManager::SEQUENCE_COUNT_ERROR;
 }
 
-void TestState::shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 expectedSeqCount) {
+void ApidManagerTestState::shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 expectedSeqCount) {
     auto it = this->shadow_seqCounts.find(apid);
     if (it != this->shadow_seqCounts.end()) {
         it->second = static_cast<U16>((expectedSeqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
     }
 }
 
-ComCfg::Apid::T TestState::shadow_getRandomTrackedApid() const {
+ComCfg::Apid::T ApidManagerTestState::shadow_getRandomTrackedApid() const {
     FW_ASSERT(!this->shadow_seqCounts.empty());
     U32 idx = STest::Random::lowerUpper(0, static_cast<U32>(this->shadow_seqCounts.size()) - 1);
     return std::next(this->shadow_seqCounts.begin(), idx)->first;
 }
 
-ComCfg::Apid::T TestState::shadow_getRandomUntrackedApid() const {
+ComCfg::Apid::T ApidManagerTestState::shadow_getRandomUntrackedApid() const {
     ComCfg::Apid::T apid;
     do {
         apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(10, ComCfg::Apid::SPP_IDLE_PACKET));

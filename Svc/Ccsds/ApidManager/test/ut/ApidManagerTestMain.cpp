@@ -8,7 +8,6 @@
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
-#include "Svc/Ccsds/ApidManager/test/ut/Rules/Rules.hpp"
 
 namespace Svc {
 
@@ -22,8 +21,8 @@ namespace Ccsds {
 // incrementing counts on subsequent calls.
 TEST(ApidManager, GetSequenceCounts) {
     ApidManagerTester state;
-    Rules::GetSeqCount::NewOk ruleNewOk;
-    Rules::GetSeqCount::Existing ruleExisting;
+    ApidManagerTester::GetSeqCount__NewOk ruleNewOk;
+    ApidManagerTester::GetSeqCount__Existing ruleExisting;
     ruleNewOk.apply(state);     // register a new APID; expect count 0
     ruleExisting.apply(state);  // retrieve count for the same APID; expect count 1
 }
@@ -32,9 +31,9 @@ TEST(ApidManager, GetSequenceCounts) {
 // and fires UnexpectedSequenceCount on a mismatch.
 TEST(ApidManager, ValidateSequenceCounts) {
     ApidManagerTester state;
-    Rules::GetSeqCount::NewOk ruleNewOk;
-    Rules::ValidateSeqCount::Ok ruleValidateOk;
-    Rules::ValidateSeqCount::Failure ruleValidateFailure;
+    ApidManagerTester::GetSeqCount__NewOk ruleNewOk;
+    ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
+    ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
     ruleNewOk.apply(state);            // register an APID so validate rules can fire
     ruleValidateOk.apply(state);       // validate correct count; no event expected
     ruleValidateFailure.apply(state);  // validate wrong count; event expected
@@ -44,11 +43,11 @@ TEST(ApidManager, ValidateSequenceCounts) {
 // all state transitions across the APID sequence-count lifecycle.
 TEST(ApidManager, RandomizedTesting) {
     ApidManagerTester state;
-    Rules::GetSeqCount::Existing ruleGetExisting;
-    Rules::GetSeqCount::NewOk ruleGetNewOk;
-    Rules::GetSeqCount::NewTableFull ruleGetNewTableFull;
-    Rules::ValidateSeqCount::Ok ruleValidateOk;
-    Rules::ValidateSeqCount::Failure ruleValidateFailure;
+    ApidManagerTester::GetSeqCount__Existing ruleGetExisting;
+    ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
+    ApidManagerTester::GetSeqCount__NewTableFull ruleGetNewTableFull;
+    ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
+    ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
 
     STest::Rule<ApidManagerTester>* rules[] = {
         &ruleGetExisting, &ruleGetNewOk, &ruleGetNewTableFull, &ruleValidateOk, &ruleValidateFailure,

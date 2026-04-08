@@ -58,22 +58,22 @@ class ApidManagerTester : public ApidManagerGTestBase {
     //! The component under test
     ApidManager component;
 
+    //! Shadow state for rule-based testing
+    ApidManagerTestState shadow;
+
   public:
     // ----------------------------------------------------------------------
-    // Shadow state and rule method declarations
+    // Rule Based Testing
     // ----------------------------------------------------------------------
 
-    //! Shadow model used by precondition/action rule methods
-    TestState shadow;
-
     //! Rules for the getApidSeqCountIn port
-    FW_RBT_DECLARE_RULE(GetSeqCount, Existing)
-    FW_RBT_DECLARE_RULE(GetSeqCount, NewOk)
-    FW_RBT_DECLARE_RULE(GetSeqCount, NewTableFull)
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, Existing);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewOk);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewTableFull);
 
     //! Rules for the validateApidSeqCountIn port
-    FW_RBT_DECLARE_RULE(ValidateSeqCount, Ok)
-    FW_RBT_DECLARE_RULE(ValidateSeqCount, Failure)
+    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Failure);
 };
 
 }  // namespace Ccsds
