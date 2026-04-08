@@ -321,6 +321,9 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         }
 
         // Load the header into the dynamic buffer
+        FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                  AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
         ::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
     }
 
