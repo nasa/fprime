@@ -426,15 +426,18 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeTyp
     // Size the Packet (so we can alloc a buffer)
     switch (ComCfg::Pvn pvnEnum = static_cast<ComCfg::Pvn::T>(pvn)) {
         case ComCfg::Pvn::SPACE_PACKET_PROTOCOL:
-        // Intentionally fallthrough since logic is more condensed this way
-        case ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL:
-            if (vc.pvnMask & (1 << pvn)) {
+            if (vc.pvnMask & Svc::Ccsds::PvnBitfield::SPP_MASK) {
                 vc.spanningPacket.context.set_pvn(pvnEnum);
-                if (pvnEnum == ComCfg::Pvn::SPACE_PACKET_PROTOCOL) {
-                    return sizeSppPacket(packetStart, remainingBytes);
-                } else {
-                    return sizeEppPacket(packetStart, remainingBytes);
-                }
+                return sizeSppPacket(packetStart, remainingBytes);
+            } else {
+                this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvnEnum);
+                return 0;
+            }
+            break;
+        case ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL:
+            if (vc.pvnMask & Svc::Ccsds::PvnBitfield::EPP_MASK) {
+                vc.spanningPacket.context.set_pvn(pvnEnum);
+                return sizeEppPacket(packetStart, remainingBytes);
             } else {
                 this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvnEnum);
                 return 0;
