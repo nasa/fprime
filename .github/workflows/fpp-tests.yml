@@ -43,7 +43,7 @@ jobs:
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util check
+          fprime-util check --pass-through --output-on-failure
         shell: bash
       - name: "Archive Logs"
         uses: actions/upload-artifact@v4

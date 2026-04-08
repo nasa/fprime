@@ -26,7 +26,7 @@ class QueuedComponentBase : public PassiveComponentBase {
         MSG_DISPATCH_ERROR,  //!< Errors dispatching messages
         MSG_DISPATCH_EXIT    //!< A message was sent requesting an exit of the loop
     } MsgDispatchStatus;
-    void deinit();  //!< Allows de-initialization on teardown
+    void deinit() override;  //!< Allows de-initialization on teardown
 
   protected:
     QueuedComponentBase(const char* name);  //!< Constructor
@@ -35,8 +35,15 @@ class QueuedComponentBase : public PassiveComponentBase {
     Os::Queue m_queue;                      //!< queue object for active component
     Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
     virtual MsgDispatchStatus doDispatch() = 0;  //!< method to dispatch a single message in the queue.
+
+    //!\brief dispatches all messages currently in the queue, returning status of the dispatch
+    //!
+    //! This method will dispatch once for each of the messages in the queue at the time of the call. It will continue
+    //! to dispatch until all messages have been dispatched or a dispatch returns a status other than MSG_DISPATCH_OK.
+    //! \return status of the dispatch
+    MsgDispatchStatus dispatchAvailableMessages();
 #if FW_OBJECT_TO_STRING == 1
-    virtual const char* getToStringFormatString();  //!< Format string for toString function
+    const char* getToStringFormatString() override;  //!< Format string for toString function
 #endif
     FwSizeType getNumMsgsDropped();  //!< return number of messages dropped
     void incNumMsgDropped();         //!< increment the number of messages dropped

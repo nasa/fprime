@@ -4,7 +4,8 @@ module Ccsds {
     @ Enum representing an error during framing/deframing in the CCSDS protocols
     @ TODO: Decide whether AOS errors should be merged with TC errors into a unified enum
     enum FrameError: U8 {
-        SP_INVALID_LENGTH = 0
+        SP_INVALID_PACKET = 0
+        SP_INVALID_LENGTH = 1
         TC_INVALID_SCID = 1
         TC_INVALID_LENGTH = 2
         TC_INVALID_VCID = 3

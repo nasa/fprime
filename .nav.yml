@@ -34,7 +34,7 @@ nav:
       - APIs:
         - C++: docs/reference/api/cpp/html/
         - CMake: docs/reference/api/cmake/
-      - Component SDDs:
+      - Software Design Documents:
         - Svc:
           - "Svc/**/docs/sdd.md"
         - Fw:
@@ -43,6 +43,8 @@ nav:
           - "Fw/**/docs/sdd.md"
         - Drv:
           - "Drv/**/docs/sdd.md"
+        - Os:
+          - "Os/**/docs/sdd.md"
       - Specifications: 
         - FPP Language Spec: 'https://nasa.github.io/fpp/fpp-spec.html'
         - GDS Plugins: docs/reference/gds-plugins/

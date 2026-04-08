@@ -230,20 +230,20 @@ For example, in the project topology FPP file:
 
 ```fpp
 topology ... {
-    import FileHandling.Subtopology # For file downlink
-    import DataProducts.Subtopology
+    instance FileHandling.Subtopology # For file downlink
+    instance DataProducts.Subtopology
     instance producer
 
     # Connect producers to DpManager
     connections DataProducers {
-        producer.productGetOut  -> DataProducts.dpMgr.productGetIn
-        producer.productSendOut -> DataProducts.dpMgr.productSendIn
+        producer.productGetOut  -> DataProducts.Subtopology.productGetIn
+        producer.productSendOut -> DataProducts.Subtopology.productSendIn
     }
 
     # For connecting the catalog to the file downlink
     connections FileHandling_DataProducts{
-        DataProducts.dpCat.fileOut             -> FileHandling.fileDownlink.SendFile
-        FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
+        DataProducts.Subtopology.dpCatFileOut              -> FileHandling.Subtopology.fileDownlinkSendFile
+        FileHandling.Subtopology.fileDownlinkFileComplete  -> DataProducts.Subtopology.dpCatFileDone
     }
 }
 ```

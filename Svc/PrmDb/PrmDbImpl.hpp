@@ -13,6 +13,7 @@
 #ifndef PRMDBIMPL_HPP_
 #define PRMDBIMPL_HPP_
 
+#include <Fw/DataStructures/ArrayMap.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
@@ -37,6 +38,8 @@ typedef PrmDb_PrmDbFileLoadState PrmDbFileLoadState;
 
 class PrmDbImpl final : public PrmDbComponentBase {
     friend class PrmDbTester;
+
+    using PrmDbStore = Fw::ArrayMap<FwPrmIdType, Fw::ParamBuffer, PRMDB_NUM_DB_ENTRIES>;
 
   public:
     //!  \brief PrmDb constructor
@@ -85,25 +88,6 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
-    // Structure for a single parameter entry
-    struct t_dbStruct {
-        bool used;            //!< whether slot is being used
-        FwPrmIdType id;       //!< the id being stored in the slot
-        Fw::ParamBuffer val;  //!< the serialized value of the parameter
-
-        bool operator==(const t_dbStruct& other) const {
-            if (used != other.used)
-                return false;
-            if (id != other.id)
-                return false;
-            // Compare lengths first
-            if (val.getSize() != other.val.getSize())
-                return false;
-            // Compare buffer contents
-            return std::memcmp(val.getBuffAddr(), other.val.getBuffAddr(), val.getSize()) == 0;
-        }
-    };
-
     // helper to compute CRC over a buffer
     U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
 
@@ -114,12 +98,12 @@ class PrmDbImpl final : public PrmDbComponentBase {
     // when commanded. Upon reading the file, the parameters are "staged"
     // into the staging database, and then committed to the active database
     // when a commit command is received.
-    t_dbStruct* m_activeDb;   //!< Pointer to the active database
-    t_dbStruct* m_stagingDb;  //!< Pointer to the staging database
+    PrmDbStore* m_activeDb;   //!< Pointer to the active database
+    PrmDbStore* m_stagingDb;  //!< Pointer to the staging database
 
     // Actual storage for the active and staging databases
-    t_dbStruct m_dbStore1[PRMDB_NUM_DB_ENTRIES];
-    t_dbStruct m_dbStore2[PRMDB_NUM_DB_ENTRIES];
+    PrmDbStore m_dbStore1;
+    PrmDbStore m_dbStore2;
 
     //! ----------------------------------------------------------------------
     //! Port & Command Handlers
@@ -226,7 +210,7 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  This function returns a pointer to the requested database
     //!  \param dbType The type of database requested (active or staging)
     //!  \return Pointer to the database array to be set
-    t_dbStruct* getDbPtr(PrmDbType dbType);
+    PrmDbStore* getDbPtr(PrmDbType dbType);
 
     //!  \brief PrmDb get db string function
     //!  This function returns a string for the requested database
@@ -234,26 +218,12 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \return string representing the database
     static Fw::String getDbString(PrmDbType dbType);
 
-    //! \brief Check param db equality
-    //!
-    //!  This helper method verifies the active and staging parameter dbs are equal
-    bool dbEqual();
-
     //! \brief Deep copy for db
     //!
     //!  Copies one db to another
     //! \param dest The destination db to copy to  (active or staging)
     //! \param src The source db to copy from  (active or staging)
     void dbCopy(PrmDbType dest, PrmDbType src);
-
-    //! \brief Deep copy for single db entry
-    //!
-    //!  Copies one db entry to another at specified index
-    //!
-    //! \param dest The destination db to copy to  (active or staging)
-    //! \param src The source db to copy from  (active or staging)
-    //! \param index The index of the entry to copy
-    void dbCopySingle(PrmDbType dest, PrmDbType src, FwSizeType index);
 };
 }  // namespace Svc
 

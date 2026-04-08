@@ -448,6 +448,56 @@ FormalParamStruct Receiver ::structReturnSync_handler(FwIndexType portNum,
     return s;
 }
 
+void Receiver ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    // The port number will map to the typed port ID this serial data represents
+    SenderId::T senderId;
+    const auto portId = static_cast<TestDeploymentPort::T>(portNum);
+
+    // Determine which instance to reply to based on the port they send to
+    switch (portId) {
+        case TestDeploymentPort::ARRAY_ARGS_ASYNC:
+        case TestDeploymentPort::ENUM_ARGS_ASYNC:
+        case TestDeploymentPort::NO_ARGS_ASYNC:
+        case TestDeploymentPort::PRIMITIVE_ARGS_ASYNC:
+        case TestDeploymentPort::STRING_ARGS_ASYNC:
+        case TestDeploymentPort::STRUCT_ARGS_ASYNC:
+            senderId = SenderId::ASYNC;
+            break;
+        case TestDeploymentPort::ARRAY_ARGS_GUARDED:
+        case TestDeploymentPort::ENUM_ARGS_GUARDED:
+        case TestDeploymentPort::NO_ARGS_GUARDED:
+        case TestDeploymentPort::PRIMITIVE_ARGS_GUARDED:
+        case TestDeploymentPort::STRING_ARGS_GUARDED:
+        case TestDeploymentPort::STRUCT_ARGS_GUARDED:
+            senderId = SenderId::GUARDED;
+            break;
+        case TestDeploymentPort::ARRAY_ARGS_SYNC:
+        case TestDeploymentPort::ENUM_ARGS_SYNC:
+        case TestDeploymentPort::NO_ARGS_SYNC:
+        case TestDeploymentPort::PRIMITIVE_ARGS_SYNC:
+        case TestDeploymentPort::STRING_ARGS_SYNC:
+        case TestDeploymentPort::STRUCT_ARGS_SYNC:
+            senderId = SenderId::SYNC;
+            break;
+        default:
+            FW_ASSERT(0, portId);
+            return;
+    }
+
+    // Copy the data into out receiver buffer
+    m_recv.resetSer();
+    if (buffer.getDeserializeSizeLeft() > 0) {
+        buffer.copyRaw(m_recv, buffer.getDeserializeSizeLeft());
+    }
+
+    Fw::Buffer data(m_data, m_recv.getSize());
+
+    // Reply over the serial reply
+    // This will trigger the serialReplyIn on the sender which send a
+    // signal out on the serial output to typedPort[2]
+    serialReplyOut_out(senderId, 2, portId, data);
+}
+
 // ----------------------------------------------------------------------
 // Overflow hook implementations for typed input ports
 // ----------------------------------------------------------------------

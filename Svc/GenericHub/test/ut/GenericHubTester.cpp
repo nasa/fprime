@@ -148,6 +148,151 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     m_buffer_in++;
 }
 
+void GenericHubTester ::test_command_dispatch() {
+    Fw::ComBuffer buffer;
+    clearFromPortHistory();
+    random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
+
+    invoke_to_cmdDispIn(0, buffer, 279);
+
+    // **must** return buffer
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_cmdDispOut_SIZE(1);
+    ASSERT_from_cmdDispOut(0, buffer, 279);
+    clearFromPortHistory();
+}
+
+void GenericHubTester ::test_command_response() {
+    FwOpcodeType opCode = 0x3A56BF8C;
+    U32 cmdSeq = 825;
+    Fw::CmdResponse response = Fw::CmdResponse::VALIDATION_ERROR;
+
+    invoke_to_cmdRespIn(0, opCode, cmdSeq, response);
+
+    ASSERT_from_cmdRespOut_SIZE(1);
+    ASSERT_from_cmdRespOut(0, 0x3A56BF8C, 825, Fw::CmdResponse::VALIDATION_ERROR);
+    clearFromPortHistory();
+}
+
+void GenericHubTester ::test_commands() {
+    this->test_command_dispatch();
+
+    this->test_command_response();
+}
+
+void GenericHubTester ::send_from_driver_packet(U32 type,
+                                                U32 port,
+                                                FwBuffSizeType declaredSize,
+                                                const U8* payload,
+                                                FwBuffSizeType payloadSize) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    Fw::ExternalSerializeBuffer serializer(m_data_for_allocation, sizeof(m_data_for_allocation));
+    serializer.resetSer();
+
+    status = serializer.serializeFrom(type);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    status = serializer.serializeFrom(port);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    status = serializer.serializeFrom(declaredSize);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    if (payloadSize > 0) {
+        ASSERT_NE(payload, nullptr);
+        status = serializer.serializeFrom(payload, payloadSize, Fw::Serialization::OMIT_LENGTH);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    Fw::Buffer buffer(m_data_for_allocation, serializer.getSize());
+    this->invoke_to_fromBufferDriver(0, buffer);
+}
+
+void GenericHubTester ::test_invalid_deserialization_paths() {
+    // Header too short to deserialize
+    clearFromPortHistory();
+    Fw::Buffer shortBuffer(m_data_for_allocation, sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType) - 1);
+    this->invoke_to_fromBufferDriver(0, shortBuffer);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Invalid type should be dropped
+    clearFromPortHistory();
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_MAX), 0, 0, nullptr, 0);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Declared payload size mismatch should be dropped
+    clearFromPortHistory();
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_PORT), 0, 1, nullptr, 0);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Invalid serialOut destination port should not invoke output
+    clearFromPortHistory();
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_PORT),
+                                  this->componentOut.getNum_serialOut_OutputPorts(), 0, nullptr, 0);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Invalid bufferOut destination port should return the buffer
+    clearFromPortHistory();
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_BUFFER),
+                                  this->componentOut.getNum_bufferOut_OutputPorts(), 0, nullptr, 0);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Command dispatch path: raw payload too small to include context
+    clearFromPortHistory();
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP), 0, 0, nullptr, 0);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    // Command dispatch path: raw payload larger than ComBuffer supports
+    clearFromPortHistory();
+    const FwBuffSizeType tooLargeCmdSize =
+        static_cast<FwBuffSizeType>(Fw::ComBuffer::SERIALIZED_SIZE + sizeof(U32) + 1);
+    this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP), 0, tooLargeCmdSize, m_data_store,
+                                  tooLargeCmdSize);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+
+    clearFromPortHistory();
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -251,6 +396,12 @@ void GenericHubTester ::connectPorts() {
     // tlmIn
     this->connect_to_tlmIn(0, this->componentIn.get_tlmIn_InputPort(0));
 
+    // cmdDispIn
+    this->connect_to_cmdDispIn(0, this->componentIn.get_cmdDispIn_InputPort(0));
+
+    // cmdRespIn
+    this->connect_to_cmdRespIn(0, this->componentIn.get_cmdRespIn_InputPort(0));
+
     // fromBufferDriver
     this->connect_to_fromBufferDriver(0, this->componentOut.get_fromBufferDriver_InputPort(0));
 
@@ -264,6 +415,12 @@ void GenericHubTester ::connectPorts() {
 
     // tlmOut
     this->componentOut.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
+
+    // cmdDispOut
+    this->componentOut.set_cmdDispOut_OutputPort(0, this->get_from_cmdDispOut(0));
+
+    // cmdRespOut
+    this->componentOut.set_cmdRespOut_OutputPort(0, this->get_from_cmdRespOut(0));
 
     // toBufferDriver
     this->componentIn.set_toBufferDriver_OutputPort(0, this->get_from_toBufferDriver(0));

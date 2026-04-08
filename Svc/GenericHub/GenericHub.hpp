@@ -25,10 +25,12 @@ class GenericHub final : public GenericHubComponentBase {
      * Type of serialized data on the wire. Allows for expanding them on the opposing end.
      */
     enum HubType {
-        HUB_TYPE_PORT,     //!< Port type transmission
-        HUB_TYPE_BUFFER,   //!< Buffer type transmission
-        HUB_TYPE_EVENT,    //!< Event transmission
-        HUB_TYPE_CHANNEL,  //!< Telemetry channel type
+        HUB_TYPE_PORT,      //!< Port type transmission
+        HUB_TYPE_BUFFER,    //!< Buffer type transmission
+        HUB_TYPE_EVENT,     //!< Event transmission
+        HUB_TYPE_CHANNEL,   //!< Telemetry channel type
+        HUB_TYPE_CMD_DISP,  //!< Command dispatch type
+        HUB_TYPE_CMD_RESP,  //!< Command response type
         HUB_TYPE_MAX
     };
 
@@ -61,6 +63,23 @@ class GenericHub final : public GenericHubComponentBase {
     void bufferOutReturn_handler(FwIndexType portNum,  //!< The port number
                                  Fw::Buffer& fwBuffer  //!< The buffer
                                  ) override;
+
+    //! Handler implementation for cmdDispIn
+    //!
+    //! Command buffer input port for sequencers or other sources of command buffers
+    void cmdDispIn_handler(FwIndexType portNum,  //!< The port number
+                           Fw::ComBuffer& data,  //!< Buffer containing packet data
+                           U32 context           //!< Call context value; meaning chosen by user
+                           ) override;
+
+    //! Handler implementation for cmdRespIn
+    //!
+    //! Input port for command response
+    void cmdRespIn_handler(FwIndexType portNum,             //!< The port number
+                           FwOpcodeType opCode,             //!< Command Op Code
+                           U32 cmdSeq,                      //!< Command Sequence
+                           const Fw::CmdResponse& response  //!< The command response argument
+                           ) override;
 
     //! Handler implementation for fromBufferDriver
     //!

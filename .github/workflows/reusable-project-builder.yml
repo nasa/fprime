@@ -113,6 +113,6 @@ jobs:
       - name: "Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
+          fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
 

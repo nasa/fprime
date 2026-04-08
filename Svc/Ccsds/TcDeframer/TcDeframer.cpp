@@ -50,9 +50,12 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     // CCSDS TC Trailer:
     // 16b - Frame Error Control Field (FECF): CRC16
-
-    FW_ASSERT(data.getSize() > TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(data.getSize()));
+    if (data.getSize() <= TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE) {
+        // Incoming buffer is not long enough to contain a valid frame (header+trailer)
+        this->log_WARNING_LO_InvalidPacket();
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
 
     TCHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);

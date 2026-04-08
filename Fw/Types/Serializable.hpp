@@ -20,6 +20,7 @@ typedef enum {
     FW_DESERIALIZE_SIZE_MISMATCH,     //!< Data was left in the buffer, but not enough to deserialize
     FW_DESERIALIZE_TYPE_MISMATCH,     //!< Deserialized type ID didn't match
     FW_DESERIALIZE_IMMUTABLE,         //!< Attempted to deserialize into an immutable buffer
+    FW_DESERIALIZE_INVALID_DATA,      //!< Data failed validation
     FW_SERIALIZE_DISCARDED_EXISTING,  //!< Serialization succeeded, but deleted old data
 } SerializeStatus;
 
@@ -68,10 +69,6 @@ class Serializable {
     //! \param mode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) = 0;
-
-    //! TODO: this operator should be deleted, this must be done after RawTime is modified though
-    // as it currently depends on this being defined
-    Serializable& operator=(const Serializable& src) = default;
 
     // ----------------------------------------------------------------------
     // Legacy methods for backward compatibility
@@ -1597,7 +1594,9 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
     ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
         // Ward against self-assignment
         if (this != &src) {
-            this->setExtBuffer(src.m_buff, src.m_buffSize);
+            this->clear();
+            this->m_buff = src.m_buff;
+            this->m_buffSize = src.m_buffSize;
             this->m_serLoc = src.m_serLoc;
             this->m_deserLoc = src.m_deserLoc;
         }

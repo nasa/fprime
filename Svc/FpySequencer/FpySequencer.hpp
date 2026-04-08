@@ -13,7 +13,6 @@
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
-#include "Svc/FpySequencer/FlagIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencerComponentAc.hpp"
@@ -33,7 +32,6 @@ static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_TLM_BUFFER_
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_PARAM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max prm buffer size");
-static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(), "Flag count must be less than U8 max");
 
 namespace Svc {
 
@@ -65,8 +63,6 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
         FpySequencer_PushTimeDirective pushTime;
-        FpySequencer_SetFlagDirective setFlag;
-        FpySequencer_GetFlagDirective getFlag;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
         FpySequencer_StoreRelDirective storeRel;
@@ -75,6 +71,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_LoadAbsDirective loadAbs;
         FpySequencer_StoreAbsDirective storeAbs;
         FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
+        FpySequencer_PopEventDirective popEvent;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -218,14 +215,6 @@ class FpySequencer : public FpySequencerComponentBase {
                          U32 cmdSeq            //!< The command sequence number
                          ) override;
 
-    //! Handler for command SET_FLAG
-    //!
-    //! Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag.
-    //! This command is only valid in the RUNNING state.
-    void SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                             U32 cmdSeq,           //!< The command sequence number
-                             Svc::Fpy::FlagId flag,
-                             bool value) override;
     //! Handler for command DUMP_STACK_TO_FILE
     //!
     //! Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
@@ -552,12 +541,6 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_pushTime
     void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) override;
 
-    //! Internal interface handler for directive_setFlag
-    void directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) override;
-
-    //! Internal interface handler for directive_getFlag
-    void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
-
     //! Internal interface handler for directive_getField
     void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
 
@@ -582,6 +565,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_storeAbsConstOffset
     void directive_storeAbsConstOffset_internalInterfaceHandler(
         const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) override;
+
+    //! Internal interface handler for directive_popEvent
+    void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -646,11 +632,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Fw::Time wakeupTime = Fw::Time();
 
         Stack stack = Stack();
-
-        // the sequencer runtime flags. these are modifiable by the sequence and control
-        // various aspects of the sequencer.
-        // these get set to a default value from FpySequencerCfg
-        bool flags[Fpy::FLAG_COUNT] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -857,8 +838,6 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
-    Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
-    Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
     Signal storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error);
@@ -868,6 +847,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error);
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                 DirectiveError& error);
+    Signal popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

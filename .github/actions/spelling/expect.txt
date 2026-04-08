@@ -15,6 +15,7 @@ ampcs
 ANamespace
 Aos
 aosmpdu
+APacket
 apid
 APIDOCS
 APPENDFILE
@@ -163,6 +164,7 @@ deframe
 deframed
 deframer
 deframing
+Deinitialization
 deployables
 DEPRECATEDLIST
 deser
@@ -170,6 +172,7 @@ Deserial
 DEVICESM
 DHTML
 diafile
+diffs
 diles
 dinkel
 dnf
@@ -230,6 +233,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exploitability
 externalproject
 FAKELOGGER
 fbuild
@@ -254,6 +258,9 @@ FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEMANAGERCONFIG
 FILEOPENERROR
+FILETESTER
+FILEWORKER
+FILEWORKERTYPES
 FILEWRITEERROR
 fio
 fle
@@ -383,6 +390,7 @@ jobrestrictions
 jpl
 jplffs
 jre
+kessler
 kevin
 kermit
 kubiak
@@ -408,6 +416,7 @@ LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR
+lockfiles
 LOGGERRULES
 LOGPACKET
 lol
@@ -458,6 +467,7 @@ mutexattr
 Mutexed
 muxed
 mycompany
+myos
 nasafprime
 nbits
 ncsl
@@ -468,6 +478,9 @@ NODELABEL
 noinline
 NOLINT
 NOLINTNEXTLINE
+nominaldne
+nominalread
+nominalwrite
 noparent
 norecords
 NOSPEC
@@ -494,7 +507,7 @@ optin
 optind
 orgslist
 ortega
-OSAL
+osal
 ostate
 OSTIME
 otherside
@@ -575,6 +588,7 @@ qhelpgenerator
 QHG
 qhp
 qsf
+racheljt
 RAII
 randtbl
 raspberrypi
@@ -597,6 +611,7 @@ refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
 regexs
+remediations
 REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
@@ -605,6 +620,7 @@ rhel
 RHH
 Rizvi
 ROOTDIR
+rowspan
 rpi
 rptr
 SAlias
@@ -711,6 +727,8 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+testwrite
+testwriteoffset
 tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
@@ -769,6 +787,7 @@ vcid
 VCP
 vcs
 VCx
+vendored
 VFILE
 VID
 vla
