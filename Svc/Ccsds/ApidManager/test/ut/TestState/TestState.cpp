@@ -29,7 +29,7 @@ U16 TestState::shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     // APID not yet tracked: register it, starting at count 0
     if (this->shadow_seqCounts.size() < ApidManager::MAX_TRACKED_APIDS) {
         this->shadow_seqCounts[apid] = static_cast<U16>(1);  // next expected is 1
-        return 0;                                             // first count returned is 0
+        return 0;                                            // first count returned is 0
     }
     return ApidManager::SEQUENCE_COUNT_ERROR;
 }

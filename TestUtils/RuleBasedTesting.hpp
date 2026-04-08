@@ -29,9 +29,9 @@
 // -----
 // 1. Create a TestState class (composition or inheritance).
 //
-// 2. Declare one method pair per rule in TestState using FW_TEST_STATE_DEF_RULE:
+// 2. Declare one method pair per rule in TestState using FW_RBT_DECLARE_RULE:
 //
-//      FW_TEST_STATE_DEF_RULE(GroupName, RuleName)
+//      FW_RBT_DECLARE_RULE(GroupName, RuleName)
 //
 //    This expands to:
 //      bool precondition__GroupName__RuleName() const;
@@ -39,7 +39,7 @@
 //
 // 3. In Rules.hpp, define the STest::Rule subclass for each rule:
 //
-//      FW_RULES_DEF_RULE(TestState, GroupName, RuleName)
+//      FW_RBT_IMPLEMENT_RULE(TestState, GroupName, RuleName)
 //
 //    This creates:
 //      namespace GroupName {
@@ -57,19 +57,19 @@
 #include "STest/Rule/Rule.hpp"
 
 // -----------------------------------------------------------------------
-//! \def FW_RULES_DEF_RULE
+//! \def FW_RBT_IMPLEMENT_RULE
 //!
 //! Defines an STest::Rule<STATE_TYPE> subclass named RULE_NAME inside
 //! namespace GROUP_NAME.  The subclass forwards precondition() and
 //! action() calls to the matching methods on the STATE_TYPE object,
-//! which must be declared with FW_TEST_STATE_DEF_RULE and implemented
+//! which must be declared with FW_RBT_DECLARE_RULE and implemented
 //! in a per-group .cpp file.
 //!
 //! \param STATE_TYPE  The TestState type used by STest::Rule
 //! \param GROUP_NAME  Rule group: becomes a C++ namespace and name prefix
 //! \param RULE_NAME   Rule variant: becomes the struct name and name suffix
 // -----------------------------------------------------------------------
-#define FW_RULES_DEF_RULE(STATE_TYPE, GROUP_NAME, RULE_NAME)                                                     \
+#define FW_RBT_IMPLEMENT_RULE(STATE_TYPE, GROUP_NAME, RULE_NAME)                                                 \
     namespace GROUP_NAME {                                                                                       \
                                                                                                                  \
     struct RULE_NAME : public STest::Rule<STATE_TYPE> {                                                          \
@@ -82,17 +82,17 @@
     }
 
 // -----------------------------------------------------------------------
-//! \def FW_TEST_STATE_DEF_RULE
+//! \def FW_RBT_DECLARE_RULE
 //!
 //! Declares a precondition/action method pair in a TestState class.
 //! The precondition is const; the action is non-const.
 //! Use this inside the TestState class body; implement both bodies in a
 //! per-group .cpp file.
 //!
-//! \param GROUP_NAME  Must match the GROUP_NAME in FW_RULES_DEF_RULE
-//! \param RULE_NAME   Must match the RULE_NAME in FW_RULES_DEF_RULE
+//! \param GROUP_NAME  Must match the GROUP_NAME in FW_RBT_IMPLEMENT_RULE
+//! \param RULE_NAME   Must match the RULE_NAME in FW_RBT_IMPLEMENT_RULE
 // -----------------------------------------------------------------------
-#define FW_TEST_STATE_DEF_RULE(GROUP_NAME, RULE_NAME)       \
+#define FW_RBT_DECLARE_RULE(GROUP_NAME, RULE_NAME)          \
     bool precondition__##GROUP_NAME##__##RULE_NAME() const; \
     void action__##GROUP_NAME##__##RULE_NAME();
 

@@ -67,13 +67,13 @@ class ApidManagerTester : public ApidManagerGTestBase {
     TestState shadow;
 
     //! Rules for the getApidSeqCountIn port
-    FW_TEST_STATE_DEF_RULE(GetSeqCount, Existing)
-    FW_TEST_STATE_DEF_RULE(GetSeqCount, NewOk)
-    FW_TEST_STATE_DEF_RULE(GetSeqCount, NewTableFull)
+    FW_RBT_DECLARE_RULE(GetSeqCount, Existing)
+    FW_RBT_DECLARE_RULE(GetSeqCount, NewOk)
+    FW_RBT_DECLARE_RULE(GetSeqCount, NewTableFull)
 
     //! Rules for the validateApidSeqCountIn port
-    FW_TEST_STATE_DEF_RULE(ValidateSeqCount, Ok)
-    FW_TEST_STATE_DEF_RULE(ValidateSeqCount, Failure)
+    FW_RBT_DECLARE_RULE(ValidateSeqCount, Ok)
+    FW_RBT_DECLARE_RULE(ValidateSeqCount, Failure)
 };
 
 }  // namespace Ccsds

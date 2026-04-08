@@ -3,11 +3,11 @@
 // \author thomas-bc
 // \brief  Rule definitions for ApidManager rule-based testing
 //
-// FW_RULES_DEF_RULE(ApidManagerTester, GROUP, RULE) creates a
+// FW_RBT_IMPLEMENT_RULE(ApidManagerTester, GROUP, RULE) creates a
 // STest::Rule<ApidManagerTester> subclass in namespace GROUP named RULE.
 // Its precondition() and action() delegate to the matching methods on the
 // TestState object.  Those methods are declared in TestState.hpp via
-// FW_TEST_STATE_DEF_RULE and implemented in the per-group .cpp files
+// FW_RBT_DECLARE_RULE and implemented in the per-group .cpp files
 // listed below.
 //
 // Rule groups
@@ -33,23 +33,23 @@ namespace Rules {
 // ----------------------------------------------------------------------
 
 //! Get the sequence count for an APID that is already tracked
-FW_RULES_DEF_RULE(ApidManagerTester, GetSeqCount, Existing)
+FW_RBT_IMPLEMENT_RULE(ApidManagerTester, GetSeqCount, Existing)
 
 //! Register and get the sequence count for a new APID (table not full)
-FW_RULES_DEF_RULE(ApidManagerTester, GetSeqCount, NewOk)
+FW_RBT_IMPLEMENT_RULE(ApidManagerTester, GetSeqCount, NewOk)
 
 //! Attempt to get the sequence count for a new APID when the table is full
-FW_RULES_DEF_RULE(ApidManagerTester, GetSeqCount, NewTableFull)
+FW_RBT_IMPLEMENT_RULE(ApidManagerTester, GetSeqCount, NewTableFull)
 
 // ----------------------------------------------------------------------
 // ValidateSeqCount rules
 // ----------------------------------------------------------------------
 
 //! Validate the correct (expected) sequence count — no event expected
-FW_RULES_DEF_RULE(ApidManagerTester, ValidateSeqCount, Ok)
+FW_RBT_IMPLEMENT_RULE(ApidManagerTester, ValidateSeqCount, Ok)
 
 //! Validate a wrong sequence count — UnexpectedSequenceCount event expected
-FW_RULES_DEF_RULE(ApidManagerTester, ValidateSeqCount, Failure)
+FW_RBT_IMPLEMENT_RULE(ApidManagerTester, ValidateSeqCount, Failure)
 
 }  // namespace Rules
 
