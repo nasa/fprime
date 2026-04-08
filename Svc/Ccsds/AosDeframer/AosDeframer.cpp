@@ -281,14 +281,24 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
     FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0, static_cast<FwAssertArgType>(size));
 
-    // Seek amount
+    // How much the outer func needs to seek forward in the AOS frame
     FwSizeType seekForward = 0;
 
+    // We work out of the static header buffer until we know the full packet size
     if (!vc.spanningPacket.buffer.isValid()) {
-        // Fill the tmp header buff w/ what we got
+        // (Keep) packing whatever we've got into the static header buffer
         const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
+        // Pack the lesser of how much we have & how much room we have
         const FwSizeType toHeader = FW_MIN(size, headerCap - vc.spanningPacket.bytesReceived);
         if (toHeader > 0) {
+            FW_ASSERT(vc.spanningPacket.bytesReceived < headerCap,
+                      static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                      static_cast<FwAssertArgType>(headerCap));
+            FW_ASSERT(toHeader <= headerCap, static_cast<FwAssertArgType>(toHeader),
+                      static_cast<FwAssertArgType>(headerCap));
+            FW_ASSERT(vc.spanningPacket.bytesReceived + toHeader <= headerCap,
+                      static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                      static_cast<FwAssertArgType>(toHeader), static_cast<FwAssertArgType>(headerCap));
             ::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
             vc.spanningPacket.bytesReceived += toHeader;
 
@@ -298,7 +308,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             seekForward += toHeader;
         }
 
-        // Attempt to find a size w/ what we have (zero means this frame is over)
+        // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
+        // packet)
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
@@ -309,7 +320,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         if (vc.spanningPacket.buffer.getSize() < packetSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
-            // Save before abandon clears it — needed for the correct seek offset below
+            // Save before abandon clears it -— needed for the correct seek offset below
             const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
             this->abandonSpanningPacket(vc);
 
