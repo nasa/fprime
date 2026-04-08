@@ -4,17 +4,6 @@
 // \brief  Rule implementations for the ValidateSeqCount rule group
 //
 // These rules exercise the validateApidSeqCountIn port.
-//
-//   ValidateSeqCount.Ok
-//     Precondition: at least one APID is tracked in the shadow.
-//     Action:       invoke validateApidSeqCountIn with the correct
-//                   (shadow-expected) count; verify no event is fired.
-//
-//   ValidateSeqCount.Failure
-//     Precondition: at least one APID is tracked in the shadow.
-//     Action:       invoke validateApidSeqCountIn with a deliberately
-//                   wrong count; verify UnexpectedSequenceCount fires
-//                   with the transmitted and expected values.
 // ======================================================================
 
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"

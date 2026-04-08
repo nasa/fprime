@@ -4,22 +4,6 @@
 // \brief  Rule implementations for the GetSeqCount rule group
 //
 // These rules exercise the getApidSeqCountIn port.
-//
-//   GetSeqCount.Existing
-//     Precondition: at least one APID is tracked in the shadow.
-//     Action:       invoke getApidSeqCountIn for a random tracked APID
-//                   and verify the returned count matches the shadow.
-//
-//   GetSeqCount.NewOk
-//     Precondition: the APID table is not full.
-//     Action:       invoke getApidSeqCountIn for an untracked APID;
-//                   expect it to be registered at sequence count 0
-//                   with no events fired.
-//
-//   GetSeqCount.NewTableFull
-//     Precondition: the APID table is full.
-//     Action:       invoke getApidSeqCountIn for an untracked APID;
-//                   expect SEQUENCE_COUNT_ERROR and an ApidTableFull event.
 // ======================================================================
 
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"

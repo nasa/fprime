@@ -39,9 +39,9 @@ TEST(ApidManager, ValidateSequenceCounts) {
     ruleValidateFailure.apply(tester);  // validate wrong count; event expected
 }
 
-// Randomized test: apply rules in a bounded random sequence to exercise
-// all state transitions across the APID sequence-count lifecycle.
+// Randomized test: apply rules in a random sequence for a large number of iterations
 TEST(ApidManager, RandomizedTesting) {
+    FwSizeType numRulesToApply = 10000;
     ApidManagerTester tester;
     ApidManagerTester::GetSeqCount__Existing ruleGetExisting;
     ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
@@ -54,13 +54,12 @@ TEST(ApidManager, RandomizedTesting) {
     };
 
     STest::RandomScenario<ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
-    STest::BoundedScenario<ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 10000);
+    STest::BoundedScenario<ApidManagerTester> bounded("Bounded Random Rules Scenario", random, numRulesToApply);
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
 }
 
 }  // namespace Ccsds
-
 }  // namespace Svc
 
 int main(int argc, char** argv) {
