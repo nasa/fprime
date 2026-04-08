@@ -23,15 +23,10 @@
             severity warning high \
             format "Invalid CCSDS Transfer Frame Version Number. Received: {} | Expected: {}"
 
-        @ Deframing encountered an invalid/unsupported packet version number in the M_PDU data zone
-        event InvalidPvn(vcId: U8, pvn: U8) \
+        @ Deframing encountered a packet version number that is not enabled by configuration
+        event DisabledPvn(vcId: U8, pvn: U8) \
             severity warning high \
-            format "Invalid packet version number {} encountered on VC {}"
-
-        @ Deframing encountered a valid packet version number that is disabled by configuration
-        event DisabledPvn(vcId: U8, pvn: ComCfg.Pvn) \
-            severity warning high \
-            format "Valid packet version number {} encountered on VC {} but it is disabled by configuration"
+            format "Packet version number {} encountered on VC {} but it is invalid or disabled by configuration"
 
         @ Frame was received with idle-only data on a virtual channel (CCSDS 732.0-B-5 Section 4.1.4.2.2.4)
         event IdleFrame(vcId: U8) \

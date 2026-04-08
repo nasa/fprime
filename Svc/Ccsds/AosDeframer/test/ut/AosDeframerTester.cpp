@@ -883,7 +883,7 @@ void AosDeframerTester::testInvalidPvnVersion() {
     ASSERT_from_dataOut_SIZE(0);
     // Frame should still be returned
     ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_EVENTS_InvalidPvn_SIZE(1);
+    ASSERT_EVENTS_DisabledPvn_SIZE(1);
     // Telemetry should still be updated for frame count
     ASSERT_TLM_FramesProcessed_SIZE(1);
 }

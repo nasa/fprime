@@ -423,28 +423,26 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeTyp
     // Default to invalid, override if valid (non-idle) packet
     vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
 
+    // Check if this pvn is disabled
+    if (~vc.pvnMask & (1 << pvn)) {
+        this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvn);
+        return 0;
+    }
+
+    ComCfg::Pvn pvnEnum = static_cast<ComCfg::Pvn::T>(pvn);
+    vc.spanningPacket.context.set_pvn(pvnEnum);
+
     // Size the Packet (so we can alloc a buffer)
-    switch (ComCfg::Pvn pvnEnum = static_cast<ComCfg::Pvn::T>(pvn)) {
+    switch (pvnEnum) {
         case ComCfg::Pvn::SPACE_PACKET_PROTOCOL:
-            if (vc.pvnMask & Svc::Ccsds::PvnBitfield::SPP_MASK) {
-                vc.spanningPacket.context.set_pvn(pvnEnum);
-                return sizeSppPacket(packetStart, remainingBytes);
-            } else {
-                this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvnEnum);
-                return 0;
-            }
+            return sizeSppPacket(packetStart, remainingBytes);
             break;
         case ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL:
-            if (vc.pvnMask & Svc::Ccsds::PvnBitfield::EPP_MASK) {
-                vc.spanningPacket.context.set_pvn(pvnEnum);
-                return sizeEppPacket(packetStart, remainingBytes);
-            } else {
-                this->log_WARNING_HI_DisabledPvn(vc.virtualChannelId, pvnEnum);
-                return 0;
-            }
+            return sizeEppPacket(packetStart, remainingBytes);
             break;
         default:
-            this->log_WARNING_HI_InvalidPvn(vc.virtualChannelId, pvn);
+            // User should only configure AOS Deframer to accept SPP &/| EPP
+            FW_ASSERT(false, pvn);
             return 0;
     }
 }
