@@ -243,7 +243,8 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
     }
 
     // Store VC frame count in the VC struct for reference (e.g. gap detection)
-    this->tlmWrite_LatestVcFrameCount(vc->vcFrameCount = rxVcFrameCount);
+    vc->vcFrameCount = rxVcFrameCount;
+    this->tlmWrite_LatestVcFrameCount(vc->vcFrameCount);
 
     // Update context with extracted values
     context.set_vcId(vcId);
