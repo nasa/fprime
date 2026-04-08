@@ -34,8 +34,8 @@
 //      FW_RBT_DECLARE_RULE(GroupName, RuleName)
 //
 //    This expands to:
-//      bool precondition__GroupName__RuleName() const;
-//      void action__GroupName__RuleName();
+//      bool GroupName__RuleName__precondition() const;
+//      void GroupName__RuleName__action();
 //
 // 3. In Rules.hpp, define the STest::Rule subclass for each rule:
 //
@@ -75,9 +75,9 @@
     struct RULE_NAME : public STest::Rule<STATE_TYPE> {                                                          \
         RULE_NAME() : Rule<STATE_TYPE>(#GROUP_NAME "." #RULE_NAME) {}                                            \
                                                                                                                  \
-        bool precondition(const STATE_TYPE& state) { return state.precondition__##GROUP_NAME##__##RULE_NAME(); } \
+        bool precondition(const STATE_TYPE& state) { return state.GROUP_NAME##__##RULE_NAME##__precondition(); } \
                                                                                                                  \
-        void action(STATE_TYPE& state) { state.action__##GROUP_NAME##__##RULE_NAME(); }                          \
+        void action(STATE_TYPE& state) { state.GROUP_NAME##__##RULE_NAME##__action(); }                          \
     };                                                                                                           \
     }
 
@@ -93,7 +93,7 @@
 //! \param RULE_NAME   Must match the RULE_NAME in FW_RBT_IMPLEMENT_RULE
 // -----------------------------------------------------------------------
 #define FW_RBT_DECLARE_RULE(GROUP_NAME, RULE_NAME)          \
-    bool precondition__##GROUP_NAME##__##RULE_NAME() const; \
-    void action__##GROUP_NAME##__##RULE_NAME();
+    bool GROUP_NAME##__##RULE_NAME##__precondition() const; \
+    void GROUP_NAME##__##RULE_NAME##__action();
 
 #endif

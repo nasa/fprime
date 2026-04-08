@@ -33,11 +33,11 @@ namespace Ccsds {
 // GetSeqCount.Existing
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::precondition__GetSeqCount__Existing() const {
+bool ApidManagerTester::GetSeqCount__Existing__precondition() const {
     return !this->shadow.shadow_seqCounts.empty();
 }
 
-void ApidManagerTester::action__GetSeqCount__Existing() {
+void ApidManagerTester::GetSeqCount__Existing__action() {
     this->clearHistory();
 
     ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
@@ -52,11 +52,11 @@ void ApidManagerTester::action__GetSeqCount__Existing() {
 // GetSeqCount.NewOk
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::precondition__GetSeqCount__NewOk() const {
+bool ApidManagerTester::GetSeqCount__NewOk__precondition() const {
     return !this->shadow.shadow_isTableFull;
 }
 
-void ApidManagerTester::action__GetSeqCount__NewOk() {
+void ApidManagerTester::GetSeqCount__NewOk__action() {
     this->clearHistory();
 
     // Use constexpr local to avoid ODR-use of the static constexpr member
@@ -71,8 +71,7 @@ void ApidManagerTester::action__GetSeqCount__NewOk() {
     U16 returned = this->invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 expected = this->shadow.shadow_getAndIncrementSeqCount(apid);
 
-    ASSERT_EQ(returned, expected) << "First sequence count for new APID "
-                                  << static_cast<U16>(apid) << " must be 0";
+    ASSERT_EQ(returned, expected) << "First sequence count for new APID " << static_cast<U16>(apid) << " must be 0";
     ASSERT_EVENTS_SIZE(0);
 }
 
@@ -80,11 +79,11 @@ void ApidManagerTester::action__GetSeqCount__NewOk() {
 // GetSeqCount.NewTableFull
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::precondition__GetSeqCount__NewTableFull() const {
+bool ApidManagerTester::GetSeqCount__NewTableFull__precondition() const {
     return this->shadow.shadow_isTableFull;
 }
 
-void ApidManagerTester::action__GetSeqCount__NewTableFull() {
+void ApidManagerTester::GetSeqCount__NewTableFull__action() {
     this->clearHistory();
 
     ComCfg::Apid::T apid = this->shadow.shadow_getRandomUntrackedApid();
@@ -92,8 +91,8 @@ void ApidManagerTester::action__GetSeqCount__NewTableFull() {
 
     // Use constexpr local to avoid ODR-use of the static constexpr member
     constexpr U16 errorValue = ApidManager::SEQUENCE_COUNT_ERROR;
-    ASSERT_EQ(returned, errorValue) << "Expected SEQUENCE_COUNT_ERROR for untracked APID "
-                                    << static_cast<U16>(apid) << " when the table is full";
+    ASSERT_EQ(returned, errorValue) << "Expected SEQUENCE_COUNT_ERROR for untracked APID " << static_cast<U16>(apid)
+                                    << " when the table is full";
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ApidTableFull_SIZE(1);
     ASSERT_EVENTS_ApidTableFull(0, static_cast<U16>(apid));
