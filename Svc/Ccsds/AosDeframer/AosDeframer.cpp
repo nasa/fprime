@@ -126,14 +126,14 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         vc->spanningPacket.context = packetContext;
     }
 
-    // Update telemetry
-    this->tlmWrite_FramesProcessed(++vc->framesProcessed);
-
     // Extract packets from the M_PDU data zone
     this->extractPackets(*vc, data);
 
     // Return the frame buffer
     this->dataReturnOut_out(0, data, context);
+
+    // Update telemetry
+    this->tlmWrite_FramesProcessed(++vc->framesProcessed);
 }
 
 void AosDeframer::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
