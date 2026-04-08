@@ -216,29 +216,34 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     // Extract Virtual Channel Frame Count (Section 4.1.2.4)
     // 24 bits in the upper 3 bytes of frameCountAndSignaling
-    U32 vcFrameCount = (header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountMask) >>
-                       AOSHeaderSubfields::vcFrameCountOffset;
+    U32 rxVcFrameCount = (header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountMask) >>
+                         AOSHeaderSubfields::vcFrameCountOffset;
+
+    // Default Frame Count is a 24 bit counter (e.g. modulo 2^24)
+    U32 frameCountMask = 0x00FF'FFFF;
 
     // Extract VC Frame Count Cycle if in use (Section 4.1.2.5.3)
     if ((header.get_frameCountAndSignaling() & AOSHeaderSubfields::cycleCountFlagMask) != 0) {
-        const U8 vcFrameCountCycle = header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountCycleMask;
+        const U8 rxVcFrameCountCycle = header.get_frameCountAndSignaling() & AOSHeaderSubfields::vcFrameCountCycleMask;
         // Extend the 24-bit frame count with the 4-bit cycle count
-        vcFrameCount |= static_cast<U32>(vcFrameCountCycle) << 24;
+        rxVcFrameCount |= static_cast<U32>(rxVcFrameCountCycle) << 24;
+        // Add the 4 additional bits to our modulo
+        frameCountMask |= 0xFF00'0000;
     }
 
     // Gap detect after the first accepted frame on a VC
     if (vc->framesProcessed > 0U) {
         const U32 expectedVcFrameCount = vc->vcFrameCount + 1U;
-        if (vcFrameCount != expectedVcFrameCount) {
-            this->log_WARNING_HI_VcFrameCountGap(vcId, vcFrameCount, expectedVcFrameCount);
+        if (rxVcFrameCount != (expectedVcFrameCount & frameCountMask)) {
+            this->log_WARNING_HI_VcFrameCountGap(vcId, rxVcFrameCount, expectedVcFrameCount);
             this->notifyErrorIfConnected(Ccsds::FrameError::AOS_VC_FRAME_COUNT_GAP);
             // Other errors will implicitly drop their spanning packet once we finally lock back onto a valid frame
             this->abandonSpanningPacket(*vc);
         }
     }
 
-    // Store VC frame count in the VC struct for reference (e.g., gap detection)
-    this->tlmWrite_LatestVcFrameCount(vc->vcFrameCount = vcFrameCount);
+    // Store VC frame count in the VC struct for reference (e.g. gap detection)
+    this->tlmWrite_LatestVcFrameCount(vc->vcFrameCount = rxVcFrameCount);
 
     // Update context with extracted values
     context.set_vcId(vcId);
