@@ -1,12 +1,12 @@
         @ Latest VC Frame Received from header
-        telemetry LatestVcFrameCount: VCxU32
+        telemetry LatestVcFrameCount: U32
 
         @ Processed frames per Virtual Channel
-        telemetry FramesProcessed: VCxU32 \
+        telemetry FramesProcessed: U32 \
             format "{} frames processed"
 
         @ Packets extracted per Virtual Channel
-        telemetry PacketsExtracted: VCxU32 \
+        telemetry PacketsExtracted: U32 \
             format "{} packets extracted"
 
         @ Frame Error Control Field (FECF) errors (per physical channel)
