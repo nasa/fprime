@@ -28,10 +28,9 @@ namespace Ccsds {
 class ApidManagerTestState {
   public:
     // ----------------------------------------------------------------------
-    // Shadow state
+    // Component "shadow" test state
     //
-    // These mirror the component's internal APID-to-sequence-count map.
-    // Preconditions check them; actions update them alongside the component.
+    // These state variables mirror the component's internal state (APID map, etc).
     // ----------------------------------------------------------------------
 
     //! Expected next sequence count for every tracked APID.
@@ -42,9 +41,10 @@ class ApidManagerTestState {
     bool shadow_isTableFull = false;
 
   public:
-    // ----------------------------------------------------------------------
-    // Shadow helpers (implemented in ApidManagerTestState/ApidManagerTestState.cpp)
-    // ----------------------------------------------------------------------
+    // -----------------------------------------------------------------------------
+    // Helpers maintaining the shadow state in line with component under test,
+    // or simple test helpers querying the state
+    // -----------------------------------------------------------------------------
 
     //! Return the current expected sequence count for apid and advance the
     //! shadow to the next value.

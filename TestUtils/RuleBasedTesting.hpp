@@ -4,42 +4,37 @@
 //
 // Background
 // ----------
-// F Prime rule-based testing uses STest::Rule<State>, where State is a
-// concrete TestState class.  The STest infrastructure selects rules
-// whose precondition() returns true and then calls action().
+// F Prime rule-based testing (RBT) uses STest::Rule<Tester>, where Tester is
+// usually the component tester class.  The STest infrastructure selects
+// rules whose precondition() returns true and then calls action().
 //
-// The generated ASSERT_EVENTS_*, ASSERT_TLM_*, invoke_to_*, etc. macros
-// all expand to `this->someMethod(...)`.  They only compile in a context
-// where `this` is the component tester (or a subclass of it).
-//
-// Common patterns
-// ---------------
-// 1) Composition-first (recommended for readability)
-//      class TestState { MyComponentTester tester; ... };
-//    Rule methods call tester APIs explicitly and use explicit forwarding
-//    helpers for event/tlm assertions.
-//
-// 2) Inheritance-first (macro convenience)
-//      class TestState : public MyComponentTester { ... };
-//    Rule methods can call generated ASSERT_* macros directly.
-//
-// This header is intentionally neutral and supports both patterns.
+// While rules can be declared manually, the macro has several benefits:
+// - It standardizes the naming convention for rule methods and labels.
+// - It reduces boilerplate
+// - It makes the F Prime test asserts (e.g. ASSERT_EVENTS_*, ASSERT_TLM_* etc.)
+//   available inside rule method bodies, which is not straightforward manually.
+//   This is because those asserts expand to `this->...`, where `this` needs
+//   to be the tester instance, which is not the case in a classical STest::Rule
 //
 // Usage
 // -----
-// 1. Create a TestState class (composition or inheritance).
+// 1. Inside a ComponentTester class, declare each rule with FW_RBT_DEFINE_RULE:
 //
-// 2. Define each rule inside a ComponentTester with FW_RBT_DEFINE_RULE:
+//      FW_RBT_DEFINE_RULE(MyComponentTester, GroupName, RuleName);
 //
-//      FW_RBT_DEFINE_RULE(MyComponentTester, GroupName, RuleName)
-//
-//    This creates:
+//    This creates inside the tester class:
 //      bool GroupName__RuleName__precondition() const;
 //      void GroupName__RuleName__action();
-//      struct GroupName__RuleName : STest::Rule<TestState> { ... };
+//      struct GroupName__RuleName : STest::Rule<MyComponentTester> { ... };
 //
-// 3. Implement the method bodies in per-group .cpp files. Inside each
-//    body, `this` is a TestState pointer, so ASSERT_* macros are direct.
+// 2. Implement the method bodies in .cpp files (and add *.cpp to CMakeLists.txt !!)
+//
+// 3. In the test main, instantiate and use rule types as nested types of
+//    the tester class:
+//
+//      MyComponentTester tester;
+//      MyComponentTester::GroupName__RuleName rule;
+//      rule.apply(tester);
 //
 // ======================================================================
 
@@ -51,69 +46,29 @@
 // -----------------------------------------------------------------------
 //! \def FW_RBT_DEFINE_RULE
 //!
-//! Defines everything needed for one rule inside a TestState class:
-//! 1) precondition declaration
-//! 2) action declaration
-//! 3) a nested STest::Rule<STATE_TYPE> subclass named GROUP_NAME__RULE_NAME
+//! Defines everything needed for one rule inside a ComponentTester class:
+//! 1) GroupName__RuleName__precondition() const — declaration
+//! 2) GroupName__RuleName__action()             — declaration
+//! 3) struct GroupName__RuleName : STest::Rule<TESTER_TYPE> — definition
 //!
-//! This allows users to keep all rule declarations and rule types in one
-//! place (the tester header) without creating a separate Rules.hpp file.
-//!
-//! \param STATE_TYPE  The TestState type used by STest::Rule (usually a ComponentTester class)
-//! \param GROUP_NAME  Rule group: used in method/rule names and rule label
-//! \param RULE_NAME   Rule variant: used in method/rule names and rule label
-// -----------------------------------------------------------------------
-#define FW_RBT_DEFINE_RULE(STATE_TYPE, GROUP_NAME, RULE_NAME)                                    \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                      \
-    void GROUP_NAME##__##RULE_NAME##__action();                                                  \
-    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<STATE_TYPE> {                          \
-        GROUP_NAME##__##RULE_NAME() : STest::Rule<STATE_TYPE>(#GROUP_NAME "." #RULE_NAME) {}     \
-                                                                                                 \
-        bool precondition(const STATE_TYPE& state) override {                                    \
-            return state.GROUP_NAME##__##RULE_NAME##__precondition();                            \
-        }                                                                                        \
-                                                                                                 \
-        void action(STATE_TYPE& state) override { state.GROUP_NAME##__##RULE_NAME##__action(); } \
-    }
-
-// -----------------------------------------------------------------------
-//! \def FW_RBT_IMPLEMENT_RULE
-//!
-//! Defines an STest::Rule<STATE_TYPE> subclass named RULE_NAME inside
-//! namespace GROUP_NAME.  The subclass forwards precondition() and
-//! action() calls to the matching methods on the STATE_TYPE object,
-//! which must be declared with FW_RBT_DECLARE_RULE and implemented
-//! in a per-group .cpp file.
-//!
-//! \param STATE_TYPE  The TestState type used by STest::Rule
-//! \param GROUP_NAME  Rule group: becomes a C++ namespace and name prefix
-//! \param RULE_NAME   Rule variant: becomes the struct name and name suffix
-// -----------------------------------------------------------------------
-#define FW_RBT_IMPLEMENT_RULE(STATE_TYPE, GROUP_NAME, RULE_NAME)                                                 \
-    namespace GROUP_NAME {                                                                                       \
-                                                                                                                 \
-    struct RULE_NAME : public STest::Rule<STATE_TYPE> {                                                          \
-        RULE_NAME() : Rule<STATE_TYPE>(#GROUP_NAME "." #RULE_NAME) {}                                            \
-                                                                                                                 \
-        bool precondition(const STATE_TYPE& state) { return state.GROUP_NAME##__##RULE_NAME##__precondition(); } \
-                                                                                                                 \
-        void action(STATE_TYPE& state) { state.GROUP_NAME##__##RULE_NAME##__action(); }                          \
-    };                                                                                                           \
-    }
-
-// -----------------------------------------------------------------------
-//! \def FW_RBT_DECLARE_RULE
-//!
-//! Declares a precondition/action method pair in a TestState class.
-//! The precondition is const; the action is non-const.
-//! Use this inside the TestState class body; implement both bodies in a
+//! Place inside the tester class body; implement both method bodies in a
 //! per-group .cpp file.
 //!
-//! \param GROUP_NAME  Must match the GROUP_NAME in FW_RBT_IMPLEMENT_RULE
-//! \param RULE_NAME   Must match the RULE_NAME in FW_RBT_IMPLEMENT_RULE
+//! \param TESTER_TYPE  The ComponentTester class (state passed to STest::Rule)
+//! \param GROUP_NAME   Rule group: appears in method names and the rule label
+//! \param RULE_NAME    Rule variant: appears in method names and the rule label
 // -----------------------------------------------------------------------
-#define FW_RBT_DECLARE_RULE(GROUP_NAME, RULE_NAME)          \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const; \
-    void GROUP_NAME##__##RULE_NAME##__action();
+#define FW_RBT_DEFINE_RULE(TESTER_TYPE, GROUP_NAME, RULE_NAME)                                      \
+    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                         \
+    void GROUP_NAME##__##RULE_NAME##__action();                                                     \
+    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TESTER_TYPE> {                            \
+        GROUP_NAME##__##RULE_NAME() : STest::Rule<TESTER_TYPE>(#GROUP_NAME "." #RULE_NAME) {}       \
+                                                                                                    \
+        bool precondition(const TESTER_TYPE& tester) override {                                     \
+            return tester.GROUP_NAME##__##RULE_NAME##__precondition();                              \
+        }                                                                                           \
+                                                                                                    \
+        void action(TESTER_TYPE& tester) override { tester.GROUP_NAME##__##RULE_NAME##__action(); } \
+    }
 
 #endif
