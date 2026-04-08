@@ -29,9 +29,9 @@
 // -----
 // 1. Create a TestState class (composition or inheritance).
 //
-// 2. Define each rule inside TestState with FW_RBT_DEFINE_RULE:
+// 2. Define each rule inside a ComponentTester with FW_RBT_DEFINE_RULE:
 //
-//      FW_RBT_DEFINE_RULE(TestState, GroupName, RuleName)
+//      FW_RBT_DEFINE_RULE(MyComponentTester, GroupName, RuleName)
 //
 //    This creates:
 //      bool GroupName__RuleName__precondition() const;
@@ -59,7 +59,7 @@
 //! This allows users to keep all rule declarations and rule types in one
 //! place (the tester header) without creating a separate Rules.hpp file.
 //!
-//! \param STATE_TYPE  The TestState type used by STest::Rule
+//! \param STATE_TYPE  The TestState type used by STest::Rule (usually a ComponentTester class)
 //! \param GROUP_NAME  Rule group: used in method/rule names and rule label
 //! \param RULE_NAME   Rule variant: used in method/rule names and rule label
 // -----------------------------------------------------------------------
