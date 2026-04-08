@@ -41,7 +41,7 @@ TEST(ApidManager, ValidateSequenceCounts) {
 
 // Randomized test: apply rules in a random sequence for a large number of iterations
 TEST(ApidManager, RandomizedTesting) {
-    FwSizeType numRulesToApply = 10000;
+    U32 numRulesToApply = 10000;
     ApidManagerTester tester;
     ApidManagerTester::GetSeqCount__Existing ruleGetExisting;
     ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
