@@ -278,6 +278,7 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
 }
 
 FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size) {
+    FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0, static_cast<FwAssertArgType>(size));
 
     // Seek amount
@@ -333,6 +334,9 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
     // Copy what we got
     const FwSizeType toBody = FW_MIN(size, spaceLeft);
     if (toBody > 0) {
+        FW_ASSERT(vc.spanningPacket.bytesReceived + toBody <= vc.spanningPacket.buffer.getSize(),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived), static_cast<FwAssertArgType>(toBody),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
         ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
         vc.spanningPacket.bytesReceived += toBody;
         seekForward += toBody;
