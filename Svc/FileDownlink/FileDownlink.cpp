@@ -276,20 +276,28 @@ void FileDownlink ::sendFile(const char* sourceFilename, const char* destFilenam
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         return;
     }
+    const U32 fileSize = this->m_file.getSize();
 
-    if (startOffset >= this->m_file.getSize()) {
-        this->enterCooldown();
-        this->log_WARNING_HI_DownlinkPartialFail(this->m_file.getSourceName(), this->m_file.getDestName(), startOffset,
-                                                 this->m_file.getSize());
+    if (fileSize == 0) {
+        this->m_mode.set(Mode::IDLE);
+        this->m_warnings.zeroSize();
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
                                                             : SendFileStatus::STATUS_INVALID);
         return;
-    } else if (startOffset + length > this->m_file.getSize()) {
+
+    } else if (startOffset >= fileSize) {
+        this->enterCooldown();
+        this->log_WARNING_HI_DownlinkPartialFail(this->m_file.getSourceName(), this->m_file.getDestName(), startOffset,
+                                                 fileSize);
+        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
+                                                            : SendFileStatus::STATUS_INVALID);
+        return;
+    } else if (startOffset + length > fileSize) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
-        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->m_file.getSize(),
-                                                    this->m_file.getSourceName(), this->m_file.getDestName());
-        length = this->m_file.getSize() - startOffset;
+        this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, fileSize, this->m_file.getSourceName(),
+                                                    this->m_file.getDestName());
+        length = fileSize - startOffset;
     }
 
     // Send file and switch to WAIT mode
@@ -306,9 +314,9 @@ void FileDownlink ::sendFile(const char* sourceFilename, const char* destFilenam
         this->log_ACTIVITY_HI_SendStarted(length, this->m_file.getSourceName(), this->m_file.getDestName());
         this->m_endOffset = startOffset + length;
     } else {
-        this->log_ACTIVITY_HI_SendStarted(this->m_file.getSize() - startOffset, this->m_file.getSourceName(),
+        this->log_ACTIVITY_HI_SendStarted(fileSize - startOffset, this->m_file.getSourceName(),
                                           this->m_file.getDestName());
-        this->m_endOffset = this->m_file.getSize();
+        this->m_endOffset = fileSize;
     }
 }
 

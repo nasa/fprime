@@ -36,7 +36,7 @@ void Nested::test() {
     const FwIndexType expectedActionSize = 6;
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedActionSize);
     for (FwIndexType i = 0; i < expectedActionSize; i++) {
-        ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_INITIAL_TRANSITION);
     }
 }
 
