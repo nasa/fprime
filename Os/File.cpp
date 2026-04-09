@@ -51,9 +51,7 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode) {
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
     FW_ASSERT(nullptr != filepath);
-    const FwSizeType length =
-        static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, FileNameStringSize + 1) + 1);
-    return this->open(filepath, length, requested_mode, overwrite);
+    return this->open(filepath, static_cast<FwSizeType>(FileNameStringSize + 1), requested_mode, overwrite);
 }
 
 File::Status File::open(const CHAR* filepath, FwSizeType length, File::Mode requested_mode) {

@@ -4,6 +4,7 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include <unistd.h>
+#include <config/FppConstantsAc.hpp>
 #include <csignal>
 #include <cstdio>
 #include <list>
@@ -34,12 +35,14 @@ bool check_permissions(const char* path, int permission) {
 std::shared_ptr<std::string> get_test_filename(bool random) {
     const char* filename = TEST_FILE;
     char full_buffer[_POSIX_PATH_MAX];
-    char buffer[_POSIX_PATH_MAX - sizeof(BASE_PATH)];
+    // Cap random part so full path (BASE_PATH + '/' + random) fits within FileNameStringSize
+    static const size_t MAX_RANDOM_LEN = FileNameStringSize - sizeof(BASE_PATH);
+    char buffer[MAX_RANDOM_LEN + 1];
     // When random, select random characters
     if (random) {
         filename = buffer;
         size_t i = 0;
-        for (i = 0; i < STest::Pick::lowerUpper(2, (sizeof buffer) - 1); i++) {
+        for (i = 0; i < STest::Pick::lowerUpper(2, MAX_RANDOM_LEN); i++) {
             char selected_character = static_cast<char>(STest::Pick::lowerUpper(48, 126));
             selected_character =
                 (selected_character == '/') ? static_cast<char>(selected_character + 1) : selected_character;
