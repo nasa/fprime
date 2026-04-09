@@ -933,6 +933,33 @@ void Os::Test::FileTest::Tester::OpenIllegalPath::action(Os::Test::FileTest::Tes
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  OpenIllegalBoundedPath
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenIllegalBoundedPath::OpenIllegalBoundedPath()
+    : Os::Test::FileTest::Tester::AssertRule("OpenIllegalBoundedPath") {}
+
+void Os::Test::FileTest::Tester::OpenIllegalBoundedPath::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s \n", this->getName());
+    state.assert_file_consistent();
+    // Create a buffer filled with non-null characters with no null terminator within bounds
+    constexpr FwSizeType BOUND = 10;
+    CHAR path[BOUND];
+    memset(path, 'A', BOUND);  // Fill entirely with 'A', no null terminator within BOUND
+
+    Os::File::Mode random_mode =
+        static_cast<Os::File::Mode>(STest::Pick::lowerUpper(Os::File::Mode::OPEN_READ, Os::File::Mode::OPEN_APPEND));
+    bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+    ASSERT_DEATH_IF_SUPPORTED(
+        state.m_file.open(path, BOUND, random_mode,
+                          overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
+        ASSERT_IN_FILE_CPP);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  OpenIllegalMode
 //
 // ------------------------------------------------------------------------------------------------------
