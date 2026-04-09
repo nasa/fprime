@@ -9,9 +9,7 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
 
-namespace Svc {
-
-namespace Ccsds {
+using Svc::Ccsds::ApidManagerTester;
 
 // ----------------------------------------------------------------------
 // Tests
@@ -58,9 +56,6 @@ TEST(ApidManager, RandomizedTesting) {
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
 }
-
-}  // namespace Ccsds
-}  // namespace Svc
 
 int main(int argc, char** argv) {
     STest::Random::seed();
