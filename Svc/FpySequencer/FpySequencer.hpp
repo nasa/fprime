@@ -104,7 +104,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // pushes a byte array to the top of the stack from the source array
         // leaves the source array unmodified
         // does not convert endianness
-        void push(U8* src, Fpy::StackSizeType size);
+        void push(const U8* src, Fpy::StackSizeType size);
 
         // pushes zero bytes to the stack
         void pushZeroes(Fpy::StackSizeType byteCount);
@@ -145,6 +145,14 @@ class FpySequencer : public FpySequencerComponentBase {
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
                         FpySequencer_BlockState block      //!< Return command status when complete or not
                         ) override;
+    
+    //! Handler implementation for command RUN_ARGS
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                             U32 cmdSeq,                          //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
+                             Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
+                             Svc::SeqArgs buffer                  //!< Arguments to pass to the sequencer
+                             ) override;
 
     //! Handler for command VALIDATE
     //!
@@ -362,6 +370,14 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! increments the m_sequencesStarted counter
     void Svc_FpySequencer_SequencerStateMachine_action_incrementSequenceCounter(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action pushArgsToStack of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! pushes sequence arguments to the stack
+    void Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -599,6 +615,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // return
     FwOpcodeType m_savedOpCode;
     U32 m_savedCmdSeq;
+
+    // sequence arguments to push to stack when entering RUNNING state
+    Svc::SeqArgs m_pendingSeqArgs;
 
     // the goal state is the state that we're trying to reach in the sequencer
     // if it's RUNNING, then we should promptly go to RUNNING once we validate the

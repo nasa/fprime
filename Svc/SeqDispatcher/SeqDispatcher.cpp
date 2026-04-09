@@ -137,10 +137,22 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
 // Command handler implementations
 // ----------------------------------------------------------------------
 
+// RUN command delegates to RUN_ARGS with empty arguments for backward compatibility
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
                                     Fw::Wait block) {
+    // Create empty args and delegate to RUN_ARGS handler
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
+}
+
+// RUN_ARGS command dispatches a sequence with optional arguments to the first available sequencer
+void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
+                                         const U32 cmdSeq,
+                                         const Fw::CmdStringArg& fileName,
+                                         Fw::Wait block,
+                                         Svc::SeqArgs buffer) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -149,9 +161,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
         return;
     }
 
-    // Empty Args Placeholder
-    Svc::SeqArgs emptyArgs(0, 0);
-    this->runSequence(idx, fileName, block, emptyArgs);
+    this->runSequence(idx, fileName, block, buffer);
 
     if (block == Fw::Wait::NO_WAIT) {
         // return instantly

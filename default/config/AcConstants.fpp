@@ -61,4 +61,7 @@ constant FwAssertTextSize = 256
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 @ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
-constant SequenceArgumentsMaxSize = 512
+@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with other command arguments
+@ Total serialized size: fileName (~44 bytes) + Fw::Wait (4 bytes) + SeqArgs (8 + buffer_size)
+@ With FW_CMD_ARG_BUFFER_MAX_SIZE ~= 500, we limit this to 400 bytes
+constant SequenceArgumentsMaxSize = 400

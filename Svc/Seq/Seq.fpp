@@ -1,8 +1,8 @@
 module Svc {
   struct SeqArgs {
     $size: FwSizeType
-    args: [SequenceArgumentsMaxSize] U8
-  } default { $size = 0 }
+    buffer: [SequenceArgumentsMaxSize] U8
+  } default { $size = 0, buffer = 0 }
 
   @ Port to request a sequence be run
   port CmdSeqIn(

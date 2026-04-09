@@ -271,7 +271,7 @@ void CmdSequencerTester ::parameterizedDataReadErrors(SequenceFiles::File& file)
 void CmdSequencerTester ::parameterizedNeverLoaded() {
     // Try to run a sequence
     Fw::String fArg("");
-    Svc::SeqArgs emptyArgs(0, 0);
+    Svc::SeqArgs emptyArgs{0, 0};
     this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert seqDone response
@@ -475,7 +475,7 @@ void CmdSequencerTester ::runSequence(const U32 cmdSeq, const char* const fileNa
 void CmdSequencerTester ::runSequenceByPortCall(const char* const fileName) {
     // Invoke the seqRun port
     Fw::String fArg(fileName);
-    Svc::SeqArgs emptyArgs(0, 0);
+    Svc::SeqArgs emptyArgs{0, 0};
     this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert no command response
@@ -502,7 +502,7 @@ void CmdSequencerTester ::runSequenceByFileDispatcherPortCall(const char* const 
 void CmdSequencerTester ::runLoadedSequence() {
     // Invoke the port
     Fw::String fArg("");
-    Svc::SeqArgs emptyArgs(0, 0);
+    Svc::SeqArgs emptyArgs{0, 0};
     this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert no command response
@@ -533,7 +533,7 @@ void CmdSequencerTester ::startNewSequence(const char* const fileName) {
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Invoke sequence port
     Fw::String fArg(fileName);
-    Svc::SeqArgs emptyArgs(0, 0);
+    Svc::SeqArgs emptyArgs{0, 0};
     this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert response on seqDone

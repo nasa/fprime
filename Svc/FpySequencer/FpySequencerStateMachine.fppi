@@ -169,6 +169,8 @@ state machine SequencerStateMachine {
     action checkStatementTimeout
     @ increments the m_sequencesStarted counter
     action incrementSequenceCounter
+    @ pushes sequence arguments to the stack
+    action pushArgsToStack
     @ reports that a breakpoint was hit
     action report_seqBroken
     @ sets the breakpoint to the provided args
@@ -226,7 +228,7 @@ state machine SequencerStateMachine {
     state RUNNING {
         @ start with a fresh baked runtime, and tick up the
         @ sequence counter
-        entry do { resetRuntime, incrementSequenceCounter }
+        entry do { resetRuntime, incrementSequenceCounter, pushArgsToStack }
 
         initial enter BREAK_CHECK
 

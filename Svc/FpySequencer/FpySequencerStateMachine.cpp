@@ -255,6 +255,34 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_incrementSequen
     this->m_sequencesStarted++;
 }
 
+//! Implementation for action pushArgsToStack of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! pushes sequence arguments to the stack
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    const Svc::SeqArgs& args = this->m_pendingSeqArgs;
+
+    // Early return if no arguments provided
+    if (args.get_size() == 0) {
+        return;
+    }
+
+    Fpy::StackSizeType availableSpace = Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size;
+
+    if (args.get_size() > availableSpace) {
+        // Args too large - fail the sequence gracefully.
+        this->sequencer_sendSignal_result_failure();
+        return;
+    }
+
+    // Push args buffer to stack. Args are already serialized in big-endian format
+    // by F' serialization system, so no endianness conversion is needed.
+    this->m_runtime.stack.push(args.get_buffer(),
+                               static_cast<Fpy::StackSizeType>(args.get_size()));
+}
+
 //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
 //!
 //! clears all variables related to the loading/validating of the sequence file
@@ -343,11 +371,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStart
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     if (this->isConnected_seqStartOut_OutputPort(0)) {
-        // report that the sequence started to internal callers
-        // Create empty SeqArgs as placeholder
-        // Use parameterized constructor to ensure m_size is initialized to 0
-        Svc::SeqArgs emptyArgs(0, 0);
-        this->seqStartOut_out(0, this->m_sequenceFilePath, emptyArgs);
+        // report that the sequence started to internal callers with the actual args
+        this->seqStartOut_out(0, this->m_sequenceFilePath, this->m_pendingSeqArgs);
     }
 }
 // ----------------------------------------------------------------------

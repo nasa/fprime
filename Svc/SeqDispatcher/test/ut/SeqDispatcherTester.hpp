@@ -40,6 +40,10 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
 
     void testDispatch();
     void testLogStatus();
+    void testRunArgsWithValidArguments();
+    void testRunArgsWithMaxSizedArguments();
+    void testRunArgsNoSequencersAvailable();
+    void testRunArgsBlockingVsNonBlocking();
 
   private:
     // ----------------------------------------------------------------------

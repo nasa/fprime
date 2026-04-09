@@ -122,7 +122,7 @@ void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
 // pushes a byte array to the top of the stack from the source array
 // leaves the source array unmodified
 // does not convert endianness
-void FpySequencer::Stack::push(U8* src, Fpy::StackSizeType srcSize) {
+void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
     FW_ASSERT(this->size + srcSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(srcSize));
     memcpy(this->top(), src, srcSize);

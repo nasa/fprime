@@ -5,5 +5,13 @@ async command RUN(
                     ) \
     opcode 0
 
+@ Dispatches a sequence with arguments to the first available sequencer
+async command RUN_ARGS(
+                      fileName: string size 240 @< The name of the sequence file
+                      $block: Fw.Wait @< Return command status when complete or not
+                      buffer: Svc.SeqArgs @< Arguments to pass to a sequencer
+                    ) \
+    opcode 1
+
 @ Logs via Events the state of each connected command sequencer
-async command LOG_STATUS() opcode 1
+async command LOG_STATUS() opcode 2
