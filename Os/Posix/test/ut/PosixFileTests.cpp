@@ -35,8 +35,10 @@ bool check_permissions(const char* path, int permission) {
 std::shared_ptr<std::string> get_test_filename(bool random) {
     const char* filename = TEST_FILE;
     char full_buffer[_POSIX_PATH_MAX];
-    // Cap random part so full path (BASE_PATH + '/' + random) fits within FileNameStringSize
-    static const size_t MAX_RANDOM_LEN = FileNameStringSize - sizeof(BASE_PATH);
+    // Cap random part so full path (BASE_PATH + '/' + random) is strictly less than FileNameStringSize.
+    // sizeof(BASE_PATH) accounts for strlen(BASE_PATH) + null, which equals the prefix length
+    // (strlen(BASE_PATH) + '/') by coincidence. Subtract 1 for additional margin.
+    static const size_t MAX_RANDOM_LEN = FileNameStringSize - sizeof(BASE_PATH) - 1;
     char buffer[MAX_RANDOM_LEN + 1];
     // When random, select random characters
     if (random) {
