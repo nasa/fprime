@@ -474,6 +474,13 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
     ASSERT_EQ(status, s2);
 
+    // After open, m_path points to the local Fw::String buffer which will be destroyed
+    // when this action returns. Reset m_path to point to the persistent filename string
+    // kept alive in the FILES vector to avoid a dangling pointer.
+    if (Os::File::Status::OP_OK == status) {
+        state.m_file.m_path = filename->c_str();
+    }
+
     // Extra check to ensure file is consistently open
     if (Os::File::Status::OP_OK == status) {
         state.assert_file_opened(*filename, m_mode);
