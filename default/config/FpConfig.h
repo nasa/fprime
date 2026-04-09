@@ -21,6 +21,9 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
+// Enable strict assertions
+#define FW_STRICT_ASSERTIONS 1
+
 // Direct port calls (TODO)
 #ifndef FW_DIRECT_PORT_CALLS
 #define FW_DIRECT_PORT_CALLS 0
