@@ -6,7 +6,7 @@
 #define Os_File_hpp_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/StringBase.hpp>
+#include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
 
 // Forward declaration for UTs
@@ -282,20 +282,20 @@ class File final : public FileInterface {
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode);
 
-    //! \brief open file with supplied StringBase path and mode
+    //! \brief open file with supplied string path and mode
     //!
     //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
     //! files. Use the overload accepting `OverwriteType` to set overwrite flag and clobber existing files.
     //!
     //! It is invalid to supply `mode` as a non-enumerated value.
     //!
-    //! \param path: StringBase reference of path to open
+    //! \param path: ConstStringBase reference of path to open
     //! \param mode: file operation mode
     //! \return: status of the open
     //!
-    Os::FileInterface::Status open(const Fw::StringBase& path, Mode mode);
+    Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode);
 
-    //! \brief open file with supplied StringBase path, mode, and overwrite type
+    //! \brief open file with supplied string path, mode, and overwrite type
     //!
     //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
     //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
@@ -303,12 +303,12 @@ class File final : public FileInterface {
     //! It is invalid to supply `mode` as a non-enumerated value.
     //! It is invalid to supply `overwrite` as a non-enumerated value.
     //!
-    //! \param path: StringBase reference of path to open
+    //! \param path: ConstStringBase reference of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
     //! \return: status of the open
     //!
-    Os::FileInterface::Status open(const Fw::StringBase& path, Mode mode, OverwriteType overwrite);
+    Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode, OverwriteType overwrite);
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!

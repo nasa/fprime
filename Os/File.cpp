@@ -6,6 +6,7 @@
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
 #include <algorithm>
+#include <config/FppConstantsAc.hpp>
 
 extern "C" {
 #include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
@@ -50,14 +51,17 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode) {
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
     FW_ASSERT(nullptr != filepath);
-    return this->open(filepath, static_cast<FwSizeType>(FW_FIXED_LENGTH_STRING_SIZE + 1), requested_mode, overwrite);
+    return this->open(filepath, static_cast<FwSizeType>(FileNameStringSize + 1), requested_mode, overwrite);
 }
 
 File::Status File::open(const CHAR* filepath, FwSizeType length, File::Mode requested_mode) {
     return this->open(filepath, length, requested_mode, OverwriteType::NO_OVERWRITE);
 }
 
-File::Status File::open(const CHAR* filepath, FwSizeType length, File::Mode requested_mode, File::OverwriteType overwrite) {
+File::Status File::open(const CHAR* filepath,
+                        FwSizeType length,
+                        File::Mode requested_mode,
+                        File::OverwriteType overwrite) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
     FW_ASSERT(Fw::StringUtils::string_length(filepath, length) < length);
@@ -79,11 +83,12 @@ File::Status File::open(const CHAR* filepath, FwSizeType length, File::Mode requ
     return status;
 }
 
-File::Status File::open(const Fw::StringBase& path, File::Mode requested_mode) {
-    return this->open(path.toChar(), static_cast<FwSizeType>(path.getCapacity()), requested_mode, OverwriteType::NO_OVERWRITE);
+File::Status File::open(const Fw::ConstStringBase& path, File::Mode requested_mode) {
+    return this->open(path.toChar(), static_cast<FwSizeType>(path.getCapacity()), requested_mode,
+                      OverwriteType::NO_OVERWRITE);
 }
 
-File::Status File::open(const Fw::StringBase& path, File::Mode requested_mode, File::OverwriteType overwrite) {
+File::Status File::open(const Fw::ConstStringBase& path, File::Mode requested_mode, File::OverwriteType overwrite) {
     return this->open(path.toChar(), static_cast<FwSizeType>(path.getCapacity()), requested_mode, overwrite);
 }
 
