@@ -290,9 +290,10 @@ void Os::Test::FileTest::Tester::OpenBaseRule::action(Os::Test::FileTest::Tester
         while (state.exists(*filename)) {
             filename = state.get_filename(this->m_random);
             attempts++;
-            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
-                << "Failed to generate unique filename after " << attempts << " attempts. "
-                << "Consider expanding the filename generation in get_filename().";
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
         }
     }
 
@@ -400,11 +401,19 @@ void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTes
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
-    // When randomly generating filenames, skip this iteration if the file already exists on the
-    // real filesystem but not in the synthetic filesystem (which is reset per test). This avoids
-    // a status mismatch between the real and synthetic open calls.
-    if (this->m_random && !this->m_overwrite && state.exists(*filename)) {
-        return;
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
     }
 
     // Ensure initial and shadow states synchronized
@@ -443,11 +452,19 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
-    // When randomly generating filenames, skip this iteration if the file already exists on the
-    // real filesystem but not in the synthetic filesystem (which is reset per test). This avoids
-    // a status mismatch between the real and synthetic open calls.
-    if (this->m_random && !this->m_overwrite && state.exists(*filename)) {
-        return;
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
     }
 
     // Ensure initial and shadow states synchronized

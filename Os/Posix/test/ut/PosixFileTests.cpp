@@ -17,7 +17,7 @@ namespace FileTest {
 
 std::vector<std::shared_ptr<const std::string> > FILES;
 
-static const U32 MAX_FILES = 100;
+static const U32 MAX_FILES = 500;
 static const char BASE_PATH[] = "/tmp/fprime";
 static const char TEST_FILE[] = "fprime-os-file-test";
 //! Check if we can use the file. F_OK file exists, R_OK, W_OK are read and write.
