@@ -42,8 +42,9 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             } else {
                 this->log_WARNING_HI_SerializationError(status);
             }
-            // Return ownership of the incoming packetBuffer
-            this->dataReturnOut_out(0, packetBuffer, context);
+            // Return ownership of the incoming packetBuffer with an empty context
+            ComCfg::FrameContext emptyContext;
+            this->dataReturnOut_out(0, packetBuffer, emptyContext);
             break;
         }
         // Handle a file packet
@@ -54,8 +55,9 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             if (this->isConnected_fileOut_OutputPort(0)) {
                 this->fileOut_out(0, packetBuffer);
             } else {
-                // Port not connected, return the buffer immediately
-                this->dataReturnOut_out(0, packetBuffer, context);
+                // Port not connected, return the buffer immediately with an empty context
+                ComCfg::FrameContext emptyContext;
+                this->dataReturnOut_out(0, packetBuffer, emptyContext);
             }
             break;
         }
@@ -67,8 +69,9 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             if (this->isConnected_unknownDataOut_OutputPort(0)) {
                 this->unknownDataOut_out(0, packetBuffer, context);
             } else {
-                // Port not connected, return the buffer immediately
-                this->dataReturnOut_out(0, packetBuffer, context);
+                // Port not connected, return the buffer immediately with an empty context
+                ComCfg::FrameContext emptyContext;
+                this->dataReturnOut_out(0, packetBuffer, emptyContext);
             }
             break;
         }
