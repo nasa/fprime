@@ -119,8 +119,8 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
     // Byte 0: 3b PVN=7 | 3b protocolId | 2b lengthOfLength
     // protocolId=0 (EppProtocolId::Idle) produces an EPP idle/fill packet
     buffer[0] = static_cast<U8>((ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset));
-    buffer[0] |= ((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset);
-    buffer[0] |= (lengthOfLength & EPPSubfields::lengthOfLengthMask);
+    buffer[0] |= static_cast<U8>((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset);
+    buffer[0] |= static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask);
 
     if (lengthOfLength == EppLengthOfLength::Zero) {
         return 1;
