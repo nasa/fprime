@@ -30,11 +30,6 @@ module Svc {
             ) \
             severity warning high \
             format "Deserializing packet type failed with status {}"
-        
-        @ An allocation error occurred
-        event AllocationError(reason: AllocationReason) severity warning high \
-            format "Buffer allocation for {} failed"
-
 
         ###############################################################################
         # Standard AC Ports for Events 
