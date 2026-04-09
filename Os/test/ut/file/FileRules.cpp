@@ -2,6 +2,7 @@
 // \title Os/test/ut/file/MyRules.cpp
 // \brief rule implementations for common testing
 // ======================================================================
+#include <Fw/Types/String.hpp>
 #include <algorithm>
 #include <cstdio>
 #include "RulesHeaders.hpp"
@@ -382,6 +383,106 @@ Os::Test::FileTest::Tester::OpenForRead::OpenForRead(const bool randomize_filena
                                                // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
                                                randomize_filename) {}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateBounded
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateBounded::OpenFileCreateBounded(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateBounded",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
+                << "Failed to generate unique filename after " << attempts << " attempts. "
+                << "Consider expanding the filename generation in get_filename().";
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the bounded char* open overload
+    FwSizeType length = static_cast<FwSizeType>(filename->length() + 1);
+    Os::File::Status status = state.m_file.open(filename->c_str(), length, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateString
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateString::OpenFileCreateString(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateString",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
+                << "Failed to generate unique filename after " << attempts << " attempts. "
+                << "Consider expanding the filename generation in get_filename().";
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the ConstStringBase open overload
+    Fw::String path(filename->c_str());
+    Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  CloseFile
