@@ -60,7 +60,6 @@ void FprimeRouterTester ::testRouteUnknownPacketUnconnected() {
     ASSERT_from_dataReturnOut_SIZE(1);   // data ownership should always be returned
 }
 
-
 void FprimeRouterTester ::testBufferReturn() {
     U8 data[1];
     Fw::Buffer buffer(data, sizeof(data));
