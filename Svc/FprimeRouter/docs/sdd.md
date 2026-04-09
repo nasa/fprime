@@ -6,7 +6,7 @@ The `Svc::FprimeRouter` component receives F´ packets (as [Fw::Buffer](../../..
 
 The `Svc::FprimeRouter` component supports `Fw::ComPacketType::FW_PACKET_COMMAND` and `Fw::ComPacketType::FW_PACKET_FILE` packet types. Unknown packet types are forwarded on the `unknownDataOut` port, which a project-specific component can connect to for custom routing.
 
-About memory management, buffers sent by `Svc::FprimeRouter` on the `fileOut` and `unknownDataOut` ports are passed through directly without copying. The original buffer is not returned to the deframer until the receiver returns it through the `fileBufferReturnIn` port.
+About memory management, buffers sent by `Svc::FprimeRouter` on the `fileOut` and `unknownDataOut` ports are passed through directly without copying. Receivers of these buffers **must** return them to `Svc::FprimeRouter` through the `fileBufferReturnIn` port when finished processing. The original buffer is not returned to the deframer until this happens.
 
 **Note:** The `FrameContext` received on `dataIn` is not preserved across the buffer return path. When buffers are returned via `fileBufferReturnIn`, `Svc::FprimeRouter` constructs an empty `ComCfg::FrameContext` for the `dataReturnOut` call. This applies to all packet types — the context is always discarded on return.
 
