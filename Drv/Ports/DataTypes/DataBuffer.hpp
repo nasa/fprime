@@ -6,7 +6,7 @@
 
 namespace Drv {
 
-class DataBuffer : public Fw::SerializeBufferBase {
+class DataBuffer : public Fw::LinearBufferBase {
   public:
     enum {
         DATA_BUFFER_SIZE = 256,

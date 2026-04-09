@@ -15,7 +15,7 @@
 
 namespace Fw {
 
-class SmSignalBuffer final : public SerializeBufferBase {
+class SmSignalBuffer final : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = 1010,
