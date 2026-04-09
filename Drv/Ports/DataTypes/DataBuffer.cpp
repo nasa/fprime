@@ -4,7 +4,7 @@
 namespace Drv {
 
 DataBuffer::DataBuffer(const U8* args, FwSizeType size) {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -12,8 +12,8 @@ DataBuffer::DataBuffer() {}
 
 DataBuffer::~DataBuffer() {}
 
-DataBuffer::DataBuffer(const DataBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
+DataBuffer::DataBuffer(const DataBuffer& other) : Fw::LinearBufferBase() {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,7 +22,7 @@ DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }

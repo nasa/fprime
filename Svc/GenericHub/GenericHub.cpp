@@ -295,8 +295,8 @@ void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::T
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void GenericHub::serialIn_handler(FwIndexType portNum,            /*!< The port number*/
-                                  Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHub::serialIn_handler(FwIndexType portNum,         /*!< The port number*/
+                                  Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }

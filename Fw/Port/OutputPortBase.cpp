@@ -27,7 +27,7 @@ void OutputPortBase::registerSerialPort(InputPortBase* port) {
     this->m_serPort = port;
 }
 
-SerializeStatus OutputPortBase::invokeSerial(SerializeBufferBase& buffer) {
+SerializeStatus OutputPortBase::invokeSerial(LinearBufferBase& buffer) {
     FW_ASSERT(this->m_serPort);
     return this->m_serPort->invokeSerial(buffer);
 }

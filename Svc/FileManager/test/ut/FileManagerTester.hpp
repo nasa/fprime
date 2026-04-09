@@ -74,14 +74,6 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     void removeFileFail();
 
-    //! Shell command (succeed)
-    //!
-    void shellCommandSucceed();
-
-    //! Shell command (fail)
-    //!
-    void shellCommandFail();
-
     //! Append file (succeed, append to new file)
     //!
     void appendFileSucceed_newFile();
@@ -146,9 +138,6 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Remove a file
     void removeFile(const char* const fileName, bool ignoreErrors);
-
-    //! Perform a shell command
-    void shellCommand(const char* const command, const char* const logFileName);
 
     //! Append 2 files together
     void appendFile(const char* const source, const char* const target);

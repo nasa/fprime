@@ -17,7 +17,7 @@
 
 namespace Fw {
 
-class TlmBuffer final : public SerializeBufferBase {
+class TlmBuffer final : public LinearBufferBase {
   public:
     enum { SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF, SERIALIZED_SIZE = FW_TLM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType) };
 

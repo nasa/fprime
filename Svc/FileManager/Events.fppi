@@ -35,15 +35,6 @@ event FileRemoveError(
   id 0x03 \
   format "Could not remove file {}, returned status {}"
 
-@ The File System component executed a shell command that returned status non-zero
-event ShellCommandFailed(
-                          $command: string size 256 @< The command string
-                          status: U32 @< The status code
-                        ) \
-  severity warning high \
-  id 0x04 \
-  format "Shell command {} failed with status {}"
-
 @ The File System component returned status non-zero when trying to append 2 files together
 event AppendFileFailed(
                         source: string size FileNameStringSize @< The name of the file being read from
@@ -62,14 +53,6 @@ event AppendFileSucceeded(
   severity activity high \
   id 0x06 \
   format "Appended {} to the end of {}"
-
-@ The File System component executed a shell command that returned status zero
-event ShellCommandSucceeded(
-                             $command: string size FileNameStringSize @< The command string
-                           ) \
-  severity activity high \
-  id 0x07 \
-  format "Shell command {} succeeded"
 
 @ The File System component created a new directory without error
 event CreateDirectorySucceeded(
@@ -112,14 +95,6 @@ event AppendFileStarted(
   severity activity high \
   id 0x0C \
   format "Appending file {} to the end of {}..."
-
-@ The File System component began executing a shell command
-event ShellCommandStarted(
-                           $command: string size 256 @< The command string
-                         ) \
-  severity activity high \
-  id 0x0D \
-  format "Running shell command {}..."
 
 @ The File System component began creating a new directory
 event CreateDirectoryStarted(

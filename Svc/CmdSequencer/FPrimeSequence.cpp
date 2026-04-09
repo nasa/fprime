@@ -111,7 +111,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readOpenFile() {
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::readHeader() {
     Os::File& file = this->m_sequenceFile;
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     bool status = true;
 
     FwSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
@@ -139,7 +139,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readHeader() {
 }
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::deserializeHeader() {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Header& header = this->m_header;
 
     // File size
@@ -178,7 +178,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::deserializeHeader() {
 bool CmdSequencerComponentImpl::FPrimeSequence ::readRecordsAndCRC() {
     Os::File& file = this->m_sequenceFile;
     const FwSizeType size = this->m_header.m_fileSize;
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
 
     FwSizeType readLen = size;
     Os::File::Status fileStatus = file.read(buffer.getBuffAddr(), readLen);
@@ -199,7 +199,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readRecordsAndCRC() {
 }
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::extractCRC() {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     U32& crc = this->m_crc.m_stored;
 
     // Compute the data size
@@ -248,7 +248,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecor
 }
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescriptor(Record::Descriptor& descriptor) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     U8 descEntry;
 
     Fw::SerializeStatus status = buffer.deserializeTo(descEntry);
@@ -265,7 +265,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescr
 }
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeTag(Fw::Time& timeTag) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     U32 seconds, useconds;
     Fw::SerializeStatus status = buffer.deserializeTo(seconds);
     if (status == Fw::FW_SERIALIZE_OK) {
@@ -278,7 +278,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeT
 }
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecordSize(U32& recordSize) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Fw::SerializeStatus status = buffer.deserializeTo(recordSize);
     if (status == Fw::FW_SERIALIZE_OK and recordSize > buffer.getDeserializeSizeLeft()) {
         // Not enough data left
@@ -294,7 +294,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecor
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::copyCommand(Fw::ComBuffer& comBuffer,
                                                                             const U32 recordSize) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
     FwSizeType size = recordSize;
     Fw::SerializeStatus status = comBuffer.setBuffLen(recordSize);
@@ -304,7 +304,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::copyCommand(Fw::
 }
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::validateRecords() {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     const U32 numRecords = this->m_header.m_numRecords;
     Sequence::Record record;
 

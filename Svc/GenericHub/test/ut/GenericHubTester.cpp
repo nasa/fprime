@@ -81,7 +81,7 @@ void GenericHubTester ::test_random_io() {
     }
 }
 
-void GenericHubTester ::random_fill(Fw::SerializeBufferBase& buffer, U32 max_size) {
+void GenericHubTester ::random_fill(Fw::LinearBufferBase& buffer, U32 max_size) {
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
@@ -340,8 +340,8 @@ void GenericHubTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Bu
     this->invoke_to_bufferOutReturn(portNum, fwBuffer);
 }
 
-void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
-                                               Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void GenericHubTester ::from_serialOut_handler(FwIndexType portNum,         /*!< The port number*/
+                                               Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
     // Assert the buffer came through exactly on the right port

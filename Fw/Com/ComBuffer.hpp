@@ -17,7 +17,7 @@
 
 namespace Fw {
 
-class ComBuffer final : public SerializeBufferBase {
+class ComBuffer final : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = 1010,

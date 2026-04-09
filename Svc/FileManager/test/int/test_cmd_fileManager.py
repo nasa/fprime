@@ -2,7 +2,6 @@
 
 Test the command FileManager with basic integration tests.
     fileManager.CreateDirectory
-    fileManager.ShellCommand  # Don't use ShellCommand
     fileManager.FileSize
     fileManager.MoveFile
     fileManager.AppendFile
