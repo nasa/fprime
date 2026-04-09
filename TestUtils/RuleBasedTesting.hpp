@@ -58,17 +58,17 @@
 //! \param GROUP_NAME   Rule group: appears in method names and the rule label
 //! \param RULE_NAME    Rule variant: appears in method names and the rule label
 // -----------------------------------------------------------------------
-#define FW_RBT_DEFINE_RULE(TESTER_TYPE, GROUP_NAME, RULE_NAME)                                      \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                         \
-    void GROUP_NAME##__##RULE_NAME##__action();                                                     \
-    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TESTER_TYPE> {                            \
-        GROUP_NAME##__##RULE_NAME() : STest::Rule<TESTER_TYPE>(#GROUP_NAME "." #RULE_NAME) {}       \
-                                                                                                    \
-        bool precondition(const TESTER_TYPE& tester) override {                                     \
-            return tester.GROUP_NAME##__##RULE_NAME##__precondition();                              \
-        }                                                                                           \
-                                                                                                    \
-        void action(TESTER_TYPE& tester) override { tester.GROUP_NAME##__##RULE_NAME##__action(); } \
+#define FW_RBT_DEFINE_RULE(TESTER_TYPE, GROUP_NAME, RULE_NAME)                                \
+    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                   \
+    void GROUP_NAME##__##RULE_NAME##__action();                                               \
+    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TESTER_TYPE> {                      \
+        GROUP_NAME##__##RULE_NAME() : STest::Rule<TESTER_TYPE>(#GROUP_NAME "." #RULE_NAME) {} \
+        bool precondition(const TESTER_TYPE& tester) override {                               \
+            return tester.GROUP_NAME##__##RULE_NAME##__precondition();                        \
+        }                                                                                     \
+        void action(TESTER_TYPE& tester) override {                                           \
+            tester.GROUP_NAME##__##RULE_NAME##__action();                                     \
+        }                                                                                     \
     }
 
 #endif
