@@ -42,36 +42,37 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             } else {
                 this->log_WARNING_HI_SerializationError(status);
             }
+            // Return ownership of the incoming packetBuffer
+            this->dataReturnOut_out(0, packetBuffer, context);
             break;
         }
         // Handle a file packet
         case Fw::ComPacketType::FW_PACKET_FILE: {
-            // If the file uplink output port is connected, send the file packet. Otherwise take no action.
+            // If the file uplink output port is connected, send the file packet directly.
+            // Ownership is passed to the receiver and will come back on fileBufferReturnIn,
+            // at which point we return it to the deframer via dataReturnOut.
             if (this->isConnected_fileOut_OutputPort(0)) {
-                // Send the buffer out directly. Ownership is passed to the receiver.
-                // It will come back on fileBufferReturnIn once the receiver is done with it,
-                // at which point we return ownership to the deframer via dataReturnOut.
                 this->fileOut_out(0, packetBuffer);
-                return;
+            } else {
+                // Port not connected, return the buffer immediately
+                this->dataReturnOut_out(0, packetBuffer, context);
             }
             break;
         }
         default: {
             // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
             // connected, forward packet and context for further processing.
-            // Ownership is passed to the receiver. It will come back on fileBufferReturnIn
-            // once the receiver is done with it, at which point we return ownership to the
-            // deframer via dataReturnOut.
+            // Ownership is passed to the receiver and will come back on fileBufferReturnIn,
+            // at which point we return it to the deframer via dataReturnOut.
             if (this->isConnected_unknownDataOut_OutputPort(0)) {
                 this->unknownDataOut_out(0, packetBuffer, context);
-                return;
+            } else {
+                // Port not connected, return the buffer immediately
+                this->dataReturnOut_out(0, packetBuffer, context);
             }
             break;
         }
     }
-
-    // Return ownership of the incoming packetBuffer
-    this->dataReturnOut_out(0, packetBuffer, context);
 }
 
 void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
