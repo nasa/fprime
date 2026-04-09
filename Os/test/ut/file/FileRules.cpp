@@ -400,19 +400,6 @@ void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTes
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
-    // When randomly generating filenames, some seeds can result in duplicate filenames
-    // Continue generating until unique, unless this is an overwrite test
-    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
-    U32 attempts = 0;
-    if (this->m_random && !this->m_overwrite) {
-        while (state.exists(*filename)) {
-            filename = state.get_filename(this->m_random);
-            attempts++;
-            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
-                << "Failed to generate unique filename after " << attempts << " attempts. "
-                << "Consider expanding the filename generation in get_filename().";
-        }
-    }
 
     // Ensure initial and shadow states synchronized
     state.assert_file_consistent();
@@ -450,19 +437,6 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
-    // When randomly generating filenames, some seeds can result in duplicate filenames
-    // Continue generating until unique, unless this is an overwrite test
-    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
-    U32 attempts = 0;
-    if (this->m_random && !this->m_overwrite) {
-        while (state.exists(*filename)) {
-            filename = state.get_filename(this->m_random);
-            attempts++;
-            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
-                << "Failed to generate unique filename after " << attempts << " attempts. "
-                << "Consider expanding the filename generation in get_filename().";
-        }
-    }
 
     // Ensure initial and shadow states synchronized
     state.assert_file_consistent();
