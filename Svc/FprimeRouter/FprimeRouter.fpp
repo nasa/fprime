@@ -7,21 +7,10 @@ module Svc {
         # ----------------------------------------------------------------------
         import Router
 
-        enum AllocationReason : U8{
-            FILE_UPLINK,  @< Buffer allocation for file uplink
-            USER_BUFFER   @< Buffer allocation for user handled buffer
-        }
-
         @ Port for forwarding non-recognized packet types
-        @ Ownership of the buffer is retained by the FprimeRouter, meaning receiving
-        @ components should either process data synchronously, or copy the data if needed
+        @ Ownership of the buffer is passed to the receiver. The receiver must return
+        @ the buffer via fileBufferReturnIn when done.
         output port unknownDataOut: Svc.ComDataWithContext
-
-        @ Port for allocating buffers
-        output port bufferAllocate: Fw.BufferGet
-
-        @ Port for deallocating buffers
-        output port bufferDeallocate: Fw.BufferSend
 
         @ An error occurred while serializing a com buffer
         event SerializationError(
@@ -37,11 +26,6 @@ module Svc {
             severity warning high \
             format "Deserializing packet type failed with status {}"
         
-        @ An allocation error occurred
-        event AllocationError(reason: AllocationReason) severity warning high \
-            format "Buffer allocation for {} failed"
-
-
         ###############################################################################
         # Standard AC Ports for Events 
         ###############################################################################
