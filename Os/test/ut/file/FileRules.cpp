@@ -401,10 +401,10 @@ void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTes
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
     // When randomly generating filenames, some seeds can result in duplicate filenames
-    // Continue generating until unique
+    // Continue generating until unique, unless this is an overwrite test
     constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
     U32 attempts = 0;
-    if (this->m_random) {
+    if (this->m_random && !this->m_overwrite) {
         while (state.exists(*filename)) {
             filename = state.get_filename(this->m_random);
             attempts++;
@@ -451,10 +451,10 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
     // When randomly generating filenames, some seeds can result in duplicate filenames
-    // Continue generating until unique
+    // Continue generating until unique, unless this is an overwrite test
     constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
     U32 attempts = 0;
-    if (this->m_random) {
+    if (this->m_random && !this->m_overwrite) {
         while (state.exists(*filename)) {
             filename = state.get_filename(this->m_random);
             attempts++;
