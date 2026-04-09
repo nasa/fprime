@@ -113,7 +113,7 @@ active component PythonEchoer {
 ```
 
 > [!TIP]
-> An fprime component cookiercutter for `fprime-python` components is available: [https://github.com/LeStarch/fprime-python-component-cookiecutter](https://github.com/LeStarch/fprime-python-component-cookiecutter). `fprime-util new --from-source https://github.com/LeStarch/fprime-python-component-cookiecutter` 
+> An fprime component cookiecutter for `fprime-python` components is available: [https://github.com/LeStarch/fprime-python-component-cookiecutter](https://github.com/LeStarch/fprime-python-component-cookiecutter). `fprime-util new --from-source https://github.com/LeStarch/fprime-python-component-cookiecutter` 
 
 ## Implementation
 
