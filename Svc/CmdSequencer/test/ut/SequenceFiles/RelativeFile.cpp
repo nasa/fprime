@@ -26,7 +26,7 @@ RelativeFile ::RelativeFile(const U32 a_n, const Format::t a_format) : File(a_fo
     this->setName(s.toChar());
 }
 
-void RelativeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void RelativeFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordDataSize = this->n * FPrime::Records::STANDARD_SIZE;
     const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
@@ -46,7 +46,7 @@ void RelativeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::CRCs::serialize(buffer);
 }
 
-void RelativeFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void RelativeFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

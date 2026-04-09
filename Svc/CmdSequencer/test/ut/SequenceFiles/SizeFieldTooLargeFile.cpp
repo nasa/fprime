@@ -20,7 +20,7 @@ namespace SequenceFiles {
 SizeFieldTooLargeFile ::SizeFieldTooLargeFile(const U32 a_bufferSize, const Format::t a_format)
     : File("size_field_too_large", a_format), bufferSize(a_bufferSize) {}
 
-void SizeFieldTooLargeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void SizeFieldTooLargeFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordSize = sizeof(U8) +   // Descriptor
                            sizeof(U32) +  // Seconds

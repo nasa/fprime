@@ -22,7 +22,7 @@ namespace SequenceFiles {
 TooLargeFile ::TooLargeFile(const U32 a_bufferSize, const Format::t a_format)
     : File("too_large", a_format), bufferSize(a_bufferSize) {}
 
-void TooLargeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void TooLargeFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 dataSize = this->getDataSize();
     const U32 numRecords = 16;
@@ -31,7 +31,7 @@ void TooLargeFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::Headers::serialize(dataSize, numRecords, timeBase, timeContext, buffer);
 }
 
-void TooLargeFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void TooLargeFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Data

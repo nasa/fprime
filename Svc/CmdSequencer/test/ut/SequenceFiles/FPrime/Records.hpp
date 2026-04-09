@@ -46,21 +46,21 @@ enum Constants {
 void serialize(Records::Descriptor desc,                //!< Descriptor
                const Fw::Time& time,                    //!< Time
                const Fw::ComBuffer& opcodeAndArgument,  //!< Serialized opcode and argument
-               Fw::SerializeBufferBase& destBuffer      //!< Destination buffer
+               Fw::LinearBufferBase& destBuffer         //!< Destination buffer
 );
 
 //! Serialize a record with an opcode and one U32 argument
-void serialize(Descriptor desc,                     //!< Descriptor
-               const Fw::Time& time,                //!< Time
-               const FwOpcodeType opcode,           //!< Opcode
-               const U32 argument,                  //!< Argument
-               Fw::SerializeBufferBase& destBuffer  //!< Destination buffer
+void serialize(Descriptor desc,                  //!< Descriptor
+               const Fw::Time& time,             //!< Time
+               const FwOpcodeType opcode,        //!< Opcode
+               const U32 argument,               //!< Argument
+               Fw::LinearBufferBase& destBuffer  //!< Destination buffer
 );
 
 //! Serialize a record with empty opcode and argument
-void serialize(Descriptor desc,                     //!< Descriptor
-               const Fw::Time& time,                //!< Time
-               Fw::SerializeBufferBase& destBuffer  //!< Destination buffer
+void serialize(Descriptor desc,                  //!< Descriptor
+               const Fw::Time& time,             //!< Time
+               Fw::LinearBufferBase& destBuffer  //!< Destination buffer
 );
 
 }  // namespace Records

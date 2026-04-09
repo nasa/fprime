@@ -122,8 +122,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
-                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void from_serialOut_handler(FwIndexType portNum,         /*!< The port number*/
+                                Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
     );
 
   private:
@@ -131,7 +131,7 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void send_random_buffer(U32 port);
 
-    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::LinearBufferBase& buffer, U32 max_size);
 
     void test_command_dispatch();
 

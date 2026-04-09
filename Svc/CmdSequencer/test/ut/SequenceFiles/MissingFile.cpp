@@ -18,7 +18,7 @@ namespace SequenceFiles {
 
 MissingFile ::MissingFile(const Format::t a_format) : File("missing", a_format) {}
 
-void MissingFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void MissingFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // CRC
     AMPCS::CRCs::createFile(buffer, this->getName().toChar());
 }

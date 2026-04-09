@@ -20,7 +20,7 @@ namespace SequenceFiles {
 
 MissingCRCFile ::MissingCRCFile(const Format::t a_format) : File("invalid_record", a_format) {}
 
-void MissingCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void MissingCRCFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U8 data = 1;
     const U32 numRecords = 1;
@@ -31,7 +31,7 @@ void MissingCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(data));
 }
 
-void MissingCRCFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void MissingCRCFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

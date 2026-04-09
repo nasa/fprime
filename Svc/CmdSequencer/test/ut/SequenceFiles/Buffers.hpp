@@ -21,7 +21,7 @@ namespace SequenceFiles {
 namespace Buffers {
 
 //! A file buffer
-class FileBuffer : public Fw::SerializeBufferBase {
+class FileBuffer : public Fw::LinearBufferBase {
   public:
     enum Constants { CAPACITY = 4096 };
 
@@ -38,8 +38,8 @@ class FileBuffer : public Fw::SerializeBufferBase {
 };
 
 //! Write a buffer to a file
-void write(const Fw::SerializeBufferBase& buffer,  //!< The buffer
-           const char* fileName                    //!< The file name
+void write(const Fw::LinearBufferBase& buffer,  //!< The buffer
+           const char* fileName                 //!< The file name
 );
 
 }  // namespace Buffers
