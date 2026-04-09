@@ -6,17 +6,17 @@ module Ccsds {
     enum FrameError: U8 {
         SP_INVALID_PACKET = 0
         SP_INVALID_LENGTH = 1
-        TC_INVALID_SCID = 1
-        TC_INVALID_LENGTH = 2
-        TC_INVALID_VCID = 3
-        TC_INVALID_CRC = 4
-        AOS_INVALID_SCID = 5      @< CCSDS 732.0-B-5: Spacecraft ID mismatch (4.1.2.2)
-        AOS_INVALID_LENGTH = 6    @< CCSDS 732.0-B-5: Frame length insufficient
-        AOS_INVALID_VCID = 7      @< CCSDS 732.0-B-5: Virtual Channel ID mismatch (4.1.2.3)
-        AOS_INVALID_CRC = 8       @< CCSDS 732.0-B-5: Frame Error Control Field CRC mismatch (4.1.6)
-        AOS_INVALID_VERSION = 9   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
-        AOS_INVALID_EPP = 10      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
-        AOS_VC_FRAME_COUNT_GAP = 11 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
+        TC_INVALID_SCID = 2
+        TC_INVALID_LENGTH = 3
+        TC_INVALID_VCID = 4
+        TC_INVALID_CRC = 5
+        AOS_INVALID_SCID = 6      @< CCSDS 732.0-B-5: Spacecraft ID mismatch (4.1.2.2)
+        AOS_INVALID_LENGTH = 7    @< CCSDS 732.0-B-5: Frame length insufficient
+        AOS_INVALID_VCID = 8      @< CCSDS 732.0-B-5: Virtual Channel ID mismatch (4.1.2.3)
+        AOS_INVALID_CRC = 9       @< CCSDS 732.0-B-5: Frame Error Control Field CRC mismatch (4.1.6)
+        AOS_INVALID_VERSION = 10   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
+        AOS_INVALID_EPP = 11      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
+        AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
     }
 
     # ------------------------------------------------
