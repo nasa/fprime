@@ -42,5 +42,5 @@ SVC-ROUTER-002 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacketT
 SVC-ROUTER-003 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacketType::FW_PACKET_FILE` to the `fileOut` output port. | Routing file packets | Unit test |
 SVC-ROUTER-004 | `Svc::FprimeRouter` shall route data that is neither `Fw::ComPacketType::FW_PACKET_COMMAND` nor `Fw::ComPacketType::FW_PACKET_FILE` to the `unknownDataOut` output port. | Allows for projects to provide custom routing for additional (project-specific) uplink data types | Unit test |
 SVC-ROUTER-005 | `Svc::FprimeRouter` shall emit warning events if serialization errors occur during processing of incoming packets | Aid in diagnosing uplink issues | Unit test |
-SVC-ROUTER-005 | `Svc::FprimeRouter` shall pass through buffers for `FW_PACKET_FILE` and unknown packet types without copying, and defer returning them to the deframer until they are returned via `fileBufferReturnIn` | Efficient memory management | Unit test |
-SVC-ROUTER-005 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
+SVC-ROUTER-006 | `Svc::FprimeRouter` shall pass through buffers for `FW_PACKET_FILE` and unknown packet types without copying, and defer returning them to the deframer until they are returned via `fileBufferReturnIn` | Efficient memory management | Unit test |
+SVC-ROUTER-007 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
