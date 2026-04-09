@@ -122,16 +122,6 @@ struct PushTimeDirective {
     _empty: U8
 }
 
-@ pops a bool off the stack, sets a flag with a specific index to that bool
-struct SetFlagDirective {
-    flagIdx: U8
-}
-
-@ gets a flag and pushes its value as a U8 to the stack
-struct GetFlagDirective {
-    flagIdx: U8
-}
-
 @ grabs a specified region from a struct, pushes it to the stack, removing
 @ the rest of the struct
 struct GetFieldDirective {
@@ -189,6 +179,12 @@ struct StoreAbsConstOffsetDirective {
     $size: Fpy.StackSizeType
 }
 
+@ pops a severity and message from the stack and emits an F Prime event
+struct PopEventDirective {
+    # pops StackSizeType message_size, then message_size bytes, then U8 severity off the stack
+    _empty: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -227,10 +223,6 @@ internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
 
-internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
-
-internal port directive_getFlag(directive: GetFlagDirective) priority 6 assert
-
 internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
 internal port directive_peek(directive: PeekDirective) priority 6 assert
@@ -246,3 +238,5 @@ internal port directive_loadAbs(directive: LoadAbsDirective) priority 6 assert
 internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
 
 internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert
+
+internal port directive_popEvent(directive: PopEventDirective) priority 6 assert

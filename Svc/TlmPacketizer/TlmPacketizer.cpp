@@ -417,6 +417,10 @@ void TlmPacketizer ::SEND_PKT_cmdHandler(const FwOpcodeType opCode,
                                          const U32 id,
                                          const Svc::TelemetrySection section) {
     FW_ASSERT(section.isValid());
+    if (section < 0 or section >= TelemetrySection::NUM_SECTIONS) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     FwChanIdType pkt = 0;
     for (pkt = 0; pkt < this->m_numPackets; pkt++) {
         if (this->m_fillBuffers[pkt].id == id) {
@@ -464,8 +468,7 @@ void TlmPacketizer ::ENABLE_GROUP_cmdHandler(FwOpcodeType opCode,
                                              Fw::Enabled enable) {
     FW_ASSERT(section.isValid());
     FW_ASSERT(enable.isValid());
-    if ((0 <= section and section >= TelemetrySection::NUM_SECTIONS) or
-        tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
+    if (section < 0 or section >= TelemetrySection::NUM_SECTIONS or tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }

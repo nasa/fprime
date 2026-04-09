@@ -273,6 +273,15 @@ class Receiver final : public ReceiverComponentBase {
                                                FormalParamStruct& sRef      //!< A struct ref
                                                ) override;
 
+    // ----------------------------------------------------------------------
+    // Handlers to implement for serial input ports
+    // ----------------------------------------------------------------------
+
+    //! Handler for input port serialIn
+    void serialIn_handler(FwIndexType portNum,          //!< The port number
+                          Fw::LinearBufferBase& buffer  //!< The serialization buffer
+                          ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Overflow hook implementations for typed input ports

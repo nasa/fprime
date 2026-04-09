@@ -29,7 +29,7 @@ ActiveRateGroup::ActiveRateGroup(const char* compName)
       m_overrunThrottle(0),
       m_cycleSlips(0) {}
 
-void ActiveRateGroup::configure(U32 contexts[], FwIndexType numContexts) {
+void ActiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
     FW_ASSERT(contexts);
     FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
               static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
