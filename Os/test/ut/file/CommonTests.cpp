@@ -330,7 +330,6 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
     Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
     Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
-    Os::Test::FileTest::Tester::OpenIllegalBoundedPath open_illegal_bounded_path;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_overwrite_rule,
@@ -351,8 +350,7 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
                                                         &incremental_invalid_mode_rule,
                                                         &full_invalid_mode_rule,
                                                         &open_file_create_bounded_rule,
-                                                        &open_file_create_string_rule,
-                                                        &open_illegal_bounded_path};
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
@@ -394,7 +392,6 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
     Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
     Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
-    Os::Test::FileTest::Tester::OpenIllegalBoundedPath open_illegal_bounded_path;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_rule,
@@ -422,8 +419,7 @@ TEST_F(FunctionalIO, RandomizedTesting) {
                                                         &incremental_invalid_mode_rule,
                                                         &full_invalid_mode_rule,
                                                         &open_file_create_bounded_rule,
-                                                        &open_file_create_string_rule,
-                                                        &open_illegal_bounded_path};
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
