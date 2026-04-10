@@ -33,7 +33,7 @@ module Cfdp {
         output port dataOut: [NumChannels] Fw.BufferSend
 
         @ Buffer that was sent via the dataOut port and is now being returned
-        async input port dataReturnIn: [NumChannels] Svc.ComDataWithContext
+        async input port dataReturnIn: [NumChannels] Fw.BufferSend
 
         @ Port for allocating buffers to hold PDU data
         output port bufferAllocate: [NumChannels] Fw.BufferGet

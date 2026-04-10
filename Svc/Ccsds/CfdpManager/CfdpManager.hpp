@@ -233,8 +233,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Handler for input port dataReturnIn
     void dataReturnIn_handler(
             FwIndexType portNum, //!< The port number
-            Fw::Buffer& data,
-            const ComCfg::FrameContext& context
+            Fw::Buffer& fwBuffer
     ) override;
 
     //! Handler for input port dataIn

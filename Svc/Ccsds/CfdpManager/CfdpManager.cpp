@@ -60,12 +60,12 @@ void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
     this->tlmWrite_ChannelTelemetry(this->m_channelTelemetry);
 }
 
-void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
+void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 {
     // dataReturnIn is the allocated buffer coming back from the dataOut call
     // Port mapping is the same from bufferAllocate -> dataOut -> dataReturnIn -> bufferDeallocate
     FW_ASSERT(portNum < Cfdp::NumChannels, portNum, Cfdp::NumChannels);
-    this->bufferDeallocate_out(portNum, data);
+    this->bufferDeallocate_out(portNum, fwBuffer);
 }
 
 void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
@@ -236,7 +236,31 @@ void CfdpManager ::sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
     // There is a direct mapping between channel index and port number
     portNum = static_cast<FwIndexType>(channel.getChannelId());
 
-    // Full send
+    // ComQueue expects buffers to start with a 2-byte packet descriptor (APID)
+    // Prepend FW_PACKET_FILE descriptor to the CFDP PDU
+
+    U8* bufferData = pduBuffer.getData();
+    const FwSizeType pduSize = pduBuffer.getSize();
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const FwSizeType totalSize = descriptorSize + pduSize;
+
+    // Safety check: ensure size won't overflow
+    FW_ASSERT_NO_OVERFLOW(pduSize, size_t);
+
+    // Shift PDU data forward to make room for descriptor
+    // Use memmove (not memcpy) since source and destination overlap
+    memmove(bufferData + descriptorSize, bufferData, static_cast<size_t>(pduSize));
+
+    // Write FW_PACKET_FILE descriptor at the beginning (big-endian U16)
+    const FwPacketDescriptorType descriptor =
+        static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);  // High byte
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);         // Low byte
+
+    // Update buffer size to include descriptor
+    pduBuffer.setSize(totalSize);
+
+    // Send buffer with descriptor
     this->dataOut_out(portNum, pduBuffer);
 }
 
