@@ -22,11 +22,13 @@ extern "C" {
 // ----------------------------------------------------------------------
 
 // Enable strict assertions
-#define FW_STRICT_ASSERTIONS 1
+#ifndef FW_STRICT_ASSERTIONS
+#define FW_STRICT_ASSERTIONS (1)  //!< Indicates whether strict assertions are used (more checking, more instructions)
+#endif
 
-// Direct port calls (TODO)
+// Enable direct port calls
 #ifndef FW_DIRECT_PORT_CALLS
-#define FW_DIRECT_PORT_CALLS 0
+#define FW_DIRECT_PORT_CALLS (0)  //!< Indicates whether direct port calls are used (saves space and time)
 #endif
 
 // Allow objects to have names. Allocates storage for each instance
