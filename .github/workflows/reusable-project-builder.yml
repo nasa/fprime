@@ -48,8 +48,10 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
+      - name: "Set verbose flag"
+        run: echo "VERBOSE_FLAG=${{ runner.debug == '1' && '--verbose' || '' }}" >> $GITHUB_ENV
+        shell: bash
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -83,8 +85,10 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
+      - name: "Set verbose flag"
+        run: echo "VERBOSE_FLAG=${{ runner.debug == '1' && '--verbose' || '' }}" >> $GITHUB_ENV
+        shell: bash
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
