@@ -386,9 +386,8 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
 
     // Handle special First Header Pointer values (Section 4.1.4.2.2.4)
     if (firstHeaderPointer == M_PDUSubfields::FHP_IDLE_DATA_ONLY) {
-        // Frame contains only idle data - abandon any in-progress spanning packet
+        // Frame contains only idle data
         this->log_ACTIVITY_LO_IdleFrame(vc.virtualChannelId);
-        this->abandonSpanningPacket(vc);
         return;
     }
     // Handle continuation data (data before First Header Pointer)
