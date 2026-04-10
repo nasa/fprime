@@ -131,7 +131,7 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void send_random_buffer(U32 port);
 
-    void random_fill(Fw::LinearBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
 
     void test_command_dispatch();
 

@@ -23,7 +23,7 @@ void serialize(U32 dataSize,
                U32 numRecords,
                FwTimeBaseStoreType timeBase,
                FwTimeContextStoreType timeContext,
-               Fw::LinearBufferBase& destBuffer) {
+               Fw::SerialBufferBase& destBuffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(dataSize));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(numRecords));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serializeFrom(timeBase));
