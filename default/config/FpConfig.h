@@ -28,7 +28,11 @@ extern "C" {
 
 // Enable direct port calls
 #ifndef FW_DIRECT_PORT_CALLS
-#define FW_DIRECT_PORT_CALLS (0)  //!< Indicates whether direct port calls are used (saves space and time)
+#ifdef BUILD_UT
+#define FW_DIRECT_PORT_CALLS (0)  //!< Indirect port calls are required for unit tests
+#else
+#define FW_DIRECT_PORT_CALLS (1)  //!< Indicates whether direct port calls are used (saves space and time)
+#endif
 #endif
 
 // Allow objects to have names. Allocates storage for each instance
