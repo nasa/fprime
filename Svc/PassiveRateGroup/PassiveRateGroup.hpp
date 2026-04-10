@@ -46,7 +46,7 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
-    void configure(U32 contexts[], FwIndexType numContexts);
+    void configure(const U32 contexts[], const FwIndexType numContexts);
 
     //!  \brief PassiveRateGroupImpl destructor
     //!

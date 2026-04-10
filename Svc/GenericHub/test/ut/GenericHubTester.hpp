@@ -143,6 +143,8 @@ class GenericHubTester : public GenericHubGTestBase {
                                  const U8* payload,
                                  FwBuffSizeType payloadSize);
 
+    void assert_no_outputs_sent();
+
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------

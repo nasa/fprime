@@ -206,75 +206,54 @@ void GenericHubTester ::send_from_driver_packet(U32 type,
     this->invoke_to_fromBufferDriver(0, buffer);
 }
 
+void GenericHubTester ::assert_no_outputs_sent() {
+    ASSERT_EQ(m_comm_out, 0U);
+    ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_eventOut_SIZE(0);
+    ASSERT_from_tlmOut_SIZE(0);
+    ASSERT_from_cmdDispOut_SIZE(0);
+    ASSERT_from_cmdRespOut_SIZE(0);
+}
+
 void GenericHubTester ::test_invalid_deserialization_paths() {
     // Header too short to deserialize
     clearFromPortHistory();
     Fw::Buffer shortBuffer(m_data_for_allocation, sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType) - 1);
     this->invoke_to_fromBufferDriver(0, shortBuffer);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Invalid type should be dropped
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_MAX), 0, 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Declared payload size mismatch should be dropped
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_PORT), 0, 1, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Invalid serialOut destination port should not invoke output
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_PORT),
                                   this->componentOut.getNum_serialOut_OutputPorts(), 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Invalid bufferOut destination port should return the buffer
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_BUFFER),
                                   this->componentOut.getNum_bufferOut_OutputPorts(), 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Command dispatch path: raw payload too small to include context
     clearFromPortHistory();
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP), 0, 0, nullptr, 0);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     // Command dispatch path: raw payload larger than ComBuffer supports
     clearFromPortHistory();
@@ -283,12 +262,7 @@ void GenericHubTester ::test_invalid_deserialization_paths() {
     this->send_from_driver_packet(static_cast<U32>(GenericHub::HUB_TYPE_CMD_DISP), 0, tooLargeCmdSize, m_data_store,
                                   tooLargeCmdSize);
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_EQ(m_comm_out, 0U);
-    ASSERT_from_bufferOut_SIZE(0);
-    ASSERT_from_eventOut_SIZE(0);
-    ASSERT_from_tlmOut_SIZE(0);
-    ASSERT_from_cmdDispOut_SIZE(0);
-    ASSERT_from_cmdRespOut_SIZE(0);
+    this->assert_no_outputs_sent();
 
     clearFromPortHistory();
 }
