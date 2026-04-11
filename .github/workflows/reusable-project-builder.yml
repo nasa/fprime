@@ -48,7 +48,6 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -68,11 +67,21 @@ jobs:
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
           fprime-util generate ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Build"
         working-directory: ${{ inputs.build_location }}
         run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
           fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
 
@@ -83,7 +92,6 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      VERBOSE_FLAG: ${{ runner.debug == '1' && '--verbose' || '' }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -103,16 +111,31 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
           fprime-util generate --ut ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Build UTs"
         working-directory: ${{ inputs.build_location }}
         run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
           fprime-util build --ut -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
           fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
 
