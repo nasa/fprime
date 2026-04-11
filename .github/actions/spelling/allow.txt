@@ -1,5 +1,6 @@
 AUTOGEN
 atype
+deinit
 github
 https
 ssh
