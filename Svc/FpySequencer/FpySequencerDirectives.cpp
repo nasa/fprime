@@ -1323,7 +1323,7 @@ Signal FpySequencer::setSeed_directiveHandler(const FpySequencer_SetSeedDirectiv
 }
 
 Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error) {
-    if (Fpy::MAX_STACK_SIZE - sizeof(U8) < this->m_runtime.stack.size) {
+    if (Fpy::MAX_STACK_SIZE - sizeof(U32) < this->m_runtime.stack.size) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1338,8 +1338,8 @@ Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirect
         this->m_rngSeeded = true;
     }
 
-    U8 randVal = static_cast<U8>(this->m_rng());
-    this->m_runtime.stack.push(&randVal, static_cast<Fpy::StackSizeType>(sizeof(randVal)));
+    U32 randVal = static_cast<U32>(this->m_rng());
+    this->m_runtime.stack.push(randVal);
     return Signal::stmtResponse_success;
 }
 

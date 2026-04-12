@@ -1477,20 +1477,20 @@ TEST_F(FpySequencerTester, pushRand) {
 
     tester_get_m_runtime_ptr()->stack.size = 0;
     Signal result = tester_pushRand_directiveHandler(directive, err);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, sizeof(U8));
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, sizeof(U32));
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
 
     // make sure subsequent calls advance the existing RNG instead of reseeding on new time
     setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 99, 999, 999));
     result = tester_pushRand_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
 
     // check almost overflow
-    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U8);
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U32);
     result = tester_pushRand_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
@@ -1521,7 +1521,7 @@ TEST_F(FpySequencerTester, setSeed) {
     result = tester_pushRand_directiveHandler(FpySequencer_PushRandDirective(), err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
 
     // underflow
     result = tester_setSeed_directiveHandler(directive, err);
@@ -4204,9 +4204,9 @@ TEST_F(FpySequencerTester, IntegrationPushTime) {
 
 TEST_F(FpySequencerTester, IntegrationPushRand) {
     allocMem();
-    // Sequence: PUSH_RAND, DISCARD(1)
+    // Sequence: PUSH_RAND, DISCARD(sizeof(U32))
     add_PUSH_RAND();
-    add_DISCARD(sizeof(U8));
+    add_DISCARD(sizeof(U32));
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -4215,11 +4215,11 @@ TEST_F(FpySequencerTester, IntegrationPushRand) {
 
 TEST_F(FpySequencerTester, IntegrationSetSeedPushRand) {
     allocMem();
-    // Sequence: PUSH_VAL(seed), SET_SEED, PUSH_RAND, DISCARD(1)
+    // Sequence: PUSH_VAL(seed), SET_SEED, PUSH_RAND, DISCARD(sizeof(U32))
     add_PUSH_VAL<U32>(123456789U);
     add_SET_SEED();
     add_PUSH_RAND();
-    add_DISCARD(sizeof(U8));
+    add_DISCARD(sizeof(U32));
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
