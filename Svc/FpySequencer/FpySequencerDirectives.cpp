@@ -3,7 +3,6 @@
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-#include <random>
 
 namespace Svc {
 
@@ -1310,7 +1309,17 @@ Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirect
         return Signal::stmtResponse_failure;
     }
 
-    U8 randVal = 1;
+    if (!this->m_rngSeeded) {
+        Fw::Time currentTime = this->getTime();
+        std::seed_seq seedSeq{static_cast<U32>(currentTime.getTimeBase()),
+                              static_cast<U32>(currentTime.getContext()),
+                              currentTime.getSeconds(),
+                              currentTime.getUSeconds()};
+        this->m_rng.seed(seedSeq);
+        this->m_rngSeeded = true;
+    }
+
+    U8 randVal = static_cast<U8>(this->m_rng());
     this->m_runtime.stack.push(&randVal, static_cast<Fpy::StackSizeType>(sizeof(randVal)));
     return Signal::stmtResponse_success;
 }
