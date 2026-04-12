@@ -1107,3 +1107,14 @@ Stores a value to an absolute address in the stack (used for global variables), 
 | value         | bytes    | stack      | The value to store (popped from stack top). |
 
 **Requirement:**  FPY-SEQ-009
+
+## SET_SEED (77)
+
+
+## PUSH_RAND (78)
+Pushes the next RNG value to the stack.
+If this is called without seed being set beforehand it will be automatically done based on current time.
+This function is not cryptographically secure. 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| U8 | Stubbed RNG value, currently always `1` |

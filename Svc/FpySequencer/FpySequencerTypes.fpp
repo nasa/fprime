@@ -118,6 +118,7 @@ module Svc {
             LOAD_ABS = 74
             STORE_ABS = 75
             STORE_ABS_CONST_OFFSET = 76
+            PUSH_RAND = 78
         }
 
         enum DirectiveErrorCode : U8 {

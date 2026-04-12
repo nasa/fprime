@@ -122,6 +122,11 @@ struct PushTimeDirective {
     _empty: U8
 }
 
+@ pushes the next RNG value to the stack
+struct PushRandDirective {
+    _empty: U8
+}
+
 @ pops a bool off the stack, sets a flag with a specific index to that bool
 struct SetFlagDirective {
     flagIdx: U8
@@ -226,6 +231,8 @@ internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
 internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
+
+internal port directive_pushRand(directive: PushRandDirective) priority 6 assert
 
 internal port directive_setFlag(directive: SetFlagDirective) priority 6 assert
 

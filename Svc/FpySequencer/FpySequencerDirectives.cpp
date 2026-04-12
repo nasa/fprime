@@ -3,6 +3,7 @@
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include <random>
 
 namespace Svc {
 
@@ -206,6 +207,13 @@ void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySeq
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushTime_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TIME, error);
+}
+
+//! Internal interface handler for directive_pushRand
+void FpySequencer::directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushRand_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_RAND, error);
 }
 
 //! Internal interface handler for directive_setFlag
@@ -1293,6 +1301,17 @@ Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirect
 
     // push time to end of stack
     this->m_runtime.stack.push(timeEsb.getBuffAddr(), static_cast<Fpy::StackSizeType>(timeEsb.getSize()));
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error) {
+    if (Fpy::MAX_STACK_SIZE - sizeof(U8) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    U8 randVal = 1;
+    this->m_runtime.stack.push(&randVal, static_cast<Fpy::StackSizeType>(sizeof(randVal)));
     return Signal::stmtResponse_success;
 }
 

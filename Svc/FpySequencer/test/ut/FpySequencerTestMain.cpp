@@ -1463,6 +1463,30 @@ TEST_F(FpySequencerTester, pushTime) {
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 }
 
+TEST_F(FpySequencerTester, pushRand) {
+    FpySequencer_PushRandDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    Signal result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, sizeof(U8));
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 1);
+
+    // check almost overflow
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U8);
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // check overflow
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
 TEST_F(FpySequencerTester, getField) {
     FpySequencer_GetFieldDirective directive(4, 2);  // parent size 3, member size 2
     tester_push<U8>(123);
@@ -4130,6 +4154,17 @@ TEST_F(FpySequencerTester, IntegrationPushTime) {
     // Sequence: PUSH_TIME, DISCARD(Fw::Time::SERIALIZED_SIZE)
     add_PUSH_TIME();
     add_DISCARD(static_cast<Fpy::StackSizeType>(Fw::Time::SERIALIZED_SIZE));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationPushRand) {
+    allocMem();
+    // Sequence: PUSH_RAND, DISCARD(1)
+    add_PUSH_RAND();
+    add_DISCARD(sizeof(U8));
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
