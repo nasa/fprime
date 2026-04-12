@@ -1109,6 +1109,15 @@ Stores a value to an absolute address in the stack (used for global variables), 
 **Requirement:**  FPY-SEQ-009
 
 ## SET_SEED (77)
+Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal RNG.
+
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| seed     | U32      | stack  | Seed value used to initialize the RNG |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
 
 
 ## PUSH_RAND (78)
