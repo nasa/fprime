@@ -45,7 +45,7 @@ pydantic==2.12.5
 pydantic_core==2.41.5
 Pygments==2.20.0
 pyserial==3.5
-pytest==8.3.3
+pytest==9.0.3
 python-dateutil==2.9.0.post0
 python-slugify==8.0.4
 pytz==2024.2
