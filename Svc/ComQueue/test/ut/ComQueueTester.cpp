@@ -916,6 +916,115 @@ void ComQueueTester::testBufferQueueDropOldestReturnsOwnership() {
     component.cleanup();
 }
 
+void ComQueueTester::testComQueueDropOldestNoBufferReturn() {
+    // Verify that COM queue with DROP_OLDEST does NOT trigger bufferReturnOut
+    // (only buffer queues return ownership). This exercises the nullptr discarded path.
+    ComQueue::QueueConfigurationTable configurationTable;
+
+    // Configure first COM queue with DROP_OLDEST and depth 2
+    configurationTable.entries[0].priority = 0;
+    configurationTable.entries[0].depth = 2;
+    configurationTable.entries[0].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[0].overflowMode = Types::QUEUE_DROP_OLDEST;
+
+    // Configure other queues with minimal settings
+    for (FwIndexType i = 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 1;
+    }
+
+    component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data1[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data2[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data3[BUFFER_LENGTH] = BUFFER_DATA;
+    data1[BUFFER_DATA_OFFSET] = 1;
+    data2[BUFFER_DATA_OFFSET] = 2;
+    data3[BUFFER_DATA_OFFSET] = 3;
+
+    Fw::ComBuffer comBuffer1(&data1[0], sizeof(data1));
+    Fw::ComBuffer comBuffer2(&data2[0], sizeof(data2));
+    Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
+
+    // Fill queue and overflow
+    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    dispatchAll();
+
+    // bufferReturnOut should NEVER be called for COM queues
+    ASSERT_from_bufferReturnOut_SIZE(0);
+
+    // Overflow event
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::COM_QUEUE, 0);
+
+    // Dequeue: oldest (1) was dropped, so we get 2 then 3
+    emitOneAndCheck(0, data2, BUFFER_LENGTH);
+    emitOneAndCheck(1, data3, BUFFER_LENGTH);
+    ASSERT_from_dataOut_SIZE(2);
+
+    component.cleanup();
+}
+
+void ComQueueTester::testBufferQueueFlushAfterDropOldest() {
+    // Verify that flushing a buffer queue after DROP_OLDEST overflow correctly
+    // deserializes and returns all remaining Fw::Buffers.
+    ComQueue::QueueConfigurationTable configurationTable;
+
+    // Configure all COM queues with priority 1, minimal depth
+    for (FwIndexType i = 0; i < ComQueue::COM_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = 1;
+        configurationTable.entries[i].depth = 1;
+    }
+
+    // Configure first BUFFER queue with DROP_OLDEST and depth 2
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].priority = 0;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].depth = 2;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_OLDEST;
+
+    // Configure remaining buffer queues
+    for (FwIndexType i = ComQueue::COM_PORT_COUNT + 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 1;
+    }
+
+    component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data1[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data2[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data3[BUFFER_LENGTH] = BUFFER_DATA;
+    data1[BUFFER_DATA_OFFSET] = 1;
+    data2[BUFFER_DATA_OFFSET] = 2;
+    data3[BUFFER_DATA_OFFSET] = 3;
+
+    Fw::Buffer buffer1(&data1[0], sizeof(data1));
+    Fw::Buffer buffer2(&data2[0], sizeof(data2));
+    Fw::Buffer buffer3(&data3[0], sizeof(data3));
+
+    // Fill buffer queue and cause one overflow (drops buffer1)
+    invoke_to_bufferQueueIn(0, buffer1);
+    invoke_to_bufferQueueIn(0, buffer2);
+    invoke_to_bufferQueueIn(0, buffer3);
+    dispatchAll();
+
+    // buffer1 was returned on overflow
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer1);
+
+    // Now flush the buffer queue — buffer2 and buffer3 should be drained and returned
+    this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, 0);
+    this->component.doDispatch();
+
+    // buffer1 (overflow) + buffer2, buffer3 (flush) = 3 total returns
+    ASSERT_from_bufferReturnOut_SIZE(3);
+    ASSERT_from_bufferReturnOut(1, buffer2);
+    ASSERT_from_bufferReturnOut(2, buffer3);
+
+    component.cleanup();
+}
+
 void ComQueueTester::testSetQueuePriorityCommand() {
     // Configure the component
     configure();

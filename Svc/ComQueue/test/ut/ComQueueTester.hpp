@@ -99,6 +99,10 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testBufferQueueDropOldestReturnsOwnership();
 
+    void testComQueueDropOldestNoBufferReturn();
+
+    void testBufferQueueFlushAfterDropOldest();
+
     void testSetQueuePriorityCommand();
 
     void testSetQueuePriorityInvalidIndex();

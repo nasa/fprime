@@ -95,7 +95,9 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 entry.index = entryIndex;
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
-                entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
+                // ComBuffer queues store the raw object; buffer queues store the serialized form
+                // (pointer, size, context) via serializeTo/deserializeFrom.
+                entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
                 // Overflow checks
                 FW_ASSERT((std::numeric_limits<FwSizeType>::max() / entry.depth) >= entry.msgSize,
                           static_cast<FwAssertArgType>(entry.depth), static_cast<FwAssertArgType>(entry.msgSize));
@@ -225,8 +227,15 @@ void ComQueue::bufferQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBu
     // Ensure that the port number of bufferQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
+    // Serialize the Fw::Buffer into its portable form (pointer, size, context) before enqueuing.
+    // The queue stores this serialized representation rather than the raw object bytes, so that
+    // retrieval (dequeue or discard-on-overflow) can reconstruct the Fw::Buffer via deserializeFrom.
+    U8 serialized[Fw::Buffer::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer sb(serialized, sizeof(serialized));
+    Fw::SerializeStatus serStatus = fwBuffer.serializeTo(sb);
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(serStatus));
     bool success =
-        this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+        this->enqueue(queueNum, QueueType::BUFFER_QUEUE, serialized, Fw::Buffer::SERIALIZED_SIZE);
     if (!success) {
         this->bufferReturnOut_out(portNum, fwBuffer);
     }
@@ -308,7 +317,7 @@ void ComQueue::bufferQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuf
 bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8* data, const FwSizeType size) {
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
-    const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
+    const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
     FW_ASSERT((queueType == QueueType::COM_QUEUE) || (queueNum >= COM_PORT_COUNT),
               static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
     const FwIndexType portNum =
@@ -316,10 +325,14 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
 
-    // For buffer queues, capture any discarded buffer so we can return ownership
-    Fw::Buffer droppedBuffer;
-    U8* discardedPtr = (queueType == QueueType::BUFFER_QUEUE) ? reinterpret_cast<U8*>(&droppedBuffer) : nullptr;
-    Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size, discardedPtr);
+    // For buffer queues, capture any discarded (oldest) entry so we can return buffer ownership.
+    // We use a raw U8 array of SERIALIZED_SIZE because the queue stores the serialized form of
+    // Fw::Buffer (pointer, size, context) — not the C++ object itself.  After retrieval we
+    // reconstruct the Fw::Buffer via deserializeFrom.
+    U8 discardedData[Fw::Buffer::SERIALIZED_SIZE];
+    U8* discardedPtr = (queueType == QueueType::BUFFER_QUEUE) ? discardedData : nullptr;
+    const FwSizeType discardedSize = (discardedPtr != nullptr) ? static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE) : 0;
+    Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size, discardedPtr, discardedSize);
 
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
@@ -328,8 +341,15 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         }
     }
 
-    // Return ownership of the dropped buffer when DROP_OLDEST discards an Fw::Buffer
+    // Return ownership of the dropped buffer when DROP_OLDEST discards an Fw::Buffer.
+    // The discarded bytes are the serialized Fw::Buffer; deserialize to recover the object.
     if (status == Fw::FW_SERIALIZE_DISCARDED_EXISTING && queueType == QueueType::BUFFER_QUEUE) {
+        Fw::Buffer droppedBuffer;
+        Fw::ExternalSerializeBuffer deserializer(discardedData, Fw::Buffer::SERIALIZED_SIZE);
+        Fw::SerializeStatus setStatus = deserializer.setBuffLen(Fw::Buffer::SERIALIZED_SIZE);
+        FW_ASSERT(setStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
+        Fw::SerializeStatus deserStatus = droppedBuffer.deserializeFrom(deserializer);
+        FW_ASSERT(deserStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(deserStatus));
         this->bufferReturnOut_out(portNum, droppedBuffer);
     }
 
@@ -392,10 +412,16 @@ void ComQueue::drainQueue(FwIndexType index) {
             Fw::ComBuffer comBuffer;
             status = queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
         } else {
-            // For buffer queues, if the buffer requires ownership return, return it via the bufferReturnOut port
-            // Dequeueing is reading the whole persisted Fw::Buffer object from the queue's storage.
+            // For buffer queues, dequeue the serialized Fw::Buffer and deserialize to recover the object
+            // so we can return ownership via bufferReturnOut.
+            U8 serialized[Fw::Buffer::SERIALIZED_SIZE];
+            status = queue.dequeue(serialized, Fw::Buffer::SERIALIZED_SIZE);
             Fw::Buffer buffer;
-            status = queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
+            Fw::ExternalSerializeBuffer deserializer(serialized, sizeof(serialized));
+            Fw::SerializeStatus setStatus = deserializer.setBuffLen(Fw::Buffer::SERIALIZED_SIZE);
+            FW_ASSERT(setStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
+            Fw::SerializeStatus deserStatus = buffer.deserializeFrom(deserializer);
+            FW_ASSERT(deserStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(deserStatus));
             this->bufferReturnOut_out(static_cast<FwIndexType>(index - COM_PORT_COUNT), buffer);
         }
     }
@@ -429,10 +455,17 @@ void ComQueue::processQueue() {
                       static_cast<FwAssertArgType>(dequeue_status));
             this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
-            Fw::Buffer buffer;
-            auto dequeue_status = queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
+            // Dequeue the serialized Fw::Buffer and deserialize to recover the object for sending.
+            U8 serialized[Fw::Buffer::SERIALIZED_SIZE];
+            auto dequeue_status = queue.dequeue(serialized, Fw::Buffer::SERIALIZED_SIZE);
             FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
                       static_cast<FwAssertArgType>(dequeue_status));
+            Fw::Buffer buffer;
+            Fw::ExternalSerializeBuffer deserializer(serialized, sizeof(serialized));
+            Fw::SerializeStatus setStatus = deserializer.setBuffLen(Fw::Buffer::SERIALIZED_SIZE);
+            FW_ASSERT(setStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
+            Fw::SerializeStatus deserStatus = buffer.deserializeFrom(deserializer);
+            FW_ASSERT(deserStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(deserStatus));
             this->sendBuffer(buffer, entry.index);
         }
 

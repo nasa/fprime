@@ -33,7 +33,7 @@ void Queue::setup(U8* const storage,
     m_overflow_mode = overflow_mode;
 }
 
-Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType size, U8* discarded) {
+Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType size, U8* discarded, FwSizeType discarded_size) {
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));  // Ensure initialization
     FW_ASSERT(m_message_size == size, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(m_message_size));  // Message size is as expected
@@ -44,6 +44,8 @@ Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType siz
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && m_overflow_mode == QUEUE_DROP_OLDEST) {
         // Capture the oldest message before discarding, if caller provided a buffer
         if (discarded != nullptr) {
+            FW_ASSERT(discarded_size >= m_message_size, static_cast<FwAssertArgType>(discarded_size),
+                      static_cast<FwAssertArgType>(m_message_size));
             Fw::SerializeStatus peek_status = m_internal.peek(discarded, m_message_size, 0);
             FW_ASSERT(peek_status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(peek_status));
         }

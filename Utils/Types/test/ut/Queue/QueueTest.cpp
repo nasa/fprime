@@ -221,6 +221,122 @@ TEST_F(QueueTest, AlternatingLIFO) {
     EXPECT_EQ(1, dequeueValue(queue));
 }
 
+// Test DROP_OLDEST with discarded output captures the dropped message
+TEST_F(QueueTest, DropOldestDiscardedOutput) {
+    U8 storage[BUFFER_SIZE];
+    Types::Queue queue;
+    queue.setup(storage, BUFFER_SIZE, QUEUE_DEPTH, MSG_SIZE, Types::QUEUE_FIFO, Types::QUEUE_DROP_OLDEST);
+
+    // Fill the queue with values 1..5
+    for (U32 i = 1; i <= 5; i++) {
+        enqueueValue(queue, i);
+    }
+
+    // Enqueue 99 with discarded output — should capture dropped value 1
+    U32 newValue = 99;
+    U32 discarded = 0;
+    Fw::SerializeStatus status = queue.enqueue(
+        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
+    EXPECT_EQ(1u, discarded);
+
+    // Enqueue 100 — should capture dropped value 2
+    newValue = 100;
+    discarded = 0;
+    status = queue.enqueue(
+        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
+    EXPECT_EQ(2u, discarded);
+
+    // Remaining queue should be: 3, 4, 5, 99, 100
+    EXPECT_EQ(3u, dequeueValue(queue));
+    EXPECT_EQ(4u, dequeueValue(queue));
+    EXPECT_EQ(5u, dequeueValue(queue));
+    EXPECT_EQ(99u, dequeueValue(queue));
+    EXPECT_EQ(100u, dequeueValue(queue));
+}
+
+// Test DROP_OLDEST with nullptr discarded still works (backward compat)
+TEST_F(QueueTest, DropOldestNullDiscarded) {
+    U8 storage[BUFFER_SIZE];
+    Types::Queue queue;
+    queue.setup(storage, BUFFER_SIZE, QUEUE_DEPTH, MSG_SIZE, Types::QUEUE_FIFO, Types::QUEUE_DROP_OLDEST);
+
+    // Fill the queue
+    for (U32 i = 1; i <= 5; i++) {
+        enqueueValue(queue, i);
+    }
+
+    // Enqueue with nullptr discarded — should still work
+    U32 newValue = 99;
+    Fw::SerializeStatus status = queue.enqueue(
+        reinterpret_cast<const U8*>(&newValue), MSG_SIZE, nullptr, 0);
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
+
+    // Queue should be: 2, 3, 4, 5, 99
+    EXPECT_EQ(2u, dequeueValue(queue));
+    EXPECT_EQ(3u, dequeueValue(queue));
+    EXPECT_EQ(4u, dequeueValue(queue));
+    EXPECT_EQ(5u, dequeueValue(queue));
+    EXPECT_EQ(99u, dequeueValue(queue));
+}
+
+// Test DROP_NEWEST does not use discarded output (no drop occurs, buffer untouched)
+TEST_F(QueueTest, DropNewestIgnoresDiscarded) {
+    U8 storage[BUFFER_SIZE];
+    Types::Queue queue;
+    queue.setup(storage, BUFFER_SIZE, QUEUE_DEPTH, MSG_SIZE, Types::QUEUE_FIFO, Types::QUEUE_DROP_NEWEST);
+
+    // Fill the queue
+    for (U32 i = 1; i <= 5; i++) {
+        enqueueValue(queue, i);
+    }
+
+    // Enqueue when full with DROP_NEWEST — should fail, discarded untouched
+    U32 newValue = 99;
+    U32 discarded = 42;
+    Fw::SerializeStatus status = queue.enqueue(
+        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    EXPECT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, status);
+    EXPECT_EQ(42u, discarded);  // Unchanged
+
+    // Original values still intact
+    for (U32 i = 1; i <= 5; i++) {
+        EXPECT_EQ(i, dequeueValue(queue));
+    }
+}
+
+// Test LIFO with DROP_OLDEST captures discarded via output
+TEST_F(QueueTest, LIFODropOldestDiscardedOutput) {
+    U8 storage[BUFFER_SIZE];
+    Types::Queue queue;
+    queue.setup(storage, BUFFER_SIZE, QUEUE_DEPTH, MSG_SIZE, Types::QUEUE_LIFO, Types::QUEUE_DROP_OLDEST);
+
+    // Fill with 1..5
+    for (U32 i = 1; i <= 5; i++) {
+        enqueueValue(queue, i);
+    }
+
+    // Enqueue 99 — drops oldest (1)
+    U32 newValue = 99;
+    U32 discarded = 0;
+    Fw::SerializeStatus status = queue.enqueue(
+        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
+    EXPECT_EQ(1u, discarded);
+
+    // LIFO dequeue: 99, 5, 4, 3, 2
+    EXPECT_EQ(99u, dequeueValue(queue));
+    EXPECT_EQ(5u, dequeueValue(queue));
+    EXPECT_EQ(4u, dequeueValue(queue));
+    EXPECT_EQ(3u, dequeueValue(queue));
+    EXPECT_EQ(2u, dequeueValue(queue));
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
