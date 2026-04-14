@@ -25,7 +25,7 @@ nav:
       - Framework: docs/user-manual/framework/
       - FPP: 'https://nasa.github.io/fpp/fpp-users-guide.html'
       - GDS: docs/user-manual/gds
-      - Design Pattens: docs/user-manual/design-patterns/
+      - Design Patterns: docs/user-manual/design-patterns/
       - Build System: docs/user-manual/build-system/
       - Security: docs/user-manual/security/
     - How To: docs/how-to
