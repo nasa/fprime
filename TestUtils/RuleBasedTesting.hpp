@@ -60,15 +60,17 @@
 //! \param GROUP_NAME   Rule group: appears in method names and the rule label
 //! \param RULE_NAME    Rule variant: appears in method names and the rule label
 // -----------------------------------------------------------------------
-#define FW_RBT_DEFINE_RULE(TEST_STATE, GROUP_NAME, RULE_NAME)                                            \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                              \
-    void GROUP_NAME##__##RULE_NAME##__action();                                                          \
-    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TEST_STATE> {                                  \
-        GROUP_NAME##__##RULE_NAME() : STest::Rule<TEST_STATE>(#GROUP_NAME "." #RULE_NAME) {}             \
-        bool precondition(const TEST_STATE& testState) override {                                        \
-            return testState.GROUP_NAME##__##RULE_NAME##__precondition();                                \
-        }                                                                                                \
-        void action(TEST_STATE& testState) override { testState.GROUP_NAME##__##RULE_NAME##__action(); } \
+#define FW_RBT_DEFINE_RULE(TEST_STATE, GROUP_NAME, RULE_NAME)                                \
+    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                  \
+    void GROUP_NAME##__##RULE_NAME##__action();                                              \
+    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TEST_STATE> {                      \
+        GROUP_NAME##__##RULE_NAME() : STest::Rule<TEST_STATE>(#GROUP_NAME "." #RULE_NAME) {} \
+        bool precondition(const TEST_STATE& testState) override {                            \
+            return testState.GROUP_NAME##__##RULE_NAME##__precondition();                    \
+        }                                                                                    \
+        void action(TEST_STATE& testState) override {                                        \
+            testState.GROUP_NAME##__##RULE_NAME##__action();                                 \
+        }                                                                                    \
     }
 
 #endif
