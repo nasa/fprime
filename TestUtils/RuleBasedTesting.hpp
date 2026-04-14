@@ -47,28 +47,26 @@
 //! \def FW_RBT_DEFINE_RULE
 //!
 //! Defines everything needed for one rule inside a ComponentTester class:
-//! 1) GroupName__RuleName__precondition() const — declaration
-//! 2) GroupName__RuleName__action()             — declaration
-//! 3) struct GroupName__RuleName : STest::Rule<TESTER_TYPE> — definition
+//! 1) GroupName__RuleName__precondition() const             — declaration
+//! 2) GroupName__RuleName__action()                         — declaration
+//! 3) struct GroupName__RuleName : STest::Rule<TEST_STATE>  — definition
 //!
 //! Place inside the tester class body; implement both method bodies in a
 //! per-group .cpp file.
 //!
-//! \param TESTER_TYPE  The ComponentTester class (state passed to STest::Rule)
+//! \param TEST_STATE  The TestState class (usually a ComponentTester class for component RBT)
 //! \param GROUP_NAME   Rule group: appears in method names and the rule label
 //! \param RULE_NAME    Rule variant: appears in method names and the rule label
 // -----------------------------------------------------------------------
-#define FW_RBT_DEFINE_RULE(TESTER_TYPE, GROUP_NAME, RULE_NAME)                                \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                   \
-    void GROUP_NAME##__##RULE_NAME##__action();                                               \
-    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TESTER_TYPE> {                      \
-        GROUP_NAME##__##RULE_NAME() : STest::Rule<TESTER_TYPE>(#GROUP_NAME "." #RULE_NAME) {} \
-        bool precondition(const TESTER_TYPE& tester) override {                               \
-            return tester.GROUP_NAME##__##RULE_NAME##__precondition();                        \
-        }                                                                                     \
-        void action(TESTER_TYPE& tester) override {                                           \
-            tester.GROUP_NAME##__##RULE_NAME##__action();                                     \
-        }                                                                                     \
+#define FW_RBT_DEFINE_RULE(TEST_STATE, GROUP_NAME, RULE_NAME)                                            \
+    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                              \
+    void GROUP_NAME##__##RULE_NAME##__action();                                                          \
+    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TEST_STATE> {                                  \
+        GROUP_NAME##__##RULE_NAME() : STest::Rule<TEST_STATE>(#GROUP_NAME "." #RULE_NAME) {}             \
+        bool precondition(const TEST_STATE& testState) override {                                        \
+            return testState.GROUP_NAME##__##RULE_NAME##__precondition();                                \
+        }                                                                                                \
+        void action(TEST_STATE& testState) override { testState.GROUP_NAME##__##RULE_NAME##__action(); } \
     }
 
 #endif

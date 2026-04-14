@@ -44,7 +44,7 @@ void ApidManagerTester::GetSeqCount__NewOk__action() {
     this->clearHistory();
 
     // Use constexpr local to avoid ODR-use of the static constexpr member
-    constexpr U8 maxTrackedApids = ApidManager::MAX_TRACKED_APIDS;
+    constexpr U16 maxTrackedApids = ApidManager::MAX_TRACKED_APIDS;
     if (this->shadow.shadow_seqCounts.size() >= maxTrackedApids) {
         // Table is now full; update shadow flag so the precondition flips
         this->shadow.shadow_isTableFull = true;
