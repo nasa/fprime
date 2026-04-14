@@ -42,7 +42,7 @@ Before expanding or following this guide, the reader should typically have:
 - A working F Prime development environment
 - An understanding of how to create F Prime projects using F Prime libraries
 - Basic familiarity with FPP and the generated C++ structure
-- Working of Python development
+- Working understanding of Python development
 
 ## Python in F Prime
 
@@ -175,8 +175,10 @@ Thus, we must set up the bindings manually.  To do so, add a C++ file to your to
 // Function used to bind the deployment into Python
 void setup_user_deployment(pybind11::module_& m) {
     // Bind in the topology state type
+    // See: https://pybind11.readthedocs.io/en/stable/classes.html
     pybind11::class_<ReferenceDeployment::TopologyState>(m, "TopologyState")
         .def(pybind11::init<>())
+         // See: https://pybind11.readthedocs.io/en/stable/classes.html#instance-and-static-fields
         .def_readwrite("hostname", &ReferenceDeployment::TopologyState::hostname)
         .def_readwrite("port", &ReferenceDeployment::TopologyState::port);   
 }
@@ -238,3 +240,4 @@ Unit testing for Python components is not yet supported. Testing may use the int
 - [F Prime Python Reference](https://github.com/fprime-community/fprime-python-reference)
 - [F Prime Python](https://github.com/fprime-community/fprime-python)
 - [Pybind11](https://pybind11.readthedocs.io/en/stable/)
+- [Pybind11 - Classes](https://pybind11.readthedocs.io/en/stable/classes.html)
