@@ -69,7 +69,7 @@ class ByteStreamBufferAdapterTester final : public ByteStreamBufferAdapterGTestB
     void initComponents();
 
     //! Fill buffer with random data
-    void random_fill(Fw::LinearBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
 
   private:
     // ----------------------------------------------------------------------

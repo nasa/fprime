@@ -26,7 +26,7 @@ void serialize(U32 dataSize,                        //!< Size of data following 
                U32 numRecords,                      //!< Number of records
                FwTimeBaseStoreType timeBase,        //!< Time base
                FwTimeContextStoreType timeContext,  //!< Time context
-               Fw::LinearBufferBase& destBuffer     //!< Destination buffer
+               Fw::SerialBufferBase& destBuffer     //!< Destination buffer
 );
 
 }  // namespace Headers

@@ -43,7 +43,7 @@ void AsyncByteStreamBufferAdapterTester ::from_toByteStreamDriver_handler(FwInde
 // Tests
 // ----------------------------------------------------------------------
 
-void AsyncByteStreamBufferAdapterTester ::random_fill(Fw::LinearBufferBase& buffer, U32 max_size) {
+void AsyncByteStreamBufferAdapterTester ::random_fill(Fw::SerialBufferBase& buffer, U32 max_size) {
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     // buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {

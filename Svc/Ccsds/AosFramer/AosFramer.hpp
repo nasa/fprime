@@ -137,7 +137,7 @@ class AosFramer final : public AosFramerComponentBase {
     //! (minus optional CRC)
     void fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context);
 
-    void serialize_idle_spp_packet(Fw::LinearBufferBase& serializer, U16 length);
+    void serialize_idle_spp_packet(Fw::SerialBufferBase& serializer, U16 length);
 
     //! Fill out the Transfer Frame Primary Header (4.1.2)
     void setup_header(const ComCfg::FrameContext& context);

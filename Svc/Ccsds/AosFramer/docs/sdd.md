@@ -34,5 +34,5 @@ The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed s
 | output | dataOut | Svc.ComDataWithContext | Outputs framed data with optional context |
 | output | dataReturnOut | Svc.ComDataWithContext | Returns ownership of the incoming Fw::Buffer to its sender once framing is handled |
 | sync input | dataReturnIn | Svc.ComDataWithContext | Receives buffer from a deallocate call in a ComDriver component |
-| sync input | comStatusIn | Fw.SuccessCondition | Receives general status from downstream component indicating readiness for more input |
-| output | comStatusOut | Fw.SuccessCondition | Indicates the status of framer for receiving more data |
+| sync input | comStatusIn | Fw.SuccessCondition | Receives status from downstream communication adapter per the [Communication Adapter Protocol](../../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol) |
+| output | comStatusOut | Fw.SuccessCondition | Passes status through to upstream `Svc::ComQueue` per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) |

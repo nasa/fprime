@@ -92,7 +92,7 @@ class TmFramer final : public TmFramerComponentBase {
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
     //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet(Fw::LinearBufferBase& serializer);
+    void fill_with_idle_packet(Fw::SerialBufferBase& serializer);
 
     // ----------------------------------------------------------------------
     // Members

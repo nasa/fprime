@@ -81,7 +81,7 @@ void GenericHubTester ::test_random_io() {
     }
 }
 
-void GenericHubTester ::random_fill(Fw::LinearBufferBase& buffer, U32 max_size) {
+void GenericHubTester ::random_fill(Fw::SerialBufferBase& buffer, U32 max_size) {
     U32 random_size = STest::Pick::lowerUpper(0, max_size);
     buffer.resetSer();
     for (U32 i = 0; i < random_size; i++) {
