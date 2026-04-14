@@ -9,7 +9,7 @@ For general defects, please submit a [Bug Report](https://github.com/nasa/fprime
 
 To report a vulnerability for F´ please use the [vulnerability report form](https://github.com/nasa/fprime/security/advisories/new). 
 
-If you are using AI tools to assist with your reporting, please review the [AI policy](./AI_POLICY.md) for guidelines on disclosure and best practices. 
+If you are using AI tools to assist with your reporting, we require that you disclose this in your report. Please review the [AI policy](./AI_POLICY.md) for guidelines on disclosure and best practices.
 
 ### Static Analysis Checks
 
