@@ -35,10 +35,6 @@ with an [easy first issue](https://github.com/nasa/fprime/issues?q=is%3Aissue+is
 When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure,
 development process, and helpful tips sections below.
 
-For first-time contributors, the best path is to start with documentation updates, bug fixes, tests, or issues that have
-already been approved. Large framework changes, broad refactors, speculative cleanups, and new features
-are rarely a good first contribution unless a maintainer has explicitly asked for them.
-
 ## Code Contribution Process
 
 All code contributions to F´ begin with an issue. Whether you're fixing a bug, adding a feature, or improving
