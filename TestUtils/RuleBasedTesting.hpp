@@ -46,13 +46,15 @@
 // -----------------------------------------------------------------------
 //! \def FW_RBT_DEFINE_RULE
 //!
-//! Defines everything needed for one rule inside a ComponentTester class:
+//! Defines everything needed for one rule inside a TestState class:
 //! 1) GroupName__RuleName__precondition() const             — declaration
 //! 2) GroupName__RuleName__action()                         — declaration
 //! 3) struct GroupName__RuleName : STest::Rule<TEST_STATE>  — definition
 //!
-//! Place inside the tester class body; implement both method bodies in a
-//! per-group .cpp file.
+//! To use:
+//! 1. Place the macro inside the TestState class body for each rule (usually
+//!     TestState is a ComponentTester class for rules of F Prime components)
+//! 2. Implement both method bodies in a cpp file (e.g. GroupName.cpp)
 //!
 //! \param TEST_STATE  The TestState class (usually a ComponentTester class for component RBT)
 //! \param GROUP_NAME   Rule group: appears in method names and the rule label
