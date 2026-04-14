@@ -93,7 +93,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     // Compute CRC over the transmitted data (header + body)
     FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
-    for (U32 i = 0; i < hash_field_size; i++) {
+    for (FwSizeType i = 0; i < hash_field_size; i++) {
         U8 byte = 0;
         status = data.peek(byte, i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
