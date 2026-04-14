@@ -77,10 +77,12 @@ class Queue {
      *
      * \param message: message of size m_message_size to enqueue
      * \param size: size of the message being sent. Must be equivalent to queue's message size.
+     * \param discarded: optional output buffer to receive the discarded message data when DROP_OLDEST fires.
+     *        Must point to at least message_size bytes. If nullptr, discarded data is not captured.
      * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
      * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
      */
-    Fw::SerializeStatus enqueue(const U8* const message, const FwSizeType size);
+    Fw::SerializeStatus enqueue(const U8* const message, const FwSizeType size, U8* discarded = nullptr);
 
     /**
      * \brief pops a fixed-size message off the queue

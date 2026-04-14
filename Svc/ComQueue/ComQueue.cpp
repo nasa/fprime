@@ -315,12 +315,22 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
-    Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
+
+    // For buffer queues, capture any discarded buffer so we can return ownership
+    Fw::Buffer droppedBuffer;
+    U8* discardedPtr = (queueType == QueueType::BUFFER_QUEUE) ? reinterpret_cast<U8*>(&droppedBuffer) : nullptr;
+    Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size, discardedPtr);
+
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
             this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;
         }
+    }
+
+    // Return ownership of the dropped buffer when DROP_OLDEST discards an Fw::Buffer
+    if (status == Fw::FW_SERIALIZE_DISCARDED_EXISTING && queueType == QueueType::BUFFER_QUEUE) {
+        this->bufferReturnOut_out(portNum, droppedBuffer);
     }
 
     // When the component is already in READY state process the queue to send out the next available message immediately

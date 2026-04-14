@@ -829,10 +829,89 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     // Verify we only have 2 messages
     ASSERT_from_dataOut_SIZE(2);
 
-    // Verify buffers were returned (2 sent + dropped buffer1)
-    // Note: When DROP_OLDEST happens, the dropped buffer should NOT be returned
-    // since it was consumed by the queue
+    // Verify buffers were returned (2 sent + 1 dropped buffer1 returned for ownership)
+    ASSERT_from_bufferReturnOut_SIZE(3);
+
+    component.cleanup();
+}
+
+void ComQueueTester::testBufferQueueDropOldestReturnsOwnership() {
+    // Verify that when a buffer queue configured with DROP_OLDEST overflows,
+    // the dropped (oldest) Fw::Buffer is returned via bufferReturnOut so that
+    // buffer-pool ownership is not leaked.
+    ComQueue::QueueConfigurationTable configurationTable;
+
+    // Configure all COM queues with priority 1, minimal depth
+    for (FwIndexType i = 0; i < ComQueue::COM_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = 1;
+        configurationTable.entries[i].depth = 1;
+    }
+
+    // Configure first BUFFER queue with DROP_OLDEST and depth 2
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].priority = 0;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].depth = 2;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].mode = Types::QUEUE_FIFO;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_OLDEST;
+
+    // Configure remaining buffer queues
+    for (FwIndexType i = ComQueue::COM_PORT_COUNT + 1; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 1;
+    }
+
+    component.configure(configurationTable, 0, mallocAllocator);
+
+    // Create uniquely identifiable buffers
+    U8 data1[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data2[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data3[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 data4[BUFFER_LENGTH] = BUFFER_DATA;
+    data1[BUFFER_DATA_OFFSET] = 1;
+    data2[BUFFER_DATA_OFFSET] = 2;
+    data3[BUFFER_DATA_OFFSET] = 3;
+    data4[BUFFER_DATA_OFFSET] = 4;
+
+    Fw::Buffer buffer1(&data1[0], sizeof(data1));
+    Fw::Buffer buffer2(&data2[0], sizeof(data2));
+    Fw::Buffer buffer3(&data3[0], sizeof(data3));
+    Fw::Buffer buffer4(&data4[0], sizeof(data4));
+
+    // Fill the buffer queue (depth = 2)
+    invoke_to_bufferQueueIn(0, buffer1);
+    invoke_to_bufferQueueIn(0, buffer2);
+    dispatchAll();
+
+    // No buffers should have been returned yet (no overflow, no dequeue)
+    ASSERT_from_bufferReturnOut_SIZE(0);
+
+    // Enqueue buffer3 when full — should drop oldest (buffer1) and return it
+    invoke_to_bufferQueueIn(0, buffer3);
+    dispatchAll();
+
+    // The dropped buffer1 must be returned for ownership
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer1);
+
+    // Overflow event should be emitted
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::BUFFER_QUEUE, 0);
+
+    // Enqueue buffer4 when full again — should drop oldest (buffer2) and return it
+    invoke_to_bufferQueueIn(0, buffer4);
+    dispatchAll();
+
     ASSERT_from_bufferReturnOut_SIZE(2);
+    ASSERT_from_bufferReturnOut(1, buffer2);
+
+    // Dequeue and verify the queue contains buffer3, buffer4 (the two newest)
+    emitOneAndCheck(0, data3, BUFFER_LENGTH);
+    emitOneAndCheck(1, data4, BUFFER_LENGTH);
+
+    // The two dequeued buffers are also returned via dataReturnIn -> bufferReturnOut
+    ASSERT_from_bufferReturnOut_SIZE(4);
+
+    // No more messages in queue
+    ASSERT_from_dataOut_SIZE(2);
 
     component.cleanup();
 }

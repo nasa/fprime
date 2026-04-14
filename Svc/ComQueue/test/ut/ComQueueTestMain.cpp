@@ -89,6 +89,11 @@ TEST(BufferQueueOverflowModes, DropOldest) {
     tester.testBufferQueueDropOldestMode();
 }
 
+TEST(BufferQueueOverflowModes, DropOldestReturnsOwnership) {
+    Svc::ComQueueTester tester;
+    tester.testBufferQueueDropOldestReturnsOwnership();
+}
+
 TEST(Commands, SetQueuePriority) {
     Svc::ComQueueTester tester;
     tester.testSetQueuePriorityCommand();
