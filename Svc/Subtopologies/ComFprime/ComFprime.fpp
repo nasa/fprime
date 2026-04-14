@@ -141,9 +141,6 @@ module ComFprime {
             # Deframer <-> Router
             deframer.dataOut           -> fprimeRouter.dataIn
             fprimeRouter.dataReturnOut -> deframer.dataReturnIn
-            # Router buffer allocations
-            fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
-            fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
         }
     } # end FramingSubtopology
 

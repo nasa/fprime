@@ -8,6 +8,7 @@
 #ifndef Svc_EventManager_HPP_
 #define Svc_EventManager_HPP_
 
+#include <Fw/DataStructures/ArraySet.hpp>
 #include <Fw/Log/LogPacket.hpp>
 #include <Svc/EventManager/EventManagerComponentAc.hpp>
 #include <config/EventManagerCfg.hpp>
@@ -61,9 +62,8 @@ class EventManager final : public EventManagerComponentBase {
     Fw::LogPacket m_logPacket;  //!< packet buffer for assembling log packets
     Fw::ComBuffer m_comBuffer;  //!< com buffer for sending event buffers
 
-    // array of filtered event IDs.
-    // value of 0 means no entry
-    FwEventIdType m_filteredIDs[TELEM_ID_FILTER_SIZE];
+    // Set of filtered event IDs.
+    Fw::ArraySet<FwEventIdType, TELEM_ID_FILTER_SIZE> m_filteredIDs;
 };
 
 }  // namespace Svc

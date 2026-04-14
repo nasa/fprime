@@ -20,7 +20,7 @@ namespace SequenceFiles {
 
 MixedFile ::MixedFile(const Format::t a_format) : File("mixed", a_format) {}
 
-void MixedFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void MixedFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const FwSizeType numRecs = 4;
     const U32 recordDataSize = numRecs * FPrime::Records::STANDARD_SIZE;
@@ -48,7 +48,7 @@ void MixedFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::CRCs::serialize(buffer);
 }
 
-void MixedFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void MixedFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

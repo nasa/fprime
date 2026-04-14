@@ -6,11 +6,13 @@ The `Svc::FprimeRouter` component receives F´ packets (as [Fw::Buffer](../../..
 
 The `Svc::FprimeRouter` component supports `Fw::ComPacketType::FW_PACKET_COMMAND` and `Fw::ComPacketType::FW_PACKET_FILE` packet types. Unknown packet types are forwarded on the `unknownDataOut` port, which a project-specific component can connect to for custom routing.
 
-About memory management, all buffers sent by `Svc::FprimeRouter` on the `fileOut` and `unknownDataOut` ports are expected to be returned to the router through the `fileBufferReturnIn` port for deallocation.
+About memory management, buffers sent by `Svc::FprimeRouter` on the `fileOut` and `unknownDataOut` ports are passed through directly without copying. Receivers of these buffers **must** return them to `Svc::FprimeRouter` through the `fileBufferReturnIn` port when finished processing. The original buffer is not returned to the deframer until this happens.
+
+**Note:** The `FrameContext` received on `dataIn` is not preserved across the buffer return path. When buffers are returned via `fileBufferReturnIn`, `Svc::FprimeRouter` constructs an empty `ComCfg::FrameContext` for the `dataReturnOut` call. This applies to all packet types — the context is always discarded on return.
 
 ## Custom Routing
 
-The `Svc::FprimeRouter` component is designed to be extensible through the use of a project-specific router. The `unknownDataOut` port can be connected to a project-specific component that can receive all unknown packet types. This component can then implement custom handling of these unknown packets. After processing, the project-specific component shall return the received buffer to the `Svc::FprimeRouter` component through the `fileBufferReturnIn` port (named this way as it only receives file packets in the common use-case), which will deallocate the buffer.
+The `Svc::FprimeRouter` component is designed to be extensible through the use of a project-specific router. The `unknownDataOut` port can be connected to a project-specific component that can receive all unknown packet types. This component can then implement custom handling of these unknown packets. After processing, the project-specific component shall return the received buffer to the `Svc::FprimeRouter` component through the `fileBufferReturnIn` port (named this way as it only receives file packets in the common use-case), which will return the buffer to the deframer.
 
 ## Usage Examples
 
@@ -32,8 +34,6 @@ In the canonical uplink communications stack, `Svc::FprimeRouter` is connected t
 | `output` | `fileOut` | `Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) |
 | `sync input` | `fileBufferReturnIn` | `Fw.BufferSend` | Receiving back ownership of buffer sent on `fileOut` and `unknownDataOut` | 
 | `output` | `unknownDataOut` | `Svc.ComDataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a  project-defined router) |
-| `output`| `bufferAllocate` | `Fw.BufferGet` | Port for allocating buffers, allowing copy of received data |
-| `output`| `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers |
 
 ## Requirements
 
@@ -44,5 +44,5 @@ SVC-ROUTER-002 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacketT
 SVC-ROUTER-003 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacketType::FW_PACKET_FILE` to the `fileOut` output port. | Routing file packets | Unit test |
 SVC-ROUTER-004 | `Svc::FprimeRouter` shall route data that is neither `Fw::ComPacketType::FW_PACKET_COMMAND` nor `Fw::ComPacketType::FW_PACKET_FILE` to the `unknownDataOut` output port. | Allows for projects to provide custom routing for additional (project-specific) uplink data types | Unit test |
 SVC-ROUTER-005 | `Svc::FprimeRouter` shall emit warning events if serialization errors occur during processing of incoming packets | Aid in diagnosing uplink issues | Unit test |
-SVC-ROUTER-005 | `Svc::FprimeRouter` shall make a copy of buffers that represent a `FW_PACKET_FILE` | Aid in memory management of file buffers | Unit test |
-SVC-ROUTER-005 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
+SVC-ROUTER-006 | `Svc::FprimeRouter` shall pass through buffers for `FW_PACKET_FILE` and unknown packet types without copying, and defer returning them to the deframer until they are returned via `fileBufferReturnIn` | Efficient memory management | Unit test |
+SVC-ROUTER-007 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |

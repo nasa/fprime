@@ -52,7 +52,7 @@ void writeFile(Os::File& file,    //!< The file
 
 }  // namespace
 
-void createFile(Fw::SerializeBufferBase& buffer, const char* const fileName) {
+void createFile(Fw::LinearBufferBase& buffer, const char* const fileName) {
     CRC crc;
     computeCRC(buffer, crc);
     U32 crcFinal;
@@ -60,7 +60,7 @@ void createFile(Fw::SerializeBufferBase& buffer, const char* const fileName) {
     writeCRC(crcFinal, fileName);
 }
 
-void computeCRC(Fw::SerializeBufferBase& buffer, CRC& crc) {
+void computeCRC(Fw::LinearBufferBase& buffer, CRC& crc) {
     crc.init();
     const U8* const addr = buffer.getBuffAddr();
     const U32 size = buffer.getSize();

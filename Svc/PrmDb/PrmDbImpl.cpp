@@ -21,7 +21,7 @@ namespace Svc {
 
 // anonymous namespace for buffer declaration
 namespace {
-class WorkingBuffer : public Fw::SerializeBufferBase {
+class WorkingBuffer : public Fw::LinearBufferBase {
   public:
     FwSizeType getCapacity() const { return sizeof(m_buff); }
 
@@ -32,6 +32,7 @@ class WorkingBuffer : public Fw::SerializeBufferBase {
   private:
     // Set to max of parameter buffer + id
     U8 m_buff[FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)];
+    static_assert(sizeof(m_buff) >= sizeof(U32), "Size of parameter buffer storage must be >= sizeof(U32)");
 };
 }  // namespace
 
@@ -137,9 +138,12 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // write placeholder for the CRC
     Utils::Hash crc;
-    FwSizeType writeSize = static_cast<FwSizeType>(HASH_DIGEST_LENGTH);
     U32 crcInitial = U32(~0);
-    stat = paramFile.write(reinterpret_cast<const U8*>(&crcInitial), writeSize, Os::File::WaitType::WAIT);
+    buff.resetSer();
+    Fw::SerializeStatus serStat = buff.serializeFrom(crcInitial);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    FwSizeType writeSize = static_cast<FwSizeType>(buff.getSize());
+    stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
 
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_PLACE, 0, stat);
@@ -182,7 +186,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
         // reset buffer
         buff.resetSer();
-        Fw::SerializeStatus serStat = buff.serializeFrom(recordSize);
+        serStat = buff.serializeFrom(recordSize);
         // should always work
         FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
@@ -284,11 +288,16 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-    writeSize = static_cast<FwSizeType>(HASH_DIGEST_LENGTH);
+    buff.resetSer();
     U32 crcFinal;
     crc.finalize(crcFinal);
     crcFinal = ~crcFinal;
-    stat = paramFile.write(reinterpret_cast<const U8*>(&crcFinal), writeSize, Os::File::WaitType::WAIT);
+    serStat = buff.serializeFrom(crc);
+
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    writeSize = static_cast<FwSizeType>(buff.getSize());
+
+    stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_REAL, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -392,10 +401,12 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     }
     //===========================================================================
     // read CRC from beginning of file
+    WorkingBuffer buff;
     U32 fileCrc;
     FwSizeType readSize = static_cast<FwSizeType>(sizeof(fileCrc));
 
-    stat = paramFile.read(reinterpret_cast<U8*>(&fileCrc), readSize);
+    // Read raw CRC bytes from file
+    stat = paramFile.read(buff.getBuffAddr(), readSize);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC, static_cast<I32>(0), stat);
         return PrmLoadStatus::ERROR;
@@ -405,6 +416,13 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_SIZE, static_cast<I32>(0), static_cast<I32>(readSize));
         return PrmLoadStatus::ERROR;
     }
+
+    // Deserialize the CRC in a portable way
+    Fw::SerializeStatus serStat = buff.setBuffLen(readSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    buff.resetDeser();
+    serStat = buff.deserializeTo(fileCrc);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
     U32 crc = 0xFFFFFFFF;
     // read into CRC buffer for checking
@@ -427,8 +445,6 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         return PrmLoadStatus::ERROR;
     }
     //===========================================================================
-
-    WorkingBuffer buff;
 
     U32 recordNumTotal = 0;
     U32 recordNumAdded = 0;

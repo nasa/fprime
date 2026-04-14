@@ -5,7 +5,7 @@
 
 namespace Fw {
 
-class ActiveComponentExitSerializableBuffer : public Fw::SerializeBufferBase {
+class ActiveComponentExitSerializableBuffer : public Fw::LinearBufferBase {
   public:
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
     FwSizeType getCapacity() const { return sizeof(m_buff); }

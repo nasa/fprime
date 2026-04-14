@@ -12,7 +12,7 @@ CmdArgBuffer::CmdArgBuffer() {}
 
 CmdArgBuffer::~CmdArgBuffer() {}
 
-CmdArgBuffer::CmdArgBuffer(const CmdArgBuffer& other) : Fw::SerializeBufferBase() {
+CmdArgBuffer::CmdArgBuffer(const CmdArgBuffer& other) : Fw::LinearBufferBase() {
     SerializeStatus stat = this->setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }

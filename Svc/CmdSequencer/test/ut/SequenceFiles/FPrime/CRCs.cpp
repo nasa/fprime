@@ -19,7 +19,7 @@ namespace FPrime {
 
 namespace CRCs {
 
-void serialize(Fw::SerializeBufferBase& destBuffer) {
+void serialize(Fw::LinearBufferBase& destBuffer) {
     CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
     crc.init();
     crc.update(destBuffer.getBuffAddr(), destBuffer.getSize());

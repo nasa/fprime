@@ -7,7 +7,7 @@
 
 namespace Fw {
 
-class StatementArgBuffer : public SerializeBufferBase {
+class StatementArgBuffer : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF,

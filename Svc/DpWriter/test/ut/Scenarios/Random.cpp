@@ -32,6 +32,7 @@ Rules::BufferSendIn::InvalidBuffer bufferSendInInvalidBuffer;
 Rules::BufferSendIn::InvalidHeader bufferSendInInvalidHeader;
 Rules::BufferSendIn::InvalidHeaderHash bufferSendInInvalidHeaderHash;
 Rules::BufferSendIn::OK bufferSendInOK;
+Rules::BufferSendIn::OKProcShrink bufferSendInOKProcShrink;
 Rules::CLEAR_EVENT_THROTTLE::OK clearEventThrottleOK;
 Rules::FileOpenStatus::Error fileOpenStatusError;
 Rules::FileOpenStatus::OK fileOpenStatusOK;
@@ -52,6 +53,7 @@ void Tester ::run(U32 maxNumSteps) {
                                        &bufferSendInInvalidHeader,
                                        &bufferSendInInvalidHeaderHash,
                                        &bufferSendInOK,
+                                       &bufferSendInOKProcShrink,
                                        &clearEventThrottleOK,
                                        &fileOpenStatusError,
                                        &fileOpenStatusOK,
