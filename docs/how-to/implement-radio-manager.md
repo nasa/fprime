@@ -242,8 +242,7 @@ Implement retry logic for transient failures. See [`Svc.ComStub::handleSynchrono
 
 - **Return buffers promptly**: Return ownership via `*Return*` ports immediately after transmission.
 
-- **Handle errors gracefully**: Emit `Fw::Success::FAILURE` to pause data flow, then emit a recovery `Fw::Success::SUCCESS` when the communication path has been restored. The adapter is responsible for any retransmission of failed data before emitting the recovery SUCCESS.
-
+- **Handle errors gracefully**: Emit `Fw::Success::FAILURE` to pause data flow, then emit a recovery `Fw::Success::SUCCESS` when the communication path has been restored.
 ---
 
 ## Additional Resources
