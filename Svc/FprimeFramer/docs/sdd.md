@@ -31,8 +31,8 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 | `output`        | `dataOut`       | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing |
 | `sync input`    | `dataReturnIn`  | `Svc.ComDataWithContext` | Port to receive back ownership of buffer sent out of `dataOut`           |
 | `output`        | `dataReturnOut` | `Svc.ComDataWithContext` | Port to return ownership of buffer received on `dataIn`                  |
-| `sync input`    | `comStatusIn`   | `Fw.SuccessCondition`    | Port receiving the general status from the downstream component          |
-| `output`        | `comStatusOut`  | `Fw.SuccessCondition`    | Port receiving indicating the status of framer for receiving more data   |
+| `sync input`    | `comStatusIn`   | `Fw.SuccessCondition`    | Port receiving the status from the downstream communication adapter          |
+| `output`        | `comStatusOut`  | `Fw.SuccessCondition`    | Port indicating the status of framer to the upstream `Svc::ComQueue`   |
 
 ## Requirements
 
@@ -41,5 +41,5 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 | SVC-FPRIME_FRAMER-001 | `Svc::FprimeFramer` shall accept data buffers (packets) stored in `Fw::Buffer` through its `dataIn` input port | Unit Test |
 | SVC-FPRIME_FRAMER-002 | `Svc::FprimeFramer` shall emit one F Prime frame on its `framedOut` output port for each packet received on `dataIn` input port | Unit Test |
 | SVC-FPRIME_FRAMER-003 | `Svc::FprimeFramer` shall emit F Prime frames that conforms to the [F´ frame specification](../../FprimeProtocol/docs/sdd.md) | Unit Test |
-| SVC-FPRIME_FRAMER-004 | `Svc::FprimeFramer` shall pass through all `Fw.SuccessCondition` received on `comStatusIn` to `comStatusOut` | Unit Test |
+| SVC-FPRIME_FRAMER-004 | `Svc::FprimeFramer` shall pass through all `Fw.SuccessCondition` received on `comStatusIn` to `comStatusOut`, including the initial start-up `Fw::Success::SUCCESS`, per-message statuses, and any recovery `Fw::Success::SUCCESS` after a `Fw::Success::FAILURE`, per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) | Unit Test |
 
