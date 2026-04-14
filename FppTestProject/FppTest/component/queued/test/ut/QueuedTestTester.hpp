@@ -143,11 +143,11 @@ class QueuedTestTester : public QueuedTestGTestBase {
     FppTest::Types::AliasStringArrayType arrayStringAliasReturnVal;
 
     // Buffers from serial output ports;
-    U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
-    U8 stringData[InputStringArgsPort::SERIALIZED_SIZE];
-    U8 enumData[InputEnumArgsPort::SERIALIZED_SIZE];
-    U8 arrayData[InputArrayArgsPort::SERIALIZED_SIZE];
-    U8 structData[InputStructArgsPort::SERIALIZED_SIZE];
+    U8 primitiveData[PrimitiveArgsPortBuffer::CAPACITY];
+    U8 stringData[StringArgsPortBuffer::CAPACITY];
+    U8 enumData[EnumArgsPortBuffer::CAPACITY];
+    U8 arrayData[ArrayArgsPortBuffer::CAPACITY];
+    U8 structData[StructArgsPortBuffer::CAPACITY];
     U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
 
     Fw::SerialBuffer primitiveBuf;
