@@ -75,7 +75,7 @@ library_locations = lib/fprime-python:...
 Once added, users should install `fprime-python` into their Python environment.
 
 ```bash
-pip install lib/fprime-python
+pip install ./lib/fprime-python
 ```
 
 > [!TIP]
