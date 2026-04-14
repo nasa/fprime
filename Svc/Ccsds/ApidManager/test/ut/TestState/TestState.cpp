@@ -6,6 +6,7 @@
 
 #include "Svc/Ccsds/ApidManager/test/ut/TestState/TestState.hpp"
 
+#include <iterator>
 #include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/ApidManager/ApidManager.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
