@@ -84,7 +84,10 @@ class Queue {
      * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
      * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
      */
-    Fw::SerializeStatus enqueue(const U8* const message, const FwSizeType size, U8* discarded = nullptr, FwSizeType discarded_size = 0);
+    Fw::SerializeStatus enqueue(const U8* const message,
+                                const FwSizeType size,
+                                U8* discarded = nullptr,
+                                FwSizeType discarded_size = 0);
 
     /**
      * \brief pops a fixed-size message off the queue

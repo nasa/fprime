@@ -235,18 +235,16 @@ TEST_F(QueueTest, DropOldestDiscardedOutput) {
     // Enqueue 99 with discarded output — should capture dropped value 1
     U32 newValue = 99;
     U32 discarded = 0;
-    Fw::SerializeStatus status = queue.enqueue(
-        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
-        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+                                               reinterpret_cast<U8*>(&discarded), sizeof(discarded));
     EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
     EXPECT_EQ(1u, discarded);
 
     // Enqueue 100 — should capture dropped value 2
     newValue = 100;
     discarded = 0;
-    status = queue.enqueue(
-        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
-        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE, reinterpret_cast<U8*>(&discarded),
+                           sizeof(discarded));
     EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
     EXPECT_EQ(2u, discarded);
 
@@ -271,8 +269,7 @@ TEST_F(QueueTest, DropOldestNullDiscarded) {
 
     // Enqueue with nullptr discarded — should still work
     U32 newValue = 99;
-    Fw::SerializeStatus status = queue.enqueue(
-        reinterpret_cast<const U8*>(&newValue), MSG_SIZE, nullptr, 0);
+    Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE, nullptr, 0);
     EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
 
     // Queue should be: 2, 3, 4, 5, 99
@@ -297,9 +294,8 @@ TEST_F(QueueTest, DropNewestIgnoresDiscarded) {
     // Enqueue when full with DROP_NEWEST — should fail, discarded untouched
     U32 newValue = 99;
     U32 discarded = 42;
-    Fw::SerializeStatus status = queue.enqueue(
-        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
-        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+                                               reinterpret_cast<U8*>(&discarded), sizeof(discarded));
     EXPECT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, status);
     EXPECT_EQ(42u, discarded);  // Unchanged
 
@@ -323,9 +319,8 @@ TEST_F(QueueTest, LIFODropOldestDiscardedOutput) {
     // Enqueue 99 — drops oldest (1)
     U32 newValue = 99;
     U32 discarded = 0;
-    Fw::SerializeStatus status = queue.enqueue(
-        reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
-        reinterpret_cast<U8*>(&discarded), sizeof(discarded));
+    Fw::SerializeStatus status = queue.enqueue(reinterpret_cast<const U8*>(&newValue), MSG_SIZE,
+                                               reinterpret_cast<U8*>(&discarded), sizeof(discarded));
     EXPECT_EQ(Fw::FW_SERIALIZE_DISCARDED_EXISTING, status);
     EXPECT_EQ(1u, discarded);
 

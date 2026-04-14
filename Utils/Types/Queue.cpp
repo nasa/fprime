@@ -33,7 +33,10 @@ void Queue::setup(U8* const storage,
     m_overflow_mode = overflow_mode;
 }
 
-Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType size, U8* discarded, FwSizeType discarded_size) {
+Fw::SerializeStatus Queue::enqueue(const U8* const message,
+                                   const FwSizeType size,
+                                   U8* discarded,
+                                   FwSizeType discarded_size) {
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));  // Ensure initialization
     FW_ASSERT(m_message_size == size, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(m_message_size));  // Message size is as expected

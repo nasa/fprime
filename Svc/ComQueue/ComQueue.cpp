@@ -97,7 +97,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 // ComBuffer queues store the raw object; buffer queues store the serialized form
                 // (pointer, size, context) via serializeTo/deserializeFrom.
-                entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
+                entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer)
+                                                              : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
                 // Overflow checks
                 FW_ASSERT((std::numeric_limits<FwSizeType>::max() / entry.depth) >= entry.msgSize,
                           static_cast<FwAssertArgType>(entry.depth), static_cast<FwAssertArgType>(entry.msgSize));
@@ -234,8 +235,7 @@ void ComQueue::bufferQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBu
     Fw::ExternalSerializeBuffer sb(serialized, sizeof(serialized));
     Fw::SerializeStatus serStatus = fwBuffer.serializeTo(sb);
     FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(serStatus));
-    bool success =
-        this->enqueue(queueNum, QueueType::BUFFER_QUEUE, serialized, Fw::Buffer::SERIALIZED_SIZE);
+    bool success = this->enqueue(queueNum, QueueType::BUFFER_QUEUE, serialized, Fw::Buffer::SERIALIZED_SIZE);
     if (!success) {
         this->bufferReturnOut_out(portNum, fwBuffer);
     }
@@ -317,7 +317,9 @@ void ComQueue::bufferQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuf
 bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8* data, const FwSizeType size) {
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
-    const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
+    const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE)
+                                        ? sizeof(Fw::ComBuffer)
+                                        : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
     FW_ASSERT((queueType == QueueType::COM_QUEUE) || (queueNum >= COM_PORT_COUNT),
               static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
     const FwIndexType portNum =
@@ -331,7 +333,8 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     // reconstruct the Fw::Buffer via deserializeFrom.
     U8 discardedData[Fw::Buffer::SERIALIZED_SIZE];
     U8* discardedPtr = (queueType == QueueType::BUFFER_QUEUE) ? discardedData : nullptr;
-    const FwSizeType discardedSize = (discardedPtr != nullptr) ? static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE) : 0;
+    const FwSizeType discardedSize =
+        (discardedPtr != nullptr) ? static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE) : 0;
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size, discardedPtr, discardedSize);
 
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
