@@ -16,8 +16,8 @@ namespace Svc {
 
 FrameAccumulatorTester ::FrameAccumulatorTester()
     : FrameAccumulatorGTestBase("FrameAccumulatorTester", FrameAccumulatorTester::MAX_HISTORY_SIZE),
-            component("FrameAccumulator"),
-            m_failBufferAllocate(false) {
+      component("FrameAccumulator"),
+      m_failBufferAllocate(false) {
     component.configure(this->mockDetector, 1, this->mallocator, 2048);
     this->initComponents();
     this->connectPorts();

@@ -161,8 +161,8 @@ void FrameAccumulator ::processRing() {
                     Fw::SerializeStatus serialize_status = this->m_inRing.rotate(size_out);
                     FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                     FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
-                            static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                            static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
+                              static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
+                              static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
                     this->log_WARNING_HI_FrameDetectionValidFrameDropped();
                 }
                 break;
