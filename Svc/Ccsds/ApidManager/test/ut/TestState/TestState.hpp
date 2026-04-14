@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  ApidManagerTestState.hpp
+// \title  TestState.hpp
 // \author thomas-bc
 // \brief  Shadow state model for ApidManager rule-based testing
 //
