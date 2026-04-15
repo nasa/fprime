@@ -2169,7 +2169,7 @@ TEST_F(FpySequencerTester, cmd_RUN_ARGS_oversized) {
 
     sendCmd_RUN_ARGS(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK, largeArgs);
     dispatchUntilState(State::VALIDATING);
-    // should fail when trying to push args to stack
+    // should fail during validation when checking args size
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
@@ -2245,24 +2245,12 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
 }
 
-TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS) {
-    // should fail because in idle
-    this->tester_setState(State::IDLE);
-    Svc::SeqArgs emptyArgs{0, 0};
-    sendCmd_RUN_VALIDATED_ARGS(0, 0, FpySequencer_BlockState::NO_BLOCK, emptyArgs);
-    dispatchCurrentMessages(cmp);
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
-    this->clearHistory();
-
+TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
     allocMem();
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
     writeToFile("test.bin");
-    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
-    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
-    this->clearHistory();
 
     // Pass two U32 args: 10 and 20
     Svc::SeqArgs args{0, 0};
@@ -2272,11 +2260,20 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS) {
     ASSERT_EQ(argBuf.serializeFrom(arg2), Fw::FW_SERIALIZE_OK);
     args.set_size(argBuf.getSize());
 
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
+    dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
     // should succeed immediately
-    sendCmd_RUN_VALIDATED_ARGS(0, 0, FpySequencer_BlockState::NO_BLOCK, args);
+    sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED_ARGS(), 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
 
@@ -2289,11 +2286,11 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     clearHistory();
 
-    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
     this->clearHistory();
     // should succeed immediately
-    sendCmd_RUN_VALIDATED_ARGS(0, 0, FpySequencer_BlockState::BLOCK, args);
+    sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::BLOCK);
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(0);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
@@ -2305,7 +2302,7 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS) {
     // should go back to IDLE
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED_ARGS(), 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
 
     // Stack should be empty after discards
     ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(0));
@@ -2313,25 +2310,21 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS) {
     removeFile("test.bin");
 }
 
-TEST_F(FpySequencerTester, cmd_RUN_VALIDATED_ARGS_oversized) {
+TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_oversized) {
     allocMem();
     add_NO_OP();
     writeToFile("test.bin");
-    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
-    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
-    this->clearHistory();
 
     // Create args that exceed MAX_STACK_SIZE
     Svc::SeqArgs largeArgs{0, 0};
     largeArgs.set_size(Fpy::MAX_STACK_SIZE + 1);
 
-    sendCmd_RUN_VALIDATED_ARGS(0, 0, FpySequencer_BlockState::BLOCK, largeArgs);
-    this->tester_doDispatch();
-    ASSERT_CMD_RESPONSE_SIZE(0);
-    // should fail when trying to push args to stack
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), largeArgs);
+    dispatchUntilState(State::VALIDATING);
+    // should fail during validation when checking args size
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
 

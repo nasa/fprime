@@ -161,6 +161,15 @@ class FpySequencer : public FpySequencerComponentBase {
                              U32 cmdSeq,                       //!< The command sequence number
                              const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                              ) override;
+    
+    //! Handler implementation for command VALIDATE_ARGS
+    //!
+    //! Loads and validates a sequence with arguments
+    void VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                                  U32 cmdSeq,                        //!< The command sequence number
+                                  const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                                  Svc::SeqArgs buffer                //!< Arguments to pass to the sequencer
+                                  ) override;
 
     //! Handler implementation for command RUN_VALIDATED
     //!
@@ -169,15 +178,6 @@ class FpySequencer : public FpySequencerComponentBase {
                                   U32 cmdSeq,                         //!< The command sequence number
                                   Svc::FpySequencer_BlockState block  //!< Return command status when complete or not
                                   ) override;
-
-    //! Handler implementation for command RUN_VALIDATED_ARGS
-    //!
-    //! Must be called after VALIDATE. Runs the sequence that was validated with arguments
-    void RUN_VALIDATED_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
-                                       U32 cmdSeq,                          //!< The command sequence number
-                                       Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
-                                       Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
-                                       ) override;
 
     //! Handler for command CANCEL
     //!

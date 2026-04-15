@@ -20,18 +20,18 @@ async command VALIDATE(
 ) \
     opcode 2 priority 7 assert
 
-@ Must be called after VALIDATE. Runs the sequence that was validated.
+@ Loads and validates a sequence with arguments
 # prio: lower than sm sig and CANCEL
-async command RUN_VALIDATED(
-                           $block: BlockState  @< Return command status when complete or not
+async command VALIDATE_ARGS(
+    fileName: string size FileNameStringSize @< The name of the sequence file
+    buffer: Svc.SeqArgs @< Arguments to pass to the sequencer
 ) \
     opcode 3 priority 7 assert
 
 @ Must be called after VALIDATE. Runs the sequence that was validated.
 # prio: lower than sm sig and CANCEL
-async command RUN_VALIDATED_ARGS(
+async command RUN_VALIDATED(
                            $block: BlockState  @< Return command status when complete or not
-                           buffer: Svc.SeqArgs @< Arguments to pass to the sequencer
 ) \
     opcode 4 priority 7 assert
 

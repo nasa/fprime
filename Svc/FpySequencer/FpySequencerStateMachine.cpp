@@ -281,15 +281,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack
         return;
     }
 
-    Fpy::StackSizeType availableSpace = Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size;
-
-    if (args.get_size() > availableSpace) {
-        // Args too large - fail the sequence gracefully.
-        // TODO: Move this to validate() step and validate the size there.
-        this->sequencer_sendSignal_stmtResponse_unexpected();
-        return;
-    }
-
     // Push args buffer to stack. Args are already serialized in big-endian format
     // by F' serialization system, so no endianness conversion is needed.
     this->m_runtime.stack.push(args.get_buffer(),

@@ -79,6 +79,16 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
                                        U32 cmdSeq,                       //!< The command sequence number
                                        const Fw::CmdStringArg& fileName  //!< The name of the sequence file
 ) {
+    this->VALIDATE_ARGS_cmdHandler(opCode, cmdSeq, fileName, Svc::SeqArgs{0, 0});
+}
+
+//! Handler implementation for command VALIDATE_ARGS
+//!
+//! Loads and validates a sequence with arguments
+void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
+                                             U32 cmdSeq,
+                                             const Fw::CmdStringArg& fileName,
+                                             Svc::SeqArgs buffer) {
     // can only validate a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -91,28 +101,16 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
     this->m_savedOpCode = opCode;
     this->m_savedCmdSeq = cmdSeq;
 
-    // VALIDATE command doesn't receive args via command interface, use empty SeqArgs
-    // Store empty args for pushArgsToStack action
+    // VALIDATE_ARGS receives args via command interface
+    // Store args for pushArgsToStack action when RUN_VALIDATED is called
     this->sequencer_sendSignal_cmd_VALIDATE(
-        FpySequencer_SequenceExecutionArgs(fileName, FpySequencer_BlockState::BLOCK, Svc::SeqArgs{0, 0}));
+        FpySequencer_SequenceExecutionArgs(fileName, FpySequencer_BlockState::BLOCK, buffer));
 }
 
 void FpySequencer::RUN_VALIDATED_cmdHandler(
     FwOpcodeType opCode,           //!< The opcode
     U32 cmdSeq,                    //!< The command sequence number
-    FpySequencer_BlockState block //!< Return command status when complete or not
-) {
-    this->RUN_VALIDATED_ARGS_cmdHandler(opCode, cmdSeq, block, Svc::SeqArgs{0, 0});
-}
-
-//! Handler for command RUN_VALIDATED
-//!
-//! Runs a previously validated sequence
-void FpySequencer::RUN_VALIDATED_ARGS_cmdHandler(
-    FwOpcodeType opCode,           //!< The opcode
-    U32 cmdSeq,                    //!< The command sequence number
-    FpySequencer_BlockState block, //!< Return command status when complete or not
-    Svc::SeqArgs args              //!< Arguments to pass to the sequencer
+    FpySequencer_BlockState block  //!< Return command status when complete or not
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
     if (sequencer_getState() != State::AWAITING_CMD_RUN_VALIDATED) {
@@ -127,7 +125,7 @@ void FpySequencer::RUN_VALIDATED_ARGS_cmdHandler(
         this->m_savedCmdSeq = cmdSeq;
     }
 
-    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, args));
+    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, this->m_sequenceArgs));
 
     // only respond if the user doesn't want us to block further execution
     if (block == FpySequencer_BlockState::NO_BLOCK) {
