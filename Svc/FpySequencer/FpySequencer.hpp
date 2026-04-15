@@ -151,7 +151,7 @@ class FpySequencer : public FpySequencerComponentBase {
                              U32 cmdSeq,                          //!< The command sequence number
                              const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
                              Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
-                             Svc::SeqArgs buffer                  //!< Arguments to pass to the sequencer
+                             Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
                              ) override;
 
     //! Handler for command VALIDATE
@@ -162,13 +162,22 @@ class FpySequencer : public FpySequencerComponentBase {
                              const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                              ) override;
 
-    //! Handler for command RUN_VALIDATED
+    //! Handler implementation for command RUN_VALIDATED
     //!
-    //! Runs a previously validated sequence
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                                  U32 cmdSeq,                    //!< The command sequence number
-                                  FpySequencer_BlockState block  //!< Return command status when complete or not
+    //! Must be called after VALIDATE. Runs the sequence that was validated.
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,                //!< The opcode
+                                  U32 cmdSeq,                         //!< The command sequence number
+                                  Svc::FpySequencer_BlockState block  //!< Return command status when complete or not
                                   ) override;
+
+    //! Handler implementation for command RUN_VALIDATED_ARGS
+    //!
+    //! Must be called after VALIDATE. Runs the sequence that was validated with arguments
+    void RUN_VALIDATED_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                                       U32 cmdSeq,                          //!< The command sequence number
+                                       Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
+                                       Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
+                                       ) override;
 
     //! Handler for command CANCEL
     //!
@@ -260,6 +269,15 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
+    
+        //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the arguments to pass to the sequence
+    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
+        ) override;
 
     //! Implementation for action validate of state machine Svc_FpySequencer_SequencerStateMachine
     //!
@@ -338,6 +356,14 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! clears all variables related to the loading/validating of the sequence file
     void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFile(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+    
+    //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears arguments
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -617,7 +643,7 @@ class FpySequencer : public FpySequencerComponentBase {
     U32 m_savedCmdSeq;
 
     // sequence arguments to push to stack when entering RUNNING state
-    Svc::SeqArgs m_pendingSeqArgs;
+    Svc::SeqArgs m_sequenceArgs{};
 
     // the goal state is the state that we're trying to reach in the sequencer
     // if it's RUNNING, then we should promptly go to RUNNING once we validate the

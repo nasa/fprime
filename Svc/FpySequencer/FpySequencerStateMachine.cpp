@@ -40,6 +40,18 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceBloc
     this->m_sequenceBlockState = value.get_block();
 }
 
+//! Implementation for action setSequenceArguments of state machine
+//! Svc_FpySequencer_SequencerStateMachine
+//!
+//! sets the arguments of the sequence to be run
+void FpySequencer ::Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
+    SmId smId,
+    Svc_FpySequencer_SequencerStateMachine::Signal signal,
+    const Svc::FpySequencer_SequenceExecutionArgs& value
+) {
+    this->m_sequenceArgs = value.get_buffer();
+}
+
 //! Implementation for action report_seqSucceeded of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
@@ -262,7 +274,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    const Svc::SeqArgs& args = this->m_pendingSeqArgs;
+    const Svc::SeqArgs& args = this->m_sequenceArgs;
 
     // Early return if no arguments provided
     if (args.get_size() == 0) {
@@ -273,7 +285,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack
 
     if (args.get_size() > availableSpace) {
         // Args too large - fail the sequence gracefully.
-        this->sequencer_sendSignal_result_failure();
+        // TODO: Move this to validate() step and validate the size there.
+        this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
 
@@ -291,6 +304,16 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFi
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     this->m_sequenceFilePath = "";
+}
+
+//! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! clears all arguments of the sequence file
+void FpySequencer ::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
+    SmId smId,
+    Svc_FpySequencer_SequencerStateMachine::Signal signal
+) {
+    this->m_sequenceArgs = {0, 0};
 }
 
 //! Implementation for action clearBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
@@ -371,8 +394,9 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStart
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     if (this->isConnected_seqStartOut_OutputPort(0)) {
-        // report that the sequence started to internal callers with the actual args
-        this->seqStartOut_out(0, this->m_sequenceFilePath, this->m_pendingSeqArgs);
+        // report that the sequence started to internal callers
+        // NOTE: Sequence Arguments would be cleared if a VALIDATION command is sent, not a full RUN command.
+        this->seqStartOut_out(0, this->m_sequenceFilePath, this->m_sequenceArgs);
     }
 }
 // ----------------------------------------------------------------------

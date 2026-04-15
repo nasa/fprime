@@ -49,7 +49,7 @@ constant DpManagerNumPorts = 5
 constant DpWriterNumProcPorts = 5
 
 @ The size of a file name string
-constant FileNameStringSize = 200
+constant FileNameStringSize = 240
 
 @ The size of an assert text string
 constant FwAssertTextSize = 256
@@ -61,7 +61,6 @@ constant FwAssertTextSize = 256
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 @ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
-@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with other command arguments
-@ Total serialized size: fileName (~44 bytes) + Fw::Wait (4 bytes) + SeqArgs (8 + buffer_size)
-@ With FW_CMD_ARG_BUFFER_MAX_SIZE ~= 500, we limit this to 400 bytes
-constant SequenceArgumentsMaxSize = 400
+@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
+@ Total serialized size: fileName (~200 bytes) + Fw::Wait (4 bytes) + SeqArgs (8 + buffer_size)
+constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - FileNameStringSize - 8 - 8

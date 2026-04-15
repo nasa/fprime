@@ -2,14 +2,14 @@
 
 @ Run a command sequence file
 async command CS_RUN(
-                      fileName: string size 240 @< The name of the sequence file
+                      fileName: string size FileNameStringSize @< The name of the sequence file
                       $block: BlockState @< Return command status when complete or not
                     ) \
   opcode 0
 
 @ Validate a command sequence file
 async command CS_VALIDATE(
-                           fileName: string size 240 @< The name of the sequence file
+                           fileName: string size FileNameStringSize @< The name of the sequence file
                          ) \
   opcode 1
 

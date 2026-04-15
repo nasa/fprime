@@ -6,8 +6,8 @@ module Svc {
 
   @ Port to request a sequence be run
   port CmdSeqIn(
-                 filename: string size 240 @< The sequence file
-                 args: SeqArgs @< Sequence arguments (placeholder - not currently processed)
+                 filename: string size FileNameStringSize @< The sequence file
+                 args: SeqArgs                            @< Sequence arguments
                )
 
   @ Port to cancel a sequence

@@ -1,6 +1,7 @@
 struct SequenceExecutionArgs {
     filePath: string size FileNameStringSize
     $block: BlockState
+    buffer: Svc.SeqArgs
 }
 
 struct BreakpointArgs {
@@ -53,6 +54,8 @@ state machine SequencerStateMachine {
     action setSequenceFilePath: SequenceExecutionArgs
     @ sets the block state of the sequence to be run
     action setSequenceBlockState: SequenceExecutionArgs
+    @ sets the arguments to pass to the sequence
+    action setSequenceArguments: SequenceExecutionArgs
     @ performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
     action validate
 
@@ -84,13 +87,15 @@ state machine SequencerStateMachine {
     action clearSequenceFile
     @ clears the breakpoint setting
     action clearBreakpoint
+    @ clears arguments
+    action clearSequenceArguments
 
     initial enter IDLE
 
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
         # start with an unset goal state, and no debugging settings
-        entry do { clearBreakpoint, setGoalState_IDLE, clearSequenceFile }
+        entry do { clearBreakpoint, setGoalState_IDLE, clearSequenceFile, clearSequenceArguments}
         # -->
         # wait for a cmd
 
@@ -98,9 +103,9 @@ state machine SequencerStateMachine {
         # commands         #
         ####################
         # validate does not take as input a block state, only a path
-        on cmd_VALIDATE do { setGoalState_VALID, setSequenceFilePath } enter VALIDATING
+        on cmd_VALIDATE do { setGoalState_VALID, setSequenceFilePath} enter VALIDATING
         # run takes both path and block state
-        on cmd_RUN do { setGoalState_RUNNING, setSequenceFilePath, setSequenceBlockState } enter VALIDATING
+        on cmd_RUN do { setGoalState_RUNNING, setSequenceFilePath, setSequenceBlockState, setSequenceArguments} enter VALIDATING
 
         on cmd_SET_BREAKPOINT do { setBreakpoint }
         on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }
@@ -148,7 +153,7 @@ state machine SequencerStateMachine {
         @ cancelled the sequence after we validated it
         on cmd_CANCEL do { report_seqCancelled } enter IDLE
         @ the sequence path has already been decided on, so only set the sequenceShouldBlock var
-        on cmd_RUN_VALIDATED do { setSequenceBlockState } enter RUNNING
+        on cmd_RUN_VALIDATED do { setSequenceBlockState, setSequenceArguments } enter RUNNING
 
         on cmd_SET_BREAKPOINT do { setBreakpoint }
         on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }

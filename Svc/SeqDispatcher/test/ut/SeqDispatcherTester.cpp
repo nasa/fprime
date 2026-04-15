@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "SeqDispatcherTester.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -118,14 +119,10 @@ void SeqDispatcherTester::testRunArgsWithValidArguments() {
 
 // Test RUN_ARGS with maximum-sized arguments - test boundary conditions
 void SeqDispatcherTester::testRunArgsWithMaxSizedArguments() {
-    // Create test arguments with a payload to test buffer handling
-    // Note: The actual max size is limited by FW_CMD_ARG_BUFFER_MAX_SIZE (~500 bytes)
-    // After accounting for filename (~44 bytes) and Fw::Wait (4 bytes), we have ~450 bytes
-    // With SeqArgs overhead (FwSizeType = 8 bytes), buffer can be ~440 bytes
-    // We use 400 bytes to stay safely within limits
-    Svc::SeqArgs largeArgs(400, 0);
+    constexpr FwSizeType TEST_ARG_SIZE = SequenceArgumentsMaxSize;
+    Svc::SeqArgs largeArgs(TEST_ARG_SIZE, 0);
     U8* buffer = largeArgs.get_buffer();
-    for (FwSizeType i = 0; i < 400; i++) {
+    for (FwSizeType i = 0; i < TEST_ARG_SIZE; i++) {
         buffer[i] = static_cast<U8>(i % 256);
     }
 

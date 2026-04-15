@@ -286,6 +286,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     //! Get the OPCODE_RUN_VALIDATED value
     static FwOpcodeType get_OPCODE_RUN_VALIDATED() { return FpySequencerComponentBase::OPCODE_RUN_VALIDATED; }
 
+    //! Get the OPCODE_RUN_VALIDATED_ARGS value
+    static FwOpcodeType get_OPCODE_RUN_VALIDATED_ARGS() { return FpySequencerComponentBase::OPCODE_RUN_VALIDATED_ARGS; }
+
     //! Get the OPCODE_CANCEL value
     static FwOpcodeType get_OPCODE_CANCEL() { return FpySequencerComponentBase::OPCODE_CANCEL; }
 

@@ -23,7 +23,6 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_sequenceBlockState(),
       m_savedOpCode(0),
       m_savedCmdSeq(0),
-      m_pendingSeqArgs(0, 0),
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
@@ -42,15 +41,15 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
                                   FpySequencer_BlockState block      //!< Return command status when complete or not
 ) {
     // Empty args and delegate to RUN_ARGS handler
-    Svc::SeqArgs emptyArgs{0, 0};
-    this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
+    this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, Svc::SeqArgs{0, 0});
 }
 
-void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,
-                                        U32 cmdSeq,
-                                        const Fw::CmdStringArg& fileName,
-                                        Svc::FpySequencer_BlockState block,
-                                        Svc::SeqArgs buffer) {
+void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,                //!< The opcode
+                                        U32 cmdSeq,                         //!< The command sequence number
+                                        const Fw::CmdStringArg& fileName,   //!< The name of the sequence file
+                                        Svc::FpySequencer_BlockState block, //!< Return command status when complete or not
+                                        Svc::SeqArgs args                   //!< Arguments to pass to the sequencer
+) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -65,8 +64,7 @@ void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,
     }
 
     // Store args for pushArgsToStack action
-    this->m_pendingSeqArgs = buffer;
-    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(fileName, block));
+    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(fileName, block, args));
 
     // only respond if the user doesn't want us to block further execution
     if (block == FpySequencer_BlockState::NO_BLOCK) {
@@ -95,18 +93,26 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
 
     // VALIDATE command doesn't receive args via command interface, use empty SeqArgs
     // Store empty args for pushArgsToStack action
-    this->m_pendingSeqArgs = Svc::SeqArgs{0, 0};
     this->sequencer_sendSignal_cmd_VALIDATE(
-        FpySequencer_SequenceExecutionArgs(fileName, FpySequencer_BlockState::BLOCK));
+        FpySequencer_SequenceExecutionArgs(fileName, FpySequencer_BlockState::BLOCK, Svc::SeqArgs{0, 0}));
+}
+
+void FpySequencer::RUN_VALIDATED_cmdHandler(
+    FwOpcodeType opCode,           //!< The opcode
+    U32 cmdSeq,                    //!< The command sequence number
+    FpySequencer_BlockState block //!< Return command status when complete or not
+) {
+    this->RUN_VALIDATED_ARGS_cmdHandler(opCode, cmdSeq, block, Svc::SeqArgs{0, 0});
 }
 
 //! Handler for command RUN_VALIDATED
 //!
 //! Runs a previously validated sequence
-void FpySequencer::RUN_VALIDATED_cmdHandler(
+void FpySequencer::RUN_VALIDATED_ARGS_cmdHandler(
     FwOpcodeType opCode,           //!< The opcode
     U32 cmdSeq,                    //!< The command sequence number
-    FpySequencer_BlockState block  //!< Return command status when complete or not
+    FpySequencer_BlockState block, //!< Return command status when complete or not
+    Svc::SeqArgs args              //!< Arguments to pass to the sequencer
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
     if (sequencer_getState() != State::AWAITING_CMD_RUN_VALIDATED) {
@@ -121,7 +127,7 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
         this->m_savedCmdSeq = cmdSeq;
     }
 
-    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block));
+    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, args));
 
     // only respond if the user doesn't want us to block further execution
     if (block == FpySequencer_BlockState::NO_BLOCK) {
@@ -383,8 +389,7 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 
     // seqRunIn is never blocking - store args for pushArgsToStack action
     // Args must be serialized in F' big-endian format by the caller before being sent
-    this->m_pendingSeqArgs = args;
-    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(filename, FpySequencer_BlockState::NO_BLOCK));
+    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(filename, FpySequencer_BlockState::NO_BLOCK, args));
 }
 
 //! Handler for input port tlmWrite
