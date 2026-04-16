@@ -43,4 +43,12 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 
     [View Porting Guide](porting-guide.md){ .md-button .md-button--primary }
 
+-   <span class="card-title">__Rule-Based Testing__</span>
+
+    ---
+
+    This guide walks through writing rule-based unit tests using the RuleDemo example component.
+
+    [View Rule-Based Testing](rule-based-testing.md){ .md-button .md-button--primary }
+
 </div>
