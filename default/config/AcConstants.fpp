@@ -62,5 +62,5 @@ constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 @ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
 @ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
-@ Total serialized size: fileName (~200 bytes) + Fw::Wait (4 bytes) + SeqArgs (8 + buffer_size)
-constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - FileNameStringSize - 8 - 8
+@ Total serialized size: string length prefix + fileName + BlockState + SeqArgs.size field + buffer
+constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - sizeof(FwSizeStoreType) - FileNameStringSize - sizeof(U8) - sizeof(FwSizeType)
