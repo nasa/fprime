@@ -54,6 +54,8 @@ void setupTopology(const TopologyState& state);
  *   3. Stop the tasks not owned by active components
  *   4. Join to the tasks not owned by active components
  *   5. Deallocate other resources
+ *   6. Call the autocoded `tearDownComponents()` function to tear down component-owned resources
+ *   7. Call the autocoded `deinitComponents()` function to finish component shutdown
  *
  * Step 1, 2, 3, and 4 must occur in-order as the tasks must be stopped before being joined. These tasks must be stopped
  * and joined before any active resources may be deallocated.

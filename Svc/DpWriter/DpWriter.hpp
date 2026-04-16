@@ -79,7 +79,7 @@ class DpWriter final : public DpWriterComponentBase {
     );
 
     //! Perform processing on a packet buffer
-    void performProcessing(const Fw::DpContainer& container  //!< The container
+    void performProcessing(Fw::DpContainer& container  //!< The container
     );
 
     //! Write the file

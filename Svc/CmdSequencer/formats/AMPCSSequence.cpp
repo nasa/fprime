@@ -104,7 +104,7 @@ bool AMPCSSequence ::validateCRC() {
 }
 
 bool AMPCSSequence ::validateRecords() {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Sequence::Record record;
 
     // Deserialize all records and count the records
@@ -147,7 +147,7 @@ void AMPCSSequence ::clear() {
 
 bool AMPCSSequence ::readCRC() {
     Os::File& file = this->m_crcFile;
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     bool status = true;
     Fw::SerializeStatus ser_status;
 
@@ -219,7 +219,7 @@ bool AMPCSSequence ::readSequenceHeader() {
 bool AMPCSSequence ::readRecords() {
     Os::File& file = this->m_sequenceFile;
     const FwSizeType size = this->m_header.m_fileSize;
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     U8* const addr = buffer.getBuffAddr();
 
     // Check file size
@@ -266,7 +266,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeRecord(Sequence::Record& record) 
 }
 
 Fw::SerializeStatus AMPCSSequence ::deserializeTimeFlag(Sequence::Record::Descriptor& descriptor) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Record::TimeFlag::Serial::t timeFlagSerial;
     Fw::SerializeStatus status = buffer.deserializeTo(timeFlagSerial);
     if (status == Fw::FW_SERIALIZE_OK) {
@@ -287,7 +287,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeTimeFlag(Sequence::Record::Descri
 
 Fw::SerializeStatus AMPCSSequence ::deserializeTime(Fw::Time& timeTag) {
     Record::Time::t time;
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Fw::SerializeStatus status = buffer.deserializeTo(time);
     if (status == Fw::FW_SERIALIZE_OK) {
         timeTag.set(time, 0);
@@ -296,7 +296,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeTime(Fw::Time& timeTag) {
 }
 
 Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& cmdLength) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     Fw::SerializeStatus status = buffer.deserializeTo(cmdLength);
     if (status == Fw::FW_SERIALIZE_OK and cmdLength > buffer.getDeserializeSizeLeft()) {
         // Not enough data left
@@ -311,7 +311,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
 }
 
 Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, const Record::CmdLength::t cmdLength) {
-    Fw::SerializeBufferBase& buffer = this->m_buffer;
+    Fw::LinearBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
     // Serialize the command packet descriptor
     const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;

@@ -10,7 +10,9 @@
 #
 ####
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/FileTester")
+if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/FileTester")
+endif()
 
 register_fprime_module(
   AUTOCODER_INPUTS

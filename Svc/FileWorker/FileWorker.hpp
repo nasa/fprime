@@ -68,7 +68,7 @@ class FileWorker : public FileWorkerComponentBase {
     void writeIn_handler(FwIndexType portNum,  //!< The port number
                          const Fw::StringBase& path,
                          Fw::Buffer& buffer,
-                         U64 offsetBytes,
+                         FwSizeType offsetBytes,
                          bool append) override;
 
     // ----------------------------------------------------------------------

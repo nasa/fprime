@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-`Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a following `Fw::Success::SUCCESS` is received.
+`Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received on the `comStatusIn` port. `Fw::Success::SUCCESS` is accepted in three contexts: (1) at start-up to initiate data flow, (2) in response to a previously sent message, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a subsequent `Fw::Success::SUCCESS` is received.
 
 `Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by passing in a configuration table at initialization. 
 Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.
@@ -12,10 +12,11 @@ Queued messages from the highest priority source port are serviced first and a r
 ## 2. Assumptions
 
 1. Incoming buffers to a given port are in priority order
-2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal was received
-3. The com adapter is responsible for any retransmission of failed data
+2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal is received in response to that data
+3. The communication adapter is responsible for any retransmission of failed data and for emitting a recovery `Fw::Success::SUCCESS` after a failure
 4. The system includes downstream components implementing the
  [communications adapter](../../../docs/reference/communication-adapter-interface.md)
+5. An initial `Fw::Success::SUCCESS` will be received on `comStatusIn` to initiate data flow (typically at start-up or driver connection)
 
 
 ## 3. Requirements
@@ -24,10 +25,10 @@ Queued messages from the highest priority source port are serviced first and a r
 | Requirement      | Description                                                                                                                             | Rationale                                                               | Verification Method |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
 | SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw::Buffer` and `Fw::ComBuffer` received on incoming ports.                                                | The purpose of the queue is to store messages.                          | Unit Test           |
-| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` (wrapping the queued data units) on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test     |
-| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.               | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
+| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` (wrapping the queued data units) on a received `Fw::Success::SUCCESS` signal. `Fw::Success::SUCCESS` is valid at start-up (to initiate flow), in response to a sent message, or after a previous `Fw::Success::FAILURE` (to indicate recovery).           | `Svc::ComQueue` obeys the [communication adapter interface protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).     | Unit Test     |
+| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending on `Fw::Success::FAILURE` and resume on the next `Fw::Success::SUCCESS` signal.               | `Svc::ComQueue` should not send to a failing communication adapter.     | Unit Test           |
 | SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                             | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
-| SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
+| SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the [communication adapter interface protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).     | Unit test           |
 | SVC-COMQUEUE-006 | `Svc::ComQueue` shall periodically telemeter the number of queued messages per-port in response to a `run` port invocation.             | `Svc::ComQueue` should provide useful telemetry.                        | Unit Test           | 
 | SVC-COMQUEUE-007 | `Svc::ComQueue` shall emit a queue overflow event for a given port when the configured depth is exceeded. Messages shall be discarded.  | `Svc::ComQueue` needs to indicate off-nominal events.                   | Unit Test           | 
 | SVC-COMQUEUE-008 | `Svc::ComQueue` shall implement a round robin approach to balance between ports of the same priority.                                   | Allows projects to balance between a set of queues of similar priority. | Unit Test           |
@@ -77,6 +78,8 @@ The state machine will transition between states when a status is received and w
 buffer is received. `FAILURE` statuses keep the `Svc::ComQueue` in `WAITING` state whereas a `SUCCESS` status will
 either send a buffer and transition to `WAITING` or will have no buffers to send and will transition into `READY` state.
 Buffers are queued when in `WAITING` state.
+
+`Fw::Success::SUCCESS` triggers a transition from `WAITING` to either `WAITING` (if a buffer was sent) or `READY` (if no buffers are queued). This SUCCESS is valid in three contexts per the [Communication Queue Protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol): at start-up, in response to a sent message, or after a previous FAILURE indicating recovery.
 
 ![`Svc::ComQueue` Functional State Machine](./img/state-machine.png)
 

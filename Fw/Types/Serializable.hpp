@@ -27,9 +27,6 @@ typedef enum {
 class SerialBufferBase;  //!< forward declaration
 class LinearBufferBase;  //!< forward declaration
 
-// TODO: Temporary backwards-compatibility hack. Remove this when all references to SerializeBufferBase are migrated.
-using SerializeBufferBase = LinearBufferBase;
-
 struct Serialization {
     enum t {
         INCLUDE_LENGTH,  //!< Include length as first token in serialization
@@ -668,7 +665,7 @@ class SerialBufferBase {
 };
 
 class LinearBufferBase : public SerialBufferBase {
-    friend class SerializeBufferBaseTester;
+    friend class LinearBufferBaseTester;
 
   protected:
     //! \brief Copy assignment operator
@@ -682,6 +679,14 @@ class LinearBufferBase : public SerialBufferBase {
     LinearBufferBase& operator=(const LinearBufferBase& src);
 
   public:
+    //! \brief Get the static serialized size of a buffer
+    //! This is the max size of the buffer data plus the size of the stored size
+    static constexpr Serializable::SizeType STATIC_SERIALIZED_SIZE(
+        Serializable::SizeType maxSize  //!< The maximum buffer data size
+    ) {
+        return static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) + maxSize;
+    }
+
     //! \brief Destructor
     //!
     //! Destroys a LinearBufferBase instance. This is a virtual destructor

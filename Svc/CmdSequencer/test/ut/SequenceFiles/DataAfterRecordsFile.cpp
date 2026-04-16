@@ -25,7 +25,7 @@ DataAfterRecordsFile ::DataAfterRecordsFile(const U32 a_n, const Format::t a_for
     this->setName(s.toChar());
 }
 
-void DataAfterRecordsFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void DataAfterRecordsFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     ASSERT_GE(this->n, 2U);
     // Header
     const U32 recordDataSize = (this->n - 1) * FPrime::Records::STANDARD_SIZE + FPrime::Records::EOS_SIZE;

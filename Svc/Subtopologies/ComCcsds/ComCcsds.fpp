@@ -177,9 +177,6 @@ module ComCcsds {
             # SpacePacketDeframer <-> Router
             spacePacketDeframer.dataOut -> fprimeRouter.dataIn
             fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
-            # Router buffer allocations
-            fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
-            fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
         }
     } # end FramingSubtopology
 

@@ -39,7 +39,7 @@ namespace Fw {
 //! describing the origin of that data, such that it may be freed at some later point. The default context of 0xFFFFFFFF
 //! should not be used for tracking purposes, as it represents a context-free buffer.
 //!
-//! Fw::Buffer also comes with functions to return a representation of the data as a SerializeBufferBase. These two
+//! Fw::Buffer also comes with functions to return a representation of the data as a LinearBufferBase. These two
 //! functions allow easy access to the data as if it were a serialize or deserialize buffer. This can aid in writing and
 //! reading the wrapped data whereas the standard serialize and deserialize methods treat the data as a pointer to
 //! prevent excessive copying.
@@ -101,13 +101,13 @@ class Buffer : public Fw::Serializable {
     // Serialization functions
     // ----------------------------------------------------------------------
 
-    //! Returns a SerializeBufferBase representation of the wrapped data for serializing
+    //! Returns a LinearBufferBase representation of the wrapped data for serializing
     //!
-    //! Returns a SerializeBufferBase representation of the wrapped data allowing for serializing other types of data
+    //! Returns a LinearBufferBase representation of the wrapped data allowing for serializing other types of data
     //! to the wrapped buffer. Once obtained the user should call one of two functions: `sbb.resetSer();` to setup for
     //! serialization, or `sbb.setBuffLen(buffer.getSize());` to setup for deserializing.
     //! \return representation of the wrapped data to aid in serializing to it
-    DEPRECATED(SerializeBufferBase& getSerializeRepr(), "Switch to .getSerializer() and .getDeserializer()");
+    DEPRECATED(LinearBufferBase& getSerializeRepr(), "Switch to .getSerializer() and .getDeserializer()");
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
@@ -126,9 +126,9 @@ class Buffer : public Fw::Serializable {
     //! \return representation of the wrapped data to aid in deserializing to it
     ExternalSerializeBufferWithMemberCopy getDeserializer();
 
-    //! Serializes this buffer to a SerializeBufferBase
+    //! Serializes this buffer to a LinearBufferBase
     //!
-    //! This serializes the buffer to a SerializeBufferBase, however, it DOES NOT serialize the wrapped data. It only
+    //! This serializes the buffer to a LinearBufferBase, however, it DOES NOT serialize the wrapped data. It only
     //! serializes the pointer to said data, the size, and context. This is done for efficiency in moving around data,
     //! and is the primary usage of Fw::Buffer. To serialize the wrapped data, use either the data pointer accessor
     //! or the serialize buffer base representation and serialize from that.
@@ -137,9 +137,9 @@ class Buffer : public Fw::Serializable {
     Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& serialBuffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const;
 
-    //! Deserializes this buffer from a SerializeBufferBase
+    //! Deserializes this buffer from a LinearBufferBase
     //!
-    //! This deserializes the buffer from a SerializeBufferBase, however, it DOES NOT handle serialized data. It only
+    //! This deserializes the buffer from a LinearBufferBase, however, it DOES NOT handle serialized data. It only
     //! deserializes the pointer to said data, the size, and context. This is done for efficiency in moving around data,
     //! and is the primary usage of Fw::Buffer. To deserialize the wrapped data, use either the data pointer accessor
     //! or the serialize buffer base representation and deserialize from that.

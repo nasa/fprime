@@ -478,6 +478,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
 }
 
 int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+    FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
 

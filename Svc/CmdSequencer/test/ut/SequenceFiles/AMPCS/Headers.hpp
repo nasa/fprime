@@ -22,12 +22,12 @@ namespace AMPCS {
 namespace Headers {
 
 //! Serialize a header with a standard U32 value
-void serialize(Fw::SerializeBufferBase& buffer  //!< The destination buffer
+void serialize(Fw::LinearBufferBase& buffer  //!< The destination buffer
 );
 
 //! Serialize a header from a U32 value
-void serialize(const U32 value,                 //!< The value
-               Fw::SerializeBufferBase& buffer  //!< The destination buffer
+void serialize(const U32 value,              //!< The value
+               Fw::LinearBufferBase& buffer  //!< The destination buffer
 );
 
 }  // namespace Headers
