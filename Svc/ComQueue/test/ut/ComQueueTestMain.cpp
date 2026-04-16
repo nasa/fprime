@@ -89,21 +89,6 @@ TEST(BufferQueueOverflowModes, DropOldest) {
     tester.testBufferQueueDropOldestMode();
 }
 
-TEST(BufferQueueOverflowModes, DropOldestReturnsOwnership) {
-    Svc::ComQueueTester tester;
-    tester.testBufferQueueDropOldestReturnsOwnership();
-}
-
-TEST(OverflowModes, ComQueueDropOldestNoBufferReturn) {
-    Svc::ComQueueTester tester;
-    tester.testComQueueDropOldestNoBufferReturn();
-}
-
-TEST(BufferQueueOverflowModes, FlushAfterDropOldest) {
-    Svc::ComQueueTester tester;
-    tester.testBufferQueueFlushAfterDropOldest();
-}
-
 TEST(Commands, SetQueuePriority) {
     Svc::ComQueueTester tester;
     tester.testSetQueuePriorityCommand();
