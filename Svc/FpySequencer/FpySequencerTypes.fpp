@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 5;
+        constant SCHEMA_VERSION = 6;
 
         @ the type which everything referencing a size or offset on the stack is represented in
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
@@ -130,6 +130,27 @@ module Svc {
             CMD_FAIL = 17
         }
 
+        @ Maximum length for argument or type names in arg_specs
+        @ Fpy serializes these as U8 length prefix, so max is 255
+        constant MAX_ARG_SPEC_NAME_LEN = 255
+
+        @ Argument specification describing an input argument's name, type, and stack size
+        @ NOTE: This struct does NOT use FPP's auto-generated serialization!
+        @ Serialization is handled manually in C++ to match Fpy's format:
+        @   [U8 argNameLen][argNameLen bytes][U8 typeNameLen][typeNameLen bytes][U32 size]
+        struct ArgSpec {
+            @ Length of the argument name (0-255)
+            argNameLen: U8
+            @ Argument name as UTF-8 bytes (not null-terminated)
+            argName: [MAX_ARG_SPEC_NAME_LEN] U8
+            @ Length of the type name (0-255)
+            typeNameLen: U8
+            @ Type name as UTF-8 bytes (not null-terminated)
+            typeName: [MAX_ARG_SPEC_NAME_LEN] U8
+            @ Size of this argument on the stack in bytes
+            size: StackSizeType
+        } default { argNameLen = 0, argName = [0], typeNameLen = 0, typeName = [0], size = 0 }
+
         struct Header {
             @ the major version of the FSW
             majorVersion: U8
@@ -149,6 +170,12 @@ module Svc {
 
             @ the size of the body in bytes
             bodySize: U32
+
+            @ Argument specifications (schema version 6+)
+            @ Only the first argumentCount entries are valid
+            @ NOTE: These are NOT included in SERIALIZED_SIZE as they are variable-length
+            @ and must be deserialized manually in C++
+            argSpecs: [MAX_SEQUENCE_ARG_COUNT] ArgSpec
         } default { majorVersion = 0, minorVersion = 0, patchVersion = 0, schemaVersion = 0, argumentCount = 0, statementCount = 0, bodySize = 0 }
 
         struct Footer {

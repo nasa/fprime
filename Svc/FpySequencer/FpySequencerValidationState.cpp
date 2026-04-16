@@ -61,6 +61,17 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    // Read and parse arg_specs (schema version 6+)
+    if (this->m_sequenceObj.get_header().get_schemaVersion() >= 6) {
+        readStatus = this->readArgSpecs(sequenceFile);
+        if (readStatus != Fw::Success::SUCCESS) {
+            return Fw::Success::FAILURE;
+        }
+    } else {
+        // For older schema versions, no arg_specs validation needed
+        this->m_expectedArgSize = 0;
+    }
+
     readStatus =
         readBytes(sequenceFile, this->m_sequenceObj.get_header().get_bodySize(), FpySequencer_FileReadStage::BODY);
 
@@ -105,6 +116,14 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    // Validate argument size matches expected size from arg_specs (schema version 6+)
+    if (this->m_sequenceObj.get_header().get_schemaVersion() >= 6 && this->m_expectedArgSize > 0) {
+        if (this->m_sequenceArgs.get_size() != this->m_expectedArgSize) {
+            this->log_WARNING_HI_ArgSizeMismatch(this->m_expectedArgSize, this->m_sequenceArgs.get_size());
+            return Fw::Success::FAILURE;
+        }
+    }
+
     return Fw::Success::SUCCESS;
 }
 
@@ -138,6 +157,113 @@ Fw::Success FpySequencer::readHeader() {
                                                        Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
         return Fw::Success::FAILURE;
     }
+    return Fw::Success::SUCCESS;
+}
+
+// reads and parses arg_specs from the sequence file (schema version 6+)
+// stores them in the Header struct and calculates the total expected argument size
+// return SUCCESS if successful, FAILURE otherwise
+Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
+    FW_ASSERT(file.isOpen());
+
+    const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
+
+    // If no arguments, no arg_specs to read
+    if (argumentCount == 0) {
+        this->m_expectedArgSize = 0;
+        return Fw::Success::SUCCESS;
+    }
+
+    Fpy::StackSizeType totalExpectedSize = 0;
+
+    for (U8 i = 0; i < argumentCount; i++) {
+        // Get reference to the ArgSpec we're populating
+        Fpy::ArgSpec& argSpec = this->m_sequenceObj.get_header().get_argSpecs()[i];
+
+        // Read arg_name length
+        Fw::Success readStatus = this->readBytes(file, 1, FpySequencer_FileReadStage::BODY);
+        if (readStatus != Fw::Success::SUCCESS) {
+            return Fw::Success::FAILURE;
+        }
+        U8 argNameLen = 0;
+        Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(argNameLen);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileReadDeserializeError(
+                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
+            return Fw::Success::FAILURE;
+        }
+        argSpec.set_argNameLen(argNameLen);
+
+        // Read arg_name string and store it
+        if (argNameLen > 0) {
+            readStatus = this->readBytes(file, argNameLen, FpySequencer_FileReadStage::BODY);
+            if (readStatus != Fw::Success::SUCCESS) {
+                return Fw::Success::FAILURE;
+            }
+            // Store the arg_name bytes in the ArgSpec
+            for (U8 j = 0; j < argNameLen; j++) {
+                U8 byte;
+                deserStatus = this->m_sequenceBuffer.deserializeTo(byte);
+                if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                    return Fw::Success::FAILURE;
+                }
+                argSpec.get_argName()[j] = byte;
+            }
+        }
+
+        // Read type_name length
+        readStatus = this->readBytes(file, 1, FpySequencer_FileReadStage::BODY);
+        if (readStatus != Fw::Success::SUCCESS) {
+            return Fw::Success::FAILURE;
+        }
+        U8 typeNameLen = 0;
+        deserStatus = this->m_sequenceBuffer.deserializeTo(typeNameLen);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileReadDeserializeError(
+                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
+            return Fw::Success::FAILURE;
+        }
+        argSpec.set_typeNameLen(typeNameLen);
+
+        // Read type_name string and store it
+        if (typeNameLen > 0) {
+            readStatus = this->readBytes(file, typeNameLen, FpySequencer_FileReadStage::BODY);
+            if (readStatus != Fw::Success::SUCCESS) {
+                return Fw::Success::FAILURE;
+            }
+            // Store the type_name bytes in the ArgSpec
+            for (U8 j = 0; j < typeNameLen; j++) {
+                U8 byte;
+                deserStatus = this->m_sequenceBuffer.deserializeTo(byte);
+                if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                    return Fw::Success::FAILURE;
+                }
+                argSpec.get_typeName()[j] = byte;
+            }
+        }
+
+        // Read size field (StackSizeType = U32, 4 bytes, big-endian)
+        readStatus = this->readBytes(file, sizeof(Fpy::StackSizeType), FpySequencer_FileReadStage::BODY);
+        if (readStatus != Fw::Success::SUCCESS) {
+            return Fw::Success::FAILURE;
+        }
+        Fpy::StackSizeType argSize = 0;
+        deserStatus = this->m_sequenceBuffer.deserializeTo(argSize);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileReadDeserializeError(
+                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
+            return Fw::Success::FAILURE;
+        }
+        argSpec.set_size(argSize);
+
+        // Accumulate the expected argument size
+        totalExpectedSize += argSize;
+    }
+
+    this->m_expectedArgSize = totalExpectedSize;
     return Fw::Success::SUCCESS;
 }
 
