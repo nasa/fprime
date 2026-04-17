@@ -203,11 +203,22 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // deserialization after this point should always work, since
         // the source buffer was specifically sized to hold the data
 
-        // Deserialize the file directory index
+        // Deserialize the file directory index. If an error occurs processing the file,
+        // generate event and return EXECUTION_ERROR. 
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError
+                (this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError
+                (this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         this->m_stateFileData[entry].used = true;
         this->m_stateFileData[entry].visited = false;
 

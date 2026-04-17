@@ -402,6 +402,15 @@ module Svc {
       id 46 \
       format "Cannot Transmit a Catalog before Building"
 
+    @ The file contained malformed or invalid data during deserialization
+    event FileCorruptedDataError(
+                             file: string size FileNameStringSize @< The file
+                             stat: I32
+      ) \
+      severity warning high \
+      id 47 \
+      format "DP file {} contains malformed data (status {})"     
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
