@@ -21,7 +21,7 @@ jobs:
     name: Run FppTest
     runs-on: ubuntu-22.04
     steps:
-      - name: "Checkout F´ Repository"
+      - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -50,5 +50,41 @@ jobs:
         if: always()
         with:
           name: FppTest-Logs
+          path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
+          retention-days: 5
+
+  fpptest-direct-port-calls:
+    name: Run FppTest (Direct Port Calls)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ./requirements.txt
+        shell: bash
+      - name: "Generate UT build cache"
+        working-directory: ./FppTestProject
+        run: |
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+        shell: bash
+      - name: "Build UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: |
+          fprime-util build --ut
+        shell: bash
+      - name: "Run UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: |
+          fprime-util check --pass-through --output-on-failure
+        shell: bash
+      - name: "Archive Logs"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FppTest-DirectPortCalls-Logs
           path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
           retention-days: 5
