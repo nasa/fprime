@@ -645,7 +645,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // sequence arguments to push to stack when entering RUNNING state
     Svc::SeqArgs m_sequenceArgs{};
 
-    // the expected argument size from arg_specs (schema version 6+)
+    // the expected argument size from arg_specs 
     Fpy::StackSizeType m_expectedArgSize{0};
 
     // the goal state is the state that we're trying to reach in the sequencer

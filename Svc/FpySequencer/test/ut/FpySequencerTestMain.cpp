@@ -2119,6 +2119,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
 
 TEST_F(FpySequencerTester, cmd_RUN_ARGS) {
     allocMem();
+    add_ARG_SPEC("arg1", "U32", 4);
+    add_ARG_SPEC("arg2", "U32", 4);
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -2247,6 +2249,8 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
 
 TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
     allocMem();
+    add_ARG_SPEC("arg1", "U32", 4);
+    add_ARG_SPEC("arg2", "U32", 4);
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -2594,43 +2598,25 @@ TEST_F(FpySequencerTester, readHeader) {
 }
 
 TEST_F(FpySequencerTester, readBody) {
-    U8 data[Fpy::MAX_SEQUENCE_ARG_COUNT + Fpy::MAX_SEQUENCE_STATEMENT_COUNT * Fpy::Statement::SERIALIZED_SIZE];
+    U8 data[Fpy::MAX_SEQUENCE_STATEMENT_COUNT * Fpy::Statement::SERIALIZED_SIZE];
 
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
-    // write some args mappings
-    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
-        // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
-                  Fw::SerializeStatus::FW_SERIALIZE_OK);
-    }
-    // write some statements
+    // write some statements (no arg mappings in body anymore, arg_specs are separate)
     Fpy::Statement stmt(Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
-    tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
 
     ASSERT_EQ(tester_readBody(), Fw::Success::SUCCESS);
-
-    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
-        ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_args()[ii], 123);
-    }
 
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
         ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_statements()[ii], stmt);
     }
 
     tester_get_m_sequenceBuffer_ptr()->resetSer();
-    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(0);
-    // now see what happens if we don't write enough args
-    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
-        // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
-                  Fw::SerializeStatus::FW_SERIALIZE_OK);
-    }
-    // don't write any stmts otherwise their bytes will be interpreted as arg mappings and it will trigger
-    // the wrong branch
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(1);
+    // don't write any statements - should fail
     ASSERT_EQ(tester_readBody(), Fw::Success::FAILURE);
 
     // now see what happens if we don't write enough stmts
@@ -3342,6 +3328,8 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
 TEST_F(FpySequencerTester, seqRunInArgs) {
     allocMem();
+    add_ARG_SPEC("arg1", "U32", 4);
+    add_ARG_SPEC("arg2", "U32", 4);
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args

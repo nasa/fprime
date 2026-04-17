@@ -218,41 +218,18 @@ event TooManySequenceDirectives(
 event ArgSizeMismatch(
     expected: Fpy.StackSizeType
     actual: FwSizeType
+    filePath: string
 ) \
     severity warning high \
-    format "Expected {} bytes of arguments based on arg_specs, but received {}"
+    format "Expected {} bytes of arguments, but received {} in sequence file {}"
 
-event ArgSpecTotalSizeExceedsStackLimit(
-    currentTotal: Fpy.StackSizeType
+event ArgTotalSizeExceedsStackLimit(
     argSize: Fpy.StackSizeType
     maxStackSize: Fpy.StackSizeType
+    filePath: string
 ) \
     severity warning high \
-    format "Arg spec total size {} + {} would exceed max stack size {}"
-
-event ArgSpecSizeExceedsStackLimit(
-    argIndex: U8
-    argSize: Fpy.StackSizeType
-    maxStackSize: Fpy.StackSizeType
-) \
-    severity warning high \
-    format "Arg spec[{}] size {} exceeds max stack size {}"
-
-event ArgSpecNameTooLong(
-    argIndex: U8
-    nameLen: U8
-    maxLen: U8
-) \
-    severity warning high \
-    format "Arg spec[{}] name length {} exceeds maximum {}"
-
-event ArgSpecTypeTooLong(
-    argIndex: U8
-    typeLen: U8
-    maxLen: U8
-) \
-    severity warning high \
-    format "Arg spec[{}] type length {} exceeds maximum {}"
+    format "Adding argument of size {} would exceed max stack size {} in sequence file {}"
 
 event SequencePaused(
     stmtIdx: U32

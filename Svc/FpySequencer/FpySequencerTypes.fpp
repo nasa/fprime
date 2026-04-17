@@ -137,7 +137,6 @@ module Svc {
         @ Argument specification describing an input argument's name, type, and stack size
         @ NOTE: This struct does NOT use FPP's auto-generated serialization!
         @ Serialization is handled manually in C++ to match Fpy's format:
-        @   [U8 argNameLen][argNameLen bytes][U8 typeNameLen][typeNameLen bytes][U32 size]
         struct ArgSpec {
             @ Length of the argument name (0-255)
             argNameLen: U8
@@ -148,8 +147,8 @@ module Svc {
             @ Type name as UTF-8 bytes (not null-terminated)
             typeName: [MAX_ARG_SPEC_NAME_LEN] U8
             @ Size of this argument on the stack in bytes
-            size: StackSizeType
-        } default { argNameLen = 0, argName = [0], typeNameLen = 0, typeName = [0], size = 0 }
+            argSize: StackSizeType
+        } default { argNameLen = 0, argName = 0, typeNameLen = 0, typeName = 0, argSize = 0 }
 
         struct Header {
             @ the major version of the FSW
@@ -170,12 +169,6 @@ module Svc {
 
             @ the size of the body in bytes
             bodySize: U32
-
-            @ Argument specifications (schema version 6+)
-            @ Only the first argumentCount entries are valid
-            @ NOTE: These are NOT included in SERIALIZED_SIZE as they are variable-length
-            @ and must be deserialized manually in C++
-            argSpecs: [MAX_SEQUENCE_ARG_COUNT] ArgSpec
         } default { majorVersion = 0, minorVersion = 0, patchVersion = 0, schemaVersion = 0, argumentCount = 0, statementCount = 0, bodySize = 0 }
 
         struct Footer {
@@ -192,7 +185,7 @@ module Svc {
             header: Header
             @ an array of size m_header.argumentCount mapping argument position to local
             @ variable index
-            args: [MAX_SEQUENCE_ARG_COUNT] U8
+            args: [MAX_SEQUENCE_ARG_COUNT] ArgSpec
             statements: [MAX_SEQUENCE_STATEMENT_COUNT] Statement
             footer: Footer
         }
