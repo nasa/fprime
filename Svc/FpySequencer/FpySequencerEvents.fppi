@@ -222,6 +222,38 @@ event ArgSizeMismatch(
     severity warning high \
     format "Expected {} bytes of arguments based on arg_specs, but received {}"
 
+event ArgSpecTotalSizeExceedsStackLimit(
+    currentTotal: Fpy.StackSizeType
+    argSize: Fpy.StackSizeType
+    maxStackSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arg spec total size {} + {} would exceed max stack size {}"
+
+event ArgSpecSizeExceedsStackLimit(
+    argIndex: U8
+    argSize: Fpy.StackSizeType
+    maxStackSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arg spec[{}] size {} exceeds max stack size {}"
+
+event ArgSpecNameTooLong(
+    argIndex: U8
+    nameLen: U8
+    maxLen: U8
+) \
+    severity warning high \
+    format "Arg spec[{}] name length {} exceeds maximum {}"
+
+event ArgSpecTypeTooLong(
+    argIndex: U8
+    typeLen: U8
+    maxLen: U8
+) \
+    severity warning high \
+    format "Arg spec[{}] type length {} exceeds maximum {}"
+
 event SequencePaused(
     stmtIdx: U32
 ) \

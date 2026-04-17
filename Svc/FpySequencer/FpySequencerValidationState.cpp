@@ -117,7 +117,7 @@ Fw::Success FpySequencer::validate() {
     }
 
     // Validate argument size matches expected size from arg_specs (schema version 6+)
-    if (this->m_sequenceObj.get_header().get_schemaVersion() >= 6 && this->m_expectedArgSize > 0) {
+    if (this->m_sequenceObj.get_header().get_schemaVersion() >= 6) {
         if (this->m_sequenceArgs.get_size() != this->m_expectedArgSize) {
             this->log_WARNING_HI_ArgSizeMismatch(this->m_expectedArgSize, this->m_sequenceArgs.get_size());
             return Fw::Success::FAILURE;
@@ -193,6 +193,10 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
+        if (argNameLen > Fpy::MAX_ARG_SPEC_NAME_LEN) {
+            this->log_WARNING_HI_ArgSpecNameTooLong(i, argNameLen, Fpy::MAX_ARG_SPEC_NAME_LEN);
+            return Fw::Success::FAILURE;
+        }
         argSpec.set_argNameLen(argNameLen);
 
         // Read arg_name string and store it
@@ -206,6 +210,9 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
                 U8 byte;
                 deserStatus = this->m_sequenceBuffer.deserializeTo(byte);
                 if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                    this->log_WARNING_HI_FileReadDeserializeError(
+                        FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                        this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
                     return Fw::Success::FAILURE;
                 }
                 argSpec.get_argName()[j] = byte;
@@ -225,6 +232,10 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
+        if (typeNameLen > Fpy::MAX_ARG_SPEC_NAME_LEN) {
+            this->log_WARNING_HI_ArgSpecTypeTooLong(i, typeNameLen, Fpy::MAX_ARG_SPEC_NAME_LEN);
+            return Fw::Success::FAILURE;
+        }
         argSpec.set_typeNameLen(typeNameLen);
 
         // Read type_name string and store it
@@ -238,6 +249,9 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
                 U8 byte;
                 deserStatus = this->m_sequenceBuffer.deserializeTo(byte);
                 if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                    this->log_WARNING_HI_FileReadDeserializeError(
+                        FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                        this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
                     return Fw::Success::FAILURE;
                 }
                 argSpec.get_typeName()[j] = byte;
@@ -257,8 +271,17 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
+        if (argSize > Fpy::MAX_STACK_SIZE) {
+            this->log_WARNING_HI_ArgSpecSizeExceedsStackLimit(i, argSize, Fpy::MAX_STACK_SIZE);
+            return Fw::Success::FAILURE;
+        }
         argSpec.set_size(argSize);
 
+        // Check for overflow before accumulation
+        if (totalExpectedSize > Fpy::MAX_STACK_SIZE - argSize) {
+            this->log_WARNING_HI_ArgSpecTotalSizeExceedsStackLimit(totalExpectedSize, argSize, Fpy::MAX_STACK_SIZE);
+            return Fw::Success::FAILURE;
+        }
         // Accumulate the expected argument size
         totalExpectedSize += argSize;
     }
