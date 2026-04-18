@@ -2119,8 +2119,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
 
 TEST_F(FpySequencerTester, cmd_RUN_ARGS) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", 4);
-    add_ARG_SPEC("arg2", "U32", 4);
+    add_ARG_SPEC("arg1", "U32", sizeof(U32));
+    add_ARG_SPEC("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -2249,8 +2249,8 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
 
 TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", 4);
-    add_ARG_SPEC("arg2", "U32", 4);
+    add_ARG_SPEC("arg1", "U32", sizeof(U32));
+    add_ARG_SPEC("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -3328,8 +3328,8 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
 TEST_F(FpySequencerTester, seqRunInArgs) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", 4);
-    add_ARG_SPEC("arg2", "U32", 4);
+    add_ARG_SPEC("arg1", "U32", sizeof(U32));
+    add_ARG_SPEC("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, 4);     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, 4);     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
