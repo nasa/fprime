@@ -231,6 +231,20 @@ event ArgTotalSizeExceedsStackLimit(
     severity warning high \
     format "Adding argument of size {} would exceed max stack size {} in sequence file {}"
 
+event InvalidArgSpec(
+    filePath: string
+) \
+    severity warning high \
+    format "Invalid argument specification in sequence file {}: arg_name or type_name cannot be empty"
+
+event ArgSpecStringLengthExceedsMax(
+    length: U8
+    max: U8
+    filePath: string
+) \
+    severity warning high \
+    format "Argument specification string length {} exceeds maximum {} in sequence file {}"
+
 event SequencePaused(
     stmtIdx: U32
 ) \

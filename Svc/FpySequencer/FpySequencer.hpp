@@ -752,6 +752,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // reads and parses arg_specs from the sequence file (schema version 6+)
     // return SUCCESS if successful, FAILURE otherwise
     Fw::Success readArgSpecs(Os::File& file);
+    // helper function to read and deserialize a variable-length string field (length byte + string bytes)
+    // returns the length via outLength parameter and writes string data to buffer
+    Fw::Success deserializeStringField(Os::File& file, U8* buffer, U8& outLength);
     // reads and validates the body from the m_sequenceBuffer
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readBody();
