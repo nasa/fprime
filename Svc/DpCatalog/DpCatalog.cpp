@@ -411,9 +411,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
             const FwSizeType fileNameLength = this->m_fileList[file].length();
             const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
-            const FwSignedSizeType loc =
-                Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(), fileNameLength, DP_EXT,
-                                                     dpExtLength);
+            const FwSignedSizeType loc = Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(),
+                                                                              fileNameLength, DP_EXT, dpExtLength);
 
             // Only accept files whose final suffix is the data product extension
             if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
