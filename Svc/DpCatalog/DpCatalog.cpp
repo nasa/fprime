@@ -13,6 +13,7 @@
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
@@ -408,11 +409,14 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
         for (FwSizeType file = 0; file < filesRead; file++) {
             // only consider files with the DP extension
 
-            FwSignedSizeType loc =
-                Fw::StringUtils::substring_find(this->m_fileList[file].toChar(), this->m_fileList[file].length(),
-                                                DP_EXT, Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT)));
+            const FwSizeType fileNameLength = this->m_fileList[file].length();
+            const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
+            const FwSignedSizeType loc =
+                Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(), fileNameLength, DP_EXT,
+                                                     dpExtLength);
 
-            if (-1 == loc) {
+            // Only accept files whose final suffix is the data product extension
+            if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
                 continue;
             }
 
@@ -497,14 +501,19 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
         return 0;
     }
 
+    if (fileSize < Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
+        return 0;
+    }
+
     Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileOpenError(fullFile, stat);
         return 0;
     }
 
-    // Read DP header
-    FwSizeType size = Fw::DpContainer::Header::SIZE;
+    // Read DP header and header hash
+    FwSizeType size = Fw::DpContainer::MIN_PACKET_SIZE;
 
     stat = dpFile.read(dpBuff, size);
     if (stat != Os::File::OP_OK) {
@@ -513,8 +522,8 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
         return 0;
     }
 
-    // if full header isn't read, something's wrong with the file, so skip
-    if (size != Fw::DpContainer::Header::SIZE) {
+    // if full header and hashes aren't read, something's wrong with the file, so skip
+    if (size != Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
         dpFile.close();
         return 0;
@@ -526,10 +535,35 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // give buffer to container instance
     container.setBuffer(hdrBuff);
 
+    // make sure the header metadata matches its stored hash before trusting it
+    Utils::HashBuffer storedHash;
+    Utils::HashBuffer computedHash;
+    Fw::Success::T hashStatus = container.checkHeaderHash(storedHash, computedHash);
+    if (hashStatus != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_FileHdrError(fullFile, DpHdrField::CRC, computedHash.asBigEndianU32(),
+                                          storedHash.asBigEndianU32());
+        return 0;
+    }
+
     // reset header deserialization in the container
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
+        return 0;
+    }
+
+    const FwSizeType dataSize = container.getDataSize();
+    const FwSizeType expectedDataSize = fileSize - Fw::DpContainer::MIN_PACKET_SIZE;
+    if (dataSize != expectedDataSize) {
+        this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
+        return 0;
+    }
+
+    Fw::FileNameString canonicalFileName;
+    canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
+                             container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
+    if (canonicalFileName != fullFile) {
+        this->log_WARNING_HI_FileHdrDesError(fullFile, Fw::FW_SERIALIZE_FORMAT_ERROR);
         return 0;
     }
 
@@ -570,11 +604,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
         return -1;
     }
 
-    Fw::FileNameString addedFileName;
-    addedFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), entry.record.get_id(),
-                         entry.record.get_tSec(), entry.record.get_tSub());
-
-    this->log_ACTIVITY_HI_DpFileAdded(addedFileName);
+    this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
 
     // Compute relative priority to current exploration node
     // For Handling adding a node to a catalog that has
