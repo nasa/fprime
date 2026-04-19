@@ -304,6 +304,21 @@ TEST(OffNominal, ProcessFileInvalidDir) {
     tester.test_ProcessFileInvalidDir();
 }
 
+TEST(OffNominal, TruncatedDpRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_TruncatedDpRejected();
+}
+
+TEST(OffNominal, NonCanonicalDpRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_NonCanonicalDpRejected();
+}
+
+TEST(OffNominal, BadHeaderHashRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_BadHeaderHashRejected();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
