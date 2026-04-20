@@ -48,7 +48,7 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
     SerializeStatus stat;
 
     len = AMPCS_EVR_TASK_NAME_LEN;
-    stat = buffer.deserializeTo(this->m_taskName, len, true);
+    stat = buffer.deserializeTo(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, len, Fw::Serialization::OMIT_LENGTH);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -69,7 +69,7 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
     }
 
     FwSizeType size = buffer.getDeserializeSizeLeft();
-    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, true);
+    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), this->m_logBuffer.getCapacity(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_logBuffer.setBuffLen(size);

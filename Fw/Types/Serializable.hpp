@@ -456,10 +456,14 @@ class SerialBufferBase {
     //! deserialization can be controlled via the endianMode parameter.
     //!
     //! \param buff Pointer to the buffer where deserialized data will be stored
+    //! \param buffCapacity Size in bytes of the destination buffer pointed to by buff
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    virtual SerializeStatus deserializeTo(U8* buff, FwSizeType& length, Endianness endianMode = Endianness::BIG) = 0;
+    virtual SerializeStatus deserializeTo(U8* buff,
+                                          FwSizeType buffCapacity,
+                                          FwSizeType& length,
+                                          Endianness endianMode = Endianness::BIG) = 0;
 
     //! \brief Deserialize a byte buffer with optional length prefix
     //!
@@ -470,11 +474,13 @@ class SerialBufferBase {
     //! endianMode parameter.
     //!
     //! \param buff Pointer to the buffer where deserialized data will be stored
+    //! \param buffCapacity Size in bytes of the destination buffer pointed to by buff
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param lengthMode Specifies whether length was included in serialization (INCLUDE_LENGTH or OMIT_LENGTH)
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     virtual SerializeStatus deserializeTo(U8* buff,
+                                          FwSizeType buffCapacity,
                                           FwSizeType& length,
                                           Serialization::t lengthMode,
                                           Endianness endianMode = Endianness::BIG) = 0;
@@ -1031,10 +1037,14 @@ class LinearBufferBase : public SerialBufferBase {
     //! deserialization can be controlled via the endianMode parameter.
     //!
     //! \param buff Pointer to the buffer where deserialized data will be stored
+    //! \param buffCapacity Size in bytes of the destination buffer pointed to by buff
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
-    SerializeStatus deserializeTo(U8* buff, FwSizeType& length, Endianness endianMode = Endianness::BIG) override;
+    SerializeStatus deserializeTo(U8* buff,
+                                  FwSizeType buffCapacity,
+                                  FwSizeType& length,
+                                  Endianness endianMode = Endianness::BIG) override;
 
     //! \brief Deserialize a byte buffer with optional length prefix
     //!
@@ -1045,11 +1055,13 @@ class LinearBufferBase : public SerialBufferBase {
     //! endianMode parameter.
     //!
     //! \param buff Pointer to the buffer where deserialized data will be stored
+    //! \param buffCapacity Size in bytes of the destination buffer pointed to by buff
     //! \param length Reference to store the actual number of bytes deserialized
     //! \param lengthMode Specifies whether length was included in serialization (INCLUDE_LENGTH or OMIT_LENGTH)
     //! \param endianMode Endianness mode for deserialization (default is Endianness::BIG)
     //! \return SerializeStatus indicating the result of the operation
     SerializeStatus deserializeTo(U8* buff,
+                                  FwSizeType buffCapacity,
                                   FwSizeType& length,
                                   Serialization::t lengthMode,
                                   Endianness endianMode = Endianness::BIG) override;
@@ -1323,11 +1335,11 @@ class LinearBufferBase : public SerialBufferBase {
     DEPRECATED(SerializeStatus deserialize(bool& val), "Use deserializeTo(bool& val) instead");
     DEPRECATED(SerializeStatus deserialize(void*& val), "Use deserializeTo(void*& val) instead");
     DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength),
-               "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
+               "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
     DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length),
-               "Use deserializeTo(U8* buff, FwSizeType& length) instead");
+               "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length) instead");
     DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode),
-               "Use deserializeTo(U8* buff, FwSizeType& length, Serialization::t mode) instead");
+               "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
     DEPRECATED(SerializeStatus deserialize(Serializable& val), "Use deserializeTo(Serializable& val) instead");
 
 #ifdef BUILD_UT

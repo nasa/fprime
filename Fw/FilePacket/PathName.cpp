@@ -40,7 +40,7 @@ SerializeStatus FilePacket::PathName ::fromSerialBuffer(SerialBuffer& serialBuff
     {
         const U8* addrLeft = serialBuffer.getBuffAddrLeft();
         U8 bytes[MAX_LENGTH];
-        const SerializeStatus status = serialBuffer.popBytes(bytes, this->m_length);
+        const SerializeStatus status = serialBuffer.popBytes(bytes, MAX_LENGTH, this->m_length);
 
         if (status != FW_SERIALIZE_OK) {
             return status;

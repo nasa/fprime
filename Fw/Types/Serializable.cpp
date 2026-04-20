@@ -515,14 +515,18 @@ SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus LinearBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length, Endianness endianMode) {
+SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
+                                                FwSizeType buffCapacity,
+                                                Serializable::SizeType& length,
+                                                Endianness endianMode) {
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
-    SerializeStatus status = this->deserializeTo(buff, length_in_out, Serialization::INCLUDE_LENGTH, endianMode);
+    SerializeStatus status = this->deserializeTo(buff, buffCapacity, length_in_out, Serialization::INCLUDE_LENGTH, endianMode);
     length = static_cast<Serializable::SizeType>(length_in_out);
     return status;
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
+                                                FwSizeType buffCapacity,
                                                 Serializable::SizeType& length,
                                                 Serialization::t lengthMode,
                                                 Endianness endianMode) {
@@ -537,8 +541,8 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
             return stat;
         }
 
-        // make sure it fits
-        if ((storedLength > this->getDeserializeSizeLeft()) or (storedLength > length)) {
+        // make sure it fits in both the source and the destination
+        if ((storedLength > this->getDeserializeSizeLeft()) or (storedLength > buffCapacity)) {
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
@@ -550,8 +554,13 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         length = static_cast<FwSizeType>(storedLength);
 
     } else {
-        // make sure enough is left
+        // make sure enough is left in the source
         if (length > this->getDeserializeSizeLeft()) {
+            return FW_DESERIALIZE_SIZE_MISMATCH;
+        }
+
+        // make sure the destination buffer is large enough
+        if (length > buffCapacity) {
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
@@ -930,19 +939,10 @@ SerializeStatus LinearBufferBase::deserialize(void*& val) {
     return this->deserializeTo(val);
 }
 
-// Deprecated method for backward compatibility
-SerializeStatus LinearBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) {
-    const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
-    return this->deserializeTo(buff, length, mode);
-}
-
-SerializeStatus LinearBufferBase::deserialize(U8* buff, FwSizeType& length) {
-    return this->deserializeTo(buff, length, Serialization::INCLUDE_LENGTH);
-}
-
-SerializeStatus LinearBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
-    return this->deserializeTo(buff, length, mode);
-}
+// NOTE: The deprecated deserialize(U8* buff, ...) overloads have been removed.
+// They could not be safely forwarded to deserializeTo() after the addition of
+// the buffCapacity parameter. Callers must migrate to:
+//   deserializeTo(buff, buffCapacity, length, lengthMode)
 
 SerializeStatus LinearBufferBase::deserialize(Serializable& val) {
     return this->deserializeTo(val);

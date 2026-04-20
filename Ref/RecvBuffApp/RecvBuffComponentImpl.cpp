@@ -31,7 +31,7 @@ void RecvBuffImpl::Data_handler(FwIndexType portNum, Drv::DataBuffer& buff) {
     // deserialize data
     U8 testData[24] = {0};
     FwSizeType size = sizeof(testData);
-    stat = buff.deserializeTo(testData, size);
+    stat = buff.deserializeTo(testData, sizeof(testData), size, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
     // deserialize checksum
     U32 csum = 0;
