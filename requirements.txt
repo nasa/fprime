@@ -19,7 +19,7 @@ Flask-Compress==1.15
 Flask-RESTful==0.3.10
 fprime-fpl-layout==1.0.4
 fprime-fpl-write-pic==1.0.4
-fprime-fpp==3.3.0a1
+fprime-fpp==3.3.0a2
 fprime-gds==4.2.0
 fprime-tools==4.2.0
 fprime-visual==1.0.2
