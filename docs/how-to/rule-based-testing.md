@@ -1,353 +1,359 @@
 # How-To: Write Rule-Based Tests for F Prime Components
 
-This guide shows how to write Rule-Based Testing (RBT) unit tests for an F Prime component. It uses the concrete example in `Svc/Examples/RuleBasedTesting/RuleDemo`.
+This guide shows how to write Rule-Based Testing (RBT) unit tests for an F Prime component.
 
-Rule-Based Testing is an immensely powerful methodology for unit testing which allows UTs to be constructed from a set of building blocks ("_Rules_") assembled into many different ways ("_Scenarios_"). Rules describe what can be tested and when, and Scenarios apply these rules in various sequences. Each rule models behavior with:
+Rule-Based Testing is a methodology for unit testing where unit tests are constructed from a set of building blocks (_Rules_) assembled in many different ways (_Scenarios_). Rules describe what to test and when. Scenarios apply rules in sequences. Each rule models behavior with:
 
-1. A precondition that says when the rule applies
-2. An action that drives the component and checks outcomes
+1. A precondition that says when the rule can be applied
+2. An action that performs the test
 
-The test runner repeatedly picks applicable rules in random order, so one test explores many state sequences, and each subsequent test explores different sequences. This methodology provides broad coverage and high confidence in component behavior.
-
----
+Rules are then assembled into different sequences to form the test, potentially at random and in very large numbers. This methodology provides broad coverage and high confidence in component behavior. The framework for authoring Rule-Based Testing is provided by the [`fprime/STest/` module](../../STest/README.md).
 
 ## Prerequisites
 
 Before you start, you should have:
 
-- Basic experience with F Prime unit tests (see LedBlinker tutorial)
+- Experience with F Prime unit tests (see the [LedBlinker tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/))
 - Basic experience with FPP component modeling
 - A generated UT build (`fprime-util generate --ut`)
 
----
 
-## Example Component
+## When to Use Rule-Based Testing
 
-This example uses an FPP state machine because mode-management behavior maps naturally to states and transitions. RBT itself is not limited to state-machine components. You can apply the same RBT pattern to non-state-machine components, such as `Svc/Ccsds/ApidManager/test/ut`.
+Use RBT when:
 
-This guide uses `RuleDemo`, an active component that manages mode transitions with an internal FPP state machine.
+- Your component defines a state machine or internal state affecting its behavior
+- You want to leverage Rule-Based Testing to write broad coverage tests
 
-The state machine is a good fit for this component, but it is not a requirement for RBT.
-
-Key files:
-
-- `Svc/Examples/RuleBasedTesting/RuleDemo/RuleDemo.fpp`
-- `Svc/Examples/RuleBasedTesting/RuleDemo/RuleDemo.hpp`
-- `Svc/Examples/RuleBasedTesting/RuleDemo/RuleDemo.cpp`
-
-The state machine definition in `RuleDemo.fpp`:
-
-```python
-state machine ModeManagement {
-
-    signal goOps
-    signal goScience
-    signal goSafe
-
-    action enterSafeMode
-    action enterOpsMode
-    action enterScienceMode
-
-    guard isScienceReady
-
-    state SAFE {
-        entry do { enterSafeMode }
-        on goOps enter OPERATIONS
-    }
-    state OPERATIONS {
-        entry do { enterOpsMode }
-        on goScience if isScienceReady enter SCIENCE
-        on goSafe enter SAFE
-    }
-    state SCIENCE {
-        entry do { enterScienceMode }
-        on goOps enter OPERATIONS
-        on goSafe enter SAFE
-    }
-
-    initial enter SAFE
-}
-```
+Stick with traditional tests when component behavior is purely functional (no state) and coverage is easily obtainable through traditional UTs.
 
 ---
 
-## Test Structure
+## Overview: Test Structure
 
-The UT implementation follows four pieces:
+A rule-based test has four main constructs. Two are specific to RBT:
 
-1. Tester class with rule declarations
-2. Shadow state model
-3. Rule implementation files
-4. RandomScenario test main
+**1. Shadow State Class** (`test/ut/TestState/`)  
+A test-side model mirroring the component internal state. Preconditions query it; actions update it in lockstep with the component.
 
-### 1. Tester Class
+**2. Rule Implementations** (`test/ut/Rules/`)  
+Each rule is a `STest::Rule` C++ struct that has: (1) a `precondition()` method returning `true` when the rule can apply; and (2) an `action()` method that drives the component and asserts test outcomes.
 
-In `RuleDemoTester.hpp`, declare rules with `FW_RBT_DEFINE_RULE` within your `ComponentTester` class:
+The other two constructs are common to all F´ unit tests:
 
-```cpp
-class RuleDemoTester final : public RuleDemoGTestBase {
-    // ... other declarations ...
+**3. Tester Class** (`test/ut/MyComponentTester.hpp`)  
+Extends the GTest base. For RBT, it includes a `shadow` state member of type `TestState` (defined above in 1.), and defines rules.
 
-  public:
-    FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, SafeToOps);
-    FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, OpsToSafe);
-    FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, OpsToScienceNotReady);
-    FW_RBT_DEFINE_RULE(RuleDemoTester, GetMode, MatchesShadow);
-};
-```
-
-### 2. Shadow Test State
-
-In `test/ut/TestState/TestState.hpp`, mirror the set of state and behavior you assert:
-
-```cpp
-class RuleDemoTestState {
-  public:
-    ModeEnum m_mode = ModeEnum::SAFE;
-    bool m_isScienceReady = false;
-
-    // Note: these helpers are not strictly necessary, you could directly act on the member
-    // variables, but it is good practice for when the behavior becomes more complex.
-    bool isSafe() const;
-    bool isOps() const;
-    bool isScience() const;
-    void setSafe();
-    void setOps();
-    void setScience();
-};
-```
-
-This follows the same pattern used in ApidManager-style RBT: keep test state separate from rule methods.
-
-For comparison, `Svc/Ccsds/ApidManager/test/ut` demonstrates this same shadow-state and rule pattern on a component that does not rely on an internal FPP state machine.
-
-### 3. Rule Implementations
-
-In `test/ut/Rules/SwitchMode.cpp`, each rule has precondition and action. For example, the `SafeToOps` rule models the `SAFE -> OPERATIONS` transition. It can only apply when the shadow state is `SAFE`, and the action drives the transition, checks the result, and updates shadow state.
-
-```cpp
-bool RuleDemoTester::SwitchMode__SafeToOps__precondition() const {
-    // The rule only applies if the shadow state is SAFE, so check that as the precondition
-    return this->shadow.isSafe();
-}
-
-void RuleDemoTester::SwitchMode__SafeToOps__action() {
-    this->clearHistory();
-    // Drive the component through the mode switch
-    this->invoke_to_switchMode(0, ModeEnum::OPERATIONS);
-    this->dispatchAll(); // dispatch async message (because this is an active component)
-    // Mirror the expected state change in the shadow test state
-    this->shadow.setOps();
-
-    // Assert the component getMode port reports the expected test state
-    const ModeEnum currentMode = this->invoke_to_getMode(0);
-    ASSERT_EQ(currentMode, ModeEnum::OPERATIONS);
-    ASSERT_EQ(currentMode, this->shadow.m_mode);
-}
-```
-
-The guard case (`OPERATIONS -> SCIENCE` while not ready):
-
-```cpp
-bool RuleDemoTester::SwitchMode__OpsToScienceNotReady__precondition() const {
-    return this->shadow.shadow_isOps() && (!this->shadow.shadow_isScienceReady);
-}
-
-void RuleDemoTester::SwitchMode__OpsToScienceNotReady__action() {
-    this->clearHistory();
-
-    this->invoke_to_switchMode(0, ModeEnum::SCIENCE);
-    this->dispatchAll();
-
-    const ModeEnum currentMode = this->invoke_to_getMode(0);
-    ASSERT_EQ(currentMode, ModeEnum::OPERATIONS);
-    ASSERT_EQ(currentMode, this->shadow.m_mode);
-}
-```
-
-> [!TIP]
-> It is good practice to assert against the shadow state as well as the expected mode. This way, if the test fails, you can determine whether the component state diverged from the shadow model (indicating a potential bug in the component), or whether the test failed because the shadow model was wrong (indicating a potential bug in the test).
-
-### 4. Random Scenario Main
-
-In `test/ut/RuleDemoTestMain.cpp`, run 1000 iterations:
-
-```cpp
-std::vector<STest::Rule<RuleBasedTesting::RuleDemoTester>*> rules = {
-    &safeToOps,
-    &opsToSafe,
-    &opsToScienceNotReady,
-    &getModeMatchesShadow,
-};
-
-STest::RandomScenario<RuleBasedTesting::RuleDemoTester> scenario("RuleDemo", rules);
-for (U32 i = 0; i < 1000; i++) {
-    scenario.step(tester);
-}
-```
-
-For additional scenario types, see `STest/STest/Scenario/`.
+**4. Test Main** (`test/ut/MyComponentTestMain.cpp`)  
+Instantiates rules and applies them via scenarios. Targeted tests can apply rules in manually-specified sequences; randomized tests apply rules in random order for many iterations.
 
 ---
 
 ## Step-by-Step Guide
 
-### Step 1: Confirm the model and test-facing ports in FPP
+### Example Component: ApidManager
 
-For this example, model the state transitions in FPP and expose the ports that tests call.
+The Step-by-Step guide will walk through writing rule-based tests for the `Svc/Ccsds/ApidManager` component. It is a passive component that maps identifiers (called APIDs) to sequence counts. It is essentially a lookup table that tracks the next sequence count for each APID. It exposes two ports:
+
+- `getApidSeqCountIn`: returns the next sequence count for a given APID
+- `validateApidSeqCountIn`: checks that the sequence count given as input matches the next sequence count for a given APID
+
+In short: one port gives out a sequence count, the other validates one that came in.
+The FPP model:
 
 ```python
-active component RuleDemo {
-    state machine instance sm: ModeManagement
+passive component ApidManager {
 
-    async input port switchMode: ModeSetter
-    sync input port getMode: ModeGetter
+    @ Port to request the next sequence count for a given APID
+    guarded input port getApidSeqCountIn: Ccsds.ApidSequenceCount
+
+    @ Port to validate an input sequence count for a given APID
+    guarded input port validateApidSeqCountIn: Ccsds.ApidSequenceCount
+
+    # ... events and standard AC ports ...
 }
 ```
+
+### Step 1: Identify the behaviors to cover
+
+List the distinct behaviors the component can exhibit. For `ApidManager`, this would be:
+
+| Behavior To Test | Action To Take | Expected outcome |
+|---|---|---|
+| Get count for existing APID | `getApidSeqCountIn` with tracked APID | Returns next count, no event |
+| Get count for new APID (table has room) | `getApidSeqCountIn` with untracked APID | Returns 0, registers APID, no event |
+| Get count for new APID (table is full) | `getApidSeqCountIn` with untracked APID | Returns `SEQUENCE_COUNT_ERROR`, sends `ApidTableFull` event |
+| Validate correct count | `validateApidSeqCountIn` with expected count | No event |
+| Validate wrong count | `validateApidSeqCountIn` with unexpected count | Sends `UnexpectedSequenceCount` event |
+
+Each row maps to one rule. For components defining state machines, you would usually have at least one rule per transition.
 
 ### Step 2: Add test-state and rule directories
 
-Create directories under `test/ut`:
+From your component directory, run:
 
 ```bash
-cd MyComponent/test/ut
 fprime-util new --rule-based-test
 ```
 
-This is implemented as a separate command from `fprime-util impl --ut` to give users the option to add RBT structure to an existing UT build.
+This scaffolds the `test/ut/Rules/` and `test/ut/TestState/` directories. You can also create them manually.
 
-### Step 3: Add a shadow model in TestState
+### Step 3: Define the shadow test state
 
-Create `test/ut/TestState/TestState.hpp` and `test/ut/TestState/TestState.cpp`.
+The **shadow test state** is a test-side construct that mirrors the component's internal state. Its purpose is to track the expected state of the component during testing, allowing rules to assert against the expected state, as well as driving the rule preconditions.
+
+Design principles for shadow state:
+
+- **Mirror only what's needed**: Don't replicate the entire component implementation, only the state required for preconditions and assertions
+- **Stay synchronized**: Actions update shadow in lockstep with expected component behavior  
+- **Provide helper methods if necessary**: The shadow `TestState` is a C++ class and can therefore provide helper methods to work with it
+
+Define your shadow test state in `test/ut/TestState/TestState.hpp`. For our `ApidManager` example, we mirror the APID-to-sequence-count map with an `std::map` (allowed in test code), as well as helpers that mirror the component behavior:
 
 ```cpp
-class RuleDemoTestState {
+class ApidManagerTestState {
   public:
-    ModeEnum shadow_mode = ModeEnum::SAFE;
-    bool shadow_isScienceReady = false;
+    //! Mirrors the component's internal APID-to-sequence-count map.
+    std::map<ComCfg::Apid::T, U16> shadow_seqCounts;
 
-    bool shadow_isSafe() const;
-    bool shadow_isOps() const;
-    bool shadow_isScience() const;
+    //! True once shadow_seqCounts has reached MAX_TRACKED_APIDS entries.
+    bool shadow_isTableFull = false;
 
-    void shadow_setSafe();
-    void shadow_setOps();
-    void shadow_setScience();
+    // Shadow operations that mirror component behavior
+    U16  shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid);
+    void shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 seqCount);
+    
+    // Helper methods for test randomization
+    ComCfg::Apid::T shadow_getRandomTrackedApid() const;
+    ComCfg::Apid::T shadow_getRandomUntrackedApid() const;
 };
 ```
 
-### Step 4: Declare rules in the tester header
+These methods are implemented in `TestState.cpp` to maintain the shadow state properly.
 
-Update `RuleDemoTester.hpp` with the shadow include, macro include, and rule declarations.
+### Step 4: Declare rules and shadow state member in the ComponentTester class
+
+#### Add Shadow State Member to ComponentTester
+
+Declare the shadow state member in your ComponentTester class in `MyComponent/test/ut/MyComponentTester.hpp`. For our `ApidManager` example, this would be:
 
 ```diff
---- a/Svc/Examples/RuleBasedTesting/RuleDemo/test/ut/RuleDemoTester.hpp
-+++ b/Svc/Examples/RuleBasedTesting/RuleDemo/test/ut/RuleDemoTester.hpp
-@@
-+#include "RuleBasedTesting/RuleDemo/test/ut/TestState/TestState.hpp"
++ #include "Svc/Ccsds/ApidManager/test/ut/TestState/TestState.hpp"
+
+ class ApidManagerTester : public ApidManagerGTestBase {
+    // ... other code ...
+  public:
+     ApidManager component;
++    ApidManagerTestState shadow;
+ };
+```
+
+This way, our tester contains two parallel models of the component state: the actual component instance (`component`) and the shadow state (`shadow`).
+
+#### Declare Rules
+
+Rules can be declared using the helper macro `FW_RBT_DEFINE_RULE(TesterClass, GroupName, RuleName)`. This macro creates:
+
+- A `GroupName__RuleName__precondition()` method that returns `bool`
+- A `GroupName__RuleName__action()` method that drives the test
+- A `GroupName__RuleName` C++ struct of type `STest::Rule` which can be instantiated in test cases
+
+Include `TestUtils/RuleBasedTesting.hpp` in your ComponentTester header, then declare one `FW_RBT_DEFINE_RULE` per behavior identified in Step 1. For our `ApidManager` example, this looks like:
+
+```diff
 +#include "TestUtils/RuleBasedTesting.hpp"
-@@
-+RuleDemoTestState shadow;
-@@
-+FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, SafeToOps);
-+FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, OpsToSafe);
-+FW_RBT_DEFINE_RULE(RuleDemoTester, SwitchMode, OpsToScienceNotReady);
-+FW_RBT_DEFINE_RULE(RuleDemoTester, GetMode, MatchesShadow);
+
+ class ApidManagerTester : public ApidManagerGTestBase {
+   // ... other code ...
+
++  public:
++    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, Existing);
++    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewOk);
++    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewTableFull);
++
++    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
++    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Failure);
+ };
 ```
 
-### Step 5: Implement switchMode rules in Rules/SwitchMode.cpp
+The above defines 5 rules. Three in the `GetSeqCount` group, and two in the `ValidateSeqCount` group. It is recommended to split rules into logical groups. Here, the groups are based on the input port they exercise.
 
-Implement preconditions and actions.
+### Step 5: Implement rules
+
+Create one `test/ut/Rules/<GroupName>.cpp` file for each rule group. Each rule has two methods that must be implemented:
+
+1. **Precondition** (`bool GroupName__RuleName__precondition()`): Returns `true` when the rule can apply.
+2. **Action** (`void GroupName__RuleName__action()`): Drives the component and verifies behavior.
+
+For our `ApidManager` example, the `Rules/GetSeqCount.cpp` rule group exercises `getApidSeqCountIn`:
 
 ```cpp
-bool RuleDemoTester::SwitchMode__SafeToOps__precondition() const {
-    return this->shadow.shadow_isSafe();
+// Rule applies when at least one APID is already tracked
+bool ApidManagerTester::GetSeqCount__Existing__precondition() const {
+    return !this->shadow.shadow_seqCounts.empty();
 }
 
-void RuleDemoTester::SwitchMode__SafeToOps__action() {
+void ApidManagerTester::GetSeqCount__Existing__action() {
     this->clearHistory();
-    this->invoke_to_switchMode(0, ModeEnum::OPERATIONS);
-    this->dispatchAll();
-    ASSERT_EQ(this->invoke_to_getMode(0), ModeEnum::OPERATIONS);
-    this->shadow.shadow_setOps();
+    // Use shadow helper to get a random APID that is tracked already
+    ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
+    // Invoke component port and mirror the behavior in the shadow state
+    U16 returned = this->invoke_to_getApidSeqCountIn(0, apid, 0);
+    U16 expected = this->shadow.shadow_getAndIncrementSeqCount(apid);
+    // Assert results and additional properties (e.g. events) as needed
+    ASSERT_EQ(returned, expected);
+    ASSERT_EVENTS_SIZE(0);
 }
 ```
 
-### Step 6: Implement an invariant rule in Rules/GetMode.cpp
+### Step 6: Write the test main
 
-Use a broad rule that is always applicable and checks state consistency.
+Rule-based tests typically include two types of test cases:
+
+1. **Targeted tests**: Apply rules in a fixed sequence to exercise specific paths
+2. **Randomized tests**: Apply rules in random order for many iterations to explore state space
+
+Create your test main file in `test/ut/MyComponentTestMain.cpp`. For our `ApidManager` example, this would be:
 
 ```cpp
-bool RuleDemoTester::GetMode__MatchesShadow__precondition() const {
-    return true;
+// Targeted test: manual sequence to test expected behavior
+// Useful at confirming known behavior and catching regressions early
+TEST(ApidManager, GetSequenceCounts) {
+    ApidManagerTester tester;
+    ApidManagerTester::GetSeqCount__NewOk ruleNewOk;
+    ApidManagerTester::GetSeqCount__Existing ruleExisting;
+    ruleNewOk.apply(tester);     // register a new APID; expect count 0
+    ruleExisting.apply(tester);  // retrieve count for the same APID; expect count 1
 }
 
-void RuleDemoTester::GetMode__MatchesShadow__action() {
-    this->clearHistory();
-    ASSERT_EQ(this->invoke_to_getMode(0), this->shadow.shadow_mode);
+// Randomized test: apply rules in a random sequence for 10,000 iterations.
+TEST(ApidManager, RandomizedTesting) {
+    U32 numRulesToApply = 10000;
+    // Instantiate tester and each rule
+    ApidManagerTester tester;
+    ApidManagerTester::GetSeqCount__Existing     ruleGetExisting;
+    ApidManagerTester::GetSeqCount__NewOk        ruleGetNewOk;
+    ApidManagerTester::GetSeqCount__NewTableFull ruleGetNewTableFull;
+    ApidManagerTester::ValidateSeqCount__Ok      ruleValidateOk;
+    ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
+    // Create an array of rule pointers to pass to the scenario
+    STest::Rule<ApidManagerTester>* rules[] = {
+        &ruleGetExisting, &ruleGetNewOk, &ruleGetNewTableFull,
+        &ruleValidateOk,  &ruleValidateFailure,
+    };
+    // Run the specified rules in a random sequence for 10,000 iterations
+    STest::RandomScenario<ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::BoundedScenario<ApidManagerTester> bounded("Bounded Random Rules", random, numRulesToApply);
+    bounded.run(tester);
 }
 ```
 
-### Step 7: Add dispatch helper and RandomScenario main
+**Scenarios** control how rules are applied:
 
-For active components, flush the queue after async invocations.
+- `RandomScenario`: Picks an applicable rule at random at each step
+- `BoundedScenario`: Wraps another scenario and stops after N steps
+- `SequenceScenario`: Applies rules in a fixed order
 
-```cpp
-void RuleDemoTester::dispatchAll() {
-    RuleDemoComponentBase::MsgDispatchStatus status = RuleDemoComponentBase::MSG_DISPATCH_OK;
-    while (status == RuleDemoComponentBase::MSG_DISPATCH_OK) {
-        status = this->component.doDispatch();
-        FW_ASSERT(status != RuleDemoComponentBase::MSG_DISPATCH_ERROR);
-    }
-}
-```
+For additional scenario types, see `STest/STest/Scenario/`.
 
-In `RuleDemoTestMain.cpp`, run 1000 random steps:
+### Step 7: Register all UT sources in CMake
 
-```cpp
-STest::RandomScenario<RuleBasedTesting::RuleDemoTester> scenario("RuleDemo", rules);
-for (U32 i = 0; i < 1000; i++) {
-    scenario.step(tester);
-}
-```
-
-### Step 8: Register all UT sources in CMake
-
-Update `RuleDemo/CMakeLists.txt` so UT builds include tester, rules, and test state.
+Add the tester, shadow state, and all rule files to `register_fprime_ut` in your component's `CMakeLists.txt`. For our `ApidManager` example, this would be:
 
 ```diff
---- a/Svc/Examples/RuleBasedTesting/RuleDemo/CMakeLists.txt
-+++ b/Svc/Examples/RuleBasedTesting/RuleDemo/CMakeLists.txt
-@@
  register_fprime_ut(
-@@
-     SOURCES
-         "${CMAKE_CURRENT_LIST_DIR}/test/ut/RuleDemoTestMain.cpp"
-         "${CMAKE_CURRENT_LIST_DIR}/test/ut/RuleDemoTester.cpp"
-+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/SwitchMode.cpp"
-+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/GetMode.cpp"
-+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestState/TestState.cpp"
-@@
+   SOURCES
+     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTestMain.cpp"
+     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTester.cpp"
++    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestState/TestState.cpp"
++    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/GetSeqCount.cpp"
++    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/ValidateSeqCount.cpp"
+   AUTOCODER_INPUTS
+     "${CMAKE_CURRENT_LIST_DIR}/ApidManager.fpp"
+   DEPENDS
+     Svc_Ccsds_Types
+     STest
+   UT_AUTO_HELPERS
  )
 ```
 
----
-
 ## Best Practices
 
-- Keep preconditions pure and fast.
-- Keep shadow state minimal and explicit.
-- Clear history at the start of each action.
-- Use one rule per behavior property.
-- Add at least one broadly applicable rule (for example, a state-consistency check).
+- Keep preconditions side-effect free
+- Keep shadow state minimal and explicit. Only mirror what preconditions and assertions actually use.
+- Clear history at the start of every action with `this->clearHistory()` in order to enable asserting on what this specific rule did, and not prior behavior
+- Write one rule per distinct behavior property, not one rule per port.
+- Targeted test sequence (i.e. non-random) are useful to test expected behavior. Randomized sequences is powerful at hammering out edge cases and unexpected interactions.
+
+## Advanced Usage
+
+### Understanding the FW_RBT_DEFINE_RULE Macro
+
+`FW_RBT_DEFINE_RULE(TesterClass, GroupName, RuleName)` expands to three things inside the tester class body:
+
+1. A `bool GroupName__RuleName__precondition() const` method declaration — you implement this in a `.cpp` file.
+2. A `void GroupName__RuleName__action()` method declaration — you implement this in a `.cpp` file.
+3. A `struct GroupName__RuleName : public STest::Rule<TesterClass>` rule definition whose `precondition()` and `action()` method implementations delegate back to the methods 1. and 2., respectively.
+
+The key design choice is that `precondition` and `action` are implemented to delegate to the tester itself rather than in the rule struct directly. This is what makes F Prime test assert macros like `ASSERT_EVENTS_*` and `ASSERT_TLM_*` work inside rule bodies — those macros expand to `this->...`, and `this` must be the tester instance.
+
+### Rule Parameterization at Construction
+
+As seen above, the `FW_RBT_DEFINE_RULE` macro is a helper that easily enables the use of the F´ `ASSERT_*` macros inside rule bodies. Because the constructor of the rule is empty, it does not support parameterizing a rule at instantiation time. Parameterization can be achieved by inlining the rule struct and specifying a constructor.
+
+```cpp
+class ApidManagerTester : public ApidManagerGTestBase {
+  // ... other code ...
+
+  public:
+    // --------------------------------------------
+    // Parameterized Rule: GetSeqCount__Repeated
+    // --------------------------------------------
+    struct GetSeqCount__Repeated : public STest::Rule<ApidManagerTester> {
+        // Member variable of the rule
+        U32 m_iterations;
+
+        // Constructor
+        explicit GetSeqCount__Repeated(U32 iterations) : 
+            STest::Rule<ApidManagerTester>("GetSeqCount__Repeated"), 
+            m_iterations(iterations) {}
+
+        bool precondition(const ApidManagerTester& tester) override {
+            return !tester.shadow.shadow_seqCounts.empty();
+        }
+
+        void action(ApidManagerTester& tester) override {
+            // IMPORTANT: in the rule body here, the F´ macros such as ASSERT_EVENT_*,
+            // ASSERT_TLM_*, etc. are NOT available. See note below.
+            tester.clearHistory();
+            for (U32 i = 0; i < this->m_iterations; i++) {
+                ComCfg::Apid::T apid = tester.shadow.shadow_getRandomTrackedApid();
+                U16 returned = tester.invoke_to_getApidSeqCountIn(0, apid, 0);
+                U16 expected = tester.shadow.shadow_getAndIncrementSeqCount(apid);
+                ASSERT_EQ(returned, expected);
+            }
+        }
+    };
+}
+```
+
+Then instantiate with the desired value in the test main:
+
+```cpp
+ApidManagerTester::GetSeqCount__Repeated rule5(5);    // Run 5 iterations
+ApidManagerTester::GetSeqCount__Repeated rule25(25);  // Run 25 iterations
+rule5.apply(tester);
+rule25.apply(tester);
+```
+
+>[!IMPORTANT]
+> Note that F Prime test assert macros (`ASSERT_EVENTS_*`, etc.) are not available inside manually-written rule structs because `this` refers to the rule, not the tester. Call those assertions through the `tester` reference passed to `action` instead (e.g. `tester.assertEvents_...()`), or inline the rule `precondition()`/`action()` to delegate to a method on the tester, as done by the `FW_RBT_DEFINE_RULE` macro.
 
 ---
 
 ## References
 
-- `Svc/Examples/RuleBasedTesting/RuleDemo/test/ut`
-- `TestUtils/RuleBasedTesting.hpp`
-- `STest/STest/Rule/Rule.hpp`
-- `STest/STest/Scenario/`
-- https://nasa.github.io/fpp/fpp-users-guide.html
-- `docs/user-manual/framework/state-machines.md`
+- [`Svc/Ccsds/ApidManager/test/ut/`](../../Svc/Ccsds/ApidManager/test/ut/)
+- [`TestUtils/RuleBasedTesting.hpp`](../../TestUtils/RuleBasedTesting.hpp)
+- [`STest/STest/Rule/Rule.hpp`](../../STest/STest/Rule/Rule.hpp)
+- [`STest/STest/Scenario/`](../../STest/STest/Scenario/)
