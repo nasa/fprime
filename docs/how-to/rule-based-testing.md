@@ -14,9 +14,7 @@ Rules are then assembled into different sequences to form the test, potentially 
 Before you start, you should have:
 
 - Experience with F Prime unit tests (see the [LedBlinker tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/))
-- Basic experience with FPP component modeling
 - A generated UT build (`fprime-util generate --ut`)
-
 
 ## When to Use Rule-Based Testing
 
@@ -86,7 +84,8 @@ List the distinct behaviors the component can exhibit. For `ApidManager`, this w
 | Validate correct count | `validateApidSeqCountIn` with expected count | No event |
 | Validate wrong count | `validateApidSeqCountIn` with unexpected count | Sends `UnexpectedSequenceCount` event |
 
-Each row maps to one rule. For components defining state machines, you would usually have at least one rule per transition.
+Each row maps to one rule. The internal state of ApidManager is simple and linear: its table goes from empty, to in-filling, to full.  
+For components defining state machines, you would usually have at least one rule per transition, and preconditions naturally check against a specific state of the state machine.
 
 ### Step 2: Add test-state and rule directories
 
