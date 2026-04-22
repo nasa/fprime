@@ -79,28 +79,26 @@ void FprimeFramerTester ::testNominalFraming() {
 }
 
 void FprimeFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
-
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext context;
- 
+
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         bufferData[i] = static_cast<U8>(i);
     }
- 
+
     // Signal the allocator handler to return a larger-than-needed buffer,
     // simulating a BufferManager bin that is bigger than the exact frame size.
     this->m_useOversizedAlloc = true;
     this->invoke_to_dataIn(0, buffer, context);
     this->m_useOversizedAlloc = false;
- 
+
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataReturnOut_SIZE(1);
- 
-    const FwSizeType expectedFrameSize = sizeof(bufferData) +
-                                         FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
+
+    const FwSizeType expectedFrameSize = sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
                                          FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
- 
+
     Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
     // If setSize() is missing from FprimeFramer, getSize() returns the
     // oversized allocation (2 * expectedFrameSize) and this assertion fails.

@@ -59,9 +59,9 @@ class SerialBuffer final : public LinearBufferBase {
     );
 
     //! Pop n bytes off the buffer
-    SerializeStatus popBytes(U8* const addr,       //!< Address of bytes to pop
+    SerializeStatus popBytes(U8* const addr,           //!< Address of bytes to pop
                              FwSizeType buffCapacity,  //!< Capacity in bytes of addr
-                             FwSizeType n          //!< Number of bytes to pop
+                             FwSizeType n              //!< Number of bytes to pop
     );
 
   private:

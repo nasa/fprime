@@ -110,7 +110,8 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     }
 
     // telemetry buffer
-    stat = this->m_tlmBuffer.deserializeTo(buffer.getBuffAddr(), buffer.getCapacity(), bufferSize, Fw::Serialization::OMIT_LENGTH);
+    stat = this->m_tlmBuffer.deserializeTo(buffer.getBuffAddr(), buffer.getCapacity(), bufferSize,
+                                           Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -142,7 +143,8 @@ SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     }
     // deserialize the channel value entry buffers
     FwSizeType size = buffer.getDeserializeSizeLeft();
-    stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), this->m_tlmBuffer.getCapacity(), size, Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), this->m_tlmBuffer.getCapacity(), size,
+                                Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_tlmBuffer.setBuffLen(size);

@@ -69,7 +69,8 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
     }
 
     FwSizeType size = buffer.getDeserializeSizeLeft();
-    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), this->m_logBuffer.getCapacity(), size, Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), this->m_logBuffer.getCapacity(), size,
+                                Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_logBuffer.setBuffLen(size);

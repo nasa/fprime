@@ -1334,12 +1334,14 @@ class LinearBufferBase : public SerialBufferBase {
     DEPRECATED(SerializeStatus deserialize(F64& val), "Use deserializeTo(F64& val) instead");
     DEPRECATED(SerializeStatus deserialize(bool& val), "Use deserializeTo(bool& val) instead");
     DEPRECATED(SerializeStatus deserialize(void*& val), "Use deserializeTo(void*& val) instead");
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength),
-               "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
+    DEPRECATED(
+        SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength),
+        "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
     DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length),
                "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length) instead");
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode),
-               "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
+    DEPRECATED(
+        SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode),
+        "Use deserializeTo(U8* buff, FwSizeType buffCapacity, FwSizeType& length, Serialization::t mode) instead");
     DEPRECATED(SerializeStatus deserialize(Serializable& val), "Use deserializeTo(Serializable& val) instead");
 
 #ifdef BUILD_UT

@@ -520,7 +520,8 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 Serializable::SizeType& length,
                                                 Endianness endianMode) {
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
-    SerializeStatus status = this->deserializeTo(buff, buffCapacity, length_in_out, Serialization::INCLUDE_LENGTH, endianMode);
+    SerializeStatus status =
+        this->deserializeTo(buff, buffCapacity, length_in_out, Serialization::INCLUDE_LENGTH, endianMode);
     length = static_cast<Serializable::SizeType>(length_in_out);
     return status;
 }

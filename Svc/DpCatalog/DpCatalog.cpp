@@ -204,18 +204,16 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // the source buffer was specifically sized to hold the data
 
         // Deserialize the file directory index. If an error occurs processing the file,
-        // generate event and return EXECUTION_ERROR. 
+        // generate event and return EXECUTION_ERROR.
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
         if (status != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileCorruptedDataError
-                (this->m_stateFile, static_cast<I32>(status));
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
             stateFile.close();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
         if (status != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileCorruptedDataError
-                (this->m_stateFile, static_cast<I32>(status));
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
             stateFile.close();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
