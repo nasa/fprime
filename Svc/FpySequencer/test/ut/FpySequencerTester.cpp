@@ -63,10 +63,14 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     Fw::ExternalSerializeBuffer buf;
     buf.setExtBuffer(data, sizeof(data));
 
-    // Calculate body size (statements only, arg_specs go in header section)
+    // Calculate body size (statements and arg_specs)
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }    
+    for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
+        ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+
     seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();
 
@@ -76,18 +80,9 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     // Write arg_specs in Fpy variable-length format
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
         const Fpy::ArgSpec& argSpec = seq.get_args()[ii];
-        // Write arg_name length and bytes (without F Prime length prefix)
-        ASSERT_EQ(buf.serializeFrom(argSpec.get_argNameLen()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-        if (argSpec.get_argNameLen() > 0) {
-            ASSERT_EQ(buf.serializeFrom(argSpec.get_argName(), argSpec.get_argNameLen(), Fw::Serialization::OMIT_LENGTH),
-                     Fw::SerializeStatus::FW_SERIALIZE_OK);
-        }
-        // Write type_name length and bytes (without F Prime length prefix)
-        ASSERT_EQ(buf.serializeFrom(argSpec.get_typeNameLen()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-        if (argSpec.get_typeNameLen() > 0) {
-            ASSERT_EQ(buf.serializeFrom(argSpec.get_typeName(), argSpec.get_typeNameLen(), Fw::Serialization::OMIT_LENGTH),
-                     Fw::SerializeStatus::FW_SERIALIZE_OK);
-        }
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_argName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_typeName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
         // Write size
         ASSERT_EQ(buf.serializeFrom(argSpec.get_argSize()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -119,33 +114,25 @@ void FpySequencerTester::removeFile(const char* name) {
     Os::FileSystem::removeFile(name);
 }
 
-void FpySequencerTester::add_ARG_SPEC(const char* argName, const char* typeName, Fpy::StackSizeType argSize) {
+void FpySequencerTester::addArgumentSpec(Fw::String argName, Fw::String typeName, Fpy::StackSizeType argSize) {
     U8 argCount = seq.get_header().get_argumentCount();
     FW_ASSERT(argCount < Fpy::MAX_SEQUENCE_ARG_COUNT);
 
     Fpy::ArgSpec& argSpec = seq.get_args()[argCount];
 
     // Set arg_name
-    U8 argNameLen = static_cast<U8>(strlen(argName));
-    FW_ASSERT(argNameLen <= Fpy::MAX_ARG_SPEC_NAME_LEN);
-    argSpec.set_argNameLen(argNameLen);
-    for (U8 i = 0; i < argNameLen; i++) {
-        argSpec.get_argName()[i] = static_cast<U8>(argName[i]);
-    }
+    FW_ASSERT(argName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_argName(argName);
 
     // Set type_name
-    U8 typeNameLen = static_cast<U8>(strlen(typeName));
-    FW_ASSERT(typeNameLen <= Fpy::MAX_ARG_SPEC_NAME_LEN);
-    argSpec.set_typeNameLen(typeNameLen);
-    for (U8 i = 0; i < typeNameLen; i++) {
-        argSpec.get_typeName()[i] = static_cast<U8>(typeName[i]);
-    }
+    FW_ASSERT(typeName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_typeName(typeName);
 
     // Set size
     argSpec.set_argSize(argSize);
 
     // Increment argument count
-    seq.get_header().set_argumentCount(argCount + 1);
+    seq.get_header().set_argumentCount(++argCount);
 }
 
 void FpySequencerTester::resetRuntime() {

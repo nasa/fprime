@@ -138,17 +138,11 @@ module Svc {
         @ NOTE: This struct does NOT use FPP's auto-generated serialization!
         @ Serialization is handled manually in C++ to match Fpy's format:
         struct ArgSpec {
-            @ Length of the argument name (0-255)
-            argNameLen: U8
-            @ Argument name as UTF-8 bytes (not null-terminated)
-            argName: [MAX_ARG_SPEC_NAME_LEN] U8
-            @ Length of the type name (0-255)
-            typeNameLen: U8
-            @ Type name as UTF-8 bytes (not null-terminated)
-            typeName: [MAX_ARG_SPEC_NAME_LEN] U8
+            argName: string size MAX_ARG_SPEC_NAME_LEN
+            typeName: string size MAX_ARG_SPEC_NAME_LEN
             @ Size of this argument on the stack in bytes
             argSize: StackSizeType
-        } default { argNameLen = 0, argName = 0, typeNameLen = 0, typeName = 0, argSize = 0 }
+        } default {argName = "", typeName = "", argSize = 0 }
 
         struct Header {
             @ the major version of the FSW

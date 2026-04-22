@@ -79,7 +79,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void writeToFile(const char* name, FwSizeType maxBytes = Fpy::Sequence::SERIALIZED_SIZE);
     void removeFile(const char* name);
     void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
-    void add_ARG_SPEC(const char* argName, const char* typeName, Fpy::StackSizeType argSize);
+    void addArgumentSpec(Fw::String argName, Fw::String typeName, Fpy::StackSizeType argSize);
 
     void add_WAIT_REL();
     void add_WAIT_REL(FpySequencer_WaitRelDirective dir);

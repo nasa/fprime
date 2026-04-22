@@ -305,7 +305,6 @@ void FpySequencer ::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceA
     Svc_FpySequencer_SequencerStateMachine::Signal signal
 ) {
     this->m_sequenceArgs = {0, 0};
-    this->m_expectedArgSize = 0;
 }
 
 //! Implementation for action clearBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine

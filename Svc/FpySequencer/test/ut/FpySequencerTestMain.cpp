@@ -2119,8 +2119,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
 
 TEST_F(FpySequencerTester, cmd_RUN_ARGS) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", sizeof(U32));
-    add_ARG_SPEC("arg2", "U32", sizeof(U32));
+    addArgumentSpec("arg1", "U32", sizeof(U32));
+    addArgumentSpec("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, sizeof(U32));     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, sizeof(U32));     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -2249,8 +2249,8 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
 
 TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", sizeof(U32));
-    add_ARG_SPEC("arg2", "U32", sizeof(U32));
+    addArgumentSpec("arg1", "U32", sizeof(U32));
+    addArgumentSpec("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, sizeof(U32));     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, sizeof(U32));     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
@@ -2340,7 +2340,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_arg_name) {
     clearSeq();
 
     // Create arg_spec with zero-length arg name (invalid)
-    add_ARG_SPEC("", "U32", sizeof(U32));  // Empty string for arg name
+    addArgumentSpec("", "U32", sizeof(U32));  // Empty string for arg name
     add_NO_OP();
     writeToFile("test.bin");
 
@@ -2368,7 +2368,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_type_name) {
     clearSeq();
 
     // Create arg_spec with zero-length type name (invalid)
-    add_ARG_SPEC("arg1", "", sizeof(U32));  // Empty string for type name
+    addArgumentSpec("arg1", "", sizeof(U32));  // Empty string for type name
     add_NO_OP();
     writeToFile("test.bin");
 
@@ -2404,7 +2404,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_max_length_strings) {
     memset(maxLengthType, 'B', 255);
     maxLengthType[255] = '\0';
 
-    add_ARG_SPEC(maxLengthName, maxLengthType, sizeof(U32));
+    addArgumentSpec(maxLengthName, maxLengthType, sizeof(U32));
     add_LOAD_REL(0, sizeof(U32));
     add_DISCARD(sizeof(U32) * 2);  // Discard loaded copy + original
     writeToFile("test.bin");
@@ -2430,7 +2430,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_size_mismatch) {
     clearSeq();
 
     // Create arg_spec claiming U32 (4 bytes) but provide wrong size
-    add_ARG_SPEC("badArg", "U32", sizeof(U64));  // Type says U32, size says U64 (8 bytes)
+    addArgumentSpec("badArg", "U32", sizeof(U64));  // Type says U32, size says U64 (8 bytes)
     add_NO_OP();
     writeToFile("test.bin");
 
@@ -3450,8 +3450,8 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
 TEST_F(FpySequencerTester, seqRunInArgs) {
     allocMem();
-    add_ARG_SPEC("arg1", "U32", sizeof(U32));
-    add_ARG_SPEC("arg2", "U32", sizeof(U32));
+    addArgumentSpec("arg1", "U32", sizeof(U32));
+    addArgumentSpec("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, sizeof(U32));     // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, sizeof(U32));     // Load second arg (U32 at offset 4) - duplicates it on stack
     add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args

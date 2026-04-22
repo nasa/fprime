@@ -61,12 +61,6 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // Read and parse arg_specs
-    readStatus = this->readArgSpecs(sequenceFile);
-    if (readStatus != Fw::Success::SUCCESS) {
-        return Fw::Success::FAILURE;
-    }
-
     readStatus =
         readBytes(sequenceFile, this->m_sequenceObj.get_header().get_bodySize(), FpySequencer_FileReadStage::BODY);
 
@@ -111,12 +105,6 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    if (this->m_sequenceArgs.get_size() != this->m_expectedArgSize) {
-        this->log_WARNING_HI_ArgSizeMismatch(this->m_expectedArgSize, this->m_sequenceArgs.get_size(),
-                                                this->m_sequenceFilePath);
-        return Fw::Success::FAILURE;
-    }
-
     return Fw::Success::SUCCESS;
 }
 
@@ -153,89 +141,56 @@ Fw::Success FpySequencer::readHeader() {
     return Fw::Success::SUCCESS;
 }
 
-// Helper function to read and deserialize a variable-length string field
-// Reads length byte, then the string data into the provided buffer
-Fw::Success FpySequencer::deserializeStringField(Os::File& file, U8* buffer, U8& outLength) {
-    // Read length byte
-    Fw::Success readStatus = this->readBytes(file, sizeof(U8), FpySequencer_FileReadStage::BODY);
-    if (readStatus != Fw::Success::SUCCESS) {
-        return Fw::Success::FAILURE;
-    }
-
-    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(outLength);
-    if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_FileReadDeserializeError(
-            FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-            this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
-        return Fw::Success::FAILURE;
-    }
-
-    // Validate length is non-zero (reject empty strings)
-    if (outLength == 0) {
-        this->log_WARNING_HI_InvalidArgSpec(this->m_sequenceFilePath);
-        return Fw::Success::FAILURE;
-    }
-
-    // Validate length doesn't exceed buffer capacity
-    if (outLength > Fpy::MAX_ARG_SPEC_NAME_LEN) {
-        this->log_WARNING_HI_ArgSpecStringLengthExceedsMax(outLength, Fpy::MAX_ARG_SPEC_NAME_LEN, this->m_sequenceFilePath);
-        return Fw::Success::FAILURE;
-    }
-
-    // Read string bytes
-    readStatus = this->readBytes(file, outLength, FpySequencer_FileReadStage::BODY);
-    if (readStatus != Fw::Success::SUCCESS) {
-        return Fw::Success::FAILURE;
-    }
-
-    FwSizeType actualLen = static_cast<FwSizeType>(outLength);
-    deserStatus = this->m_sequenceBuffer.deserializeTo(buffer, actualLen, Fw::Serialization::OMIT_LENGTH);
-    if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_FileReadDeserializeError(
-            FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-            this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
-        return Fw::Success::FAILURE;
-    }
-
-    return Fw::Success::SUCCESS;
-}
-
-// reads and validates arg_specs from the m_sequenceBuffer
-// stores them in the Sequence.args array and calculates the total expected argument size
-// return SUCCESS if successful, FAILURE otherwise
-Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
-    FW_ASSERT(file.isOpen());
-
+// reads and validates the body from the m_sequenceBuffer
+// return SUCCESS if sequence is valid, FAILURE otherwise
+Fw::Success FpySequencer::readBody() {
+    Fw::SerializeStatus deserStatus;
+    
     const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
     Fpy::StackSizeType totalExpectedSize = 0;
-    Fw::SerializeStatus deserStatus;
-    Fw::Success readStatus;
-
-    // Read and deserialize each arg_spec incrementally since they're variable-length
+    
+    // deser arguments
+     // Read and deserialize each arg_spec incrementally since they're variable-length
     for (U8 i = 0; i < argumentCount; i++) {
         Fpy::ArgSpec& argSpec = this->m_sequenceObj.get_args()[i];
-
+        Fw::String myString{};
         // Read arg_name (length + string)
-        U8 argNameLen = 0;
-        readStatus = this->deserializeStringField(file, argSpec.get_argName(), argNameLen);
-        if (readStatus != Fw::Success::SUCCESS) {
+        deserStatus = this->m_sequenceBuffer.deserializeTo(myString);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileReadDeserializeError(
+                FpySequencer_FileReadStage::BODY,
+                this->m_sequenceFilePath,
+                static_cast<I32>(deserStatus),
+                this->m_sequenceBuffer.getDeserializeSizeLeft(),
+                this->m_sequenceBuffer.getSize()
+            );
             return Fw::Success::FAILURE;
         }
-        argSpec.set_argNameLen(argNameLen);
+        if (myString.length() == 0) {
+            this->log_WARNING_HI_InvalidArgSpec(this->m_sequenceFilePath);
+            return Fw::Success::FAILURE;
+        }
+        argSpec.set_argName(myString);
 
         // Read type_name (length + string)
-        U8 typeNameLen = 0;
-        readStatus = this->deserializeStringField(file, argSpec.get_typeName(), typeNameLen);
-        if (readStatus != Fw::Success::SUCCESS) {
+        deserStatus = this->m_sequenceBuffer.deserializeTo(myString);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileReadDeserializeError(
+                FpySequencer_FileReadStage::BODY,
+                this->m_sequenceFilePath,
+                static_cast<I32>(deserStatus),
+                this->m_sequenceBuffer.getDeserializeSizeLeft(),
+                this->m_sequenceBuffer.getSize()
+            );
             return Fw::Success::FAILURE;
         }
-        argSpec.set_typeNameLen(typeNameLen);
+        if (myString.length() == 0) {
+            this->log_WARNING_HI_InvalidArgSpec(this->m_sequenceFilePath);
+            return Fw::Success::FAILURE;
+        }
+        argSpec.set_typeName(myString);
 
         // Read and deserialize size field
-        readStatus = this->readBytes(file, sizeof(Fpy::StackSizeType), FpySequencer_FileReadStage::BODY);
-        if (readStatus != Fw::Success::SUCCESS) {
-            return Fw::Success::FAILURE;
-        }
         Fpy::StackSizeType argSize = 0;
         deserStatus = this->m_sequenceBuffer.deserializeTo(argSize);
         if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
@@ -254,15 +209,7 @@ Fw::Success FpySequencer::readArgSpecs(Os::File& file) {
         argSpec.set_argSize(argSize);
         totalExpectedSize += argSize;
     }
-
-    this->m_expectedArgSize = totalExpectedSize;
-    return Fw::Success::SUCCESS;
-}
-
-// reads and validates the body from the m_sequenceBuffer
-// return SUCCESS if sequence is valid, FAILURE otherwise
-Fw::Success FpySequencer::readBody() {
-    Fw::SerializeStatus deserStatus;
+    
     // deser statements
     for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
         // deser statement
