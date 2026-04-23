@@ -61,6 +61,6 @@ if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
       )
     else()
       # Only print message if we're in BUILD_TESTING *and* FileTester isn't available
-      message(INFO "Svc/FileWorker: FileTester test dependency is only supported on Posix, skipping FileWorkerTestError")
+      message(STATUS "Svc/FileWorker: FileTester test dependency is only supported on Posix, skipping FileWorkerTestError")
     endif()
 endif()
