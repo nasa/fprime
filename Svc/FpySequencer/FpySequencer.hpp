@@ -145,7 +145,7 @@ class FpySequencer : public FpySequencerComponentBase {
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
                         FpySequencer_BlockState block      //!< Return command status when complete or not
                         ) override;
-    
+
     //! Handler implementation for command RUN_ARGS
     void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
                              U32 cmdSeq,                          //!< The command sequence number
@@ -161,7 +161,7 @@ class FpySequencer : public FpySequencerComponentBase {
                              U32 cmdSeq,                       //!< The command sequence number
                              const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                              ) override;
-    
+
     //! Handler implementation for command VALIDATE_ARGS
     //!
     //! Loads and validates a sequence with arguments
@@ -269,8 +269,8 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
-    
-        //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+
+    //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the arguments to pass to the sequence
     void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
@@ -359,7 +359,7 @@ class FpySequencer : public FpySequencerComponentBase {
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
-    
+
     //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! clears arguments
