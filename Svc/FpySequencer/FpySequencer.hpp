@@ -634,6 +634,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // live running computation of CRC (updated as we read)
     U32 m_computedCRC;
 
+    // Size of arguments read in current sequence. Used for validation between
+    // User provided arguments and what is requested of the sequence.
+    Fpy::StackSizeType m_totalReadArgumentSize{0};
+
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
     FpySequencer_BlockState m_sequenceBlockState;

@@ -73,7 +73,7 @@ Fw::Success FpySequencer::validate() {
     if (readStatus != Fw::Success::SUCCESS) {
         return Fw::Success::FAILURE;
     }
-
+    
     // read footer bytes but don't include in CRC
     readStatus = this->readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, FpySequencer_FileReadStage::FOOTER, false);
 
@@ -147,7 +147,7 @@ Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
     
     const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
-    Fpy::StackSizeType totalExpectedSize = 0;
+    this->m_totalReadArgumentSize = 0;
     
     // deser arguments
      // Read and deserialize each arg_spec incrementally since they're variable-length
@@ -201,13 +201,21 @@ Fw::Success FpySequencer::readBody() {
         }
 
         // Check for overflow before accumulation
-        if (totalExpectedSize > Fpy::MAX_STACK_SIZE - argSize) {
+        if (m_totalReadArgumentSize > Fpy::MAX_STACK_SIZE - argSize) {
             this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(argSize, Fpy::MAX_STACK_SIZE,
                                                                 this->m_sequenceFilePath);
             return Fw::Success::FAILURE;
         }
         argSpec.set_argSize(argSize);
-        totalExpectedSize += argSize;
+        m_totalReadArgumentSize += argSize;
+    }
+
+    // Validate total argument size
+    if (this->m_totalReadArgumentSize != this->m_sequenceArgs.get_size()){
+        this->log_WARNING_HI_ArgSizeMismatch(this->m_sequenceObj.get_header().get_argumentCount(),
+                                             this->m_sequenceArgs.get_size(),
+                                             this->m_sequenceFilePath);
+        return Fw::Success::FAILURE;
     }
     
     // deser statements
