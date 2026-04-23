@@ -53,6 +53,10 @@ module Svc {
         # same priority as RUN cmd
         async input port seqRunIn: Svc.CmdSeqIn priority 7 assert
 
+        @ port for requesting to cancel the currently running sequence
+        # same priority as CANCEL cmd
+        async input port seqCancelIn: Svc.CmdSeqCancel priority 8 assert
+
         @ called when a sequence begins running
         output port seqStartOut: Svc.CmdSeqIn
 

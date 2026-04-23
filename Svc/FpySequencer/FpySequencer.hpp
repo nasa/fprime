@@ -483,6 +483,12 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Handler for input port seqRunIn
     void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) override;
 
+    //! Handler implementation for seqCancelIn
+    //!
+    //! port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
+
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number
                         U32 key               //!< Value to return to pinger
