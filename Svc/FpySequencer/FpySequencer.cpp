@@ -360,7 +360,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 void FpySequencer ::seqCancelIn_handler(FwIndexType portNum) {
     // only state you can't cancel in is IDLE
     if (sequencer_getState() == State::IDLE) {
-        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->log_WARNING_HI_InvalidCancel(static_cast<I32>(sequencer_getState()));
         return;
     }
     this->sequencer_sendSignal_cmd_CANCEL();

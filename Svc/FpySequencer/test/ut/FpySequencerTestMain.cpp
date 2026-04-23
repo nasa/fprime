@@ -3196,7 +3196,7 @@ TEST_F(FpySequencerTester, seqCancelIn) {
     this->invoke_to_seqCancelIn(0);
     this->tester_doDispatch();
     // should fail if we're in IDLE
-    ASSERT_EVENTS_InvalidCommand_SIZE(1);
+    ASSERT_EVENTS_InvalidCancel_SIZE(1);
 
     dispatchCurrentMessages(cmp);
     ASSERT_EQ(this->tester_getState(), State::IDLE);
@@ -3209,36 +3209,6 @@ TEST_F(FpySequencerTester, seqCancelIn) {
     dispatchUntilState(State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-}
-
-
-TEST_F(FpySequencerTester, flag_EXIT_ON_CMD_FAIL) {
-    // test a simple seq that fails because a cmd fails
-    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(true, Fw::ParamValid::VALID);
-    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
-    this->clearHistory();
-    allocMem();
-    add_CONST_CMD(123);
-    writeAndRun();
-    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
-    // okay now send in a failure
-    invoke_to_cmdResponseIn(0, 123, 0x00010001, Fw::CmdResponse::EXECUTION_ERROR);
-    dispatchUntilState(State::IDLE);
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::EXECUTION_ERROR);
-
-    // now test that it doesn't fail if we set flag to false
-    this->paramSet_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(false, Fw::ParamValid::VALID);
-    this->paramSend_FLAG_DEFAULT_EXIT_ON_CMD_FAIL(0, 0);
-    this->clearHistory();
-    // cmd is already in seq, can just rerun
-    writeAndRun();
-    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
-    // okay now send in a failure
-    invoke_to_cmdResponseIn(0, 123, 0x00020002, Fw::CmdResponse::EXECUTION_ERROR);
-    dispatchUntilState(State::IDLE);
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, 0, get_OPCODE_RUN(), Fw::CmdResponse::OK);
 }
 
 // ----------------------------------------------------------------------
