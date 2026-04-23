@@ -3196,7 +3196,7 @@ TEST_F(FpySequencerTester, seqCancelIn) {
     this->invoke_to_seqCancelIn(0);
     this->tester_doDispatch();
     // should fail if we're in IDLE
-    ASSERT_EVENTS_InvalidCancel_SIZE(1);
+    ASSERT_EVENTS_InvalidSeqCancelCall_SIZE(1);
 
     dispatchCurrentMessages(cmp);
     ASSERT_EQ(this->tester_getState(), State::IDLE);
