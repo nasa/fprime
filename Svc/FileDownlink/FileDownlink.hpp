@@ -92,8 +92,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
       public:
         //! Open the OS file for reading and initialize the checksum
-        Os::File::Status open(const char* const sourceFileName,  //!< The source file name
-                              const char* const destFileName     //!< The destination file name
+        Os::File::Status open(const Fw::FileNameString& sourceFileName,  //!< The source file name
+                              const Fw::FileNameString& destFileName     //!< The destination file name
         );
 
         //! Read bytes from the OS file and update the checksum
@@ -199,8 +199,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Used to track a single file downlink request
     struct FileEntry {
-        char srcFilename[Fw::FileNameString::STRING_SIZE];   // Name of requested file
-        char destFilename[Fw::FileNameString::STRING_SIZE];  // Name of requested file
+        Fw::FileNameString srcFilename;   // Name of requested file
+        Fw::FileNameString destFilename;  // Name of requested file
         U32 offset;
         U32 length;
         CallerSource source;  // Source of the downlink request
@@ -310,9 +310,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
     // ----------------------------------------------------------------------
 
     void sendFile(
-        const char* sourceFilename,  //!< The name of the on-board file to send
-        const char* destFilename,    //!< The name of the destination file on the ground
-        U32 startOffset,             //!< Starting offset of the source file
+        const Fw::FileNameString& sourceFilename,  //!< The name of the on-board file to send
+        const Fw::FileNameString& destFilename,    //!< The name of the destination file on the ground
+        U32 startOffset,                           //!< Starting offset of the source file
         U32 length  //!< Number of bytes to send from starting offset. Length of 0 implies until the end of the file
     );
 

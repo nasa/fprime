@@ -21,9 +21,18 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
-// Direct port calls (TODO)
+// Enable strict assertions
+#ifndef FW_STRICT_ASSERTIONS
+#define FW_STRICT_ASSERTIONS (1)  //!< Indicates whether strict assertions are used (more checking, more instructions)
+#endif
+
+// Enable direct port calls
 #ifndef FW_DIRECT_PORT_CALLS
-#define FW_DIRECT_PORT_CALLS 0
+#ifdef BUILD_UT
+#define FW_DIRECT_PORT_CALLS (0)  //!< Indirect port calls are required for unit tests
+#else
+#define FW_DIRECT_PORT_CALLS (1)  //!< Indicates whether direct port calls are used (saves space and time)
+#endif
 #endif
 
 // Allow objects to have names. Allocates storage for each instance
@@ -114,6 +123,14 @@ extern "C" {
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL (FW_FILENAME_ASSERT)  //!< Defines the type of assert used
+#endif
+
+// Decide whether the framework should force assertions to always abort.
+// If enabled, allows additional compiler optimizations and prevents code from running after an assertion trips.
+// If disabled (default), allows the FATAL event handler to decide whether code should continue running after an
+// assertion trips.
+#ifndef FW_ASSERTIONS_ALWAYS_ABORT
+#define FW_ASSERTIONS_ALWAYS_ABORT 0
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values

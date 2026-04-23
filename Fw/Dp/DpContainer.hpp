@@ -177,6 +177,10 @@ class DpContainer {
     void setBuffer(const Buffer& buffer  //!< The packet buffer
     );
 
+    //! Shrink the Fw::Buffer size to match the
+    //! DataSize in the container header
+    void shrinkBufferSize();
+
     //! Invalidate the packet buffer
     void invalidateBuffer() {
         this->m_buffer = Fw::Buffer();

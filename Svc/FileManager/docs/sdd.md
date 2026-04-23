@@ -1,34 +1,26 @@
 # Svc::FileManager Component
 
-## 1. Introduction
+## Overview
 
-The `Svc::FileManager` is a component that performs various file operations.
+`Svc::FileManager` provides a set of ground commands for common file and filesystem operations.
+It is a wrapper around the OSAL file, filesystem and directory APIs. The component accepts
+commands, calls the corresponding OSAL operation, and reports the result through events,
+telemetry, and command responses.
 
-## 2. Requirements
+## Functionality
 
-TBD
+`Svc::FileManager` supports common filesystem operations. They are currently:
 
-## 3. Design
+- CreateDirectory
+- RemoveDirectory
+- ListDirectory
+- MoveFile
+- RemoveFile
+- AppendFile
+- FileSize
+- CalculateCrc
 
-### 3.1 Context
-
-#### 3.1.1 Component Diagram
-
-TBD
-
-## 4. Dictionaries
-
-TBD
-
-## 5. Module Checklists
-
-## 6. Unit Testing
-
-## 7. Change Log
-
-Date | Description
----- | -----------
-4/20/2017 | Initial Version
-
+For each command, the component returns success or failure and emits status
+information for operators.
 
 

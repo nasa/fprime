@@ -44,16 +44,6 @@ TEST(Test, removeFileFail) {
     tester.removeFileFail();
 }
 
-TEST(Test, shellCommandSucceed) {
-    Svc::FileManagerTester tester;
-    tester.shellCommandSucceed();
-}
-
-TEST(Test, shellCommandFail) {
-    Svc::FileManagerTester tester;
-    tester.shellCommandFail();
-}
-
 TEST(Test, appendFileSucceedNewFile) {
     Svc::FileManagerTester tester;
     tester.appendFileSucceed_newFile();

@@ -7,14 +7,15 @@
 add_compile_options(
   -Wno-shadow
 )
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopology.cpp"
-)
-set(MOD_DEPS
-  Fw/Logger
-  Svc/PosixTime
-)
 
-register_fprime_module()
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/RefTopology.cpp"
+  DEPENDS
+    Fw_Logger
+    Svc_PosixTime
+    Svc_TlmPacketizer_config_TlmPacketizerConfig # Supports packet autocoding w/o TlmPacketizer  
+)

@@ -73,12 +73,12 @@ class ConstStringBase : public Serializable {
     SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
     DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
-               "Use serializeTo(SerializeBufferBase& buffer) instead") {
+               "Use serializeTo(LinearBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
     DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer, SizeType maxLen) const,
-               "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead") {
+               "Use serializeTo(LinearBufferBase& buffer, SizeType maxLen) instead") {
         return this->serializeTo(buffer, maxLen);
     }
 

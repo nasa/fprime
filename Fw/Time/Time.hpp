@@ -22,7 +22,12 @@ class Time : public Serializable {
     Time(TimeBase timeBase,
          FwTimeContextStoreType context,
          U32 seconds,
-         U32 useconds);                                      // !< Constructor with member values as arguments
+         U32 useconds);  // !< Constructor with member values as arguments
+
+    //! \brief Constructor with floating-point (F64) seconds
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug)
+    explicit Time(F64 seconds);
+
     virtual ~Time();                                         // !< Destructor
     void set(U32 seconds, U32 useconds);                     // !< Sets value of time stored
     void set(TimeBase timeBase, U32 seconds, U32 useconds);  // !< Sets value of time stored
@@ -30,6 +35,11 @@ class Time : public Serializable {
              FwTimeContextStoreType context,
              U32 seconds,
              U32 useconds);  // !< Sets value of time stored
+
+    //! \brief Sets value of time stored
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug)
+    void set(F64 seconds);
+
     void setTimeBase(TimeBase timeBase);
     void setTimeContext(FwTimeContextStoreType context);
     U32 getSeconds() const;   // !< Gets seconds part of time
@@ -48,6 +58,18 @@ class Time : public Serializable {
     bool operator>=(const Time& other) const;
     bool operator<=(const Time& other) const;
     Time& operator=(const Time& other);
+
+    //! \brief Assign this Time from floating-point (F64) seconds
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug mode)
+    Time& operator=(F64 seconds);
+
+    //! \brief Add floating-point (F64) value to this Time
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug mode)
+    Time& operator+=(F64 seconds);
+
+    //! \brief Convert object to floating point (F64) representation
+    //! \return The floating point (F64) representation of this Time
+    operator F64() const;
 
     //! \brief get the underlying TimeValue
     //! \return the TimeValue representation of this Time as a copy
@@ -77,8 +99,22 @@ class Time : public Serializable {
                     const Time& subtrahend  //!< Value being subtracted
     );
 
+    //! \brief Extract seconds from a floating-point (F64)
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug mode)
+    //! \return Seconds count as U32
+    static U32 parseSeconds(F64 seconds);
+
+    //! \brief Extract microseconds from a floating-point (F64)
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug)
+    //! \return Microseconds count as U32
+    static U32 parseUSeconds(F64 seconds);
+
     // add seconds and microseconds to existing time
     void add(U32 seconds, U32 mseconds);
+
+    //! \brief Add floating-point (F64) seconds to existing time
+    //! \warning Negative value (seconds < 0) results in undefined behavior (assert fail in Debug)
+    void add(F64 seconds);
 
 #ifdef BUILD_UT  // Stream operators to support Googletest
     friend std::ostream& operator<<(std::ostream& os, const Time& val);

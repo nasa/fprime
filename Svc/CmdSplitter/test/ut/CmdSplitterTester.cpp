@@ -8,6 +8,7 @@
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <STest/Pick/Pick.hpp>
+#include <algorithm>
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
@@ -51,7 +52,7 @@ FwOpcodeType CmdSplitterTester ::setup_and_pick_valid_opcode(bool for_local) {
         FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(1, MAX_OPCODE));
         component.configure(base);
         EXPECT_GT(base, 0);  // Must leave some room for local commands
-        return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, FW_MIN(static_cast<U32>(base) - 1, MAX_OPCODE)));
+        return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, std::min(static_cast<U32>(base) - 1, MAX_OPCODE)));
     }
     FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, MAX_OPCODE));
     component.configure(base);

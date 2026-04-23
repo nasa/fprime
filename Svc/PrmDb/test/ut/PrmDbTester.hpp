@@ -36,6 +36,8 @@ class PrmDbTester : public PrmDbGTestBase {
     void runRefPrmFile();
 
   private:
+    bool dbEqual();
+
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/

@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "AssertFatalAdapterTester.hpp"
+#include <algorithm>
 #include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -39,10 +40,10 @@ AssertFatalAdapterTester::~AssertFatalAdapterTester() {}
 void AssertFatalAdapterTester::testAsserts() {
     U32 lineNo;
 
-    // Apply all truncations to file buffer size
-    const FwSizeType fileMaxSize = FW_MIN(FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
-                                                 static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE)),
-                                          static_cast<FwSizeType>(FW_ASSERT_TEXT_SIZE));
+    // apply all truncations to file buffer size
+    const FwSizeType fileMaxSize =
+        std::min({static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
+                  static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE), static_cast<FwSizeType>(FW_ASSERT_TEXT_SIZE)});
 
     char file[Fw::StringBase::BUFFER_SIZE(fileMaxSize)];
     Fw::String fileString;

@@ -18,9 +18,9 @@
 
 namespace Fw {
 
-class LogBuffer final : public SerializeBufferBase {
+class LogBuffer final : public LinearBufferBase {
   public:
-    enum { SERIALIZED_TYPE_ID = FW_TYPEID_LOG_BUFF, SERIALIZED_SIZE = FW_LOG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType) };
+    enum { SERIALIZED_TYPE_ID = FW_TYPEID_LOG_BUFF, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_LOG_BUFFER_MAX_SIZE) };
 
     LogBuffer(const U8* args, FwSizeType size);
     LogBuffer();

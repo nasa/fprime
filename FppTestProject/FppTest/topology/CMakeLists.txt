@@ -1,6 +1,8 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/components")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/top_ports")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/special_ports")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ports")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/types")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/async")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/sync")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/guarded")

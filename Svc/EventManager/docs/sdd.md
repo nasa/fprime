@@ -45,8 +45,6 @@ developers to specify a set of events in the component FPP.
 autocoder will add an `Fw::Log` output port to send events in serialized form. The EventManager receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
 interface. 
- 
-**Note:** the Event ID value 0 is reserved for the logger.
 
 Should a FATAL severity event arrive, it is announced using a FATAL out port allow the system to respond when a FATAL
 event is seen.

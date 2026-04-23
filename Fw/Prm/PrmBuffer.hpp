@@ -23,11 +23,11 @@ namespace Fw {
 static_assert(FW_PARAM_BUFFER_MAX_SIZE >= StringBase::BUFFER_SIZE(FW_PARAM_STRING_MAX_SIZE),
               "param string must fit into param buffer");
 
-class ParamBuffer final : public SerializeBufferBase {
+class ParamBuffer final : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_PRM_BUFF,
-        SERIALIZED_SIZE = FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_PARAM_BUFFER_MAX_SIZE)
     };
 
     ParamBuffer(const U8* args, FwSizeType size);

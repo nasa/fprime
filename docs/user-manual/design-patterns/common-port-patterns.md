@@ -89,7 +89,7 @@ Callback ports can be of any instance kind (`sync`, `guarded`, `async`) but are 
 
 ### Implementation
 
-The requestor side of the callback port patten instantiates an `output` request port instance of any port type, and an `input` receive port instance of any type.  In the example below, `Fw.Signal` is used as the request type, and response port types, however; any port type may be used.
+The requestor side of the callback port pattern instantiates an `output` request port instance of any port type, and an `input` receive port instance of any type.  In the example below, `Fw.Signal` is used as the request type, and response port types, however; any port type may be used.
 
 ```fpp
 component MyRequestor {
@@ -124,7 +124,7 @@ connections CallbackPattern {
 
 ### Conclusion
 
-The callback port patten is used to separate a request from the response allowing the requestor to return to other work while the request is completed.
+The callback port pattern is used to separate a request from the response allowing the requestor to return to other work while the request is completed.
 
 ## Parallel Ports
 
@@ -182,7 +182,7 @@ connections ParallelPorts {
 }
 ```
 
-Notice how `comp0` in this snippet is is wired to `myComponent`'s ports always using the 0th index. The same is true for `comp1` on the 1st index. This allows the component to correlate the remote component via index.
+Notice how `comp0` in this snippet is wired to `myComponent`'s ports always using the 0th index. The same is true for `comp1` on the 1st index. This allows the component to correlate the remote component via index.
 
 In the C++ implementation this would look like:
 

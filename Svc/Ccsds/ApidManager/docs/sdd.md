@@ -6,10 +6,10 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 ## Functionality
 
-- Maintains a table of APIDs and their associated 14-bit sequence counts.
+- Maintains a `Fw::ArrayMap` of APIDs and their associated 14-bit sequence counts.
 - Handles a fixed maximum number of tracked APIDs (as configured in the project).
 - Provides a way to retrieve the current sequence count for a given APID through a port call.
-- Provides a way to validate a received sequence counts for a given APID through a port call.
+- Provides a way to validate a received sequence count for a given APID through a port call.
 
 ## Port Descriptions
 

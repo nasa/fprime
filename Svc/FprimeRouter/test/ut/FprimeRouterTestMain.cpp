@@ -28,18 +28,8 @@ TEST(FprimeRouter, TestRouteUnknownPacketUnconnected) {
     Svc::FprimeRouterTester tester(true);
     tester.testRouteUnknownPacketUnconnected();
 }
-TEST(FprimeRouter, TestAllocationFailureFile) {
-    COMMENT("Test failure to allocate for files");
-    Svc::FprimeRouterTester tester;
-    tester.testAllocationFailureFile();
-}
-TEST(FprimeRouter, TestAllocationFailureUnknown) {
-    COMMENT("Test failure to allocate for unknown packets");
-    Svc::FprimeRouterTester tester;
-    tester.testAllocationFailureUnknown();
-}
 TEST(FprimeRouter, TestBufferReturn) {
-    COMMENT("Deallocate a returning buffer");
+    COMMENT("Return a buffer via fileBufferReturnIn");
     Svc::FprimeRouterTester tester;
     tester.testBufferReturn();
 }
