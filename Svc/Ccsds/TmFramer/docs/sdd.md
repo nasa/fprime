@@ -42,8 +42,8 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | output | dataOut | Svc.ComDataWithContext | Outputs framed data with optional context |
 | output | dataReturnOut | Svc.ComDataWithContext | Returns ownership of the incoming Fw::Buffer to its sender once framing is handled |
 | sync input | dataReturnIn | Svc.ComDataWithContext | Receives buffer from a deallocate call in a ComDriver component |
-| sync input | comStatusIn | Fw.SuccessCondition | Receives general status from downstream component indicating readiness for more input |
-| output | comStatusOut | Fw.SuccessCondition | Indicates the status of framer for receiving more data |
+| sync input | comStatusIn | Fw.SuccessCondition | Receives status from downstream communication adapter per the [Communication Adapter Protocol](../../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol) |
+| output | comStatusOut | Fw.SuccessCondition | Passes status through to upstream `Svc::ComQueue` per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) |
 
 ## Requirements
 
@@ -56,7 +56,7 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | SVC-Ccsds-TM-FRAMER-004 | The TmFramer shall output the constructed TM Transfer Frame via its `dataOut` port. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-005 | The TmFramer shall return ownership of the input buffer via the `dataReturnOut` port after the framing process is complete. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-006 | The TmFramer shall accept returned buffers (previously sent via `dataOut`) through the `dataReturnIn` port for deallocation or reuse. | Unit Test |
-| SVC-Ccsds-TM-FRAMER-007 | The TmFramer shall receive communication status from downstream components via the `comStatusIn` port, and pass it through to `comStatusOut` | Unit Test, Integration Test |
+| SVC-Ccsds-TM-FRAMER-007 | The TmFramer shall receive communication status from downstream components via the `comStatusIn` port and pass it through to `comStatusOut`, including the initial start-up `Fw::Success::SUCCESS`, per-message statuses, and any recovery `Fw::Success::SUCCESS` after a `Fw::Success::FAILURE`, per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) | Unit Test, Integration Test |
 | SVC-Ccsds-TM-FRAMER-008 | The TmFramer shall use exactly one Virtual Channel. | Unit Test, Integration Test |
 | SVC-Ccsds-TM-FRAMER-009 | The TmFramer shall correctly populate all mandatory fields of the TM Transfer Frame Primary Header, including Transfer Frame Version Number, Spacecraft Identifier, Virtual Channel Identifier, Operational Control Field Flag, Master Channel Frame Count, Virtual Channel Frame Count, Transfer Frame Secondary Header Flag, Synchronization Flag, Packet Order Flag, Segment Length Identifier, and First Header Pointer. | Unit Test, Inspection |
 | SVC-Ccsds-TM-FRAMER-010 | The TmFramer shall be configurable with a Spacecraft Identifier. | Inspection, Unit Test |

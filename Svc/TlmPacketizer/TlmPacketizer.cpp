@@ -11,6 +11,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
+#include <TlmPacketizerConfig/FppConstantsAc.hpp>
 #include <cstring>
 
 namespace Svc {
@@ -25,6 +26,8 @@ static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry 
 
 TlmPacketizer ::TlmPacketizer(const char* const compName)
     : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false), m_numChannels(0) {
+    // Register self as parameter delegate
+    this->registerExternalParameters(this);
     // clear missing tlm channel check
     for (FwChanIdType entry = 0; entry < TLMPACKETIZER_MAX_MISSING_TLM_CHECK; entry++) {
         this->m_missTlmCheck[entry].checked = false;
@@ -36,11 +39,6 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
         this->m_fillBuffers[buffer].updated = false;
     }
 
-    // enable sections
-    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = Fw::Enabled::ENABLED);
-    }
-
     static_assert(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS == MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1,
                   "NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS MUST BE MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1");
 }
@@ -49,8 +47,7 @@ TlmPacketizer ::~TlmPacketizer() {}
 
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
-                                  const FwChanIdType startLevel,
-                                  const TlmPacketizer_GroupConfig& defaultGroupConfig) {
+                                  const FwChanIdType startLevel) {
     FW_ASSERT(packetList.list);
     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
     // functionality for two reasons:
@@ -124,15 +121,6 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
 
     }  // end packet list
     FW_ASSERT(maxLevel <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(maxLevel));
-
-    // Enable and set group configurations
-    for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-        for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-            Fw::Enabled groupEnabled = group <= startLevel ? Fw::Enabled::ENABLED : Fw::Enabled::DISABLED;
-            this->m_groupConfigs[static_cast<FwSizeType>(section)][group] = defaultGroupConfig;
-            this->m_groupConfigs[static_cast<FwSizeType>(section)][group].set_enabled(groupEnabled);
-        }
-    }
 
     // This section adds entries in the map for channels that are intended to be ignored. When the user supplies
     // a list with no length, this loop is skipped. To turn-off ignoring of channels, the user can provide a null
@@ -429,6 +417,10 @@ void TlmPacketizer ::SEND_PKT_cmdHandler(const FwOpcodeType opCode,
                                          const U32 id,
                                          const Svc::TelemetrySection section) {
     FW_ASSERT(section.isValid());
+    if (section < 0 or section >= TelemetrySection::NUM_SECTIONS) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     FwChanIdType pkt = 0;
     for (pkt = 0; pkt < this->m_numPackets; pkt++) {
         if (this->m_fillBuffers[pkt].id == id) {
@@ -476,8 +468,7 @@ void TlmPacketizer ::ENABLE_GROUP_cmdHandler(FwOpcodeType opCode,
                                              Fw::Enabled enable) {
     FW_ASSERT(section.isValid());
     FW_ASSERT(enable.isValid());
-    if ((0 <= section and section >= TelemetrySection::NUM_SECTIONS) or
-        tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
+    if (section < 0 or section >= TelemetrySection::NUM_SECTIONS or tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
@@ -564,6 +555,37 @@ void TlmPacketizer::missingChannel(FwChanIdType id) {
             return;
         }
     }
+}
+
+Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
+                                                    const FwPrmIdType local_id,
+                                                    const Fw::ParamValid prmStat,
+                                                    Fw::SerialBufferBase& buff) {
+    // Autocoder always calls deserializeParam with VALID
+    FW_ASSERT(prmStat == Fw::ParamValid::VALID);
+    switch (local_id) {
+        case PARAMID_SECTION_ENABLED:
+            return buff.deserializeTo(this->m_sectionEnabled);
+        case PARAMID_SECTION_CONFIGS:
+            return buff.deserializeTo(this->m_groupConfigs);
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+    }
+    return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
+}
+
+Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id,
+                                                  const FwPrmIdType local_id,
+                                                  Fw::SerialBufferBase& buff) const {
+    switch (local_id) {
+        case PARAMID_SECTION_ENABLED:
+            return buff.serializeFrom(this->m_sectionEnabled);
+        case PARAMID_SECTION_CONFIGS:
+            return buff.serializeFrom(this->m_groupConfigs);
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+    }
+    return Fw::SerializeStatus::FW_SERIALIZE_FORMAT_ERROR;
 }
 
 }  // end namespace Svc

@@ -108,5 +108,6 @@ void teardownTopology(const TopologyState& state) {
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
     tearDownComponents(state);
+    deinitComponents(state);
 }
 }  // namespace Ref

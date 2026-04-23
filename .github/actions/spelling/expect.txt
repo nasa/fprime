@@ -171,6 +171,7 @@ Deserial
 DEVICESM
 DHTML
 diafile
+diffs
 diles
 dinkel
 dnf
@@ -230,6 +231,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exploitability
 externalproject
 FAKELOGGER
 fbuild
@@ -350,6 +352,7 @@ initstate
 inkscape
 inorder
 installable
+interoperate
 intlimits
 inttypes
 INVALIDBUFFER
@@ -411,6 +414,7 @@ LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR
+lockfiles
 LOGGERRULES
 LOGPACKET
 Lsb
@@ -603,6 +607,7 @@ refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
 regexs
+remediations
 REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
@@ -777,6 +782,7 @@ VCA
 vcid
 VCP
 vcs
+vendored
 VFILE
 VID
 vla

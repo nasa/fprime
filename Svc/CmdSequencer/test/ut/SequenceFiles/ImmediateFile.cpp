@@ -26,7 +26,7 @@ ImmediateFile ::ImmediateFile(const U32 a_n, const Format::t a_format) : File(a_
     this->setName(s.toChar());
 }
 
-void ImmediateFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void ImmediateFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordDataSize = this->n * FPrime::Records::STANDARD_SIZE;
     const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
@@ -44,7 +44,7 @@ void ImmediateFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::CRCs::serialize(buffer);
 }
 
-void ImmediateFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void ImmediateFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

@@ -56,13 +56,7 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     //! Route a packet of unknown type
     void testRouteUnknownPacketUnconnected();
 
-    //! Route a packet of unknown type
-    void testAllocationFailureFile();
-
-    //! Deallocate a returning buffer
-    void testAllocationFailureUnknown();
-
-    //! Deallocate a returning buffer
+    //! Test buffer return via fileBufferReturnIn
     void testBufferReturn();
 
     //! Invoke the command response input port
@@ -85,12 +79,6 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     //! Mock the reception of a packet of a specific type
     void mockReceivePacketType(Fw::ComPacketType packetType);
 
-    // ----------------------------------------------------------------------
-    // Port handler overrides
-    // ----------------------------------------------------------------------
-    //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
-
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -98,10 +86,6 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
 
     //! The component under test
     FprimeRouter component;
-
-    Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
-    U8 m_buffer_slot[64];
-    bool m_forceAllocationError = false;  // Flag to force allocation error
 };
 
 }  // namespace Svc

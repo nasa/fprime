@@ -13,19 +13,21 @@
 
 #include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/RedBlackTreeMap.hpp"
+#include "Fw/Prm/PrmExternalTypes.hpp"
 #include "Fw/Types/EnabledEnumAc.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
-#include "config/TlmPacketizerCfg.hpp"
+#include "TlmPacketizerConfig/FppConstantsAc.hpp"
+#include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {
 
 //! Constant allowing users to ignore the omit list allowing a reduction in required buckets and thus storage
 constexpr Svc::TlmPacketizerPacket IGNORE_OMIT_LIST = {nullptr, 0, 0, 0};
 
-class TlmPacketizer final : public TlmPacketizerComponentBase {
+class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamExternalDelegate {
     friend class TlmPacketizerTester;
 
   public:
@@ -41,13 +43,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     void setPacketList(
         const TlmPacketizerPacketList& packetList,   // channels to packetize
         const Svc::TlmPacketizerPacket& ignoreList,  // channels to ignore (i.e. no warning event if not packetized)
-        const FwChanIdType startLevel,               // starting level of packets to send
-        const TlmPacketizer_GroupConfig& defaultGroupConfig =
-            TlmPacketizer_GroupConfig{});  // default group config setting
+        const FwChanIdType startLevel                // starting level of packets to send
+    );
 
     //! Destroy object TlmPacketizer
     //!
-    ~TlmPacketizer(void);
+    ~TlmPacketizer();
 
   private:
     // ----------------------------------------------------------------------
@@ -208,6 +209,16 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     static const TlmPacketizer_TelemetrySendPortMap TELEMETRY_SEND_PORT_MAP;
 
   private:
+    Fw::SerializeStatus serializeParam(const FwPrmIdType base_id,
+                                       const FwPrmIdType local_id,
+                                       Fw::SerialBufferBase& buff) const override;
+
+    Fw::SerializeStatus deserializeParam(const FwPrmIdType base_id,
+                                         const FwPrmIdType local_id,
+                                         const Fw::ParamValid prmStat,
+                                         Fw::SerialBufferBase& buff) override;
+
+  private:
     //! Handler implementation for configureSectionGroupRate
     //!
     //! Input configuration port
@@ -230,8 +241,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
 
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized
-    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, TLMPACKETIZER_HASH_BUCKETS> m_channelIndices;
-    Fw::Array<TlmEntry, TLMPACKETIZER_HASH_BUCKETS>
+    Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, MAX_PACKETIZER_CHANNELS> m_channelIndices;
+    Fw::Array<TlmEntry, MAX_PACKETIZER_CHANNELS>
         m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
 };
 

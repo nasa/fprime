@@ -19,10 +19,10 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     // NOTE: it is understood and accepted that the following code is not as efficient as it could technically be
     // We are leveraging the FPP autocoded types to do the deserialization for us.
-    // In its current implementation, CircularBuffer is not a SerializeBufferBase, which prevents us from deserializing
+    // In its current implementation, CircularBuffer is not a LinearBufferBase, which prevents us from deserializing
     // directly from the CircularBuffer into FrameHeader/FrameTrailer. Instead, we have to copy the data into
     // a temporary SerializeBuffer, and then deserialize from that buffer into the FrameHeader/FrameTrailer objects.
-    // A better implementation would be to have CircularBuffer implement a shared interface with SerializeBufferBase,
+    // A better implementation would be to have CircularBuffer implement a shared interface with LinearBufferBase,
     // and then we could pass the CircularBuffer directly into the FrameHeader/FrameTrailer deserializers. This is left
     // as a TODO for future improvement as it is a significant refactor
 
@@ -49,11 +49,25 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (header.get_startWord() != default_value.get_startWord()) {
         return Status::NO_FRAME_DETECTED;
     }
+    // Validate size before proceeding
+    const FwSizeType max_payload_size = std::numeric_limits<FwSizeType>::max() -
+                                        FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
+                                        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // If the header length is larger than size can store, then frame is invalid
+    if (max_payload_size < header.get_lengthField()) {
+        // Size overflow - frame is invalid
+        return Status::NO_FRAME_DETECTED;
+    }
+
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
     const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
                                            FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    // If the current allocated size can't hold the expected_frame_size -> MORE_DATA_NEEDED
-    if (data.get_allocated_size() < expected_frame_size) {
+    // If the frame will never fit, then report NO_FRAME_DETECTED to drop the erroneous frame
+    if (data.get_capacity() < expected_frame_size) {
+        return Status::NO_FRAME_DETECTED;
+    }
+    // If the frame could fit but we haven't received enough data yet, report MORE_DATA_NEEDED
+    else if (data.get_allocated_size() < expected_frame_size) {
         size_out = expected_frame_size;
         return Status::MORE_DATA_NEEDED;
     }
@@ -79,7 +93,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     // Compute CRC over the transmitted data (header + body)
     FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
-    for (U32 i = 0; i < hash_field_size; i++) {
+    for (FwSizeType i = 0; i < hash_field_size; i++) {
         U8 byte = 0;
         status = data.peek(byte, i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

@@ -34,6 +34,7 @@ class TestState : public DpWriterTester {
     TEST_STATE_DEF_RULE(BufferSendIn, InvalidHeader)
     TEST_STATE_DEF_RULE(BufferSendIn, InvalidHeaderHash)
     TEST_STATE_DEF_RULE(BufferSendIn, OK)
+    TEST_STATE_DEF_RULE(BufferSendIn, OKProcShrink)
     TEST_STATE_DEF_RULE(CLEAR_EVENT_THROTTLE, OK)
     TEST_STATE_DEF_RULE(FileOpenStatus, Error)
     TEST_STATE_DEF_RULE(FileOpenStatus, OK)

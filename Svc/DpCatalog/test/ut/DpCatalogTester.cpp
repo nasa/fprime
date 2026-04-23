@@ -744,4 +744,16 @@ void DpCatalogTester ::test_BadFileDone() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_ProcessFileInvalidDir() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_InvalidDir";
+    Fw::FileNameString stateFile("");
+    this->component.configure(dirs, 1, stateFile, 100, alloc);
+
+    ASSERT_DEATH_IF_SUPPORTED(this->component.processFile("somefile.dp", DP_MAX_DIRECTORIES), "Assert");
+
+    this->component.shutdown();
+}
+
 }  // namespace Svc
