@@ -354,6 +354,7 @@ initstate
 inkscape
 inorder
 installable
+interoperate
 intlimits
 inttypes
 INVALIDBUFFER

@@ -71,14 +71,6 @@ class FileManager final : public FileManagerComponentBase {
                                     const Fw::CmdStringArg& dirName  //!< The directory to remove
                                     ) override;
 
-    //! Implementation for ShellCommand command handler
-    //!
-    void ShellCommand_cmdHandler(const FwOpcodeType opCode,           //!< The opcode
-                                 const U32 cmdSeq,                    //!< The command sequence number
-                                 const Fw::CmdStringArg& command,     //!< The shell command string
-                                 const Fw::CmdStringArg& logFileName  //!< The name of the log file
-                                 ) override;
-
     //! Implementation for ConcatFiles command handler
     //! Append 1 file's contents to the end of another.
     void AppendFile_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
@@ -128,12 +120,6 @@ class FileManager final : public FileManagerComponentBase {
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
-
-    //! A system command with no arguments
-    //!
-    int systemCall(const Fw::CmdStringArg& command,     //!< The command
-                   const Fw::CmdStringArg& logFileName  //!< The log file name
-    ) const;
 
     //! Emit telemetry based on status
     //!

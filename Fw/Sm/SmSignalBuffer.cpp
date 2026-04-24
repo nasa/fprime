@@ -6,7 +6,7 @@ namespace Fw {
 SmSignalBuffer::SmSignalBuffer(const U8* args, Serializable::SizeType size) : m_bufferData{} {
     FW_ASSERT(args != nullptr);
     FW_ASSERT(size <= sizeof(this->m_bufferData));
-    SerializeStatus stat = SerializeBufferBase::setBuff(args, size);
+    SerializeStatus stat = LinearBufferBase::setBuff(args, size);
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -14,11 +14,11 @@ SmSignalBuffer::SmSignalBuffer() : m_bufferData{} {}
 
 SmSignalBuffer::~SmSignalBuffer() {}
 
-SmSignalBuffer::SmSignalBuffer(const SmSignalBuffer& other) : Fw::SerializeBufferBase(), m_bufferData{} {
+SmSignalBuffer::SmSignalBuffer(const SmSignalBuffer& other) : Fw::LinearBufferBase(), m_bufferData{} {
     FW_ASSERT(other.getBuffAddr() != nullptr);
     FW_ASSERT(other.getSize() <= sizeof(this->m_bufferData));
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
+    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -30,7 +30,7 @@ SmSignalBuffer& SmSignalBuffer::operator=(const SmSignalBuffer& other) {
     FW_ASSERT(other.getBuffAddr() != nullptr);
     FW_ASSERT(other.getSize() <= sizeof(this->m_bufferData));
 
-    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData, other.getSize());
+    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }

@@ -14,10 +14,12 @@
 #include <signal.h>
 // Used for command line argument processing
 #include <getopt.h>
-// Used for printf functions
+// Used for atoi
 #include <cstdlib>
 // Used to get the Os::Console
 #include <Os/Os.hpp>
+// Used for logging to the console
+#include <Fw/Logger/Logger.hpp>
 
 /**
  * \brief print commandline help message
@@ -27,7 +29,7 @@
  * @param app: name of application
  */
 void print_usage(const char* app) {
-    (void)printf("Usage: ./%s [options]\n-a\thostname/IP address\n-p\tport_number\n", app);
+    Fw::Logger::log("Usage: ./%s [options]\n-a\thostname/IP address\n-p\tport_number\n", app);
 }
 
 /**
@@ -87,12 +89,12 @@ int main(int argc, char* argv[]) {
     // Setup program shutdown via Ctrl-C
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
-    (void)printf("Hit Ctrl-C to quit\n");
+    Fw::Logger::log("Hit Ctrl-C to quit\n");
 
     // Setup, cycle, and teardown topology
     Ref::setupTopology(inputs);
     Ref::startRateGroups(Fw::TimeInterval(1, 0));  // Program loop cycling rate groups at 1Hz
     Ref::teardownTopology(inputs);
-    (void)printf("Exiting...\n");
+    Fw::Logger::log("Exiting...\n");
     return 0;
 }

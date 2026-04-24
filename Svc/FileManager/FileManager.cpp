@@ -113,22 +113,6 @@ void FileManager ::RemoveDirectory_cmdHandler(const FwOpcodeType opCode,
     this->sendCommandResponse(opCode, cmdSeq, status);
 }
 
-void FileManager ::ShellCommand_cmdHandler(const FwOpcodeType opCode,
-                                           const U32 cmdSeq,
-                                           const Fw::CmdStringArg& command,
-                                           const Fw::CmdStringArg& logFileName) {
-    Fw::LogStringArg logStringCommand(command.toChar());
-    this->log_ACTIVITY_HI_ShellCommandStarted(logStringCommand);
-    int status = this->systemCall(command, logFileName);
-    if (status == 0) {
-        this->log_ACTIVITY_HI_ShellCommandSucceeded(logStringCommand);
-    } else {
-        this->log_WARNING_HI_ShellCommandFailed(logStringCommand, static_cast<U32>(status));
-    }
-    this->emitTelemetry(status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR);
-    this->sendCommandResponse(opCode, cmdSeq, status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR);
-}
-
 void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& source,
@@ -297,24 +281,6 @@ void FileManager ::run_internalInterfaceHandler() {
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
-
-int FileManager ::systemCall(const Fw::CmdStringArg& command, const Fw::CmdStringArg& logFileName) const {
-    // Create a buffer of at least enough size for storing the eval string less the 2 %s tokens, two command strings,
-    // and a null terminator at the end
-    const char evalStr[] = "eval '%s' 1>>%s 2>&1\n";
-    constexpr U32 bufferSize = (sizeof(evalStr) - 4) + (2 * FW_CMD_STRING_MAX_SIZE) + 1;
-    char buffer[bufferSize];
-
-    // Wrap that buffer in an external string for formatting purposes
-    Fw::ExternalString stringBuffer(buffer, bufferSize);
-    Fw::FormatStatus formatStatus = stringBuffer.format(evalStr, command.toChar(), logFileName.toChar());
-    // Since the buffer is exactly sized, the only error can occur is a software error not caused by ground
-    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
-
-    // Call the system
-    const int status = system(stringBuffer.toChar());
-    return status;
-}
 
 void FileManager ::emitTelemetry(const Os::FileSystem::Status status) {
     if (status == Os::FileSystem::OP_OK) {

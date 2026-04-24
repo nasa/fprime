@@ -7,10 +7,10 @@
 #ifndef Svc_Ccsds_ApidManagerTester_HPP
 #define Svc_Ccsds_ApidManagerTester_HPP
 
-#include "STest/Random/Random.hpp"
-#include "STest/Rule/Rule.hpp"
 #include "Svc/Ccsds/ApidManager/ApidManager.hpp"
 #include "Svc/Ccsds/ApidManager/ApidManagerGTestBase.hpp"
+#include "Svc/Ccsds/ApidManager/test/ut/TestState/TestState.hpp"
+#include "TestUtils/RuleBasedTesting.hpp"
 
 namespace Svc {
 
@@ -22,10 +22,10 @@ class ApidManagerTester : public ApidManagerGTestBase {
     // Constants
     // ----------------------------------------------------------------------
 
-    // Maximum size of histories storing events, telemetry, and port outputs
+    //! Maximum size of histories storing events, telemetry, and port outputs
     static const FwSizeType MAX_HISTORY_SIZE = 10;
 
-    // Instance ID supplied to the component instance under test
+    //! Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
   public:
@@ -41,7 +41,7 @@ class ApidManagerTester : public ApidManagerGTestBase {
 
   private:
     // ----------------------------------------------------------------------
-    // Helper functions
+    // Helper functions (auto-generated via UT_AUTO_HELPERS)
     // ----------------------------------------------------------------------
 
     //! Connect ports
@@ -58,56 +58,22 @@ class ApidManagerTester : public ApidManagerGTestBase {
     //! The component under test
     ApidManager component;
 
-    // Shadow test state
-    std::map<ComCfg::Apid::T, U16> shadow_seqCounts;  //!< Map to hold expected sequence counts for APIDs
-    bool shadow_isTableFull = false;
-
-    // ----------------------------------------------------------------------
-    // Helpers for tracking the shadow test state
-    // ----------------------------------------------------------------------
-
-    U16 shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid);
-
-    void shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 expectedSeqCount);
-
-    ComCfg::Apid::T shadow_getRandomTrackedApid();
-
-    ComCfg::Apid::T shadow_getRandomUntrackedApid();
-
-    // ----------------------------------------------------------------------
-    // Tests: Rule Based Testing
-    // ----------------------------------------------------------------------
+    //! Shadow state for rule-based testing
+    ApidManagerTestState shadow;
 
   public:
-    struct GetExistingSeqCount : public STest::Rule<ApidManagerTester> {
-        GetExistingSeqCount() : STest::Rule<ApidManagerTester>("GetExistingSeqCount") {};
-        bool precondition(const ApidManagerTester& state);
-        void action(ApidManagerTester& state);
-    };
+    // ----------------------------------------------------------------------
+    // Rule Based Testing
+    // ----------------------------------------------------------------------
 
-    struct GetNewSeqCountOk : public STest::Rule<ApidManagerTester> {
-        GetNewSeqCountOk() : STest::Rule<ApidManagerTester>("GetNewSeqCountOk") {};
-        bool precondition(const ApidManagerTester& state);
-        void action(ApidManagerTester& state);
-    };
+    //! Rules for the getApidSeqCountIn port
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, Existing);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewOk);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewTableFull);
 
-    struct GetNewSeqCountTableFull : public STest::Rule<ApidManagerTester> {
-        GetNewSeqCountTableFull() : STest::Rule<ApidManagerTester>("GetNewSeqCountTableFull") {};
-        bool precondition(const ApidManagerTester& state);
-        void action(ApidManagerTester& state);
-    };
-
-    struct ValidateSeqCountOk : public STest::Rule<ApidManagerTester> {
-        ValidateSeqCountOk() : STest::Rule<ApidManagerTester>("ValidateSeqCountOk") {};
-        bool precondition(const ApidManagerTester& state);
-        void action(ApidManagerTester& state);
-    };
-
-    struct ValidateSeqCountFailure : public STest::Rule<ApidManagerTester> {
-        ValidateSeqCountFailure() : STest::Rule<ApidManagerTester>("ValidateSeqCountFailure") {};
-        bool precondition(const ApidManagerTester& state);
-        void action(ApidManagerTester& state);
-    };
+    //! Rules for the validateApidSeqCountIn port
+    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Failure);
 };
 
 }  // namespace Ccsds

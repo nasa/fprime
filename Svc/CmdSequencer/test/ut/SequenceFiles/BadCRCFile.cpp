@@ -21,7 +21,7 @@ namespace SequenceFiles {
 
 BadCRCFile ::BadCRCFile(const Format::t a_format) : File("bad_crc", a_format) {}
 
-void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void BadCRCFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordData = 0x10;
     const U32 dataSize = sizeof recordData + FPrime::CRCs::SIZE;
@@ -41,7 +41,7 @@ void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(this->crc.m_stored));
 }
 
-void BadCRCFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void BadCRCFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

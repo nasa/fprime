@@ -28,6 +28,9 @@ class Tester {
     //! OK
     void OK();
 
+    //! OKProcShrink
+    void OKProcShrink();
+
     //! Invalid buffer
     void InvalidBuffer();
 
@@ -56,6 +59,9 @@ class Tester {
 
     //! Rule BufferSendIn::OK
     Rules::BufferSendIn::OK ruleOK;
+
+    //! Rule BufferSendIn::OKProcShrink
+    Rules::BufferSendIn::OKProcShrink ruleOKProcShrink;
 
     //! Rule BufferSendIn::InvalidBuffer
     Rules::BufferSendIn::InvalidBuffer ruleInvalidBuffer;

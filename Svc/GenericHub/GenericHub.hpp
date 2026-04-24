@@ -116,8 +116,8 @@ class GenericHub final : public GenericHubComponentBase {
 
     //! Handler implementation for serialIn
     //!
-    void serialIn_handler(FwIndexType portNum,            /*!< The port number*/
-                          Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void serialIn_handler(FwIndexType portNum,         /*!< The port number*/
+                          Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
                           ) override;
 
     // Helpers and members
