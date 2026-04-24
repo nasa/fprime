@@ -86,6 +86,7 @@ SocketIpStatus TcpServerComponentImpl::startup() {
 }
 
 void TcpServerComponentImpl::terminate() {
+    this->stop();
     Os::ScopeLock scopedLock(this->m_lock);
     this->m_socket.terminate(this->m_descriptor);
     this->m_descriptor.serverFd = -1;
