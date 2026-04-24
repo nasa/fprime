@@ -82,7 +82,7 @@ void SpacePacketFramerTester::testNominalFraming() {
 }
 
 void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
-   U8 payload[16];
+    U8 payload[16];
     for (U32 i = 0; i < sizeof(payload); ++i) {
         payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
     }
@@ -90,24 +90,23 @@ void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
     ComCfg::FrameContext context;
     context.set_apid(static_cast<ComCfg::Apid::T>(0x01));
     this->m_nextSeqCount = 0;
- 
+
     // Signal the allocator handler to return a larger-than-needed buffer,
     // simulating a BufferManager bin that is bigger than the exact packet size.
     this->m_useOversizedAlloc = true;
     this->invoke_to_dataIn(0, data, context);
     this->m_useOversizedAlloc = false;
- 
+
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataReturnOut_SIZE(1);
- 
+
     const FwSizeType expectedFrameSize = sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE;
- 
+
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     // If setSize() is missing from SpacePacketFramer, getSize() returns the
     // oversized allocation (2 * expectedFrameSize) and this assertion fails.
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
 }
-
 
 // ----------------------------------------------------------------------
 // Output port handler overrides
