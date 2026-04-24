@@ -26,7 +26,10 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block, const Svc::SeqArgs& args) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
+                                const Fw::ConstStringBase& fileName,
+                                Fw::Wait block,
+                                const Svc::SeqArgs& args) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -50,9 +53,9 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
     this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, args);
 }
 
-void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                                       const Fw::StringBase& fileName, //!< The sequence file name
-                                       const Svc::SeqArgs& args        //!< Sequence arguments (not currently used)
+void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,             //!< The port number
+                                       const Fw::StringBase& fileName,  //!< The sequence file name
+                                       const Svc::SeqArgs& args         //!< Sequence arguments (not currently used)
 ) {
     (void)args;  // Suppress unused parameter warning
     FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, static_cast<FwAssertArgType>(portNum));

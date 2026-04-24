@@ -50,9 +50,9 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    void seqRunOut_handler(FwIndexType portNum,            //!< The port number
-                           const Fw::StringBase& filename, //!< The sequence file
-                           const Svc::SeqArgs& args        //!< Sequence arguments
+    void seqRunOut_handler(FwIndexType portNum,             //!< The port number
+                           const Fw::StringBase& filename,  //!< The sequence file
+                           const Svc::SeqArgs& args         //!< Sequence arguments
     );
 
   private:

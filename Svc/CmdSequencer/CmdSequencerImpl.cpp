@@ -176,7 +176,9 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
 }
 
-void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
+void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum,
+                                                 const Fw::StringBase& filename,
+                                                 const Svc::SeqArgs& args) {
     (void)args;  // Suppress unused parameter warning
     this->doSequenceRun(filename);
 }
