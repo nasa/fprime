@@ -519,6 +519,20 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 FwSizeType buffCapacity,
                                                 Serializable::SizeType& length,
                                                 Endianness endianMode) {
+
+    // validate arguments 
+    // 
+    // A non-zero capacity with a null destination pointer would reach memcpy
+    // with an invalid address. A null pointer is only safe when nothing will
+    // be copied (buffCapacity == 0).
+    if (buff == nullptr && buffCapacity > 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
+    // endianMode is an enum; an out-of-range value indicates a caller bug.
+    FW_ASSERT(endianMode == Endianness::BIG || endianMode == Endianness::LITTLE,
+              static_cast<FwAssertArgType>(endianMode));
+
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
     SerializeStatus status =
         this->deserializeTo(buff, buffCapacity, length_in_out, Serialization::INCLUDE_LENGTH, endianMode);

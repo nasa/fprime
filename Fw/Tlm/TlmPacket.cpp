@@ -109,20 +109,25 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
         return stat;
     }
 
-    // telemetry buffer
-    stat = this->m_tlmBuffer.deserializeTo(buffer.getBuffAddr(), buffer.getCapacity(), bufferSize,
+    // validate telemetry buffer's destination pointer and capacity
+    U8* const buffAddr = buffer.getBuffAddr();
+    if (buffAddr == nullptr) {
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+    if (bufferSize == 0 || bufferSize > buffer.getCapacity()) {
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+    stat = this->m_tlmBuffer.deserializeTo(buffAddr, buffer.getCapacity(), bufferSize,
                                            Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 
-    // set buffer size
-    stat = buffer.setBuffLen(bufferSize);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-
-    return Fw::FW_SERIALIZE_OK;
+    // Update the destination buffer's length so callers can deserialize typed
+    // values out of it afterwards (e.g. buffOut.deserializeTo(valOut)).
+    // Without this, buffer.getBuffLength() stays 0 and any subsequent typed
+    // deserialize call returns FW_DESERIALIZE_SIZE_MISMATCH.
+    return buffer.setBuffLen(bufferSize);
 }
 
 SerializeStatus TlmPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
@@ -141,14 +146,23 @@ SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
+
     // deserialize the channel value entry buffers
     FwSizeType size = buffer.getDeserializeSizeLeft();
-    stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), this->m_tlmBuffer.getCapacity(), size,
+
+    // validate destination pointer and capacity
+    U8* const tlmAddr = this->m_tlmBuffer.getBuffAddr();
+    if (tlmAddr == nullptr) {
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+    if (size > this->m_tlmBuffer.getCapacity()) {
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+    stat = buffer.deserializeTo(tlmAddr, this->m_tlmBuffer.getCapacity(), size,
                                 Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_tlmBuffer.setBuffLen(size);
-        FW_ASSERT(stat == FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
     }
     return stat;
 }

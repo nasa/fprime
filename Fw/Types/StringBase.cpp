@@ -100,6 +100,15 @@ SerializeStatus StringBase::deserializeFrom(SerialBufferBase& buffer, Fw::Endian
     // Public interface returns const char*, but implementation needs char*
     // So use const_cast
     CHAR* raw = const_cast<CHAR*>(this->toChar());
+
+    // CodeQL fix: validate the source buffer before forwarding it to
+    // deserializeTo. SerialBufferBase does not expose getBuffAddr(), so we
+    // check getCapacity() — a zero-capacity buffer has no usable backing
+    // storage and any read from it would be undefined behaviour.
+    if (buffer.getCapacity() == 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
     // Deserialize length
     // Fail if length exceeds max size (the initial value of actualSize)
     // Otherwise deserialize length bytes and set actualSize to length
