@@ -551,7 +551,7 @@ module Svc {
       format "Cannot retransmit DP {}_{}_{}while it is being transmitted"
 
     @ DP operations file processing started
-    event DpFileProcessingStarted(
+    event DpOpFileProcessingStarted(
                           file: string size FileNameStringSize @< The file
       ) \
       severity activity high \
@@ -559,7 +559,7 @@ module Svc {
       format "Processing DP operations file {}"
 
     @ DP operations file processing complete
-    event DpFileProcessingComplete(
+    event DpOpFileProcessingComplete(
                           file: string size FileNameStringSize @< The file
                           numRecords: U32 @< number of records processed
       ) \
@@ -568,7 +568,7 @@ module Svc {
       format "Completed processing DP operations file {} with {} records"
 
     @ Error opening DP operations file
-    event DpFileOpenError(
+    event DpOpFileOpenError(
                           file: string size FileNameStringSize @< The file
                           stat: I32 @< status
       ) \
@@ -577,7 +577,7 @@ module Svc {
       format "Error opening DP operations file {}, stat: {}"
 
     @ Error reading DP operations file
-    event DpFileReadError(
+    event DpOpFileReadError(
                           file: string size FileNameStringSize @< The file
                           stat: I32 @< status
       ) \
@@ -586,7 +586,7 @@ module Svc {
       format "Error reading DP operations file {}, stat: {}"
 
     @ Invalid DP operations file size
-    event DpFileInvalidSize(
+    event DpOpFileInvalidSize(
                           file: string size FileNameStringSize @< The file
                           $size: I32 @< file size
       ) \
@@ -595,7 +595,7 @@ module Svc {
       format "Invalid DP operations file {} size: {} (not a multiple of 17 bytes)"
 
     @ Invalid operation code in DP operations file
-    event DpFileInvalidOp(
+    event DpOpFileInvalidOp(
                           file: string size FileNameStringSize @< The file
                           recordNum: U32 @< record number
                           opCode: U8 @< invalid operation code
@@ -605,7 +605,7 @@ module Svc {
       format "DP operations file {} has invalid operation code {} at record {}"
 
     @ Invalid checksum in DP operations file
-    event DpFileChecksumError(
+    event DpOpFileChecksumError(
                           file: string size FileNameStringSize @< The file
                           computed: U32 @< computed checksum
                           expected: U32 @< expected checksum

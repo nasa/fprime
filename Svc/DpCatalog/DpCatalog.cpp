@@ -1289,7 +1289,7 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
     // Open the operations file
     Os::File::Status stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_DpFileOpenError(fileName, stat);
+        this->log_WARNING_HI_DpOpFileOpenError(fileName, stat);
         return false;
     }
 
@@ -1297,7 +1297,7 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fileName.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         opFile.close();
-        this->log_WARNING_HI_DpFileOpenError(fileName, sizeStat);
+        this->log_WARNING_HI_DpOpFileOpenError(fileName, sizeStat);
         return false;
     }
 
@@ -1306,14 +1306,14 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
     const FwSizeType CRC_SIZE = 4;
     if (fileSize < CRC_SIZE) {
         opFile.close();
-        this->log_WARNING_HI_DpFileInvalidSize(fileName, static_cast<I32>(fileSize));
+        this->log_WARNING_HI_DpOpFileInvalidSize(fileName, static_cast<I32>(fileSize));
         return false;
     }
 
     FwSizeType dataSize = fileSize - CRC_SIZE;
     if (dataSize % RECORD_SIZE != 0) {
         opFile.close();
-        this->log_WARNING_HI_DpFileInvalidSize(fileName, static_cast<I32>(fileSize));
+        this->log_WARNING_HI_DpOpFileInvalidSize(fileName, static_cast<I32>(fileSize));
         return false;
     }
 
@@ -1529,7 +1529,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     FwSizeType dataSize = fileSize - CRC_SIZE;
     U32 numRecords = static_cast<U32>(dataSize / RECORD_SIZE);
 
-    this->log_ACTIVITY_HI_DpFileProcessingStarted(fileName);
+    this->log_ACTIVITY_HI_DpOpFileProcessingStarted(fileName);
 
     // First pass: validate CRC32 by scanning file byte by byte
     unsigned long crc = 0xFFFFFFFF;
@@ -1541,7 +1541,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
         Os::File::Status stat = opFile.read(&byteBuf, readSize);
         if (stat != Os::File::OP_OK || readSize != 1) {
             opFile.close();
-            this->log_WARNING_HI_DpFileReadError(fileName, stat);
+            this->log_WARNING_HI_DpOpFileReadError(fileName, stat);
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
@@ -1556,7 +1556,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     opFile.close();
 
     if (stat != Os::File::OP_OK || readSize != CRC_SIZE) {
-        this->log_WARNING_HI_DpFileReadError(fileName, stat);
+        this->log_WARNING_HI_DpOpFileReadError(fileName, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -1566,7 +1566,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
 
     // Validate checksum
     if (computedCrc != expectedCrc) {
-        this->log_WARNING_HI_DpFileChecksumError(fileName, computedCrc, expectedCrc);
+        this->log_WARNING_HI_DpOpFileChecksumError(fileName, computedCrc, expectedCrc);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -1574,7 +1574,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     // Second pass: reopen file and process records one at a time
     stat = opFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_DpFileOpenError(fileName, stat);
+        this->log_WARNING_HI_DpOpFileOpenError(fileName, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -1586,7 +1586,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
         stat = opFile.read(recordBuf, readSize);
         if (stat != Os::File::OP_OK || readSize != RECORD_SIZE) {
             opFile.close();
-            this->log_WARNING_HI_DpFileReadError(fileName, stat);
+            this->log_WARNING_HI_DpOpFileReadError(fileName, stat);
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
@@ -1609,14 +1609,14 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
                 break;
             default:
                 opFile.close();
-                this->log_WARNING_HI_DpFileInvalidOp(fileName, recordNum, operationCode);
+                this->log_WARNING_HI_DpOpFileInvalidOp(fileName, recordNum, operationCode);
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
         }
     }
 
     opFile.close();
-    this->log_ACTIVITY_HI_DpFileProcessingComplete(fileName, numRecords);
+    this->log_ACTIVITY_HI_DpOpFileProcessingComplete(fileName, numRecords);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

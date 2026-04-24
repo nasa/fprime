@@ -1897,7 +1897,7 @@ void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
     this->component.doDispatch();
 
     // Should get error event and response
-    ASSERT_EVENTS_DpFileOpenError_SIZE(1);
+    ASSERT_EVENTS_DpOpFileOpenError_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -1928,7 +1928,7 @@ void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
     this->component.doDispatch();
 
     // Should get invalid size event and error response
-    ASSERT_EVENTS_DpFileInvalidSize_SIZE(1);
+    ASSERT_EVENTS_DpOpFileInvalidSize_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -1968,7 +1968,7 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     this->component.doDispatch();
 
     // Should get invalid op event and error response
-    ASSERT_EVENTS_DpFileInvalidOp_SIZE(1);
+    ASSERT_EVENTS_DpOpFileInvalidOp_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 12, Fw::CmdResponse::EXECUTION_ERROR);
 
@@ -2025,8 +2025,8 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     this->component.doDispatch();
 
     // Should get processing started/complete events and success response
-    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
-    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpDeleted_SIZE(2);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 13, Fw::CmdResponse::OK);
@@ -2094,8 +2094,8 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     this->component.doDispatch();
 
     // Should get success events
-    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
-    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 14, Fw::CmdResponse::OK);
@@ -2154,8 +2154,8 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     this->component.doDispatch();
 
     // Should get success events
-    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
-    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpRetransmitted_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 15, Fw::CmdResponse::OK);
@@ -2221,8 +2221,8 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     this->component.doDispatch();
 
     // Should get success events
-    ASSERT_EVENTS_DpFileProcessingStarted_SIZE(1);
-    ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingStarted_SIZE(1);
+    ASSERT_EVENTS_DpOpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpDeleted_SIZE(1);
     ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
     ASSERT_EVENTS_DpRetransmitted_SIZE(1);
