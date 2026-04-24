@@ -186,7 +186,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
     this->m_stateFileEntries = 0;
 
     // read entries from the state file
-    for (FwSizeType entry = 0; entry < this->m_numDpSlots; entry++) {
+    for (U32 entry = 0; entry < this->m_numDpSlots; entry++) {
         FwSizeType size = static_cast<FwSizeType>(sizeof(buffer));
         // read the directory index
         stat = stateFile.read(buffer, size);
@@ -220,9 +220,17 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
 
         // Deserialize the file directory index
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile,entry);
+            fileLoc += size;
+            continue;
+        }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile,entry);
+            fileLoc += size;
+            continue;
+        }
         this->m_stateFileData[entry].used = true;
         this->m_stateFileData[entry].visited = false;
 
@@ -1501,7 +1509,7 @@ bool DpCatalog::updateExistingDpForRetransmit(DpBtreeNode* existingNode,
     return true;
 }
 
-void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName) {
+void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName) {
     // Check initialization
     if (not this->checkInit()) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1517,7 +1525,7 @@ void DpCatalog ::PROCESS_DP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, con
     }
 
     const FwSizeType RECORD_SIZE = 17;
-    const FwSizeType CRC_SIZE = 4;
+    const FwSizeType CRC_SIZE = sizeof(U32);
     FwSizeType dataSize = fileSize - CRC_SIZE;
     U32 numRecords = static_cast<U32>(dataSize / RECORD_SIZE);
 
@@ -1647,6 +1655,13 @@ void DpCatalog::SEND_CATALOG_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 
         }
     }
 
+    // Check if catalog is empty
+    if (numEntries == 0) {
+        this->log_WARNING_HI_ComponentNoMemory();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
     // Calculate size needed for container
     FwSizeType dpSize = numEntries * (DpRecord::SERIALIZED_SIZE + sizeof(FwDpIdType));
 
@@ -1760,8 +1775,7 @@ bool DpCatalog::deleteDpHelper(FwDpIdType id, U32 tSec, U32 tSub) {
     // Delete the physical file
     Os::FileSystem::Status status = Os::FileSystem::removeFile(dpFileName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-        this->log_WARNING_HI_DpDeleteError(dpFileName, status);
-        return false;
+        this->log_WARNING_LO_DpDeleteError(dpFileName, status);
     }
 
     // Update state file if catalog was modified

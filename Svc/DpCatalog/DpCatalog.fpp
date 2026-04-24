@@ -133,7 +133,7 @@ module Svc {
       opcode 6
 
     @ Process a file containing batch DP operations
-    async command PROCESS_DP_FILE (
+    async command PROCESS_DP_OP_FILE (
                                     fileName: string size FileNameStringSize @< The operations file name
                                   ) \
       opcode 7
@@ -483,7 +483,7 @@ module Svc {
                           file: string size FileNameStringSize @< The file
                           stat: I32 @< status
       ) \
-      severity warning high \
+      severity warning low \
       id 50 \
       format "Error deleting DP file {}, stat: {}"
 
@@ -645,6 +645,22 @@ module Svc {
       severity activity low \
       id 66 \
       format "File op: RETRANSMIT DP {}_{}_{} with priority {}"
+
+    @ Invalid checksum in DP operations file
+    event DpStateFileLoadError(
+                          file: string size FileNameStringSize @< The file
+                          recordNum: U32 @< record number with decode error
+      ) \
+      severity warning high \
+      id 67 \
+      format "DP state file {} load error reading record {}"
+
+    @ No catalog build when generating DP catalog DP
+    event DpCatalogDpNoCatalog(
+      ) \
+      severity warning high \
+      id 68 \
+      format "Must build catalog before generating catalog data product"
 
     # ----------------------------------------------------------------------
     # Telemetry

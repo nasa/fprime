@@ -148,7 +148,8 @@ When a data product is downlinked, it is marked in the node as completed, but th
 
 ### 3.8 Batch Operations File
 
-The `PROCESS_DP_FILE` command allows operators to perform multiple catalog operations atomically by specifying them in a file. This is useful for automated ground tools that need to delete, reprioritize, or retransmit multiple data products without requiring individual commands for each operation.
+The `PROCESS_DP_FILE` command allows operators to perform multiple catalog operations atomically by specifying them in a file. This is useful for automated ground tools that need to delete, reprioritize, or retransmit multiple data products without requiring individual commands for each operation. This command will only work if a catalog has already been built
+by the `BUILD_CATALOG` command.
 
 #### 3.8.1 File Format
 

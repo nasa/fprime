@@ -1893,13 +1893,13 @@ void DpCatalogTester::test_ProcessDpFile_InvalidFile() {
 
     // Try to process nonexistent file
     Fw::FileNameString opFile("./nonexistent_ops.dat");
-    this->sendCmd_PROCESS_DP_FILE(0, 10, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 10, opFile);
     this->component.doDispatch();
 
     // Should get error event and response
     ASSERT_EVENTS_DpFileOpenError_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Cleanup
     this->component.shutdown();
@@ -1924,13 +1924,13 @@ void DpCatalogTester::test_ProcessDpFile_InvalidSize() {
     file.write(data, size);
     file.close();
 
-    this->sendCmd_PROCESS_DP_FILE(0, 11, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 11, opFile);
     this->component.doDispatch();
 
     // Should get invalid size event and error response
     ASSERT_EVENTS_DpFileInvalidSize_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Cleanup
     Os::FileSystem::removeFile(opFile.toChar());
@@ -1964,13 +1964,13 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     appendCrc32(file, data, 17);
     file.close();
 
-    this->sendCmd_PROCESS_DP_FILE(0, 12, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 12, opFile);
     this->component.doDispatch();
 
     // Should get invalid op event and error response
     ASSERT_EVENTS_DpFileInvalidOp_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 12, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Cleanup
     Os::FileSystem::removeFile(opFile.toChar());
@@ -2021,7 +2021,7 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     file.close();
 
     // Process the file
-    this->sendCmd_PROCESS_DP_FILE(0, 13, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 13, opFile);
     this->component.doDispatch();
 
     // Should get processing started/complete events and success response
@@ -2029,7 +2029,7 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpDeleted_SIZE(2);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 13, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 13, Fw::CmdResponse::OK);
 
     // Verify DP 1 and 3 are deleted, DP 2 still exists
     Fw::FileNameString dp1File;
@@ -2090,7 +2090,7 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     file.close();
 
     // Process the file
-    this->sendCmd_PROCESS_DP_FILE(0, 14, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 14, opFile);
     this->component.doDispatch();
 
     // Should get success events
@@ -2098,7 +2098,7 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 14, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 14, Fw::CmdResponse::OK);
 
     // Verify priority was changed
     DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
@@ -2150,7 +2150,7 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     file.close();
 
     // Process the file
-    this->sendCmd_PROCESS_DP_FILE(0, 15, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 15, opFile);
     this->component.doDispatch();
 
     // Should get success events
@@ -2158,7 +2158,7 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     ASSERT_EVENTS_DpFileProcessingComplete_SIZE(1);
     ASSERT_EVENTS_DpRetransmitted_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 15, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 15, Fw::CmdResponse::OK);
 
     // Verify DP was added to catalog
     DpCatalog::DpBtreeNode* node = this->component.findTreeNode(1, 1000, 100);
@@ -2217,7 +2217,7 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     file.close();
 
     // Process the file
-    this->sendCmd_PROCESS_DP_FILE(0, 16, opFile);
+    this->sendCmd_PROCESS_DP_OP_FILE(0, 16, opFile);
     this->component.doDispatch();
 
     // Should get success events
@@ -2227,7 +2227,7 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     ASSERT_EVENTS_DpPriorityChanged_SIZE(1);
     ASSERT_EVENTS_DpRetransmitted_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_FILE, 16, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_PROCESS_DP_OP_FILE, 16, Fw::CmdResponse::OK);
 
     // Verify results
     // DP 1 should be deleted
@@ -2279,11 +2279,8 @@ void DpCatalogTester::test_SendCatalogDp_EmptyCatalog() {
 
     // Should succeed with empty container (0 entries)
     ASSERT_CMD_RESPONSE_SIZE(2);
-    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::OK);
-
-    // Should have called productGet and productSend handlers
-    ASSERT_EQ(this->productGetHistory->size(), 1);
-    ASSERT_EQ(this->productSendHistory->size(), 1);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SEND_CATALOG_DP, 1, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpCatalogDpNoCatalog_SIZE(0);
 
     this->component.shutdown();
 }
