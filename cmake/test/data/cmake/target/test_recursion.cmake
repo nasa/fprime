@@ -20,6 +20,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Prm
     Fw_StringFormat_snprintf
     Fw_StringScan_sscanf
+    Fw_AssertHook_fputs
     Fw_Time
     Fw_Tlm
     Fw_Types
