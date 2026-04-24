@@ -94,3 +94,6 @@ Packet-Views
 docs/reference/api/cpp
 docs/reference/api/cmake
 temp_dir/
+
+.claude
+yamcs-data

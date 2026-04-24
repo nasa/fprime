@@ -8,6 +8,7 @@
 #include "Svc/DpCatalog/DpCatalog.hpp"
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "Svc/DpCatalog/DpOpRecordSerializableAc.hpp"
 #include "Utils/Hash/libcrc/CRC32.hpp"
 
 #include <new>  // placement new
@@ -221,13 +222,13 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // Deserialize the file directory index
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
         if (status != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile,entry);
+            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile, entry);
             fileLoc += size;
             continue;
         }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
         if (status != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile,entry);
+            this->log_WARNING_HI_DpStateFileLoadError(this->m_stateFile, entry);
             fileLoc += size;
             continue;
         }
@@ -1301,9 +1302,9 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
         return false;
     }
 
-    // Verify file size: must be at least 4 bytes (for CRC32) and data portion must be multiple of 17 bytes
-    const FwSizeType RECORD_SIZE = 17;
-    const FwSizeType CRC_SIZE = 4;
+    // Verify file size: must be at least 4 bytes (for CRC32) and data portion must be multiple of DpOpRecord size
+    const FwSizeType RECORD_SIZE = DpOpRecord::SERIALIZED_SIZE;
+    const FwSizeType CRC_SIZE = sizeof(U32);
     if (fileSize < CRC_SIZE) {
         opFile.close();
         this->log_WARNING_HI_DpOpFileInvalidSize(fileName, static_cast<I32>(fileSize));
@@ -1318,32 +1319,6 @@ bool DpCatalog::openAndValidateOpFile(const Fw::StringBase& fileName,
     }
 
     return true;
-}
-
-void DpCatalog::parseFileOperationRecord(const U8* recordBuf,
-                                         U8& operationCode,
-                                         U32& id,
-                                         U32& tSec,
-                                         U32& tSub,
-                                         U32& priority) {
-    const FwSizeType DATA_SIZE = 17;  // Size of data fields (excludes CRC32)
-    Fw::ExternalSerializeBuffer serialBuffer(const_cast<U8*>(recordBuf), DATA_SIZE);
-    serialBuffer.setBuffLen(DATA_SIZE);
-
-    Fw::SerializeStatus desStat = serialBuffer.deserializeTo(operationCode);
-    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-    desStat = serialBuffer.deserializeTo(id, Fw::Endianness::BIG);
-    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-    desStat = serialBuffer.deserializeTo(tSec, Fw::Endianness::BIG);
-    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-    desStat = serialBuffer.deserializeTo(tSub, Fw::Endianness::BIG);
-    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
-
-    desStat = serialBuffer.deserializeTo(priority, Fw::Endianness::BIG);
-    FW_ASSERT(desStat == Fw::FW_SERIALIZE_OK, desStat);
 }
 
 bool DpCatalog::readDpHeader(const Fw::FileNameString& dpFileName, Fw::DpContainer& container) {
@@ -1524,7 +1499,7 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
         return;
     }
 
-    const FwSizeType RECORD_SIZE = 17;
+    const FwSizeType RECORD_SIZE = DpOpRecord::SERIALIZED_SIZE;
     const FwSizeType CRC_SIZE = sizeof(U32);
     FwSizeType dataSize = fileSize - CRC_SIZE;
     U32 numRecords = static_cast<U32>(dataSize / RECORD_SIZE);
@@ -1580,36 +1555,45 @@ void DpCatalog ::PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, 
     }
 
     // Process each record
-    U8 recordBuf[RECORD_SIZE];
+    U8 recordBuf[DpOpRecord::SERIALIZED_SIZE];
     for (U32 recordNum = 0; recordNum < numRecords; recordNum++) {
-        readSize = RECORD_SIZE;
+        readSize = DpOpRecord::SERIALIZED_SIZE;
         stat = opFile.read(recordBuf, readSize);
-        if (stat != Os::File::OP_OK || readSize != RECORD_SIZE) {
+        if (stat != Os::File::OP_OK || readSize != DpOpRecord::SERIALIZED_SIZE) {
             opFile.close();
             this->log_WARNING_HI_DpOpFileReadError(fileName, stat);
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
-        // Parse record fields
-        U8 operationCode;
-        U32 id, tSec, tSub, priority;
-        this->parseFileOperationRecord(recordBuf, operationCode, id, tSec, tSub, priority);
+        // Parse record fields using DpOpRecord
+        DpOpRecord record;
+        Fw::ExternalSerializeBuffer serialBuffer(recordBuf, DpOpRecord::SERIALIZED_SIZE);
+        serialBuffer.setBuffLen(DpOpRecord::SERIALIZED_SIZE);
+        Fw::SerializeStatus desStat = serialBuffer.deserializeTo(record);
+        if (desStat != Fw::FW_SERIALIZE_OK) {
+            opFile.close();
+            this->log_WARNING_HI_DpOpFileReadError(fileName, desStat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
 
         // Dispatch based on operation code
-        switch (operationCode) {
+        switch (record.get_opCode()) {
             case DP_OP_DELETE:
-                (void)this->deleteDpHelper(id, tSec, tSub);
+                (void)this->deleteDpHelper(record.get_id(), record.get_tSec(), record.get_tSub());
                 break;
             case DP_OP_REPRIORITIZE:
-                (void)this->changeDpPriorityHelper(id, tSec, tSub, priority);
+                (void)this->changeDpPriorityHelper(record.get_id(), record.get_tSec(), record.get_tSub(),
+                                                   record.get_priority());
                 break;
             case DP_OP_RETRANSMIT:
-                (void)this->retransmitDpHelper(id, tSec, tSub, priority);
+                (void)this->retransmitDpHelper(record.get_id(), record.get_tSec(), record.get_tSub(),
+                                               record.get_priority());
                 break;
             default:
                 opFile.close();
-                this->log_WARNING_HI_DpOpFileInvalidOp(fileName, recordNum, operationCode);
+                this->log_WARNING_HI_DpOpFileInvalidOp(fileName, recordNum, record.get_opCode());
                 this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
         }

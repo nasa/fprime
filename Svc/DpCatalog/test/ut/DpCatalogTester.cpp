@@ -13,6 +13,7 @@
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
+#include "Svc/DpCatalog/DpOpRecordSerializableAc.hpp"
 #include "config/DpCfg.hpp"
 
 // Include CRC32 library for test record generation
@@ -26,25 +27,18 @@ namespace Svc {
 // Helper function to create DP operation records
 // ----------------------------------------------------------------------
 
-// Helper function to pack a 17-byte operation record (big-endian)
+// Helper function to pack a DpOpRecord
 static void packOpRecord(U8* buffer, U8 op, U32 id, U32 tSec, U32 tSub, U32 priority) {
-    buffer[0] = op;
-    buffer[1] = static_cast<U8>((id >> 24) & 0xFF);
-    buffer[2] = static_cast<U8>((id >> 16) & 0xFF);
-    buffer[3] = static_cast<U8>((id >> 8) & 0xFF);
-    buffer[4] = static_cast<U8>(id & 0xFF);
-    buffer[5] = static_cast<U8>((tSec >> 24) & 0xFF);
-    buffer[6] = static_cast<U8>((tSec >> 16) & 0xFF);
-    buffer[7] = static_cast<U8>((tSec >> 8) & 0xFF);
-    buffer[8] = static_cast<U8>(tSec & 0xFF);
-    buffer[9] = static_cast<U8>((tSub >> 24) & 0xFF);
-    buffer[10] = static_cast<U8>((tSub >> 16) & 0xFF);
-    buffer[11] = static_cast<U8>((tSub >> 8) & 0xFF);
-    buffer[12] = static_cast<U8>(tSub & 0xFF);
-    buffer[13] = static_cast<U8>((priority >> 24) & 0xFF);
-    buffer[14] = static_cast<U8>((priority >> 16) & 0xFF);
-    buffer[15] = static_cast<U8>((priority >> 8) & 0xFF);
-    buffer[16] = static_cast<U8>(priority & 0xFF);
+    Svc::DpOpRecord record;
+    record.set_opCode(op);
+    record.set_id(id);
+    record.set_tSec(tSec);
+    record.set_tSub(tSub);
+    record.set_priority(priority);
+
+    Fw::ExternalSerializeBuffer serialBuffer(buffer, Svc::DpOpRecord::SERIALIZED_SIZE);
+    Fw::SerializeStatus status = serialBuffer.serializeFrom(record);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 
 // Helper function to calculate and append CRC32 for all data
@@ -1953,15 +1947,15 @@ void DpCatalogTester::test_ProcessDpFile_InvalidOp() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack record with invalid operation code
-    U8 data[17];
+    U8 data[Svc::DpOpRecord::SERIALIZED_SIZE];
     packOpRecord(data, 99, 0, 0, 0, 0);  // Invalid operation code 99
 
     // Write record
-    FwSizeType size = 17;
+    FwSizeType size = Svc::DpOpRecord::SERIALIZED_SIZE;
     file.write(data, size);
 
     // Append valid CRC32
-    appendCrc32(file, data, 17);
+    appendCrc32(file, data, Svc::DpOpRecord::SERIALIZED_SIZE);
     file.close();
 
     this->sendCmd_PROCESS_DP_OP_FILE(0, 12, opFile);
@@ -2008,9 +2002,9 @@ void DpCatalogTester::test_ProcessDpFile_DeleteOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack records into buffer
-    U8 allData[34];                                  // 2 records * 17 bytes
-    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
-    packOpRecord(&allData[17], 1, 3, 3000, 300, 0);  // DELETE DP 3
+    U8 allData[Svc::DpOpRecord::SERIALIZED_SIZE * 2];                              // 2 records
+    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);                                 // DELETE DP 1
+    packOpRecord(&allData[Svc::DpOpRecord::SERIALIZED_SIZE], 1, 3, 3000, 300, 0);  // DELETE DP 3
 
     // Write all records
     FwSizeType size = 34;
@@ -2078,15 +2072,15 @@ void DpCatalogTester::test_ProcessDpFile_ReprioritizeOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack record
-    U8 rec[17];
+    U8 rec[Svc::DpOpRecord::SERIALIZED_SIZE];
     packOpRecord(rec, 2, 1, 1000, 100, 5);  // REPRIORITIZE DP 1 to priority 5
 
     // Write record
-    FwSizeType size = 17;
+    FwSizeType size = Svc::DpOpRecord::SERIALIZED_SIZE;
     file.write(rec, size);
 
     // Append CRC32
-    appendCrc32(file, rec, 17);
+    appendCrc32(file, rec, Svc::DpOpRecord::SERIALIZED_SIZE);
     file.close();
 
     // Process the file
@@ -2138,15 +2132,15 @@ void DpCatalogTester::test_ProcessDpFile_RetransmitOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack record
-    U8 rec[17];
+    U8 rec[Svc::DpOpRecord::SERIALIZED_SIZE];
     packOpRecord(rec, 3, 1, 1000, 100, 5);  // RETRANSMIT DP 1 with priority 5
 
     // Write record
-    FwSizeType size = 17;
+    FwSizeType size = Svc::DpOpRecord::SERIALIZED_SIZE;
     file.write(rec, size);
 
     // Append CRC32
-    appendCrc32(file, rec, 17);
+    appendCrc32(file, rec, Svc::DpOpRecord::SERIALIZED_SIZE);
     file.close();
 
     // Process the file
@@ -2203,10 +2197,11 @@ void DpCatalogTester::test_ProcessDpFile_MixedOps() {
     file.open(opFile.toChar(), Os::File::OPEN_CREATE);
 
     // Pack all records into buffer
-    U8 allData[51];                                  // 3 records * 17 bytes
-    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);   // DELETE DP 1
-    packOpRecord(&allData[17], 2, 2, 2000, 200, 5);  // REPRIORITIZE DP 2 to priority 5
-    packOpRecord(&allData[34], 3, 4, 4000, 400, 3);  // RETRANSMIT DP 4 with priority 3
+    U8 allData[Svc::DpOpRecord::SERIALIZED_SIZE * 3];                              // 3 records
+    packOpRecord(&allData[0], 1, 1, 1000, 100, 0);                                 // DELETE DP 1
+    packOpRecord(&allData[Svc::DpOpRecord::SERIALIZED_SIZE], 2, 2, 2000, 200, 5);  // REPRIORITIZE DP 2 to priority 5
+    packOpRecord(&allData[Svc::DpOpRecord::SERIALIZED_SIZE * 2], 3, 4, 4000, 400,
+                 3);  // RETRANSMIT DP 4 with priority 3
 
     // Write all records
     FwSizeType size = 51;

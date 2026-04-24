@@ -25,6 +25,22 @@ module Svc {
     $state: Fw.DpState # Transmission state of the data product
   }
 
+  @ DP operation file operation codes
+  enum DpOpCode : U8 {
+    DELETE = 1,
+    REPRIORITIZE = 2,
+    RETRANSMIT = 3
+  }
+
+  @ Data structure representing a DP operation record in a DP operations file.
+  struct DpOpRecord {
+    opCode: U8 @< Operation code
+    $id: FwDpIdType @< The ID of the data product
+    tSec: U32 @< Generation time in seconds
+    tSub: U32 @< Generation time in subseconds
+    $priority: U32 @< Priority of the data product
+  }
+
 
   @ A component for managing downlink of data products
   active component DpCatalog {

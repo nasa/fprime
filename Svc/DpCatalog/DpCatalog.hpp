@@ -161,9 +161,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     //!
     //! Process a file containing batch DP operations
     void PROCESS_DP_OP_FILE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
-                                    U32 cmdSeq,                       //!< The command sequence number
-                                    const Fw::CmdStringArg& fileName  //!< The operations file name
-                                    ) override;
+                                       U32 cmdSeq,                       //!< The command sequence number
+                                       const Fw::CmdStringArg& fileName  //!< The operations file name
+                                       ) override;
 
     //! Handler implementation for command SEND_CATALOG_DP
     //!
@@ -328,15 +328,6 @@ class DpCatalog final : public DpCatalogComponentBase {
                                FwSizeType& fileSize,
                                FwOpcodeType opCode,
                                U32 cmdSeq);
-
-    /// @brief Parse a single operation record from buffer
-    /// @param recordBuf Buffer containing the record
-    /// @param operationCode Output: the operation code
-    /// @param id Output: DP ID
-    /// @param tSec Output: time seconds
-    /// @param tSub Output: time subseconds
-    /// @param priority Output: priority
-    void parseFileOperationRecord(const U8* recordBuf, U8& operationCode, U32& id, U32& tSec, U32& tSub, U32& priority);
 
     /// @brief Read DP header from file
     /// @param dpFileName The DP file name
