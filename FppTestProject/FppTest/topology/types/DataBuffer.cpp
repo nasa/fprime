@@ -22,6 +22,7 @@ DataBuffer::DataBuffer(const DataBuffer& buffer) : DataBuffer() {
     m_size = buffer.m_size;
 }
 DataBuffer::DataBuffer(const Fw::LinearBufferBase& buffer) {
+    // KCODE-AUDIT:fsw-003-assert-as-validation — Use cmdResponse_VALIDATION_ERROR for untrusted input; keep FW_ASSERT for invariants.
     FW_ASSERT(buffer.getSize() <= sizeof(m_data), static_cast<FwAssertArgType>(buffer.getSize()), sizeof(m_data));
     std::memcpy(this->m_data, buffer.getBuffAddr(), buffer.getSize());
     m_size = buffer.getSize();

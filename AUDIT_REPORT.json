@@ -1,0 +1,2147 @@
+{
+  "project": "/home/curly/proyectos/fprime",
+  "timestamp": "2026-04-25",
+  "languages_detected": [
+    "cpp",
+    "c",
+    "shell",
+    "python"
+  ],
+  "files_scanned": 864,
+  "candidates_found": 150,
+  "confirmed_findings": 8,
+  "false_positives": 142,
+  "findings": [
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/TlmPacketizer/TlmPacketizer.cpp",
+      "line": 51,
+      "matched_text": "FW_ASSERT(packetList.list",
+      "context": "49:                                   const Svc::TlmPacketizerPacket& ignoreList,\n50:                                   const FwChanIdType startLevel) {\n51:     FW_ASSERT(packetList.list);\n52:     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables\n53:     // functionality for two reasons:\n54:     //     1. There are no ignored channels as configured by FPP.",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Ground command argument `packetList.list` is untrusted external input validated only by a debug-only `FW_ASSERT` that compiles out in release, bypassing validation and causing a null pointer dereference crash at line 71. (+2 more matches of this pattern in the same file)",
+        "execution_path": "Ground station sends SET_PACKET_LIST command with null `list` pointer -> Fw Command Dispatcher deserializes and invokes `TlmPacketizer::setPacketList` -> `FW_ASSERT` strips in release -> loop at line 67 dereferences `packetList.list[pktEntry]` -> crash.",
+        "suggested_fix": "Replace `FW_ASSERT(packetList.list);` with a runtime null check that logs an error event and returns early, or use `Fw::Check::valid`/`Fw::Assert` with appropriate assert level."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-010-cmd-arg-before-validate",
+      "pattern_title": "Ground-command argument used before cmdResponse check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PrmDb/PrmDbImpl.cpp",
+      "line": 333,
+      "matched_text": "PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,",
+      "context": "331: }\n332: \n333: void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,\n334:                                          U32 cmdSeq,\n335:                                          const Fw::CmdStringArg& fileName,\n336:                                          PrmDb_Merge merge) {",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Untrusted ground command argument `fileName` is passed directly to `readParamFileImpl` without any length, format, or allowlist validation, allowing a malicious payload to trigger unbounded file operations or state corruption.",
+        "execution_path": "Ground command dispatcher -> PRM_LOAD_FILE_cmdHandler -> readParamFileImpl(fileName, DB_STAGING) -> file open/read",
+        "suggested_fix": "Add `if (fileName.getBuffLen() > MAX_FILENAME_LEN) { cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::INVALID_ARG); return; }` before line 359."
+      },
+      "cwe": "CWE-20"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/GenericHub/GenericHub.cpp",
+      "line": 131,
+      "matched_text": "fwBuffer.getData() +",
+      "context": "129:         (size == (fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType)))) {\n130:         // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately\n131:         U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);\n132:         FwSizeType rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType);\n133:         if (type == HUB_TYPE_PORT) {\n134:             // Com buffer representations should be copied before the call returns, so we need not \"allocate\" new data",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "<one sentence naming the input source + bypass + outcome, OR the specific mitigation that rules this out>",
+        "execution_path": "\"BufferDriver -> GenericHub deserialization -> line 131\"",
+        "suggested_fix": "\"Add `FW_ASSERT(fwBuffer.getData() != nullptr, static_cast"
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-010-cmd-arg-before-validate",
+      "pattern_title": "Ground-command argument used before cmdResponse check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FpySequencer/FpySequencer.cpp",
+      "line": 67,
+      "matched_text": "VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< The opcode",
+      "context": "65: //!\n66: //! Loads and validates a sequence\n67: void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< The opcode\n68:                                        U32 cmdSeq,                       //!< The command sequence number\n69:                                        const Fw::CmdStringArg& fileName  //!< The name of the sequence file\n70: ) {",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "The untrusted `fileName` argument from a ground command is passed directly to `sequencer_sendSignal_cmd_VALIDATE` without any length validation or allowlist check, allowing a malformed path to corrupt state or trigger unsafe file operations downstream.",
+        "execution_path": "Ground station sends VALIDATE command -> F Prime command dispatcher invokes `VALIDATE_cmdHandler` -> `fileName` is forwarded to `sequencer_sendSignal_cmd_VALIDATE` -> downstream file/sequence parser processes raw string.",
+        "suggested_fix": "Add `if (fileName.size() > MAX_SEQ_NAME_LEN) { cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR); return; }` before line 83, or validate/normalize the path before forwarding."
+      },
+      "cwe": "CWE-20"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/FpySequencer/FpySequencerRunState.cpp",
+      "line": 183,
+      "matched_text": "FW_ASSERT(argBuf.getDeserializeSizeLeft(",
+      "context": "181: \n182:             // now there should be nothing left, otherwise coding err\n183:             FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,\n184:                       static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));\n185: \n186:             // and set the buf size now that we know it",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Ground command payload length consistency is validated via `FW_ASSERT`, which compiles out in release builds, allowing malformed commands with mismatched length fields to bypass checks and cause buffer overreads or undefined sequencer behavior. (+1 more matches of this pattern in the same file)",
+        "execution_path": "Ground command reception -> `FpySequencerRunState::deserializeDirective` -> `argBuf.deserializeTo` -> line 183",
+        "suggested_fix": "Replace `FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0, ...)` with a conditional check that logs an error and returns `Fw::Success::FAILURE` when `argBuf.getDeserializeSizeLeft() != 0`."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileUplink/FileUplink.cpp",
+      "line": 60,
+      "matched_text": "buffer.getData() +",
+      "context": "58: \n59:     // Deserialize the file packet contents into Fw::FilePacket (remove packet type token)\n60:     Fw::Buffer packetBuffer(buffer.getData() + sizeof(packetType),\n61:                             buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(packetType)));\n62:     Fw::FilePacket filePacket;\n63:     status = filePacket.fromBuffer(packetBuffer);",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "The handler accepts a runtime buffer from an external network/IPC port without validating `getData()`, allowing a null base pointer to be passed to `Fw::Buffer` and subsequently dereferenced in `fromBuffer`, causing a crash.",
+        "execution_path": "External packet arrives -> `bufferSendIn` port dispatches to `bufferSendIn_handler` -> line 60 constructs `packetBuffer` with null base pointer -> `filePacket.fromBuffer` dereferences it -> crash.",
+        "suggested_fix": "Add `if (buffer.getData() == nullptr) { this->log_WARNING_HI_BufferNull(); return; }` before line 60."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/AosFramer/AosFramer.cpp",
+      "line": 304,
+      "matched_text": "data.getData() +",
+      "context": "302:     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);\n303: \n304:     const U8* dataStart = data.getData() + dataOffset;\n305:     // min of (remaining bytes in buffer and available bytes in frame)\n306:     FwSizeType dataSize = data.getSize() - dataOffset;\n307: ",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "Fw::BufferManager exhaustion can yield a null-allocated buffer; getData() returns nullptr, and the subsequent pointer arithmetic and serialization at line 321 will dereference it, causing a crash under high load.",
+        "execution_path": "High inbound traffic -> Fw::BufferManager returns null/invalid buffer -> caller passes it to pack_packet() -> data.getData() is nullptr -> line 321 serializeFrom dereferences null -> crash.",
+        "suggested_fix": "Add `FW_ASSERT(data.getData() != nullptr, static_cast<FwAssertArgType>(data.getSize()));` or check `data.isValid()` before use, or return early if invalid."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/types/DataBuffer.cpp",
+      "line": 25,
+      "matched_text": "FW_ASSERT(buffer.getSize(",
+      "context": "23: }\n24: DataBuffer::DataBuffer(const Fw::LinearBufferBase& buffer) {\n25:     FW_ASSERT(buffer.getSize() <= sizeof(m_data), static_cast<FwAssertArgType>(buffer.getSize()), sizeof(m_data));\n26:     std::memcpy(this->m_data, buffer.getBuffAddr(), buffer.getSize());\n27:     m_size = buffer.getSize();\n28: }",
+      "verification": {
+        "verdict": "confirmed",
+        "reasoning": "The assert validates a runtime buffer size against a compile-time limit without a fallback, so if disabled in release, untrusted external input (e.g., command argument or telemetry payload) bypasses validation and causes a stack/heap buffer overflow during `std::memcpy`.",
+        "execution_path": "External command/telemetry payload -> deserialization or command handler -> `DataBuffer(const Fw::LinearBufferBase&)` constructor -> line 25 `FW_ASSERT` (stripped in release) -> line 26 `std::memcpy` -> memory corruption.",
+        "suggested_fix": "Replace `FW_ASSERT` with a runtime bounds check that returns an error status or uses `std::min` to clamp the copy length, or switch to a dynamic container if variable sizing is required."
+      },
+      "cwe": "CWE-617"
+    }
+  ],
+  "false_positives_detail": [
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googletest/src/gtest.cc",
+      "line": 2284,
+      "matched_text": "(&array)[kSize]",
+      "context": "2282: \n2283: template <size_t kSize>\n2284: std::vector<std::string> ArrayAsVector(const char* const (&array)[kSize]) {\n2285:   return std::vector<std::string>(array, array + kSize);\n2286: }\n2287: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `&` is part of C++ reference-to-array syntax (`T (&name)[N]`), not an address-of operator performing pointer arithmetic, and the function safely converts compile-time constant arrays to vectors via standard iterator initialization."
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-007-deref-before-null-check",
+      "pattern_title": "Pointer dereferenced before null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googletest/src/gtest.cc",
+      "line": 2853,
+      "matched_text": "test->Run();",
+      "context": "2851:     // This doesn't throw as all user code that can throw are wrapped into\n2852:     // exception handling code.\n2853:     test->Run();\n2854:   }\n2855: \n2856:   if (test != nullptr) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The dereference at line 2853 is guaranteed safe because `HandleExceptionsInMethodIfSupported` only returns `nullptr` after recording a fatal failure, and the preceding `!Test::HasFatalFailure()` check at line 2850 explicitly guards the block, as also confirmed by the explicit comment at line 2849."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googletest/include/gtest/gtest-param-test.h",
+      "line": 304,
+      "matched_text": "(&array)[N]",
+      "context": "302: \n303: template <typename T, size_t N>\n304: internal::ParamGenerator<T> ValuesIn(const T (&array)[N]) {\n305:   return ValuesIn(array, array + N);\n306: }\n307: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The expression `(&array)[N]` is standard C++ syntax for declaring a function parameter as a reference to an array of size `N`, not pointer arithmetic on a pointer variable."
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googletest/include/gtest/gtest-printers.h",
+      "line": 851,
+      "matched_text": "(&a)[N]",
+      "context": "849:   // Prints the given array, omitting some elements when there are too\n850:   // many.\n851:   static void Print(const T (&a)[N], ::std::ostream* os) {\n852:     UniversalPrintArray(a, N, os);\n853:   }\n854: };",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The syntax `const T (&a)[N]` is a standard C++ function parameter declaration for a reference to an array of compile-time size `N`, not a runtime pointer arithmetic expression. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googletest/include/gtest/internal/gtest-internal.h",
+      "line": 1027,
+      "matched_text": "(&lhs)[N]",
+      "context": "1025: // This overload is used when k >= 1.\n1026: template <typename T, typename U, size_t N>\n1027: inline bool ArrayEq(const T (&lhs)[N], const U (&rhs)[N]) {\n1028:   return internal::ArrayEq(lhs, N, rhs);\n1029: }\n1030: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The syntax `const T (&lhs)[N]` is a standard C++ reference-to-array declaration (parentheses are required to declare a reference to an array), not pointer arithmetic; `N` is a compile-time template parameter and the type system guarantees safe bounds at instantiation. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googlemock/include/gmock/gmock-function-mocker.h",
+      "line": 73,
+      "matched_text": "(&prefix)[N]",
+      "context": "71: \n72: template <int N, int M>\n73: constexpr bool StartsWith(const char (&prefix)[N], const char (&str)[M]) {\n74:   return N <= M && internal::PrefixOf(prefix, str);\n75: }\n76: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The token sequence `(&prefix)[N]` is part of a function parameter declaration (`const char (&prefix)[N]`), which is standard C++ syntax for a reference to an array, not a runtime expression performing pointer arithmetic on the address of a variable. (+6 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googlemock/include/gmock/gmock-matchers.h",
+      "line": 4158,
+      "matched_text": "(&array)[N]",
+      "context": "4156: \n4157: template <typename T, size_t N>\n4158: inline auto ElementsAreArray(const T (&array)[N])\n4159:     -> decltype(ElementsAreArray(array, N)) {\n4160:   return ElementsAreArray(array, N);\n4161: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The syntax `const T (&array)[N]` is a C++ reference-to-array parameter declaration, not an address-of operator applied to a pointer variable; the type system enforces it as a reference to a compile-time-sized array, ruling out stack-read pointer arithmetic. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "cpp-001-ptr-address-index",
+      "pattern_title": "Suspicious pointer arithmetic: (&var)[N]",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/googletest/googlemock/include/gmock/internal/gmock-internal-utils.h",
+      "line": 364,
+      "matched_text": "(&array)[N]",
+      "context": "362:   typedef const type const_reference;\n363: \n364:   static const_reference ConstReference(const Element (&array)[N]) {\n365:     static_assert(std::is_same<Element, RawElement>::value,\n366:                   \"Element type must not be const\");\n367:     return type(array, N, RelationToSourceReference());",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The code context shows a function parameter declaration `const Element (&array)[N]`, which is standard C++ syntax for a reference to an array, not an expression performing pointer arithmetic or indexing into `(&var)[N]`. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "uni-016-external-file-path",
+      "pattern_title": "File path directly controlled by user input",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/cmake/autocoder/scripts/fpp_to_dict_wrapper.py",
+      "line": 48,
+      "matched_text": "open(args.",
+      "context": "46:     args = parser.parse_args()\n47: \n48:     with open(args.jsonVersionFile, \"r\") as file:\n49:         versions = json.load(file)\n50: \n51:     # Parses library versions into a string to input to fpp-to-dict",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The input is a build-time CLI argument controlled by the build system/developer rather than an external runtime user, and build-time scripts are explicitly excluded from standard security threat models per checklist item 2."
+      },
+      "cwe": "CWE-73"
+    },
+    {
+      "pattern_id": "inj-005-path-traversal",
+      "pattern_title": "File open on user-controlled path without realpath check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/cmake/autocoder/scripts/fpp_to_dict_wrapper.py",
+      "line": 48,
+      "matched_text": "open(args",
+      "context": "46:     args = parser.parse_args()\n47: \n48:     with open(args.jsonVersionFile, \"r\") as file:\n49:         versions = json.load(file)\n50: \n51:     # Parses library versions into a string to input to fpp-to-dict",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The input is supplied by CMake or a developer at build time, not an external attacker, which places this autocoder wrapper outside standard security threat models."
+      },
+      "cwe": "CWE-22"
+    },
+    {
+      "pattern_id": "uni-011-weak-crypto",
+      "pattern_title": "Use of broken cryptographic algorithm (MD5, SHA1, DES, RC4, MD4)",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Utils/Hash/openssl/sha.h",
+      "line": 125,
+      "matched_text": "SHA1",
+      "context": "123: int SHA1_Update(SHA_CTX *c, const void *data, size_t len);\n124: int SHA1_Final(unsigned char *md, SHA_CTX *c);\n125: unsigned char *SHA1(const unsigned char *d, size_t n, unsigned char *md);\n126: void SHA1_Transform(SHA_CTX *c, const unsigned char *data);\n127: # endif\n128: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "This is a standard OpenSSL header file declaring the SHA1 API, not a usage site, and falls under the explicit exemption for crypto library implementations."
+      },
+      "cwe": "CWE-327"
+    },
+    {
+      "pattern_id": "crypto-003-md5-sha1-for-auth",
+      "pattern_title": "MD5 / SHA1 used for authentication / signing / passwords",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Utils/Hash/openssl/sha.h",
+      "line": 125,
+      "matched_text": "SHA1",
+      "context": "123: int SHA1_Update(SHA_CTX *c, const void *data, size_t len);\n124: int SHA1_Final(unsigned char *md, SHA_CTX *c);\n125: unsigned char *SHA1(const unsigned char *d, size_t n, unsigned char *md);\n126: void SHA1_Transform(SHA_CTX *c, const unsigned char *data);\n127: # endif\n128: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The flagged line is a standard OpenSSL header declaration in a cryptographic library, not a security-critical usage site, and lacks any runtime input trace or authentication/signing context."
+      },
+      "cwe": "CWE-327"
+    },
+    {
+      "pattern_id": "inj-005-path-traversal",
+      "pattern_title": "File open on user-controlled path without realpath check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Utils/Hash/libcrc/tst_crc.c",
+      "line": 220,
+      "matched_text": "fopen( argv",
+      "context": "218: \n219:             prev_byte = 0;\n220:             fp        = fopen( argv[a], \"rb\" );\n221: \n222:             if ( fp != nullptr ) {\n223: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The input `argv[a]` is a developer-controlled CLI argument for a test utility (`tst_crc.c`), which falls outside the standard production threat model and lacks a concrete external attacker trigger path."
+      },
+      "cwe": "CWE-22"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Version/Version.cpp",
+      "line": 44,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "42: // ----------------------------------------------------------------------\n43: \n44: void Version ::getVersion_handler(FwIndexType portNum,\n45:                                   const Svc::VersionCfg::VersionEnum& version_id,\n46:                                   Fw::StringBase& version_string,\n47:                                   Svc::VersionStatus& status) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body; the actual array indexing uses `version_slot` derived from `version_id`, which is explicitly validated by `FW_ASSERT(version_id.isValid(), version_id.e);` before any access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/TlmPacketizer/TlmPacketizer.cpp",
+      "line": 67,
+      "matched_text": "for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries;",
+      "context": "65:     // table\n66:     FwChanIdType maxLevel = 0;\n67:     for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {\n68:         // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID\n69:         FwSizeType packetLen =\n70:             sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "Line 57 contains an explicit `FW_ASSERT` that bounds `packetList.numEntries` to `MAX_PACKETIZER_PACKETS` before the loop, capping the iteration count and preventing unbounded execution. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/TlmPacketizer/TlmPacketizer.cpp",
+      "line": 159,
+      "matched_text": "_handler(const FwIndexType portNum,",
+      "context": "157: // ----------------------------------------------------------------------\n158: \n159: void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,\n160:                                      FwChanIdType id,\n161:                                      Fw::Time& timeTag,\n162:                                      Fw::TlmBuffer& val) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is received from the F Prime framework but is never used to index an array or access memory in the handler body, so a bounds check is unnecessary. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/TlmChan/TlmChan.cpp",
+      "line": 56,
+      "matched_text": "_handler(const FwIndexType portNum, U32 key) {",
+      "context": "54: }\n55: \n56: void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {\n57:     // return key\n58:     this->pingOut_out(0, key);\n59: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The static analyzer incorrectly flags `portNum` as an array index, but `portNum` is unused in the handler body; indexing relies on `index` derived from `id` via `doHash`, which is explicitly bounded by `TLMCHAN_NUM_TLM_HASH_SLOTS`, and F Prime's autocoder/framework guarantees valid `portNum` routing for generated handlers. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/SystemResources/SystemResources.cpp",
+      "line": 65,
+      "matched_text": "_handler(const FwIndexType portNum, U32 tick_time_hz) {",
+      "context": "63: // ----------------------------------------------------------------------\n64: \n65: void SystemResources ::run_handler(const FwIndexType portNum, U32 tick_time_hz) {\n66:     if (m_enable) {\n67:         Cpu();\n68:         Mem();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but completely unused in the handler body, so it is never dereferenced or used to index an array, ruling out any out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/StaticMemory/StaticMemoryComponentImpl.cpp",
+      "line": 46,
+      "matched_text": "fwBuffer.getData() +",
+      "context": "44:     // Check the memory returned is within the region\n45:     FW_ASSERT(fwBuffer.getData() >= m_static_memory[portNum]);\n46:     FW_ASSERT((fwBuffer.getData() + fwBuffer.getSize()) <= (m_static_memory[portNum] + sizeof(m_static_memory[0])),\n47:               static_cast<FwAssertArgType>(fwBuffer.getSize()),\n48:               static_cast<FwAssertArgType>(sizeof(m_static_memory[0])));\n49:     m_allocated[portNum] = false;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The buffer is guaranteed non-null by the fixed-pool allocator's internal array, and the subsequent assertion on line 45 bounds-checks the pointer, implicitly catching null."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/SeqDispatcher/SeqDispatcher.cpp",
+      "line": 124,
+      "matched_text": "_handler(FwIndexType portNum, const Fw::StringBase& fileName) {",
+      "context": "122: \n123: //! Handler for input port seqRunIn\n124: void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName) {\n125:     FwIndexType idx = this->getNextAvailableSequencerIdx();\n126:     // no available sequencers\n127:     if (idx == -1) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter in `seqRunIn_handler` is completely unused in the function body and never passed to an array indexer or bounds check, so no out-of-bounds access can occur."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/RateGroupDriver/RateGroupDriver.cpp",
+      "line": 42,
+      "matched_text": "_handler(FwIndexType portNum, Os::RawTime& cycleStart) {",
+      "context": "40: RateGroupDriver::~RateGroupDriver() {}\n41: \n42: void RateGroupDriver::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {\n43:     // Make sure that the dividers have been configured:\n44:     // If this asserts, add the configure() call to initialization.\n45:     FW_ASSERT(this->m_configured);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler parameter `portNum` is not used to index any array in the function body; the loop iterates over a local `entry` variable, so the out-of-bounds indexing concern does not apply."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PrmDb/PrmDbImpl.cpp",
+      "line": 79,
+      "matched_text": "_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {",
+      "context": "77: // If there are a lot of accesses, perhaps an interrupt lock could be used instead of guarded ports\n78: \n79: Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {\n80:     // search for entry\n81:     auto success = this->m_activeDb->find(id, val);\n82: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, so no array indexing occurs and no bounds check is required. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PosixTime/PosixTime.cpp",
+      "line": 18,
+      "matched_text": "_handler(FwIndexType portNum, /*!< The port number*/",
+      "context": "16: PosixTime::~PosixTime() {}\n17: \n18: void PosixTime::timeGetPort_handler(FwIndexType portNum, /*!< The port number*/\n19:                                     Fw::Time& time       /*!< The U32 cmd argument*/\n20: ) {\n21:     timespec stime;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never dereferenced or used to index any array, so the out-of-bounds access concern does not apply."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PolyDb/PolyDb.cpp",
+      "line": 20,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "18: }\n19: \n20: void PolyDb ::getValue_handler(FwIndexType portNum,\n21:                                const Svc::PolyDbCfg::PolyDbEntry& entry,\n22:                                Svc::MeasurementStatus& status,\n23:                                Fw::Time& time,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler does not use `portNum` to index `m_db`; it indexes using `entry.e`, which is explicitly validated by `FW_ASSERT(entry.isValid(), entry.e);` on line 25, and `portNum` is an unused framework identification parameter. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PassiveRateGroup/PassiveRateGroup.cpp",
+      "line": 35,
+      "matched_text": "for (FwIndexType entry = 0; entry < this->m_numContexts;",
+      "context": "33:     this->m_numContexts = numContexts;\n34:     // copy context values\n35:     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {\n36:         this->m_contexts[entry] = static_cast<U32>(contexts[entry]);\n37:     }\n38: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->m_numContexts` is derived from the `configure` parameter `numContexts`, which is strictly constrained by an assertion on line 27 that forces it to equal the fixed, compile-time-determined number of output ports, eliminating any untrusted or unbounded input path."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImplCommon.cpp",
+      "line": 31,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_numFilteredIDs;",
+      "context": "29:                                                Fw::TextLogString& text) {\n30:     // Check event ID filters\n31:     for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {\n32:         if (this->m_filteredIDs[i] == id) {\n33:             return;\n34:         }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound is set via the trusted `configure` method and explicitly validated against a compile-time constant at line 16, ruling out unbounded external input."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImplCommon.cpp",
+      "line": 25,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "23: }\n24: \n25: void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum,\n26:                                                FwEventIdType id,\n27:                                                Fw::Time& timeTag,\n28:                                                const Fw::LogSeverity& severity,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never used to index any array, so no bounds check is applicable or required."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/PassThroughRouter/PassThroughRouter.cpp",
+      "line": 23,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "21: // ----------------------------------------------------------------------\n22: \n23: void PassThroughRouter::allPacketsReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {\n24:     ComCfg::FrameContext context = {};  // default context used to satisfy dataReturnOut port interface\n25:     this->dataReturnOut_out(0, fwBuffer, context);\n26: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is received but never used to index an array or access memory in either handler, rendering the bounds-check warning inapplicable. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/OsTime/OsTime.cpp",
+      "line": 53,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Time& time) {",
+      "context": "51: // ----------------------------------------------------------------------\n52: \n53: void OsTime ::timeGetPort_handler(FwIndexType portNum, Fw::Time& time) {\n54:     Fw::Time temp_epoch_fw_time;\n55:     Os::RawTime temp_epoch_os_time;\n56:     bool temp_epoch_valid;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the handler signature but is completely unused within the function body, so it cannot be used to index an array or cause an out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Health/HealthComponentImpl.cpp",
+      "line": 86,
+      "matched_text": "for (FwSizeType i = 0; i < this->queue_depth;",
+      "context": "84: void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {\n85:     // dispatch messages\n86:     for (FwSizeType i = 0; i < this->queue_depth; i++) {\n87:         MsgDispatchStatus stat = this->doDispatch();\n88:         if (MSG_DISPATCH_EMPTY == stat) {\n89:             break;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->queue_depth` is a trusted F Prime component parameter configured at startup, not untrusted external input, and the pattern incorrectly cites `msg->count` while the loop also contains an early `break` on empty dispatch that limits iterations. (+1 more matches of this pattern in the same file)",
+        "execution_path": "F Prime scheduler -> HealthImpl::Run_handler -> reads statically configured parameter `queue_depth`"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Health/HealthComponentImpl.cpp",
+      "line": 72,
+      "matched_text": "_handler(const FwIndexType portNum, U32 key) {",
+      "context": "70: // ----------------------------------------------------------------------\n71: \n72: void HealthImpl::PingReturn_handler(const FwIndexType portNum, U32 key) {\n73:     // verify the key value\n74:     if (key != this->m_pingTrackerEntries[portNum].key) {\n75:         Fw::LogStringArg _arg = this->m_pingTrackerEntries[portNum].entry.entryName;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework guarantees that `portNum` passed to a port handler is always a valid index for the fired port before invoking the handler, ruling out out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/GenericHub/GenericHub.cpp",
+      "line": 52,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "50: // ----------------------------------------------------------------------\n51: \n52: void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n53:     this->send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());\n54:     bufferInReturn_out(portNum, fwBuffer);\n55: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` argument is supplied by the F Prime framework's trusted port dispatch mechanism, which guarantees it is a valid index for the registered ports before invoking the handler, so it is not user-controlled and requires no explicit bounds check. (+8 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FrameAccumulator/FrameAccumulator.cpp",
+      "line": 53,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::FrameContext& context) {",
+      "context": "51: // ----------------------------------------------------------------------\n52: \n53: void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::FrameContext& context) {\n54:     // Check whether there is data to process\n55:     if (buffer.isValid()) {\n56:         // The buffer is not necessarily a full frame, so the attached context has no meaning and we ignore it",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body does not use `portNum` to index any array or data structure; it is an unused autocoder-generated parameter, and the F Prime framework guarantees its validity before dispatch. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FpySequencer/FpySequencer.cpp",
+      "line": 251,
+      "matched_text": "_handler(FwIndexType portNum,  //!< The port number",
+      "context": "249: }\n250: //! Handler for input port checkTimers\n251: void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number\n252:                                        U32 context           //!< The call order\n253: ) {\n254:     this->sequencer_sendSignal_checkTimersIn();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, ruling out any out-of-bounds indexing or need for a bounds check. (+4 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/FpySequencer/FpySequencerValidationState.cpp",
+      "line": 8,
+      "matched_text": "void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes) {",
+      "context": "6: namespace Svc {\n7: \n8: void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes) {\n9:     // if this assertion fails, you aren't allocating enough bytes for the\n10:     // FpySequencer. this is because you must have a buffer big enough to fit the\n11:     // header of a sequence",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The method is a setup routine explicitly invoked during the configure() phase to initialize m_sequenceBuffer, and F Prime's component lifecycle guarantees that runtime handlers do not fire before configure() completes, ruling out premature access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FprimeRouter/FprimeRouter.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {",
+      "context": "25: // ----------------------------------------------------------------------\n26: \n27: void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {\n28:     Fw::SerializeStatus status;\n29:     Fw::ComPacketType packetType = context.get_apid();\n30:     // Route based on received APID (packet type)",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never used to index an array or access a resource, so no bounds check is required. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FprimeFramer/FprimeFramer.cpp",
+      "line": 26,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "24: // ----------------------------------------------------------------------\n25: \n26: void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n27:     FprimeProtocol::FrameHeader header;\n28:     FprimeProtocol::FrameTrailer trailer;\n29: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body does not reference `portNum` at all, and Fprime's framework dispatches handlers per-port, guaranteeing that `portNum` is valid and trusted for the invoked handler. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FprimeDeframer/FprimeDeframer.cpp",
+      "line": 28,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "26: // ----------------------------------------------------------------------\n27: \n28: void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n29:     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {\n30:         // Incoming buffer is not long enough to contain a valid frame (header+trailer)\n31:         this->log_WARNING_HI_InvalidBufferReceived();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, and the Fprime runtime guarantees valid port dispatch before invoking the handler, so no out-of-bounds indexing can occur. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FprimeDeframer/FprimeDeframer.cpp",
+      "line": 92,
+      "matched_text": "data.getData() +",
+      "context": "90:     // Add byte by byte to the hash\n91:     for (FwSizeType i = 0; i < fieldToHashSize; i++) {\n92:         hash.update(data.getData() + i, 1);\n93:     }\n94:     hash.finalize(computedCrc);\n95:     // Check that the CRC in the trailer of the frame matches the computed CRC",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The size validation at line 29 (`data.getSize() < ...`) implicitly guards against a null `getData()` because a buffer exhausted from the `BufferManager` has `getSize() == 0`, which triggers an early return before the dereference at line 92. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileWorker/FileWorker.cpp",
+      "line": 29,
+      "matched_text": "_handler(FwIndexType portNum) {",
+      "context": "27: // ----------------------------------------------------------------------\n28: \n29: void FileWorker ::cancelIn_handler(FwIndexType portNum) {\n30:     this->m_abort.store(true, std::memory_order_relaxed);\n31: }\n32: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body at line 29 does not reference or index using `portNum`, so no bounds check is required. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/FileWorker/FileWorker.cpp",
+      "line": 36,
+      "matched_text": "FW_ASSERT(buffer.getData(",
+      "context": "34:     FW_ASSERT(path != nullptr);\n35:     FW_ASSERT(path.length() > 0);\n36:     FW_ASSERT(buffer.getData() != nullptr);\n37: \n38:     const char* const fileName = path.toChar();\n39:     FwSizeType fileSize = 0;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "`Fw::Buffer` is a framework-managed type dispatched via F Prime's port mechanism, which guarantees valid allocations, so this asserts a framework invariant/programming error rather than untrusted external input. (+6 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileWorker/FileWorker.cpp",
+      "line": 252,
+      "matched_text": "buffer.getData() +",
+      "context": "250:         FwSizeType readAmt = FW_MIN(size - bytesRead, BLOCK_SIZE_BYTES);\n251:         FwSizeType readAmtActual = readAmt;\n252:         Os::File::Status ret = file.read(buffer.getData() + bytesRead, readAmtActual);\n253: \n254:         if (Os::File::OP_OK != ret || readAmt != readAmtActual) {\n255:             return FileWorkerReadStatus::FW_READ_ERROR;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "Line 234 explicitly guards the pointer with `FW_ASSERT(buffer.getData() != nullptr)` before the dereference on line 252, satisfying the stated mitigation condition."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-013-reinterpret-cast-untrusted",
+      "pattern_title": "reinterpret_cast on untrusted data (no size check)",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileWorker/FileWorker.cpp",
+      "line": 349,
+      "matched_text": "reinterpret_cast<U8*>(buffer.getData()",
+      "context": "347:     // Get buffer data and size\n348:     FwSizeType size = buffer.getSize();\n349:     U8* const data = reinterpret_cast<U8*>(buffer.getData());\n350:     FW_ASSERT(data != nullptr);\n351: \n352:     // Apply offset",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The cast targets `U8*` (a byte pointer), not a struct pointer, so no size validation is required for the cast itself and the buffer is used for raw byte writing, not struct interpretation. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileUplink/FileUplink.cpp",
+      "line": 39,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& buffer) {",
+      "context": "37: // ----------------------------------------------------------------------\n38: \n39: void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {\n40:     // If packet is too small to contain a packet type, log + deallocate and return\n41:     if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {\n42:         this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework's internal port dispatch mechanism guarantees portNum corresponds to a valid connected port, ruling out external injection or out-of-bounds indexing. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileManager/FileManager.cpp",
+      "line": 206,
+      "matched_text": "_handler(const FwIndexType portNum, U32 key) {",
+      "context": "204: }\n205: \n206: void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {\n207:     // return key\n208:     this->pingOut_out(0, key);\n209: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's autocoder generates a dedicated handler function per input port and the framework dispatches directly to it, so `portNum` is never used as an array index and requires no bounds check. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-010-cmd-arg-before-validate",
+      "pattern_title": "Ground-command argument used before cmdResponse check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileManager/FileManager.cpp",
+      "line": 46,
+      "matched_text": "CreateDirectory_cmdHandler(const FwOpcodeType opCode,",
+      "context": "44: // ----------------------------------------------------------------------\n45: \n46: void FileManager ::CreateDirectory_cmdHandler(const FwOpcodeType opCode,\n47:                                               const U32 cmdSeq,\n48:                                               const Fw::CmdStringArg& dirName) {\n49:     Fw::LogStringArg logStringDirName(dirName.toChar());",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's command dispatch layer inherently bounds `Fw::CmdStringArg` to a fixed max length, and processing the argument before sending the response is the standard, safe command handler pattern with no unbounded memory operation or state corruption risk. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-20"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileDownlink/FileDownlink.cpp",
+      "line": 68,
+      "matched_text": "_handler(const FwIndexType portNum, U32 context) {",
+      "context": "66: // ----------------------------------------------------------------------\n67: \n68: void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {\n69:     switch (this->m_mode.get()) {\n70:         case Mode::IDLE: {\n71:             FwSizeType real_size = 0;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced to index an array or access memory in the handler body, so the bounds-check requirement is inapplicable. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/FileDownlink/FileDownlink.cpp",
+      "line": 376,
+      "matched_text": "FW_ASSERT(buffer.getSize(",
+      "context": "374:     filePacket.fromCancelPacket(cancelPacket);\n375:     this->getBuffer(buffer, CANCEL_PACKET);\n376:     FW_ASSERT(buffer.getSize() >= filePacket.bufferSize() + sizeof(FwPacketDescriptorType),\n377:               static_cast<FwAssertArgType>(buffer.getSize()),\n378:               static_cast<FwAssertArgType>(filePacket.bufferSize() + sizeof(FwPacketDescriptorType)));\n379: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The condition validates a statically configured buffer-pool invariant rather than external input, as `getBuffer` allocates from a fixed-size pool indexed by `CANCEL_PACKET` and `filePacket.bufferSize()` is derived from a fixed internal struct layout."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileDownlink/FileDownlink.cpp",
+      "line": 384,
+      "matched_text": "buffer.getData() +",
+      "context": "382:         buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));\n383:     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);\n384:     Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),\n385:                             buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(FwPacketDescriptorType)));\n386:     // Serialize the filePacket content into the buffer\n387:     status = filePacket.toBuffer(offsetBuffer);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The FW_ASSERT on line 376 enforces buffer.getSize() >= a positive constant, which in Fw::Buffer's contract guarantees getData() is non-null, effectively guarding the pointer arithmetic on line 384. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileDispatcher/FileDispatcher.cpp",
+      "line": 29,
+      "matched_text": "for (FwSizeType entry = 0; entry < table.numEntries;",
+      "context": "27:     // validate table\n28:     FW_ASSERT(table.numEntries <= Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE);\n29:     for (FwSizeType entry = 0; entry < table.numEntries; entry++) {\n30:         FW_ASSERT(table.entries[entry].port.isValid(),\n31:                   table.entries[entry].port.e);  // valid output port\n32:         FW_ASSERT(table.entries[entry].fileExt.length() > 0,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "Line 28 contains an explicit `FW_ASSERT` validating `table.numEntries` against `FILE_DISPATCHER_MAX_TABLE_SIZE`, and the `configure` method is a trusted initialization/configuration routine, not a runtime untrusted input handler. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FileDispatcher/FileDispatcher.cpp",
+      "line": 47,
+      "matched_text": "_handler(FwIndexType portNum, Fw::StringBase& file_name) {",
+      "context": "45: // ----------------------------------------------------------------------\n46: \n47: void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBase& file_name) {\n48:     // determine file extension and dispatch accordingly\n49: \n50:     // walk table to find match",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never used to index any array or data structure, rendering the bounds-check requirement inapplicable. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FatalHandler/FatalHandlerComponentBaremetalImpl.cpp",
+      "line": 18,
+      "matched_text": "_handler(const FwIndexType portNum, FwEventIdType Id) {",
+      "context": "16: // ----------------------------------------------------------------------\n17: \n18: void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {\n19:     Fw::Logger::log(\"FATAL %\" PRI_FwEventIdType \"handled.\\n\", Id);\n20:     while (true) {\n21:     }  // Returning might be bad",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body does not use `portNum` for any array indexing, and the F' framework's autocoder-generated dispatch mechanism inherently validates port indices before invoking the handler."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp",
+      "line": 26,
+      "matched_text": "_handler(const FwIndexType portNum, FwEventIdType Id) {",
+      "context": "24: // ----------------------------------------------------------------------\n25: \n26: void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {\n27:     // for **nix, delay then exit with error code\n28:     Fw::Logger::log(\"FATAL %d handled.\\n\", Id);\n29:     (void)Os::Task::delay(Fw::TimeInterval(1, 0));",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, eliminating any out-of-bounds indexing risk, and the F' framework validates port indices before dispatching to handlers."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/FatalHandler/FatalHandlerComponentVxWorksImpl.cpp",
+      "line": 20,
+      "matched_text": "_handler(const FwIndexType portNum, FwEventIdType Id) {",
+      "context": "18: namespace Svc {\n19: \n20: void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {\n21:     Fw::Logger::log(\"FATAL %d handled.\\n\", Id, 0, 0, 0, 0, 0);\n22:     taskSuspend(0);\n23: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body does not use `portNum` to index any array, and the F' framework validates port indices against connected ports before dispatching to component handlers, ruling out out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/EventManager/EventManager.cpp",
+      "line": 36,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "34: EventManager::~EventManager() {}\n35: \n36: void EventManager::LogRecv_handler(FwIndexType portNum,\n37:                                    FwEventIdType id,\n38:                                    Fw::Time& timeTag,\n39:                                    const Fw::LogSeverity& severity,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the `LogRecv_handler` function body, so it cannot be used to index an array or trigger an out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/DpWriter/DpWriter.cpp",
+      "line": 34,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& buffer) {",
+      "context": "32: // ----------------------------------------------------------------------\n33: \n34: void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {\n35:     Fw::Success::T status = Fw::Success::SUCCESS;\n36:     // portNum is unused\n37:     (void)portNum;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "portNum is explicitly marked as unused via `(void)portNum;` on line 37 and is never referenced or used to index any array or memory within the handler body. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/DpManager/DpManager.cpp",
+      "line": 29,
+      "matched_text": "_handler(const FwIndexType portNum,",
+      "context": "27: // ----------------------------------------------------------------------\n28: \n29: Fw::Success DpManager::productGetIn_handler(const FwIndexType portNum,\n30:                                             FwDpIdType id,\n31:                                             FwSizeType size,\n32:                                             Fw::Buffer& buffer) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework validates the `portNum` index during port dispatch before invoking the handler, so the value is trusted and no manual bounds check is required. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/DpCatalog/DpCatalog.cpp",
+      "line": 119,
+      "matched_text": "for (FwSizeType slot = 0; slot < this->m_numDpSlots;",
+      "context": "117:     FW_ASSERT(this->m_memPtr);\n118:     this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);\n119:     for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {\n120:         // overlay new instance of the DpState entry on the memory\n121:         (void)new (&this->m_freeListHead[slot]) DpBtreeNode();\n122:         this->m_freeListHead[slot].left = nullptr;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->m_numDpSlots` is derived from `this->m_memSize / slotSize` during trusted component configuration (mitigation #1) and iterates over the corresponding internally-allocated memory array whose size exactly matches the bound (mitigation #5); the static analyzer's reference to `msg->count` is a pattern mismatch. (+7 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/DpCatalog/DpCatalog.cpp",
+      "line": 964,
+      "matched_text": "_handler(FwIndexType portNum, const Svc::SendFileResponse& resp) {",
+      "context": "962: // ----------------------------------------------------------------------\n963: \n964: void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileResponse& resp) {\n965:     // check file status\n966:     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {\n967:         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, and F Prime's internal dispatch mechanism inherently validates port indices before invoking component handlers, ruling out any out-of-bounds risk. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/DpCatalog/DpCatalog.cpp",
+      "line": 114,
+      "matched_text": "void DpCatalog::resetBinaryTree() {",
+      "context": "112: }\n113: \n114: void DpCatalog::resetBinaryTree() {\n115:     // initialize data structures in the free list\n116:     // Step 2 in memory partition (see configure() comments)\n117:     FW_ASSERT(this->m_memPtr);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The specific mitigation that rules this out is the explicit null/size guard at line 90 preceding the call inside configure(), combined with FPrime's lifecycle guarantee that configure() completes before any external input or handlers can trigger. (+6 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComStub/ComStub.cpp",
+      "line": 46,
+      "matched_text": "_handler(const FwIndexType portNum,",
+      "context": "44: }\n45: \n46: void ComStub::drvReceiveIn_handler(const FwIndexType portNum,\n47:                                    Fw::Buffer& recvBuffer,\n48:                                    const Drv::ByteStreamStatus& recvStatus) {\n49:     if (recvStatus != Drv::ByteStreamStatus::OP_OK) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and all output calls hardcode port index `0`, so no out-of-bounds indexing occurs. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComRetry/ComRetry.cpp",
+      "line": 33,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Success& condition) {",
+      "context": "31: // ----------------------------------------------------------------------\n32: \n33: void ComRetry ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {\n34:     FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED);\n35: \n36:     // When waiting for send, just pass the status up the stack as the buffer should still be upstream",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced or used to index any array or container within the handler body, so no out-of-bounds access can occur. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComQueue/ComQueue.cpp",
+      "line": 260,
+      "matched_text": "for (U32 i = 0; i < comQueueDepth.SIZE;",
+      "context": "258:     // Downlink the high-water marks for the Fw::ComBuffer array types\n259:     ComQueueDepth comQueueDepth;\n260:     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {\n261:         comQueueDepth[i] = static_cast<U32>(this->m_queues[i].get_high_water_mark());\n262:         this->m_queues[i].clear_high_water_mark();\n263:     }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `comQueueDepth.SIZE` is a compile-time constant/fixed array size (trusted source), and the function is a periodic scheduler handler, not an external input processor. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComQueue/ComQueue.cpp",
+      "line": 235,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Success& condition) {",
+      "context": "233: }\n234: \n235: void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {\n236:     switch (this->m_state) {\n237:         // On success, the queue should be processed. On failure, the component should still wait.\n238:         case WAITING:",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced or used to index any data structure within the function body, eliminating any out-of-bounds risk. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/ComQueue/ComQueue.cpp",
+      "line": 235,
+      "matched_text": "void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {",
+      "context": "233: }\n234: \n235: void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {\n236:     switch (this->m_state) {\n237:         // On success, the queue should be processed. On failure, the component should still wait.\n238:         case WAITING:",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The method is a framework input port handler (`comStatusIn_handler`) that cannot be invoked before `configure()` completes, as F Prime's component lifecycle guarantees all port connections and message dispatch tables are established only after the configure phase finishes. (+6 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComLogger/ComLogger.cpp",
+      "line": 123,
+      "matched_text": "_handler(const FwIndexType portNum, U32 key) {",
+      "context": "121: }\n122: \n123: void ComLogger ::pingIn_handler(const FwIndexType portNum, U32 key) {\n124:     // return key\n125:     this->pingOut_out(0, key);\n126: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never used to index an array or buffer, eliminating any out-of-bounds risk."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ComAggregator/ComAggregator.cpp",
+      "line": 33,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Success& condition) {",
+      "context": "31: // ----------------------------------------------------------------------\n32: \n33: void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {\n34:     this->aggregationMachine_sendSignal_status(condition);\n35: }\n36: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body (lines 33-35), so no array indexing occurs and no bounds check is required. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/CmdSequencer/CmdSequencerImpl.cpp",
+      "line": 173,
+      "matched_text": "_handler(FwIndexType portNum, const Fw::StringBase& filename) {",
+      "context": "171: }\n172: \n173: void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {\n174:     this->doSequenceRun(filename);\n175: }\n176: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and never passed to any function or used for indexing, so no out-of-bounds access can occur. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/CmdDispatcher/CommandDispatcherImpl.cpp",
+      "line": 26,
+      "matched_text": "_handler(FwIndexType portNum, FwOpcodeType opCode) {",
+      "context": "24: CommandDispatcherImpl::~CommandDispatcherImpl() {}\n25: \n26: void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) {\n27:     FwIndexType existingPort;\n28:     if (this->m_entryTable.find(opCode, existingPort) == Fw::Success::SUCCESS) {\n29:         // Opcode already present — must be the same port (re-registration)",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "`portNum` is not used as an array index in this handler; it is only stored as a value in a hash table or passed to logging, and the F Prime framework guarantees its validity for the specific dispatched handler. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ChronoTime/ChronoTime.cpp",
+      "line": 25,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Time& time) {",
+      "context": "23: // ----------------------------------------------------------------------\n24: \n25: void ChronoTime ::timeGetPort_handler(FwIndexType portNum, Fw::Time& time) {\n26:     const auto time_now = std::chrono::system_clock::now();\n27:     time.set(TimeBase::TB_WORKSTATION_TIME,\n28:              static_cast<U32>(std::chrono::duration_cast<std::chrono::seconds>(time_now.time_since_epoch()).count()),",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, so it cannot be used to index an array or trigger an out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/TmFramer/TmFramer.cpp",
+      "line": 28,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "26: // ----------------------------------------------------------------------\n27: \n28: void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n29:     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,\n30:               static_cast<FwAssertArgType>(data.getSize()));\n31:     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the handler signature but is completely unused within the function body, so no array indexing or bounds validation is possible or required. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/TcDeframer/TcDeframer.cpp",
+      "line": 35,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "33: // ----------------------------------------------------------------------\n34: \n35: void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n36:     // CCSDS TC Format:\n37:     // 5 octets - TC Primary Header\n38:     // Up to 1019 octets - Data Field (including optional 2 octets frame error control field)",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and never indexes memory or controls flow, so the absence of a bounds check is benign."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/TcDeframer/TcDeframer.cpp",
+      "line": 113,
+      "matched_text": "data.getData() +",
+      "context": "111: \n112:     // Point to the start of the data field and set appropriate size\n113:     data.setData(data.getData() + TCHeader::SERIALIZED_SIZE);\n114:     // Shrink size to that of the encapsulated data field ( header | data | trailer )\n115:     data.setSize(total_frame_length - TCHeader::SERIALIZED_SIZE - TCTrailer::SERIALIZED_SIZE);\n116: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's Fw::Buffer contract enforces that any buffer with size > 0 has a valid, non-null getData() pointer, and the explicit size validation at line 53 implicitly guards against null-allocated buffers by returning early if the size is insufficient."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/SpacePacketFramer/SpacePacketFramer.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "25: // ----------------------------------------------------------------------\n26: \n27: void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n28:     SpacePacketHeader header;\n29:     Fw::SerializeStatus status;\n30:     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "portNum is not used to index any array in the handler body; it is either ignored or passed to framework methods that safely handle it, and F Prime's port invocation mechanism guarantees its validity. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/SpacePacketDeframer/SpacePacketDeframer.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "25: // ----------------------------------------------------------------------\n26: \n27: void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n28:     // ################################\n29:     // CCSDS SpacePacket Format:\n30:     // 6 octets - Primary Header",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, and F Prime's framework guarantees that the dispatcher only invokes the handler with a valid port index corresponding to the firing port, eliminating any out-of-bounds risk. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-005-buffer-getdata-unchecked",
+      "pattern_title": "Fw::Buffer::getData() result used without null check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/SpacePacketDeframer/SpacePacketDeframer.cpp",
+      "line": 82,
+      "matched_text": "data.getData() +",
+      "context": "80: \n81:     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA\n82:     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);\n83:     data.setSize(pkt_length);\n84: \n85:     this->dataOut_out(0, data, contextCopy);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The explicit size check at line 44 ensures `data.getSize() > 6` before reaching line 82, and F Prime's BufferManager contract guarantees that any framework-allocated buffer with size > 0 has a valid non-null `getData()` pointer, ruling out the null dereference."
+      },
+      "cwe": "CWE-476"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/ApidManager/ApidManager.cpp",
+      "line": 24,
+      "matched_text": "_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 receivedSeqCount) {",
+      "context": "22: // ----------------------------------------------------------------------\n23: \n24: U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 receivedSeqCount) {\n25:     U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);\n26:     if (receivedSeqCount != expectedSequenceCount && receivedSeqCount != SEQUENCE_COUNT_ERROR) {\n27:         // Likely a packet was dropped or out of order",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the handler signature but is completely unused within the function body, so no array indexing occurs and no bounds check is required. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/Ccsds/AosFramer/AosFramer.cpp",
+      "line": 59,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {",
+      "context": "57: // ----------------------------------------------------------------------\n58: \n59: void AosFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {\n60:     // Get the VC Struct for this buffer\n61:     const U8 vcId = context.get_vcId();\n62:     AosVc& currentVc = this->get_vc_struct(context);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced in the handler body, so no indexing occurs, and the F Prime framework inherently validates the port number during dispatch. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferRepeater/BufferRepeater.cpp",
+      "line": 63,
+      "matched_text": "_handler(FwIndexType portNum, /*!< The port number*/",
+      "context": "61: // ----------------------------------------------------------------------\n62: \n63: void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/\n64:                                      Fw::Buffer& buffer   /*!< The serialization buffer*/\n65: ) {\n66:     FW_ASSERT(this->m_allocation_failure_response < NUM_BUFFER_REPEATER_FAILURE_OPTIONS);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The parameter `portNum` is declared in the handler signature but is never referenced or used to index any array within the function body, rendering the bounds-check requirement inapplicable."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferManager/BufferManagerComponentImpl.cpp",
+      "line": 52,
+      "matched_text": "for (U16 entry = 0; entry < this->m_numStructs;",
+      "context": "50:     if (not this->m_cleaned) {\n51:         // walk through Fw::Buffer instances and delete them\n52:         for (U16 entry = 0; entry < this->m_numStructs; entry++) {\n53:             this->m_buffers[entry].buff.~Buffer();\n54:         }\n55:         this->m_cleaned = true;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `m_numStructs` is a trusted configuration parameter used to allocate the internal `m_buffers` array, and the `U16` loop variable inherently caps iterations, ruling out unbounded external input. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferManager/BufferManagerComponentImpl.cpp",
+      "line": 66,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "64: // ----------------------------------------------------------------------\n65: \n66: void BufferManagerComponentImpl ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n67:     // make sure component has been set up\n68:     FW_ASSERT(this->m_setup);\n69:     FW_ASSERT(m_buffers);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in this handler; the actual array indexing uses `id` derived from `fwBuffer.getContext()`, which is explicitly bounds-checked against `m_numStructs` at line 84. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferManager/BufferManagerComponentImpl.cpp",
+      "line": 127,
+      "matched_text": "void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manager ID",
+      "context": "125: }\n126: \n127: void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manager ID\n128:                                        FwEnumStoreType memId,        //!< Memory segment identifier\n129:                                        Fw::MemAllocator& allocator,  //!< memory allocator\n130:                                        const BufferBins& bins        //!< Set of user bins",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "`setup()` is a configuration-phase helper explicitly designed to be invoked by `configure()` during component initialization, not an operational method exposed to runtime inputs, so the pre-configure guard is unnecessary and the pattern is overly broad.",
+        "execution_path": "NONE (framework initialization → `configure()` → `setup()`)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferLogger/BufferLogger.cpp",
+      "line": 41,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "39: // ----------------------------------------------------------------------\n40: \n41: void BufferLogger ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n42:     if (m_state == LogState::LOGGING_ON) {\n43:         const U8* const addr = fwBuffer.getData();\n44:         const FwSizeType size = fwBuffer.getSize();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is never referenced to index an array or access memory within the handler body, so no bounds validation is required. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferLogger/BufferLoggerFile.cpp",
+      "line": 139,
+      "matched_text": "for (U8 i = 0; i < this->m_sizeOfSize;",
+      "context": "137:     U8 sizeBuffer[sizeof(FwSizeType)];\n138:     FwSizeType sizeRegister = size;\n139:     for (U8 i = 0; i < this->m_sizeOfSize; ++i) {\n140:         sizeBuffer[this->m_sizeOfSize - i - 1] = sizeRegister & 0xFF;\n141:         sizeRegister >>= 8;\n142:     }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->m_sizeOfSize` is a trusted component configuration parameter explicitly constrained by an assert to `sizeof(FwSizeType)` (≤8), not untrusted external input, and the loop executes a fixed, bounded number of iterations for standard integer serialization."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/BufferAccumulator/BufferAccumulator.cpp",
+      "line": 68,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& buffer) {",
+      "context": "66: // ----------------------------------------------------------------------\n67: \n68: void BufferAccumulator ::bufferSendInFill_handler(const FwIndexType portNum, Fw::Buffer& buffer) {\n69:     const bool status = this->m_bufferQueue.enqueue(buffer);\n70:     if (status) {\n71:         if (this->m_numWarnings > 0) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's autocoder generates a distinct handler per input port, so `portNum` is implicitly valid and unused for indexing here; the framework guarantees its correctness. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActiveTextLogger/ActiveTextLogger.cpp",
+      "line": 49,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_numFilteredIDs;",
+      "context": "47:     }\n48:     // Check event ID filters\n49:     for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {\n50:         if (this->m_filteredIDs[i] == id) {\n51:             return;\n52:         }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `m_numFilteredIDs` is strictly validated in `configure` (line 25) against a compile-time constant via `FW_ASSERT`, and `configure` is a trusted initialization method, not a runtime message handler."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActiveTextLogger/ActiveTextLogger.cpp",
+      "line": 38,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "36: // ----------------------------------------------------------------------\n37: \n38: void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,\n39:                                           FwEventIdType id,\n40:                                           Fw::Time& timeTag,\n41:                                           const Fw::LogSeverity& severity,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the handler signature but is completely unused throughout the function body, eliminating any possibility of it being used to index an array or trigger an out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActiveRateGroup/ActiveRateGroup.cpp",
+      "line": 42,
+      "matched_text": "for (FwIndexType entry = 0; entry < this->m_numContexts;",
+      "context": "40:     this->m_numContexts = numContexts;\n41:     // copy context values\n42:     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {\n43:         this->m_contexts[entry] = contexts[entry];\n44:     }\n45: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `numContexts` is strictly validated at line 34 against a fixed compile-time port count, and `configure` is a trusted initialization method rather than a runtime untrusted input handler, ruling out the vulnerability. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActiveRateGroup/ActiveRateGroup.cpp",
+      "line": 110,
+      "matched_text": "_handler(FwIndexType portNum, U32 key) {",
+      "context": "108: }\n109: \n110: void ActiveRateGroup::PingIn_handler(FwIndexType portNum, U32 key) {\n111:     // return the key to health\n112:     this->PingOut_out(0, key);\n113: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but completely unused in the handler body, so no array indexing occurs and no bounds check is required."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActivePhaser/ActivePhaser.cpp",
+      "line": 180,
+      "matched_text": "for (U32 i = 0; i < m_state.used;",
+      "context": "178:     // if so, increment the context.\n179:     // Unlikely to overflow because this happens during registration.\n180:     for (U32 i = 0; i < m_state.used; i++) {\n181:         if (m_state.entries[i].port == port) {\n182:             context = m_state.entries[i].context + 1;\n183:         }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `m_state.used` is an internal registration counter initialized to zero and incremented by one, explicitly validated against `0xFFFF` at line 46, and does not originate from untrusted external input (the explanation's reference to `msg->count` is a pattern mismatch)."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Svc/ActivePhaser/ActivePhaser.cpp",
+      "line": 101,
+      "matched_text": "_handler(FwIndexType portNum, Os::RawTime& cycleStart) {",
+      "context": "99: // ----------------------------------------------------------------------\n100: \n101: void ActivePhaser ::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {\n102:     m_lock.lock();\n103:     m_ticks += 1;\n104:     m_lock.unLock();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, and F Prime's framework inherently validates the port index before dispatching to the handler, ruling out any out-of-bounds risk."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/STest/STest/Scenario/InterleavedScenario.hpp",
+      "line": 106,
+      "matched_text": "for (U32 i = 0; i < scenarioArray->size;",
+      "context": "104:           this->scenarioArray->getScenarios();\n105:         assert(scenarios != nullptr);\n106:         for (U32 i = 0; i < scenarioArray->size; ++i) {\n107:           assert(scenarios[i] != nullptr);\n108:           if (!scenarios[i]->isDone()) {\n109:             result = false;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `scenarioArray->size` is a test-framework configuration parameter provided by the developer at construction time (trusted source), not untrusted external input, and the pattern description incorrectly references `msg->count` instead of the actual member variable."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/STest/STest/Scenario/ScenarioArray.hpp",
+      "line": 59,
+      "matched_text": "for (U32 i = 0; i < this->size;",
+      "context": "57:       void reset() {\n58:         this->sequenceIndex = 0;\n59:         for (U32 i = 0; i < this->size; ++i) {\n60:           this->scenarios[i]->reset();\n61:         }\n62:       }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `this->size` is a constructor parameter in a test framework (`STest`), not untrusted external input, which rules out the vulnerability."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/STest/STest/Scenario/SelectedScenario.hpp",
+      "line": 98,
+      "matched_text": "for (U32 i = 0; i < scenarioArray->size;",
+      "context": "96:             this->scenarioArray->getScenarios();\n97:           assert(scenarios != nullptr);\n98:           for (U32 i = 0; i < scenarioArray->size; ++i) {\n99:             assert(scenarios[i] != nullptr);\n100:             if (!scenarios[i]->isDone()) {\n101:               result = false;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `scenarioArray->size` is a constructor parameter in a trusted test framework (`STest`) populated by static test setup rather than untrusted external input, and is inherently capped by the `U32` type."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/SignalGen/SignalGen.cpp",
+      "line": 110,
+      "matched_text": "for (U32 i = 1; i < this->sigHistory.SIZE;",
+      "context": "108: \n109:     // Shift and assign our array types\n110:     for (U32 i = 1; i < this->sigHistory.SIZE; i++) {\n111:         this->sigHistory[i - 1] = this->sigHistory[i];\n112:         this->sigPairHistory[i - 1] = this->sigPairHistory[i];\n113:     }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The static analysis explanation incorrectly cites `msg->count` as the loop bound, but the actual code at line 110 uses `this->sigHistory.SIZE`, which is a compile-time constant fixed by the F Prime `Fw::Array` template parameter, eliminating any external input dependency."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/SignalGen/SignalGen.cpp",
+      "line": 88,
+      "matched_text": "_handler(FwIndexType portNum, /*!< The port number*/",
+      "context": "86: }\n87: \n88: void SignalGen::schedIn_handler(FwIndexType portNum, /*!< The port number*/\n89:                                 U32 context          /*!< The call order*/\n90: ) {\n91:     F32 value = 0.0f;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the function signature but is completely unused in the handler body, so no array indexing occurs and the bounds-check requirement is moot."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/SendBuffApp/SendBuffComponentImpl.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "25: SendBuffImpl::~SendBuffImpl() {}\n26: \n27: void SendBuffImpl::SchedIn_handler(FwIndexType portNum, U32 context) {\n28:     // first, dequeue any messages\n29: \n30:     MsgDispatchStatus stat = MSG_DISPATCH_OK;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the signature but is completely unused in the handler body, eliminating any possibility of an out-of-bounds array access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/RecvBuffApp/RecvBuffComponentImpl.cpp",
+      "line": 23,
+      "matched_text": "_handler(FwIndexType portNum, Drv::DataBuffer& buff) {",
+      "context": "21: RecvBuffImpl::~RecvBuffImpl() {}\n22: \n23: void RecvBuffImpl::Data_handler(FwIndexType portNum, Drv::DataBuffer& buff) {\n24:     this->m_stats.set_BuffRecv(++this->m_buffsReceived);\n25:     // reset deserialization of buffer\n26:     buff.resetDeser();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the function signature but is completely unused in the handler body, so it cannot be used to index an array or trigger an out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/PingReceiver/PingReceiverComponentImpl.cpp",
+      "line": 31,
+      "matched_text": "_handler(const FwIndexType portNum, U32 key) {",
+      "context": "29: // ----------------------------------------------------------------------\n30: \n31: void PingReceiverComponentImpl ::PingIn_handler(const FwIndexType portNum, U32 key) {\n32:     // this->log_DIAGNOSTIC_PR_PingReceived(key);\n33:     this->tlmWrite_PR_NumPings(this->m_pingsRecvd++);\n34:     if (not this->m_inhibitPings) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is not used to index any array or data structure in the handler body, so the missing bounds check is irrelevant."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/DpDemo/DpDemo.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "25: // ----------------------------------------------------------------------\n26: \n27: void DpDemo ::run_handler(FwIndexType portNum, U32 context) {\n28:     // If a Data product is being generated, store records\n29:     if (this->dpInProgress) {\n30:         this->dpContainer.serializeRecord_StringRecord(Fw::String(\"Test string\"));",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced or used to index any array in the handler body, which rules out the out-of-bounds indexing concern."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Ref/BlockDriver/BlockDriver.cpp",
+      "line": 11,
+      "matched_text": "_handler(FwIndexType portNum, Drv::DataBuffer& buffer) {",
+      "context": "9: BlockDriver::~BlockDriver() {}\n10: \n11: void BlockDriver::BufferIn_handler(FwIndexType portNum, Drv::DataBuffer& buffer) {\n12:     // just a pass-through\n13:     this->BufferOut_out(0, buffer);\n14: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is never used to index any array or data structure, which directly rules out the out-of-bounds access concern. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Os/Task.cpp",
+      "line": 103,
+      "matched_text": "FW_ASSERT(arguments.m_routine != nullptr",
+      "context": "101:     // simultaneously from different threads. (As was observed in UT runs.)\n102:     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));\n103:     FW_ASSERT(arguments.m_routine != nullptr);\n104:     this->m_name = arguments.m_name;\n105:     this->m_state = State::STARTING;\n106: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The parameter is a function pointer provided by trusted application code or the autocoder, not untrusted external input, and FW_ASSERT is standard for internal API contracts in F Prime."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Os/Posix/Task.cpp",
+      "line": 184,
+      "matched_text": "FW_ASSERT(arguments.m_routine != nullptr",
+      "context": "182: \n183: Os::Task::Status PosixTask::start(const Arguments& arguments) {\n184:     FW_ASSERT(arguments.m_routine != nullptr);\n185: \n186:     // Try to create thread with assuming permissions\n187:     Os::Task::Status status = this->create(arguments, PermissionExpectation::EXPECT_PERMISSION);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The assertion enforces an internal framework API precondition for a function pointer parameter passed by trusted component code, not untrusted external input, which rules out the security threat model."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/Types/MemAllocator.cpp",
+      "line": 42,
+      "matched_text": "void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type,",
+      "context": "40: }\n41: \n42: void MemAllocatorRegistry::registerAllocator(const MemoryAllocation::MemoryAllocatorType type,\n43:                                              MemAllocator& allocator) {\n44:     this->m_allocators[type] = &allocator;\n45: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The pattern is misapplied to `MemAllocatorRegistry`, a utility singleton without an FPrime component lifecycle or `configure()` method, so the pre-configure check is irrelevant."
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Fw/Types/GTest/Bytes.cpp",
+      "line": 21,
+      "matched_text": "for (size_t i = 0; i < expected.size;",
+      "context": "19: void Bytes ::compare(const Bytes& expected, const Bytes& actual) {\n20:     ASSERT_EQ(expected.size, actual.size);\n21:     for (size_t i = 0; i < expected.size; ++i) {\n22:         ASSERT_EQ(expected.bytes[i], actual.bytes[i]) << \"At i=\" << i << \"\\n\";\n23:     }\n24: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The specific mitigation is that this is a Google Test helper function where `expected.size` is controlled by unit test fixtures rather than untrusted external input, placing it outside the production security boundary."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/SerializableFile/SerializableFile.cpp",
+      "line": 86,
+      "matched_text": "void SerializableFile::reset() {",
+      "context": "84: }\n85: \n86: void SerializableFile::reset() {\n87:     this->m_buffer.resetSer();    //!< reset to beginning of buffer to reuse for serialization\n88:     this->m_buffer.resetDeser();  //!< reset deserialization to beginning\n89: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The specific mitigation that rules this out is the constructor initialization and validation of `m_buffer` (lines 23-27), which guarantees the buffer is fully allocated and valid before any method, including `reset()`, can execute."
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Fw/Obj/SimpleObjRegistry.cpp",
+      "line": 26,
+      "matched_text": "for (FwSizeType obj = 0; obj < this->m_numEntries;",
+      "context": "24: \n25: void SimpleObjRegistry::dump() {\n26:     for (FwSizeType obj = 0; obj < this->m_numEntries; obj++) {\n27: #if FW_OBJECT_NAMES == 1\n28: #if FW_OBJECT_TO_STRING == 1\n29:         char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The specific mitigation that rules this out is the assertion on line 59 (`FW_ASSERT(this->m_numEntries < FW_OBJ_SIMPLE_REG_ENTRIES)`) which strictly caps the internal registry counter against a compile-time constant, and `dump()` is a debugging routine not processing untrusted external input. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/Dp/DpContainer.cpp",
+      "line": 89,
+      "matched_text": "void DpContainer::serializeHeader() {",
+      "context": "87: }\n88: \n89: void DpContainer::serializeHeader() {\n90:     FW_ASSERT(this->m_buffer.isValid());\n91:     auto serializer = this->m_buffer.getSerializer();\n92:     // Serialize the packet type",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "DpContainer is a utility class rather than an F Prime component, so the two-phase init rule does not apply, and line 90 contains an explicit validity assert that safely guards against uninitialized state. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Fw/DataStructures/ArraySetOrMapImpl.hpp",
+      "line": 178,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_size;",
+      "context": "176:     ) const {\n177:         auto status = Success::FAILURE;\n178:         for (FwSizeType i = 0; i < this->m_size; i++) {\n179:             const auto& e = this->m_entries[i];\n180:             if (e.getKey() == keyOrElement) {\n181:                 valueOrNil = e.getValue();",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->m_size` is an internal state variable strictly capped by the compile-time template parameter `CAPACITY` of `ArraySetOrMapImpl`, and is only modified through the class's own methods (`insert`, `clear`, `operator=`) which enforce this invariant, ruling out unbounded external input. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Fw/DataStructures/ExternalArray.hpp",
+      "line": 175,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_size;",
+      "context": "173:     void releaseStorage() {\n174:         if ((this->m_elements != nullptr) && this->m_destroyElementsOnRelease) {\n175:             for (FwSizeType i = 0; i < this->m_size; i++) {\n176:                 this->m_elements[i].~T();\n177:             }\n178:             this->m_destroyElementsOnRelease = false;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The static analyzer incorrectly claims the bound is `msg->count`; the actual bound `this->m_size` is the internal array size set by the class constructor or `setStorage`, inherently bounded by the allocation and `FwSizeType` type."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/Comp/ActiveComponentBase.cpp",
+      "line": 35,
+      "matched_text": "void ActiveComponentBase::start(FwTaskPriorityType priority,",
+      "context": "33: #endif\n34: \n35: void ActiveComponentBase::start(FwTaskPriorityType priority,\n36:                                 FwSizeType stackSize,\n37:                                 FwSizeType cpuAffinity,\n38:                                 FwTaskIdType identifier) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's deployment manager and test harness enforce a strict lifecycle contract that calls configure() before start(), so the method is never invoked on an unconfigured instance. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/Comp/QueuedComponentBase.cpp",
+      "line": 18,
+      "matched_text": "void QueuedComponentBase::deinit() {",
+      "context": "16: }\n17: \n18: void QueuedComponentBase::deinit() {\n19:     this->m_queue.teardown();\n20: }\n21: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The specific mitigation that rules this out is the F Prime framework lifecycle guarantee that deinit() strictly executes after configure() and start(), combined with Os::Queue::teardown() being designed as a safe no-op for uncreated queues. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "fsw-012-configure-no-state-check",
+      "pattern_title": "Component method used before configure() completion check",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/Fw/Buffer/Buffer.cpp",
+      "line": 68,
+      "matched_text": "void Buffer::setData(U8* const data) {",
+      "context": "66: }\n67: \n68: void Buffer::setData(U8* const data) {\n69:     this->m_bufferData = data;\n70:     if (m_bufferData != nullptr) {\n71:         this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The pattern explicitly excludes setters, and `Fw::Buffer` is a simple data-holder class that does not implement or rely on a two-phase `configure()` lifecycle, so calling `setData` at any time safely updates its members without uninitialized-state risks. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-665"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/types/DataBuffer.cpp",
+      "line": 42,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_size;",
+      "context": "40:     const auto thisData = this->m_data;\n41:     const auto srcData = src.m_data;\n42:     for (FwSizeType i = 0; i < this->m_size; i++) {\n43:         if (thisData[i] != srcData[i]) {\n44:             return false;\n45:         }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The loop bound `this->m_size` is strictly capped by `sizeof(m_data)` via an `FW_ASSERT` in the constructor at line 31, preventing unbounded iteration regardless of external input. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "cpp-003-unchecked-data-index",
+      "pattern_title": "Buffer access with fixed index, no size validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Sender/Sender.cpp",
+      "line": 295,
+      "matched_text": "buf[32]",
+      "context": "293: \n294: void Sender::wait() {\n295:     U8 buf[32];\n296:     FwSizeType actualSize;\n297:     FwQueuePriorityType priority;\n298:     m_queue.receive(buf, sizeof(buf), Os::QueueInterface::BLOCKING, actualSize, priority);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The buffer `buf` is a fixed-size local array (`U8 buf[32]`) with a known compile-time size, and `sizeof(buf)` is explicitly passed to `m_queue.receive`, ruling out untrusted dynamic sizing or out-of-bounds access."
+      },
+      "cwe": "CWE-125"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Sender/Sender.cpp",
+      "line": 244,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "242: }\n243: \n244: void Sender::replyIn_handler(FwIndexType portNum,\n245:                              FwIndexType handlerPortNum,\n246:                              const TestDeploymentPort& portId,\n247:                              const Fw::Buffer& inputData) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` is supplied by the F Prime framework's internal port dispatch mechanism, which guarantees it is a valid index for the component's ports before invoking the handler, ruling out untrusted or out-of-bounds input. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-003-assert-as-validation",
+      "pattern_title": "FW_ASSERT used as input validation (disabled in release)",
+      "severity": "medium",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Sender/Sender.cpp",
+      "line": 275,
+      "matched_text": "FW_ASSERT(inputData.getData(",
+      "context": "273:                                    const TestDeploymentPort& portId,\n274:                                    const Fw::Buffer& inputData) {\n275:     FW_ASSERT(inputData.getData() != nullptr);\n276: \n277:     // Mark that we received a serial reply\n278:     m_serialReplyReceived = true;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The input is a framework-provided buffer from an internal serial reply dispatch in a test component, making the null-check an internal invariant assertion rather than untrusted external input validation."
+      },
+      "cwe": "CWE-617"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Receiver/Receiver.cpp",
+      "line": 27,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "25: // ----------------------------------------------------------------------\n26: \n27: void Receiver ::arrayArgsAsync_handler(FwIndexType portNum,\n28:                                        const FormalParamArray& a,\n29:                                        FormalParamArray& aRef,\n30:                                        const FormalAliasArray& b,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "portNum is a framework-provided invocation identifier passed directly to the framework's replyOut_out routing method, which handles port validation internally, and is not used to index a custom array without bounds checking. (+35 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Framework/Framework.cpp",
+      "line": 86,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "84: // ----------------------------------------------------------------------\n85: \n86: void Framework::syncIn_handler(FwIndexType portNum, U32 context) {\n87:     U8 bufData[4];\n88:     Fw::ExternalSerializeBuffer buf(bufData, sizeof(bufData));\n89: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "F Prime's framework guarantees `portNum` validity before invoking handlers, ruling out the out-of-bounds risk, and the code does not actually index an array with `portNum` anyway. (+12 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/topology/components/Comp/Comp.cpp",
+      "line": 44,
+      "matched_text": "_handler(FwIndexType portNum, U32 key) {",
+      "context": "42: }\n43: \n44: void Comp ::PingIn_handler(FwIndexType portNum, U32 key) {\n45:     PingOut_out(portNum, key);\n46: }\n47: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework guarantees `portNum` is valid before invoking the handler, and the code does not use `portNum` to index an array but merely forwards it to an output port call. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/state_machine/internal_instance/state/BasicTester.cpp",
+      "line": 30,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "28: // ----------------------------------------------------------------------\n29: \n30: void BasicTester::schedIn_handler(FwIndexType portNum, U32 context) {\n31:     // Nothing to do\n32: }\n33: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body contains only a comment and does not reference `portNum` at all, so no bounds check is required and no out-of-bounds access can occur."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/state_machine/internal_instance/initial/BasicTester.cpp",
+      "line": 30,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "28: // ----------------------------------------------------------------------\n29: \n30: void BasicTester::schedIn_handler(FwIndexType portNum, U32 context) {\n31:     // Nothing to do\n32: }\n33: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body is empty and does not reference `portNum` at all, so no out-of-bounds indexing or bounds check is possible."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/state_machine/internal_instance/choice/BasicTester.cpp",
+      "line": 37,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "35: // ----------------------------------------------------------------------\n36: \n37: void BasicTester::schedIn_handler(FwIndexType portNum, U32 context) {\n38:     // Nothing to do\n39: }\n40: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body is empty and does not reference `portNum` at all, so no array indexing occurs and the bounds-check requirement is moot."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "cpp-012-loop-unvalidated-bound",
+      "pattern_title": "Loop bound from external input without validation",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/state_machine/internal/harness/History.hpp",
+      "line": 42,
+      "matched_text": "for (FwSizeType i = 0; i < this->m_size;",
+      "context": "40:         bool result = (this->m_size == history.m_size);\n41:         if (result) {\n42:             for (FwSizeType i = 0; i < this->m_size; i++) {\n43:                 if (this->m_items[i] != history.m_items[i]) {\n44:                     result = false;\n45:                     break;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The bound `this->m_size` is an internal class member strictly capped by the compile-time template parameter `size` (enforced by `FW_ASSERT` in `push`), and this file is a test harness that does not process untrusted external input."
+      },
+      "cwe": "CWE-606"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/state_machine/external_instance/SmTest.cpp",
+      "line": 26,
+      "matched_text": "_handler(const FwIndexType portNum, U32 context) {",
+      "context": "24: // ----------------------------------------------------------------------\n25: \n26: void SmTest::schedIn_handler(const FwIndexType portNum, U32 context) {\n27:     Fw::SmSignalBuffer data;\n28: \n29:     device1_stateMachineInvoke(DeviceSm_Interface::DeviceSm_Signals::RTI_SIG, data);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared but never referenced in the function body, so it cannot be used to index an array or trigger an out-of-bounds access."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/dp/DpTest.cpp",
+      "line": 46,
+      "matched_text": "_handler(const FwIndexType portNum, U32 context) {",
+      "context": "44: // ----------------------------------------------------------------------\n45: \n46: void DpTest::schedIn_handler(const FwIndexType portNum, U32 context) {\n47:     // Request a buffer for Container 1\n48:     this->dpRequest_Container1(CONTAINER_1_DATA_SIZE);\n49:     // Request a buffer for Container 2",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, eliminating any indexing risk, and F Prime's framework dispatch guarantees valid invocation without requiring explicit bounds checks."
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/component/queued/QueuedTest.cpp",
+      "line": 32,
+      "matched_text": "_handler(FwIndexType portNum,          //!< The port number",
+      "context": "30: // ----------------------------------------------------------------------\n31: \n32: void QueuedTest ::serialAsync_handler(FwIndexType portNum,          //!< The port number\n33:                                       Fw::LinearBufferBase& Buffer  //!< The serialization buffer\n34: ) {\n35:     this->serializeStatus = this->serialOut_out(portNum, Buffer);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` argument is supplied by the F Prime framework, which validates it before invoking the handler, and `serialOut_out` is a generated routing method that safely handles the index without requiring manual bounds checks. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/component/passive/PassiveTest.cpp",
+      "line": 25,
+      "matched_text": "_handler(FwIndexType portNum,          //!< The port number",
+      "context": "23: // ----------------------------------------------------------------------\n24: \n25: void PassiveTest ::serialGuarded_handler(FwIndexType portNum,          //!< The port number\n26:                                          Fw::LinearBufferBase& Buffer  //!< The serialization buffer\n27: ) {\n28:     this->serializeStatus = this->serialOut_out(portNum, Buffer);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework's event dispatcher validates `portNum` against the component's input port count before invoking the handler, and `serialOut_out` is a generated framework method that safely handles port invocation without requiring explicit bounds checks in the handler body. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/component/common/typed.cpp",
+      "line": 9,
+      "matched_text": "_handler(FwIndexType portNum,",
+      "context": "7: // ----------------------------------------------------------------------\n8: \n9: Fw::String TestComponentName ::stringReturnGuarded_handler(FwIndexType portNum,\n10:                                                            const Fw::StringBase& str,\n11:                                                            Fw::StringBase& strRef) {\n12:     return this->stringReturnOut_out(portNum, str, strRef);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` argument is supplied by the F Prime framework's event dispatch logic, which guarantees it is a valid index for the component's port table before calling the handler, rendering manual bounds checks unnecessary. (+27 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/component/common/typed_async.cpp",
+      "line": 1,
+      "matched_text": "_handler(const FwIndexType portNum,",
+      "context": "1: void TestComponentName ::arrayArgsAsync_handler(const FwIndexType portNum,\n2:                                                 const FormalParamArray& a,\n3:                                                 FormalParamArray& aRef,\n4:                                                 const FormalAliasArray& b,",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is supplied by the F Prime framework's internal port dispatch logic, which guarantees it is within valid bounds before invoking the handler, making it trusted runtime input rather than user-controlled. (+6 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/FppTestProject/FppTest/component/active/ActiveTest.cpp",
+      "line": 28,
+      "matched_text": "_handler(FwIndexType portNum,          //!< The port number",
+      "context": "26: // ----------------------------------------------------------------------\n27: \n28: void ActiveTest ::serialAsync_handler(FwIndexType portNum,          //!< The port number\n29:                                       Fw::LinearBufferBase& Buffer  //!< The serialization buffer\n30: ) {\n31:     this->serializeStatus = this->serialOut_out(portNum, Buffer);",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` is supplied by the F Prime runtime's trusted port dispatch mechanism, which validates and routes signals internally before invoking the handler, making it non-user-controllable and inherently bounded. (+5 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/Udp/UdpComponentImpl.cpp",
+      "line": 79,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "77: // ----------------------------------------------------------------------\n78: \n79: Drv::ByteStreamStatus UdpComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n80:     Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());\n81:     Drv::ByteStreamStatus returnStatus;\n82:     switch (status) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused for indexing in the handler body, and F Prime's framework dispatcher guarantees it matches the registered port index, ruling out any out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/TcpServer/TcpServerComponentImpl.cpp",
+      "line": 118,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "116: // ----------------------------------------------------------------------\n117: \n118: Drv::ByteStreamStatus TcpServerComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n119:     Drv::SocketIpStatus status = this->send(fwBuffer.getData(), fwBuffer.getSize());\n120:     Drv::ByteStreamStatus returnStatus;\n121:     switch (status) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is not used to index any array or data structure, so the bounds-check concern does not apply. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/TcpClient/TcpClientComponentImpl.cpp",
+      "line": 71,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "69: // ----------------------------------------------------------------------\n70: \n71: Drv::ByteStreamStatus TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {\n72:     Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());\n73:     Drv::ByteStreamStatus returnStatus;\n74:     switch (status) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is declared in the function signature but is never referenced or used anywhere in the handler body, so it cannot be used to index an array or trigger an out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxUartDriver/LinuxUartDriver.cpp",
+      "line": 299,
+      "matched_text": "_handler(FwIndexType portNum, U32 context) {",
+      "context": "297: // ----------------------------------------------------------------------\n298: \n299: void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {\n300:     this->tlmWrite_BytesSent(this->m_bytesSent);\n301:     this->tlmWrite_BytesRecv(this->m_bytesReceived);\n302: }",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `run_handler` function body does not reference or use the `portNum` parameter, eliminating any possibility of out-of-bounds indexing or missing validation. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxSpiDriver/LinuxSpiDriverComponentImplStub.cpp",
+      "line": 26,
+      "matched_text": "_handler(const FwIndexType portNum,",
+      "context": "24: // ----------------------------------------------------------------------\n25: \n26: SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType portNum,\n27:                                                             Fw::Buffer& WriteBuffer,\n28:                                                             Fw::Buffer& readBuffer) {\n29:     return SpiStatus::SPI_OK;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body, and the F' framework automatically validates port indices before dispatching to component handlers, ruling out out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxI2cDriver/LinuxI2cDriver.cpp",
+      "line": 51,
+      "matched_text": "_handler(const FwIndexType portNum, U32 addr, Fw::Buffer& serBuffer) {",
+      "context": "49: // Note this port handler is guarded, so we can make the ioctl call\n50: \n51: Drv::I2cStatus LinuxI2cDriver ::write_handler(const FwIndexType portNum, U32 addr, Fw::Buffer& serBuffer) {\n52:     // Make sure file has been opened\n53:     if (-1 == this->m_fd) {\n54:         return I2cStatus::I2C_OPEN_ERR;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is completely unused in the handler body and is guaranteed valid by the F Prime framework's autocoder dispatch mechanism, so no out-of-bounds indexing or validation is required. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxI2cDriver/LinuxI2cDriverStub.cpp",
+      "line": 37,
+      "matched_text": "_handler(const FwIndexType portNum, U32 addr, Fw::Buffer& serBuffer) {",
+      "context": "35: // Note this port handler is guarded, so we can make the ioctl call\n36: \n37: I2cStatus LinuxI2cDriver ::write_handler(const FwIndexType portNum, U32 addr, Fw::Buffer& serBuffer) {\n38:     return I2cStatus::I2C_OK;\n39: }\n40: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The handler body does not use `portNum` to index any data structure, and F Prime's framework guarantees valid port indices before invoking component handlers. (+2 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxGpioDriver/LinuxGpioDriver.cpp",
+      "line": 257,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Logic& state) {",
+      "context": "255: }\n256: \n257: Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw::Logic& state) {\n258:     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;\n259:     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {\n260:         struct gpiohandle_data values;",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` parameter is never used to index an array in the handler body, and the F Prime framework validates port numbers before invoking handlers, ruling out out-of-bounds access. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/LinuxGpioDriver/LinuxGpioDriverStub.cpp",
+      "line": 47,
+      "matched_text": "_handler(const FwIndexType portNum, Fw::Logic& state) {",
+      "context": "45: }\n46: \n47: Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw::Logic& state) {\n48:     return Drv::GpioStatus::UNKNOWN_ERROR;\n49: }\n50: ",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The parameter `portNum` is completely unused in the handler body, which simply returns a constant status, ruling out any array indexing or bounds-check requirement. (+1 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/ByteStreamBufferAdapter/ByteStreamBufferAdapter.cpp",
+      "line": 24,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "22: // ----------------------------------------------------------------------\n23: \n24: void ByteStreamBufferAdapter::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {\n25:     if (this->m_driverIsReady) {\n26:         Drv::ByteStreamStatus status = toByteStreamDriver_out(portNum, fwBuffer);\n27:         if (status != Drv::ByteStreamStatus::OP_OK) {",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The `portNum` is supplied by the F Prime framework's port routing layer which guarantees it is a valid index, and the code forwards it to framework-generated output port methods rather than indexing a custom array. (+3 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    },
+    {
+      "pattern_id": "fsw-001-port-handler-no-check",
+      "pattern_title": "Component port handler uses portNum without bounds check",
+      "severity": "high",
+      "file": "/home/curly/proyectos/fprime/Drv/AsyncByteStreamBufferAdapter/AsyncByteStreamBufferAdapter.cpp",
+      "line": 24,
+      "matched_text": "_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {",
+      "context": "22: // ----------------------------------------------------------------------\n23: \n24: void AsyncByteStreamBufferAdapter ::bufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {\n25:     if (this->m_driverIsReady) {\n26:         this->toByteStreamDriver_out(portNum, fwBuffer);\n27:         // ByteStreamDriver is Async; don't return buffer here but wait for toByteStreamDriverReturn",
+      "verification": {
+        "verdict": "false_positive",
+        "reasoning": "The F Prime framework validates `portNum` during message dispatch before invoking the handler, and the `*_out` calls are framework-managed output port sends that do not perform unchecked array indexing in the component code. (+4 more matches of this pattern in the same file)"
+      },
+      "cwe": "CWE-129"
+    }
+  ],
+  "needs_context": 0,
+  "needs_context_detail": [],
+  "coverage": {
+    "totalCandidateFiles": 864,
+    "scannedFiles": 864,
+    "skippedByLimit": 0,
+    "truncated": false,
+    "maxFiles": 9007199254740991,
+    "capSource": "user"
+  },
+  "elapsed_ms": 1539313
+}

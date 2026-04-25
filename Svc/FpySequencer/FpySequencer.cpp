@@ -68,6 +68,12 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
                                        U32 cmdSeq,                       //!< The command sequence number
                                        const Fw::CmdStringArg& fileName  //!< The name of the sequence file
 ) {
+    // KCODE-FIX:fsw-010 — reject malformed ground-command argument before any side effect.
+    if (fileName.length() == 0 || fileName.length() >= Fw::CmdStringArg::SERIALIZED_SIZE) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     // can only validate a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));

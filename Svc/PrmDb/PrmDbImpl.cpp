@@ -334,6 +334,12 @@ void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
                                          U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
                                          PrmDb_Merge merge) {
+    // KCODE-FIX:fsw-010 — reject malformed ground-command argument before any side effect.
+    if (fileName.length() == 0 || fileName.length() >= Fw::CmdStringArg::SERIALIZED_SIZE) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     // Reject PRM_LOAD_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
         this->log_WARNING_LO_PrmDbFileLoadInvalidAction(m_state, PrmDb_PrmLoadAction::LOAD_FILE_COMMAND);

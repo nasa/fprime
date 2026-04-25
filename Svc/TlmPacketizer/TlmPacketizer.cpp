@@ -48,6 +48,7 @@ TlmPacketizer ::~TlmPacketizer() {}
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
                                   const FwChanIdType startLevel) {
+    // KCODE-AUDIT:fsw-003-assert-as-validation — Use cmdResponse_VALIDATION_ERROR for untrusted input; keep FW_ASSERT for invariants.
     FW_ASSERT(packetList.list);
     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
     // functionality for two reasons:

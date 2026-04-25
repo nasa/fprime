@@ -180,6 +180,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
 
             // now there should be nothing left, otherwise coding err
+            // KCODE-AUDIT:fsw-003-assert-as-validation — Use cmdResponse_VALIDATION_ERROR for untrusted input; keep FW_ASSERT for invariants.
             FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,
                       static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
 
