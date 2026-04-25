@@ -58,6 +58,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
 
     // Deserialize the file packet contents into Fw::FilePacket (remove packet type token)
     FW_ASSERT(buffer.getData() != nullptr);  // KCODE-FIX:fsw-005
+    FW_ASSERT(buffer.getData() != nullptr);  // KCODE-FIX:fsw-005
     Fw::Buffer packetBuffer(buffer.getData() + sizeof(packetType),
                             buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(packetType)));
     Fw::FilePacket filePacket;

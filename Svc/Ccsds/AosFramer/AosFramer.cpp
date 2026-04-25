@@ -302,6 +302,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     FW_ASSERT(data.getData() != nullptr);  // KCODE-FIX:fsw-005
+    FW_ASSERT(data.getData() != nullptr);  // KCODE-FIX:fsw-005
     const U8* dataStart = data.getData() + dataOffset;
     // min of (remaining bytes in buffer and available bytes in frame)
     FwSizeType dataSize = data.getSize() - dataOffset;
