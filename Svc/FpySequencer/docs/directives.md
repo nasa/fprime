@@ -1144,11 +1144,11 @@ Pops a message size, message, and severity from the stack and emits an F Prime e
 | severity     | Fw.LogSeverity | stack  | The event severity level. |
 
 ## SET_SEED (77)
-Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal RNG.
+Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal PRNG.
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| seed     | U32      | stack  | Seed value used to initialize the RNG |
+| seed     | U32      | stack  | Seed value used to initialize the PRNG |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -1156,9 +1156,10 @@ Pops a `U32` seed value from the stack and uses it to seed the sequencer's inter
 
 
 ## PUSH_RAND (78)
-Pushes the next RNG value to the stack.
+Pushes the next PRNG value to the stack.
 If this is called without seed being set beforehand it will be automatically done based on current time.
-This function is not cryptographically secure. 
+Note that this function uses C++'s random library so it does not qualify as a CSPRNG and is thus not cryptographically secure. 
+[](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator)
 | Stack Result Type | Description |
 | ------------------|-------------|
-| U32 | The next pseudorandom 32-bit value from the sequencer's internal RNG |
+| U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
