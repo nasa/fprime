@@ -1142,3 +1142,14 @@ Pops a message size, message, and severity from the stack and emits an F Prime e
 | message_size | StackSizeType  | stack  | Number of bytes to pop for the message. |
 | message      | bytes          | stack  | UTF-8 encoded message string. |
 | severity     | Fw.LogSeverity | stack  | The event severity level. |
+
+## SET_SEED (77)
+
+
+## PUSH_RAND (78)
+Pushes the next RNG value to the stack.
+If this is called without seed being set beforehand it will be automatically done based on current time.
+This function is not cryptographically secure. 
+| Stack Result Type | Description |
+| ------------------|-------------|
+| U8 | Stubbed RNG value, currently always `1` |
