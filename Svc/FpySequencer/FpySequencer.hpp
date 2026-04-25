@@ -21,6 +21,7 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "config/FppConstantsAc.hpp"
+#include <random>
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
@@ -614,6 +615,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // the total number of statements this sequencer has dispatched, successfully or
     // otherwise, since construction
     U64 m_statementsDispatched;
+
+    // per-component RNG state used by PUSH_RAND and later SET_SEED-style directives
+    std::mt19937 m_rng;
+    bool m_rngSeeded = false;
 
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.

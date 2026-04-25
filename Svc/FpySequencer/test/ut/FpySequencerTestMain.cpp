@@ -1401,12 +1401,28 @@ TEST_F(FpySequencerTester, pushTime) {
 TEST_F(FpySequencerTester, pushRand) {
     FpySequencer_PushRandDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 7, 123, 456);
+    setTestTime(testTime);
+    std::mt19937 expectedRng;
+    std::seed_seq seedSeq{static_cast<U32>(testTime.getTimeBase()),
+                          static_cast<U32>(testTime.getContext()),
+                          testTime.getSeconds(),
+                          testTime.getUSeconds()};
+    expectedRng.seed(seedSeq);
+
     tester_get_m_runtime_ptr()->stack.size = 0;
     Signal result = tester_pushRand_directiveHandler(directive, err);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, sizeof(U8));
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<U8>(), 1);
+    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
+
+    // make sure subsequent calls advance the existing RNG instead of reseeding on new time
+    setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 99, 999, 999));
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
 
     // check almost overflow
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U8);
