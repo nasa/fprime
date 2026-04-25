@@ -282,6 +282,10 @@ void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
 }
+void FpySequencerTester::add_SET_SEED() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::SET_SEED, buf);
+}
 void FpySequencerTester::add_PUSH_RAND() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_RAND, buf);
@@ -548,6 +552,11 @@ Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement
 Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive,
                                                             DirectiveError& err) {
     return this->cmp.pushTime_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.setSeed_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive,

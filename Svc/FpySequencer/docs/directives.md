@@ -1144,6 +1144,15 @@ Pops a message size, message, and severity from the stack and emits an F Prime e
 | severity     | Fw.LogSeverity | stack  | The event severity level. |
 
 ## SET_SEED (77)
+Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal RNG.
+
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| seed     | U32      | stack  | Seed value used to initialize the RNG |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
 
 
 ## PUSH_RAND (78)

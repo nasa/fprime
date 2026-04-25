@@ -1438,6 +1438,32 @@ TEST_F(FpySequencerTester, pushRand) {
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 }
 
+TEST_F(FpySequencerTester, setSeed) {
+    FpySequencer_SetSeedDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    const U32 testSeed = 123456789U;
+    std::mt19937 expectedRng;
+    expectedRng.seed(testSeed);
+
+    tester_push<U32>(testSeed);
+    Signal result = tester_setSeed_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+
+    // make sure the explicit seed overrides time-based initialization
+    setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 77, 888, 999));
+    result = tester_pushRand_directiveHandler(FpySequencer_PushRandDirective(), err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), static_cast<U8>(expectedRng()));
+
+    // underflow
+    result = tester_setSeed_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+}
+
 TEST_F(FpySequencerTester, getField) {
     FpySequencer_GetFieldDirective directive(4, 2);  // parent size 3, member size 2
     tester_push<U8>(123);
@@ -4029,6 +4055,19 @@ TEST_F(FpySequencerTester, IntegrationPushTime) {
 TEST_F(FpySequencerTester, IntegrationPushRand) {
     allocMem();
     // Sequence: PUSH_RAND, DISCARD(1)
+    add_PUSH_RAND();
+    add_DISCARD(sizeof(U8));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationSetSeedPushRand) {
+    allocMem();
+    // Sequence: PUSH_VAL(seed), SET_SEED, PUSH_RAND, DISCARD(1)
+    add_PUSH_VAL<U32>(123456789U);
+    add_SET_SEED();
     add_PUSH_RAND();
     add_DISCARD(sizeof(U8));
     writeAndRun();
