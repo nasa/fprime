@@ -128,6 +128,7 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
     if (status == Fw::FW_SERIALIZE_OK &&
         (size == (fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType)))) {
         // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
+        FW_ASSERT(fwBuffer.getData() != nullptr);  // audit-fix:fsw-005
         FW_ASSERT(fwBuffer.getData() != nullptr);  // KCODE-FIX:fsw-005
         FW_ASSERT(fwBuffer.getData() != nullptr);  // KCODE-FIX:fsw-005
         U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);

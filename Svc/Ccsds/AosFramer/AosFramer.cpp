@@ -301,6 +301,7 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     status = frameSerializer.moveSerToOffset(START_OF_PAYLOAD + currentVc.current_payload_offset);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    FW_ASSERT(data.getData() != nullptr);  // audit-fix:fsw-005
     FW_ASSERT(data.getData() != nullptr);  // KCODE-FIX:fsw-005
     FW_ASSERT(data.getData() != nullptr);  // KCODE-FIX:fsw-005
     const U8* dataStart = data.getData() + dataOffset;
