@@ -1161,4 +1161,4 @@ If this is called without seed being set beforehand it will be automatically don
 This function is not cryptographically secure. 
 | Stack Result Type | Description |
 | ------------------|-------------|
-| U8 | The next pseudorandom byte from the sequencer's internal RNG |
+| U32 | The next pseudorandom 32-bit value from the sequencer's internal RNG |
