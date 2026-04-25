@@ -20,11 +20,16 @@
 
 namespace Fw {
 
+//! \brief handles an assertion
+//!
+//! Handle an assertion failure or FATAL. This function is called after the defaultPrintAssert has
+//! been called. The default implementation calls `assert(0)`.
+[[noreturn]] void defaultDoAssert();
+
 //! \brief print an assert message
 //!
 //! Print a pre-formatted assert message. This function is called after the assert message has been formatted
-//! by defaultReportAssert. The default implementation uses fputs to write to stderr, but this can be overridden
-//! at compile time to provide custom behavior for deeply embedded systems.
+//! by defaultReportAssert. The default implementation uses fputs to write to stderr.
 //!
 //! \param msg: null-terminated string containing the formatted assert message
 void defaultPrintAssert(const CHAR* msg);

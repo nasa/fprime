@@ -2,7 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Fw/Types/assert_hook.hpp>
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 
@@ -29,7 +28,7 @@ void AssertHook::reportAssert(FILE_NAME_ARG file,
 }
 
 void AssertHook::doAssert() {
-    assert(0);
+    defaultDoAssert();
 }
 
 AssertHook* AssertHook::s_assertHook = nullptr;
@@ -63,7 +62,7 @@ FW_ASSERT_NORETURN void defaultSwAssert(FILE_NAME_ARG file,
         defaultReportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, assertMsg,
                             static_cast<FwSizeType>(sizeof(assertMsg)));
         defaultPrintAssert(assertMsg);
-        assert(0);
+        defaultDoAssert();
     } else {
         registeredHook->reportAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
         registeredHook->doAssert();
