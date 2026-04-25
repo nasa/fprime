@@ -107,8 +107,8 @@ module Svc {
             STORE_ABS = 73
             STORE_ABS_CONST_OFFSET = 74
             POP_EVENT = 75
-            SET_SEED = 77
-            PUSH_RAND = 78
+            SET_SEED = 76
+            PUSH_RAND = 77
         }
 
         enum DirectiveErrorCode : U8 {
