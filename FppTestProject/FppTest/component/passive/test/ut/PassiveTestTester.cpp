@@ -33,7 +33,7 @@ void PassiveTestTester ::initComponents() {
     this->component.init(PassiveTestTester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid PassiveTestTester ::from_prmGetIn_handler(const FwIndexType portNum,
+Fw::ParamValid PassiveTestTester ::from_to_prmGetIn_handler(const FwIndexType portNum,
                                                          FwPrmIdType id,
                                                          Fw::ParamBuffer& val) {
     val.resetSer();
@@ -87,7 +87,7 @@ Fw::ParamValid PassiveTestTester ::from_prmGetIn_handler(const FwIndexType portN
 
     }
 
-    this->pushFromPortEntry_prmGetIn(id, val);
+    this->pushFromPortEntry_to_prmGetIn(id, val);
 
     return prmValid;
 }

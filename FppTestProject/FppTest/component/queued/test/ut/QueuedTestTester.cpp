@@ -36,7 +36,7 @@ void QueuedTestTester ::initComponents() {
     this->component.init(QueuedTestTester::TEST_INSTANCE_QUEUE_DEPTH, QueuedTestTester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid QueuedTestTester ::from_prmGetIn_handler(const FwIndexType portNum,
+Fw::ParamValid QueuedTestTester ::from_to_prmGetIn_handler(const FwIndexType portNum,
                                                         FwPrmIdType id,
                                                         Fw::ParamBuffer& val) {
     val.resetSer();
@@ -90,7 +90,7 @@ Fw::ParamValid QueuedTestTester ::from_prmGetIn_handler(const FwIndexType portNu
 
     }
 
-    this->pushFromPortEntry_prmGetIn(id, val);
+    this->pushFromPortEntry_to_prmGetIn(id, val);
 
     return prmValid;
 }
