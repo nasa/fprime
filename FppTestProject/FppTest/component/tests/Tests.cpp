@@ -109,6 +109,9 @@ TEST(ComponentExternalParameterTest, ParameterExternalTest) {
 
     tester.setPrmValid(Fw::ParamValid::VALID);
     tester.testExternalParam();
+
+    tester.setPrmValid(Fw::ParamValid::INVALID);
+    tester.testExternalParam();
 }
 
 // External Parameter tests
