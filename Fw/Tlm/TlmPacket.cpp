@@ -95,6 +95,9 @@ SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& b
 
 // extract telemetry value
 SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuffer& buffer, FwSizeType bufferSize) {
+    // Validate the destination buffer parameter before any use.
+    FW_ASSERT(buffer.getCapacity() > 0, static_cast<FwAssertArgType>(buffer.getCapacity()));
+
     // deserialize items out of buffer
 
     // id
@@ -117,6 +120,11 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     if (bufferSize == 0 || bufferSize > buffer.getCapacity()) {
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
+    // Invariant: buffAddr is non-null and bufferSize fits within the destination.
+    FW_ASSERT(buffAddr != nullptr);
+    FW_ASSERT(bufferSize <= buffer.getCapacity(),
+              static_cast<FwAssertArgType>(bufferSize),
+              static_cast<FwAssertArgType>(buffer.getCapacity()));
     stat = this->m_tlmBuffer.deserializeTo(buffAddr, buffer.getCapacity(), bufferSize,
                                            Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
@@ -158,6 +166,11 @@ SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     if (size > this->m_tlmBuffer.getCapacity()) {
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
+    // Invariant: tlmAddr is non-null and size fits within the destination.
+    FW_ASSERT(tlmAddr != nullptr);
+    FW_ASSERT(size <= this->m_tlmBuffer.getCapacity(),
+              static_cast<FwAssertArgType>(size),
+              static_cast<FwAssertArgType>(this->m_tlmBuffer.getCapacity()));
     stat = buffer.deserializeTo(tlmAddr, this->m_tlmBuffer.getCapacity(), size,
                                 Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {

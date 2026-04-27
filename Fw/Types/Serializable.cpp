@@ -520,12 +520,15 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 Serializable::SizeType& length,
                                                 Endianness endianMode) {
 
-    // validate arguments 
-    // 
-    // A non-zero capacity with a null destination pointer would reach memcpy
-    // with an invalid address. A null pointer is only safe when nothing will
-    // be copied (buffCapacity == 0).
+    // Validate buff: a non-null pointer is required whenever data will be copied.
     if (buff == nullptr && buffCapacity > 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
+    // Validate buffCapacity independently: a zero-capacity destination cannot
+    // accept any data. CodeQL requires buffCapacity to appear in a standalone
+    // conditional before it is forwarded to the implementation overload.
+    if (buffCapacity == 0 && length > static_cast<Serializable::SizeType>(0)) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
@@ -545,10 +548,13 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 Serializable::SizeType& length,
                                                 Serialization::t lengthMode,
                                                 Endianness endianMode) {
-    // A non-zero capacity with a null destination pointer would reach memcpy
-    // with an invalid address. A null pointer is only safe when nothing will
-    // be copied (buffCapacity == 0).
+    // Validate buff: a non-null pointer is required whenever data will be copied.
     if (buff == nullptr && buffCapacity > 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
+    // Validate buffCapacity independently so CodeQL sees it checked before use.
+    if (buffCapacity == 0 && length > static_cast<Serializable::SizeType>(0)) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
@@ -593,7 +599,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         if (length > 0) {
             FW_ASSERT(buff);
             (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(length));
-        }        
+        }
     }
 
     this->m_deserLoc += static_cast<Serializable::SizeType>(length);
