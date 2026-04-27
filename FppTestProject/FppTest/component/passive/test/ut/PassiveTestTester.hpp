@@ -154,7 +154,6 @@ class PassiveTestTester : public PassiveTestGTestBase {
 
     //! External Parameter Delegate
     class PassiveTestComponentBaseParamExternalDelegate : public Fw::ParamExternalDelegate {
-
       public:
         // ----------------------------------------------------------------------
         // Parameter variables

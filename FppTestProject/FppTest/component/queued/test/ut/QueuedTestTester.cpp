@@ -37,8 +37,8 @@ void QueuedTestTester ::initComponents() {
 }
 
 Fw::ParamValid QueuedTestTester ::from_to_prmGetIn_handler(const FwIndexType portNum,
-                                                        FwPrmIdType id,
-                                                        Fw::ParamBuffer& val) {
+                                                           FwPrmIdType id,
+                                                           Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -87,7 +87,6 @@ Fw::ParamValid QueuedTestTester ::from_to_prmGetIn_handler(const FwIndexType por
         default:
             FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
             break;
-
     }
 
     this->pushFromPortEntry_to_prmGetIn(id, val);
@@ -142,7 +141,6 @@ void QueuedTestTester ::from_prmSetIn_handler(const FwIndexType portNum, FwPrmId
         default:
             FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
             break;
-
     }
 
     this->pushFromPortEntry_prmSetIn(id, val);

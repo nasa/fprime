@@ -34,8 +34,8 @@ void PassiveTestTester ::initComponents() {
 }
 
 Fw::ParamValid PassiveTestTester ::from_to_prmGetIn_handler(const FwIndexType portNum,
-                                                         FwPrmIdType id,
-                                                         Fw::ParamBuffer& val) {
+                                                            FwPrmIdType id,
+                                                            Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -84,7 +84,6 @@ Fw::ParamValid PassiveTestTester ::from_to_prmGetIn_handler(const FwIndexType po
         default:
             FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
             break;
-
     }
 
     this->pushFromPortEntry_to_prmGetIn(id, val);
@@ -139,7 +138,6 @@ void PassiveTestTester ::from_prmSetIn_handler(const FwIndexType portNum, FwPrmI
         default:
             FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
             break;
-
     }
 
     this->pushFromPortEntry_prmSetIn(id, val);

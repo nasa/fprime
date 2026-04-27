@@ -95,9 +95,9 @@ U32 from_primitiveReturnOut_handler(const FwIndexType portNum,  //!< The port nu
 //! Handler for from_to_prmGetIn
 //!
 Fw::ParamValid from_to_prmGetIn_handler(const FwIndexType portNum,  //!< The port number
-                                     FwPrmIdType id,             //!< Parameter ID
-                                     Fw::ParamBuffer& val        //!< Buffer containing serialized parameter value
-                                     ) final;
+                                        FwPrmIdType id,             //!< Parameter ID
+                                        Fw::ParamBuffer& val        //!< Buffer containing serialized parameter value
+                                        ) final;
 
 //! Handler for from_to_prmGetIn
 //!
