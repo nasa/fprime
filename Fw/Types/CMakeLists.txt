@@ -52,6 +52,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AssertTypesTest.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TypesTest.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CAssertTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeserializeToTest.cpp"
   DEPENDS
     Os
 )
