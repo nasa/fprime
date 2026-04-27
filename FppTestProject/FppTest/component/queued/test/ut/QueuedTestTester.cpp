@@ -142,9 +142,9 @@ Fw::SerializeStatus QueuedTestTester::QueuedTestComponentBaseParamExternalDelega
         case QueuedTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             stat = buff.deserializeTo(this->m_param_ParamBoolExternal);
             break;
-        // ParamI32External
-        case QueuedTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.deserializeTo(this->m_param_ParamI32External);
+        // ParamU32External
+        case QueuedTestComponentBase::PARAMID_PARAMU32EXTERNAL:
+            stat = buff.deserializeTo(this->m_param_ParamU32External);
             break;
         // ParamStringExternal
         case QueuedTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
@@ -183,9 +183,9 @@ Fw::SerializeStatus QueuedTestTester::QueuedTestComponentBaseParamExternalDelega
         case QueuedTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             stat = buff.serializeFrom(this->m_param_ParamBoolExternal);
             break;
-        // ParamI32External
-        case QueuedTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.serializeFrom(this->m_param_ParamI32External);
+        // ParamU32External
+        case QueuedTestComponentBase::PARAMID_PARAMU32EXTERNAL:
+            stat = buff.serializeFrom(this->m_param_ParamU32External);
             break;
         // ParamStringExternal
         case QueuedTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:

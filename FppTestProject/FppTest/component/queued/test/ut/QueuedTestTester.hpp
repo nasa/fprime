@@ -179,8 +179,8 @@ class QueuedTestTester : public QueuedTestGTestBase {
         //! True if ParamBoolExternal was successfully received
         Fw::ParamValid m_param_ParamBoolExternal_valid;
 
-        //! True if ParamI32External was successfully received
-        Fw::ParamValid m_param_ParamI32External_valid;
+        //! True if ParamU32External was successfully received
+        Fw::ParamValid m_param_ParamU32External_valid;
 
         //! True if ParamStringExternal was successfully received
         Fw::ParamValid m_param_ParamStringExternal_valid;
@@ -202,8 +202,8 @@ class QueuedTestTester : public QueuedTestGTestBase {
         //! Parameter ParamBoolExternal
         bool m_param_ParamBoolExternal;
 
-        //! Parameter ParamI32External
-        I32 m_param_ParamI32External;
+        //! Parameter ParamU32External
+        I32 m_param_ParamU32External;
 
         //! Parameter ParamStringExternal
         Fw::ParamString m_param_ParamStringExternal;

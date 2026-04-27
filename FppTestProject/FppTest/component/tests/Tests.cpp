@@ -113,7 +113,7 @@ TEST(ComponentExternalParameterTest, ParameterExternalTest) {
 
 // External Parameter tests
 using ExternalParamCommandTestImplementations = ::testing::Types<FppTest::Types::BoolParam,
-                                                                 FppTest::Types::I32Param,
+                                                                 FppTest::Types::U32Param,
                                                                  FppTest::Types::PrmStringParam,
                                                                  FppTest::Types::EnumParam,
                                                                  FppTest::Types::ArrayParam,
