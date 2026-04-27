@@ -46,36 +46,48 @@ Fw::ParamValid QueuedTestTester ::from_prmGetIn_handler(const FwIndexType portNu
 
     FW_ASSERT(id >= id_base);
 
-    switch (id - id_base) {
+    const FwPrmIdType localId = id - id_base;
+    switch (localId) {
         case QueuedTestComponentBase::PARAMID_PARAMBOOL:
+        case QueuedTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             status = val.serializeFrom(boolPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case QueuedTestComponentBase::PARAMID_PARAMU32:
+        case QueuedTestComponentBase::PARAMID_PARAMU32EXTERNAL:
             status = val.serializeFrom(u32Prm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case QueuedTestComponentBase::PARAMID_PARAMSTRING:
+        case QueuedTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
             status = val.serializeFrom(stringPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case QueuedTestComponentBase::PARAMID_PARAMENUM:
+        case QueuedTestComponentBase::PARAMID_PARAMENUMEXTERNAL:
             status = val.serializeFrom(enumPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case QueuedTestComponentBase::PARAMID_PARAMARRAY:
+        case QueuedTestComponentBase::PARAMID_PARAMARRAYEXTERNAL:
             status = val.serializeFrom(arrayPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case QueuedTestComponentBase::PARAMID_PARAMSTRUCT:
+        case QueuedTestComponentBase::PARAMID_PARAMSTRUCTEXTERNAL:
             status = val.serializeFrom(structPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
+
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
+            break;
+
     }
 
     this->pushFromPortEntry_prmGetIn(id, val);

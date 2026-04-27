@@ -172,29 +172,6 @@ class ActiveTestTester : public ActiveTestGTestBase {
     class ActiveTestComponentBaseParamExternalDelegate : public Fw::ParamExternalDelegate {
       public:
         // ----------------------------------------------------------------------
-        // Parameter validity flags
-        // ----------------------------------------------------------------------
-
-        //! True if ParamBoolExternal was successfully received
-        Fw::ParamValid m_param_ParamBoolExternal_valid;
-
-        //! True if ParamU32External was successfully received
-        Fw::ParamValid m_param_ParamU32External_valid;
-
-        //! True if ParamStringExternal was successfully received
-        Fw::ParamValid m_param_ParamStringExternal_valid;
-
-        //! True if ParamEnumExternal was successfully received
-        Fw::ParamValid m_param_ParamEnumExternal_valid;
-
-        //! True if ParamArrayExternal was successfully received
-        Fw::ParamValid m_param_ParamArrayExternal_valid;
-
-        //! True if ParamStructExternal was successfully received
-        Fw::ParamValid m_param_ParamStructExternal_valid;
-
-      public:
-        // ----------------------------------------------------------------------
         // Parameter variables
         // ----------------------------------------------------------------------
 
