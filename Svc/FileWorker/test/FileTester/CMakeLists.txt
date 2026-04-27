@@ -1,3 +1,5 @@
+restrict_platforms(Posix)
+
 register_fprime_implementation(
         Svc_FileWorker_test_FileTester
     IMPLEMENTS
