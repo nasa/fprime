@@ -122,11 +122,9 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     }
     // Invariant: buffAddr is non-null and bufferSize fits within the destination.
     FW_ASSERT(buffAddr != nullptr);
-    FW_ASSERT(bufferSize <= buffer.getCapacity(),
-              static_cast<FwAssertArgType>(bufferSize),
+    FW_ASSERT(bufferSize <= buffer.getCapacity(), static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(buffer.getCapacity()));
-    stat = this->m_tlmBuffer.deserializeTo(buffAddr, buffer.getCapacity(), bufferSize,
-                                           Fw::Serialization::OMIT_LENGTH);
+    stat = this->m_tlmBuffer.deserializeTo(buffAddr, buffer.getCapacity(), bufferSize, Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -168,11 +166,9 @@ SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     }
     // Invariant: tlmAddr is non-null and size fits within the destination.
     FW_ASSERT(tlmAddr != nullptr);
-    FW_ASSERT(size <= this->m_tlmBuffer.getCapacity(),
-              static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size <= this->m_tlmBuffer.getCapacity(), static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_tlmBuffer.getCapacity()));
-    stat = buffer.deserializeTo(tlmAddr, this->m_tlmBuffer.getCapacity(), size,
-                                Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.deserializeTo(tlmAddr, this->m_tlmBuffer.getCapacity(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_tlmBuffer.setBuffLen(size);

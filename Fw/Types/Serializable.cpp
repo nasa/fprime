@@ -519,7 +519,6 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 FwSizeType buffCapacity,
                                                 Serializable::SizeType& length,
                                                 Endianness endianMode) {
-
     // Validate buff: a non-null pointer is required whenever data will be copied.
     if (buff == nullptr && buffCapacity > 0) {
         return FW_DESERIALIZE_SIZE_MISMATCH;

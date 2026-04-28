@@ -43,7 +43,6 @@ SerializeStatus SerialBuffer ::pushBytes(const U8* const addr, const FwSizeType 
 }
 
 SerializeStatus SerialBuffer ::popBytes(U8* const addr, FwSizeType buffCapacity, FwSizeType n) {
-
     // Check for null destination with a non-zero pop count and buffCapacity
     if (addr == nullptr && n > 0) {
         return FW_DESERIALIZE_SIZE_MISMATCH;

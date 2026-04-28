@@ -52,8 +52,7 @@ struct TestBuffer {
 // Write `count` bytes with values 0, 1, 2, … into tb and reset for reading.
 void makeFilled(TestBuffer& tb, FwSizeType count) {
     for (FwSizeType i = 0; i < count; ++i) {
-        Fw::SerializeStatus st =
-            tb.buf.serializeFrom(static_cast<U8>(i & 0xFF));
+        Fw::SerializeStatus st = tb.buf.serializeFrom(static_cast<U8>(i & 0xFF));
         EXPECT_EQ(st, Fw::FW_SERIALIZE_OK);
     }
     tb.buf.resetDeser();
@@ -62,8 +61,7 @@ void makeFilled(TestBuffer& tb, FwSizeType count) {
 // Write `count` bytes preceded by a FwSizeStoreType length prefix into tb,
 // then reset for reading.
 void makeFilledWithLength(TestBuffer& tb, FwSizeType count) {
-    Fw::SerializeStatus st =
-        tb.buf.serializeFrom(static_cast<FwSizeStoreType>(count));
+    Fw::SerializeStatus st = tb.buf.serializeFrom(static_cast<FwSizeStoreType>(count));
     EXPECT_EQ(st, Fw::FW_SERIALIZE_OK);
     for (FwSizeType i = 0; i < count; ++i) {
         st = tb.buf.serializeFrom(static_cast<U8>(i & 0xFF));
@@ -83,19 +81,18 @@ void makeFilledWithLength(TestBuffer& tb, FwSizeType count) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, HappyPathOmitLengthExactFit) {
     constexpr FwSizeType N = 8;
-    TestBuffer tb; makeFilled(tb, N);
+    TestBuffer tb;
+    makeFilled(tb, N);
 
     U8 dest[N] = {};
     FwSizeType length = N;  // caller specifies how many bytes to pull
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, N);
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF))
-            << "Byte mismatch at index " << i;
+        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF)) << "Byte mismatch at index " << i;
     }
 }
 
@@ -104,19 +101,18 @@ TEST(DeserializeTo, HappyPathOmitLengthExactFit) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, HappyPathOmitLengthOversizedDest) {
     constexpr FwSizeType N = 4;
-    TestBuffer tb; makeFilled(tb, N);
+    TestBuffer tb;
+    makeFilled(tb, N);
 
     U8 dest[32] = {};  // bigger than N
     FwSizeType length = N;
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, N);
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF))
-            << "Byte mismatch at index " << i;
+        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF)) << "Byte mismatch at index " << i;
     }
 }
 
@@ -125,15 +121,15 @@ TEST(DeserializeTo, HappyPathOmitLengthOversizedDest) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, OverflowRejectedOmitLengthDestTooSmall) {
     constexpr FwSizeType N = 8;
-    TestBuffer tb; makeFilled(tb, N);
+    TestBuffer tb;
+    makeFilled(tb, N);
 
     U8 dest[N - 1] = {};
     FwSizeType length = N;  // ask for N bytes into a buffer of only N-1
 
     const FwSizeType cursorBefore = tb.buf.getDeserializeSizeLeft();
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 
@@ -148,13 +144,13 @@ TEST(DeserializeTo, OverflowRejectedOmitLengthDestTooSmall) {
 TEST(DeserializeTo, SourceUnderrunOmitLength) {
     constexpr FwSizeType WRITTEN = 4;
     constexpr FwSizeType REQUESTED = 8;  // more than what was written
-    TestBuffer tb; makeFilled(tb, WRITTEN);
+    TestBuffer tb;
+    makeFilled(tb, WRITTEN);
 
     U8 dest[REQUESTED] = {};
     FwSizeType length = REQUESTED;
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 }
@@ -168,19 +164,18 @@ TEST(DeserializeTo, SourceUnderrunOmitLength) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, HappyPathIncludeLength) {
     constexpr FwSizeType N = 6;
-    TestBuffer tb; makeFilledWithLength(tb, N);
+    TestBuffer tb;
+    makeFilledWithLength(tb, N);
 
     U8 dest[N] = {};
     FwSizeType length = N;  // initial value acts as the max the caller accepts
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::INCLUDE_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::INCLUDE_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, N);  // length is updated to the actual bytes written
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF))
-            << "Byte mismatch at index " << i;
+        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF)) << "Byte mismatch at index " << i;
     }
 }
 
@@ -188,15 +183,15 @@ TEST(DeserializeTo, HappyPathIncludeLength) {
 // Overflow rejected — stored length prefix exceeds destination capacity
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, OverflowRejectedIncludeLengthDestTooSmall) {
-    constexpr FwSizeType STORED = 8;  // serialized as the length prefix
+    constexpr FwSizeType STORED = 8;    // serialized as the length prefix
     constexpr FwSizeType DEST_CAP = 4;  // destination is smaller
-    TestBuffer tb; makeFilledWithLength(tb, STORED);
+    TestBuffer tb;
+    makeFilledWithLength(tb, STORED);
 
     U8 dest[DEST_CAP] = {};
     FwSizeType length = STORED;
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, DEST_CAP, length, Fw::Serialization::INCLUDE_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, DEST_CAP, length, Fw::Serialization::INCLUDE_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 
@@ -214,19 +209,18 @@ TEST(DeserializeTo, OverflowRejectedIncludeLengthDestTooSmall) {
 
 TEST(DeserializeTo, HappyPathExplicitEndianMode) {
     constexpr FwSizeType N = 5;
-    TestBuffer tb; makeFilledWithLength(tb, N);
+    TestBuffer tb;
+    makeFilledWithLength(tb, N);
 
     U8 dest[N] = {};
     Fw::Serializable::SizeType length = static_cast<Fw::Serializable::SizeType>(N);
 
-    Fw::SerializeStatus status =
-        tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Endianness::BIG);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Endianness::BIG);
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, static_cast<Fw::Serializable::SizeType>(N));
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF))
-            << "Byte mismatch at index " << i;
+        EXPECT_EQ(dest[i], static_cast<U8>(i & 0xFF)) << "Byte mismatch at index " << i;
     }
 }
 
@@ -239,12 +233,12 @@ TEST(DeserializeTo, HappyPathExplicitEndianMode) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, NullPointerNonZeroCapacityRejected) {
     constexpr FwSizeType N = 4;
-    TestBuffer tb; makeFilled(tb, N);
+    TestBuffer tb;
+    makeFilled(tb, N);
 
     FwSizeType length = N;
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        nullptr, N, length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(nullptr, N, length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 }
@@ -255,15 +249,15 @@ TEST(DeserializeTo, NullPointerNonZeroCapacityRejected) {
 // with a zero length and would be caught by UBSAN.
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, ZeroLengthIsNoOp) {
-    TestBuffer tb; makeFilled(tb, 4);
+    TestBuffer tb;
+    makeFilled(tb, 4);
 
     U8 dest[4] = {};
     FwSizeType length = 0;
 
     const FwSizeType cursorBefore = tb.buf.getDeserializeSizeLeft();
 
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status = tb.buf.deserializeTo(dest, sizeof(dest), length, Fw::Serialization::OMIT_LENGTH);
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, static_cast<FwSizeType>(0));
@@ -285,26 +279,25 @@ TEST(DeserializeTo, ZeroLengthIsNoOp) {
 // ---------------------------------------------------------------------------
 TEST(DeserializeTo, CursorUnchangedAfterFailedCall) {
     constexpr FwSizeType N = 8;
-    TestBuffer tb; makeFilled(tb, N);
+    TestBuffer tb;
+    makeFilled(tb, N);
 
     // First attempt: destination too small — must fail.
     U8 smallDest[N / 2] = {};
     FwSizeType length = N;
-    Fw::SerializeStatus status = tb.buf.deserializeTo(
-        smallDest, sizeof(smallDest), length, Fw::Serialization::OMIT_LENGTH);
+    Fw::SerializeStatus status =
+        tb.buf.deserializeTo(smallDest, sizeof(smallDest), length, Fw::Serialization::OMIT_LENGTH);
     EXPECT_EQ(status, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 
     // Second attempt: correctly-sized destination — must succeed and return
     // the same data that was written originally.
     U8 goodDest[N] = {};
     length = N;
-    status = tb.buf.deserializeTo(
-        goodDest, sizeof(goodDest), length, Fw::Serialization::OMIT_LENGTH);
+    status = tb.buf.deserializeTo(goodDest, sizeof(goodDest), length, Fw::Serialization::OMIT_LENGTH);
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(length, N);
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(goodDest[i], static_cast<U8>(i & 0xFF))
-            << "Byte mismatch at index " << i;
+        EXPECT_EQ(goodDest[i], static_cast<U8>(i & 0xFF)) << "Byte mismatch at index " << i;
     }
 }
 
@@ -315,27 +308,23 @@ TEST(DeserializeTo, SuccessiveCallsPartitionSource) {
     constexpr FwSizeType TOTAL = 8;
     constexpr FwSizeType FIRST = 3;
     constexpr FwSizeType SECOND = TOTAL - FIRST;
-    TestBuffer tb; makeFilled(tb, TOTAL);
+    TestBuffer tb;
+    makeFilled(tb, TOTAL);
 
     U8 dest1[FIRST] = {};
     FwSizeType len1 = FIRST;
-    EXPECT_EQ(tb.buf.deserializeTo(dest1, sizeof(dest1), len1,
-                                   Fw::Serialization::OMIT_LENGTH),
-              Fw::FW_SERIALIZE_OK);
+    EXPECT_EQ(tb.buf.deserializeTo(dest1, sizeof(dest1), len1, Fw::Serialization::OMIT_LENGTH), Fw::FW_SERIALIZE_OK);
 
     U8 dest2[SECOND] = {};
     FwSizeType len2 = SECOND;
-    EXPECT_EQ(tb.buf.deserializeTo(dest2, sizeof(dest2), len2,
-                                   Fw::Serialization::OMIT_LENGTH),
-              Fw::FW_SERIALIZE_OK);
+    EXPECT_EQ(tb.buf.deserializeTo(dest2, sizeof(dest2), len2, Fw::Serialization::OMIT_LENGTH), Fw::FW_SERIALIZE_OK);
 
     // Verify each partition contains the right slice of 0, 1, 2, …
     for (FwSizeType i = 0; i < FIRST; ++i) {
         EXPECT_EQ(dest1[i], static_cast<U8>(i)) << "dest1 mismatch at " << i;
     }
     for (FwSizeType i = 0; i < SECOND; ++i) {
-        EXPECT_EQ(dest2[i], static_cast<U8>((FIRST + i) & 0xFF))
-            << "dest2 mismatch at " << i;
+        EXPECT_EQ(dest2[i], static_cast<U8>((FIRST + i) & 0xFF)) << "dest2 mismatch at " << i;
     }
 }
 
@@ -361,8 +350,7 @@ TEST(PopBytes, HappyPath) {
 
     EXPECT_EQ(status, Fw::FW_SERIALIZE_OK);
     for (FwSizeType i = 0; i < N; ++i) {
-        EXPECT_EQ(dest[i], static_cast<U8>(10 + i))
-            << "popBytes byte mismatch at " << i;
+        EXPECT_EQ(dest[i], static_cast<U8>(10 + i)) << "popBytes byte mismatch at " << i;
     }
 }
 
