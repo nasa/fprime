@@ -3358,6 +3358,7 @@ TEST_F(FpySequencerTester, seqCancelIn) {
     dispatchUntilState(State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
 
 TEST_F(FpySequencerTester, seqRunInArgs) {
     allocMem();
