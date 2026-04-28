@@ -531,6 +531,12 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
+    // Validate buff is non-null whenever buffCapacity > 0, and buffCapacity
+    // is sufficient to hold the requested length.
+    FW_ASSERT(buffCapacity >= static_cast<FwSizeType>(length),
+              static_cast<FwAssertArgType>(buffCapacity),
+              static_cast<FwAssertArgType>(length));
+
     // endianMode is an enum; an out-of-range value indicates a caller bug.
     FW_ASSERT(endianMode == Endianness::BIG || endianMode == Endianness::LITTLE,
               static_cast<FwAssertArgType>(endianMode));
