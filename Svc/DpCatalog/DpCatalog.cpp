@@ -21,7 +21,9 @@ static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compName) {}
+DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compName) {
+    // Members are default-initialized via in-class initializers in the header.
+}
 
 void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
                           FwSizeType numDirs,
