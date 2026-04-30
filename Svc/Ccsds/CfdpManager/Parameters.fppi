@@ -4,11 +4,11 @@ param LocalEid: Cfdp.EntityId \
 
 @ Maximum number of bytes to put into a file PDU
 param OutgoingFileChunkSize: U32 \
-    default 480
+    default 992
 
 @ The maximum number of received bytes to calculate a CRC for in a single scheduler cycle
 param RxCrcCalcBytesPerCycle: U32 \
-    default 16384
+    default 65536
 
 @ Default CFDP channel for fileIn port-initiated file transfers
 param FileInDefaultChannel: U8 \
@@ -40,7 +40,7 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
-            max_outgoing_pdus_per_cycle = 32, \
+            max_outgoing_pdus_per_cycle = 64, \
             tmp_dir = "/tmp", \
             fail_dir = "/fail" \
         }, \
@@ -51,7 +51,7 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             inactivity_timer = 30, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
-            max_outgoing_pdus_per_cycle = 32, \
+            max_outgoing_pdus_per_cycle = 64, \
             tmp_dir = "/tmp", \
             fail_dir = "/fail" \
         } \

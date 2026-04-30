@@ -62,7 +62,7 @@ module Svc {
             @
             @ @par Limits:
             @      Must respect any CCSDS packet size limits on the system.
-            constant MaxPduSize = 512
+            constant MaxPduSize = 1024
         }
     }
 }
