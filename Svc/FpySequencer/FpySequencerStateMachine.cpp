@@ -19,13 +19,21 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
 //! Implementation for action setSequenceFilePath of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
-//! sets the current sequence file path member var
+//! sets the current sequence file path member var, resolving it against
+//! the SEQ_BASE_DIR parameter so that subsequent telemetry, events, and
+//! file IO see the fully qualified path
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
     SmId smId,                                              //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    this->m_sequenceFilePath = value.get_filePath();
+    Fw::ParamValid valid;
+    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(valid);
+    if (baseDir.length() > 0) {
+        this->m_sequenceFilePath.format("%s/%s", baseDir.toChar(), value.get_filePath().toChar());
+    } else {
+        this->m_sequenceFilePath = value.get_filePath();
+    }
 }
 
 //! Implementation for action setSequenceBlockState of state machine

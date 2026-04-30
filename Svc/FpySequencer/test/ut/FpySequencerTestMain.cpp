@@ -2770,6 +2770,74 @@ TEST_F(FpySequencerTester, validate) {
     ASSERT_EVENTS_ExtraBytesInSequence_SIZE(1);
 }
 
+TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
+    // base dir of "." should resolve "test.bin" to "./test.bin" — m_sequenceFilePath
+    // (used by tlm/events/file IO) should hold the fully resolved path
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    paramSet_SEQ_BASE_DIR(Fw::ParamString("."), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+
+    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("./test.bin"));
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
+    // empty base dir — m_sequenceFilePath should be the raw user-provided path
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(""), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+
+    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("test.bin"));
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
+    // a base dir that doesn't exist makes file open fail. the FileOpenError
+    // event should report the fully resolved path, not the user-supplied one
+    allocMem();
+    paramSet_SEQ_BASE_DIR(Fw::ParamString("nonexistent_dir"), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath,
+              Fw::LogStringArg("nonexistent_dir/test.bin"));
+}
+
+TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
+    // setting the param should emit the telemetry channel via parameterUpdated
+    Fw::ParamString val("/seq");
+    paramSet_SEQ_BASE_DIR(val, Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+
+    ASSERT_TLM_PRM_SEQ_BASE_DIR_SIZE(1);
+    ASSERT_TLM_PRM_SEQ_BASE_DIR(0, val.toChar());
+}
+
 TEST_F(FpySequencerTester, allocateBuffer) {
     Fw::MallocAllocator alloc;
     cmp.allocateBuffer(0, alloc, 100);
