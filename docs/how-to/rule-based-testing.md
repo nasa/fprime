@@ -287,7 +287,7 @@ To summarize, adding a new new rule involves:
     +FW_RBT_DEFINE_RULE(<ComponentName>Tester, <GroupName>, <RuleName>);
     ```
 
-2. Add the following boilerplate the precondition and action methods a the corresponding `test/ut/Rules/<GroupName>.cpp` file. For new rule groups, create a new `<GroupName>.cpp` file.
+2. Add the following precondition and action method implementations to the corresponding `test/ut/Rules/<GroupName>.cpp` file. For new rule groups, create a new `<GroupName>.cpp` file.
 
     ```diff
     + bool <ComponentName>Tester::<GroupName>__<RuleName>__precondition() const {
