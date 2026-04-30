@@ -666,6 +666,10 @@ void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
     this->cmp.m_computedCRC = crc;
 }
 
+void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {
+    this->cmp.m_sequenceArgs = args;
+}
+
 // Get cmp member pointers
 FpySequencer::Runtime* FpySequencerTester::tester_get_m_runtime_ptr() {
     return &(this->cmp.m_runtime);

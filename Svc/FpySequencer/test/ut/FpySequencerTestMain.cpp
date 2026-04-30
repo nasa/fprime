@@ -2717,10 +2717,56 @@ TEST_F(FpySequencerTester, readHeader) {
 }
 
 TEST_F(FpySequencerTester, readBody) {
-    U8 data[Fpy::MAX_SEQUENCE_STATEMENT_COUNT * Fpy::Statement::SERIALIZED_SIZE];
+    FwSizeType argSpecSize = Fpy::MAX_SEQUENCE_ARG_COUNT * Fpy::ArgSpec::SERIALIZED_SIZE;
+    FwSizeType stmtSize = Fpy::MAX_SEQUENCE_STATEMENT_COUNT * Fpy::Statement::SERIALIZED_SIZE;
 
-    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
-    // write some statements (no arg mappings in body anymore, arg_specs are separate)
+    U8 data[argSpecSize + stmtSize];
+
+    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));    
+    
+    // write some argSpecs
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+    Svc::SeqArgs maxArgs{0, 0};
+    maxArgs.set_size(Fpy::MAX_SEQUENCE_ARG_COUNT * sizeof(U32));
+    tester_set_m_sequenceArgs(maxArgs);
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
+        Fw::String argName;
+        argName.format("arg%u", ii);
+        Fw::String typeName("U32");
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(argName), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(typeName), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(0);
+
+    ASSERT_EQ(tester_readBody(), Fw::Success::SUCCESS);
+
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
+        Fw::String expectedArgName;
+        expectedArgName.format("arg%u", ii);
+        ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_args()[ii].get_argName(), expectedArgName);
+        ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_args()[ii].get_typeName(), Fw::String("U32"));
+        ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_args()[ii].get_argSize(), sizeof(U32));
+    }
+
+    // check not writing enough arguments
+    // -1 intended mistake 
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(""), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(""), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    ASSERT_EQ(tester_readBody(), Fw::Success::FAILURE);
+
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+
+    // write some statements
+    Svc::SeqArgs noArgs{0, 0};
+    tester_set_m_sequenceArgs(noArgs);
+    tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(0);
     Fpy::Statement stmt(Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
@@ -2740,13 +2786,7 @@ TEST_F(FpySequencerTester, readBody) {
 
     // now see what happens if we don't write enough stmts
     tester_get_m_sequenceBuffer_ptr()->resetSer();
-    tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
-    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
-        // map arg idx ii to serReg pos 123
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U8>(123)),
-                  Fw::SerializeStatus::FW_SERIALIZE_OK);
-    }
     // the -1 here is the intended mistake
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT - 1; ii++) {
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
