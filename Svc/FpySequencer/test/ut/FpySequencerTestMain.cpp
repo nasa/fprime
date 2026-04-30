@@ -2339,7 +2339,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_arg_name) {
     allocMem();
     clearSeq();
 
-    // Create arg_spec with zero-length arg name (invalid)
+    // Create arg_spec with zero-length arg name (valid)
     addArgumentSpec("", "U32", sizeof(U32));  // Empty string for arg name
     add_NO_OP();
     writeToFile("test.bin");
@@ -2353,12 +2353,11 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_arg_name) {
 
     sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
     dispatchUntilState(State::VALIDATING);
-    // Should fail during arg_spec deserialization due to zero-length arg name
-    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
-    ASSERT_from_seqDoneOut_SIZE(1);
-    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::OK);
 
     removeFile("test.bin");
 }
@@ -2367,7 +2366,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_type_name) {
     allocMem();
     clearSeq();
 
-    // Create arg_spec with zero-length type name (invalid)
+    // Create arg_spec with zero-length type name (valid)
     addArgumentSpec("arg1", "", sizeof(U32));  // Empty string for type name
     add_NO_OP();
     writeToFile("test.bin");
@@ -2381,13 +2380,12 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_type_name) {
 
     sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
     dispatchUntilState(State::VALIDATING);
-    // Should fail during arg_spec deserialization due to zero-length type name
-    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
-    ASSERT_from_seqDoneOut_SIZE(1);
-    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::OK);
+    
     removeFile("test.bin");
 }
 
@@ -2429,15 +2427,14 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_size_mismatch) {
     allocMem();
     clearSeq();
 
-    // Create arg_spec claiming U32 (4 bytes) but provide wrong size
-    addArgumentSpec("badArg", "U32", sizeof(U64));  // Type says U32, size says U64 (8 bytes)
+    addArgumentSpec("arg", "U64", sizeof(U64));  // U64 Arg
     add_NO_OP();
     writeToFile("test.bin");
 
     // Create args buffer with actual U32 (4 bytes)
     Svc::SeqArgs args{0, 0};
     Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
-    U32 arg1Val = 99;
+    U32 arg1Val = 99; // Passing in a U32
     ASSERT_EQ(argBuf.serializeFrom(arg1Val), Fw::FW_SERIALIZE_OK);
     args.set_size(argBuf.getSize());
 

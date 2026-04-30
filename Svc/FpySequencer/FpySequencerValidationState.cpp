@@ -147,7 +147,7 @@ Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
     
     const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
-    this->m_totalReadArgumentSize = 0;
+    this->m_totalExpectedArgSize = 0;
     
     // deser arguments
      // Read and deserialize each arg_spec incrementally since they're variable-length
@@ -166,10 +166,6 @@ Fw::Success FpySequencer::readBody() {
             );
             return Fw::Success::FAILURE;
         }
-        if (myString.length() == 0) {
-            this->log_WARNING_HI_InvalidArgSpec(this->m_sequenceFilePath);
-            return Fw::Success::FAILURE;
-        }
         argSpec.set_argName(myString);
 
         // Read type_name (length + string)
@@ -182,10 +178,6 @@ Fw::Success FpySequencer::readBody() {
                 this->m_sequenceBuffer.getDeserializeSizeLeft(),
                 this->m_sequenceBuffer.getSize()
             );
-            return Fw::Success::FAILURE;
-        }
-        if (myString.length() == 0) {
-            this->log_WARNING_HI_InvalidArgSpec(this->m_sequenceFilePath);
             return Fw::Success::FAILURE;
         }
         argSpec.set_typeName(myString);
@@ -201,17 +193,17 @@ Fw::Success FpySequencer::readBody() {
         }
 
         // Check for overflow before accumulation
-        if (m_totalReadArgumentSize > Fpy::MAX_STACK_SIZE - argSize) {
+        if (m_totalExpectedArgSize > Fpy::MAX_STACK_SIZE - argSize) {
             this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(argSize, Fpy::MAX_STACK_SIZE,
                                                                 this->m_sequenceFilePath);
             return Fw::Success::FAILURE;
         }
         argSpec.set_argSize(argSize);
-        m_totalReadArgumentSize += argSize;
+        m_totalExpectedArgSize += argSize;
     }
 
     // Validate total argument size
-    if (this->m_totalReadArgumentSize != this->m_sequenceArgs.get_size()){
+    if (this->m_totalExpectedArgSize != this->m_sequenceArgs.get_size()){
         this->log_WARNING_HI_ArgSizeMismatch(this->m_sequenceObj.get_header().get_argumentCount(),
                                              this->m_sequenceArgs.get_size(),
                                              this->m_sequenceFilePath);

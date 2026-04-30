@@ -63,13 +63,13 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     Fw::ExternalSerializeBuffer buf;
     buf.setExtBuffer(data, sizeof(data));
 
-    // Calculate body size (statements and arg_specs)
-    for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
-        ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    }    
+    // Calculate body size (arg_specs and statements)
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+    for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
+        ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }    
 
     seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();

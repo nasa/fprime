@@ -636,7 +636,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // Size of arguments read in current sequence. Used for validation between
     // User provided arguments and what is requested of the sequence.
-    Fpy::StackSizeType m_totalReadArgumentSize{0};
+    Fpy::StackSizeType m_totalExpectedArgSize{0};
 
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
@@ -750,9 +750,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // reads and validates the header from the m_sequenceBuffer
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readHeader();
-    // helper function to read and deserialize a variable-length string field (length byte + string bytes)
-    // returns the length via outLength parameter and writes string data to buffer
-    Fw::Success deserializeStringField(Os::File& file, U8* buffer, U8& outLength);
     // reads and validates the body from the m_sequenceBuffer
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readBody();
