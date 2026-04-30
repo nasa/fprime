@@ -19,7 +19,7 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::m
 
 namespace Svc {
 CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
-    : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0), m_numCmdsDropped(0) {}
+    : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0), m_numCmdsDropped(0), m_numCmdQueueFull(0) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
 
@@ -46,7 +46,7 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
         this->log_COMMAND_OpCodeCompleted(opCode);
     } else {
         this->m_numCmdErrors++;
-        FW_ASSERT(response.e != Fw::CmdResponse::OK);
+        this->log_WARNING_HI_CommandError(opCode, response);
         this->log_COMMAND_OpCodeError(opCode, response);
     }
     // look for command source
@@ -103,6 +103,19 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
                 return;
             }
         }  // end if status port connected
+        
+        // Check if destination component queue is full before dispatching
+        if (this->isConnected_compCmdSendQueueFull_InputPort(0)) {
+            // If queue full port connected, assume destination queue might be full
+            // and the component will notify via this port
+            this->m_pendingQueueFullCheck = true;
+            this->m_pendingOpCode = cmdPkt.getOpCode();
+            this->m_pendingCmdSeq = this->m_seq;
+            this->m_pendingPortNum = portNum;
+            this->m_pendingContext = context;
+            this->m_pendingArgBuffer = cmdPkt.getArgBuffer();
+        }
+        
         // pass arguments to argument buffer
         this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
         // log dispatched command
@@ -110,6 +123,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
         // increment command count
         this->m_numCmdsDispatched++;
+        this->m_pendingQueueFullCheck = false;
     } else {
         this->log_WARNING_HI_InvalidCommand(cmdPkt.getOpCode());
         this->m_numCmdErrors++;
@@ -121,6 +135,16 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
     // increment sequence number
     this->m_seq++;
+}
+
+void CommandDispatcherImpl::compCmdSendQueueFull_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq) {
+    this->m_numCmdQueueFull++;
+    this->log_WARNING_HI_CommandDroppedQueueFull(opCode, portNum);
+    
+    // Send error response back to command source
+    if (this->isConnected_seqCmdStatus_OutputPort(this->m_pendingPortNum)) {
+        this->seqCmdStatus_out(this->m_pendingPortNum, opCode, this->m_pendingContext, Fw::CmdResponse::EXECUTION_ERROR);
+    }
 }
 
 void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {
@@ -171,6 +195,12 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
 
     // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
     this->m_numCmdsDropped++;
+    
+    // Fix #5065: Send error response back to caller when queue overflows
+    if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+        this->seqCmdStatus_out(portNum, opcode, context, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+    
     this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode, context);
 }
 

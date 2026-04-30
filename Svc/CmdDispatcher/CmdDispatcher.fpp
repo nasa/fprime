@@ -1,4 +1,3 @@
-
 module Svc {
 
   @ A component for dispatching commands
@@ -22,6 +21,9 @@ module Svc {
 
     @ Command buffer input port for sequencers or other sources of command buffers
     async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com hook
+
+    @ Input port for destination queue full notification
+    async input port compCmdSendQueueFull: [CmdDispatcherComponentCommandPorts] Fw.CmdReg
 
     @ Ping input port
     async input port pingIn: Svc.Ping
@@ -195,6 +197,25 @@ module Svc {
       severity warning high \
       id 11 \
       format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" \
+      throttle 5
+
+    @ Command error event providing diagnostic visibility for ground operators
+    event CommandError(
+                        Opcode: FwOpcodeType @< The opcode with the error
+                        error: Fw.CmdResponse @< The error value
+                      ) \
+      severity warning high \
+      id 12 \
+      format "Command 0x{x} failed with error {}"
+
+    @ Command dropped due to queue full on destination component
+    event CommandDroppedQueueFull(
+                                   Opcode: FwOpcodeType @< The command opcode dropped
+                                   $port: I32 @< The destination port
+                                 ) \
+      severity warning high \
+      id 13 \
+      format "Command 0x{x} dropped due to queue full on destination port {}" \
       throttle 5
 
     # ----------------------------------------------------------------------

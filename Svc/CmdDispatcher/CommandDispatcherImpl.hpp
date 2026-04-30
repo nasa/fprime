@@ -42,6 +42,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!
     //!  \param name the component instance name
     CommandDispatcherImpl(const char* name);
+    
     //!  \brief Component destructor
     //!
     //!  The destructor for this component is empty
@@ -62,6 +63,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
                              FwOpcodeType opCode,
                              U32 cmdSeq,
                              const Fw::CmdResponse& response) override;
+    
     //!  \brief component command buffer handler
     //!
     //!  The command buffer handler is called to submit a new
@@ -71,6 +73,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param data the buffer containing the command.
     //!  \param context a user value returned with the status
     void seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+    
     //!  \brief component command registration handler
     //!
     //!  The command registration handler is called to register
@@ -80,6 +83,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param portNum the number of the incoming port.
     //!  \param opCode the opcode being registered.
     void compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) override;
+    
     //!  \brief component ping handler
     //!
     //!  The ping handler responds to messages to verify that the task
@@ -104,6 +108,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param opCode the NO_OP opcode.
     //!  \param cmdSeq the assigned sequence number for the command
     void CMD_NO_OP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
+    
     //!  \brief NO_OP with string command handler
     //!
     //!  A test command that receives a string and sends an event
@@ -113,6 +118,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param cmdSeq the assigned sequence number for the command
     //!  \param arg1 the string argument
     void CMD_NO_OP_STRING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& arg1) override;
+    
     //!  \brief A test command with different argument types
     //!
     //!  A test command that receives a set of arguments of different types
@@ -123,6 +129,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param arg2 the F32 argument
     //!  \param arg3 the U8 argument
     void CMD_TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2, U8 arg3) override;
+    
     //!  \brief A command to clear the command tracking
     //!
     //!  This command will clear the table tracking the completion of commands.
@@ -143,6 +150,15 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param data the buffer containing the command.
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+
+    //!  \brief Called when destination component queue is full
+    //!
+    //!  Generate event and send error response back to command source
+    //!
+    //!  \param portNum the number of the port reporting queue full.
+    //!  \param opCode the opcode that could not be delivered
+    //!  \param cmdSeq the sequence number of the dropped command
+    void compCmdSendQueueFull_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq);
 
     //! \brief map from opcode to output port index
     //!
@@ -171,7 +187,17 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
     U32 m_numCmdsDropped;     //!< number of commands dropped due to buffer overflow
+    U32 m_numCmdQueueFull;    //!< number of commands dropped due to destination queue full
+
+    // Pending command state for queue full detection
+    bool m_pendingQueueFullCheck;
+    FwOpcodeType m_pendingOpCode;
+    U32 m_pendingCmdSeq;
+    FwIndexType m_pendingPortNum;
+    U32 m_pendingContext;
+    Fw::CmdArgBuffer m_pendingArgBuffer;
 };
+
 }  // namespace Svc
 
 #endif /* COMMANDDISPATCHERIMPL_HPP_ */

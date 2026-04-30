@@ -27,6 +27,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runNopCommands();
     void runClearCommandTracking();
     void runCommandQueueOverflow();
+    void runCommandErrorResponse();
 
     void registerBuiltinCommands();
 

@@ -745,6 +745,61 @@ void CommandDispatcherTester::runCommandQueueOverflow() {
     ASSERT_TLM_CommandsDropped(0, 6);
 }
 
+void CommandDispatcherTester::runCommandErrorResponse() {
+    // verify sequence tracker table is empty
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
+    this->registerBuiltinCommands();
+
+    // register our own command
+    FwOpcodeType testOpCode = 0x50;
+    U32 testContext = 13;
+
+    this->clearEvents();
+    this->invoke_to_compCmdReg(0, testOpCode);
+    ASSERT_EQ(this->m_impl.m_entryTable.getSize(), 5);
+    FwIndexType port;
+    ASSERT_EQ(Fw::Success::SUCCESS, this->m_impl.m_entryTable.find(testOpCode, port));
+    ASSERT_EQ(port, 0);
+
+    // verify registration event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
+    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+
+    // dispatch a test command
+    U32 testCmdArg = 100;
+    this->clearEvents();
+    Fw::ComBuffer buff;
+    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+
+    // verify dispatch event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
+    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+
+    this->clearEvents();
+    this->m_seqStatusRcvd = false;
+    // perform command response with error to trigger CommandError event
+    this->invoke_to_compCmdStat(0, testOpCode, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+
+    // Verify CommandError event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CommandError_SIZE(1);
+    ASSERT_EVENTS_CommandError(0, testOpCode, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Verify status passed back to port
+    ASSERT_TRUE(this->m_seqStatusRcvd);
+    ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+    ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+    ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 void CommandDispatcherTester::from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                    U32 key                    /*!< Value to return to pinger*/
 ) {}
