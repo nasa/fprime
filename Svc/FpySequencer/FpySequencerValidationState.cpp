@@ -41,7 +41,15 @@ Fw::Success FpySequencer::validate() {
     this->m_computedCRC = CRC_INITIAL_VALUE;
 
     Os::File sequenceFile;
-    Os::File::Status openStatus = sequenceFile.open(this->m_sequenceFilePath.toChar(), Os::File::OPEN_READ);
+    Fw::ParamValid baseDirValid;
+    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
+    Fw::String resolvedPath;
+    if (baseDir.length() > 0) {
+        resolvedPath.format("%s/%s", baseDir.toChar(), this->m_sequenceFilePath.toChar());
+    } else {
+        resolvedPath = this->m_sequenceFilePath;
+    }
+    Os::File::Status openStatus = sequenceFile.open(resolvedPath.toChar(), Os::File::OPEN_READ);
 
     if (openStatus != Os::File::Status::OP_OK) {
         this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(openStatus));
