@@ -276,6 +276,33 @@ Add the tester, shadow state, and all rule files to `register_fprime_ut` in your
  )
 ```
 
+### Summary for How To Add a new Rule
+
+
+To summarize, adding a new new rule involves:
+
+1. Add a new `FW_RBT_DEFINE_RULE` declaration in the tester header `test/ut/MyComponentTester.hpp`:
+
+    ```diff
+    +FW_RBT_DEFINE_RULE(<ComponentName>Tester, <GroupName>, <RuleName>);
+    ```
+
+2. Add the following boilerplate the precondition and action methods a the corresponding `test/ut/Rules/<GroupName>.cpp` file. For new rule groups, create a new `<GroupName>.cpp` file.
+
+    ```diff
+    + bool <ComponentName>Tester::<GroupName>__<RuleName>__precondition() const {
+    +     return true; // TODO: optional precondition logic, always true can be an option
+    + }
+    + void <ComponentName>Tester::<GroupName>__<RuleName>__action() {
+    +     // TODO: implement the rule behavior
+    + }
+    ```
+
+The rule is then ready to be applied in test mains via scenarios as seen in step 6.
+
+>[!TIP]
+> To add the action and precondition boilerplate, simply copy-paste an existing rule implementation and modify the RuleName with your new rule name.
+
 ## Best Practices
 
 - Keep preconditions side-effect free
@@ -296,9 +323,11 @@ Add the tester, shadow state, and all rule files to `register_fprime_ut` in your
 
 The key design choice is that `precondition` and `action` are implemented to delegate to the tester itself rather than in the rule struct directly. This is what makes F Prime test assert macros like `ASSERT_EVENTS_*` and `ASSERT_TLM_*` work inside rule bodies — those macros expand to `this->...`, and `this` must be the tester instance.
 
+The definition of this macro can be found in [`TestUtils/RuleBasedTesting.hpp`](../../TestUtils/RuleBasedTesting.hpp) for reference.
+
 ### Rule Parameterization at Construction
 
-As seen above, the `FW_RBT_DEFINE_RULE` macro is a helper that easily enables the use of the F´ `ASSERT_*` macros inside rule bodies. Because the constructor of the rule is empty, it does not support parameterizing a rule at instantiation time. Parameterization can be achieved by inlining the rule struct and specifying a constructor.
+As seen above, the `FW_RBT_DEFINE_RULE` macro is a helper that easily enables the use of the F´ `ASSERT_*` macros inside rule bodies. Because the constructor of the rule is empty, it does not support parameterizing a rule at instantiation time. Parameterization can be useful in some instances and can be achieved by inlining the rule struct and specifying a constructor.
 
 ```cpp
 class ApidManagerTester : public ApidManagerGTestBase {
