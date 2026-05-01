@@ -70,7 +70,7 @@ Ports are organized as follows:
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
 | dataOut | output array[N] | `Fw.BufferSend` | Send encoded CFDP PDU data buffers to downstream components. One port (`N`) per CFDP channel. |
-| dataReturnIn | async input array[N] | `Svc.ComDataWithContext` | Receive buffers previously sent via `dataOut` after downstream processing is complete. One port per CFDP channel. |
+| dataReturnIn | async input array[N] | `Fw.BufferSend` | Receive buffers previously sent via `dataOut` after downstream processing is complete. One port per CFDP channel. |
 | bufferAllocate | output array[N] | `Fw.BufferGet` | Request allocation of buffers for constructing outgoing CFDP PDUs. One port (`N`) per CFDP channel. |
 | bufferDeallocate | output array[N] | `Fw.BufferSend` | Return/deallocate buffers that were allocated but not sent (e.g., due to errors). One port (`N`) per CFDP channel. |
 
