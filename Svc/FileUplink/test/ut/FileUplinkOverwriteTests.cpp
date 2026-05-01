@@ -6,8 +6,8 @@
 // Add to CMakeLists.txt sources alongside the other test .cpp files.
 // ======================================================================
 
-#include "FileUplinkTester.hpp"
 #include <gtest/gtest.h>
+#include "FileUplinkTester.hpp"
 
 namespace Svc {
 

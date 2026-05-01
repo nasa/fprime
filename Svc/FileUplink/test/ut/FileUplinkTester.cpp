@@ -10,9 +10,9 @@
 //
 // ======================================================================
 
+#include <sys/stat.h>
 #include <cerrno>
 #include <cstring>
-#include <sys/stat.h>
 
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
