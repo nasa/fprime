@@ -305,7 +305,7 @@ class Channel {
      * another queue. Need this function because the path of
      * freeing a transaction (returning to default state)
      * means that it must be removed from the current queue
-     * otherwise if the structure is zero'd out the queue
+     * otherwise if the structure is cleared the queue
      * will become corrupted due to other nodes on the queue
      * pointing to an invalid node
      *
