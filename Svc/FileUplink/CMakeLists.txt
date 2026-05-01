@@ -27,6 +27,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FileUplink.fpp"
   ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkTester.cpp
   ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkMain.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkOverwriteTests.cpp
 )
 register_fprime_ut()
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")

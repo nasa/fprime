@@ -87,6 +87,18 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //!
     void cancelPacketInDataMode();
 
+    //! Overwrite a larger file with a smaller one; verify no stale bytes remain
+    //!
+    void overwriteWithSmallerFile();
+
+    //! Overwrite a file with one of the same size; verify content changes
+    //!
+    void overwriteSameSizeFile();
+
+    //! Overwrite a smaller file with a larger one; verify full content written
+    //!
+    void overwriteWithLargerFile();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for from ports
@@ -142,6 +154,10 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //! Verify file data
     //!
     void verifyFileData(const char* const path, const U8* const sentData, const size_t sentDataSize);
+
+    //! Verify on-disk file size equals expectedSize (catches stale tail bytes)
+    //!
+    void verifyFileSize(const char* const path, size_t expectedSize);
 
     //! Remove a file
     //!

@@ -12,6 +12,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <sys/stat.h>
 
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
@@ -527,6 +528,144 @@ void FileUplinkTester ::removeFile(const char* const path) {
     if (status != 0) {
         ASSERT_EQ(ENOENT, errno);
     }
+}
+
+void FileUplinkTester ::verifyFileSize(const char* const path, const size_t expectedSize) {
+    struct stat st;
+    ASSERT_EQ(0, ::stat(path, &st)) << "Could not stat " << path;
+    ASSERT_EQ(static_cast<size_t>(st.st_size), expectedSize)
+        << "File has " << st.st_size << " bytes on disk; expected " << expectedSize
+        << ". Os::File::open is likely not truncating stale content.";
+}
+
+// ----------------------------------------------------------------------
+// Overwrite truncation tests
+// Regression coverage for the change in File.cpp:
+//   Os::File::open(path, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE)
+// Without truncation, stale bytes from a previously-larger file survive
+// past the new logical EOF and corrupt the uplinked content.
+// ----------------------------------------------------------------------
+
+void FileUplinkTester ::overwriteWithSmallerFile() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "overwrite_test.bin";
+
+    // --- First upload: 4 packets * PACKET_SIZE = 20 bytes of 0xAA ---
+    const U32 numLargePackets = 4;
+    const size_t largeFileSize = numLargePackets * PACKET_SIZE;
+    U8 largeData[largeFileSize];
+    memset(largeData, 0xAA, largeFileSize);
+
+    this->sendStartPacket(sourcePath, destPath, largeFileSize);
+    for (U32 i = 0; i < numLargePackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &largeData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum largeChecksum;
+    largeChecksum.update(largeData, 0, largeFileSize);
+    this->sendEndPacket(largeChecksum);
+
+    this->verifyFileData(destPath, largeData, largeFileSize);
+    this->verifyFileSize(destPath, largeFileSize);
+
+    // --- Second upload: 1 packet * PACKET_SIZE = 5 bytes of 0xBB ---
+    const U32 numSmallPackets = 1;
+    const size_t smallFileSize = numSmallPackets * PACKET_SIZE;
+    U8 smallData[smallFileSize];
+    memset(smallData, 0xBB, smallFileSize);
+
+    this->sendStartPacket(sourcePath, destPath, smallFileSize);
+    for (U32 i = 0; i < numSmallPackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &smallData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum smallChecksum;
+    smallChecksum.update(smallData, 0, smallFileSize);
+    this->sendEndPacket(smallChecksum);
+
+    // Content must be the new data only — no 0xAA stale tail
+    this->verifyFileData(destPath, smallData, smallFileSize);
+    this->verifyFileSize(destPath, smallFileSize);
+
+    this->removeFile(destPath);
+}
+
+void FileUplinkTester ::overwriteSameSizeFile() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "overwrite_test.bin";
+
+    const U32 numPackets = 2;
+    const size_t fileSize = numPackets * PACKET_SIZE;
+
+    // --- First upload: 0x11 fill ---
+    U8 firstData[fileSize];
+    memset(firstData, 0x11, fileSize);
+
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    for (U32 i = 0; i < numPackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &firstData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum firstChecksum;
+    firstChecksum.update(firstData, 0, fileSize);
+    this->sendEndPacket(firstChecksum);
+
+    this->verifyFileData(destPath, firstData, fileSize);
+
+    // --- Second upload: 0x22 fill, same path and size ---
+    U8 secondData[fileSize];
+    memset(secondData, 0x22, fileSize);
+
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    for (U32 i = 0; i < numPackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &secondData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum secondChecksum;
+    secondChecksum.update(secondData, 0, fileSize);
+    this->sendEndPacket(secondChecksum);
+
+    // All bytes must reflect the new upload
+    this->verifyFileData(destPath, secondData, fileSize);
+    this->verifyFileSize(destPath, fileSize);
+
+    this->removeFile(destPath);
+}
+
+void FileUplinkTester ::overwriteWithLargerFile() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "overwrite_test.bin";
+
+    // --- First upload: 1 packet * PACKET_SIZE = 5 bytes of 0x33 ---
+    const U32 numSmallPackets = 1;
+    const size_t smallFileSize = numSmallPackets * PACKET_SIZE;
+    U8 smallData[smallFileSize];
+    memset(smallData, 0x33, smallFileSize);
+
+    this->sendStartPacket(sourcePath, destPath, smallFileSize);
+    for (U32 i = 0; i < numSmallPackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &smallData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum smallChecksum;
+    smallChecksum.update(smallData, 0, smallFileSize);
+    this->sendEndPacket(smallChecksum);
+
+    this->verifyFileData(destPath, smallData, smallFileSize);
+
+    // --- Second upload: 4 packets * PACKET_SIZE = 20 bytes of 0x44 ---
+    const U32 numLargePackets = 4;
+    const size_t largeFileSize = numLargePackets * PACKET_SIZE;
+    U8 largeData[largeFileSize];
+    memset(largeData, 0x44, largeFileSize);
+
+    this->sendStartPacket(sourcePath, destPath, largeFileSize);
+    for (U32 i = 0; i < numLargePackets; ++i) {
+        this->sendDataPacket(i * PACKET_SIZE, &largeData[i * PACKET_SIZE]);
+    }
+    CFDP::Checksum largeChecksum;
+    largeChecksum.update(largeData, 0, largeFileSize);
+    this->sendEndPacket(largeChecksum);
+
+    this->verifyFileData(destPath, largeData, largeFileSize);
+    this->verifyFileSize(destPath, largeFileSize);
+
+    this->removeFile(destPath);
 }
 
 }  // namespace Svc
