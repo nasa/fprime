@@ -279,7 +279,7 @@ Add the tester, shadow state, and all rule files to `register_fprime_ut` in your
 ### Summary for How To Add a new Rule
 
 
-To summarize, adding a new new rule involves:
+To summarize, adding a new rule involves:
 
 1. Add a new `FW_RBT_DEFINE_RULE` declaration in the tester header `test/ut/MyComponentTester.hpp`:
 
