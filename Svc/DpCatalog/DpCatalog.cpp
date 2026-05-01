@@ -381,10 +381,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     FwSizeType totalFiles = 0;
 
     // get file listings from file system
-    const FwSizeType numDirs = (this->m_numDirectories <= DP_MAX_DIRECTORIES)
-                                   ? this->m_numDirectories
-                                   : static_cast<FwSizeType>(DP_MAX_DIRECTORIES);
-    for (FwSizeType dir = 0; dir < numDirs; dir++) {
+    // double bounds to appease static analysis
+    for (FwSizeType dir = 0; dir < this->m_numDirectories && dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES); dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;
