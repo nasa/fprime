@@ -32,10 +32,12 @@ tcp.
 | Requirement     | Description                                                                                                                 | Rationale                                                   | Verification Method |
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------|
 | SVC-COMSTUB-001 | `Svc::ComStub` shall accept `Fw::Buffer` for transmission and  pass them to a `Drv::ByteStreamSend` port                    | The comm interface must send `Fw::Buffer`s through a driver | Unit Test           |
-| SVC-COMSTUB-002 | `Svc::ComStub` shall send a `Fw::Success:SUCCESS` signal via an `Fw.SuccessCondition` port on `Drv::ByteStreamSend` success | Successful sends must notify any attached `Svc::ComQueue`   | Unit Test           |
-| SVC-COMSTUB-003 | `Svc::ComStub` shall send a `Fw::Success:FAILURE` signal via an `Fw.SuccessCondition` port on `Drv::ByteStreamSend` failure | Failed sends must notify any attached `Svc::ComQueue`       | Unit Test           |
+| SVC-COMSTUB-002 | `Svc::ComStub` shall send a `Fw::Success::SUCCESS` signal via `comStatusOut` on `Drv::ByteStreamSend` success (in response to data received on `dataIn`) | Successful sends must notify any attached `Svc::ComQueue` per the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol)   | Unit Test           |
+| SVC-COMSTUB-003 | `Svc::ComStub` shall send a `Fw::Success::FAILURE` signal via `comStatusOut` on `Drv::ByteStreamSend` failure | Failed sends must notify any attached `Svc::ComQueue` per the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol)       | Unit Test           |
 | SVC-COMSTUB-004 | `Svc::ComStub` shall retry sending to `Drv::ByteStreamSend` on `Drv::ByteStreamSend` retry                                  | Sends indicating `RETRY` should be retried.                 | Unit Test           |
-| SVC-COMSTUB-005 | `Svc::ComStub` shall pass-through `Fw::Buffer` from a  `Drv::ByteStreamRead` on `Drv::ByteStreamSend` success               | A Comm interface must receive `Fw::Buffer`s from a driver   | Unit Test           | 
+| SVC-COMSTUB-005 | `Svc::ComStub` shall pass-through `Fw::Buffer` from a  `Drv::ByteStreamRead` on `Drv::ByteStreamSend` success               | A Comm interface must receive `Fw::Buffer`s from a driver   | Unit Test           |
+| SVC-COMSTUB-006 | `Svc::ComStub` shall emit exactly one `Fw::Success::SUCCESS` via `comStatusOut` on start-up / driver connection to initiate data flow | Initial SUCCESS is required to start the [Communication Queue Protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol)   | Unit Test           |
+| SVC-COMSTUB-007 | `Svc::ComStub` shall emit exactly one `Fw::Success::SUCCESS` via `comStatusOut` after a driver reconnection following a previous failure to indicate recovery | Recovery SUCCESS resumes data flow per the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol)   | Unit Test           | 
 
 ## 4. Design
 
@@ -85,8 +87,7 @@ be useful
 ### 4.2. State, Configuration, and Runtime Setup
 
 `Svc::ComStub` stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
-response to a driver reconnection event. This is to implement the  Communication Adapter Protocol of a
-[communication adapter interface](../../../docs/reference/communication-adapter-interface.md). It also keeps
+response to a driver reconnection event. This implements the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol): the initial/recovery `Fw::Success::SUCCESS` initiates or resumes data flow from `Svc::ComQueue`. It also keeps
 track of a `m_retry_count` to limit the number of retries on an attempt to send data.
 
 ### 4.3. Port Handlers
@@ -101,8 +102,8 @@ asserts.
 
 #### 4.3.1 drvConnected
 
-This port receives the connected signal from the driver and responds with exactly one `READY` invocation to the
-`comStatusOut` port. This starts downlink. This occurs each time the driver reconnects.
+This port receives the connected signal from the driver and responds with exactly one `Fw::Success::SUCCESS` invocation to the
+`comStatusOut` port. This initiates data flow from `Svc::ComQueue` at start-up, or resumes data flow after a previous failure when the driver reconnects. This is one of the three valid contexts for `Fw::Success::SUCCESS` as defined in the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol).
 
 #### 4.3.1 drvReceiveIn
 

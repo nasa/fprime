@@ -14,7 +14,7 @@ module Svc {
     }
 
     array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
-    array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs
+    array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs default TELEMETRY_SECTION_DEFAULTS
     array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
     # ----------------------------------------------------------------------

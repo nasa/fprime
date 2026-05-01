@@ -519,8 +519,9 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                          ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum,            //!< The port number
-                          const Fw::StringBase& filename  //!< The sequence file
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& filename,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Sequence arguments (not currently used)
                           ) override;
 
     //! Handler implementation for seqDispatchIn

@@ -51,7 +51,8 @@ class AbstractState {
           m_NumFailedWrites(0),
           m_NumSuccessfulWrites(0),
           m_NumErrors(0),
-          m_procTypes(0) {}
+          m_procTypes(0),
+          m_procShrinkDataSizeOpt() {}
 
   public:
     // ----------------------------------------------------------------------
@@ -66,9 +67,15 @@ class AbstractState {
     //! Set the data size
     void setDataSize(FwSizeType dataSize) { this->m_dataSizeOpt.set(dataSize); }
 
+    void clearDataSize() { this->m_dataSizeOpt.clear(); }
+
     //! Get a data product buffer backed by bufferData
     //! \return The buffer
     Fw::Buffer getDpBuffer();
+
+    //! Get a data product buffer backed by bufferData
+    //! \return The buffer
+    Fw::Buffer getDpBufferWithProc(Fw::DpCfg::ProcType::SerialType procTypes);
 
   private:
     // ----------------------------------------------------------------------
@@ -127,6 +134,8 @@ class AbstractState {
 
     //! Bit mask for processing out port calls
     Fw::DpCfg::ProcType::SerialType m_procTypes;
+
+    TestUtils::Option<FwSizeType> m_procShrinkDataSizeOpt;
 };
 
 }  // namespace Svc

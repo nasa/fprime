@@ -66,6 +66,24 @@ TEST_F(Functionality, CopyConstructor) {
     close_rule.apply(*tester);
 }
 
+// Ensure that open works via the bounded char* overload
+TEST_F(Functionality, OpenWithCreationBounded) {
+    Os::Test::FileTest::Tester::OpenFileCreateBounded rule(false);
+    rule.apply(*tester);
+}
+
+// Ensure that open works via the ConstStringBase overload
+TEST_F(Functionality, OpenWithCreationString) {
+    Os::Test::FileTest::Tester::OpenFileCreateString rule(false);
+    rule.apply(*tester);
+}
+
+// Ensure that open asserts on unterminated path within bounds
+TEST_F(InvalidArguments, OpenBoundedPathUnterminated) {
+    Os::Test::FileTest::Tester::OpenIllegalBoundedPath rule;
+    rule.apply(*tester);
+}
+
 // Ensure that open on existence works
 TEST_F(FunctionalIO, OpenWithCreationExists) {
     Os::Test::FileTest::Tester::OpenFileCreate open_rule(false);
@@ -310,6 +328,8 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::FileTest::Tester::WriteIllegalBuffer write_illegal_buffer;
     Os::Test::FileTest::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
+    Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
+    Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_overwrite_rule,
@@ -328,7 +348,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
                                                         &read_illegal_buffer,
                                                         &write_illegal_buffer,
                                                         &incremental_invalid_mode_rule,
-                                                        &full_invalid_mode_rule};
+                                                        &full_invalid_mode_rule,
+                                                        &open_file_create_bounded_rule,
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
@@ -368,6 +390,8 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::FileTest::Tester::WriteInvalidModes write_invalid_modes_rule;
     Os::Test::FileTest::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
+    Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
+    Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_rule,
@@ -393,7 +417,9 @@ TEST_F(FunctionalIO, RandomizedTesting) {
                                                         &read_invalid_modes_rule,
                                                         &write_invalid_modes_rule,
                                                         &incremental_invalid_mode_rule,
-                                                        &full_invalid_mode_rule};
+                                                        &full_invalid_mode_rule,
+                                                        &open_file_create_bounded_rule,
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));

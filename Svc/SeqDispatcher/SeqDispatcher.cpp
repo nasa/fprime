@@ -26,7 +26,10 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
+                                const Fw::ConstStringBase& fileName,
+                                Fw::Wait block,
+                                const Svc::SeqArgs& args) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -47,12 +50,14 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
 
     this->m_dispatchedCount++;
     this->tlmWrite_dispatchedCount(this->m_dispatchedCount);
-    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning);
+    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, args);
 }
 
-void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                                       const Fw::StringBase& fileName  //!< The sequence file name
+void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,             //!< The port number
+                                       const Fw::StringBase& fileName,  //!< The sequence file name
+                                       const Svc::SeqArgs& args         //!< Sequence arguments (not currently used)
 ) {
+    (void)args;  // Suppress unused parameter warning
     FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, static_cast<FwAssertArgType>(portNum));
     if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK ||
         this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
@@ -121,7 +126,7 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
 }
 
 //! Handler for input port seqRunIn
-void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName) {
+void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName, const Svc::SeqArgs& args) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -129,16 +134,28 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
         return;
     }
 
-    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT);
+    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT, args);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
 
+// RUN command delegates to RUN_ARGS with empty arguments for backward compatibility
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
                                     Fw::Wait block) {
+    // Create empty args and delegate to RUN_ARGS handler
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
+}
+
+// RUN_ARGS command dispatches a sequence with optional arguments to the first available sequencer
+void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
+                                         const U32 cmdSeq,
+                                         const Fw::CmdStringArg& fileName,
+                                         Fw::Wait block,
+                                         Svc::SeqArgs buffer) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -147,7 +164,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
         return;
     }
 
-    this->runSequence(idx, fileName, block);
+    this->runSequence(idx, fileName, block, buffer);
 
     if (block == Fw::Wait::NO_WAIT) {
         // return instantly

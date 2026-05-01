@@ -99,6 +99,12 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    Fpy::StackSizeType availableSpace = Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size;
+
+    if (this->m_sequenceArgs.get_size() > availableSpace) {
+        return Fw::Success::FAILURE;
+    }
+
     return Fw::Success::SUCCESS;
 }
 

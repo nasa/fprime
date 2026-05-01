@@ -370,7 +370,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                    \
                                                                                                                     \
         /* Check successful serialization */                                                                        \
-        U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];                                                           \
+        U8 data[PrimitiveArgsPortBuffer::CAPACITY];                                                                 \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
         status = buf.serializeFrom(port.args.val1);                                                                 \
@@ -452,7 +452,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                    \
                                                                                                                     \
         /* Check successful serialization */                                                                        \
-        U8 data[InputStringArgsPort::SERIALIZED_SIZE];                                                              \
+        U8 data[StringArgsPortBuffer::CAPACITY];                                                                    \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
         status = buf.serializeFrom(port.args.val1);                                                                 \
@@ -497,7 +497,7 @@
         this->checkSerializeStatusBufferEmpty();                                                                    \
                                                                                                                     \
         /* Check successful serialization */                                                                        \
-        U8 data[InputEnumArgsPort::SERIALIZED_SIZE];                                                                \
+        U8 data[EnumArgsPortBuffer::CAPACITY];                                                                      \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
         status = buf.serializeFrom(port.args.val1);                                                                 \
@@ -541,7 +541,7 @@
                                                                                                                     \
         this->checkSerializeStatusBufferEmpty();                                                                    \
                                                                                                                     \
-        U8 data[InputArrayArgsPort::SERIALIZED_SIZE];                                                               \
+        U8 data[ArrayArgsPortBuffer::CAPACITY];                                                                     \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
         status = buf.serializeFrom(port.args.val1);                                                                 \
@@ -591,7 +591,7 @@
                                                                                                                     \
         this->checkSerializeStatusBufferEmpty();                                                                    \
                                                                                                                     \
-        U8 data[InputStructArgsPort::SERIALIZED_SIZE];                                                              \
+        U8 data[StructArgsPortBuffer::CAPACITY];                                                                    \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
                                                                                                                     \
         status = buf.serializeFrom(port.args.val1);                                                                 \

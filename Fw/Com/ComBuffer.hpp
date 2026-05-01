@@ -17,11 +17,11 @@
 
 namespace Fw {
 
-class ComBuffer final : public SerializeBufferBase {
+class ComBuffer final : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = 1010,
-        SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)  // size of buffer + storage of size word
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_COM_BUFFER_MAX_SIZE)  // size of buffer + storage of size word
     };
 
     ComBuffer(const U8* args, FwSizeType size);
