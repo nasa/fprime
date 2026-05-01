@@ -192,8 +192,9 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
-    U16 spacecraftId = static_cast<U16>(((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
-                                         AOSHeaderSubfields::spacecraftIdLsbOffset));
+    U16 spacecraftId =
+        static_cast<U16>((static_cast<U16>(header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
+                          AOSHeaderSubfields::spacecraftIdLsbOffset));
     spacecraftId |= static_cast<U16>((header.get_frameCountAndSignaling() & AOSHeaderSubfields::spacecraftIdMsbMask)
                                      << (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
@@ -515,18 +516,18 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
 
     // If length of length is 2 or more then there's an extra byte of extension/user defined (4.1.2.1.1)
     if (lengthOfLength >= EppLengthOfLength::Two) {
-        lengthOffset += 1U;
+        lengthOffset = static_cast<U8>(lengthOffset + 1U);
     }
 
     // If length of length is 4 then we add 2 bytes for the ccsds reserved field (4.1.2.1.1)
     if (lengthOfLength == EppLengthOfLength::Four) {
-        lengthOffset += 2U;
+        lengthOffset = static_cast<U8>(lengthOffset + 2U);
         // '0d3' on the wire, but means 4
         lengthOfLength = 4;
     }
 
     // Bytes to get to length + length of length
-    const U8 headerLength = lengthOffset + lengthOfLength;
+    const U8 headerLength = static_cast<U8>(lengthOffset + lengthOfLength);
 
     // Validate and read length field
     if (payloadSize < headerLength) {
@@ -547,7 +548,7 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
 U8 AosDeframer::getPacketVersion(U8 firstByte) {
     // PVN is the upper 3 bits per both CCSDS 133.0-B-2 and 133.1-B-3
     // EPP's Subfield array is done in bytes
-    return firstByte >> EPPSubfields::packetVersionOffset;
+    return static_cast<U8>(firstByte >> EPPSubfields::packetVersionOffset);
 }
 
 }  // namespace Ccsds
