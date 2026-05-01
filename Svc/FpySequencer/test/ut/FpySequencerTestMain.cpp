@@ -2824,8 +2824,7 @@ TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
     dispatchUntilState(State::IDLE);
 
     ASSERT_EVENTS_FileOpenError_SIZE(1);
-    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath,
-              Fw::LogStringArg("nonexistent_dir/test.bin"));
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/test.bin"));
 }
 
 TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
