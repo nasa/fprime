@@ -21,8 +21,9 @@ namespace Fw {
 class CmdArgBuffer final : public LinearBufferBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_CMD_BUFF,                    //!< type id for CmdArgBuffer
-        SERIALIZED_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE + sizeof(I32)  //!< size when serialized. Buffer + size of buffer
+        SERIALIZED_TYPE_ID = FW_TYPEID_CMD_BUFF,  //!< type id for CmdArgBuffer
+        SERIALIZED_SIZE =
+            STATIC_SERIALIZED_SIZE(FW_CMD_ARG_BUFFER_MAX_SIZE)  //!< size when serialized. Buffer + size of buffer
     };
 
     CmdArgBuffer(const U8* args, FwSizeType size);       //!< buffer source constructor

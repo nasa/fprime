@@ -11,7 +11,7 @@ class StatementArgBuffer : public LinearBufferBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF,
-        SERIALIZED_SIZE = FW_STATEMENT_ARG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
+        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_STATEMENT_ARG_BUFFER_MAX_SIZE)
     };
 
     StatementArgBuffer(const U8* args, FwSizeType size);

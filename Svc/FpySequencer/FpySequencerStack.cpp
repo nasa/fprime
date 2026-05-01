@@ -57,7 +57,7 @@ F64 FpySequencer::Stack::pop<F64>() {
 template <typename T>
 void FpySequencer::Stack::push(T val) {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
-    FW_ASSERT(this->size + sizeof(val) < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
+    FW_ASSERT(this->size + sizeof(val) <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
@@ -122,7 +122,7 @@ void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
 // pushes a byte array to the top of the stack from the source array
 // leaves the source array unmodified
 // does not convert endianness
-void FpySequencer::Stack::push(U8* src, Fpy::StackSizeType srcSize) {
+void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
     FW_ASSERT(this->size + srcSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(srcSize));
     memcpy(this->top(), src, srcSize);
@@ -131,7 +131,7 @@ void FpySequencer::Stack::push(U8* src, Fpy::StackSizeType srcSize) {
 
 // pushes zero bytes to the stack
 void FpySequencer::Stack::pushZeroes(Fpy::StackSizeType byteCount) {
-    FW_ASSERT(this->size + byteCount < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
+    FW_ASSERT(this->size + byteCount <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(byteCount));
     memset(this->top(), 0, byteCount);
     this->size += byteCount;

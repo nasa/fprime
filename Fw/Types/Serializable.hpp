@@ -679,6 +679,14 @@ class LinearBufferBase : public SerialBufferBase {
     LinearBufferBase& operator=(const LinearBufferBase& src);
 
   public:
+    //! \brief Get the static serialized size of a buffer
+    //! This is the max size of the buffer data plus the size of the stored size
+    static constexpr Serializable::SizeType STATIC_SERIALIZED_SIZE(
+        Serializable::SizeType maxSize  //!< The maximum buffer data size
+    ) {
+        return static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) + maxSize;
+    }
+
     //! \brief Destructor
     //!
     //! Destroys a LinearBufferBase instance. This is a virtual destructor
