@@ -524,7 +524,7 @@ void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
     ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE, 286);
 }
 
-void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
+void AosDeframerTester::testSpanningPacketMaintainedOnOIDFrame() {
     this->configureDefault();
 
     // Create a packet that spans two frames (6 + 280 = 286 bytes > 246-byte data zone)
@@ -539,17 +539,16 @@ void AosDeframerTester::testSpanningPacketAbandonedOnIdleFrame() {
     ASSERT_from_dataOut_SIZE(0);
     this->clearHistory();
 
-    // Frame 1 (vcCount=1): idle frame — spanning packet abandoned
+    // Frame 1 (vcCount=1): only idle data frame — spanning packet kept
     U8 idlePayload[1] = {0};
     Fw::Buffer buffer2 = this->assembleFrameBuffer(idlePayload, sizeof(idlePayload), M_PDUSubfields::FHP_IDLE_DATA_ONLY,
                                                    ComCfg::SpacecraftId, 0, 1);
     this->invoke_to_dataIn(0, buffer2, context);
 
-    ASSERT_from_dataOut_SIZE(0);  // Partial spanning packet dropped
+    ASSERT_from_dataOut_SIZE(0);
     ASSERT_EVENTS_IdleFrame_SIZE(1);
     ASSERT_EVENTS_IdleFrame(0, 0);
-    ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(1);
-    ASSERT_EVENTS_SpanningPacketAbandoned(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, TEST_DATA_ZONE_SIZE, 286);
+    ASSERT_EVENTS_SpanningPacketAbandoned_SIZE(0);
 }
 
 void AosDeframerTester::testSpanningPacketAbandonedOnPrematureFhp() {

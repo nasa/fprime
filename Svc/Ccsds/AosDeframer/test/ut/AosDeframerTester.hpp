@@ -115,8 +115,8 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet dropped when a VC frame count gap is detected mid-reassembly
     void testSpanningPacketAbandonedOnVcGap();
 
-    //! Test spanning packet dropped when an idle frame arrives mid-reassembly
-    void testSpanningPacketAbandonedOnIdleFrame();
+    //! Test spanning packet maintained when an only idle data frame arrives mid-reassembly
+    void testSpanningPacketMaintainedOnOIDFrame();
 
     //! Test spanning packet silently dropped when FHP arrives before the packet's expected end
     void testSpanningPacketAbandonedOnPrematureFhp();

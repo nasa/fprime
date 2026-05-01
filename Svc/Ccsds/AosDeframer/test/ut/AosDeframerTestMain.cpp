@@ -105,9 +105,9 @@ TEST(AosDeframer, testSpanningPacketAbandonedOnVcGap) {
     tester.testSpanningPacketAbandonedOnVcGap();
 }
 
-TEST(AosDeframer, testSpanningPacketAbandonedOnIdleFrame) {
+TEST(AosDeframer, testSpanningPacketMaintainedOnOIDFrame) {
     Svc::Ccsds::AosDeframerTester tester;
-    tester.testSpanningPacketAbandonedOnIdleFrame();
+    tester.testSpanningPacketMaintainedOnOIDFrame();
 }
 
 TEST(AosDeframer, testSpanningPacketAbandonedOnPrematureFhp) {
