@@ -21,32 +21,9 @@ static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-DpCatalog ::DpCatalog(const char* const compName)
-    : DpCatalogComponentBase(compName),
-      m_initialized(false),
-      m_dpTree(nullptr),
-      m_freeListHead(nullptr),
-      m_currentNode(nullptr),
-      m_currentXmitNode(nullptr),
-      m_numDpSlots(0),
-      m_numDirectories(0),
-      m_stateFileData(nullptr),
-      m_stateFileEntries(0),
-      m_memSize(0),
-      m_memPtr(nullptr),
-      m_allocatorId(0),
-      m_allocator(nullptr),
-      m_catalogBuilt(false),
-      m_xmitInProgress(false),
-      m_xmitCmdWait(false),
-      m_xmitBytes(0),
-      m_xmitOpCode(0),
-      m_xmitCmdSeq(0),
-      m_pendingFiles(0),
-      m_pendingDpBytes(0),
-      m_remainActive(false) {}
-
-DpCatalog ::~DpCatalog() {}
+DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compName) {
+    // Members are default-initialized via in-class initializers in the header.
+}
 
 void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
                           FwSizeType numDirs,
@@ -381,7 +358,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     FwSizeType totalFiles = 0;
 
     // get file listings from file system
-    for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
+    // double bounds to appease static analysis
+    for (FwSizeType dir = 0; dir < this->m_numDirectories && dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES); dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;

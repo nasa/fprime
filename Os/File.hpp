@@ -6,6 +6,7 @@
 #define Os_File_hpp_
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
 
 // Forward declaration for UTs
@@ -264,6 +265,51 @@ class File final : public FileInterface {
     //!
     Os::FileInterface::Status open(const char* path, Mode mode);
 
+    //! \brief open file with supplied path, bounded length, and mode
+    //!
+    //! Open the file passed in with the given mode. The path length is bounded by `length`.
+    //! Opening files with `OPEN_CREATE` mode will not clobber existing files. Use the overload
+    //! accepting `OverwriteType` to set overwrite flag and clobber existing files.
+    //!
+    //! It is invalid to send `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid for the path to not be null-terminated within `length` characters.
+    //!
+    //! \param path: c-string of path to open
+    //! \param length: bound on the path buffer size
+    //! \param mode: file operation mode
+    //! \return: status of the open
+    //!
+    Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode);
+
+    //! \brief open file with supplied string path and mode
+    //!
+    //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
+    //! files. Use the overload accepting `OverwriteType` to set overwrite flag and clobber existing files.
+    //!
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //!
+    //! \param path: ConstStringBase reference of path to open
+    //! \param mode: file operation mode
+    //! \return: status of the open
+    //!
+    Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode);
+
+    //! \brief open file with supplied string path, mode, and overwrite type
+    //!
+    //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
+    //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
+    //!
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid to supply `overwrite` as a non-enumerated value.
+    //!
+    //! \param path: ConstStringBase reference of path to open
+    //! \param mode: file operation mode
+    //! \param overwrite: overwrite existing file on create
+    //! \return: status of the open
+    //!
+    Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode, OverwriteType overwrite);
+
     //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Read data from this file up to the `size` and store it in `buffer`.  This version will
@@ -320,6 +366,26 @@ class File final : public FileInterface {
     //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
+
+    //! \brief open file with supplied path, bounded length, mode, and overwrite type
+    //!
+    //! Open the file passed in with the given mode. The path length is bounded by `length`.
+    //! If overwrite is set to OVERWRITE, then opening files in OPEN_CREATE mode will clobber
+    //! existing files. Set overwrite to NO_OVERWRITE to preserve existing files. This is the
+    //! core open implementation to which all other open overloads delegate.
+    //!
+    //! It is invalid to send `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid to supply `overwrite` as a non-enumerated value.
+    //! It is invalid for the path to not be null-terminated within `length` characters.
+    //!
+    //! \param path: c-string of path to open
+    //! \param length: bound on the path buffer size
+    //! \param mode: file operation mode
+    //! \param overwrite: overwrite existing file on create
+    //! \return: status of the open
+    //!
+    Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode, OverwriteType overwrite);
 
     //! \brief close the file, if not opened then do nothing
     //!
