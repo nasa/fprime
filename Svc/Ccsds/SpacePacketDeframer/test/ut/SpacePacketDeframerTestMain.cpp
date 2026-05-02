@@ -22,7 +22,7 @@ TEST(SpacePacketDeframer, testDeframingIncorrectLength) {
 }
 
 // ----------------------------------------------------------------------
-// Finding 1 — U16 overflow in pkt_length calculation
+// U16 overflow in pkt_length calculation
 // packetDataLength=0xFFFF wraps to 0 without the U32-widening fix,
 // causing the length guard to pass and an empty buffer to reach dataOut.
 // ----------------------------------------------------------------------
@@ -33,8 +33,8 @@ TEST(SpacePacketDeframer, testPacketDataLengthMaxU16Overflow) {
 }
 
 // ----------------------------------------------------------------------
-// Finding 3 — graceful handling of undersized buffers
-// The original FW_ASSERT aborts the FSW on deserialisation failure.
+// graceful handling of undersized buffers
+// The original FW_ASSERT aborts the FSW on deserialization failure.
 // The fix replaces it with an InvalidPacket EVR and a graceful drop.
 // ----------------------------------------------------------------------
 

@@ -52,7 +52,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
-    // Deserialisation can still fail if the buffer is malformed despite passing the size check
+    // Deserialization can still fail if the buffer is malformed despite passing the size check
     if (status != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_InvalidPacket();
         if (this->isConnected_errorNotify_OutputPort(0)) {
