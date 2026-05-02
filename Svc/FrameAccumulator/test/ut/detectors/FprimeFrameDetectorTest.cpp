@@ -5,21 +5,21 @@
 // These tests exercise FprimeFrameDetector::detect() directly (unlike the
 // FrameAccumulator tests which use a MockDetector). They cover:
 //
-//   Fix 1 — Overflow guard: near-max lengthField values must be rejected
-//            or handled safely before expected_frame_size is computed.
+//   Overflow guard: near-max lengthField values must be rejected
+//   or handled safely before expected_frame_size is computed.
 //
-//            Implementation note: lengthField is a TokenType (U32, 32-bit).
-//            On a 64-bit host FwSizeType is 64-bit, so TokenType::max +
-//            OVERHEAD cannot overflow FwSizeType — the guard is dead on
-//            this platform. The tests below therefore verify the correct
-//            observable behaviour (NO_FRAME_DETECTED) for extreme inputs
-//            regardless of which check produces it (guard vs. capacity).
-//            On a 32-bit embedded target where FwSizeType == U32, the
-//            guard becomes the critical path and prevents the overflow.
+//   Implementation note: lengthField is a TokenType (U32, 32-bit).
+//   On a 64-bit host FwSizeType is 64-bit, so TokenType::max +
+//   OVERHEAD cannot overflow FwSizeType — the guard is dead on
+//   this platform. The tests below therefore verify the correct
+//   observable behaviour (NO_FRAME_DETECTED) for extreme inputs
+//   regardless of which check produces it (guard vs. capacity).
+//   On a 32-bit embedded target where FwSizeType == U32, the
+//   guard becomes the critical path and prevents the overflow.
 //
-//   Fix 2 — hash_field_size invariant: frames that pass the guard must
-//            reach the CRC stage without triggering the FW_ASSERT, proving
-//            the safety contract holds end-to-end.
+//   hash_field_size invariant: frames that pass the guard must
+//   reach the CRC stage without triggering the FW_ASSERT, proving
+//   the safety contract holds end-to-end.
 // ======================================================================
 
 #include <cstring>
@@ -85,7 +85,7 @@ class FprimeFrameDetectorTest : public ::testing::Test {
 };
 
 // ======================================================================
-// Fix 1 Tests — extreme lengthField values are handled safely
+// Test — extreme lengthField values are handled safely
 // ======================================================================
 
 // ----------------------------------------------------------------------
@@ -173,7 +173,7 @@ TEST_F(FprimeFrameDetectorTest, ZeroLengthFieldPassesGuard) {
 }
 
 // ======================================================================
-// Fix 2 Tests — hash_field_size invariant (FW_ASSERT contract)
+// Test — hash_field_size invariant (FW_ASSERT contract)
 // ======================================================================
 
 // The FW_ASSERT before `hash_field_size` fires only if the guard failed to
@@ -244,7 +244,7 @@ TEST_F(FprimeFrameDetectorTest, HashFieldSizeInvariantHoldsForLargerFrame) {
 }
 
 // ======================================================================
-// Regression tests — ensure pre-existing behaviour is preserved
+// Regression tests — ensure preexisting behaviour is preserved
 // ======================================================================
 
 // ----------------------------------------------------------------------

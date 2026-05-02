@@ -93,7 +93,7 @@ class CcsdsTcFrameDetectorUnderflowTest : public ::testing::Test {
 };
 
 // ======================================================================
-// Fix tests — data_to_crc_length underflow / ordering safety
+// Tests — data_to_crc_length underflow / ordering safety
 //
 // These tests submit frames with extreme declared lengths and verify that
 // detect() returns NO_FRAME_DETECTED without crashing or exhibiting
@@ -182,7 +182,7 @@ TEST_F(CcsdsTcFrameDetectorUnderflowTest, LengthFieldAtMinimumValidSizeNotReject
 }
 
 // ======================================================================
-// Regression tests — pre-existing behaviour must be preserved
+// Regression tests — preexisting behaviour must be preserved
 // ======================================================================
 
 // ----------------------------------------------------------------------
