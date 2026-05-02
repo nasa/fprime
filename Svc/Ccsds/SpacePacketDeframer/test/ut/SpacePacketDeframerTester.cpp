@@ -106,8 +106,109 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
 }
 
 // ----------------------------------------------------------------------
-// Helper functions
+// Finding 1 — U16 overflow in pkt_length calculation
 // ----------------------------------------------------------------------
+
+void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
+    // packetDataLength = 0xFFFF is the max U16 value.
+    //
+    // Without the fix:
+    //   pkt_length = static_cast<U16>(0xFFFF + 1) = 0
+    //   length guard: 0 > (bufSize - SERIALIZED_SIZE) = false → PASSES
+    //   → empty buffer (size 0) forwarded to dataOut — silent corruption.
+    //
+    // With the fix (widen to U32 before adding 1):
+    //   pkt_length_wide = 65536
+    //   length guard: 65536 > 1 = true → REJECTED with InvalidLength.
+    //
+    // This test asserts the correct post-fix behavior.  If run against the
+    // unfixed code it will fail, acting as a regression guard.
+
+    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(1);
+    U16 seqCount = 0;
+    const U16 overflowLengthToken = 0xFFFFU;  // triggers U16 wrap-to-zero without fix
+    U8 payload[1] = {0xAB};                   // 1-byte payload — buffer size will be SERIALIZED_SIZE+1
+
+    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, overflowLengthToken, payload, sizeof(payload));
+    ComCfg::FrameContext nullContext;
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    // Packet must NOT be forwarded downstream
+    ASSERT_from_dataOut_SIZE(0);
+    // Buffer must be returned (frame dropped)
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_LENGTH);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);  // dataReturnOut + errorNotify
+    // Returned buffer must be the original input
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, nullContext);
+    // InvalidLength event must fire.
+    // The EVR argument for transmitted length is static_cast<U16>(pkt_length_wide)
+    // where pkt_length_wide=65536, so static_cast<U16>(65536)=0 — same result as
+    // static_cast<U16>(overflowLengthToken + 1).
+    // maxDataAvailable = bufSize - SERIALIZED_SIZE = 1.
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidLength_SIZE(1);
+    ASSERT_EVENTS_InvalidLength(0, static_cast<U16>(overflowLengthToken + 1), sizeof(payload));
+}
+
+// ----------------------------------------------------------------------
+// Finding 3 — graceful handling of undersized buffers (no FW_ASSERT)
+// ----------------------------------------------------------------------
+
+void SpacePacketDeframerTester ::testBufferExactlyHeaderSize() {
+    // A buffer of exactly SERIALIZED_SIZE bytes passes the `>` check in the
+    // original FW_ASSERT version only if the check was `<` — the updated
+    // check uses `<=` so this must be caught and dropped gracefully.
+    // This is the tightest boundary case for the size guard.
+    U8 rawData[SpacePacketHeader::SERIALIZED_SIZE] = {};
+    Fw::Buffer buffer(rawData, SpacePacketHeader::SERIALIZED_SIZE);
+    ComCfg::FrameContext nullContext;
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);  // dataReturnOut + errorNotify
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+}
+
+void SpacePacketDeframerTester ::testBufferSmallerThanHeaderSize() {
+    // A buffer smaller than SERIALIZED_SIZE — cannot hold even the header.
+    // Must be dropped gracefully without asserting.
+    U8 rawData[SpacePacketHeader::SERIALIZED_SIZE - 1] = {};
+    Fw::Buffer buffer(rawData, SpacePacketHeader::SERIALIZED_SIZE - 1);
+    ComCfg::FrameContext nullContext;
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+}
+
+void SpacePacketDeframerTester ::testBufferSingleByte() {
+    // Single-byte buffer — most extreme undersize input.
+    // Verifies the size guard fires and no crash occurs.
+    U8 rawData[1] = {0xFF};
+    Fw::Buffer buffer(rawData, sizeof(rawData));
+    ComCfg::FrameContext nullContext;
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+}
 
 Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 seqCount,

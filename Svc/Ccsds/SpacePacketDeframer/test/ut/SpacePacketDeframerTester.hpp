@@ -48,6 +48,19 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void testDeframingIncorrectLength();
     // void testDeframingIncorrectSeqCount();
 
+    // Finding 1 — U16 overflow in pkt_length calculation.
+    // packetDataLength=0xFFFF causes static_cast<U16>(0xFFFF+1)=0 without the
+    // fix, allowing an empty buffer to slip past the length guard and reach
+    // dataOut.  After the fix the packet must be rejected with InvalidLength.
+    void testPacketDataLengthMaxU16Overflow();
+
+    // Finding 3 — graceful handling of undersized buffers instead of FW_ASSERT.
+    // Buffers at or below SERIALIZED_SIZE must emit InvalidPacket and be dropped,
+    // never crash the FSW via an assert.
+    void testBufferExactlyHeaderSize();
+    void testBufferSmallerThanHeaderSize();
+    void testBufferSingleByte();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
