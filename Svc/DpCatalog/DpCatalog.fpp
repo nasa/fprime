@@ -402,6 +402,16 @@ module Svc {
       id 46 \
       format "Cannot Transmit a Catalog before Building"
 
+    @ DP file name does not match the file's header metadata
+    event InvalidFileName(
+                            file: string size FileNameStringSize @< The invalid file
+                            expected: string size FileNameStringSize @< The expected canonical file
+                          ) \
+      severity warning high \
+      id 47 \
+      format "Invalid DP file name {}. Expected {}" \
+      throttle 10
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------

@@ -788,6 +788,8 @@ void DpCatalogTester::test_TruncatedDpRejected() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_FileReadError_SIZE(1);
+    ASSERT_EVENTS_FileReadError(0, fileName.toChar(), static_cast<I32>(Os::File::BAD_SIZE));
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();
@@ -817,6 +819,8 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_InvalidFileName_SIZE(1);
+    ASSERT_EVENTS_InvalidFileName(0, rogueFile.toChar(), canonicalFile.toChar());
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();
@@ -842,6 +846,8 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_FileHdrError_SIZE(1);
+    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 635957387, 652734603);
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();

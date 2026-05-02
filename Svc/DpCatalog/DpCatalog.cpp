@@ -562,7 +562,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
                              container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
     if (canonicalFileName != fullFile) {
-        this->log_WARNING_HI_FileHdrDesError(fullFile, Fw::FW_SERIALIZE_FORMAT_ERROR);
+        this->log_WARNING_HI_InvalidFileName(fullFile, canonicalFileName);
         return 0;
     }
 
