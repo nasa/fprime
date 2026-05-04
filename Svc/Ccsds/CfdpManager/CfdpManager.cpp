@@ -237,28 +237,16 @@ void CfdpManager ::sendPduBuffer(Channel& channel, Fw::Buffer& pduBuffer)
     portNum = static_cast<FwIndexType>(channel.getChannelId());
 
     // ComQueue expects buffers to start with a 2-byte packet descriptor (APID)
-    // Prepend FW_PACKET_FILE descriptor to the CFDP PDU
+    // The PDU data has already been serialized at offset PACKET_DESCRIPTOR_SIZE,
+    // so we just need to write the descriptor at the beginning
 
     U8* bufferData = pduBuffer.getData();
-    const FwSizeType pduSize = pduBuffer.getSize();
-    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
-    const FwSizeType totalSize = descriptorSize + pduSize;
-
-    // Safety check: ensure size won't overflow
-    FW_ASSERT_NO_OVERFLOW(pduSize, size_t);
-
-    // Shift PDU data forward to make room for descriptor
-    // Use memmove (not memcpy) since source and destination overlap
-    memmove(bufferData + descriptorSize, bufferData, static_cast<size_t>(pduSize));
 
     // Write FW_PACKET_FILE descriptor at the beginning (big-endian U16)
     const FwPacketDescriptorType descriptor =
         static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
     bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);  // High byte
     bufferData[1] = static_cast<U8>(descriptor & 0xFF);         // Low byte
-
-    // Update buffer size to include descriptor
-    pduBuffer.setSize(totalSize);
 
     // Send buffer with descriptor
     this->dataOut_out(portNum, pduBuffer);

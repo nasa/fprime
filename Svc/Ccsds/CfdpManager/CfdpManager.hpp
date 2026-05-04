@@ -46,6 +46,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   public:
   // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  //! Size of packet descriptor prepended to PDUs for ComQueue
+  static constexpr FwSizeType PACKET_DESCRIPTOR_SIZE = sizeof(FwPacketDescriptorType);
+
+  // ----------------------------------------------------------------------
   // Port calls that are invoked by the CFDP engine
   // These functions are analogous to the functions in cf_cfdp_sbintf.*
   // However these functions are not direct ports due to the architectural
