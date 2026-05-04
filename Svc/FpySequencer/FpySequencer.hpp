@@ -20,6 +20,7 @@
 #include "Svc/FpySequencer/HeaderSerializableAc.hpp"
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -143,7 +144,7 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        FpySequencer_BlockState block      //!< Return command status when complete or not
+                        BlockState block      //!< Return command status when complete or not
                         ) override;
 
     //! Handler for command VALIDATE
@@ -159,7 +160,7 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Runs a previously validated sequence
     void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,           //!< The opcode
                                   U32 cmdSeq,                    //!< The command sequence number
-                                  FpySequencer_BlockState block  //!< Return command status when complete or not
+                                  BlockState block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -594,7 +595,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
-    FpySequencer_BlockState m_sequenceBlockState;
+    BlockState m_sequenceBlockState;
     // if we are to block on completion, save the opCode and cmdSeq we should
     // return
     FwOpcodeType m_savedOpCode;

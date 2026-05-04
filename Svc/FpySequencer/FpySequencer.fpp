@@ -2,11 +2,6 @@ module Svc {
     @ Dispatches command sequences to available command sequencers
     active component FpySequencer {
 
-        enum BlockState : U8 {
-            BLOCK
-            NO_BLOCK
-        }
-
         enum GoalState : U8 {
             RUNNING
             VALID

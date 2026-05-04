@@ -8,7 +8,7 @@
 #define SeqDispatcher_HPP
 
 #include "Fw/Types/StringBase.hpp"
-#include "Fw/Types/WaitEnumAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -68,7 +68,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block);
+    void runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, BlockState block);
 
     // ----------------------------------------------------------------------
     // Command handler implementations
@@ -79,7 +79,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     void RUN_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
                         const U32 cmdSeq,                 /*!< The command sequence number*/
                         const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
-                        Fw::Wait block);
+                        BlockState block);
 
     void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                const U32 cmdSeq);         /*!< The command sequence number*/

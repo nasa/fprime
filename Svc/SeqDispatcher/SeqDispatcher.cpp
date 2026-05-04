@@ -26,7 +26,7 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, BlockState block) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -35,7 +35,7 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
     FW_ASSERT(this->m_entryTable[sequencerIdx].state == SeqDispatcher_CmdSequencerState::AVAILABLE,
               static_cast<FwAssertArgType>(this->m_entryTable[sequencerIdx].state));
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
     } else {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK;
@@ -129,7 +129,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
         return;
     }
 
-    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT);
+    this->runSequence(idx, fileName, BlockState::NO_BLOCK);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
@@ -138,7 +138,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    Fw::Wait block) {
+                                    BlockState block) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -149,7 +149,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
 
     this->runSequence(idx, fileName, block);
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         // return instantly
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {

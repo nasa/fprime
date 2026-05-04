@@ -1,7 +1,7 @@
 @ Dispatches a sequence to the first available sequencer
 async command RUN(
                       fileName: string size 240 @< The name of the sequence file
-                      $block: Fw.Wait @< Return command status when complete or not
+                      $block: Svc.BlockState @< Return command status when complete or not
                     ) \
     opcode 0
 

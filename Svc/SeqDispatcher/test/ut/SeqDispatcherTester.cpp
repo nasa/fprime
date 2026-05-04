@@ -29,7 +29,7 @@ SeqDispatcherTester ::~SeqDispatcherTester() {
 void SeqDispatcherTester ::testDispatch() {
     // test that it fails when we dispatch too many sequences
     for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
-        sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+        sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
         this->component.doDispatch();
         // no response cuz blocking
         ASSERT_CMD_RESPONSE_SIZE(0);
@@ -38,7 +38,7 @@ void SeqDispatcherTester ::testDispatch() {
     ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 1, 0);
     this->clearHistory();
     // all sequencers should be busy
-    sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+    sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
@@ -55,7 +55,7 @@ void SeqDispatcherTester ::testDispatch() {
     this->clearHistory();
     // ok now we should be able to send another sequence
     // let's test non blocking now
-    sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::NO_WAIT);
+    sendCmd_RUN(0, 0, Fw::String("test"), BlockState::NO_BLOCK);
     this->component.doDispatch();
 
     // should immediately return
@@ -73,7 +73,7 @@ void SeqDispatcherTester ::testDispatch() {
 }
 
 void SeqDispatcherTester::testLogStatus() {
-    this->sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+    this->sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
     this->component.doDispatch();
     this->clearHistory();
     this->sendCmd_LOG_STATUS(0, 0);
