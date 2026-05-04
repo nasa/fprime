@@ -119,7 +119,8 @@ U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
 }
 
 Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
-    return Fw::Buffer(this->m_internalDataBuffer, size);
+    FwSizeType allocation = (this->m_useOversizedAlloc) ? sizeof(this->m_internalDataBuffer) : size;
+    return Fw::Buffer(this->m_internalDataBuffer, allocation);
 }
 
 }  // namespace Ccsds
