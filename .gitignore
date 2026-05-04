@@ -94,7 +94,3 @@ Packet-Views
 docs/reference/api/cpp
 docs/reference/api/cmake
 temp_dir/
-
-.codex
-dest.bin
-GEMINI.md
