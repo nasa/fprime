@@ -105,10 +105,6 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
                                 realDataLength);  // Event logs the size in bytes, so add 1 to length token
 }
 
-// ----------------------------------------------------------------------
-// Finding 1 — U16 overflow in pkt_length calculation
-// ----------------------------------------------------------------------
-
 void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
     // This test asserts the correct overflow behavior when all bits of packet
     // length are used.
@@ -141,10 +137,6 @@ void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
     ASSERT_EVENTS_InvalidLength_SIZE(1);
     ASSERT_EVENTS_InvalidLength(0, overflowLengthToken + 1, sizeof(payload));
 }
-
-// ----------------------------------------------------------------------
-// Finding 3 — graceful handling of undersized buffers (no FW_ASSERT)
-// ----------------------------------------------------------------------
 
 void SpacePacketDeframerTester ::testBufferExactlyHeaderSize() {
     U8 rawData[SpacePacketHeader::SERIALIZED_SIZE] = {};
@@ -194,6 +186,10 @@ void SpacePacketDeframerTester ::testBufferSingleByte() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidPacket_SIZE(1);
 }
+
+// ----------------------------------------------------------------------
+// Helper functions
+// ----------------------------------------------------------------------
 
 Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 seqCount,

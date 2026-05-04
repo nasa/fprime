@@ -27,9 +27,7 @@ TEST(SpacePacketDeframer, testPacketDataLengthMaxU16Overflow) {
 }
 
 // ----------------------------------------------------------------------
-// graceful handling of undersized buffers
-// The original FW_ASSERT aborts the FSW on deserialization failure.
-// The fix replaces it with an InvalidPacket EVR and a graceful drop.
+// Tests for graceful handling of undersized buffers
 // ----------------------------------------------------------------------
 
 TEST(SpacePacketDeframer, testBufferExactlyHeaderSize) {
