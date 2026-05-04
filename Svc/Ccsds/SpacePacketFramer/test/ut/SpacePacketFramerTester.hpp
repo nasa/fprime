@@ -82,9 +82,6 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
 
     U16 m_nextSeqCount;  // Sequence count to be returned by getApidSeqCount output port
 
-    // Backing store for the oversized allocation path
-    U8 m_oversizedDataBuffer[512];
-
     // Flag read by from_bufferAllocate_handler to choose which path to take
     bool m_useOversizedAlloc = false;
 };
