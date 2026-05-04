@@ -788,7 +788,7 @@ void DpCatalogTester::test_MalformedFile() {
     Os::FileSystem::removeFile(stateFile.toChar());
     this->component.shutdown();
 }
- 
+
 void DpCatalogTester::test_TruncatedDpRejected() {
     Fw::MallocAllocator alloc;
     Fw::FileNameString dir("./DpTest_TruncatedDpRejected");
