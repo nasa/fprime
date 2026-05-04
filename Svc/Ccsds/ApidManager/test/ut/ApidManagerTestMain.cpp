@@ -47,10 +47,11 @@ TEST(ApidManager, ValidateSequenceCountWhenTableFull) {
     ApidManagerTester::ValidateSeqCount__NewTableFull ruleValidateNewTableFull;
     // Apply the NewOk rule until the table is full and the shadow flag flips.
     // The rule itself is responsible for flipping shadow_isTableFull when size has reached MAX.
-    while (!tester.shadow.shadow_isTableFull) {
+    FwIndexType iter_bound = 1000;
+    while (!tester.shadow.shadow_isTableFull && iter_bound-- > 0) {
         ruleGetNewOk.apply(tester);
     }
-    // Now exercise the bug path: validate a count for an untracked APID against a full table
+    // Now exercise the test path: validate a count for an untracked APID against a full table
     ruleValidateNewTableFull.apply(tester);
 }
 

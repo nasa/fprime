@@ -83,7 +83,6 @@ List the distinct behaviors the component can exhibit. For `ApidManager`, this w
 | Get count for new APID (table is full) | `getApidSeqCountIn` with untracked APID | Returns `SEQUENCE_COUNT_ERROR`, sends `ApidTableFull` event |
 | Validate correct count | `validateApidSeqCountIn` with expected count | No event |
 | Validate wrong count | `validateApidSeqCountIn` with unexpected count | Sends `UnexpectedSequenceCount` event |
-| Validate count for new APID (table is full) | `validateApidSeqCountIn` with untracked APID | Sends `ApidTableFull` event, no `UnexpectedSequenceCount` |
 
 Each row maps to one rule. The internal state of ApidManager is simple and linear: its table goes from empty, to in-filling, to full.  
 For components defining state machines, you would usually have at least one rule per transition, and preconditions naturally check against a specific state of the state machine.
