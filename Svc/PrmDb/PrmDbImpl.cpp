@@ -153,7 +153,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     Os::File paramFile;
     WorkingBuffer buff;
 
-    Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE);
+    Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE, Os::File::OVERWRITE);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::OPEN, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);

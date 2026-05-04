@@ -104,7 +104,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // pushes a byte array to the top of the stack from the source array
         // leaves the source array unmodified
         // does not convert endianness
-        void push(U8* src, Fpy::StackSizeType size);
+        void push(const U8* src, Fpy::StackSizeType size);
 
         // pushes zero bytes to the stack
         void pushZeroes(Fpy::StackSizeType byteCount);
@@ -146,6 +146,14 @@ class FpySequencer : public FpySequencerComponentBase {
                         FpySequencer_BlockState block      //!< Return command status when complete or not
                         ) override;
 
+    //! Handler implementation for command RUN_ARGS
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                             U32 cmdSeq,                          //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
+                             Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
+                             Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
+                             ) override;
+
     //! Handler for command VALIDATE
     //!
     //! Loads and validates a sequence
@@ -154,12 +162,21 @@ class FpySequencer : public FpySequencerComponentBase {
                              const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                              ) override;
 
-    //! Handler for command RUN_VALIDATED
+    //! Handler implementation for command VALIDATE_ARGS
     //!
-    //! Runs a previously validated sequence
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                                  U32 cmdSeq,                    //!< The command sequence number
-                                  FpySequencer_BlockState block  //!< Return command status when complete or not
+    //! Loads and validates a sequence with arguments
+    void VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                                  U32 cmdSeq,                        //!< The command sequence number
+                                  const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                                  Svc::SeqArgs buffer                //!< Arguments to pass to the sequencer
+                                  ) override;
+
+    //! Handler implementation for command RUN_VALIDATED
+    //!
+    //! Must be called after VALIDATE. Runs the sequence that was validated.
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,                //!< The opcode
+                                  U32 cmdSeq,                         //!< The command sequence number
+                                  Svc::FpySequencer_BlockState block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -253,6 +270,15 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
 
+    //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the arguments to pass to the sequence
+    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
+        ) override;
+
     //! Implementation for action validate of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
@@ -334,6 +360,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears arguments
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! checks if sequencer should wake from sleep
@@ -362,6 +396,14 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! increments the m_sequencesStarted counter
     void Svc_FpySequencer_SequencerStateMachine_action_incrementSequenceCounter(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action pushArgsToStack of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! pushes sequence arguments to the stack
+    void Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -470,7 +512,13 @@ class FpySequencer : public FpySequencerComponentBase {
                                ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) override;
+    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
+
+    //! Handler implementation for seqCancelIn
+    //!
+    //! port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
 
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number
@@ -599,6 +647,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // return
     FwOpcodeType m_savedOpCode;
     U32 m_savedCmdSeq;
+
+    // sequence arguments to push to stack when entering RUNNING state
+    Svc::SeqArgs m_sequenceArgs{};
 
     // the goal state is the state that we're trying to reach in the sequencer
     // if it's RUNNING, then we should promptly go to RUNNING once we validate the

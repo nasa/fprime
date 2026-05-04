@@ -252,7 +252,9 @@ void ActiveTextLoggerTester ::runOffNominalTest() {
     // Verify file not made:
     ASSERT_FALSE(stat);
     ASSERT_FALSE(this->component.m_log_file.m_openFile);
-    ASSERT_NE(Os::FileSystem::OP_OK, Os::FileSystem::getFileSize(longFileName, tmp));
+    // Use exists() instead of getFileSize() since getFileSize() goes through Os::File::open()
+    // which asserts on paths exceeding FileNameStringSize
+    ASSERT_FALSE(Os::FileSystem::exists(longFileName));
 
     printf("Testing file name of max size and file already exists\n");
     // Maximum valid file name is Fw::FileNameString::STRING_SIZE add one for \0

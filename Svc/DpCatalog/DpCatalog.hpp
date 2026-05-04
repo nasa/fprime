@@ -34,7 +34,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     );
 
     /// @brief DpCatalog destructor
-    ~DpCatalog();
+    ~DpCatalog() = default;
 
     /// @brief Configure the DpCatalog
     /// @param maxDpFiles The max number of data product files to track
@@ -243,42 +243,42 @@ class DpCatalog final : public DpCatalogComponentBase {
     // ----------------------------------
     // Private data
     // ----------------------------------
-    bool m_initialized;  //!< set when the component has been initialized
+    bool m_initialized = false;  //!< set when the component has been initialized
 
-    DpBtreeNode* m_dpTree;           //!< The head of the binary tree
-    DpBtreeNode* m_freeListHead;     //!< The head of the free list
-    DpBtreeNode* m_currentNode;      //!< current node for traversing tree
-    DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
+    DpBtreeNode* m_dpTree = nullptr;           //!< The head of the binary tree
+    DpBtreeNode* m_freeListHead = nullptr;     //!< The head of the free list
+    DpBtreeNode* m_currentNode = nullptr;      //!< current node for traversing tree
+    DpBtreeNode* m_currentXmitNode = nullptr;  //!< node being currently transmitted
 
-    FwSizeType m_numDpSlots;  //!< Stores the available number of record slots.
+    FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
-    FwSizeType m_numDirectories;                           //!< number of supplied directories
+    FwSizeType m_numDirectories = 0;                       //!< number of supplied directories
     Fw::String m_fileList[DP_MAX_FILES];                   //!< working array of files/directory
 
-    Fw::FileNameString m_stateFile;      //!< file to store transmit state
-    DpDstateFileEntry* m_stateFileData;  //!< DP state loaded from file
-    FwSizeType m_stateFileEntries;       //!< size of state file data
+    Fw::FileNameString m_stateFile;                //!< file to store transmit state
+    DpDstateFileEntry* m_stateFileData = nullptr;  //!< DP state loaded from file
+    FwSizeType m_stateFileEntries = 0;             //!< size of state file data
 
-    FwSizeType m_memSize;           //!< size of allocated buffer
-    void* m_memPtr;                 //!< stored for shutdown
-    FwEnumStoreType m_allocatorId;  //!< stored for shutdown
-    Fw::MemAllocator* m_allocator;  //!< stored for shutdown
+    FwSizeType m_memSize = 0;                 //!< size of allocated buffer
+    void* m_memPtr = nullptr;                 //!< stored for shutdown
+    FwEnumStoreType m_allocatorId = 0;        //!< stored for shutdown
+    Fw::MemAllocator* m_allocator = nullptr;  //!< stored for shutdown
 
-    bool m_catalogBuilt;                    //!< catalog build is complete (can add DPs at runtime)
-    bool m_xmitInProgress;                  //!< set if DP files are in the process of being sent
+    bool m_catalogBuilt = false;            //!< catalog build is complete (can add DPs at runtime)
+    bool m_xmitInProgress = false;          //!< set if DP files are in the process of being sent
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
-    bool m_xmitCmdWait;                     //!< true if waiting for transmission complete to complete xmit command
-    U64 m_xmitBytes;                        //!< bytes transmitted for downlink session
-    FwOpcodeType m_xmitOpCode;              //!< stored xmit command opcode
-    U32 m_xmitCmdSeq;                       //!< stored command sequence id
+    bool m_xmitCmdWait = false;             //!< true if waiting for transmission complete to complete xmit command
+    U64 m_xmitBytes = 0;                    //!< bytes transmitted for downlink session
+    FwOpcodeType m_xmitOpCode = 0;          //!< stored xmit command opcode
+    U32 m_xmitCmdSeq = 0;                   //!< stored command sequence id
 
-    U32 m_pendingFiles;    //!< Pending Files to Transmit
-    U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
+    U32 m_pendingFiles = 0;    //!< Pending Files to Transmit
+    U64 m_pendingDpBytes = 0;  //!< Pending Bytes to Transmit
 
-    bool m_remainActive;  //!< Does the DpCat resume transmission when
-                          //!< a runtime Dp is received after
-                          //!< the full catalog is sent
+    bool m_remainActive = false;  //!< Does the DpCat resume transmission when
+                                  //!< a runtime Dp is received after
+                                  //!< the full catalog is sent
 };
 
 }  // namespace Svc
