@@ -150,7 +150,7 @@ void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
     // maxDataAvailable = bufSize - SERIALIZED_SIZE = 1.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidLength_SIZE(1);
-    ASSERT_EVENTS_InvalidLength(0, static_cast<U16>(overflowLengthToken + 1), sizeof(payload));
+    ASSERT_EVENTS_InvalidLength(0, overflowLengthToken + 1, sizeof(payload));
 }
 
 // ----------------------------------------------------------------------
