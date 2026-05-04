@@ -21,9 +21,7 @@ register_fprime_library(
 
 # Allow comparison of a configurable constant with a fixed-width constant that may be "always true" in
 # specific configurations buy may not be true in other configurations. Relates to: FwSizeType
-target_compile_options("${FPRIME_CURRENT_MODULE}" PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-Wno-tautological-constant-out-of-range-compare>
-)
+target_compile_options(${FPRIME_CURRENT_MODULE} PRIVATE -Wno-tautological-constant-out-of-range-compare)
 
 ### Unit Tests ###
 register_fprime_ut(
