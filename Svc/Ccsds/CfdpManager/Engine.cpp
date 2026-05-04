@@ -179,9 +179,6 @@ void Engine::dispatchTx(Transaction *txn)
 
 Status::T Engine::sendMd(Transaction *txn)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
     FW_ASSERT((txn->m_state == TXN_STATE_S1) || (txn->m_state == TXN_STATE_S2), txn->m_state);
     FW_ASSERT(txn->m_chan != NULL);
 
@@ -208,67 +205,20 @@ Status::T Engine::sendMd(Transaction *txn)
         closureRequested  // closure requested flag
     );
 
-    // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = md.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
-    if (status == Cfdp::Status::SUCCESS) {
-        // Serialize to buffer at offset to leave room for descriptor
-        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
-                           buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = md.serializeTo(sb);
-        if (serStatus != Fw::FW_SERIALIZE_OK) {
-            // Failed to serialize, return the buffer
-            m_manager->log_WARNING_LO_FailMetadataPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
-            status = Cfdp::Status::ERROR;
-        } else {
-            // Update buffer size to actual serialized size plus descriptor
-            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            // Send the PDU
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter
-            m_manager->incrementSentPdu(txn->getChannelId());
-        }
-    }
-
-    return status;
+    return serializeAndSendPdu(txn, md);
 }
 
 Status::T Engine::sendFd(Transaction *txn, FileDataPdu& fdPdu)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
-    // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = fdPdu.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
+    Status::T status = serializeAndSendPdu(txn, fdPdu);
     if (status == Cfdp::Status::SUCCESS) {
-        // Serialize to buffer at offset to leave room for descriptor
-        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
-                           buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = fdPdu.serializeTo(sb);
-        if (serStatus != Fw::FW_SERIALIZE_OK) {
-            m_manager->log_WARNING_LO_FailFileDataPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
-            status = Cfdp::Status::ERROR;
-        } else {
-            // Update buffer size to actual serialized size plus descriptor
-            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter and file data bytes
-            m_manager->incrementSentPdu(txn->getChannelId());
-            m_manager->addSentFileDataBytes(txn->getChannelId(), fdPdu.getDataSize());
-        }
+        m_manager->addSentFileDataBytes(txn->getChannelId(), fdPdu.getDataSize());
     }
-
     return status;
 }
 
 Status::T Engine::sendEof(Transaction *txn)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
     // Create and initialize EOF PDU
     EofPdu eof;
 
@@ -294,38 +244,12 @@ Status::T Engine::sendEof(Transaction *txn)
         eof.appendTlv(tlv);
     }
 
-    // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = eof.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
-    if (status == Cfdp::Status::SUCCESS) {
-        // Serialize to buffer at offset to leave room for descriptor
-        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
-                           buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = eof.serializeTo(sb);
-        if (serStatus != Fw::FW_SERIALIZE_OK) {
-            // Failed to serialize, return the buffer
-            m_manager->log_WARNING_LO_FailEofPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
-            status = Cfdp::Status::ERROR;
-        } else {
-            // Update buffer size to actual serialized size plus descriptor
-            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            // Send the PDU
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter
-            m_manager->incrementSentPdu(txn->getChannelId());
-        }
-    }
-
-    return status;
+    return serializeAndSendPdu(txn, eof);
 }
 
 Status::T Engine::sendAck(Transaction *txn, AckTxnStatus ts, FileDirective dir_code,
                              ConditionCode cc, EntityId peer_eid, TransactionSeq tsn)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
     FW_ASSERT((dir_code == FILE_DIRECTIVE_END_OF_FILE) || (dir_code == FILE_DIRECTIVE_FIN), dir_code);
 
     // Determine source and destination EIDs based on transaction direction
@@ -361,38 +285,12 @@ Status::T Engine::sendAck(Transaction *txn, AckTxnStatus ts, FileDirective dir_c
         ts  // transaction status
     );
 
-    // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = ack.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
-    if (status == Cfdp::Status::SUCCESS) {
-        // Serialize to buffer at offset to leave room for descriptor
-        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
-                           buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = ack.serializeTo(sb);
-        if (serStatus != Fw::FW_SERIALIZE_OK) {
-            // Failed to serialize, return the buffer
-            m_manager->log_WARNING_LO_FailAckPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
-            status = Cfdp::Status::ERROR;
-        } else {
-            // Update buffer size to actual serialized size plus descriptor
-            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            // Send the PDU
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter
-            m_manager->incrementSentPdu(txn->getChannelId());
-        }
-    }
-
-    return status;
+    return serializeAndSendPdu(txn, ack);
 }
 
 Status::T Engine::sendFin(Transaction *txn, FinDeliveryCode dc, FinFileStatus fs,
                              ConditionCode cc)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
     // Create and initialize FIN PDU
     FinPdu fin;
 
@@ -417,58 +315,48 @@ Status::T Engine::sendFin(Transaction *txn, FinDeliveryCode dc, FinFileStatus fs
         fin.appendTlv(tlv);
     }
 
-    // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = fin.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
-    if (status == Cfdp::Status::SUCCESS) {
-        // Serialize to buffer at offset to leave room for descriptor
-        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
-                           buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = fin.serializeTo(sb);
-        if (serStatus != Fw::FW_SERIALIZE_OK) {
-            // Failed to serialize, return the buffer
-            m_manager->log_WARNING_LO_FailFinPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
-            status = Cfdp::Status::ERROR;
-        } else {
-            // Update buffer size to actual serialized size plus descriptor
-            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            // Send the PDU
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter
-            m_manager->incrementSentPdu(txn->getChannelId());
-        }
-    }
-
-    return status;
+    return serializeAndSendPdu(txn, fin);
 }
 
 Status::T Engine::sendNak(Transaction *txn, NakPdu& nakPdu)
 {
-    Fw::Buffer buffer;
-    Status::T status = Cfdp::Status::SUCCESS;
-
     // Verify this is a Class 2 transaction (NAK only used in Class 2)
     Class::T tx_class = txn->getClass();
     FW_ASSERT(tx_class == Cfdp::Class::CLASS_2, tx_class);
 
+    return serializeAndSendPdu(txn, nakPdu);
+}
+
+Status::T Engine::serializeAndSendPdu(
+    Transaction* txn,
+    PduBase& pdu
+) {
+    Fw::Buffer buffer;
+    Status::T status = Cfdp::Status::SUCCESS;
+
     // Allocate buffer with space for packet descriptor
-    const FwSizeType bufferSize = nakPdu.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
+    const FwSizeType bufferSize = pdu.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
     status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
+
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer at offset to leave room for descriptor
         Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
                            buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
-        Fw::SerializeStatus serStatus = nakPdu.serializeTo(sb);
+        Fw::SerializeStatus serStatus = pdu.serializeTo(sb);
+
         if (serStatus != Fw::FW_SERIALIZE_OK) {
-            m_manager->log_WARNING_LO_FailNakPduSerialization(txn->getChannelId(), static_cast<I32>(serStatus));
+            // Log generic PDU serialization error with PDU type
+            m_manager->log_WARNING_LO_FailPduSerialization(
+                txn->getChannelId(),
+                static_cast<U8>(pdu.getType()),  // 0=MD, 1=EOF, 2=FIN, 3=ACK, 4=NAK, 5=FD
+                static_cast<I32>(serStatus)
+            );
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
             // Update buffer size to actual serialized size plus descriptor
             buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
             m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            // Increment sent PDU counter
             m_manager->incrementSentPdu(txn->getChannelId());
         }
     }

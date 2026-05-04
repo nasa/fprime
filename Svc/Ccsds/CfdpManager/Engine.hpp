@@ -573,6 +573,25 @@ class Engine {
 
     // PDU Operations - Send
 
+    /**
+     * @brief Common helper to serialize and send any PDU type
+     *
+     * Handles the common pattern of:
+     * 1. Allocating buffer with space for packet descriptor
+     * 2. Serializing PDU at offset
+     * 3. Logging errors on serialization failure
+     * 4. Sending via sendPduBuffer on success
+     * 5. Incrementing sent PDU counter
+     *
+     * @param txn Transaction context
+     * @param pdu PDU object to serialize (any type derived from PduBase)
+     * @return Status::SUCCESS on success, Status::ERROR on failure
+     */
+    Status::T serializeAndSendPdu(
+        Transaction* txn,
+        PduBase& pdu
+    );
+
     // PDU Operations - Receive
 
     /**

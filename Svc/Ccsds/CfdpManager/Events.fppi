@@ -96,47 +96,13 @@ event FailPduHeaderDeserialization(
     severity warning low \
     format "Failed to deserialize PDU header on channel {}, status {}"
 
-event FailMetadataPduSerialization(
+event FailPduSerialization(
     channelId: U8 @< Channel sending the PDU
+    pduType: U8 @< PDU type (0=MD, 1=EOF, 2=FIN, 3=ACK, 4=NAK, 5=FD)
     status: I32 @< Serialization status code
 ) \
     severity warning low \
-    format "Failed to serialize Metadata PDU on channel {}, status {}"
-
-event FailFileDataPduSerialization(
-    channelId: U8 @< Channel sending the PDU
-    status: I32 @< Serialization status code
-) \
-    severity warning low \
-    format "Failed to serialize File Data PDU on channel {}, status {}"
-
-event FailEofPduSerialization(
-    channelId: U8 @< Channel sending the PDU
-    status: I32 @< Serialization status code
-) \
-    severity warning low \
-    format "Failed to serialize EOF PDU on channel {}, status {}"
-
-event FailAckPduSerialization(
-    channelId: U8 @< Channel sending the PDU
-    status: I32 @< Serialization status code
-) \
-    severity warning low \
-    format "Failed to serialize ACK PDU on channel {}, status {}"
-
-event FailFinPduSerialization(
-    channelId: U8 @< Channel sending the PDU
-    status: I32 @< Serialization status code
-) \
-    severity warning low \
-    format "Failed to serialize FIN PDU on channel {}, status {}"
-
-event FailNakPduSerialization(
-    channelId: U8 @< Channel sending the PDU
-    status: I32 @< Serialization status code
-) \
-    severity warning low \
-    format "Failed to serialize NAK PDU on channel {}, status {}"
+    format "Failed to serialize PDU type {} on channel {}, status {}"
 
 event FailMetadataPduDeserialization(
     channelId: U8 @< Channel that received the PDU
