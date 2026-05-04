@@ -64,18 +64,8 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     // Widen to U32 before adding 1 to prevent U16 truncation to 0 when packetDataLength == 0xFFFF (max U16 value).
     // This is a undefined behavior condition in C++.
-    const U32 pkt_length_wide = static_cast<U32>(header.get_packetDataLength()) + 1U;
-    if (pkt_length_wide > static_cast<U32>(data.getSize() - SpacePacketHeader::SERIALIZED_SIZE)) {
-        FwSizeType maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
-        this->log_WARNING_HI_InvalidLength(static_cast<U16>(pkt_length_wide), maxDataAvailable);
-        if (this->isConnected_errorNotify_OutputPort(0)) {
-            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_LENGTH);
-        }
-        this->dataReturnOut_out(0, data, context);
-        return;
-    }
-    const U16 pkt_length = static_cast<U16>(pkt_length_wide);
-    if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
+    const U32 pkt_length = static_cast<U32>(header.get_packetDataLength()) + 1U;
+    if ((pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) || (pkt_length > std::numeric_limits<FwSizeType>::max())) {
         FwSizeType maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
         if (this->isConnected_errorNotify_OutputPort(0)) {
