@@ -20,7 +20,7 @@ function(test_chained_autocoder_add_module_target MODULE TARGET SOURCES DEPENDEN
 
     # Add manual dependency to prevent a race condition
     # Force ordering with sibling test_autocoder target. Both targets run "test_target_autocoder"
-    # on this module, so CMake emits the same `cmake -E copy` rule into both submakefiles;
+    # on this module, so CMake emits the same `cmake -E copy` rule into both sub-makefiles;
     # without ordering, `make -jN` can fire both in parallel and race on the destination file.
     # The if(TARGET) guard keeps this safe if test_autocoder is ever reordered or removed.
     if (TARGET "${MODULE}_test_autocode")
