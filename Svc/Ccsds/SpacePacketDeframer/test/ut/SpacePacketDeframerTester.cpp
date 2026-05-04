@@ -110,19 +110,8 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
 // ----------------------------------------------------------------------
 
 void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
-    // packetDataLength = 0xFFFF is the max U16 value.
-    //
-    // Without the fix:
-    //   pkt_length = static_cast<U16>(0xFFFF + 1) = 0
-    //   length guard: 0 > (bufSize - SERIALIZED_SIZE) = false → PASSES
-    //   → empty buffer (size 0) forwarded to dataOut — silent corruption.
-    //
-    // With the fix (widen to U32 before adding 1):
-    //   pkt_length_wide = 65536
-    //   length guard: 65536 > 1 = true → REJECTED with InvalidLength.
-    //
-    // This test asserts the correct post-fix behavior.  If run against the
-    // unfixed code it will fail, acting as a regression guard.
+    // This test asserts the correct overflow behavior when all bits of packet
+    // length are used.
 
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(1);
     U16 seqCount = 0;
@@ -158,10 +147,6 @@ void SpacePacketDeframerTester ::testPacketDataLengthMaxU16Overflow() {
 // ----------------------------------------------------------------------
 
 void SpacePacketDeframerTester ::testBufferExactlyHeaderSize() {
-    // A buffer of exactly SERIALIZED_SIZE bytes passes the `>` check in the
-    // original FW_ASSERT version only if the check was `<` — the updated
-    // check uses `<=` so this must be caught and dropped gracefully.
-    // This is the tightest boundary case for the size guard.
     U8 rawData[SpacePacketHeader::SERIALIZED_SIZE] = {};
     Fw::Buffer buffer(rawData, SpacePacketHeader::SERIALIZED_SIZE);
     ComCfg::FrameContext nullContext;

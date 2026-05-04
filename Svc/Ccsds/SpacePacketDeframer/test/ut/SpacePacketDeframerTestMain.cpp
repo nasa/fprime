@@ -21,12 +21,6 @@ TEST(SpacePacketDeframer, testDeframingIncorrectLength) {
     tester.testDeframingIncorrectLength();
 }
 
-// ----------------------------------------------------------------------
-// U16 overflow in pkt_length calculation
-// packetDataLength=0xFFFF wraps to 0 without the U32-widening fix,
-// causing the length guard to pass and an empty buffer to reach dataOut.
-// ----------------------------------------------------------------------
-
 TEST(SpacePacketDeframer, testPacketDataLengthMaxU16Overflow) {
     Svc::Ccsds::SpacePacketDeframerTester tester;
     tester.testPacketDataLengthMaxU16Overflow();
