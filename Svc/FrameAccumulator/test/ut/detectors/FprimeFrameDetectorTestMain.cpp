@@ -172,14 +172,8 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
     EXPECT_EQ(status, Svc::FrameDetector::Status::MORE_DATA_NEEDED);
 }
 
-// ---------------------------------------------------------------------
-// Tests for the overflow-hardening guard added in PR #5087. The guard
-// rejects frames whose declared lengthField would overflow FwSizeType
-// when added to the fixed header+trailer overhead.
-// ---------------------------------------------------------------------
-
 TEST(FprimeFrameDetector, TestRejectsLengthFieldExceedingCapacity) {
-    // lengthField = 1 → expected_frame_size = FRAME_OVERHEAD + 1, which
+    // lengthField = 1 -> expected_frame_size = FRAME_OVERHEAD + 1, which
     // exceeds the ring's capacity. The capacity check in detect() must
     // reject the frame without crashing.
     Svc::FrameDetectors::FprimeFrameDetector fprime_detector;

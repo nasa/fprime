@@ -148,20 +148,8 @@ TEST_F(CcsdsFrameDetectorTest, TestCorruptedCrc) {
     EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
 }
 
-// ---------------------------------------------------------------------
-// Tests for the data_to_crc_length underflow guard added in PR #5087.
-//
-// The CCSDS TC length field encodes (frame_bytes - 1). When that yields an
-// expected_frame_length below the header+trailer overhead, the previous
-// implementation computed `U16(expected_frame_length - TRAILER_SIZE)` and
-// underflowed to 0xFFFF, sending the CRC loop reading far past the frame.
-// The fix moves the minimum-size guard ahead of the subtraction. These
-// tests use a valid flagsAndScId so the size guard — not the flags
-// rejection at line 40 — is what actually exercises detect().
-// ---------------------------------------------------------------------
-
 TEST_F(CcsdsFrameDetectorTest, TestRejectsTooSmallExpectedFrameLength) {
-    // length field = 0 → expected_frame_length = 1, well below TC_FRAME_OVERHEAD.
+    // length field = 0 -> expected_frame_length = 1, well below TC_FRAME_OVERHEAD.
     // The minimum-size guard must reject the frame before the subtraction runs.
     TCHeader header(EXPECTED_START_TOKEN, 0, 0);
     U8 frame_header[TCHeader::SERIALIZED_SIZE];
@@ -178,7 +166,7 @@ TEST_F(CcsdsFrameDetectorTest, TestRejectsTooSmallExpectedFrameLength) {
 }
 
 TEST_F(CcsdsFrameDetectorTest, TestRejectsLengthJustBelowOverhead) {
-    // length field = TC_FRAME_OVERHEAD - 2 → expected_frame_length = TC_FRAME_OVERHEAD - 1.
+    // length field = TC_FRAME_OVERHEAD - 2 -> expected_frame_length = TC_FRAME_OVERHEAD - 1.
     // Boundary just below the minimum valid size — must still be rejected by the guard.
     const U16 vc_id_and_length = static_cast<U16>(TC_FRAME_OVERHEAD - 2);
     TCHeader header(EXPECTED_START_TOKEN, vc_id_and_length, 0);
@@ -196,10 +184,9 @@ TEST_F(CcsdsFrameDetectorTest, TestRejectsLengthJustBelowOverhead) {
 }
 
 TEST_F(CcsdsFrameDetectorTest, TestMinimumSizedFrameDetected) {
-    // length field = TC_FRAME_OVERHEAD - 1 → expected_frame_length = TC_FRAME_OVERHEAD
-    // (header + trailer, no body). This is the smallest valid frame and must
-    // pass the guard. With a correct CRC, detect() returns FRAME_DETECTED —
-    // proving the guard's strict `<` comparison does not mistakenly reject it.
+    // This tests that a frame with no body can be detected (not disallowed by the TC standard)
+
+    // length token = (TC_FRAME_OVERHEAD - 1) which makes a body size of 0 and expected_frame_length = TC_FRAME_OVERHEAD
     const U16 vc_id_and_length = static_cast<U16>(TC_FRAME_OVERHEAD - 1);
     TCHeader header(EXPECTED_START_TOKEN, vc_id_and_length, 0);
     U8 frame_header[TCHeader::SERIALIZED_SIZE];
