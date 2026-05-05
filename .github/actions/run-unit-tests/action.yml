@@ -18,9 +18,9 @@ inputs:
     required: false
     default: ""
   jobs:
-    description: "Parallel job count for build and check steps"
+    description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
     required: false
-    default: "8"
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -31,10 +31,36 @@ runs:
     - name: "Build UTs"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: fprime-util build --all --ut -j${{ inputs.jobs }} ${{ inputs.target-platform }}
+      run: |
+        JOBS_INPUT="${{ inputs.jobs }}"
+        JOBS_FLAG=""
+        if [ "${JOBS_INPUT}" = "random" ]; then
+          JOBS=$(( (RANDOM % 32) + 1 ))
+          JOBS_FLAG="-j${JOBS}"
+          echo "Building UTs with ${JOBS} parallel jobs (randomized 1-32)"
+        elif [ -n "${JOBS_INPUT}" ]; then
+          JOBS_FLAG="-j${JOBS_INPUT}"
+          echo "Building UTs with ${JOBS_INPUT} parallel jobs"
+        else
+          echo "Building UTs with default parallelism"
+        fi
+        fprime-util build --all --ut ${JOBS_FLAG} ${{ inputs.target-platform }}
     - name: "Run Unit Tests"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       env:
         CTEST_OUTPUT_ON_FAILURE: "1"
-      run: fprime-util check --all -j${{ inputs.jobs }} ${{ inputs.target-platform }} --pass-through --output-on-failure
+      run: |
+        JOBS_INPUT="${{ inputs.jobs }}"
+        JOBS_FLAG=""
+        if [ "${JOBS_INPUT}" = "random" ]; then
+          JOBS=$(( (RANDOM % 32) + 1 ))
+          JOBS_FLAG="-j${JOBS}"
+          echo "Running UTs with ${JOBS} parallel jobs (randomized 1-32)"
+        elif [ -n "${JOBS_INPUT}" ]; then
+          JOBS_FLAG="-j${JOBS_INPUT}"
+          echo "Running UTs with ${JOBS_INPUT} parallel jobs"
+        else
+          echo "Running UTs with default parallelism"
+        fi
+        fprime-util check --all ${JOBS_FLAG} ${{ inputs.target-platform }} --pass-through --output-on-failure

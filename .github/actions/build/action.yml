@@ -18,9 +18,9 @@ inputs:
     required: false
     default: "false"
   jobs:
-    description: "Parallel job count for the build step"
+    description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
     required: false
-    default: "8"
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -36,4 +36,16 @@ runs:
         if [ "${{ inputs.build-all }}" = "true" ]; then
           ALL_FLAG="--all"
         fi
-        fprime-util build ${ALL_FLAG} -j${{ inputs.jobs }} ${{ inputs.target-platform }}
+        JOBS_INPUT="${{ inputs.jobs }}"
+        JOBS_FLAG=""
+        if [ "${JOBS_INPUT}" = "random" ]; then
+          JOBS=$(( (RANDOM % 32) + 1 ))
+          JOBS_FLAG="-j${JOBS}"
+          echo "Building with ${JOBS} parallel jobs (randomized 1-32)"
+        elif [ -n "${JOBS_INPUT}" ]; then
+          JOBS_FLAG="-j${JOBS_INPUT}"
+          echo "Building with ${JOBS_INPUT} parallel jobs"
+        else
+          echo "Building with default parallelism"
+        fi
+        fprime-util build ${ALL_FLAG} ${JOBS_FLAG} ${{ inputs.target-platform }}
