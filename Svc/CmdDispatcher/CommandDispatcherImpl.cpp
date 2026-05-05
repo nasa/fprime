@@ -121,6 +121,9 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
     // increment sequence number
     this->m_seq++;
+    if (this->m_seq >= CMD_SEQ_GUARD) {
+        this->m_seq = 0;
+    }
 }
 
 void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {

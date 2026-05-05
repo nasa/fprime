@@ -166,6 +166,10 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //! \brief map from command sequence number to pending command state
     Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
+    //!< Guard for wrap-around
+    static constexpr U32 CMD_SEQ_GUARD =
+    std::numeric_limits<U32>::max() - CMD_DISPATCHER_SEQUENCER_TABLE_SIZE;
+
     U32 m_seq;  //!< current command sequence number
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
