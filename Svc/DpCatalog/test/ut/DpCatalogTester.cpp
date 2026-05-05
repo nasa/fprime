@@ -101,7 +101,6 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // Sort both lists to compare (RedBlackTreeSet may return entries in different order
     // when they have identical sort keys due to internal tree structure after removals)
     std::sort(expectedEntries.begin(), expectedEntries.end());
-    std::sort(actualEntries.begin(), actualEntries.end());
 
     // Verify all entries match
     for (size_t i = 0; i < expectedEntries.size(); i++) {
