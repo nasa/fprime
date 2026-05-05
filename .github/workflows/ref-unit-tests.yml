@@ -61,4 +61,5 @@ jobs:
         uses: ./.github/actions/run-unit-tests
         with:
           working-directory: "Ref"
+          cmake-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}

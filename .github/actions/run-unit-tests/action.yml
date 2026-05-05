@@ -9,10 +9,6 @@ inputs:
     description: "Extra flags passed to fprime-util generate --ut (e.g. CMake defines)"
     required: false
     default: ""
-  framework-uts:
-    description: "Enable framework-level UTs (ON/OFF). Default OFF — set ON for framework builds."
-    required: false
-    default: "OFF"
   target-platform:
     description: "Target platform/toolchain passed to fprime-util (e.g. native, aarch64-linux)"
     required: false
@@ -27,7 +23,7 @@ runs:
     - name: "Generate UT Build Cache"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=${{ inputs.framework-uts }} ${{ inputs.cmake-args }} ${{ inputs.target-platform }}
+      run: fprime-util generate --ut ${{ inputs.cmake-args }} ${{ inputs.target-platform }}
     - name: "Build UTs"
       working-directory: ${{ inputs.working-directory }}
       shell: bash

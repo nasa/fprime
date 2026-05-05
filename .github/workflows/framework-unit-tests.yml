@@ -60,5 +60,4 @@ jobs:
       - name: "Run Unit Tests"
         uses: ./.github/actions/run-unit-tests
         with:
-          framework-uts: "ON"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
