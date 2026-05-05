@@ -12,6 +12,11 @@ function(test_autocoder_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPEN
 endfunction(test_autocoder_add_deployment_target)
 
 function(test_autocoder_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    # Allow modules to opt out (e.g. TestChainedAutocoderModule, which owns its own
+    # run of test_target_autocoder via target/test_chained_autocoder).
+    if (SKIP_TEST_AUTOCODER_TARGET)
+        return()
+    endif()
     run_ac_set("${MODULE}" "autocoder/test_target_autocoder")
     # Use the variable from this run as set by the autocoder
     add_custom_target("${MODULE}_test_autocode" DEPENDS "${AUTOCODER_GENERATED_OTHER}")
