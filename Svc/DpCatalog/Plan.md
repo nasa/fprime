@@ -214,9 +214,9 @@ No performance degradation expected.
 4. Test runtime DP additions via `addToCat` during transmission
 
 ### Build and Run
+From the root of the repo:
 ```bash
-cd /home/tcanham/source/fprime-nasa
-fprime-util generate --ut
+fprime-util generate -f --ut
 cd Svc/DpCatalog
 fprime-util check
 ```
@@ -249,6 +249,39 @@ Following `.github/agents/fprime-code-review.agent.md`:
 - ✓ Follow Rule of Three/Five (RedBlackTreeSet handles this)
 - ✓ Unit tests required (will update existing + add new)
 - ✓ Update SDD if exists
+
+### Formatting Standards (`.clang-format`)
+
+```yaml
+BasedOnStyle: Chromium
+IndentWidth: 4
+ColumnLimit: 120
+AccessModifierOffset: -2
+InsertNewlineAtEOF: true
+```
+
+### Static Analysis Checks (`.clang-tidy`)
+
+```yaml
+Checks:
+  - bugprone-unhandled-self-assignment
+  - modernize-deprecated-headers
+  - modernize-redundant-void-arg
+  - modernize-use-bool-literals
+  - modernize-use-nullptr
+  - readability-braces-around-statements
+  - clang-analyzer-security.insecureAPI.rand (disabled)
+WarningsAsErrors: '*'
+```
+
+**Key requirements:**
+
+- 4-space indentation
+- 120 character line limit
+- Use `nullptr` (not NULL)
+- Use bool literals (`true`/`false`, not `1`/`0`)
+- Braces around all control statements
+- All clang-tidy warnings treated as errors
 
 ## Migration Sequence
 
