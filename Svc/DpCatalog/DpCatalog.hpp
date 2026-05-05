@@ -219,8 +219,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     bool m_initialized = false;  //!< set when the component has been initialized
 
     Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES> m_dpCatalog;  //!< The sorted catalog of DPs
-    DpStateEntry m_currentXmitEntry;  //!< Entry currently being transmitted
-    bool m_hasCurrentXmit = false;    //!< Whether m_currentXmitEntry is valid
+    DpStateEntry m_currentXmitEntry;                              //!< Entry currently being transmitted
+    bool m_hasCurrentXmit = false;                                //!< Whether m_currentXmitEntry is valid
 
     FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 

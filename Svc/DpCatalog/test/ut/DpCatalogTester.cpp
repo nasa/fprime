@@ -7,8 +7,8 @@
 #include "DpCatalogTester.hpp"
 #include <algorithm>
 #include <cstdlib>
-#include <vector>
 #include <set>
+#include <vector>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -102,9 +102,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // Verify all entries match
     size_t i = 0;
     for (const auto& expectedEntry : expectedEntries) {
-        ASSERT_EQ(actualEntries[i].record, expectedEntry.record)
-            << "Entry mismatch at sorted index " << i;
-        i++; // Increment the index of the actual entries to walk one at a time in order
+        ASSERT_EQ(actualEntries[i].record, expectedEntry.record) << "Entry mismatch at sorted index " << i;
+        i++;  // Increment the index of the actual entries to walk one at a time in order
     }
 
     // Verify catalog is now empty
