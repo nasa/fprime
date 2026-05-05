@@ -1,0 +1,64 @@
+# Unit test verification for F´ framework and Ref deployment.
+# Runs two parallel jobs: framework-level UTs and Ref deployment UTs.
+
+name: "Unit Tests"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+jobs:
+
+  framework:
+    name: "Framework UTs"
+    runs-on: ubuntu-22.04
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+      - name: "Generate UT Build Cache"
+        run: fprime-util generate --ut
+      - name: "Build UTs"
+        run: fprime-util build --all --ut -j8
+      - name: "Run Unit Tests"
+        run: fprime-util check --all -j8 --pass-through --output-on-failure
+
+  ref:
+    name: "Ref UTs"
+    runs-on: ubuntu-22.04
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+      - name: "Generate UT Build Cache"
+        working-directory: Ref
+        run: fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF
+      - name: "Build UTs"
+        working-directory: Ref
+        run: fprime-util build --all --ut -j8
+      - name: "Run Unit Tests"
+        working-directory: Ref
+        run: fprime-util check --all -j8 --pass-through --output-on-failure

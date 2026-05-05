@@ -1,20 +1,10 @@
-# This is a basic workflow to help you get started with Actions
+# DEPRECATED: This workflow has been replaced by build.yml and unit-tests.yml.
+# Kept for reference only. Use workflow_dispatch to trigger manually if needed.
 
-name: CI [ubuntu]
+name: "CI [ubuntu] (deprecated)"
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
-  push:
-    branches: [ devel, release/** ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
