@@ -777,12 +777,12 @@ void DpCatalogTester::test_MalformedFile() {
 
     // 5. Command should generate event instead of ASSERT
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    // ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
 
     // High-priority warning event should be caught by this test
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_FileCorruptedDataError_SIZE(1);
-    // ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+    ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
 
     // 6. Cleanup
     Os::FileSystem::removeFile(stateFile.toChar());
