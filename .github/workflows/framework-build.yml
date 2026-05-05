@@ -12,6 +12,20 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: "ubuntu-22.04"
+      python-version:
+        description: "Python version (only used on macOS runners)"
+        required: false
+        default: "3.12"
+      jobs:
+        description: "Parallel job count"
+        required: false
+        default: "8"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,16 +34,22 @@ concurrency:
 jobs:
   build:
     name: "Framework"
-    runs-on: ubuntu-22.04
+    runs-on: ${{ inputs.runner || 'ubuntu-22.04' }}
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
+      - name: "Setup Python"
+        if: contains(inputs.runner || '', 'macos')
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version || '3.12' }}
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
       - name: "Build Framework"
         uses: ./.github/actions/build
         with:
           build-all: "true"
+          jobs: ${{ inputs.jobs || '8' }}
