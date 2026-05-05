@@ -569,7 +569,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
-                           Svc::BlockState block /*!< Return command status when complete or not*/
+                           Svc::BlockState block              /*!< Return command status when complete or not*/
                            ) override;
 
     //! Handler for command CS_START

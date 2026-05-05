@@ -144,15 +144,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        BlockState block      //!< Return command status when complete or not
+                        BlockState block                   //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command RUN_ARGS
-    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
-                             U32 cmdSeq,                          //!< The command sequence number
-                             const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
-                             BlockState block,                     //!< Return command status when complete or not
-                             Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                             U32 cmdSeq,                        //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                             BlockState block,                  //!< Return command status when complete or not
+                             Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
                              ) override;
 
     //! Handler for command VALIDATE
@@ -175,8 +175,8 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Handler implementation for command RUN_VALIDATED
     //!
     //! Must be called after VALIDATE. Runs the sequence that was validated.
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,                //!< The opcode
-                                  U32 cmdSeq,                         //!< The command sequence number
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,   //!< The opcode
+                                  U32 cmdSeq,            //!< The command sequence number
                                   Svc::BlockState block  //!< Return command status when complete or not
                                   ) override;
 
