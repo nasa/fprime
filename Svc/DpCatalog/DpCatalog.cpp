@@ -195,7 +195,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         fileLoc += size;
         this->m_stateFileEntries++;
     }
-
+    stateFile.close();
     return Fw::CmdResponse::OK;
 }
 
@@ -302,6 +302,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     FwSizeType size = entryBuffer.getSize();
     stat = stateFile.write(buffer, size);
     if (stat != Os::File::OP_OK) {
+        stateFile.close();
         this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
         return;
     }
