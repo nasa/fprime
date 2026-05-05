@@ -55,6 +55,8 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     trailer.set_crcField(hashBuffer.asBigEndianU32());
     status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // Trim to actual frame size in case allocator returned a larger buffer
+    frameBuffer.setSize(static_cast<Fw::Buffer::SizeType>(frameSize));
 
     // Send the full frame out - this port shall always be connected
     this->dataOut_out(0, frameBuffer, context);

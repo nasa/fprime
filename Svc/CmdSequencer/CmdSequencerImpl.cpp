@@ -100,7 +100,10 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            // Create empty SeqArgs as placeholder
+            // Use parameterized constructor to ensure m_size is initialized to 0
+            Svc::SeqArgs emptyArgs{0, 0};
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
         }
         this->performCmd_Step();
     }
@@ -162,7 +165,10 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            // Create empty SeqArgs as placeholder
+            // Use parameterized constructor to ensure m_size is initialized to 0
+            Svc::SeqArgs emptyArgs{0, 0};
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
         }
         this->performCmd_Step();
     }
@@ -170,7 +176,10 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
 }
 
-void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
+void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum,
+                                                 const Fw::StringBase& filename,
+                                                 const Svc::SeqArgs& args) {
+    (void)args;  // Suppress unused parameter warning
     this->doSequenceRun(filename);
 }
 
@@ -322,7 +331,9 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
     this->performCmd_Step();
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
     if (this->isConnected_seqStartOut_OutputPort(0)) {
-        this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+        // Create empty SeqArgs as placeholder
+        Svc::SeqArgs emptyArgs{0, 0};
+        this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
     }
     this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
 }

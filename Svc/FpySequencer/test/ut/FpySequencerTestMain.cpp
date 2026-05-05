@@ -2069,7 +2069,7 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
     dispatchUntilState(State::IDLE);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
@@ -2086,7 +2086,7 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_from_seqDoneOut_SIZE(0);
     dispatchUntilState(State::VALIDATING);
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -2114,6 +2114,68 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     // dispatch cmd
     this->tester_doDispatch();
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_RUN_ARGS) {
+    allocMem();
+    add_LOAD_REL(0, 4);  // Load first arg (U32 at offset 0) - duplicates it on stack
+    add_LOAD_REL(4, 4);  // Load second arg (U32 at offset 4) - duplicates it on stack
+    add_DISCARD(16);     // Discard all: 2 loaded copies + 2 original args
+    writeToFile("test.bin");
+
+    // Pass two U32 args: 10 and 20
+    Svc::SeqArgs args{0, 0};
+    Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
+    U32 arg1 = 10, arg2 = 20;
+    ASSERT_EQ(argBuf.serializeFrom(arg1), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(argBuf.serializeFrom(arg2), Fw::FW_SERIALIZE_OK);
+    args.set_size(argBuf.getSize());
+
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test.bin"), BlockState::BLOCK, args);
+    dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_from_seqStartOut_SIZE(1);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
+
+    // Verify both args are on stack (8 bytes)
+    auto* runtime = tester_get_m_runtime_ptr();
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(8));
+
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 3);  // LOAD_REL, LOAD_REL, DISCARD
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_ARGS(), 0, Fw::CmdResponse::OK);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+
+    // Stack should be empty after discards
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(0));
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_RUN_ARGS_oversized) {
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    // Create args that exceed MAX_STACK_SIZE
+    Svc::SeqArgs largeArgs{0, 0};
+    // Set size to MAX_STACK_SIZE + 1 to trigger overflow
+    largeArgs.set_size(Fpy::MAX_STACK_SIZE + 1);
+
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test.bin"), BlockState::BLOCK, largeArgs);
+    dispatchUntilState(State::VALIDATING);
+    // should fail during validation when checking args size
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
     removeFile("test.bin");
 }
 
@@ -2181,6 +2243,92 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
+    allocMem();
+    add_LOAD_REL(0, 4);  // Load first arg (U32 at offset 0) - duplicates it on stack
+    add_LOAD_REL(4, 4);  // Load second arg (U32 at offset 4) - duplicates it on stack
+    add_DISCARD(16);     // Discard all: 2 loaded copies + 2 original args
+    writeToFile("test.bin");
+
+    // Pass two U32 args: 10 and 20
+    Svc::SeqArgs args{0, 0};
+    Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
+    U32 arg1 = 10, arg2 = 20;
+    ASSERT_EQ(argBuf.serializeFrom(arg1), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(argBuf.serializeFrom(arg2), Fw::FW_SERIALIZE_OK);
+    args.set_size(argBuf.getSize());
+
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
+    dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // should succeed immediately
+    sendCmd_RUN_VALIDATED(0, 0, BlockState::NO_BLOCK);
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
+
+    // Verify both args are on stack (8 bytes)
+    auto* runtime = tester_get_m_runtime_ptr();
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(8));
+
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 3);  // LOAD_REL, LOAD_REL, DISCARD
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    clearHistory();
+
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    this->clearHistory();
+    // should succeed immediately
+    sendCmd_RUN_VALIDATED(0, 0, BlockState::BLOCK);
+    this->tester_doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 2);
+
+    // Args should be on stack again (8 bytes)
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(8));
+
+    // should go back to IDLE
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
+
+    // Stack should be empty after discards
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(0));
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_oversized) {
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    // Create args that exceed MAX_STACK_SIZE
+    Svc::SeqArgs largeArgs{0, 0};
+    largeArgs.set_size(Fpy::MAX_STACK_SIZE + 1);
+
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), largeArgs);
+    dispatchUntilState(State::VALIDATING);
+    // should fail during validation when checking args size
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    removeFile("test.bin");
 }
 
 TEST_F(FpySequencerTester, cmd_CANCEL) {
@@ -3169,14 +3317,15 @@ TEST_F(FpySequencerTester, seqRunIn) {
     add_NO_OP();
     writeToFile("test.bin");
 
-    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    Svc::SeqArgs emptyArgs;
+    invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
     this->tester_doDispatch();
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
 
     ASSERT_from_seqStartOut_SIZE(1);
-    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), Svc::SeqArgs(0, 0));
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
 
@@ -3184,10 +3333,70 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
     // try running while already running
     this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
-    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
     // dispatch cmd
     this->tester_doDispatch();
     ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, seqCancelIn) {
+    this->tester_setState(State::IDLE);
+    this->invoke_to_seqCancelIn(0);
+    this->tester_doDispatch();
+    // should fail if we're in IDLE
+    ASSERT_EVENTS_InvalidSeqCancelCall_SIZE(1);
+
+    dispatchCurrentMessages(cmp);
+    ASSERT_EQ(this->tester_getState(), State::IDLE);
+
+    this->clearHistory();
+    this->tester_setState(State::RUNNING_SLEEPING);
+    this->invoke_to_seqCancelIn(0);
+    this->tester_doDispatch();
+    // should go back to idle
+    dispatchUntilState(State::IDLE);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+TEST_F(FpySequencerTester, seqRunInArgs) {
+    allocMem();
+    add_LOAD_REL(0, 4);  // Load first arg (U32 at offset 0) - duplicates it on stack
+    add_LOAD_REL(4, 4);  // Load second arg (U32 at offset 4) - duplicates it on stack
+    add_DISCARD(16);     // Discard all: 2 loaded copies + 2 original args
+    writeToFile("test.bin");
+
+    // Pass two U32 args: 10 and 20
+    Svc::SeqArgs args{0, 0};
+    Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
+    U32 arg1 = 10, arg2 = 20;
+    ASSERT_EQ(argBuf.serializeFrom(arg1), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(argBuf.serializeFrom(arg2), Fw::FW_SERIALIZE_OK);
+    args.set_size(argBuf.getSize());
+
+    invoke_to_seqRunIn(0, Fw::String("test.bin"), args);
+    dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_from_seqStartOut_SIZE(1);
+    ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
+
+    // Verify both args are on stack (8 bytes)
+    auto* runtime = tester_get_m_runtime_ptr();
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(8));
+
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 3);  // LOAD_REL, LOAD_REL, DISCARD
+    ASSERT_from_seqStartOut_SIZE(1);
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"), args);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+
+    // Stack should be empty after discards
+    ASSERT_EQ(runtime->stack.size, static_cast<Fpy::StackSizeType>(0));
+
     removeFile("test.bin");
 }
 
