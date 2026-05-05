@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
+#include <set>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -77,10 +78,10 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     this->component.m_xmitInProgress = true;
 
     // Collect expected entries (non-transmitted)
-    std::vector<DpCatalog::DpStateEntry> expectedEntries;
+    std::set<DpCatalog::DpStateEntry> expectedEntries;
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
         if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
-            expectedEntries.push_back(output[entry]);
+            expectedEntries.insert(output[entry]);
         }
     }
 
@@ -98,14 +99,12 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     ASSERT_EQ(actualEntries.size(), expectedEntries.size())
         << "Expected " << expectedEntries.size() << " entries, got " << actualEntries.size();
 
-    // Sort both lists to compare (RedBlackTreeSet may return entries in different order
-    // when they have identical sort keys due to internal tree structure after removals)
-    std::sort(expectedEntries.begin(), expectedEntries.end());
-
     // Verify all entries match
-    for (size_t i = 0; i < expectedEntries.size(); i++) {
-        ASSERT_EQ(actualEntries[i].record, expectedEntries[i].record)
+    size_t i = 0;
+    for (const auto& expectedEntry : expectedEntries) {
+        ASSERT_EQ(actualEntries[i].record, expectedEntry.record)
             << "Entry mismatch at sorted index " << i;
+        i++; // Increment the index of the actual entries to walk one at a time in order
     }
 
     // Verify catalog is now empty
@@ -355,11 +354,11 @@ void DpCatalogTester ::test_TreeTestRandomTransmitted() {
         Fw::FileNameString dir;
 
         // fill the input entries with random priorities
-        // Use unique IDs to avoid duplicates (RedBlackTreeSet rejects duplicate entries)
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
             inputs[entry].record.set_priority(randVal);
-            inputs[entry].record.set_id(entry);  // Use unique ID, not random
+            randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
+            inputs[entry].record.set_id(randVal);
             randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
@@ -580,10 +579,10 @@ void DpCatalogTester ::test_TreeTestRandomId() {
         Fw::FileNameString dir;
 
         // fill the input entries with random priorities
-        // Use unique IDs to avoid duplicates (RedBlackTreeSet rejects duplicate entries)
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+            U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
             inputs[entry].record.set_priority(100);
-            inputs[entry].record.set_id(entry);  // Use unique ID, not random
+            inputs[entry].record.set_id(randVal);
             inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
             inputs[entry].record.set_tSec(1000);
             inputs[entry].record.set_tSub(1500);
