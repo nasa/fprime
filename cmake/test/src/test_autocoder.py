@@ -61,8 +61,8 @@ def test_autocoder_chaining(AUTOCODER_BUILD):
     # Verify that chained autocoder files are created
     # First autocoder should create intermediate files with .generated suffix
     for intermediate in [
-        "test1.test-target.generated.txt",
-        "test2.test-target.generated.txt",
+        "test1.chained-input.generated.txt",
+        "test2.chained-input.generated.txt",
     ]:
         intermediate_path = build_cache_path / intermediate
         assert (
