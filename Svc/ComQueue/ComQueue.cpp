@@ -325,7 +325,8 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
             if (this->m_prioritizedList[i].index == queueNum &&
                 this->m_prioritizedList[i].overflowMode == Types::QUEUE_DROP_OLDEST &&
-                queue.getQueueSize() >= this->m_prioritizedList[i].depth) {
+                queue.getQueueSize() >= this->m_prioritizedList[i].depth &&
+                this->m_prioritizedList[i].depth != 0) {
                 // Queue is full and will drop oldest; remove the front entry to return ownership.
                 // popFront() always removes from the front (oldest) regardless of queue mode,
                 // matching the rotate-based removal that Queue::enqueue() uses for DROP_OLDEST.
