@@ -561,7 +561,7 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
                                                     const FwPrmIdType local_id,
                                                     const Fw::ParamValid prmStat,
                                                     Fw::SerialBufferBase& buff) {
-    if (prmStat == Fw::ParamValid::VALID) {
+    if ((prmStat == Fw::ParamValid::VALID) || (prmStat == Fw::ParamValid::DEFAULT)) {
         switch (local_id) {
             case PARAMID_SECTION_ENABLED:
                 return buff.deserializeTo(this->m_sectionEnabled);
