@@ -38,7 +38,7 @@ void CmdSequencerTester ::BadCRC() {
     SequenceFiles::BadCRCFile file(this->format);
     file.write();
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -70,7 +70,7 @@ void CmdSequencerTester ::BadRecordDescriptor() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_FORMAT_ERROR);
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -126,7 +126,7 @@ void CmdSequencerTester ::EmptyFile() {
     SequenceFiles::EmptyFile file(this->format);
     file.write();
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -170,7 +170,7 @@ void CmdSequencerTester ::FileTooLarge() {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
     this->setTestTime(testTime);
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -189,7 +189,7 @@ void CmdSequencerTester ::MissingCRC() {
     SequenceFiles::MissingCRCFile file(this->format);
     file.write();
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert no response on seqDone
     ASSERT_from_seqDone_SIZE(0);
@@ -237,7 +237,7 @@ void CmdSequencerTester ::MissingFile() {
     SequenceFiles::MissingFile file(this->format);
     file.remove();
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -267,7 +267,7 @@ void CmdSequencerTester ::SizeFieldTooLarge() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -295,7 +295,7 @@ void CmdSequencerTester ::SizeFieldTooSmall() {
     ASSERT_EVENTS_CS_RecordInvalid_SIZE(1);
     ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -323,7 +323,7 @@ void CmdSequencerTester ::USecFieldTooShort() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
     // Run the sequence
-    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);

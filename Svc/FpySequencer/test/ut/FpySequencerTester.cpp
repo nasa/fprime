@@ -377,7 +377,7 @@ void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The eve
 void FpySequencerTester::writeAndRun() {
     removeFile("test.bin");
     writeToFile("test.bin");
-    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::BLOCK);
     // dispatch cmd
     cmp.doDispatch();
     // dispatch sm sig
