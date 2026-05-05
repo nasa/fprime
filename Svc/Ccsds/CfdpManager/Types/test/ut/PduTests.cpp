@@ -29,7 +29,7 @@ class PduTest : public ::testing::Test {
 
 TEST_F(PduTest, HeaderBufferSize) {
     PduHeader header;
-    header.initialize(T_METADATA, DIRECTION_TOWARD_RECEIVER,
+    header.initialize(PduTypeEnum::METADATA, DIRECTION_TOWARD_RECEIVER,
                      Cfdp::Class::CLASS_2, 123, 456, 789);
 
     // Minimum header size with 1-byte EIDs and TSN
@@ -47,7 +47,7 @@ TEST_F(PduTest, HeaderRoundTrip) {
     const EntityId destEid = 30;
     const U16 pduDataLength = 100;
 
-    txHeader.initialize(T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
+    txHeader.initialize(PduTypeEnum::METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
     txHeader.setPduDataLength(pduDataLength);
 
     U8 buffer[256];
@@ -234,7 +234,7 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_METADATA, header.getType());
+    EXPECT_EQ(PduTypeEnum::METADATA, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());
@@ -301,7 +301,7 @@ TEST_F(PduTest, FileDataRoundTrip) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_FILE_DATA, header.getType());
+    EXPECT_EQ(PduTypeEnum::FILE_DATA, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());
@@ -414,7 +414,7 @@ TEST_F(PduTest, EofRoundTrip) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_EOF, header.getType());
+    EXPECT_EQ(PduTypeEnum::END_OF_FILE, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());
@@ -555,7 +555,7 @@ TEST_F(PduTest, FinRoundTrip) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_FIN, header.getType());
+    EXPECT_EQ(PduTypeEnum::FINISHED, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());
@@ -765,7 +765,7 @@ TEST_F(PduTest, AckRoundTrip) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_ACK, header.getType());
+    EXPECT_EQ(PduTypeEnum::ACKNOWLEDGMENT, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());
@@ -981,7 +981,7 @@ TEST_F(PduTest, NakRoundTrip) {
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
-    EXPECT_EQ(T_NAK, header.getType());
+    EXPECT_EQ(PduTypeEnum::NEGATIVE_ACK, header.getType());
     EXPECT_EQ(direction, header.getDirection());
     EXPECT_EQ(txmMode, header.getTxmMode());
     EXPECT_EQ(sourceEid, header.getSourceEid());

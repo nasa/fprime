@@ -53,7 +53,7 @@ class PduBase : public Fw::Serializable {
 
     //! Get the PDU type
     //! @return PDU type
-    PduTypeEnum getType() const { return this->m_header.getType(); }
+    PduTypeEnum::T getType() const { return this->m_header.getType(); }
 
     //! Get the direction
     //! @return PduDirection (toward receiver or sender)

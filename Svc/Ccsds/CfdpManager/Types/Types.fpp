@@ -16,6 +16,17 @@ module Cfdp {
         SEND_PDU_ERROR @< Send PDU: Send failed
     }
 
+    @ PDU type enumeration
+    enum PduTypeEnum: U8 {
+        METADATA = 0 @< Metadata PDU
+        END_OF_FILE = 1 @< End of File PDU
+        FINISHED = 2 @< Finished PDU
+        ACKNOWLEDGMENT = 3 @< Acknowledgment PDU
+        NEGATIVE_ACK = 4 @< Negative Acknowledgment PDU
+        FILE_DATA = 5 @< File Data PDU
+        NONE = 255 @< Invalid or unknown PDU type
+    }
+
     enum Flow {
         NOT_FROZEN @< CFDP channel operations are executing nominally
         FROZEN @< CFDP channel operations are frozen

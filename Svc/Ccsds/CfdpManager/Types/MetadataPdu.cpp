@@ -23,7 +23,7 @@ void MetadataPdu::initialize(PduDirection direction,
                                    const Fw::String& destFilename,
                                    ChecksumType checksumType,
                                    U8 closureRequested) {
-    this->m_header.initialize(T_METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
+    this->m_header.initialize(PduTypeEnum::METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_fileSize = fileSize;
 
@@ -86,15 +86,15 @@ Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Now set the type to T_METADATA since we've validated it
-    this->m_header.m_type = T_METADATA;
+    // Now set the type to PduTypeEnum::METADATA since we've validated it
+    this->m_header.m_type = PduTypeEnum::METADATA;
 
     // Deserialize the metadata body
     return this->fromSerialBuffer(buffer);
 }
 
 Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_METADATA);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::METADATA);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
@@ -171,7 +171,7 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
 }
 
 Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_METADATA);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::METADATA);
 
     // Directive code already read by union wrapper
 

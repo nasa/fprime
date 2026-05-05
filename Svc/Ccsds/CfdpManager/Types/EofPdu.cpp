@@ -19,8 +19,8 @@ void EofPdu::initialize(PduDirection direction,
                               ConditionCode conditionCode,
                               U32 checksum,
                               FileSize fileSize) {
-    // Initialize header with T_EOF type
-    this->m_header.initialize(T_EOF, direction, txmMode, sourceEid, transactionSeq, destEid);
+    // Initialize header with PduTypeEnum::END_OF_FILE type
+    this->m_header.initialize(PduTypeEnum::END_OF_FILE, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_conditionCode = conditionCode;
     this->m_checksum = checksum;
@@ -73,15 +73,15 @@ Fw::SerializeStatus EofPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Now set the type to T_EOF since we've validated it
-    this->m_header.m_type = T_EOF;
+    // Now set the type to PduTypeEnum::END_OF_FILE since we've validated it
+    this->m_header.m_type = PduTypeEnum::END_OF_FILE;
 
     // Deserialize the EOF body
     return this->fromSerialBuffer(buffer);
 }
 
 Fw::SerializeStatus EofPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_EOF);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::END_OF_FILE);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
@@ -132,7 +132,7 @@ Fw::SerializeStatus EofPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
 }
 
 Fw::SerializeStatus EofPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_EOF);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::END_OF_FILE);
 
     // Directive code already read by union wrapper
 

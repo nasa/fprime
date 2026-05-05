@@ -20,8 +20,8 @@ void AckPdu::initialize(PduDirection direction,
                               U8 directiveSubtypeCode,
                               ConditionCode conditionCode,
                               AckTxnStatus transactionStatus) {
-    // Initialize header with T_ACK type
-    this->m_header.initialize(T_ACK, direction, txmMode, sourceEid, transactionSeq, destEid);
+    // Initialize header with PduTypeEnum::ACKNOWLEDGMENT type
+    this->m_header.initialize(PduTypeEnum::ACKNOWLEDGMENT, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_directiveCode = directiveCode;
     this->m_directiveSubtypeCode = directiveSubtypeCode;
@@ -68,15 +68,15 @@ Fw::SerializeStatus AckPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Now set the type to T_ACK since we've validated it
-    this->m_header.m_type = T_ACK;
+    // Now set the type to PduTypeEnum::ACKNOWLEDGMENT since we've validated it
+    this->m_header.m_type = PduTypeEnum::ACKNOWLEDGMENT;
 
     // Deserialize the ACK body
     return this->fromSerialBuffer(buffer);
 }
 
 Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_ACK);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::ACKNOWLEDGMENT);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
@@ -127,7 +127,7 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
 }
 
 Fw::SerializeStatus AckPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_ACK);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::ACKNOWLEDGMENT);
 
     // Directive code already read by fromBuffer()
 

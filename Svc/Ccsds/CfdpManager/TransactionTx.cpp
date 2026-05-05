@@ -808,19 +808,19 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer,
               this->m_state_data.send.sub_state, TX_SUB_STATE_NUM_STATES);
 
     // Peek at PDU type from buffer
-    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // send state, so we only care about file directive PDU
     selected_handler = NULL;
 
-    if (pduType == Cfdp::T_FILE_DATA)
+    if (pduType == Cfdp::PduTypeEnum::FILE_DATA)
     {
         this->m_cfdpManager->log_WARNING_LO_TxNonFileDirectivePduReceived(
             this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num);
     }
-    else if (pduType != Cfdp::T_NONE)
+    else if (pduType != Cfdp::PduTypeEnum::NONE)
     {
         // It's a directive PDU - parse header to get directive code
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());

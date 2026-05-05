@@ -348,7 +348,7 @@ Status::T Engine::serializeAndSendPdu(
             // Log generic PDU serialization error with PDU type
             m_manager->log_WARNING_LO_FailPduSerialization(
                 txn->getChannelId(),
-                static_cast<U8>(pdu.getType()),  // 0=MD, 1=EOF, 2=FIN, 3=ACK, 4=NAK, 5=FD
+                pdu.getType(),
                 static_cast<I32>(serStatus)
             );
             m_manager->returnPduBuffer(*txn->m_chan, buffer);
@@ -468,10 +468,10 @@ void Engine::recvHold(Transaction *txn, const Fw::Buffer& buffer)
     // currently the only thing we will re-ack is the FIN.
 
     // Use peekPduType to determine the PDU type
-    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // Check if this is a FIN PDU for a Class 2 transaction
-    if (pduType == Cfdp::T_FIN &&
+    if (pduType == Cfdp::PduTypeEnum::FINISHED &&
         txn->getClass() == Cfdp::Class::CLASS_2) {
 
         // Deserialize FIN PDU
@@ -496,7 +496,7 @@ void Engine::recvHold(Transaction *txn, const Fw::Buffer& buffer)
 void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
 {
     // Use peekPduType to determine the PDU type before deserializing
-    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // First parse header to get transaction information
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
@@ -529,7 +529,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
         }
         else
         {
-            if (pduType == Cfdp::T_FILE_DATA)
+            if (pduType == Cfdp::PduTypeEnum::FILE_DATA)
             {
                 // file data PDU
                 // being idle and receiving a file data PDU means that no active transaction knew
@@ -550,7 +550,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
                     this->dispatchRecv(txn, buffer); // re-dispatch to enter r2
                 }
             }
-            else if (pduType == Cfdp::T_METADATA)
+            else if (pduType == Cfdp::PduTypeEnum::METADATA)
             {
                 // file directive PDU with metadata - this is the expected case for starting a new RX transaction
                 MetadataPdu md;

@@ -18,8 +18,8 @@ void NakPdu::initialize(PduDirection direction,
                               EntityId destEid,
                               FileSize scopeStart,
                               FileSize scopeEnd) {
-    // Initialize header with T_NAK type
-    this->m_header.initialize(T_NAK, direction, txmMode, sourceEid, transactionSeq, destEid);
+    // Initialize header with PduTypeEnum::NEGATIVE_ACK type
+    this->m_header.initialize(PduTypeEnum::NEGATIVE_ACK, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_scopeStart = scopeStart;
     this->m_scopeEnd = scopeEnd;
@@ -81,15 +81,15 @@ Fw::SerializeStatus NakPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Now set the type to T_NAK since we've validated it
-    this->m_header.m_type = T_NAK;
+    // Now set the type to PduTypeEnum::NEGATIVE_ACK since we've validated it
+    this->m_header.m_type = PduTypeEnum::NEGATIVE_ACK;
 
     // Deserialize the NAK body
     return this->fromSerialBuffer(buffer);
 }
 
 Fw::SerializeStatus NakPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_NAK);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::NEGATIVE_ACK);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
@@ -142,7 +142,7 @@ Fw::SerializeStatus NakPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
 }
 
 Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_NAK);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::NEGATIVE_ACK);
 
     // Directive code already read by fromBuffer()
 

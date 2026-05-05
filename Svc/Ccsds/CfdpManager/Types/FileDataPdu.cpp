@@ -20,8 +20,8 @@ void FileDataPdu::initialize(PduDirection direction,
                                    FileSize offset,
                                    U16 dataSize,
                                    const U8* data) {
-    // Initialize header with T_FILE_DATA type
-    this->m_header.initialize(T_FILE_DATA, direction, txmMode, sourceEid, transactionSeq, destEid);
+    // Initialize header with PduTypeEnum::FILE_DATA type
+    this->m_header.initialize(PduTypeEnum::FILE_DATA, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_offset = offset;
     this->m_dataSize = dataSize;
@@ -81,15 +81,15 @@ Fw::SerializeStatus FileDataPdu::fromBuffer(const Fw::Buffer& buffer) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    // Set the type to T_FILE_DATA since we've validated it
-    this->m_header.m_type = T_FILE_DATA;
+    // Set the type to PduTypeEnum::FILE_DATA since we've validated it
+    this->m_header.m_type = PduTypeEnum::FILE_DATA;
 
     // Deserialize the file data body
     return this->fromSerialBuffer(serialBuffer);
 }
 
 Fw::SerializeStatus FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) const {
-    FW_ASSERT(this->m_header.m_type == T_FILE_DATA);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::FILE_DATA);
 
     // Calculate PDU data length (everything after header)
     U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
@@ -130,7 +130,7 @@ Fw::SerializeStatus FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
 }
 
 Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer) {
-    FW_ASSERT(this->m_header.m_type == T_FILE_DATA);
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::FILE_DATA);
 
     // Deserialize offset - size depends on large file flag
     Fw::SerializeStatus status;

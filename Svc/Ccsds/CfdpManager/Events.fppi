@@ -98,11 +98,11 @@ event FailPduHeaderDeserialization(
 
 event FailPduSerialization(
     channelId: U8 @< Channel sending the PDU
-    pduType: U8 @< PDU type (0=MD, 1=EOF, 2=FIN, 3=ACK, 4=NAK, 5=FD)
+    pduType: Cfdp.PduTypeEnum @< PDU type
     status: I32 @< Serialization status code
 ) \
     severity warning low \
-    format "Failed to serialize PDU type {} on channel {}, status {}"
+    format "Failed to serialize {} PDU on channel {}, status {}"
 
 event FailMetadataPduDeserialization(
     channelId: U8 @< Channel that received the PDU

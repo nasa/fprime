@@ -1227,10 +1227,10 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
     selected_handler = NULL;
 
     // Peek at PDU type from buffer
-    Cfdp::PduTypeEnum pduType = Cfdp::peekPduType(buffer);
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // Special handling for file data PDU
-    if (pduType == Cfdp::T_FILE_DATA)
+    if (pduType == Cfdp::PduTypeEnum::FILE_DATA)
     {
         /* For file data PDU, use the provided fd_fn */
         if (!TxnStatusIsError(this->m_history->txn_stat))
@@ -1238,7 +1238,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer,
             selected_handler = fd_fn;
         }
     }
-    else if (pduType != Cfdp::T_NONE)
+    else if (pduType != Cfdp::PduTypeEnum::NONE)
     {
         // It's a directive PDU - parse header to get directive code
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());

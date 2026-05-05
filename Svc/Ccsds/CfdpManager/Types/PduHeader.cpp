@@ -13,7 +13,7 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void PduHeader::initialize(PduTypeEnum type,
+void PduHeader::initialize(PduTypeEnum::T type,
                               PduDirection direction,
                               Cfdp::Class::T txmMode,
                               EntityId sourceEid,
@@ -21,7 +21,7 @@ void PduHeader::initialize(PduTypeEnum type,
                               EntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
-    this->m_pduType = (type == T_FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
+    this->m_pduType = (type == PduTypeEnum::FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_class = txmMode;
     this->m_crcFlag = CRC_NOT_PRESENT;  // CRC not currently supported
@@ -218,23 +218,23 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
     }
 
     // Don't set m_type yet - it will be determined by the directive code for directive PDUs
-    // or set to T_FILE_DATA for file data PDUs
+    // or set to FILE_DATA for file data PDUs
     if (this->m_pduType == PDU_TYPE_FILE_DATA) {
-        this->m_type = T_FILE_DATA;
+        this->m_type = PduTypeEnum::FILE_DATA;
     } else {
         // For directive PDUs, type will be set when directive code is read
-        this->m_type = T_NONE;
+        this->m_type = PduTypeEnum::NONE;
     }
 
     return Fw::FW_SERIALIZE_OK;
 }
 
-PduTypeEnum peekPduType(const Fw::Buffer& buffer) {
-    PduTypeEnum pduTypeEnum;
+PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
+    PduTypeEnum::T pduTypeEnum;
 
     // Check minimum size for a PDU header
     if (buffer.getSize() < PduHeader::MIN_HEADERSIZE) {
-        return T_NONE;
+        return PduTypeEnum::NONE;
     }
 
     const U8* data = buffer.getData();
@@ -246,7 +246,7 @@ PduTypeEnum peekPduType(const Fw::Buffer& buffer) {
     PduType pduType = static_cast<PduType>((flags >> 4) & 0x01);
 
     if (pduType == PDU_TYPE_FILE_DATA) {
-        pduTypeEnum = T_FILE_DATA;
+        pduTypeEnum = PduTypeEnum::FILE_DATA;
     }
     else
     {
@@ -265,22 +265,22 @@ PduTypeEnum peekPduType(const Fw::Buffer& buffer) {
         // Map directive code to PduTypeEnum
         switch (directiveCode) {
             case FILE_DIRECTIVE_METADATA:
-                pduTypeEnum = T_METADATA;
+                pduTypeEnum = PduTypeEnum::METADATA;
                 break;
             case FILE_DIRECTIVE_END_OF_FILE:
-                pduTypeEnum = T_EOF;
+                pduTypeEnum = PduTypeEnum::END_OF_FILE;
                 break;
             case FILE_DIRECTIVE_FIN:
-                pduTypeEnum = T_FIN;
+                pduTypeEnum = PduTypeEnum::FINISHED;
                 break;
             case FILE_DIRECTIVE_ACK:
-                pduTypeEnum = T_ACK;
+                pduTypeEnum = PduTypeEnum::ACKNOWLEDGMENT;
                 break;
             case FILE_DIRECTIVE_NAK:
-                pduTypeEnum = T_NAK;
+                pduTypeEnum = PduTypeEnum::NEGATIVE_ACK;
                 break;
             default:
-                pduTypeEnum = T_NONE;  // Unknown directive code
+                pduTypeEnum = PduTypeEnum::NONE;  // Unknown directive code
         }
     }
     return pduTypeEnum;

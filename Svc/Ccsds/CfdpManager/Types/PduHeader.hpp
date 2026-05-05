@@ -13,6 +13,7 @@
 #include <config/EntityIdAliasAc.hpp>
 #include <config/TransactionSeqAliasAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduTypeEnumEnumAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -42,22 +43,12 @@ enum LargeFileFlag : U8 {
     LARGE_FILE_64_BIT = 1   // 64-bit file size
 };
 
-// PDU type enum (discriminator for the union and for type identification)
-enum PduTypeEnum : U8 {
-    T_METADATA = 0,
-    T_EOF = 1,
-    T_FIN = 2,
-    T_ACK = 3,
-    T_NAK = 4,
-    T_FILE_DATA = 5,
-    T_NONE = 255
-};
 
 //! The type of a PDU header (common to all PDUs)
 class PduHeader {
   private:
     //! PDU type (derived from directive code or file data flag)
-    PduTypeEnum m_type;
+    PduTypeEnum::T m_type;
 
     //! CFDP version (should be 1)
     U8 m_version;
@@ -100,7 +91,7 @@ class PduHeader {
     enum { MIN_HEADERSIZE = 7 }; // Minimum fixed portion
 
     //! Initialize a PDU header
-    void initialize(PduTypeEnum type,
+    void initialize(PduTypeEnum::T type,
                    PduDirection direction,
                    Cfdp::Class::T txmMode,
                    EntityId sourceEid,
@@ -122,7 +113,7 @@ class PduHeader {
     Fw::SerializeStatus toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const;
 
     //! Get the PDU type
-    PduTypeEnum getType() const { return this->m_type; }
+    PduTypeEnum::T getType() const { return this->m_type; }
 
     //! Get the direction
     PduDirection getDirection() const { return this->m_direction; }
@@ -165,8 +156,8 @@ class PduHeader {
 
 //! Peek at the PDU type from a buffer without consuming it
 //! @param buffer The buffer containing the PDU
-//! @return The PDU type, or T_NONE if the buffer is invalid
-PduTypeEnum peekPduType(const Fw::Buffer& buffer);
+//! @return The PDU type, or NONE if the buffer is invalid
+PduTypeEnum::T peekPduType(const Fw::Buffer& buffer);
 
 }  // namespace Cfdp
 }  // namespace Ccsds
