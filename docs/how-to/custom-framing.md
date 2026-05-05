@@ -87,7 +87,10 @@ Before implementing, consider these best practices:
    }
 
    void MyCustomFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-        this->comStatusOut_out(portNum, condition); // pass comStatus through (unless project requires otherwise)
+        // Pass comStatus through per the Framer Status Protocol. This includes the initial
+        // start-up SUCCESS, per-message statuses, and any recovery SUCCESS after a FAILURE.
+        // See: docs/reference/communication-adapter-interface.md#framer-status-protocol
+        this->comStatusOut_out(portNum, condition);
    }
 
    void MyCustomFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {

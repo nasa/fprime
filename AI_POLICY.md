@@ -2,25 +2,18 @@
 
 We're excited about the potential of generative AI to help make [F´](https://github.com/nasa/fprime) development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome the thoughtful use of these powerful tools in your F´ contributions.
 
-This guide shares our community's approach to using generative AI effectively and responsibly. You'll find practical tips, best practices, and simple guidelines to help you get the most out of AI tools while maintaining the quality standards that make F´ great.
+This guide shares our community's approach to using generative AI effectively and responsibly.
 
 ## Our Position on Generative AI
 
-F´ embraces technological advancement and innovation. Generative AI tools can assist with:
-
-- Code generation and refactoring
-- Documentation creation and improvement  
-- Test case development
-- Debugging assistance
-- Design pattern suggestions
-- Learning and understanding our codebases
-
+F´ embraces technological advancement and innovation, including the use of Generative AI tools.
 However, the use of generative AI must align with our commitment to high technical standards, quality, and the collaborative nature of open source development.
 
 ## Disclosure
 
-To maintain transparency and enable effective code review, contributors **must disclose all generative AI usage**.   
-This includes contributions in the forms of **Pull Requests**, **Issues** or **Discussions**. 
+To maintain transparency and enable effective code review, contributors **must disclose all generative AI usage**.
+This is not meant to discourage AI use, but to ensure that maintainers and reviewers have the necessary context to evaluate contributions effectively.
+This includes contributions in the forms of **Pull Requests**, **Issues**, **Security Advisories**, **Discussions**, or any other communication channels.
 
 ### Pull Request Submissions for Contributors
 
@@ -35,15 +28,6 @@ Include information about:
 - **Scope of usage**: Which files, functions, or sections were AI-assisted
 - **Tool(s) used**: Name of the AI system(s) employed (e.g., GitHub Copilot, ChatGPT, etc.)
 - **Level of modification**: Whether AI-generated content was used as-is, modified, or used as inspiration
-
-
-### What AI Cannot Replace
-
-- **Domain expertise** in flight software and embedded systems
-- **Understanding of F Prime architecture** and design patterns
-- **Critical thinking** about system requirements and constraints
-- **Human judgment** on safety-critical decisions
-- **Community collaboration** and peer review processes
 
 ## Best Practices
 

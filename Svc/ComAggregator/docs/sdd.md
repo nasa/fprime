@@ -13,9 +13,9 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 | Svc-ComAggregator-002 | ComAggregator shall hold the incoming buffer when there is insufficient space in the aggregate buffer.                                                        | Unit-Test    |
 | Svc-ComAggregator-003 | ComAggregator shall send the current aggregate buffer when the incoming buffer is held due to overflow.                                                       | Unit-Test    |
 | Svc-ComAggregator-004 | ComAggregator shall send the current aggregate buffer when it receives a timeout trigger if and only if the aggregate is non-empty.                           | Unit-Test    |
-| Svc-ComAggregator-005 | ComAggregator shall clear aggregation state when a SUCCESS communication status is received back.                                                             | Unit-Test    |
+| Svc-ComAggregator-005 | ComAggregator shall clear aggregation state when a `Fw::Success::SUCCESS` communication status is received back.                                                             | Unit-Test    |
 | Svc-ComAggregator-006 | ComAggregator shall preserve the order of received buffers when forming each aggregate and across aggregate sends.                                            | Unit-Test    |
-| Svc-ComAggregator-007 | ComAggregator shall inter operate with the [Communication Adapter Interface comStatus protocol](../../../docs/reference/communication-adapter-interface.md)   | Unit-Test    |
+| Svc-ComAggregator-007 | ComAggregator shall interoperate with the [Communication Adapter Interface protocol](../../../docs/reference/communication-adapter-interface.md). Specifically, it shall pass through `Fw::Success::SUCCESS` and `Fw::Success::FAILURE` statuses per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol), including the initial start-up SUCCESS and any recovery SUCCESS following a FAILURE.   | Unit-Test    |
 
 
 ## Design

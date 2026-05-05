@@ -71,6 +71,16 @@ TEST(BufferSendIn, OK) {
     tester.OK();
 }
 
+TEST(BufferSendIn, OKProcShrink) {
+    COMMENT("Invoke bufferSendIn with nominal input. Shrink the buffer in processing");
+    REQUIREMENT("SVC-DPMANAGER-002");
+    REQUIREMENT("SVC-DPMANAGER-003");
+    REQUIREMENT("SVC-DPMANAGER-004");
+    REQUIREMENT("SVC-DPMANAGER-007");
+    BufferSendIn::Tester tester;
+    tester.OKProcShrink();
+}
+
 TEST(CLEAR_EVENT_THROTTLE, OK) {
     COMMENT("Test the CLEAR_EVENT_THROTTLE command.");
     REQUIREMENT("SVC-DPMANAGER-006");

@@ -47,8 +47,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceBloc
 void FpySequencer ::Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
     SmId smId,
     Svc_FpySequencer_SequencerStateMachine::Signal signal,
-    const Svc::FpySequencer_SequenceExecutionArgs& value
-) {
+    const Svc::FpySequencer_SequenceExecutionArgs& value) {
     this->m_sequenceArgs = value.get_buffer();
 }
 
@@ -283,8 +282,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack
 
     // Push args buffer to stack. Args are already serialized in big-endian format
     // by F' serialization system, so no endianness conversion is needed.
-    this->m_runtime.stack.push(args.get_buffer(),
-                               static_cast<Fpy::StackSizeType>(args.get_size()));
+    this->m_runtime.stack.push(args.get_buffer(), static_cast<Fpy::StackSizeType>(args.get_size()));
 }
 
 //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
@@ -302,8 +300,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFi
 //! clears all arguments of the sequence file
 void FpySequencer ::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
     SmId smId,
-    Svc_FpySequencer_SequencerStateMachine::Signal signal
-) {
+    Svc_FpySequencer_SequencerStateMachine::Signal signal) {
     this->m_sequenceArgs = {0, 0};
 }
 

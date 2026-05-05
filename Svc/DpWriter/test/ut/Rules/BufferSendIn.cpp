@@ -79,6 +79,72 @@ void TestState ::action__BufferSendIn__OK() {
     this->abstractState.m_NumSuccessfulWrites.value++;
 }
 
+bool TestState ::precondition__BufferSendIn__OKProcShrink() const {
+    const auto& fileData = Os::Stub::File::Test::StaticData::data;
+    bool result = true;
+    result &= (fileData.openStatus == Os::File::Status::OP_OK);
+    result &= (fileData.writeStatus == Os::File::Status::OP_OK);
+    return result;
+}
+
+void TestState ::action__BufferSendIn__OKProcShrink() {
+    // Clear the history
+    this->clearHistory();
+    // Reset the saved proc types
+    // These are updated in the from_procBufferSendOut handler
+    this->abstractState.m_procTypes = 0;
+    // Reset the file pointer in the stub file implementation
+    auto& fileData = Os::Stub::File::Test::StaticData::data;
+    fileData.pointer = 0;
+    // Update m_NumBuffersReceived
+    this->abstractState.m_NumBuffersReceived.value++;
+    // Construct a random buffer
+    const FwSizeType buffer_data_size =
+        STest::Pick::lowerUpper(AbstractState::MAX_DATA_SIZE / 2, AbstractState::MAX_DATA_SIZE);
+    const FwSizeType shrink_data_size = buffer_data_size / 2;
+    this->abstractState.setDataSize(buffer_data_size);
+    Fw::Buffer buffer = this->abstractState.getDpBufferWithProc(1);
+    // Instruct the proc handler to shrink the buffer
+    this->abstractState.m_procShrinkDataSizeOpt.set(shrink_data_size);
+    const FwSizeType exp_buffer_size = Fw::DpContainer::MIN_PACKET_SIZE + shrink_data_size;
+    // Send the buffer
+    this->invoke_to_bufferSendIn(0, buffer);
+    this->doDispatch();
+    // Deserialize the container header
+    Fw::DpContainer container;
+    container.setBuffer(buffer);
+    const Fw::SerializeStatus status = container.deserializeHeader();
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Check events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FileWritten_SIZE(1);
+    Fw::FileNameString fileName;
+    this->constructDpFileName(container.getId(), container.getTimeTag(), fileName);
+    ASSERT_EVENTS_FileWritten(0, static_cast<U32>(exp_buffer_size), fileName.toChar());
+    // Check processing types
+    this->checkProcTypes(container);
+    // Check DP notification
+    ASSERT_from_dpWrittenOut_SIZE(1);
+    ASSERT_from_dpWrittenOut(0, fileName, container.getPriority(), exp_buffer_size);
+    // Check deallocation
+    ASSERT_from_deallocBufferSendOut_SIZE(1);
+    ASSERT_from_deallocBufferSendOut(0, buffer);
+    // Check file write
+    ASSERT_EQ(exp_buffer_size, fileData.pointer);
+    ASSERT_EQ(0, ::memcmp(buffer.getData(), fileData.writeResult, exp_buffer_size));
+    // Check data checksum is valid for the container buffer
+    Utils::HashBuffer storedHash;
+    Utils::HashBuffer computedHash;
+    ASSERT_EQ(Fw::Success::SUCCESS, container.checkDataHash(storedHash, computedHash));
+    // Update m_NumBytesWritten
+    this->abstractState.m_NumBytesWritten.value += exp_buffer_size;
+    // Update m_NumSuccessfulWrites
+    this->abstractState.m_NumSuccessfulWrites.value++;
+
+    this->abstractState.clearDataSize();
+    this->abstractState.m_procShrinkDataSizeOpt.clear();
+}
+
 bool TestState ::precondition__BufferSendIn__InvalidBuffer() const {
     bool result = true;
     return result;
@@ -441,6 +507,11 @@ void Tester::InvalidHeaderHash() {
 
 void Tester::OK() {
     this->ruleOK.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::OKProcShrink() {
+    this->ruleOKProcShrink.apply(this->testState);
     this->testState.printEvents();
 }
 

@@ -85,9 +85,9 @@ void SeqDispatcherTester::testLogStatus() {
     ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_LOG_STATUS, 0, Fw::CmdResponse::OK);
 }
 
-void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,            //!< The port number
-                                            const Fw::StringBase& filename, //!< The sequence file
-                                            const Svc::SeqArgs& args        //!< Sequence arguments
+void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,             //!< The port number
+                                            const Fw::StringBase& filename,  //!< The sequence file
+                                            const Svc::SeqArgs& args         //!< Sequence arguments
 ) {
     this->pushFromPortEntry_seqRunOut(filename, args);
 }

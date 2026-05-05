@@ -35,7 +35,7 @@ const U8* FileBuffer ::getBuffAddr() const {
     return m_buff;
 }
 
-void write(const Fw::SerializeBufferBase& buffer, const char* fileName) {
+void write(const Fw::LinearBufferBase& buffer, const char* fileName) {
     Os::File file;
     ASSERT_EQ(file.open(fileName, Os::File::OPEN_WRITE), Os::File::OP_OK);
     FwSizeType size = buffer.getSize();

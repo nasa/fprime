@@ -39,15 +39,15 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                            const Fw::StringBase& fileName, //!< The sequence file
-                            const Svc::SeqArgs& args        //!< Optional sequence arguments
+    void seqStartIn_handler(FwIndexType portNum,             //!< The port number
+                            const Fw::StringBase& fileName,  //!< The sequence file
+                            const Svc::SeqArgs& args         //!< Optional sequence arguments
     );
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum,            //!< The port number
-                          const Fw::StringBase& fileName, //!< The sequence file
-                          const Svc::SeqArgs& args        //!< Optional sequence arguments
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& fileName,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Optional sequence arguments
     );
 
   private:
@@ -70,7 +70,10 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block, const Svc::SeqArgs& args);
+    void runSequence(FwIndexType sequencerIdx,
+                     const Fw::ConstStringBase& fileName,
+                     Fw::Wait block,
+                     const Svc::SeqArgs& args);
 
     // ----------------------------------------------------------------------
     // Command handler implementations

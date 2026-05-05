@@ -27,11 +27,11 @@ class EmptyFile : public File {
 
   public:
     //! Serialize an empty file in F Prime format
-    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeFPrime(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 
     //! Serialize an empty file in AMPCS format
-    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeAMPCS(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 };
 

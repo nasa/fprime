@@ -25,7 +25,7 @@ BadTimeContextFile ::BadTimeContextFile(const U32 a_n, const Format::t a_format)
     this->setName(s.toChar());
 }
 
-void BadTimeContextFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void BadTimeContextFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     ASSERT_GE(this->n, 2U);
     // Header
     const U32 recordDataSize = (this->n - 1) * FPrime::Records::STANDARD_SIZE + FPrime::Records::EOS_SIZE;

@@ -142,6 +142,22 @@ void DpContainer::setBuffer(const Buffer& buffer) {
     this->m_dataSize = 0;
 }
 
+void DpContainer::shrinkBufferSize() {
+    // Calculate the assumed size for the Fw::Buffer
+    const FwSizeType newSize = this->getPacketSize();
+
+    // Check that the buffer can still store a data product
+    // AND
+    // That the update is a shrink operation. Growing an
+    // Fw::Buffer is not safe
+    FW_ASSERT(newSize >= MIN_PACKET_SIZE, static_cast<FwAssertArgType>(newSize));
+    FW_ASSERT(newSize <= this->m_buffer.getSize(), static_cast<FwAssertArgType>(newSize),
+              static_cast<FwAssertArgType>(this->m_buffer.getSize()));
+
+    // Shrink the Fw::Buffer
+    this->m_buffer.setSize(newSize);
+}
+
 Utils::HashBuffer DpContainer::getHeaderHash() const {
     const FwSizeType bufferSize = this->m_buffer.getSize();
     const FwSizeType minBufferSize = HEADER_HASH_OFFSET + HASH_DIGEST_LENGTH;

@@ -125,7 +125,8 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
         this->m_savedCmdSeq = cmdSeq;
     }
 
-    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, this->m_sequenceArgs));
+    this->sequencer_sendSignal_cmd_RUN_VALIDATED(
+        FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, this->m_sequenceArgs));
 
     // only respond if the user doesn't want us to block further execution
     if (block == FpySequencer_BlockState::NO_BLOCK) {
@@ -377,6 +378,15 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     this->m_runtime.stack.push(static_cast<I32>(response.e));
 }
 
+void FpySequencer ::seqCancelIn_handler(FwIndexType portNum) {
+    // only state you can't cancel in is IDLE
+    if (sequencer_getState() == State::IDLE) {
+        this->log_WARNING_HI_InvalidSeqCancelCall(static_cast<I32>(sequencer_getState()));
+        return;
+    }
+    this->sequencer_sendSignal_cmd_CANCEL();
+}
+
 //! Handler for input port seqRunIn
 void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
     // can only run a seq while in idle
@@ -387,7 +397,8 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 
     // seqRunIn is never blocking - store args for pushArgsToStack action
     // Args must be serialized in F' big-endian format by the caller before being sent
-    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(filename, FpySequencer_BlockState::NO_BLOCK, args));
+    this->sequencer_sendSignal_cmd_RUN(
+        FpySequencer_SequenceExecutionArgs(filename, FpySequencer_BlockState::NO_BLOCK, args));
 }
 
 //! Handler for input port tlmWrite

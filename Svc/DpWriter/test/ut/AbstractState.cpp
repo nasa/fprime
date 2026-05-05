@@ -24,6 +24,18 @@ namespace Svc {
 //! Get a data product buffer backed by m_bufferData
 //! \return The buffer
 Fw::Buffer AbstractState::getDpBuffer() {
+    Fw::DpCfg::ProcType::SerialType procTypes = 0;
+    for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
+        const bool selector = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+        if (selector) {
+            procTypes = static_cast<Fw::DpCfg::ProcType::SerialType>(procTypes | (1 << i));
+        }
+    }
+
+    return getDpBufferWithProc(procTypes);
+}
+
+Fw::Buffer AbstractState::getDpBufferWithProc(Fw::DpCfg::ProcType::SerialType procTypes) {
     // Generate the ID
     const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(
         std::numeric_limits<FwDpIdType>::min(), static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
@@ -45,13 +57,6 @@ Fw::Buffer AbstractState::getDpBuffer() {
     const U32 microseconds = STest::Pick::startLength(0, 1000000);
     container.setTimeTag(Fw::Time(seconds, microseconds));
     // Update the processing types
-    Fw::DpCfg::ProcType::SerialType procTypes = 0;
-    for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
-        const bool selector = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-        if (selector) {
-            procTypes = static_cast<Fw::DpCfg::ProcType::SerialType>(procTypes | (1 << i));
-        }
-    }
     container.setProcTypes(procTypes);
     // Update the data size
     container.setDataSize(dataSize);

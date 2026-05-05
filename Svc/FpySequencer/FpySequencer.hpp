@@ -154,6 +154,14 @@ class FpySequencer : public FpySequencerComponentBase {
                              Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
                              ) override;
 
+    //! Handler implementation for command RUN_ARGS
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                             U32 cmdSeq,                          //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
+                             Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
+                             Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
+                             ) override;
+
     //! Handler for command VALIDATE
     //!
     //! Loads and validates a sequence
@@ -279,6 +287,15 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
 
+    //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the arguments to pass to the sequence
+    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
+        ) override;
+
     //! Implementation for action validate of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
@@ -360,6 +377,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
     
+    //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears arguments
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! clears arguments
@@ -513,6 +538,12 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Handler for input port seqRunIn
     void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
+
+    //! Handler implementation for seqCancelIn
+    //!
+    //! port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
 
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number
