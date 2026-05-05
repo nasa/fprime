@@ -192,19 +192,20 @@ Fw::Success FpySequencer::readBody() {
             return Fw::Success::FAILURE;
         }
 
-        // Check for overflow before accumulation
-        if (m_totalExpectedArgSize > Fpy::MAX_STACK_SIZE - argSize) {
-            this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(argSize, Fpy::MAX_STACK_SIZE,
-                                                                this->m_sequenceFilePath);
-            return Fw::Success::FAILURE;
-        }
+
         argSpec.set_argSize(argSize);
         m_totalExpectedArgSize += argSize;
     }
 
+    // Check for overflow before accumulation
+    if (m_totalExpectedArgSize > Fpy::MAX_STACK_SIZE) {
+        this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(m_totalExpectedArgSize);
+        return Fw::Success::FAILURE;
+    }
+
     // Validate total argument size
     if (this->m_totalExpectedArgSize != this->m_sequenceArgs.get_size()){
-        this->log_WARNING_HI_ArgSizeMismatch(this->m_sequenceObj.get_header().get_argumentCount(),
+        this->log_WARNING_HI_ArgSizeMismatch(this->m_totalExpectedArgSize,
                                              this->m_sequenceArgs.get_size(),
                                              this->m_sequenceFilePath);
         return Fw::Success::FAILURE;

@@ -229,12 +229,9 @@ event ArgSizeMismatch(
 
 event ArgTotalSizeExceedsStackLimit(
     argSize: Fpy.StackSizeType
-    maxStackSize: Fpy.StackSizeType
-    filePath: string
 ) \
     severity warning high \
-    format "Adding argument of size {} would exceed max stack size {} in sequence file {}"
-
+    format "Arguments of size {} would exceed max stack size."
 
 event SequencePaused(
     stmtIdx: U32

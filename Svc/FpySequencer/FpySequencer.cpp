@@ -20,14 +20,17 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_sequenceFilePath("<invalid_seq>"),
       m_sequenceObj(),
       m_computedCRC(0),
+      m_totalExpectedArgSize(0),
       m_sequenceBlockState(),
       m_savedOpCode(0),
       m_savedCmdSeq(0),
+      m_sequenceArgs(0, 0),
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
       m_runtime(),
       m_breakpoint(),
+      m_debug(),
       m_tlm() {}
 
 FpySequencer ::~FpySequencer() {}
