@@ -1,4 +1,4 @@
-# DEPRECATED: This workflow has been replaced by build.yml and unit-tests.yml.
+# DEPRECATED: This workflow has been replaced by framework-build.yml, framework-unit-tests.yml, ref-build.yml, and ref-unit-tests.yml.
 # Kept for reference only. Use workflow_dispatch to trigger manually if needed.
 
 name: "CI [ubuntu] (deprecated)"
