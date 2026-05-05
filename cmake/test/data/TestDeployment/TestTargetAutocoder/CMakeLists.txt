@@ -1,6 +1,6 @@
 # Opt out of target/test_chained_autocoder. This module exercises the standalone
 # target/test_autocoder; without this, the chained target would also run test_target_autocoder
-# on it and CMake would emit the same `cmake -E copy` rule into two submakefiles, racing
+# on it and CMake would emit the same `cmake -E copy` rule into two sub-makefiles, racing
 # under `make -jN`. Custom targets are attached inside register_fprime_module, so the flag
 # must be set first.
 set(SKIP_TEST_CHAINED_AUTOCODER_TARGET TRUE)
