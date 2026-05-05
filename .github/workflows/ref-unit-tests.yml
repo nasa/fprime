@@ -1,0 +1,35 @@
+# Unit test verification for the F´ Ref deployment.
+
+name: "Ref Unit Tests"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+jobs:
+  unit-tests:
+    name: "Ref UTs"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+      - name: "Run Unit Tests"
+        uses: ./.github/actions/run-unit-tests
+        with:
+          working-directory: "Ref"

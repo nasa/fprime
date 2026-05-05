@@ -1,0 +1,39 @@
+name: "F´ Build"
+description: "Generate and build an F´ deployment or module"
+inputs:
+  working-directory:
+    description: "Directory to run fprime-util from"
+    required: false
+    default: "."
+  cmake-args:
+    description: "Extra flags passed to fprime-util generate (e.g. CMake defines)"
+    required: false
+    default: ""
+  target-platform:
+    description: "Target platform/toolchain passed to fprime-util (e.g. native, aarch64-linux)"
+    required: false
+    default: ""
+  build-all:
+    description: "Pass --all to fprime-util build to build all modules"
+    required: false
+    default: "false"
+  jobs:
+    description: "Parallel job count for the build step"
+    required: false
+    default: "8"
+runs:
+  using: "composite"
+  steps:
+    - name: "Generate Build Cache"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: fprime-util generate ${{ inputs.cmake-args }} ${{ inputs.target-platform }}
+    - name: "Build"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        ALL_FLAG=""
+        if [ "${{ inputs.build-all }}" = "true" ]; then
+          ALL_FLAG="--all"
+        fi
+        fprime-util build ${ALL_FLAG} -j${{ inputs.jobs }} ${{ inputs.target-platform }}

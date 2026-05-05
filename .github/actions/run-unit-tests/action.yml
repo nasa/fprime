@@ -1,0 +1,40 @@
+name: "F´ Unit Tests"
+description: "Generate, build, and run F´ unit tests"
+inputs:
+  working-directory:
+    description: "Directory to run fprime-util from"
+    required: false
+    default: "."
+  cmake-args:
+    description: "Extra flags passed to fprime-util generate --ut (e.g. CMake defines)"
+    required: false
+    default: ""
+  framework-uts:
+    description: "Enable framework-level UTs (ON/OFF). Default OFF — set ON for framework builds."
+    required: false
+    default: "OFF"
+  target-platform:
+    description: "Target platform/toolchain passed to fprime-util (e.g. native, aarch64-linux)"
+    required: false
+    default: ""
+  jobs:
+    description: "Parallel job count for build and check steps"
+    required: false
+    default: "8"
+runs:
+  using: "composite"
+  steps:
+    - name: "Generate UT Build Cache"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=${{ inputs.framework-uts }} ${{ inputs.cmake-args }} ${{ inputs.target-platform }}
+    - name: "Build UTs"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: fprime-util build --all --ut -j${{ inputs.jobs }} ${{ inputs.target-platform }}
+    - name: "Run Unit Tests"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        CTEST_OUTPUT_ON_FAILURE: "1"
+      run: fprime-util check --all -j${{ inputs.jobs }} ${{ inputs.target-platform }} --pass-through --output-on-failure
