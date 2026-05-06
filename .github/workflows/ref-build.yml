@@ -38,6 +38,7 @@ jobs:
             jobs: "random"
           - runner: macos-latest
             jobs: "2"
+    timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
       - name: "Checkout F´ Repository"

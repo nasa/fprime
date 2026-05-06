@@ -1,11 +1,20 @@
-# DEPRECATED: The Framework and Ref build/UT jobs have moved to framework-build.yml, framework-unit-tests.yml, ref-build.yml, and ref-unit-tests.yml.
-# The Integration (valgrind) and Quality (clang-tidy) jobs still need to be migrated to dedicated workflows.
-# Kept as workflow_dispatch-only for now. Use the "Run workflow" button to trigger manually if needed.
+# This is a basic workflow to help you get started with Actions
 
-name: "CI [ubuntu] (deprecated)"
+name: CI [ubuntu]
 
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
 on:
-  workflow_dispatch:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
