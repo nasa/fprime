@@ -56,5 +56,5 @@ jobs:
         uses: JPL-Devin/fprime-actions/run-unit-tests@devin/1778027440-build-and-ut-actions
         with:
           working-directory: "Ref"
-          cmake-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
