@@ -1,5 +1,6 @@
-# DEPRECATED: This workflow has been replaced by framework-build.yml, framework-unit-tests.yml, ref-build.yml, and ref-unit-tests.yml.
-# Kept for reference only. Use workflow_dispatch to trigger manually if needed.
+# DEPRECATED: The Framework and Ref build/UT jobs have moved to framework-build.yml, framework-unit-tests.yml, ref-build.yml, and ref-unit-tests.yml.
+# The Integration (valgrind) and Quality (clang-tidy) jobs still need to be migrated to dedicated workflows.
+# Kept as workflow_dispatch-only for now. Use the "Run workflow" button to trigger manually if needed.
 
 name: "CI [ubuntu] (deprecated)"
 
