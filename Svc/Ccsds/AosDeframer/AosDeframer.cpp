@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
+#include <cstring>
 #include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
