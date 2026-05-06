@@ -16,7 +16,8 @@ namespace Svc {
 
 FrameAccumulatorTester ::FrameAccumulatorTester()
     : FrameAccumulatorGTestBase("FrameAccumulatorTester", FrameAccumulatorTester::MAX_HISTORY_SIZE),
-      component("FrameAccumulator") {
+      component("FrameAccumulator"),
+      m_failBufferAllocate(false) {
     component.configure(this->mockDetector, 1, this->mallocator, 2048);
     this->initComponents();
     this->connectPorts();
@@ -160,6 +161,28 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
+void FrameAccumulatorTester ::testDropValidFrameWhenAllocationFailsAndRingIsFull() {
+    U8 data[2048] = {};
+    Fw::Buffer buffer(data, sizeof(data));
+    ComCfg::FrameContext context;
+    const FwSizeType ringCapacity = this->component.m_inRing.get_capacity();
+
+    ASSERT_EQ(ringCapacity, sizeof(data));
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+
+    this->m_failBufferAllocate = true;
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer.getSize());
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataReturnOut_SIZE(1);  // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);        // no frame was sent because allocation failed
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    ASSERT_EVENTS_FrameDetectionValidFrameDropped_SIZE(1);
+}
+
 void FrameAccumulatorTester ::testDetectionErrorHandling() {
     FwSizeType too_large_size = this->component.m_inRing.get_capacity() + 1;
     // Using buffer_size=1 to simplify test since otherwise Accumulator will loop `buffer_size` times
@@ -247,6 +270,10 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
+    if (this->m_failBufferAllocate) {
+        this->m_failBufferAllocate = false;
+        return Fw::Buffer();
+    }
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);
     ::memset(this->m_buffer.getData(), 0, size);

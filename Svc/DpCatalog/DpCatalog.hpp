@@ -10,6 +10,7 @@
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
+#include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Types/MemAllocator.hpp>
 
 #include <Fw/Types/FileNameString.hpp>
@@ -34,7 +35,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     );
 
     /// @brief DpCatalog destructor
-    ~DpCatalog();
+    ~DpCatalog() = default;
 
     /// @brief Configure the DpCatalog
     /// @param maxDpFiles The max number of data product files to track
@@ -145,14 +146,6 @@ class DpCatalog final : public DpCatalogComponentBase {
         DpStateEntry entry;  //!< state entry from file
     };
 
-    /// @brief A list sorted in priority order for downlink
-    struct DpBtreeNode {
-        DpStateEntry entry;   //!< pointer to DP record
-        DpBtreeNode* left;    //!< left child. Also used for free list
-        DpBtreeNode* right;   //!< right child
-        DpBtreeNode* parent;  //!< parent node
-    };
-
     // ----------------------------------
     // Private helpers
     // ----------------------------------
@@ -168,23 +161,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return -1 for quit, 0 for failure but continue, 1 for success
     int processFile(Fw::String fullFile, FwSizeType dir);
 
-    /// @brief insert an entry into the sorted list; if it exists, update the metadata
+    /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry
-    /// @return failed if couldn't find a slot
-    DpCatalog::DpBtreeNode* insertEntry(DpStateEntry& entry);
+    /// @return true if inserted successfully, false if catalog is full
+    bool insertEntry(DpStateEntry& entry);
 
-    /// @brief enumeration for check and insert function
-    enum CheckStat {
-        CHECK_OK,     //!< check passed and inserted. Can break loop
-        CHECK_CONT,   //!< check passed and find another node to check
-        CHECK_ERROR,  //!< check failed to allocate an entry. Quit function
-    };
-
-    /// @brief check for left/right insertion
-    CheckStat checkLeftRight(bool condition, DpBtreeNode*& node, const DpStateEntry& newEntry);
-
-    /// @brief reset the free list
-    void resetBinaryTree();
+    /// @brief reset the catalog
+    void resetCatalog();
 
     /// #brief fill  the binary tree from DP files
     Fw::CmdResponse fillBinaryTree();
@@ -206,23 +189,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param entry entry to add to state file
     void appendFileState(const DpStateEntry& entry);
 
-    /// @brief add an entry to the tree
-    /// @param newNode pointer to newly allocated node
-    /// @param newEntry entry to add
-    /// @return true if a node could be allocated
-    bool allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry);
-
-    /// @brief free an entry from the tree
-    /// @param node entry to deallocate
-    void deallocateNode(DpBtreeNode* node);
-
     /// @brief send the next entry to file downlink
     void sendNextEntry();
 
-    /// @brief find the next entry in the tree
-    /// @return pointer if an entry was found, nullptr if no more entries
+    /// @brief find the next entry in the catalog using iterator
     /// @param entry entry to return
-    DpBtreeNode* findNextTreeNode();
+    /// @return true if an entry was found, false if no more entries
+    bool findNextEntry(DpStateEntry& entry);
 
     /// @brief check to see if component successfully initialized
     /// @return bool if it was initialized
@@ -243,42 +216,41 @@ class DpCatalog final : public DpCatalogComponentBase {
     // ----------------------------------
     // Private data
     // ----------------------------------
-    bool m_initialized;  //!< set when the component has been initialized
+    bool m_initialized = false;  //!< set when the component has been initialized
 
-    DpBtreeNode* m_dpTree;           //!< The head of the binary tree
-    DpBtreeNode* m_freeListHead;     //!< The head of the free list
-    DpBtreeNode* m_currentNode;      //!< current node for traversing tree
-    DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
+    Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES> m_dpCatalog;  //!< The sorted catalog of DPs
+    DpStateEntry m_currentXmitEntry;                              //!< Entry currently being transmitted
+    bool m_hasCurrentXmit = false;                                //!< Whether m_currentXmitEntry is valid
 
-    FwSizeType m_numDpSlots;  //!< Stores the available number of record slots.
+    FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
-    FwSizeType m_numDirectories;                           //!< number of supplied directories
+    FwSizeType m_numDirectories = 0;                       //!< number of supplied directories
     Fw::String m_fileList[DP_MAX_FILES];                   //!< working array of files/directory
 
-    Fw::FileNameString m_stateFile;      //!< file to store transmit state
-    DpDstateFileEntry* m_stateFileData;  //!< DP state loaded from file
-    FwSizeType m_stateFileEntries;       //!< size of state file data
+    Fw::FileNameString m_stateFile;                //!< file to store transmit state
+    DpDstateFileEntry* m_stateFileData = nullptr;  //!< DP state loaded from file
+    FwSizeType m_stateFileEntries = 0;             //!< size of state file data
 
-    FwSizeType m_memSize;           //!< size of allocated buffer
-    void* m_memPtr;                 //!< stored for shutdown
-    FwEnumStoreType m_allocatorId;  //!< stored for shutdown
-    Fw::MemAllocator* m_allocator;  //!< stored for shutdown
+    FwSizeType m_memSize = 0;                 //!< size of allocated buffer
+    void* m_memPtr = nullptr;                 //!< stored for shutdown
+    FwEnumStoreType m_allocatorId = 0;        //!< stored for shutdown
+    Fw::MemAllocator* m_allocator = nullptr;  //!< stored for shutdown
 
-    bool m_catalogBuilt;                    //!< catalog build is complete (can add DPs at runtime)
-    bool m_xmitInProgress;                  //!< set if DP files are in the process of being sent
+    bool m_catalogBuilt = false;            //!< catalog build is complete (can add DPs at runtime)
+    bool m_xmitInProgress = false;          //!< set if DP files are in the process of being sent
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
-    bool m_xmitCmdWait;                     //!< true if waiting for transmission complete to complete xmit command
-    U64 m_xmitBytes;                        //!< bytes transmitted for downlink session
-    FwOpcodeType m_xmitOpCode;              //!< stored xmit command opcode
-    U32 m_xmitCmdSeq;                       //!< stored command sequence id
+    bool m_xmitCmdWait = false;             //!< true if waiting for transmission complete to complete xmit command
+    U64 m_xmitBytes = 0;                    //!< bytes transmitted for downlink session
+    FwOpcodeType m_xmitOpCode = 0;          //!< stored xmit command opcode
+    U32 m_xmitCmdSeq = 0;                   //!< stored command sequence id
 
-    U32 m_pendingFiles;    //!< Pending Files to Transmit
-    U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
+    U32 m_pendingFiles = 0;    //!< Pending Files to Transmit
+    U64 m_pendingDpBytes = 0;  //!< Pending Bytes to Transmit
 
-    bool m_remainActive;  //!< Does the DpCat resume transmission when
-                          //!< a runtime Dp is received after
-                          //!< the full catalog is sent
+    bool m_remainActive = false;  //!< Does the DpCat resume transmission when
+                                  //!< a runtime Dp is received after
+                                  //!< the full catalog is sent
 };
 
 }  // namespace Svc

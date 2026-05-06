@@ -102,6 +102,20 @@ class Queue {
     Fw::SerializeStatus dequeue(U8* const message, const FwSizeType size);
 
     /**
+     * \brief removes and returns the oldest (front) message regardless of queue mode
+     *
+     * Unlike dequeue(), which respects the queue mode (FIFO vs LIFO), this method always
+     * removes from the front of the queue.  This is needed when callers must capture the
+     * oldest entry before it is discarded (e.g. returning buffer ownership on DROP_OLDEST
+     * overflow).
+     *
+     * \param message: buffer of at least m_message_size bytes to receive the oldest message
+     * \param size: size of the buffer being supplied
+     * \return: Fw::SERIALIZE_OK on success, something else on failure
+     */
+    Fw::SerializeStatus popFront(U8* const message, const FwSizeType size);
+
+    /**
      * Return the largest tracked allocated size
      */
     FwSizeType get_high_water_mark() const;

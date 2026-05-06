@@ -4,7 +4,7 @@ The Svc interfaces are a set of `.fppi` files that define FPP interfaces for com
 
 ## Svc/ComInterface
 
-The `Svc/ComInterface` is an interface for implementing the [Communications Adapter Interface](../../../docs/reference/communication-adapter-interface.md). [`Svc::ComStub`](../../ComStub/docs/sdd.md) implements this interface and uses a ByteStream driver to send and receive data on a TCP/UDP/UART link, and is often used in development and early testing.
+The `Svc/ComInterface` is an interface for implementing the [Communications Adapter Interface](../../../docs/reference/communication-adapter-interface.md). Components implementing this interface must follow the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol), which defines when `Fw::Success::SUCCESS` and `Fw::Success::FAILURE` may be emitted via `comStatusOut`. [`Svc::ComStub`](../../ComStub/docs/sdd.md) implements this interface and uses a ByteStream driver to send and receive data on a TCP/UDP/UART link, and is often used in development and early testing.
 
 ## Svc/DeframerInterface
 

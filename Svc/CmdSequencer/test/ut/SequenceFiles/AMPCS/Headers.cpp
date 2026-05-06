@@ -19,11 +19,11 @@ namespace AMPCS {
 
 namespace Headers {
 
-void serialize(Fw::SerializeBufferBase& buffer) {
+void serialize(Fw::LinearBufferBase& buffer) {
     serialize(0x11223344, buffer);
 }
 
-void serialize(const U32 value, Fw::SerializeBufferBase& buffer) {
+void serialize(const U32 value, Fw::LinearBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(value));
 }
 

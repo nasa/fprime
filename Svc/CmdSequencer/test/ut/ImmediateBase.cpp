@@ -166,7 +166,8 @@ void CmdSequencerTester ::parameterizedLoadRunRun(SequenceFiles::File& file, con
     this->parameterizedAutoByPort(file, numCommands, bound);
     // Try to run a loaded sequence
     Fw::String fArg("");
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert seqDone response
     ASSERT_from_seqDone_SIZE(1);

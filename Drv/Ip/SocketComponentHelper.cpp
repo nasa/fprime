@@ -213,22 +213,27 @@ void SocketComponentHelper::readLoop() {
         // If the network connection is open, read from it
         if (this->isOpened() and this->running()) {
             Fw::Buffer buffer = this->getBuffer();
-            U8* data = buffer.getData();
-            FW_ASSERT(data);
-            FwSizeType size = buffer.getSize();
-            // recv blocks, so it may have been a while since its done an isOpened check
-            status = this->recv(data, size);
-            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
-                (status != SOCK_NO_DATA_AVAILABLE)) {
-                Fw::Logger::log("[WARNING] %s failed to recv from port with status %d and errno %d\n",
-                                this->m_task.getName().toChar(), status, errno);
-                this->close();
-                buffer.setSize(0);
+            if (buffer.isValid()) {
+                U8* data = buffer.getData();
+                FW_ASSERT(data);
+                FwSizeType size = buffer.getSize();
+                // recv blocks, so it may have been a while since its done an isOpened check
+                status = this->recv(data, size);
+                if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
+                    (status != SOCK_NO_DATA_AVAILABLE)) {
+                    Fw::Logger::log("[WARNING] %s failed to recv from port with status %d and errno %d\n",
+                                    this->m_task.getName().toChar(), status, errno);
+                    this->close();
+                    buffer.setSize(0);
+                } else {
+                    // Send out received data
+                    buffer.setSize(size);
+                }
+                this->sendBuffer(buffer, status);
             } else {
-                // Send out received data
-                buffer.setSize(size);
+                Fw::Logger::log("[WARNING] %s failed to get buffer for recv\n", this->m_task.getName().toChar());
+                (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
             }
-            this->sendBuffer(buffer, status);
         }
     }
     // This will loop until stopped. If auto-open is disabled, this will break when reopen returns disabled status

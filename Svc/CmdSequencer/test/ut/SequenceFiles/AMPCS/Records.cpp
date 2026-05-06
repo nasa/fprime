@@ -21,8 +21,8 @@ namespace Records {
 
 void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
                const AMPCSSequence::Record::Time::t time,
-               const Fw::SerializeBufferBase& cmdField,
-               Fw::SerializeBufferBase& dest) {
+               const Fw::LinearBufferBase& cmdField,
+               Fw::LinearBufferBase& dest) {
     const AMPCSSequence::Record::TimeFlag::Serial::t serialTimeFlag = timeFlag;
     const AMPCSSequence::Record::CmdLength::t cmdLength = cmdField.getSize();
     const U8* const addr = cmdField.getBuffAddr();
@@ -36,7 +36,7 @@ void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
                const AMPCSSequence::Record::Time::t time,
                const AMPCSSequence::Record::Opcode::t opcode,
                const U32 argument,
-               Fw::SerializeBufferBase& dest) {
+               Fw::LinearBufferBase& dest) {
     Fw::ComBuffer cmdField;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serializeFrom(opcode));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, cmdField.serializeFrom(argument));
@@ -45,7 +45,7 @@ void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
 
 void serialize(const AMPCSSequence::Record::TimeFlag::t timeFlag,
                const AMPCSSequence::Record::Time::t time,
-               Fw::SerializeBufferBase& dest) {
+               Fw::LinearBufferBase& dest) {
     Fw::ComBuffer cmdField;
     Records::serialize(timeFlag, time, cmdField, dest);
 }

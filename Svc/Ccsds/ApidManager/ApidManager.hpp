@@ -68,12 +68,10 @@ class ApidManager final : public ApidManagerComponentBase {
     // ----------------------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------------------
-    //! Get the sequence count for a given APID and increment it for the next
-    //! Wraps around at 14 bits
+    //! Get the sequence count for a given APID and increment it for the next.
+    //! Wraps around at 14 bits. Returns SEQUENCE_COUNT_ERROR and logs ApidTableFull event
+    //! if the APID is not yet tracked and the table is full.
     U16 getAndIncrementSeqCount(ComCfg::Apid::T apid);
-
-    //! Set the next expected sequence count for a given APID
-    void setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount);
 
     //! Helper function for wrapping around at 14 bits when calculating the next sequence count
     U16 calculateNextSeqCount(const U16 seqCount) const;

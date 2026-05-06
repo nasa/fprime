@@ -85,9 +85,38 @@ void FprimeFramerTester ::testNominalFraming() {
 Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
-    this->m_buffer.setSize(size);
-    ::memset(this->m_buffer.getData(), 0, size);
+    // When m_useOversizedAlloc is set, simulate a pool allocator returning
+    // a larger block than requested — the component must trim it before sending
+    FwSizeType allocatedSize = this->m_useOversizedAlloc ? sizeof(this->m_buffer_slot) : size;
+    this->m_buffer.setSize(allocatedSize);
+    ::memset(this->m_buffer.getData(), 0, allocatedSize);
     return this->m_buffer;
+}
+
+// ----------------------------------------------------------------------
+// Test Harness: Handler oversized output
+// ----------------------------------------------------------------------
+
+void FprimeFramerTester::testOversizedAllocatorBufferIsTrimmed() {
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    for (U32 i = 0; i < sizeof(bufferData); ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+
+    this->m_useOversizedAlloc = true;
+    this->invoke_to_dataIn(0, buffer, context);
+    this->m_useOversizedAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(1);
+
+    Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
+    FwSizeType expectedSize = sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
+                              FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    ASSERT_EQ(outputBuffer.getSize(), expectedSize);
 }
 
 }  // namespace Svc
