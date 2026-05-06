@@ -1,9 +1,14 @@
-# Component and Port Kind Selection
+# Component, Port, and Command Kind Selection
 
-This document will describe how to select the kind of component and the kind of port to use when developing within the F Prime framework. We will focus on the component kinds (passive, queued, and active) and the critical port kinds (synch, async). We will begin by discussing the types of work performed by F Prime systems, and then use this to build understanding in the kind selection for ports and components.
+This document will describe how to select the kind of component, port, and command to use when developing within the F Prime framework. We will focus on the component kinds (passive, queued, and active) and the critical port kinds (synch, async). We will begin by discussing the types of work performed by F Prime systems, and then use this to build understanding in the kind selection for ports and components.
+
+This guide assumes you have a basic understanding of the different component and port kinds. If you are unfamiliar with these concepts, please see [Core Constructs: Ports, Components, and Topologies](../overview/03-port-comp-top.md) for an introduction to these concepts.
 
 > [!NOTE]
 > This document does not discuss output ports as the kind of port is determined on the input side of the connection.
+
+> [!IMPORTANT]
+> Since command and port kinds (`sync`, `async`, `guarded`) are very similar in their selection, we will focus on port kind selection and the same principles can be applied to command kind selection.
 
 ## Types of Work in F Prime Systems
 
