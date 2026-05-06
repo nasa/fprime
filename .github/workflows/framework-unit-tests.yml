@@ -46,11 +46,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
-      - name: "Setup Python (macOS)"
-        if: contains(github.event.inputs.runner || matrix.runner, 'macos')
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
       - name: "Run Unit Tests"
