@@ -193,11 +193,13 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
 
     // Extract Spacecraft ID (Section 4.1.2.2)
     // SCID is split: 8 LS bits in globalVcId, 2 MS bits in signaling field
-    U16 spacecraftId =
-        static_cast<U16>((static_cast<U16>(header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
-                          AOSHeaderSubfields::spacecraftIdLsbOffset));
-    spacecraftId |= static_cast<U16>((header.get_frameCountAndSignaling() & AOSHeaderSubfields::spacecraftIdMsbMask)
-                                     << (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+    // We extract and do logical OR in a single operation to appease GCC warnings related to int promotion in |=
+    const U16 spacecraftId = static_cast<U16>(
+        ((header.get_globalVcId() & AOSHeaderSubfields::spacecraftIdLsbMask) >>
+                         AOSHeaderSubfields::spacecraftIdLsbOffset) |
+        ((header.get_frameCountAndSignaling() & AOSHeaderSubfields::spacecraftIdMsbMask) <<
+                         (8 - AOSHeaderSubfields::spacecraftIdMsbOffset)));
+
 
     if (spacecraftId != m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraftId, m_spacecraftId);

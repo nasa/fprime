@@ -45,9 +45,11 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
 
     // Build AOS Primary Header (6 bytes)
     // Byte 0-1: globalVcId (2b TFVN | 8b SCID LSB | 6b VCID)
-    U16 globalVcId = static_cast<U16>((tfvn & 0x3) << AOSHeaderSubfields::frameVersionOffset);
-    globalVcId |= static_cast<U16>((scid & 0xFF) << AOSHeaderSubfields::spacecraftIdLsbOffset);
-    globalVcId |= static_cast<U16>(vcid & 0x3F);
+
+    const U16 globalVcId = static_cast<U16>(
+        static_cast<U16>((tfvn & 0x3) << AOSHeaderSubfields::frameVersionOffset) |
+        static_cast<U16>((scid & 0xFF) << AOSHeaderSubfields::spacecraftIdLsbOffset) |
+        static_cast<U16>(vcid & 0x3F));
     this->m_frameData[0] = static_cast<U8>(globalVcId >> 8);
     this->m_frameData[1] = static_cast<U8>(globalVcId & 0xFF);
 
@@ -57,10 +59,11 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
     this->m_frameData[4] = static_cast<U8>(vcCount & 0xFF);
 
     // Byte 5: Signaling field (replay | cycle use | SCID MSB | VC cycle)
-    U8 signaling = 0;
-    signaling |= static_cast<U8>(1 << AOSHeaderSubfields::cycleCountFlagOffset);  // Cycle count in use
-    signaling |= static_cast<U8>(((scid >> 8) & 0x3) << AOSHeaderSubfields::spacecraftIdMsbOffset);
-    signaling |= static_cast<U8>((vcCount >> 24) & 0x0F);  // Cycle count
+
+    const U8 signaling = static_cast<U8>(
+        static_cast<U8>(1 << AOSHeaderSubfields::cycleCountFlagOffset) |  // Cycle count in use
+        static_cast<U8>(((scid >> 8) & 0x3) << AOSHeaderSubfields::spacecraftIdMsbOffset) |
+        static_cast<U8>((vcCount >> 24) & 0x0F));  // Cycl
     this->m_frameData[5] = signaling;
 
     // Byte 6-7: M_PDU Header (First Header Pointer)
@@ -118,9 +121,11 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
     // EPP Packet per CCSDS 133.1-B-3 Section 4.1.2 / 4.1.3.2
     // Byte 0: 3b PVN=7 | 3b protocolId | 2b lengthOfLength
     // protocolId=0 (EppProtocolId::Idle) produces an EPP idle/fill packet
-    buffer[0] = static_cast<U8>((ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset));
-    buffer[0] |= static_cast<U8>((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset);
-    buffer[0] |= static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask);
+
+    buffer[0] = static_cast<U8>(
+        static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset) |
+        static_cast<U8>((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset) |
+        static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask));
 
     if (lengthOfLength == EppLengthOfLength::Zero) {
         return 1;
