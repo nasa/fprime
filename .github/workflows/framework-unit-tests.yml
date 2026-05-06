@@ -17,7 +17,7 @@ on:
       runner:
         description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
         required: false
-        default: "ubuntu-22.04"
+        default: ""
       jobs:
         description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
         required: false
