@@ -53,6 +53,6 @@ jobs:
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
       - name: "Run Unit Tests"
-        uses: JPL-Devin/fprime-actions/run-unit-tests@devin/1778027440-build-and-ut-actions
+        uses: nasa/fprime-actions/run-unit-tests@devel
         with:
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
