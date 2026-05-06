@@ -53,7 +53,7 @@ jobs:
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
       - name: "Run Unit Tests"
-        uses: ./.github/actions/run-unit-tests
+        uses: JPL-Devin/fprime-actions/run-unit-tests@devin/1778027440-build-and-ut-actions
         with:
           working-directory: "Ref"
           cmake-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"

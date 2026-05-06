@@ -53,7 +53,7 @@ jobs:
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
       - name: "Build Ref"
-        uses: ./.github/actions/build
+        uses: JPL-Devin/fprime-actions/build@devin/1778027440-build-and-ut-actions
         with:
           working-directory: "Ref"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
