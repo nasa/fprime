@@ -37,7 +37,7 @@ jobs:
           - runner: ubuntu-22.04
             jobs: "random"
           - runner: macos-latest
-            jobs: "random"
+            jobs: "2"
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
       - name: "Checkout F´ Repository"
