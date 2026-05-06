@@ -1,6 +1,6 @@
-# Component, Port, and Command Kind Selection
+# Selecting Component, Port, and Command Kinds
 
-This document will describe how to select the kind of component, port, and command to use when developing within the F Prime framework. We will focus on the component kinds (passive, queued, and active) and the critical port kinds (synch, async). We will begin by discussing the types of work performed by F Prime systems, and then use this to build understanding in the kind selection for ports and components.
+This document will describe how to select the kind of component, port, and command to use when developing within the F Prime framework. We will focus on the component kinds (passive, queued, and active) and the critical port kinds (sync, async). We will begin by discussing the types of work performed by F Prime systems, then use that model to guide port and component kind selection.
 
 This guide assumes you have a basic understanding of the different component and port kinds. If you are unfamiliar with these concepts, please see [Core Constructs: Ports, Components, and Topologies](../overview/03-port-comp-top.md) for an introduction to these concepts.
 
@@ -10,15 +10,28 @@ This guide assumes you have a basic understanding of the different component and
 > [!IMPORTANT]
 > Since command and port kinds (`sync`, `async`, `guarded`) are very similar in their selection, we will focus on port kind selection and the same principles can be applied to command kind selection.
 
+**Table of Contents**
+- [Types of Work in F Prime Systems](#types-of-work-in-f-prime-systems)
+- [Component Selection for Cyclic Work](#component-selection-for-cyclic-work)
+  - [Passive Components for Cyclic Work](#passive-components-for-cyclic-work)
+  - [Queued Components for Cyclic Work](#queued-components-for-cyclic-work)
+- [Event-Driven Work](#event-driven-work)
+- [Background Work](#background-work)
+- [Hybrid Patterns](#hybrid-patterns)
+  - [Cyclic Notification Pattern](#cyclic-notification-pattern)
+  - [Active Anchor Pattern](#active-anchor-pattern)
+  - [Passive Converter Pattern](#passive-converter-pattern)
+- [Conclusion](#conclusion)
+
 ## Types of Work in F Prime Systems
 
-Work in F Prime system breaks down into three categories roughly driven by the timing requirements of the work.  These are:
+Work in an F Prime system breaks down into three categories roughly driven by the timing requirements of the work.  These are:
 
-1. Cyclic Work: Cyclic work is how F Prime address hard deadlines. This work is performed on a repeating schedule driven by a [Rate Group](../design-patterns/rate-group.md). e.g. send a control update every 10ms.
+1. Cyclic Work: Cyclic work is how F Prime addresses hard deadlines. This work is performed on a repeating schedule driven by a [Rate Group](../design-patterns/rate-group.md). e.g. send a control update every 10ms.
 2. Event-Driven Work: Event-driven work is how F Prime addresses timely work lacking hard deadlines. e.g. dispatch commands reasonably quickly.
 3. Background Work: Background work is how F Prime addresses work without timing requirements. e.g. log telemetry to disk.
 
-There are also two other terms of not: synchronous and asynchronous invocations (i.e. how a port executes).  Synchronous invocations happen immediately and block the caller until completion just like a typical function call. Asynchronous invocations are queued up until some point in the future when the receiver processes them. Synchronous ports are invoked synchronously and asynchronous ports are invoked asynchronously and backed by a queue.
+Two other relevant terms are synchronous and asynchronous invocations (i.e. how a port executes).  Synchronous invocations happen immediately and block the caller until completion just like a typical function call. Asynchronous invocations are queued up until some point in the future when the receiver processes them. Synchronous ports are invoked synchronously and asynchronous ports are invoked asynchronously and backed by a queue.
 
 > [!IMPORTANT]
 > Cyclic work is almost always performed via synchronous invocations while Event-Driven and Background work is typically performed via asynchronous invocations.
@@ -27,12 +40,12 @@ Understanding the type of work your component will perform is the first step to 
 
 ## Component Selection for Cyclic Work
 
-When performing cyclic work, it is crucial to know if all work on the cycle will be completed before the cycle repeats as this "slip" will indicate a failure to meet the cycle's hard deadline. e.g a 10Hz control update must happen every 100ms, if it takes longer than 100ms to execute one iteration of the cycle then system control has been compromised.  For this reason, cyclic work is always performed via synchronous invocations and thus will use a `synchronous` port.
+When performing cyclic work, it is crucial to know whether all work in the cycle will complete before the cycle repeats, because this 'slip' indicates a failure to meet the cycle’s hard deadline. For example, a 10 Hz control update must happen every 100 ms. If one iteration takes longer than 100 ms, system control has been compromised. For this reason, cyclic work is almost always performed via synchronous invocations and therefore uses a sync port.
 
 > [!CAUTION]
-> Remember, `guarded` ports are synchronous too with an internal mutex to protect data.  These are not as common in cyclic work and a full discussion of `guarded` ports is outside the scope of this document.
+> Remember, `guarded` ports are also synchronous with an internal mutex to protect data.  These are not as common in cyclic work and a full discussion of `guarded` ports is outside the scope of this document.
 
-Since the primary mode of invocation is `synchronous` when doing cyclic work, we will choose a component kind that does not have a thread to process asynchronous work and thus we would chose either a `passive` or `queued` component.
+Since the primary mode of invocation is synchronous when doing cyclic work, we will choose a component kind that primarily handles synchronous invocations, i.e., a `passive` or `queued` component.
 
 ### Passive Components for Cyclic Work
 
@@ -52,8 +65,10 @@ sequenceDiagram
         C1->>C1: Perform work
         C1->>+C2: (Optional) Interact with other components
         C2->>C2: Perform work
-        C2-->-C1:
-        C1-->>-R:
+        C2-->C1:
+        deactivate C2
+        C1-->>R:
+        deactivate C1
     end
 ```
 **Figure 1**: a rate group driven passive component that may call another component as part of its cyclic execution.
@@ -63,7 +78,7 @@ sequenceDiagram
 
 ### Queued Components for Cyclic Work
 
-When a component performing cyclic work also needs to accept some Event-Driven work we then required a queue to handle the asynchronous invocations, but adding a queue processing thread may disrupt the critical synchronous invocations of the core cyclic work of the component.  For this exact reason, we use a `queued` component. A `queued` component allows asynchronous events to be accepted while the core model of the component is synchronous driven.  In this model, the component dispatches the queue as part of the primary synchronous invocation (i.e. `Svc.Sched` handler) thus moving the asynchronous work into the cycle.
+When a component performing cyclic work also needs to accept some Event-Driven work, we require a queue to handle the asynchronous invocations, but adding a queue processing thread may disrupt the critical synchronous invocations of the core cyclic work of the component.  For this exact reason, we use a `queued` component. A `queued` component allows asynchronous events to be accepted while keeping a synchronous core.  In this model, the component dispatches the queue as part of the primary synchronous invocation (i.e. `Svc.Sched` handler) thereby moving the asynchronous work into the cycle.
 
 ```mermaid
 sequenceDiagram
@@ -78,13 +93,14 @@ sequenceDiagram
         R->>+C1: Cyclic Invocation (Svc.Sched)
         C1->>C1: Dispatch queue
         C1->>C1: Perform work
-        C1-->>-R:
+        C1-->>R:
+        deactivate C1
     end
 ```
 **Figure 2**: a rate group driven queued component that dispatches asynchronous events as part of its cyclic execution.
 
 > [!IMPORTANT]
-> In this model it is **imperative** that you dispatch the queue in some synchronous implementation (i.e. the `Svc.Sched` handler) otherwise the queue will fill but events will never process.
+> In this model, it is **imperative** that you dispatch the queue in some synchronous implementation (i.e. the `Svc.Sched` handler); otherwise, the queue will fill but events will never process.
 
 ## Event-Driven Work
 
@@ -103,7 +119,8 @@ sequenceDiagram
 
     loop Forever (Thread Lifecycle)
         C1->>+C1: Wait for event
-        C1->>-C1: Dispatch event
+        C1->>C1: Dispatch event
+        deactivate C1
         C1-)E: (Optional) Event source callback
     end
 ```
@@ -113,7 +130,7 @@ sequenceDiagram
 
 In F Prime, background work is typically performed via asynchronous invocations and thus uses the `async` port kind.  Since the component lacks another context to run in, we use an `active` component to dispatch the asynchronous work via a thread.
 
-This model is identical to the Event-Driven work model, however; background work runs on active components with much lower priority than the Event-Driven work. Thus the event source for background work should emit only a small number of events until the background work is indicated as complete ([see port callback pattern](../design-patterns/common-port-patterns.md#callback-ports) for more details on how to indicate that background work is complete).
+This model is identical to the Event-Driven work model running at a lower thread priority, thus requiring more careful queue management. The event source for background work should emit only a small number of events until the background work is indicated as complete ([see the port callback pattern](../design-patterns/common-port-patterns.md#callback-ports) for more details on how to indicate that background work is complete) in order to prevent queue overflows.
 
 
 ```mermaid
@@ -126,7 +143,8 @@ sequenceDiagram
 
     loop Forever (Thread Lifecycle)
         C1->>+C1: Wait for event
-        C1->>-C1: Dispatch long-running event
+        C1->>C1: Dispatch long-running event
+        deactivate C1
         C1-)E: Event complete callback
     end
     E-)C1: Asynchronous Invocation (e.g. start command)
@@ -141,13 +159,13 @@ sequenceDiagram
 Sometimes component design does not neatly fit into the above categories. This section will elaborate on some common "hybrid" patterns that combine the above models.
 
 > [!CAUTION]
-> This section is intended to give developers deeper understanding of real-world designs. You should prefer the simpler models above wherever possible.
+> This section is intended to give developers a deeper understanding of real-world designs. You should prefer the simpler models above wherever possible.
 
-## Cyclic Notification Pattern
+### Cyclic Notification Pattern
 
-We discussed what happens when a cyclic component needs to accept the occasional Event-Driven work, but what if a primarily Event-Drive component needs to perform the occasional cyclic work? For example, a component needs to emit telemetry at a regular interval that is not a strict deadline.
+We discussed what happens when a cyclic component needs to accept the occasional Event-Driven work, but what if a primarily Event-Driven component needs to perform the occasional cyclic work? For example, a component needs to emit telemetry at a regular interval that is not a strict deadline.
 
-In this case, we can use the "Cyclic Notification Pattern" where an `active` component performs primarily Event-Driven work but also has a `async` port of type `Svc.Sched` that converts the cyclic invocation into a queued event that is processed roughly at the cycle interval.
+In this case, we can use the "Cyclic Notification Pattern" where an `active` component performs primarily Event-Driven work but also has an `async` port of type `Svc.Sched` that converts the cyclic invocation into a queued event that is processed roughly at the cycle interval.
 
 ```mermaid
 sequenceDiagram
@@ -160,12 +178,13 @@ sequenceDiagram
 
     loop Forever (Thread Lifecycle)
         C1->>+C1: Wait for event
-        C1->>-C1: Dispatch event
+        C1->>C1: Dispatch event
+        deactivate C1
     end
 ```
 **Figure 5**: an active component that dispatches events as part of its thread lifecycle. Some events are generated by a cyclic invocation via a `Svc.Sched` port.
 
-## Active Anchor Pattern
+### Active Anchor Pattern
 
 Sometimes the work done by an Event-Driven component is easier to decompose into multiple components. In this case, there is typically an Event-Driven active component that orchestrates a set of passive helper components as part of its handling of events.
 
@@ -184,18 +203,20 @@ sequenceDiagram
         C1->>C1: Dispatch event
         C1->>+H1: Synchronous Invocation
         H1->>H1: Perform some work
-        H1-->>-C1:
+        H1-->>C1:
+        deactivate H1
         C1->>+H2: Synchronous Invocation
         H2->>H2: Perform some work
-        H2-->>-C1:
-        C1-)-E: (Optional) Event source callback
+        H2-->>C1:
+        deactivate H2
+        deactivate C1
     end
 ```
-**Figure 5**: an active component that dispatches events as part of its thread lifecycle using a series of passive helper components for a more nuanced decomposition.
+**Figure 6**: an active component that dispatches events as part of its thread lifecycle using a series of passive helper components for a more nuanced decomposition.
 
-## Passive Converter Pattern
+### Passive Converter Pattern
 
-Sometimes you just need a component that does some menial conversion or other work as part of what is logically another port call. E.g. you need to connect two components with incompatible port types and need need to reconcile those type. In this case, you can use a passive component as a converter that is called synchronously as part of the primary port call.
+Sometimes you just need a component that does some menial conversion or other work as part of what is logically another port call. For example, you need to connect two components with incompatible port types and need to reconcile those types. In this case, you can use a passive component as a converter that is called synchronously as part of the primary port call.
 
 ```mermaid
 sequenceDiagram
@@ -206,9 +227,10 @@ sequenceDiagram
     S->>+C: Synchronous Invocation
     C->>C: Perform conversion
     C->>D: Synchronous/Asynchronous Invocation
+    deactivate C
 ```
-**Figure 6**: a passive converter component that performs a conversion inline with a port call.
+**Figure 7**: a passive converter component that performs a conversion inline with a port call.
 
 ## Conclusion
 
-This document covers the basics of component and port kind selection in F Prime. It should give you a starting point for making informed decisions developing F Prime components, however; there are always times where a real design may depart from these models. The important thing is to understand why and be able to justify it.
+This document covers the basics of component and port kind selection in F Prime. It should give you a starting point for making informed decisions when developing F Prime components.  However, there are always times where a real design may depart from these models. The important thing is to understand why and be able to justify it.

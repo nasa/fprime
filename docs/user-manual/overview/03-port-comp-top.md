@@ -156,7 +156,7 @@ however, the user must implement at least one synchronous port invocation that u
 queue. For this and any other synchronously invocation execution context is supplied by the invoker.  **Note:** this
 component type is only rarely used.  Ensure it is the correct choice for your design.
 
-For a deeper description on selecting component kinds see [Component, Port, and Command Kind Selection](../framework/component-and-port-selection.md).
+For a deeper description on selecting component kinds see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md).
 
 > [!CAUTION]
 > In older F Prime documents component kind was used interchangeably with component type. If a part of F Prime refer's to the components type and discusses the terms `active`, `passive`, and `queued` it is referring to the component's kind.
@@ -233,4 +233,4 @@ topology. Alternate implementations can therefore easily be swapped, for example
 F´ is decomposed into a federation of discrete components organized into a system graph. The interconnections in this
 graph are handled through port calls such that the otherwise independent components can interact with each other.
 
-For an understanding of how to select port and component kinds, see [Component, Port, and Command Kind Selection](../framework/component-and-port-selection.md). For an understanding of how to select command kinds, see [Command Types](../framework/command-types.md).
+For an understanding of how to select port and component kinds, see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md). For an understanding of how to select command kinds, see [Command Types](../framework/command-types.md).
