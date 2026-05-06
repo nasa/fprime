@@ -48,8 +48,7 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
 
     const U16 globalVcId = static_cast<U16>(
         static_cast<U16>((tfvn & 0x3) << AOSHeaderSubfields::frameVersionOffset) |
-        static_cast<U16>((scid & 0xFF) << AOSHeaderSubfields::spacecraftIdLsbOffset) |
-        static_cast<U16>(vcid & 0x3F));
+        static_cast<U16>((scid & 0xFF) << AOSHeaderSubfields::spacecraftIdLsbOffset) | static_cast<U16>(vcid & 0x3F));
     this->m_frameData[0] = static_cast<U8>(globalVcId >> 8);
     this->m_frameData[1] = static_cast<U8>(globalVcId & 0xFF);
 
@@ -60,10 +59,10 @@ Fw::Buffer AosDeframerTester::assembleFrameBuffer(U8* payload,
 
     // Byte 5: Signaling field (replay | cycle use | SCID MSB | VC cycle)
 
-    const U8 signaling = static_cast<U8>(
-        static_cast<U8>(1 << AOSHeaderSubfields::cycleCountFlagOffset) |  // Cycle count in use
-        static_cast<U8>(((scid >> 8) & 0x3) << AOSHeaderSubfields::spacecraftIdMsbOffset) |
-        static_cast<U8>((vcCount >> 24) & 0x0F));  // Cycl
+    const U8 signaling =
+        static_cast<U8>(static_cast<U8>(1 << AOSHeaderSubfields::cycleCountFlagOffset) |  // Cycle count in use
+                        static_cast<U8>(((scid >> 8) & 0x3) << AOSHeaderSubfields::spacecraftIdMsbOffset) |
+                        static_cast<U8>((vcCount >> 24) & 0x0F));  // Cycl
     this->m_frameData[5] = signaling;
 
     // Byte 6-7: M_PDU Header (First Header Pointer)
