@@ -24,13 +24,13 @@ namespace Drv {
 
 TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName) : TcpServerComponentBase(compName) {}
 
-SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
+SocketIpStatus TcpServerComponentImpl::configure(const char* const ipv4_address,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds,
                                                  FwSizeType buffer_size) {
     m_allocation_size = buffer_size;  // Store the buffer size
-    (void)m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
+    (void)m_socket.configure(ipv4_address, port, send_timeout_seconds, send_timeout_microseconds);
     return startup();
 }
 
