@@ -31,7 +31,7 @@ Work in an F Prime system breaks down into three categories roughly driven by th
 2. Event-Driven Work: Event-driven work is how F Prime addresses timely work lacking hard deadlines. e.g. dispatch commands reasonably quickly.
 3. Background Work: Background work is how F Prime addresses work without timing requirements. e.g. log telemetry to disk.
 
-Two other relevant terms are synchronous and asynchronous invocations (i.e. how a port executes).  Synchronous invocations happen immediately and block the caller until completion just like a typical function call. Asynchronous invocations are queued up until some point in the future when the receiver processes them. Synchronous ports are invoked synchronously and asynchronous ports are invoked asynchronously and backed by a queue.
+Two other relevant terms are synchronous and asynchronous invocations (i.e. how a port executes).  Synchronous invocations happen immediately and block the caller until completion just like a typical function call. Asynchronous invocations are queued up until some point in the future when the receiver processes them. Synchronous ports are invoked synchronously and asynchronous ports are invoked asynchronously and backed by a queue in the receiver component.
 
 > [!IMPORTANT]
 > Cyclic work is almost always performed via synchronous invocations while Event-Driven and Background work is typically performed via asynchronous invocations.
