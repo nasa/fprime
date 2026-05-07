@@ -181,7 +181,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     // ----------------------------------------------------------------------
 
     //! Test untrusted inputs
-    void testUntrustedFhp();  
+    void testUntrustedFhp();
 
   private:
     // ----------------------------------------------------------------------
