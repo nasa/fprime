@@ -1,4 +1,4 @@
-# Build verification for the F´ Ref deployment.
+# Build and integration test for the F´ Ref deployment.
 
 name: "Ref Build"
 
@@ -38,7 +38,7 @@ jobs:
             jobs: "random"
           - runner: macos-latest
             jobs: "2"
-    timeout-minutes: 30
+    timeout-minutes: 45
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
       - name: "Checkout F´ Repository"
@@ -55,3 +55,17 @@ jobs:
         with:
           working-directory: "Ref"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+      - name: "Install valgrind"
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y valgrind
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "Ref"
+          test-working-directory: "Ref/test/int"
+          binary: "build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: "--deployment-config ${{ github.workspace }}/Ref/test/int/int_config.json"
+          valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
