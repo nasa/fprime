@@ -1,0 +1,45 @@
+# Static analysis (clang-tidy) for F´ framework flight code.
+
+name: "Framework Quality"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+jobs:
+  quality:
+    name: "Flight Static Analysis"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Install clang-tidy"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy-12
+      - name: "Build with Static Analysis"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          generate-args: "-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY=\"clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy\""
+          jobs: "4"
