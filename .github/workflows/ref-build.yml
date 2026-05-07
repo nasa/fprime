@@ -60,6 +60,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y valgrind
+      - name: "Install coreutils (macOS)"
+        if: runner.os == 'macOS'
+        run: brew install coreutils
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
