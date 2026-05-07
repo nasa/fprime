@@ -410,7 +410,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     if (firstHeaderPointer >= dataZoneSize) {
         this->log_WARNING_HI_InvalidFhp(vc.virtualChannelId, firstHeaderPointer, dataZoneSize);
         this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
-        // Abandon any existing data since this frame (and any contiunuing packets) are garbage now
+        // Abandon any existing data since this frame (and any continuing packets) are garbage now
         this->abandonSpanningPacket(vc);
         return;
     }
