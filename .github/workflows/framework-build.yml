@@ -48,6 +48,8 @@ jobs:
           submodules: true
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
       - name: "Build Framework"
         uses: nasa/fprime-actions/build@devel
         with:
