@@ -253,10 +253,13 @@ The following table maps the key patterns in this document to concrete examples 
 
 | Pattern | Typical Shape | Example Components/Subtopologies |
 | --- | --- | --- |
-| Passive Components for Cyclic Work | `passive` component with `sync` `Svc.Sched` input | `Drv.LinuxUartDriver` |
+| Passive Components for Cyclic Work | `passive` component with `sync` `Svc.Sched` input | N/A* |
 | Queued Components for Cyclic Work | `queued` component with `sync` schedule input and async/event inputs | `Svc.Health` |
 | Event-Driven Work | `active` component with primarily `async` command/port inputs | `Svc.EventManager` |
 | Background Work | `active` component handling non-deadline work asynchronously | `Svc.FileWorker` |
 | Cyclic Notification Pattern | `active` component with an `async` `Svc.Sched` input used as periodic notification | `Svc.TlmPacketizer` |
 | Active Anchor Pattern | One active "anchor" plus passive helper components | `ComCcsds.FramingSubtopology` (`Svc.ComQueue` with passive helpers like `Svc.Ccsds.TmFramer`) |
 | Passive Adapter Pattern | `passive` adapter/converter called inline with existing flow | `Drv.ByteStreamBufferAdapter` |
+
+> [!NOTE]
+> * The core F Prime codebase does not deal with any hard deadlines and thus does not have a canonical example of a purely cyclic component.

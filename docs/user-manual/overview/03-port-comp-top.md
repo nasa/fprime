@@ -233,4 +233,4 @@ topology. Alternate implementations can therefore easily be swapped, for example
 F´ is decomposed into a federation of discrete components organized into a system graph. The interconnections in this
 graph are handled through port calls such that the otherwise independent components can interact with each other.
 
-For an understanding of how to select port and component kinds, see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md). For an understanding of how to select command kinds, see [Command Types](../framework/command-types.md).
+For an understanding of how to select port and component kinds, see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md).
