@@ -231,7 +231,7 @@ AosDeframer::AosDeframerVc* AosDeframer::parseAndValidateHeader(Fw::Buffer& data
         // Extend the 24-bit frame count with the 4-bit cycle count
         rxVcFrameCount |= static_cast<U32>(rxVcFrameCountCycle) << 24;
         // Add the 4 additional bits to our modulo
-        frameCountMask |= 0xFF00'0000;
+        frameCountMask |= 0x0F00'0000;
     }
 
     // Gap detect after the first accepted frame on a VC
@@ -313,6 +313,9 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
         // packet)
+        // FIXME: packetSize is untrusted (read straight from the wire) and could have unintended side effects,
+        // especially with EPP. We should skip if packetSize exceeds a mission-defined limit instead of letting the
+        // allocator handle any requests, which has a side effect of abandoning spanning packets on failure
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
@@ -400,6 +403,13 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
             (void)this->appendToSpanningPacket(vc, dataZone, dataZoneSize);
         }
         // If no spanning packet active, this continuation data cannot be used
+        return;
+    }
+
+    // Guard against First Header Pointer pointing out of bounds (untrusted input)
+    if (firstHeaderPointer >= dataZoneSize) {
+        this->log_WARNING_HI_InvalidFhp(vc.virtualChannelId, firstHeaderPointer, dataZoneSize);
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
         return;
     }
 

@@ -984,6 +984,25 @@ void AosDeframerTester::testFrameCountTelemetry() {
     }
 }
 
+// ----------------------------------------------------------------------
+// Tests - Robustness against untrusted inputs
+// ----------------------------------------------------------------------
+
+void AosDeframerTester::testUntrustedFhp() {
+    this->configureDefault();
+
+    U8 payload[50];  // don't care about payload content for this test
+    // Create a frame with FHP pointing further than the frame's data zone
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), TEST_DATA_ZONE_SIZE);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_InvalidFhp_SIZE(1);
+}
+
 }  // namespace Ccsds
 
 }  // namespace Svc

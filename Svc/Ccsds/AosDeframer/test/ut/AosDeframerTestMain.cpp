@@ -196,6 +196,15 @@ TEST(AosDeframer, testFrameCountTelemetry) {
     tester.testFrameCountTelemetry();
 }
 
+// ----------------------------------------------------------------------
+// Tests - Robustness against untrusted inputs
+// ----------------------------------------------------------------------
+
+TEST(AosDeframer, testUntrustedFhp) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testUntrustedFhp();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
