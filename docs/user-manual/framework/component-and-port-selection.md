@@ -8,7 +8,7 @@ This guide assumes you have a basic understanding of the different component and
 > This document does not discuss output ports as the kind of port is determined on the input side of the connection.
 
 > [!IMPORTANT]
-> Since command and port kinds (`sync`, `async`, `guarded`) are very similar in their selection, we will focus on port kind selection and the same principles can be applied to command kind selection.
+> Commands are implemented in F Prime via ports. Thus they have the same kinds (`async`, `sync`, and `guarded`) and for the purposes of this document, they follow the same decision process as ports.
 
 **Table of Contents**
 - [Types of Work in F Prime Systems](#types-of-work-in-f-prime-systems)
@@ -40,7 +40,7 @@ Understanding the type of work your component will perform is the first step to 
 
 ## Component Selection for Cyclic Work
 
-When performing cyclic work, it is crucial to know whether all work in the cycle will complete before the cycle repeats, because this 'slip' indicates a failure to meet the cycle’s hard deadline. For example, a 10 Hz control update must happen every 100 ms. If one iteration takes longer than 100 ms, system control has been compromised. For this reason, cyclic work is almost always performed via synchronous invocations and therefore uses a sync port.
+When performing cyclic work, it is crucial to know whether all work in the cycle will complete before the cycle repeats, because this 'slip' indicates a failure to meet the cycle’s hard deadline. For example, a 10 Hz control update must happen every 100 ms. If one iteration takes longer than 100 ms, the cycle has slipped and system control has been compromised because it did not keep up with the expected control rate. For this reason, cyclic work is almost always performed via synchronous invocations and therefore uses a sync port. Asynchronous invocations are not used because this work would be run outside the rate group cycling context and thus slips and failure to reach deadlines would be hidden in another thread.
 
 > [!CAUTION]
 > Remember, `guarded` ports are also synchronous with an internal mutex to protect data.  These are not as common in cyclic work and a full discussion of `guarded` ports is outside the scope of this document.
@@ -80,13 +80,21 @@ sequenceDiagram
 
 When a component performing cyclic work also needs to accept some Event-Driven work, we require a queue to handle the asynchronous invocations, but adding a queue processing thread may disrupt the critical synchronous invocations of the core cyclic work of the component.  For this exact reason, we use a `queued` component. A `queued` component allows asynchronous events to be accepted while keeping a synchronous core.  In this model, the component dispatches the queue as part of the primary synchronous invocation (i.e. `Svc.Sched` handler) thereby moving the asynchronous work into the cycle.
 
+We do not typically used `sync` commands in this context because a synchronous command would block the command dispatch while executing, and also requires mutex protection to access shared data. These mutex accesses can disrupt the critical cyclic work by occurring at anytime whereas the queue is processed at a specific point in the cycle.
+
+Adding a thread to handle the asynchronous work would either mean the cyclic work is moved to this thread (again hiding slips and failures to meet deadlines) or the component thread and rate group thread would need concurrency protection that causes disruption.
+
+> [!IMPORTANT]
+> In most situations, you want a singular thread to execution to do all the work of the component. If a rate group is driving the component, use a queue to pull asynchronous work into that thread. If you have a Event-Driven components (see below) then all interaction should be `async` as to be performed on the component's thread.
+
+
 ```mermaid
 sequenceDiagram
     participant R as Rate Group
     participant C1 as Queued Component
     participant C2 as Event Source
 
-    C2-)C1: Asynchronous Invocation (e.g. command)
+    C2-)C1: Asynchronous Invocation (command or port)
     C2-)C1: Asynchronous Invocation ...
 
     loop Every Cycle (e.g. every 100ms)
@@ -108,13 +116,18 @@ Since Event-Driven work is typically high-priority but without strict hard deadl
 
 This model is constructed by having any number of `async` ports and commands attached to an `active` component. The thread scheduler handles the rest.
 
+Synchronous Event-Drive work is typically avoided because that work would block the source of the event while it is processed. This causes unnecessary coupling between components leading to more complicated system design. Thus Event-Drive work is typically performed asynchronously.  We use an `active` component because it has its own thread to processes asynchronous work.
+
+> [!IMPORTANT]
+> Here again we see uniformity in our invocations. In an `active` Event-Driven component, all ports and commands are typically `async` to that they all process on the same thread. Other patterns require concurrency protection, which is more complicated and can couple components' executions together.
+
 ```mermaid
 sequenceDiagram
     participant E as Event Source
     participant C1 as Active Component
 
 
-    E-)C1: Asynchronous Invocation (e.g. command)
+    E-)C1: Asynchronous Invocation (command or port)
     E-)C1: Asynchronous Invocation ...
 
     loop Forever (Thread Lifecycle)
@@ -139,7 +152,7 @@ sequenceDiagram
     participant C1 as Active Component
 
 
-    E-)C1: Asynchronous Invocation (e.g. start command)
+    E-)C1: Asynchronous Invocation (start command or port)
 
     loop Forever (Thread Lifecycle)
         C1->>+C1: Wait for event
@@ -147,7 +160,7 @@ sequenceDiagram
         deactivate C1
         C1-)E: Event complete callback
     end
-    E-)C1: Asynchronous Invocation (e.g. start command)
+    E-)C1: Asynchronous Invocation (start command or port)
 ```
 **Figure 4**: an active component that dispatches background events as part of its thread lifecycle. Here a callback indicates the background work is complete and another event can be handled.
 
@@ -195,7 +208,7 @@ sequenceDiagram
     participant H1 as Passive Helper 1
     participant H2 as Passive Helper 2
 
-    E-)C1: Asynchronous Invocation (e.g. command)
+    E-)C1: Asynchronous Invocation (command or port)
     E-)C1: Asynchronous Invocation ...
 
     loop Forever (Thread Lifecycle)
@@ -214,14 +227,14 @@ sequenceDiagram
 ```
 **Figure 6**: an active component that dispatches events as part of its thread lifecycle using a series of passive helper components for a more nuanced decomposition.
 
-### Passive Converter Pattern
+### Passive Adapter Pattern
 
-Sometimes you just need a component that does some menial conversion or other work as part of what is logically another port call. For example, you need to connect two components with incompatible port types and need to reconcile those types. In this case, you can use a passive component as a converter that is called synchronously as part of the primary port call.
+Sometimes you just need a component that does some menial conversion or other work as part of what is logically another port call. For example, you need to connect two components with incompatible port types and need to reconcile those types. In this case, you can use a passive component as an adapter that is called synchronously as part of the primary port call.
 
 ```mermaid
 sequenceDiagram
     participant S as Source Component
-    participant C as Converter Component
+    participant C as Adapter Component
     participant D as Destination Component 
 
     S->>+C: Synchronous Invocation
@@ -229,8 +242,21 @@ sequenceDiagram
     C->>D: Synchronous/Asynchronous Invocation
     deactivate C
 ```
-**Figure 7**: a passive converter component that performs a conversion inline with a port call.
+**Figure 7**: a passive adapter component that performs a conversion inline with a port call.
 
 ## Conclusion
 
 This document covers the basics of component and port kind selection in F Prime. It should give you a starting point for making informed decisions when developing F Prime components.  However, there are always times where a real design may depart from these models. The important thing is to understand why and be able to justify it.
+
+
+The following table maps the key patterns in this document to concrete examples in the F Prime codebase.
+
+| Pattern | Typical Shape | Example Components/Subtopologies |
+| --- | --- | --- |
+| Passive Components for Cyclic Work | `passive` component with `sync` `Svc.Sched` input | `Drv.LinuxUartDriver` |
+| Queued Components for Cyclic Work | `queued` component with `sync` schedule input and async/event inputs | `Svc.Health` |
+| Event-Driven Work | `active` component with primarily `async` command/port inputs | `Svc.EventManager` |
+| Background Work | `active` component handling non-deadline work asynchronously | `Svc.FileWorker` |
+| Cyclic Notification Pattern | `active` component with an `async` `Svc.Sched` input used as periodic notification | `Svc.TlmPacketizer` |
+| Active Anchor Pattern | One active "anchor" plus passive helper components | `ComCcsds.FramingSubtopology` (`Svc.ComQueue` with passive helpers like `Svc.Ccsds.TmFramer`) |
+| Passive Adapter Pattern | `passive` adapter/converter called inline with existing flow | `Drv.ByteStreamBufferAdapter` |
