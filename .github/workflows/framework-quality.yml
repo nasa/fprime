@@ -46,4 +46,4 @@ jobs:
             -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy"
       - name: "Build (static analysis runs during compilation)"
         shell: bash
-        run: fprime-util build --all -j4
+        run: fprime-util build --all
