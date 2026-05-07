@@ -37,9 +37,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang-tidy-12
-      - name: "Build with Static Analysis"
-        uses: nasa/fprime-actions/build@devel
-        with:
-          build-all: "true"
-          generate-args: "-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY=\"clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy\""
-          jobs: "4"
+      - name: "Generate with clang-tidy"
+        shell: bash
+        run: |
+          fprime-util generate \
+            -DCMAKE_C_COMPILER=gcc-10 \
+            -DCMAKE_CXX_COMPILER=g++-10 \
+            -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy"
+      - name: "Build (static analysis runs during compilation)"
+        shell: bash
+        run: fprime-util build --all -j4
