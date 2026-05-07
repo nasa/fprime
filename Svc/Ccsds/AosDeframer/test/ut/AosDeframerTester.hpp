@@ -176,6 +176,13 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test frame count telemetry
     void testFrameCountTelemetry();
 
+    // ----------------------------------------------------------------------
+    // Tests - Robustness against untrusted inputs
+    // ----------------------------------------------------------------------
+
+    //! Test untrusted inputs
+    void testUntrustedFhp();  
+
   private:
     // ----------------------------------------------------------------------
     // From-port handlers (allocator support for spanning packets)

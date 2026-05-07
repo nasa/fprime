@@ -47,3 +47,8 @@
         event SpanningPacketAbandoned(vcId: U8, pvn: ComCfg.Pvn, bytesReceived: FwSizeType, bytesExpected: FwSizeType) \
             severity warning high \
             format "Spanning packet on VC {} ({}) abandoned after receiving {} of {} expected bytes"
+
+        @ An invalid First Header Pointer (FHP) was received
+        event InvalidFhp(vcId: U8, fhpReceived: FwSizeType, dataZoneSize: FwSizeType) \
+            severity warning high \
+            format "Invalid First Header Pointer (FHP) received on VC {}: FHP was {} bytes, data zone is only {} bytes"

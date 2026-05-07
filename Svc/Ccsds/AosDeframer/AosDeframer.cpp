@@ -403,6 +403,13 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
         return;
     }
 
+    // Guard against First Header Pointer pointing out of bounds (untrusted input)
+    if (firstHeaderPointer >= dataZoneSize) {
+        this->log_WARNING_HI_InvalidFhp(vc.virtualChannelId, firstHeaderPointer, dataZoneSize);
+        this->notifyErrorIfConnected(Ccsds::FrameError::AOS_INVALID_LENGTH);
+        return;
+    }
+
     // There is continuation data before the first packet header
     if (firstHeaderPointer > 0 && vc.spanningPacket.bytesReceived > 0) {
         (void)this->appendToSpanningPacket(vc, dataZone, static_cast<FwSizeType>(firstHeaderPointer));
