@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <list>
 #include "DpCatalogTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(NominalManual, initTest) {
     Svc::DpCatalogTester tester;
@@ -319,7 +320,13 @@ TEST(OffNominal, BadHeaderHashRejected) {
     tester.test_BadHeaderHashRejected();
 }
 
+TEST(OffNominal, MalformedFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_MalformedFile();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    // TODO: https://github.com/nasa/fprime/issues/5104 STest::Random::seed();
     return RUN_ALL_TESTS();
 }

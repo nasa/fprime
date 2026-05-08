@@ -10,6 +10,7 @@
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
+#include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Types/MemAllocator.hpp>
 
 #include <Fw/Types/FileNameString.hpp>
@@ -145,14 +146,6 @@ class DpCatalog final : public DpCatalogComponentBase {
         DpStateEntry entry;  //!< state entry from file
     };
 
-    /// @brief A list sorted in priority order for downlink
-    struct DpBtreeNode {
-        DpStateEntry entry;   //!< pointer to DP record
-        DpBtreeNode* left;    //!< left child. Also used for free list
-        DpBtreeNode* right;   //!< right child
-        DpBtreeNode* parent;  //!< parent node
-    };
-
     // ----------------------------------
     // Private helpers
     // ----------------------------------
@@ -168,23 +161,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return -1 for quit, 0 for failure but continue, 1 for success
     int processFile(Fw::String fullFile, FwSizeType dir);
 
-    /// @brief insert an entry into the sorted list; if it exists, update the metadata
+    /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry
-    /// @return failed if couldn't find a slot
-    DpCatalog::DpBtreeNode* insertEntry(DpStateEntry& entry);
+    /// @return true if inserted successfully, false if catalog is full
+    bool insertEntry(DpStateEntry& entry);
 
-    /// @brief enumeration for check and insert function
-    enum CheckStat {
-        CHECK_OK,     //!< check passed and inserted. Can break loop
-        CHECK_CONT,   //!< check passed and find another node to check
-        CHECK_ERROR,  //!< check failed to allocate an entry. Quit function
-    };
-
-    /// @brief check for left/right insertion
-    CheckStat checkLeftRight(bool condition, DpBtreeNode*& node, const DpStateEntry& newEntry);
-
-    /// @brief reset the free list
-    void resetBinaryTree();
+    /// @brief reset the catalog
+    void resetCatalog();
 
     /// #brief fill  the binary tree from DP files
     Fw::CmdResponse fillBinaryTree();
@@ -206,23 +189,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param entry entry to add to state file
     void appendFileState(const DpStateEntry& entry);
 
-    /// @brief add an entry to the tree
-    /// @param newNode pointer to newly allocated node
-    /// @param newEntry entry to add
-    /// @return true if a node could be allocated
-    bool allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry);
-
-    /// @brief free an entry from the tree
-    /// @param node entry to deallocate
-    void deallocateNode(DpBtreeNode* node);
-
     /// @brief send the next entry to file downlink
     void sendNextEntry();
 
-    /// @brief find the next entry in the tree
-    /// @return pointer if an entry was found, nullptr if no more entries
+    /// @brief find the next entry in the catalog using iterator
     /// @param entry entry to return
-    DpBtreeNode* findNextTreeNode();
+    /// @return true if an entry was found, false if no more entries
+    bool findNextEntry(DpStateEntry& entry);
 
     /// @brief check to see if component successfully initialized
     /// @return bool if it was initialized
@@ -245,10 +218,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     // ----------------------------------
     bool m_initialized = false;  //!< set when the component has been initialized
 
-    DpBtreeNode* m_dpTree = nullptr;           //!< The head of the binary tree
-    DpBtreeNode* m_freeListHead = nullptr;     //!< The head of the free list
-    DpBtreeNode* m_currentNode = nullptr;      //!< current node for traversing tree
-    DpBtreeNode* m_currentXmitNode = nullptr;  //!< node being currently transmitted
+    Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES> m_dpCatalog;  //!< The sorted catalog of DPs
+    DpStateEntry m_currentXmitEntry;                              //!< Entry currently being transmitted
+    bool m_hasCurrentXmit = false;                                //!< Whether m_currentXmitEntry is valid
 
     FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 

@@ -13,12 +13,6 @@ module Svc {
       AUTO = 1
     }
 
-    @ Sequencer blocking state
-    enum BlockState : U8 {
-        BLOCK = 0
-        NO_BLOCK = 1
-    }
-
     @ The stage of the file read operation
     enum FileReadStage : U8 {
       READ_HEADER

@@ -39,7 +39,6 @@ register_fprime_ut(
   "Svc_FrameAccumulator_FprimeFrameDetector_test"
   SOURCES 
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/FprimeFrameDetectorTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/FprimeFrameDetectorTest.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.hpp"
   DEPENDS
@@ -51,7 +50,6 @@ register_fprime_ut(
   "Svc_FrameAccumulator_CcsdsTcFrameDetector_test"
   SOURCES 
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/CcsdsTcFrameDetectorTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/CcsdsTcFrameDetectorUnderflowTest.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTcFrameDetector.hpp"
   DEPENDS

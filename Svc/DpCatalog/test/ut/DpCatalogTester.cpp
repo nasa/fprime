@@ -7,6 +7,7 @@
 #include "DpCatalogTester.hpp"
 #include <algorithm>
 #include <cstdlib>
+#include <set>
 #include <vector>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
@@ -65,8 +66,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
 
-    // reset tree
-    this->component.resetBinaryTree();
+    // reset catalog
+    this->component.resetCatalog();
 
     // add entries
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
@@ -76,24 +77,38 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
-    // retrieve entries - they should match expected output
-    for (FwIndexType entry = 0; entry < numEntries + 1; entry++) {
-        if (entry == numEntries) {
-            // final request should indicate empty
-            ASSERT_TRUE(this->component.findNextTreeNode() == nullptr);
-        } else if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
-            // Outputs is only composed of the UNTRANSMITTED data products
-            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
-            ASSERT_TRUE(res != nullptr) << "nullptr findNextTreeNode() at " << entry << " out of " << numEntries;
-
-            //  should match expected entry
-            if (res != nullptr) {
-                ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
-            }
-            // Deallocate the "sent" node
-            this->component.deallocateNode(res);
+    // Collect expected entries (non-transmitted)
+    std::set<DpCatalog::DpStateEntry> expectedEntries;
+    for (FwIndexType entry = 0; entry < numEntries; entry++) {
+        if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            expectedEntries.insert(output[entry]);
         }
     }
+
+    // Collect actual entries from catalog
+    std::vector<DpCatalog::DpStateEntry> actualEntries;
+    DpCatalog::DpStateEntry foundEntry;
+    while (this->component.findNextEntry(foundEntry)) {
+        actualEntries.push_back(foundEntry);
+        // Remove the "sent" entry from catalog
+        Fw::Success status = this->component.m_dpCatalog.remove(foundEntry);
+        ASSERT_EQ(status, Fw::Success::SUCCESS);
+    }
+
+    // Verify we got the right number of entries
+    ASSERT_EQ(actualEntries.size(), expectedEntries.size())
+        << "Expected " << expectedEntries.size() << " entries, got " << actualEntries.size();
+
+    // Verify all entries match
+    size_t i = 0;
+    for (const auto& expectedEntry : expectedEntries) {
+        ASSERT_EQ(actualEntries[i].record, expectedEntry.record) << "Entry mismatch at sorted index " << i;
+        i++;  // Increment the index of the actual entries to walk one at a time in order
+    }
+
+    // Verify catalog is now empty
+    DpCatalog::DpStateEntry testEntry;
+    ASSERT_FALSE(this->component.findNextEntry(testEntry));
 
     this->component.shutdown();
 }
@@ -748,6 +763,44 @@ void DpCatalogTester::test_ProcessFileInvalidDir() {
 
     ASSERT_DEATH_IF_SUPPORTED(this->component.processFile("somefile.dp", DP_MAX_DIRECTORIES), "Assert");
 
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_MalformedFile() {
+    // 1. Setup paths and corrupted data
+    Fw::FileNameString stateFile("DpState.dat");
+
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    memset(buffer, 0xFF, sizeof(buffer));  // Force deserialization failure
+
+    // 2. Write the malformed data to disk
+    Os::File f;
+    ASSERT_EQ(Os::File::OP_OK, f.open(stateFile.toChar(), Os::File::OPEN_CREATE, Os::FileInterface::OVERWRITE));
+
+    FwSizeType writeSize = sizeof(buffer);
+    ASSERT_EQ(Os::File::OP_OK, f.write(buffer, writeSize));
+    f.close();
+
+    // 3. Configure the Component
+    Fw::MallocAllocator mockAllocator;
+    Fw::FileNameString dirs[DP_MAX_DIRECTORIES];
+    this->component.configure(dirs, 0, stateFile, 0, mockAllocator);
+
+    // 4. Dispatch the BUILD_CATALOG command
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+
+    // 5. Command should generate event instead of ASSERT
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // High-priority warning event should be caught by this test
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_FileCorruptedDataError_SIZE(1);
+    ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+
+    // 6. Cleanup
+    Os::FileSystem::removeFile(stateFile.toChar());
     this->component.shutdown();
 }
 

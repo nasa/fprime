@@ -2,13 +2,13 @@
 # prio: lower than sm sig and CANCEL
 async command RUN(
                       fileName: string size FileNameStringSize @< The name of the sequence file
-                      $block: BlockState @< Return command status when complete or not
+                      $block: Svc.BlockState @< Return command status when complete or not
                     ) \
     opcode 0 priority 7 assert
 
 async command RUN_ARGS(
                       fileName: string size FileNameStringSize @< The name of the sequence file
-                      $block: BlockState @< Return command status when complete or not
+                      $block: Svc.BlockState @< Return command status when complete or not
                       buffer: Svc.SeqArgs @< Arguments to pass to the sequencer
                     ) \
     opcode 1 priority 7 assert
@@ -31,7 +31,7 @@ async command VALIDATE_ARGS(
 @ Must be called after VALIDATE. Runs the sequence that was validated.
 # prio: lower than sm sig and CANCEL
 async command RUN_VALIDATED(
-                           $block: BlockState  @< Return command status when complete or not
+                           $block: Svc.BlockState  @< Return command status when complete or not
 ) \
     opcode 4 priority 7 assert
 
