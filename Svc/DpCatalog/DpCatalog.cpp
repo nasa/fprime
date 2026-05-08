@@ -334,6 +334,10 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
     // load state data from file
     Fw::CmdResponse response = this->loadStateFile();
+    if (response != Fw::CmdResponse::OK) {
+        this->resetStateFileData();
+        return response;
+    }
 
     // reset free list for entries
     this->resetBinaryTree();
