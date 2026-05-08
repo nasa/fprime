@@ -138,10 +138,10 @@ commands as well as emit telemetry and events.
 **Figure 11. Encapsulation of Behavior** The component handles the port behaviors as well as executes the commands and
 then produces the telemetry. It does not directly interact with other components.
 
-### Component Types
+### Component Kinds
 
-There are three types of components: passive, queued, and active. These components allow for different functionality in
-the system and may use different port input types [see below](#port-kinds-available-to-each-component-type). Each type
+There are three kinds of components: passive, queued, and active. These components allow for different functionality in
+the system and may use different port input types [see below](#port-kinds-available-to-each-component-type). Each kind
 of component is defined below:
 
 **Passive component:** has no thread and cannot support asynchronous port invocations nor asynchronous commands. Port
@@ -156,9 +156,15 @@ however, the user must implement at least one synchronous port invocation that u
 queue. For this and any other synchronously invocation execution context is supplied by the invoker.  **Note:** this
 component type is only rarely used.  Ensure it is the correct choice for your design.
 
-#### A Quick Look at Component Types
+For a deeper description on selecting component kinds see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md).
 
-| Component Type | Has Queue | Has Thread |
+> [!CAUTION]
+> In older F Prime documents component kind was used interchangeably with component type. If a part of F Prime refer's to the components type and discusses the terms `active`, `passive`, and `queued` it is referring to the component's kind.
+
+
+#### A Quick Look at Component Kinds
+
+| Component Kind | Has Queue | Has Thread |
 |---|---|---|
 | Passive Component | No | No |
 | Active Component | Yes | Yes |
@@ -170,7 +176,7 @@ Each component is divided into three classes that each represent a piece of the 
 classes are as follows:
 
 1. Core Framework Class: the base class of components defined as part of the framework.  A component may inherit from:
-active, passive, and queued classes.  These represent the component types defined above.
+active, passive, and queued classes.  These represent the component kinds defined above.
 2. Generated Component-Specific Base: this class is the direct descendant of the core framework class and is
 automatically generated to provide all the implementation for framework features.
 3. Component-Specific Developer Implementation Class: this class inherits from the generated component-specific base
@@ -183,7 +189,7 @@ These are shown in Figure 12.
 **Figure 12. Example of component class hierarchy.**
 
 
-### Port Kinds Available to Each Component Type
+### Port Kinds Available to Each Component Kind
 
 Passive components support synchronous and guarded ports with the execution context supplied by the calling component.
 There is no queue to support asynchronous ports. Active components support all three port types; however, the active
@@ -198,9 +204,9 @@ asynchronous port otherwise it too would effectively be a passive component with
 Output ports are invoked by calling generated base class functions from the implementation class. The behavior invoked
 is defined input port side of the connection and thus there are no special restrictions to use output ports.
 
-### Quick Look at Component Types and Supported Ports
+### Quick Look at Component Kinds and Supported Ports
 
-| Component Type | Output | Guarded / Synchronous Ports | Asynchronous Ports |
+| Component Kind | Output | Guarded / Synchronous Ports | Asynchronous Ports |
 |---|---|---|---|
 | Passive | 0 or more | 0 or more | Not available |
 | Queued  | 0 or more | 1 or more | 1 or more |
@@ -226,3 +232,5 @@ topology. Alternate implementations can therefore easily be swapped, for example
 
 F´ is decomposed into a federation of discrete components organized into a system graph. The interconnections in this
 graph are handled through port calls such that the otherwise independent components can interact with each other.
+
+For an understanding of how to select port and component kinds, see [Selecting Component, Port, and Command Kinds](../framework/component-and-port-selection.md).
