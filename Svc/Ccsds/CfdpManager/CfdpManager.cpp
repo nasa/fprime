@@ -53,7 +53,7 @@ void CfdpManager ::configure(void)
 void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context)
 {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     this->m_engine->cycle();
 
     // Emit telemetry once per second
@@ -104,7 +104,7 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     );
 
     // Pass the adjusted buffer to the engine
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     this->m_engine->receivePdu(static_cast<U8>(portNum), pduBuffer);
 
     // Return buffer
@@ -119,7 +119,7 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(
     U32 length)
 {
     Svc::SendFileResponse response;
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
 
     // TODO BPC: CFDP engine does not support partial file retransmit at this time
     if(offset > 0 || length > 0)
@@ -274,7 +274,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
 
     // Check channel index is in range
     rspStatus = this->checkCommandChannelIndex(channelId);
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
 
     if ((rspStatus == Fw::CmdResponse::OK) &&
         (Status::SUCCESS == this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e,
@@ -301,7 +301,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     // Check channel index is in range
     rspStatus = this->checkCommandChannelIndex(channelId);
     if ((rspStatus == Fw::CmdResponse::OK) &&
@@ -328,7 +328,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     // Check channel index and poll index are in range
     rspStatus = this->checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
@@ -355,7 +355,7 @@ void CfdpManager ::StopPollDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     // Check channel index and poll index are in range
     rspStatus = this->checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
@@ -379,7 +379,7 @@ void CfdpManager ::SetChannelFlow_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
     // Check channel index is in range
     rspStatus = checkCommandChannelIndex(channelId);
     if (rspStatus == Fw::CmdResponse::OK)
@@ -402,7 +402,7 @@ void CfdpManager ::SuspendResumeTransaction_cmdHandler(
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
 
     rspStatus = checkCommandChannelIndex(channelId);
 
@@ -432,7 +432,7 @@ void CfdpManager ::CancelTransaction_cmdHandler(
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
 
     rspStatus = checkCommandChannelIndex(channelId);
 
@@ -458,7 +458,7 @@ void CfdpManager ::AbandonTransaction_cmdHandler(
 {
     Fw::CmdResponse::T rspStatus = Fw::CmdResponse::OK;
 
-    FW_ASSERT(this->m_engine != NULL);
+    FW_ASSERT(this->m_engine != nullptr);
 
     rspStatus = checkCommandChannelIndex(channelId);
 
