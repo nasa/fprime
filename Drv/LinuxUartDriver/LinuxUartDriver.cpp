@@ -28,8 +28,13 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0),  m_device("NOT_EXIST"), m_quitReadThread(false) {
-}
+    : LinuxUartDriverComponentBase(compName),
+      m_fd(-1),
+      m_allocationSize(0),
+      m_device("NOT_EXIST"),
+      m_bytesSent(0),
+      m_bytesReceived(0),
+      m_quitReadThread(false) {}
 
 bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
@@ -303,9 +308,12 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw
         NATIVE_INT_TYPE stat = static_cast<NATIVE_INT_TYPE>(::write(this->m_fd, data, static_cast<size_t>(xferSize)));
 
         if (-1 == stat || stat != xferSize) {
-          Fw::LogStringArg _arg = this->m_device;
-          this->log_WARNING_HI_WriteError(_arg, stat);
-          status = Drv::SendStatus::SEND_ERROR;
+            Fw::LogStringArg _arg = this->m_device;
+            this->log_WARNING_HI_WriteError(_arg, stat);
+            status = Drv::SendStatus::SEND_ERROR;
+        } else {
+            this->m_bytesSent += static_cast<U32>(stat);
+            this->tlmWrite_BytesSent(this->m_bytesSent);
         }
     }
     // Deallocate when necessary
@@ -352,6 +360,8 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         } else if (stat > 0) {
             buff.setSize(static_cast<U32>(stat));
             status = RecvStatus::RECV_OK;  // added by m.chase 03.06.2017
+            comp->m_bytesReceived += static_cast<U32>(stat);
+            comp->tlmWrite_BytesRecv(comp->m_bytesReceived);
         } else {
             status = RecvStatus::RECV_ERROR; // Simply to return the buffer
         }
