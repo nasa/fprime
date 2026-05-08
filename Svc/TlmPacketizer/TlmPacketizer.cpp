@@ -187,7 +187,14 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
-            (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
+            const size_t srcSize = static_cast<size_t>(val.getSize());
+            const size_t dstSize = static_cast<size_t>(entry.channelSize);
+            const size_t copySize = (srcSize <= dstSize) ? srcSize : dstSize;
+            (void)memcpy(ptr, val.getBuffAddr(), copySize);
+            if (copySize < dstSize) {
+                // Zero any remaining bytes in the channel to avoid stale data being leftover
+                memset(ptr + copySize, 0, dstSize - copySize);
+            }
             this->m_lock.unLock();
         }
     }
