@@ -28,7 +28,7 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
 
 void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
                                 const Fw::ConstStringBase& fileName,
-                                Fw::Wait block,
+                                BlockState block,
                                 const Svc::SeqArgs& args) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
@@ -38,7 +38,7 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
     FW_ASSERT(this->m_entryTable[sequencerIdx].state == SeqDispatcher_CmdSequencerState::AVAILABLE,
               static_cast<FwAssertArgType>(this->m_entryTable[sequencerIdx].state));
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
     } else {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK;
@@ -134,7 +134,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
         return;
     }
 
-    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT, args);
+    this->runSequence(idx, fileName, BlockState::NO_BLOCK, args);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
@@ -144,7 +144,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    Fw::Wait block) {
+                                    BlockState block) {
     // Create empty args and delegate to RUN_ARGS handler
     Svc::SeqArgs emptyArgs{0, 0};
     this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
@@ -154,7 +154,7 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
 void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         Fw::Wait block,
+                                         BlockState block,
                                          Svc::SeqArgs buffer) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
@@ -166,7 +166,7 @@ void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
 
     this->runSequence(idx, fileName, block, buffer);
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         // return instantly
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {

@@ -4,6 +4,7 @@
 // \brief  cpp file for FrameAccumulator component test main function
 // ======================================================================
 
+#include <limits>
 #include "STest/Random/Random.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -11,6 +12,17 @@
 #include "gtest/gtest.h"
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
+constexpr FwSizeType FRAME_OVERHEAD =
+    Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE + Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+
+//! \brief Serialize an F´ frame header with the given lengthField into out_bytes.
+//! \note startWord is left at its default (magic) value so the detector accepts the header.
+bool build_fprime_header(U8* out_bytes, Svc::FprimeProtocol::TokenType length_field) {
+    Svc::FprimeProtocol::FrameHeader header;
+    header.set_lengthField(length_field);
+    Fw::ExternalSerializeBuffer ser(out_bytes, Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    return header.serializeTo(ser) == Fw::FW_SERIALIZE_OK;
+}
 
 //! \brief Create an F´ frame and serialize it into the supplied circular buffer
 //! \param circular_buffer The circular buffer to serialize the frame into
@@ -158,6 +170,50 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
     status = fprime_detector.detect(circular_buffer, unused);
 
     EXPECT_EQ(status, Svc::FrameDetector::Status::MORE_DATA_NEEDED);
+}
+
+TEST(FprimeFrameDetector, TestRejectsLengthFieldExceedingCapacity) {
+    // lengthField = 1 -> expected_frame_size = FRAME_OVERHEAD + 1, which
+    // exceeds the ring's capacity. The capacity check in detect() must
+    // reject the frame without crashing.
+    Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
+    U8 buffer[FRAME_OVERHEAD];
+    ::memset(buffer, 0, sizeof(buffer));
+    Types::CircularBuffer circular_buffer(buffer, sizeof(buffer));
+
+    U8 header_bytes[Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE];
+    ASSERT_TRUE(build_fprime_header(header_bytes, 1));
+    circular_buffer.serialize(header_bytes, sizeof(header_bytes));
+    U8 trailer_pad[Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE] = {};
+    circular_buffer.serialize(trailer_pad, sizeof(trailer_pad));
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = fprime_detector.detect(circular_buffer, size_out);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
+}
+
+TEST(FprimeFrameDetector, TestHandlesMaximumLengthField) {
+    // lengthField = TokenType::max. On a 32-bit FwSizeType target the overflow
+    // guard rejects the frame before computing expected_frame_size; on a 64-bit
+    // host the guard does not fire (TokenType::max + overhead fits in U64) but
+    // the capacity check still rejects, since no realistic ring holds 4 GiB.
+    // Either way: NO_FRAME_DETECTED, no crash, no silent wrap.
+    Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
+    U8 buffer[FRAME_OVERHEAD];
+    ::memset(buffer, 0, sizeof(buffer));
+    Types::CircularBuffer circular_buffer(buffer, sizeof(buffer));
+
+    U8 header_bytes[Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE];
+    ASSERT_TRUE(build_fprime_header(header_bytes, std::numeric_limits<Svc::FprimeProtocol::TokenType>::max()));
+    circular_buffer.serialize(header_bytes, sizeof(header_bytes));
+    U8 trailer_pad[Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE] = {};
+    circular_buffer.serialize(trailer_pad, sizeof(trailer_pad));
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = fprime_detector.detect(circular_buffer, size_out);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
 }
 
 int main(int argc, char** argv) {
