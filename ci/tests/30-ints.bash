@@ -16,7 +16,7 @@ export LOG_DIR="${FPRIME_DIR}/ci-30-ints-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
 # Directory to be used for Integration CI test
-export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
+export FPUTIL_DEPLOYS="${FPRIME_DIR}/TestDeploymentsProject"
 
 echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
 

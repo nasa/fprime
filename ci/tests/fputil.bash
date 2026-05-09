@@ -63,7 +63,7 @@ function integration_test_run {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
     export PLATFORM="${2:-*}"
-    export BINARY=`basename "${WORKDIR}"`
+    export BINARY="Ref"
     export ROOTDIR="${WORKDIR}/build-artifacts"
     (
         cd "${WORKDIR}"
@@ -107,7 +107,7 @@ function integration_test_run {
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
-            TOP_CONFIG_ARGS="--deployment-config ${WORKDIR}/test/int/int_config.json"
+            TOP_CONFIG_ARGS="--deployment-config ${WORKDIR}/Ref/test/int/int_config.json"
             ${TIMEOUT} --kill-after=10s 300s pytest ${DICTIONARY_ARGS} ${TOP_CONFIG_ARGS}
         )
         RET_PYTEST=$?
