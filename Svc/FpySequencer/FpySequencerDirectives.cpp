@@ -1304,8 +1304,8 @@ Signal FpySequencer::setSeed_directiveHandler(const FpySequencer_SetSeedDirectiv
     }
 
     U32 seed = this->m_runtime.stack.pop<U32>();
-    this->m_rng.seed(seed);
-    this->m_rngSeeded = true;
+    this->m_runtime.rng.seed(seed);
+    this->m_runtime.rngSeeded = true;
     return Signal::stmtResponse_success;
 }
 
@@ -1315,17 +1315,17 @@ Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirect
         return Signal::stmtResponse_failure;
     }
 
-    if (!this->m_rngSeeded) {
+    if (!this->m_runtime.rngSeeded) {
         Fw::Time currentTime = this->getTime();
         std::seed_seq seedSeq{static_cast<U32>(currentTime.getTimeBase()),
                               static_cast<U32>(currentTime.getContext()),
                               currentTime.getSeconds(),
                               currentTime.getUSeconds()};
-        this->m_rng.seed(seedSeq);
-        this->m_rngSeeded = true;
+        this->m_runtime.rng.seed(seedSeq);
+        this->m_runtime.rngSeeded = true;
     }
 
-    U32 randVal = static_cast<U32>(this->m_rng());
+    U32 randVal = static_cast<U32>(this->m_runtime.rng());
     this->m_runtime.stack.push(randVal);
     return Signal::stmtResponse_success;
 }

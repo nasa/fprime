@@ -26,8 +26,6 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
-      m_rng(),
-      m_rngSeeded(false),
       m_runtime(),
       m_breakpoint(),
       m_tlm() {}

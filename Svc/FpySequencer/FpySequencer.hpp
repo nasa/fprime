@@ -620,10 +620,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // otherwise, since construction
     U64 m_statementsDispatched;
 
-    // per-component RNG state used by PUSH_RAND and later SET_SEED-style directives
-    std::mt19937 m_rng;
-    bool m_rngSeeded = false;
-
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
     // this is distinct from the state of the sequencer. the
@@ -643,6 +639,10 @@ class FpySequencer : public FpySequencerComponentBase {
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
+
+        // RNG state used by PUSH_RAND and SET_SEED directives during this run
+        std::mt19937 rng;
+        bool rngSeeded = false;
 
         Stack stack = Stack();
     } m_runtime;
