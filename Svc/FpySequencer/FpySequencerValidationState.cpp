@@ -153,9 +153,7 @@ Fw::Success FpySequencer::readBody() {
      // Read and deserialize each arg_spec incrementally since they're variable-length
     for (U8 i = 0; i < argumentCount; i++) {
         Fpy::ArgSpec& argSpec = this->m_sequenceObj.get_args()[i];
-        Fw::String myString{};
-        // Read arg_name (length + string)
-        deserStatus = this->m_sequenceBuffer.deserializeTo(myString);
+        deserStatus = this->m_sequenceBuffer.deserializeTo(argSpec);
         if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY,
@@ -166,35 +164,8 @@ Fw::Success FpySequencer::readBody() {
             );
             return Fw::Success::FAILURE;
         }
-        argSpec.set_argName(myString);
 
-        // Read type_name (length + string)
-        deserStatus = this->m_sequenceBuffer.deserializeTo(myString);
-        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileReadDeserializeError(
-                FpySequencer_FileReadStage::BODY,
-                this->m_sequenceFilePath,
-                static_cast<I32>(deserStatus),
-                this->m_sequenceBuffer.getDeserializeSizeLeft(),
-                this->m_sequenceBuffer.getSize()
-            );
-            return Fw::Success::FAILURE;
-        }
-        argSpec.set_typeName(myString);
-
-        // Read and deserialize size field
-        Fpy::StackSizeType argSize = 0;
-        deserStatus = this->m_sequenceBuffer.deserializeTo(argSize);
-        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileReadDeserializeError(
-                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-                this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
-            return Fw::Success::FAILURE;
-        }
-
-
-        argSpec.set_argSize(argSize);
-        m_totalExpectedArgSize += argSize;
+        m_totalExpectedArgSize += argSpec.get_argSize();
     }
 
     // Check for overflow before accumulation
