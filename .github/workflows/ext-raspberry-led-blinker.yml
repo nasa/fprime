@@ -68,7 +68,7 @@ jobs:
 
   RPI-integration:
     name: "RPI Integration Tests"
-    runs-on: self-hosted
+    runs-on: raspberrypi
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
@@ -91,12 +91,6 @@ jobs:
           mkdir -p ci-logs
           chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
           fprime-gds --ip-client -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
-          echo "PWD=$(pwd)"
-          find ./build-artifacts -maxdepth 4 | sort
-          stat ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker || true
-          file ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker || true
-          readlink -f ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker || true
-          ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker --help || true
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'
