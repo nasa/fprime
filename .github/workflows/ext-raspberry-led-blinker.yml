@@ -36,7 +36,7 @@ jobs:
         with:
           submodules: false
           repository: fprime-community/fprime-workshop-led-blinker
-          ref: ${{ needs.get-branch.outputs.target-branch }}
+          ref: v3.6.0
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4
         with:
