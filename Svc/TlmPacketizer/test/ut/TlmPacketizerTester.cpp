@@ -1718,7 +1718,7 @@ void TlmPacketizerTester ::sectionConfigParameterTest() {
     this->paramSave_SECTION_CONFIGS(0, 0);
 }
 
-void TlmPacketizerTester::pushAllChannels() {
+void TlmPacketizerTester::pushAllChannels(Fw::Time& ts, Fw::TlmBuffer& buff) {
     // channel 10 — packet1, packet2, packet4
     buff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAB)));
@@ -1790,7 +1790,7 @@ void TlmPacketizerTester::setLevelInvalidTest() {
     //             (packet1, replicated once per enabled section) is
     //             sent.  All other group (2 and 3) packets are silent.
     // ----------------------------------------------------------------
-    this->pushAllChannels();
+    this->pushAllChannels(ts, buff);
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
@@ -1841,7 +1841,7 @@ void TlmPacketizerTester::setLevelInvalidTest() {
     //
     // The assertion below would FAIL against the old buggy implementation.
     // ----------------------------------------------------------------
-    this->pushAllChannels();
+    this->pushAllChannels(ts, buff);
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
