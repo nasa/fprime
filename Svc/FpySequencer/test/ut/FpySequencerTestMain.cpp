@@ -2121,9 +2121,9 @@ TEST_F(FpySequencerTester, cmd_RUN_ARGS) {
     allocMem();
     addArgumentSpec("arg1", "U32", sizeof(U32));
     addArgumentSpec("arg2", "U32", sizeof(U32));
-    add_LOAD_REL(0, sizeof(U32));     // Load first arg (U32 at offset 0) - duplicates it on stack
-    add_LOAD_REL(4, sizeof(U32));     // Load second arg (U32 at offset 4) - duplicates it on stack
-    add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
+    add_LOAD_REL(0, sizeof(U32));  // Load first arg (U32 at offset 0) - duplicates it on stack
+    add_LOAD_REL(4, sizeof(U32));  // Load second arg (U32 at offset 4) - duplicates it on stack
+    add_DISCARD(16);               // Discard all: 2 loaded copies + 2 original args
     writeToFile("test.bin");
 
     // Pass two U32 args: 10 and 20
@@ -2251,9 +2251,9 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS) {
     allocMem();
     addArgumentSpec("arg1", "U32", sizeof(U32));
     addArgumentSpec("arg2", "U32", sizeof(U32));
-    add_LOAD_REL(0, sizeof(U32));     // Load first arg (U32 at offset 0) - duplicates it on stack
-    add_LOAD_REL(4, sizeof(U32));     // Load second arg (U32 at offset 4) - duplicates it on stack
-    add_DISCARD(16);        // Discard all: 2 loaded copies + 2 original args
+    add_LOAD_REL(0, sizeof(U32));  // Load first arg (U32 at offset 0) - duplicates it on stack
+    add_LOAD_REL(4, sizeof(U32));  // Load second arg (U32 at offset 4) - duplicates it on stack
+    add_DISCARD(16);               // Discard all: 2 loaded copies + 2 original args
     writeToFile("test.bin");
 
     // Pass two U32 args: 10 and 20
@@ -2385,7 +2385,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_zero_length_type_name) {
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::OK);
-    
+
     removeFile("test.bin");
 }
 
@@ -2434,7 +2434,7 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_size_mismatch) {
     // Create args buffer with actual U32 (4 bytes)
     Svc::SeqArgs args{0, 0};
     Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
-    U32 arg1Val = 99; // Passing in a U32
+    U32 arg1Val = 99;  // Passing in a U32
     ASSERT_EQ(argBuf.serializeFrom(arg1Val), Fw::FW_SERIALIZE_OK);
     args.set_size(argBuf.getSize());
 
@@ -2722,8 +2722,8 @@ TEST_F(FpySequencerTester, readBody) {
 
     U8 data[argSpecSize + stmtSize];
 
-    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));    
-    
+    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
+
     // write some argSpecs
     tester_get_m_sequenceBuffer_ptr()->resetSer();
     Svc::SeqArgs maxArgs{0, 0};
@@ -2735,7 +2735,8 @@ TEST_F(FpySequencerTester, readBody) {
         Fw::String typeName("U32");
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(argName), Fw::SerializeStatus::FW_SERIALIZE_OK);
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(typeName), Fw::SerializeStatus::FW_SERIALIZE_OK);
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))),
+                  Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(0);
@@ -2751,13 +2752,14 @@ TEST_F(FpySequencerTester, readBody) {
     }
 
     // check not writing enough arguments
-    // -1 intended mistake 
+    // -1 intended mistake
     tester_get_m_sequenceBuffer_ptr()->resetSer();
 
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(""), Fw::SerializeStatus::FW_SERIALIZE_OK);
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(""), Fw::SerializeStatus::FW_SERIALIZE_OK);
-        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serializeFrom(static_cast<U32>(sizeof(U32))),
+                  Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     ASSERT_EQ(tester_readBody(), Fw::Success::FAILURE);
 
@@ -3511,7 +3513,7 @@ TEST_F(FpySequencerTester, seqRunInArgs) {
     addArgumentSpec("arg2", "U32", sizeof(U32));
     add_LOAD_REL(0, sizeof(U32));  // Load first arg (U32 at offset 0) - duplicates it on stack
     add_LOAD_REL(4, sizeof(U32));  // Load second arg (U32 at offset 4) - duplicates it on stack
-    add_DISCARD(16);     // Discard all: 2 loaded copies + 2 original args
+    add_DISCARD(16);               // Discard all: 2 loaded copies + 2 original args
     writeToFile("test.bin");
 
     // Pass two U32 args: 10 and 20

@@ -69,7 +69,7 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     }
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    }    
+    }
 
     seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();
@@ -81,7 +81,7 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
         const Fpy::ArgSpec& argSpec = seq.get_args()[ii];
         ASSERT_EQ(buf.serializeFrom(argSpec.get_argName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-        
+
         ASSERT_EQ(buf.serializeFrom(argSpec.get_typeName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
         // Write size
         ASSERT_EQ(buf.serializeFrom(argSpec.get_argSize()), Fw::SerializeStatus::FW_SERIALIZE_OK);

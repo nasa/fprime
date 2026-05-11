@@ -135,8 +135,7 @@ module Svc {
         constant MAX_ARG_SPEC_NAME_LEN = 255
 
         @ Argument specification describing an input argument's name, type, and stack size
-        @ NOTE: This struct does NOT use FPP's auto-generated serialization!
-        @ Serialization is handled manually in C++ to match Fpy's format:
+        @ NOTE: This struct does use FPP's auto-generated serialization!
         struct ArgSpec {
             argName: string size MAX_ARG_SPEC_NAME_LEN
             typeName: string size MAX_ARG_SPEC_NAME_LEN
