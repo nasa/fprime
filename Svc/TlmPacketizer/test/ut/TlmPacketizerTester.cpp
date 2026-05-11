@@ -1718,6 +1718,48 @@ void TlmPacketizerTester ::sectionConfigParameterTest() {
     this->paramSave_SECTION_CONFIGS(0, 0);
 }
 
+void TlmPacketizerTester::pushAllChannels() {
+    // channel 10 — packet1, packet2, packet4
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAB)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    // channel 100 — packet1
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0xCD)));
+    this->invoke_to_TlmRecv(0, 100, ts, buff);
+
+    // channel 333 — packet1
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0xEF)));
+    this->invoke_to_TlmRecv(0, 333, ts, buff);
+
+    // channel 13 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0x1122334455667788ULL)));
+    this->invoke_to_TlmRecv(0, 13, ts, buff);
+
+    // channel 250 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x5566)));
+    this->invoke_to_TlmRecv(0, 250, ts, buff);
+
+    // channel 22 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x77)));
+    this->invoke_to_TlmRecv(0, 22, ts, buff);
+
+    // channel 67 — packet3
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0x99)));
+    this->invoke_to_TlmRecv(0, 67, ts, buff);
+
+    // channel 60 — packet4
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAA)));
+    this->invoke_to_TlmRecv(0, 60, ts, buff);
+}
+
 void TlmPacketizerTester::setLevelInvalidTest() {
     this->stockConfiguration();
     // packetList2 contains four packets at levels 1, 2, 2, 3
@@ -1726,49 +1768,6 @@ void TlmPacketizerTester::setLevelInvalidTest() {
 
     Fw::Time ts;
     Fw::TlmBuffer buff;
-
-    // Helper lambda to push one value to every channel used by packetList2
-    auto pushAllChannels = [&]() {
-        // channel 10 — packet1, packet2, packet4
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAB)));
-        this->invoke_to_TlmRecv(0, 10, ts, buff);
-
-        // channel 100 — packet1
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0xCD)));
-        this->invoke_to_TlmRecv(0, 100, ts, buff);
-
-        // channel 333 — packet1
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0xEF)));
-        this->invoke_to_TlmRecv(0, 333, ts, buff);
-
-        // channel 13 — packet2
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0x1122334455667788ULL)));
-        this->invoke_to_TlmRecv(0, 13, ts, buff);
-
-        // channel 250 — packet2
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x5566)));
-        this->invoke_to_TlmRecv(0, 250, ts, buff);
-
-        // channel 22 — packet2
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x77)));
-        this->invoke_to_TlmRecv(0, 22, ts, buff);
-
-        // channel 67 — packet3
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0x99)));
-        this->invoke_to_TlmRecv(0, 67, ts, buff);
-
-        // channel 60 — packet4
-        buff.resetSer();
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAA)));
-        this->invoke_to_TlmRecv(0, 60, ts, buff);
-    };
 
     // ----------------------------------------------------------------
     // Step 1: Establish a known restricted state via SET_LEVEL(1).
@@ -1791,7 +1790,7 @@ void TlmPacketizerTester::setLevelInvalidTest() {
     //             (packet1, replicated once per enabled section) is
     //             sent.  All other group (2 and 3) packets are silent.
     // ----------------------------------------------------------------
-    pushAllChannels();
+    this->pushAllChannels();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
@@ -1842,7 +1841,7 @@ void TlmPacketizerTester::setLevelInvalidTest() {
     //
     // The assertion below would FAIL against the old buggy implementation.
     // ----------------------------------------------------------------
-    pushAllChannels();
+    this->pushAllChannels();
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 

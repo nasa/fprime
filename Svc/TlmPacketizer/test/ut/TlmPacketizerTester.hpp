@@ -131,6 +131,8 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     // Helper methods
     // ----------------------------------------------------------------------
 
+    void pushAllChannels(void);
+
     //! Connect ports
     //!
     void connectPorts(void);
