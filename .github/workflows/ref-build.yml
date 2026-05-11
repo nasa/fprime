@@ -64,7 +64,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install coreutils
       - name: "Integration Tests"
-        uses: nasa/fprime-actions/run-integration-tests@devel
+        uses: JPL-Devin/fprime-actions/run-integration-tests@devin/1778535763-fix-valgrind-check
         with:
           gds-working-directory: "Ref"
           test-working-directory: "Ref/test/int"
