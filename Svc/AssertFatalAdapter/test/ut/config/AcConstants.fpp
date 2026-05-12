@@ -1,18 +1,4 @@
 # ======================================================================
-# \title  Svc/AssertFatalAdapter/test/ut/AcConstantsOverride.fpp
-# \brief  Override constants for AssertFatalAdapter unit tests
-#
-# \copyright
-# Copyright 2009-2015, by the California Institute of Technology.
-# ALL RIGHTS RESERVED.  United States Government Sponsorship
-# acknowledged.
-# ======================================================================
-
-# ======================================================================
-# AcConstants.fpp
-# F Prime configuration constants
-# ======================================================================
-# ======================================================================
 # AcConstants.fpp
 # F Prime configuration constants
 # ======================================================================
@@ -24,7 +10,7 @@ constant ActiveRateGroupOutputPorts = 10
 constant PassiveRateGroupOutputPorts = 10
 
 @ Used to drive rate groups
-constant RateGroupDriverRateGroupPorts = 4
+constant RateGroupDriverRateGroupPorts = 3
 
 @ Used for command and registration ports
 constant CmdDispatcherComponentCommandPorts = 30
@@ -63,7 +49,7 @@ constant DpManagerNumPorts = 5
 constant DpWriterNumProcPorts = 5
 
 @ The size of a file name string
-constant FileNameStringSize = 200
+constant FileNameStringSize = 240
 
 @ The size of an assert text string
 constant FwAssertTextSize = 256
@@ -75,12 +61,7 @@ constant FwAssertTextSize = 256
 @ OVERRIDE FOR TESTING: Limit max string length to less than the max file length
 constant AssertFatalAdapterEventFileSize = 30
 
-# ----------------------------------------------------------------------
-# Hub connections. Connections on all deployments should mirror these settings.
-# ----------------------------------------------------------------------
-
-constant GenericHubInputPorts = 10
-constant GenericHubOutputPorts = 10
-constant GenericHubInputBuffers = 10
-constant GenericHubOutputBuffers = 10
-
+@ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
+@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
+@ Total serialized size: string length prefix + fileName + BlockState + SeqArgs(size + buffer)
+constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - sizeof(FwSizeStoreType) - FileNameStringSize - sizeof(U8) - sizeof(FwSizeType)
