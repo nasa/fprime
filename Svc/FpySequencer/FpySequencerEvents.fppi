@@ -284,3 +284,26 @@ event LogDiagnostic(
 ) \
     severity diagnostic \
     format "Sequence {}: {}"
+
+@ A stack operation in the bytecode interpreter would have violated the
+@ stack bounds (overflow on push, underflow on pop, or out-of-range copy
+@ /move offset). The operation was skipped and the sequence is aborted by
+@ the dispatcher before the next statement runs. Previously a malformed
+@ .fpy file could trigger an FW_ASSERT here and abort the FSW process.
+event StackBoundsError(
+    statementIdx: U32
+) \
+    severity warning high \
+    format "Stack bounds violation while executing statement {}; sequence aborted"
+
+@ A file I/O or buffer operation failed during sequence validation. The
+@ stage field disambiguates which OS call or buffer op hit the failure
+@ (size/position/short-read/setBuffLen). Previously these failures were
+@ FW_ASSERTs that aborted the FSW process; now the sequence is rejected
+@ cleanly and the operator can retry.
+event FileApiError(
+    filePath: string size 60
+    stage: Svc.Fpy.FileApiStage
+) \
+    severity warning high \
+    format "Sequence {} validation failed at OS file API stage {}"

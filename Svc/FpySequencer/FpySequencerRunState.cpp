@@ -18,6 +18,18 @@ Signal FpySequencer::dispatchStatement() {
     // as that indicates eof
     FW_ASSERT(this->m_runtime.nextStatementIndex <= this->m_sequenceObj.get_header().get_statementCount());
 
+    // If the previous statement caused a stack bounds violation (e.g. a
+    // malformed .fpy bytecode pushed past MAX_STACK_SIZE), the Stack class
+    // skipped the bad op and set hasBoundsError. Abort the sequence here
+    // before the next statement runs, rather than letting downstream code
+    // execute on a corrupted stack. Previously the offending op was an
+    // FW_ASSERT that aborted the FSW process.
+    if (this->m_runtime.stack.hasError()) {
+        this->log_WARNING_HI_StackBoundsError(this->currentStatementIdx());
+        this->m_runtime.stack.clearError();
+        return Signal::result_dispatchStatement_failure;
+    }
+
     if (this->m_runtime.nextStatementIndex == this->m_sequenceObj.get_header().get_statementCount()) {
         return Signal::result_dispatchStatement_noMoreStatements;
     }

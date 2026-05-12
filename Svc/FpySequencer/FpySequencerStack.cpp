@@ -5,8 +5,14 @@ namespace Svc {
 template <typename T>
 T FpySequencer::Stack::pop() {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
-    FW_ASSERT(this->size >= sizeof(T), static_cast<FwAssertArgType>(this->size),
-              static_cast<FwAssertArgType>(sizeof(T)));
+    // Underflow guard: a malformed .fpy bytecode can request more bytes
+    // than the stack currently holds. Flag the error and return a zero
+    // value rather than asserting; the dispatcher aborts the sequence
+    // before the next statement runs.
+    if (this->size < sizeof(T)) {
+        this->hasBoundsError = true;
+        return T{};
+    }
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
     // now move top of stack into byte array and shrink stack
@@ -57,8 +63,13 @@ F64 FpySequencer::Stack::pop<F64>() {
 template <typename T>
 void FpySequencer::Stack::push(T val) {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
-    FW_ASSERT(this->size + sizeof(val) <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
-              static_cast<FwAssertArgType>(sizeof(T)));
+    // Overflow guard: skip the write if it would exceed MAX_STACK_SIZE
+    // and let the dispatcher abort the sequence cleanly on the next
+    // statement. Previously an FW_ASSERT here aborted the FSW process.
+    if (this->size + sizeof(val) > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
     // convert val to unsigned to avoid undefined behavior for bitshifts of signed types
@@ -114,7 +125,13 @@ void FpySequencer::Stack::push<F64>(F64 val) {
 // pops a byte array from the top of the stack into the destination array
 // does not convert endianness
 void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
-    FW_ASSERT(this->size >= destSize, static_cast<FwAssertArgType>(this->size), static_cast<FwAssertArgType>(destSize));
+    if (this->size < destSize) {
+        this->hasBoundsError = true;
+        if (destSize > 0 && dest != nullptr) {
+            memset(dest, 0, destSize);
+        }
+        return;
+    }
     memcpy(dest, this->top() - destSize, destSize);
     this->size -= destSize;
 }
@@ -123,16 +140,20 @@ void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
 // leaves the source array unmodified
 // does not convert endianness
 void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
-    FW_ASSERT(this->size + srcSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
-              static_cast<FwAssertArgType>(srcSize));
+    if (this->size + srcSize > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
     memcpy(this->top(), src, srcSize);
     this->size += srcSize;
 }
 
 // pushes zero bytes to the stack
 void FpySequencer::Stack::pushZeroes(Fpy::StackSizeType byteCount) {
-    FW_ASSERT(this->size + byteCount <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
-              static_cast<FwAssertArgType>(byteCount));
+    if (this->size + byteCount > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
     memset(this->top(), 0, byteCount);
     this->size += byteCount;
 }
@@ -142,34 +163,44 @@ U8* FpySequencer::Stack::top() {
 }
 
 // Copies data from one region of the stack to another
-// Asserts that both regions are within bounds and do not overlap
-// Does not modify stack size
+// Sets hasBoundsError and skips the op if any region is out of bounds or
+// the regions overlap. Does not modify stack size.
 void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset,
                                Fpy::StackSizeType srcOffset,
                                Fpy::StackSizeType copySize) {
-    FW_ASSERT(destOffset + copySize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(destOffset),
-              static_cast<FwAssertArgType>(copySize));
-    FW_ASSERT(srcOffset + copySize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(srcOffset),
-              static_cast<FwAssertArgType>(copySize));
+    if (destOffset + copySize > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
+    if (srcOffset + copySize > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
     // Check for overlap: regions overlap if one starts before the other ends
     // No overlap if: destEnd <= srcStart OR srcEnd <= destStart
-    FW_ASSERT(copySize == 0 || (destOffset + copySize <= srcOffset) || (srcOffset + copySize <= destOffset),
-              static_cast<FwAssertArgType>(destOffset), static_cast<FwAssertArgType>(srcOffset));
+    if (!(copySize == 0 || (destOffset + copySize <= srcOffset) || (srcOffset + copySize <= destOffset))) {
+        this->hasBoundsError = true;
+        return;
+    }
     if (copySize > 0) {
         memcpy(this->bytes + destOffset, this->bytes + srcOffset, copySize);
     }
 }
 
 // Moves data within the stack
-// Asserts that both source and destination are within bounds
-// Does not modify stack size
+// Sets hasBoundsError and skips the op if any region is out of bounds.
+// Does not modify stack size.
 void FpySequencer::Stack::move(Fpy::StackSizeType destOffset,
                                Fpy::StackSizeType srcOffset,
                                Fpy::StackSizeType moveSize) {
-    FW_ASSERT(destOffset + moveSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(destOffset),
-              static_cast<FwAssertArgType>(moveSize));
-    FW_ASSERT(srcOffset + moveSize <= this->size, static_cast<FwAssertArgType>(srcOffset),
-              static_cast<FwAssertArgType>(moveSize));
+    if (destOffset + moveSize > Fpy::MAX_STACK_SIZE) {
+        this->hasBoundsError = true;
+        return;
+    }
+    if (srcOffset + moveSize > this->size) {
+        this->hasBoundsError = true;
+        return;
+    }
     if (moveSize > 0) {
         memmove(this->bytes + destOffset, this->bytes + srcOffset, moveSize);
     }

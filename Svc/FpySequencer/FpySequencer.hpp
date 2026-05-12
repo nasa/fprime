@@ -87,6 +87,21 @@ class FpySequencer : public FpySequencerComponentBase {
         // the byte offset from the start of the stack where the current function's local variables begin.
         // analogous to a 'frame pointer'.
         Fpy::StackSizeType currentFrameStart = 0;
+        // Set true by any stack operation that would violate stack bounds
+        // (overflow on push, underflow on pop, or out-of-range offset on
+        // copy/move). The operation is skipped when set, and the executing
+        // sequence is aborted by the dispatcher on the next dispatchStatement
+        // call. This replaces an FW_ASSERT that an attacker-controlled
+        // .fpy bytecode could trigger to crash the FSW process.
+        bool hasBoundsError = false;
+
+        // True iff a stack operation since the last clearError() would have
+        // violated the stack bounds.
+        bool hasError() const { return this->hasBoundsError; }
+
+        // Clear the error flag (called by the dispatcher after surfacing
+        // the failure to the operator).
+        void clearError() { this->hasBoundsError = false; }
 
         // pops a value off of the top of the stack
         // converts it from big endian

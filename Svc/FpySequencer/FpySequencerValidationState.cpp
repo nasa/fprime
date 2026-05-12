@@ -87,12 +87,22 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // make sure we're at EOF
+    // make sure we're at EOF. The size() and position() OS calls can fail
+    // on filesystem errors or if the file was concurrently modified by
+    // another FileManager command (e.g. RemoveFile or AppendFile) between
+    // the file open and this point. Treat the failure as a validation
+    // failure rather than aborting the FSW process.
     FwSizeType sequenceFileSize;
-    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
+    if (sequenceFile.size(sequenceFileSize) != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, Fpy::FileApiStage::SIZE);
+        return Fw::Success::FAILURE;
+    }
 
     FwSizeType sequenceFilePosition;
-    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
+    if (sequenceFile.position(sequenceFilePosition) != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, Fpy::FileApiStage::POSITION);
+        return Fw::Success::FAILURE;
+    }
 
     if (sequenceFileSize != sequenceFilePosition) {
         this->log_WARNING_HI_ExtraBytesInSequence(static_cast<FwSizeType>(sequenceFileSize - sequenceFilePosition));
@@ -226,13 +236,20 @@ Fw::Success FpySequencer::readBytes(Os::File& file,
         return Fw::Success::FAILURE;
     }
 
-    // should probably fail if we read in MORE bytes than we ask for
-    FW_ASSERT(expectedReadLen == actualReadLen, static_cast<FwAssertArgType>(expectedReadLen),
-              static_cast<FwAssertArgType>(actualReadLen));
+    // A read returning MORE bytes than requested would indicate an OS or
+    // backend bug rather than a malformed input, but treat it defensively
+    // as a validation failure instead of aborting the FSW process.
+    if (expectedReadLen != actualReadLen) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, Fpy::FileApiStage::READ_LENGTH_MISMATCH);
+        return Fw::Success::FAILURE;
+    }
 
     Fw::SerializeStatus serializeStatus =
         this->m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(expectedReadLen));
-    FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
+    if (serializeStatus != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, Fpy::FileApiStage::SET_BUFFER_LENGTH);
+        return Fw::Success::FAILURE;
+    }
 
     if (updateCrc) {
         FpySequencer::updateCrc(this->m_computedCRC, this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);

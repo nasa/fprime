@@ -109,6 +109,15 @@ module Svc {
             POP_EVENT = 75
         }
 
+        @ Stage of file I/O during sequence validation that emitted an FpyFileApiError.
+        @ Used to disambiguate which Os::File or buffer operation hit the failure.
+        enum FileApiStage : U8 {
+            SIZE = 0
+            POSITION = 1
+            READ_LENGTH_MISMATCH = 2
+            SET_BUFFER_LENGTH = 3
+        }
+
         enum DirectiveErrorCode : U8 {
             NO_ERROR = 0
             STMT_OUT_OF_BOUNDS = 1
