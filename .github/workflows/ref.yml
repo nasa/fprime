@@ -38,7 +38,7 @@ jobs:
             jobs: "random"
           - runner: macos-latest
             jobs: "2"
-    timeout-minutes: 45
+    timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
       - name: "Checkout F' Repository"
@@ -55,6 +55,41 @@ jobs:
         with:
           working-directory: "TestDeploymentsProject"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+      - name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ref-build-artifacts-${{ matrix.runner }}
+          path: TestDeploymentsProject/build-artifacts/
+          retention-days: 1
+
+  integration-tests:
+    name: "Integration Tests [${{ matrix.runner }}]"
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+          - runner: macos-latest
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: ref-build-artifacts-${{ matrix.runner }}
+          path: TestDeploymentsProject/build-artifacts/
+      - name: "Make binary executable"
+        run: chmod +x TestDeploymentsProject/build-artifacts/*/Ref/bin/Ref
       - name: "Install valgrind"
         if: runner.os == 'Linux'
         run: |
