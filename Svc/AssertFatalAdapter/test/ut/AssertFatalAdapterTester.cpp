@@ -22,9 +22,9 @@
 namespace Svc {
 
 // Apply all truncations to file buffer size
-const FwSizeType fileMaxSize = FW_MIN(
-    FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize), static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE)),
-    static_cast<FwSizeType>(FW_ASSERT_TEXT_SIZE));
+const FwSizeType FILE_ARG_MAX_LEN =
+    FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
+           FW_MIN(static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE), static_cast<FwSizeType>(FW_ASSERT_TEXT_SIZE)));
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -54,7 +54,7 @@ void doLeadingTruncation(char* dst, const char* src, FwSizeType truncatedSize) {
 void AssertFatalAdapterTester::testAsserts() {
     U32 lineNo;
 
-    char file[Fw::StringBase::BUFFER_SIZE(fileMaxSize)];
+    char file[Fw::StringBase::BUFFER_SIZE(FILE_ARG_MAX_LEN)];
     Fw::String fileString;
 
 // Asserts may be turned off resulting in this component doing a no-op
@@ -153,8 +153,8 @@ void AssertFatalAdapterTester::testTruncation() {
     // File ID mode doesn't use string paths, skip truncation test
     return;
 #else
-    constexpr FwSizeType maxSize = AssertFatalAdapterEventFileSize;
-    ASSERT_LE(maxSize, fileMaxSize);
+    constexpr FwSizeType maxSize = FILE_ARG_MAX_LEN;
+    ASSERT_LE(maxSize, static_cast<FwSizeType>(FW_ASSERT_TEXT_SIZE));
     // Test 1: Short path should remain unchanged
     const char* shortPath = "test/short.cpp";
     this->clearTextLogs();
@@ -182,21 +182,23 @@ void AssertFatalAdapterTester::testTruncation() {
     // Create a path longer than maxSize
     constexpr FwSizeType longPathSize = maxSize + 2;
     char longPath[longPathSize + 1];
+    fillWithBytePattern(longPath, longPathSize, true);
 
     // Fill with pattern: "prefix..." + "suffix/truncation_test.cpp"
-    const char* suffix = "suffix/truncation_test.cpp";
+    const char* suffix = "/suffix/truncation_test.cpp";
     FwSizeType suffixLen = Fw::StringUtils::string_length(suffix, FileNameStringSize);
-    FwSizeType prefixLen = longPathSize - suffixLen;
-
+    FwSizeType prefixLen = longPathSize - maxSize;
     // Fill prefix with repeating digits
     for (FwSizeType i = 0; i < prefixLen; i++) {
-        longPath[i] = (i % 10) + '0';
+        longPath[i] = (i % 10) + 'a';
     }
-    Fw::StringUtils::string_copy(longPath + prefixLen, suffix, suffixLen + 1);
+    Fw::StringUtils::string_copy(longPath + prefixLen + (maxSize-suffixLen), suffix, suffixLen+1);
 
     // Expected truncated result: keeps last (maxSize) characters
     char expectedTruncated[Fw::StringBase::BUFFER_SIZE(maxSize)];
     doLeadingTruncation(expectedTruncated, longPath, maxSize);
+    printf("longPath %s\n", longPath);
+    printf("expectedTruncated %s\n", expectedTruncated);
 
     this->clearTextLogs();
     this->component.reportAssert(longPath, 300, 1, 42, 0, 0, 0, 0, 0);

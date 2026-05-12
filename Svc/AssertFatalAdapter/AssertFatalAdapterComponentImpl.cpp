@@ -90,12 +90,10 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                                                    FwAssertArgType arg4,
                                                    FwAssertArgType arg5,
                                                    FwAssertArgType arg6) {
-    constexpr FwSizeType outputSize = AssertFatalAdapterEventFileSize;
+
+    constexpr FwSizeType outputSize = FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
+                                                    static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
     char output[outputSize];
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-    Fw::LogStringArg fileArg;
-    fileArg.format("0x%08" PRIX32, file);
-#else
     FwSizeType len = Fw::StringUtils::string_length(file, FileNameStringSize);
 
     // Calculate start index. If string is shorter than N, keep whole string.
@@ -104,6 +102,12 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
 
     // Copy safely into output buffer (also ensures null-termination)
     Fw::StringUtils::string_copy(output, start, outputSize + 1);
+
+    // Get file arg for events
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+    Fw::LogStringArg fileArg;
+    fileArg.format("0x%08" PRIX32, file);
+#else
 
     Fw::LogStringArg fileArg(start);
 #endif
