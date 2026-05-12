@@ -16,6 +16,15 @@ module ComCfg {
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
 
+    @ Upper bound on the size of a single packet (Space Packet or Encapsulation
+    @ Packet) accepted by the AOS deframer. The packet-length field of a CCSDS
+    @ Space Packet is U16 (max 65535 + 1 byte = 65536), and Encapsulation
+    @ Packets can in principle be larger. Capping at 65536 by default keeps a
+    @ malformed or hostile packet-length read from the wire from being passed
+    @ directly to the buffer allocator. Missions that legitimately need larger
+    @ packets should override this constant.
+    constant AosMaxPacketSize = 65536
+
     @ Aggregation buffer for ComAggregator component
     constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
 

@@ -313,12 +313,31 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
         // packet)
-        // FIXME: packetSize is untrusted (read straight from the wire) and could have unintended side effects,
-        // especially with EPP. We should skip if packetSize exceeds a mission-defined limit instead of letting the
-        // allocator handle any requests, which has a side effect of abandoning spanning packets on failure
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
+        }
+
+        // packetSize is derived from the on-the-wire packet header. Cap it at a
+        // mission-defined upper bound (ComCfg::AosMaxPacketSize) before passing
+        // to the allocator. Without this check a malformed or hostile size
+        // field would force allocate_out() to request arbitrarily large
+        // buffers, which exhausts the buffer manager and degrades downlink
+        // throughput across all virtual channels.
+        if (packetSize > ComCfg::AosMaxPacketSize) {
+            this->log_WARNING_HI_OversizedPacket(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(), packetSize,
+                                                 ComCfg::AosMaxPacketSize);
+            // Save before abandon clears it -— needed for the correct seek offset below
+            const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
+            this->abandonSpanningPacket(vc);
+
+            // Seek past the rejected packet (header bytes already consumed + remaining body)
+            const FwSizeType remainingLength = seekForward + remainingBody;
+            if (remainingLength > size) {
+                return 0;
+            } else {
+                return remainingLength;
+            }
         }
 
         // Try to allocate a buffer for the whole packet

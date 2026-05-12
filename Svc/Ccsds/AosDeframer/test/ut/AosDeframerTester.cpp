@@ -475,7 +475,10 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     this->configureDefault();
 
     U8 payload[64] = {};
-    // Start an EPP packet that declares a payload large enough to exceed the test allocator buffer.
+    // Start an EPP packet that declares a payload large enough to exceed
+    // ComCfg::AosMaxPacketSize. With the deframer's bounds check on the
+    // wire-read packet size in place, the packet is rejected up front via
+    // the OversizedPacket event before any allocation is attempted.
     payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
     payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
     payload[0] |= 0x02 & EPPSubfields::lengthOfLengthMask;
@@ -483,7 +486,7 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     payload[1] = 0x00;  // Ext Field
 
     payload[2] = 0xFF;
-    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> ALLOC_BUF_SIZE=65536)
+    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> ComCfg::AosMaxPacketSize=65536)
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
@@ -492,7 +495,7 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
 
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+    ASSERT_EVENTS_OversizedPacket_SIZE(1);
 }
 
 void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
