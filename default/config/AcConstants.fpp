@@ -54,11 +54,13 @@ constant FileNameStringSize = 240
 @ The size of an assert text string
 constant FwAssertTextSize = 256
 
-@ The size of a file name in an AssertFatalAdapter event
+@ The size of a file name in an AssertFatalAdapter event (leading-truncation)
 @ Note: File names in assertion failures are also truncated by
-@ the constants FW_ASSERT_TEXT_SIZE and FW_LOG_STRING_MAX_SIZE, set
-@ in FpConfig.h.
-constant AssertFatalAdapterEventFileSize = FileNameStringSize
+@ the constants FwAssertTextSize (in this file) and FW_LOG_STRING_MAX_SIZE (set
+@ in FW_LOG_STRING_MAX_SIZE)
+@ Set much smaller than FwAssertTextSize so there's space for time stamp/assert 
+@ arguments in log message
+constant AssertFatalAdapterEventFileSize = 150
 
 @ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
 @ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
