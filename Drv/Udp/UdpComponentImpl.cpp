@@ -32,8 +32,8 @@ SocketIpStatus UdpComponentImpl::configureSend(const char* const ipv4_address,
 }
 
 SocketIpStatus UdpComponentImpl::configureRecv(const char* const ipv4_address,
-                                               const U16 port,
-                                               FwSizeType buffer_size) {
+                                                const U16 port,
+                                                FwSizeType buffer_size) {
     m_allocation_size = buffer_size;  // Store the buffer size
     return m_socket.configureRecv(ipv4_address, port);
 }
