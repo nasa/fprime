@@ -13,6 +13,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <cassert>
 #include <cstdio>
@@ -89,15 +90,26 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                                                    FwAssertArgType arg4,
                                                    FwAssertArgType arg5,
                                                    FwAssertArgType arg6) {
+    constexpr FwSizeType outputSize = AssertFatalAdapterEventFileSize;
+    char output[outputSize];
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     Fw::LogStringArg fileArg;
     fileArg.format("0x%08" PRIX32, file);
 #else
-    Fw::LogStringArg fileArg(file);
+    FwSizeType len = Fw::StringUtils::string_length(file, FileNameStringSize);
+
+    // Calculate start index. If string is shorter than N, keep whole string.
+    FW_ASSERT(file != nullptr);
+    const char* start = (len > outputSize) ? file + (len - outputSize) : file;
+
+    // Copy safely into output buffer (also ensures null-termination)
+    Fw::StringUtils::string_copy(output, start, outputSize + 1);
+
+    Fw::LogStringArg fileArg(start);
 #endif
 
     CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
-    Fw::defaultReportAssert(file, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
+    Fw::defaultReportAssert(output, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
                             sizeof(msg));
     Fw::Logger::log("%s\n", msg);
 

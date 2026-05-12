@@ -11,7 +11,6 @@
 // ======================================================================
 
 #include "AssertFatalAdapterTester.hpp"
-#include <algorithm>
 #include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "config/FppConstantsAc.hpp"
