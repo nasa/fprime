@@ -17,33 +17,33 @@ The application illustrates some example application components:
 |RecvBuffApp | A component that receives a buffer | [SDD](../RecvBuffApp/docs/sdd.md) |
 |BlockDriver  | A notional driver that relays buffers from SendBuffApp to RecvBuffApp | [SDD](../BlockDriver/docs/sdd.md)|
 |SignalGen | A component that generates telemetry following a waveform| [SDD](../SignalGen/docs/sdd.md)|
-|PingReceiver|A test component that gets health pings that can be turned off| [SDD](../SignalGen/docs/sdd.md)| 
+|PingReceiver|A test component that gets health pings that can be turned off| [SDD](../PingReceiver/docs/sdd.md)| 
 
 It interconnects those application components with reusable service components:
 
 |Component|Description|Link
 |---|---|---|
-|EventManager|Logs events for downlink| [SDD](../../Svc/EventManager/docs/sdd.md)|
-|ActiveRateGroup|Executes a rate group by calling components| [SDD](../../Svc/ActiveRateGroup/docs/sdd.md)|
-|BufferManager|Manages a pool of buffers| [SDD](../../Svc/BufferManager/docs/sdd.md)|
-|CmdSequencer|Loads a set of commands from a binary file and executes them| [SDD](../../Svc/CmdSequencer/docs/sdd.md)|
-|CmdDispatcher|Dispatches commands from a ground system to registered components| [SDD](../../Svc/CmdDispatcher/docs/sdd.md)|
-|FileDownlink|Component to downlink files to ground system| [SDD](../../Svc/FileDownlink/docs/sdd.md)|
-|FileManager|Component to perform various file operations| [SDD](../../Svc/FileManager/docs/sdd.md)|
-|FileUplink|Component to receive uplinked files from ground system| [SDD](../../Svc/FileUplink/docs/sdd.md)|
-|Health|Pings active components in the topology to verify their aliveness| [SDD](../../Svc/Health/docs/sdd.md)|
-|PrmDb|Loads sets of parameters from storage at startup and provides them to components| [SDD](../../Svc/PrmDb/docs/sdd.md)|
-|RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle| [SDD](../../Svc/RateGroupDriver/docs/sdd.md)|
-|TlmChan|Provides storage for telemetry channels and periodically sends them to the ground system| [SDD](../../Svc/TlmChan/docs/sdd.md)|
-|PolyDb|Manages a database of polymorphic data values| [SDD](../../Svc/PolyDb/docs/sdd.md)|
+|EventManager|Logs events for downlink| [SDD](../../../Svc/EventManager/docs/sdd.md)|
+|ActiveRateGroup|Executes a rate group by calling components| [SDD](../../../Svc/ActiveRateGroup/docs/sdd.md)|
+|BufferManager|Manages a pool of buffers| [SDD](../../../Svc/BufferManager/docs/sdd.md)|
+|CmdSequencer|Loads a set of commands from a binary file and executes them| [SDD](../../../Svc/CmdSequencer/docs/sdd.md)|
+|CmdDispatcher|Dispatches commands from a ground system to registered components| [SDD](../../../Svc/CmdDispatcher/docs/sdd.md)|
+|FileDownlink|Component to downlink files to ground system| [SDD](../../../Svc/FileDownlink/docs/sdd.md)|
+|FileManager|Component to perform various file operations| [SDD](../../../Svc/FileManager/docs/sdd.md)|
+|FileUplink|Component to receive uplinked files from ground system| [SDD](../../../Svc/FileUplink/docs/sdd.md)|
+|Health|Pings active components in the topology to verify their aliveness| [SDD](../../../Svc/Health/docs/sdd.md)|
+|PrmDb|Loads sets of parameters from storage at startup and provides them to components| [SDD](../../../Svc/PrmDb/docs/sdd.md)|
+|RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle| [SDD](../../../Svc/RateGroupDriver/docs/sdd.md)|
+|TlmChan|Provides storage for telemetry channels and periodically sends them to the ground system| [SDD](../../../Svc/TlmChan/docs/sdd.md)|
+|PolyDb|Manages a database of polymorphic data values| [SDD](../../../Svc/PolyDb/docs/sdd.md)|
 
 
 There is a set of useful utility components that can be used on supported operating systems:
 
 |Component|Description|Link
 |---|---|---|
-|PosixTime|Provides time stamps for telemetry on a posix systems| [SDD](../../Svc/PosixTime/docs/sdd.md)|
-|PassiveConsoleTextLogger|Prints the text form of events to standard output| [SDD](../../Svc/PassiveConsoleTextLogger/docs/sdd.md)|
+|PosixTime|Provides time stamps for telemetry on a posix systems| [SDD](../../../Svc/PosixTime/docs/sdd.md)|
+|PassiveConsoleTextLogger|Prints the text form of events to standard output| [SDD](../../../Svc/PassiveConsoleTextLogger/docs/sdd.md)|
 
 
 ## 2. Topology

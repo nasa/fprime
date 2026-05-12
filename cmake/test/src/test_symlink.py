@@ -14,12 +14,12 @@ from . import settings
 
 
 SYMLINK_PATH = Path(tempfile.mkdtemp()) / "fprime-link"
-os.symlink(settings.REF_APP_PATH.parent, SYMLINK_PATH)
+os.symlink(settings.FRAMEWORK_PATH, SYMLINK_PATH)
 
 
 _ = cmake.get_build(
     "SYMLINKED_UT_BUILD",
-    SYMLINK_PATH / "Ref",
+    SYMLINK_PATH / "TestDeploymentsProject",
     cmake_arguments={"BUILD_TESTING": "ON", "CMAKE_DEBUG_OUTPUT": "ON"},
     make_targets=["Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),

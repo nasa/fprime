@@ -28,13 +28,13 @@ jobs:
           submodules: true
       - uses: ./.github/actions/setup
       - name: "Generate Ref Deployment"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject
         run: |
           fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         shell: bash
       - name: "Run fpp-to-json on Ref topology"
-        working-directory: ./Ref/Top
+        working-directory: ./TestDeploymentsProject/Ref/Top
         run: |
-          DEPENDENCIES=$(fpp-depend ../build-fprime-automatic-native/locs.fpp *.fpp)
+          DEPENDENCIES=$(fpp-depend ../../build-fprime-automatic-native/locs.fpp *.fpp)
           fpp-to-json ${DEPENDENCIES} *.fpp
         shell: bash

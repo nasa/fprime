@@ -58,7 +58,7 @@ jobs:
     - uses: ./.github/actions/setup
     - name: Build Ref
       run: |
-        cd Ref
+        cd TestDeploymentsProject
         fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         fprime-util build -j4
 
