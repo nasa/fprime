@@ -155,6 +155,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         stat = stateFile.read(buffer, size);
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, static_cast<I32>(fileLoc));
+            stateFile.close();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
@@ -169,6 +170,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         if (size != sizeof(buffer)) {
             this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, static_cast<I32>(fileLoc),
                                                     static_cast<I32>(size));
+            stateFile.close();
             return Fw::CmdResponse::OK;
         }
 
@@ -181,11 +183,20 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // deserialization after this point should always work, since
         // the source buffer was specifically sized to hold the data
 
-        // Deserialize the file directory index
+        // Deserialize the file directory index. If an error occurs processing the file,
+        // generate event and return EXECUTION_ERROR.
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         this->m_stateFileData[entry].used = true;
         this->m_stateFileData[entry].visited = false;
 
@@ -193,7 +204,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         fileLoc += size;
         this->m_stateFileEntries++;
     }
-
+    stateFile.close();
     return Fw::CmdResponse::OK;
 }
 
@@ -256,6 +267,7 @@ void DpCatalog::pruneAndWriteStateFile() {
             stat = stateFile.write(buffer, size);
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
+                stateFile.close();
                 return;
             }
         }
@@ -299,6 +311,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     FwSizeType size = entryBuffer.getSize();
     stat = stateFile.write(buffer, size);
     if (stat != Os::File::OP_OK) {
+        stateFile.close();
         this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
         return;
     }

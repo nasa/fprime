@@ -751,6 +751,44 @@ void DpCatalogTester::test_ProcessFileInvalidDir() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_MalformedFile() {
+    // 1. Setup paths and corrupted data
+    Fw::FileNameString stateFile("DpState.dat");
+
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    memset(buffer, 0xFF, sizeof(buffer));  // Force deserialization failure
+
+    // 2. Write the malformed data to disk
+    Os::File f;
+    ASSERT_EQ(Os::File::OP_OK, f.open(stateFile.toChar(), Os::File::OPEN_CREATE, Os::FileInterface::OVERWRITE));
+
+    FwSizeType writeSize = sizeof(buffer);
+    ASSERT_EQ(Os::File::OP_OK, f.write(buffer, writeSize));
+    f.close();
+
+    // 3. Configure the Component
+    Fw::MallocAllocator mockAllocator;
+    Fw::FileNameString dirs[DP_MAX_DIRECTORIES];
+    this->component.configure(dirs, 0, stateFile, 0, mockAllocator);
+
+    // 4. Dispatch the BUILD_CATALOG command
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+
+    // 5. Command should generate event instead of ASSERT
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // High-priority warning event should be caught by this test
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_FileCorruptedDataError_SIZE(1);
+    ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+
+    // 6. Cleanup
+    Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
 void DpCatalogTester::test_TruncatedDpRejected() {
     Fw::MallocAllocator alloc;
     Fw::FileNameString dir("./DpTest_TruncatedDpRejected");

@@ -152,7 +152,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    if (this->m_sequenceBlockState == FpySequencer_BlockState::BLOCK) {
+    if (this->m_sequenceBlockState == BlockState::BLOCK) {
         // respond if we were waiting on a response
         this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::OK);
     }
@@ -166,7 +166,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    if (this->m_sequenceBlockState == FpySequencer_BlockState::BLOCK) {
+    if (this->m_sequenceBlockState == BlockState::BLOCK) {
         // respond if we were waiting on a response
         this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }

@@ -462,7 +462,7 @@ void CmdSequencerTester ::loadSequence(const char* const fileName) {
 
 void CmdSequencerTester ::runSequence(const U32 cmdSeq, const char* const fileName) {
     // Send run command
-    this->sendCmd_CS_RUN(0, cmdSeq, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, cmdSeq, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -515,7 +515,7 @@ void CmdSequencerTester ::runLoadedSequence() {
 
 void CmdSequencerTester ::startNewSequence(const char* const fileName) {
     // Start the sequence
-    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);

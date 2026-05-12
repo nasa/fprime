@@ -412,6 +412,16 @@ module Svc {
       format "Invalid DP file name {}. Expected {}" \
       throttle 10
 
+
+    @ The file contained malformed or invalid data during deserialization
+    event FileCorruptedDataError(
+                             file: string size FileNameStringSize @< The file
+                             stat: I32
+      ) \
+      severity warning high \
+      id 48 \
+      format "DP file {} contains malformed data (status {})"     
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------

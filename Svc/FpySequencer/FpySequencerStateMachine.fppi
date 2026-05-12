@@ -1,6 +1,6 @@
 struct SequenceExecutionArgs {
     filePath: string size FileNameStringSize
-    $block: BlockState
+    $block: Svc.BlockState
     buffer: Svc.SeqArgs
 }
 

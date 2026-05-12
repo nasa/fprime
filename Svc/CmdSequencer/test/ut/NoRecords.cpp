@@ -63,7 +63,7 @@ void CmdSequencerTester ::RunNoRecords() {
     file.write();
 
     // Send run command
-    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
