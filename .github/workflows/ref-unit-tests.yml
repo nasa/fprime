@@ -53,6 +53,6 @@ jobs:
       - name: "Run Unit Tests"
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
-          working-directory: "Ref"
+          working-directory: "TestDeploymentsProject"
           generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}

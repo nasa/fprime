@@ -187,6 +187,10 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
+            // validate before memcpy
+            FW_ASSERT(val.getSize() <= entry.channelSize, static_cast<FwAssertArgType>(val.getSize()),
+                      static_cast<FwAssertArgType>(entry.channelSize));
+
             (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
             this->m_lock.unLock();
         }

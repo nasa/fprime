@@ -102,6 +102,7 @@ void TlmPacketizerTester ::pushTlmTest() {
     this->invoke_to_TlmRecv(0, 333, ts, buff);
 
     // second channel
+    buff.resetSer();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(50)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
 

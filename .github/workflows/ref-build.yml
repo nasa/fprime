@@ -53,7 +53,7 @@ jobs:
       - name: "Build Ref"
         uses: nasa/fprime-actions/build@devel
         with:
-          working-directory: "Ref"
+          working-directory: "TestDeploymentsProject"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
       - name: "Install valgrind"
         if: runner.os == 'Linux'
@@ -66,9 +66,9 @@ jobs:
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
-          gds-working-directory: "Ref"
-          test-working-directory: "Ref/test/int"
+          gds-working-directory: "TestDeploymentsProject"
+          test-working-directory: "TestDeploymentsProject/Ref/test/int"
           binary: "build-artifacts/*/Ref/bin/Ref"
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
-          pytest-args: "--deployment-config ${{ github.workspace }}/Ref/test/int/int_config.json"
+          pytest-args: "--deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
