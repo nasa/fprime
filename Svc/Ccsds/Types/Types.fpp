@@ -22,6 +22,24 @@ module Ccsds {
     # ------------------------------------------------
     # SpacePacket
     # ------------------------------------------------
+
+    @ Minimum total length of a CCSDS Space Packet in octets.
+    @ Per CCSDS 133.0-B-2 Section 4.1.2.2: 6-octet primary header + at least
+    @ 1 octet of packet data field = 7 octets.
+    constant SpacePacketMinLength = 7
+
+    @ Maximum total length of a CCSDS Space Packet in octets.
+    @ Per CCSDS 133.0-B-2 Section 4.1.2.2: 6-octet primary header + at most
+    @ 65536 octets of packet data field (the 16-bit packetDataLength field
+    @ encodes data-field-length-minus-one, so max payload = 65535 + 1 = 65536)
+    @ = 65542 octets.
+    constant SpacePacketMaxLength = 65542
+
+    @ Minimum total length of a CCSDS Encapsulation Packet in octets.
+    @ Per CCSDS 133.1-B-3 Section 4.1.2.1: a single-byte Encapsulation Idle
+    @ Packet is the minimum valid encapsulation packet.
+    constant EncapsulationPacketMinLength = 1
+
     @ Describes the frame header format for the SpacePacket communications protocol
     struct SpacePacketHeader {
         packetIdentification: U16,   @< 3 bits PVN | 1 bit Pkt type | 1 bit Sec Hdr | 11 bit APID

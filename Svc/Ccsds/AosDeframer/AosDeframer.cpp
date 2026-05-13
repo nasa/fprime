@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
+#include <algorithm>
 #include <cstring>
 #include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
@@ -30,7 +31,7 @@ AosDeframer::AosDeframer(const char* const compName)
       m_fixedFrameSize(ComCfg::AosMaxFrameFixedSize),
       m_fecfEnabled(true),
       m_spacecraftId(ComCfg::SpacecraftId),
-      m_maxPacketSize(AosDeframer_DefaultMaxPacketSize),
+      m_maxPacketSize(Svc::Ccsds::SpacePacketMaxLength),
       m_crcErrorCount(0) {
     // Initialize VC struct
     for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
@@ -66,9 +67,25 @@ void AosDeframer::configure(U32 fixedFrameSize,
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
     FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
-    // maxPacketSize must be large enough to accommodate at least an empty packet header.
-    // We cannot enforce a fixed minimum here (SPP is 6 bytes, EPP is 1) so just require non-zero.
-    FW_ASSERT(maxPacketSize > 0, static_cast<FwAssertArgType>(maxPacketSize));
+    // maxPacketSize must accommodate the smallest valid packet of EVERY
+    // enabled protocol; otherwise a legitimate packet of one of the enabled
+    // protocols would be silently rejected by the oversize cap. The binding
+    // minimum is therefore the LARGER of the enabled protocol minimums:
+    // EPP can be as small as a single idle byte (CCSDS 133.1-B-3 §4.1.2.1),
+    // SPP is 7 octets minimum (CCSDS 133.0-B-2 §4.1.2.2: 6-byte header +
+    // 1-byte minimum data field). When both are enabled the SPP minimum is
+    // the binding constraint.
+    FwSizeType minPacketSize = 0;
+    if (pvnMask & PvnBitfield::EPP_MASK) {
+        minPacketSize = std::max(minPacketSize,
+                                 static_cast<FwSizeType>(Svc::Ccsds::EncapsulationPacketMinLength));
+    }
+    if (pvnMask & PvnBitfield::SPP_MASK) {
+        minPacketSize = std::max(minPacketSize,
+                                 static_cast<FwSizeType>(Svc::Ccsds::SpacePacketMinLength));
+    }
+    FW_ASSERT(maxPacketSize >= minPacketSize, static_cast<FwAssertArgType>(maxPacketSize),
+              static_cast<FwAssertArgType>(minPacketSize));
 
     // Spanning packet reassembly requires dynamic backing via allocator ports
     FW_ASSERT(this->isConnected_allocate_OutputPort(0));
@@ -175,7 +192,7 @@ void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
 }
 
-FwSizeType AosDeframer::abandonAndSeekPast(AosDeframerVc& vc,
+FwSizeType AosDeframer::abandonAndComputeSeek(AosDeframerVc& vc,
                                            FwSizeType packetSize,
                                            FwSizeType seekForward,
                                            FwSizeType size) {
@@ -342,16 +359,12 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             return 0;
         }
 
-        // packetSize is derived from the on-the-wire packet header. Cap it at
-        // the configured upper bound (m_maxPacketSize, set via configure())
-        // before passing to the allocator. Without this check a malformed or
-        // hostile size field would force allocate_out() to request arbitrarily
-        // large buffers, which exhausts the buffer manager and degrades
-        // downlink throughput across all virtual channels.
+        // Prevent large or hostile packets from starving all virtual channels
+        // of buffer manager resources.
         if (packetSize > m_maxPacketSize) {
             this->log_WARNING_HI_OversizedPacket(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(), packetSize,
                                                  m_maxPacketSize);
-            return this->abandonAndSeekPast(vc, packetSize, seekForward, size);
+            return this->abandonAndComputeSeek(vc, packetSize, seekForward, size);
         }
 
         // Try to allocate a buffer for the whole packet
@@ -359,7 +372,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         if (vc.spanningPacket.buffer.getSize() < packetSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
-            return this->abandonAndSeekPast(vc, packetSize, seekForward, size);
+            return this->abandonAndComputeSeek(vc, packetSize, seekForward, size);
         }
 
         // Load the header into the dynamic buffer

@@ -475,19 +475,28 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     this->configureDefault();
 
     U8 payload[64] = {};
-    // Start an EPP packet that declares a payload large enough to exceed the
-    // configured maxPacketSize (default AosDeframer_DefaultMaxPacketSize =
-    // 65536). With the deframer's bounds check on the wire-read packet size
-    // in place, the packet is rejected up front via the OversizedPacket event
-    // before any allocation is attempted.
+    // Start an EPP packet whose declared total size exceeds the framework
+    // default maxPacketSize (Svc::Ccsds::SpacePacketMaxLength = 65542). With
+    // the deframer's bounds check on the wire-read packet size in place, the
+    // packet is rejected up front via the OversizedPacket event before any
+    // allocation is attempted. We use a 4-byte EPP length field (Four = 0b11)
+    // so the encoded total can exceed 65542 (a 2-byte length field is limited
+    // to 65539 bytes total, which is below the default cap).
     payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
     payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
-    payload[0] |= 0x02 & EPPSubfields::lengthOfLengthMask;
+    payload[0] |= 0x03 & EPPSubfields::lengthOfLengthMask;  // lengthOfLength = Four (0b11 = 4 bytes)
 
-    payload[1] = 0x00;  // Ext Field
+    payload[1] = 0x00;  // Ext field
+    payload[2] = 0x00;  // CCSDS reserved 1
+    payload[3] = 0x00;  // CCSDS reserved 2
 
-    payload[2] = 0xFF;
-    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> default maxPacketSize = 65536)
+    // 4-byte length field set to a value well above SpacePacketMaxLength.
+    // Header = 8 bytes (lengthOffset=4 + lengthOfLength=4), so total declared
+    // packet size = 8 + 0x00010000 = 65544, which is > 65542.
+    payload[4] = 0x00;
+    payload[5] = 0x01;
+    payload[6] = 0x00;
+    payload[7] = 0x00;
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
