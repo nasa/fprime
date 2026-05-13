@@ -297,13 +297,18 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& serBuffer) {
+void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_BytesSent(this->m_bytesSent);
+    this->tlmWrite_BytesRecv(this->m_bytesReceived);
+}
+
+Drv::SendStatus LinuxUartDriver ::send_handler(FwIndexType portNum, Fw::Buffer& sendBuffer) {
     Drv::SendStatus status = Drv::SendStatus::SEND_OK;
-    if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
+    if (this->m_fd == -1 || sendBuffer.getData() == nullptr || sendBuffer.getSize() == 0) {
         status = Drv::SendStatus::SEND_ERROR;
     } else {
-        unsigned char *data = serBuffer.getData();
-        NATIVE_INT_TYPE xferSize = static_cast<NATIVE_INT_TYPE>(serBuffer.getSize());
+        unsigned char *data = sendBuffer.getData();
+        NATIVE_INT_TYPE xferSize = static_cast<NATIVE_INT_TYPE>(sendBuffer.getSize());
 
         NATIVE_INT_TYPE stat = static_cast<NATIVE_INT_TYPE>(::write(this->m_fd, data, static_cast<size_t>(xferSize)));
 
@@ -313,12 +318,11 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw
             status = Drv::SendStatus::SEND_ERROR;
         } else {
             this->m_bytesSent += static_cast<U32>(stat);
-            this->tlmWrite_BytesSent(this->m_bytesSent);
         }
     }
     // Deallocate when necessary
     if (isConnected_deallocate_OutputPort(0)) {
-        deallocate_out(0, serBuffer);
+        deallocate_out(0, sendBuffer);
     }
     return status;
 }
@@ -361,7 +365,6 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             buff.setSize(static_cast<U32>(stat));
             status = RecvStatus::RECV_OK;  // added by m.chase 03.06.2017
             comp->m_bytesReceived += static_cast<U32>(stat);
-            comp->tlmWrite_BytesRecv(comp->m_bytesReceived);
         } else {
             status = RecvStatus::RECV_ERROR; // Simply to return the buffer
         }

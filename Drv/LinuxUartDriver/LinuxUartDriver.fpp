@@ -14,6 +14,9 @@ module Drv {
     @ Deallocates buffers passed to the "send" port
     output port deallocate: Fw.BufferSend
 
+    @ The rate group input for sending telemetry
+    sync input port run: Svc.Sched
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
