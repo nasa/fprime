@@ -48,12 +48,19 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param spacecraftId The spacecraft ID to accept (10 bits, per Section 4.1.2.2)
     //! \param vcId The virtual channel ID to accept (6 bits, per Section 4.1.2.3)
     //! \param pvnMask Bitmask of Packet Version Numbers to extract (SPP=0x01, EPP=0x80)
+    //! \param maxPacketSize Upper bound on a single deframed packet (Space Packet
+    //!                      or Encapsulation Packet). The wire-read packet size
+    //!                      is compared against this before the buffer allocator
+    //!                      is asked for storage; oversized packets are dropped
+    //!                      and reported via OversizedPacket. Defaults to
+    //!                      AosDeframer_DefaultMaxPacketSize.
     //!
     void configure(U32 fixedFrameSize,
                    bool frameErrorControlField,
                    U16 spacecraftId = ComCfg::SpacecraftId,
                    U8 vcId = 0,
-                   U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK);
+                   U8 pvnMask = PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK,
+                   FwSizeType maxPacketSize = AosDeframer_DefaultMaxPacketSize);
 
   private:
     // Forward declaration for helper method signatures that reference the nested VC state type
@@ -101,6 +108,21 @@ class AosDeframer : public AosDeframerComponentBase {
 
     //! Abandon an in-progress spanning packet, deallocating backing storage if needed
     void abandonSpanningPacket(AosDeframerVc& vc);
+
+    //! Drop a spanning packet that cannot be accepted and report how far to
+    //! seek forward in the current data block. Shared between the oversize
+    //! reject path and the allocator-failure reject path; the caller is
+    //! responsible for emitting the appropriate warning event before calling.
+    //! \param vc The virtual channel state
+    //! \param packetSize Declared total size of the rejected packet (header + body)
+    //! \param seekForward Bytes already consumed in the current data block before this packet
+    //! \param size Bytes available in the current data block
+    //! \return Bytes to seek forward in the current data block, or 0 if the rejected packet
+    //!         body would extend past the available data
+    FwSizeType abandonAndSeekPast(AosDeframerVc& vc,
+                                  FwSizeType packetSize,
+                                  FwSizeType seekForward,
+                                  FwSizeType size);
 
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
@@ -176,9 +198,10 @@ class AosDeframer : public AosDeframerComponentBase {
     // ----------------------------------------------------------------------
 
     // Frame-level configuration parameters (set via configure())
-    U32 m_fixedFrameSize = 0;   //!< Fixed frame size in bytes
-    bool m_fecfEnabled = true;  //!< Whether FECF is enabled
-    U16 m_spacecraftId = 0;     //!< Expected spacecraft ID (10 bits)
+    U32 m_fixedFrameSize = 0;          //!< Fixed frame size in bytes
+    bool m_fecfEnabled = true;         //!< Whether FECF is enabled
+    U16 m_spacecraftId = 0;            //!< Expected spacecraft ID (10 bits)
+    FwSizeType m_maxPacketSize = AosDeframer_DefaultMaxPacketSize;  //!< Upper bound on accepted packet size
 
     //! FECF CRC error counter - per physical channel (not per-VC)
     U32 m_crcErrorCount = 0;

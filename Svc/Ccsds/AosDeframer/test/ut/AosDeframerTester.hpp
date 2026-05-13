@@ -112,6 +112,11 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test spanning packet allocation failure emits an event and drops the packet
     void testSpanningPacketAllocFailureEvent();
 
+    //! Test that a per-instance maxPacketSize override via configure() is honored
+    //! and that a packet just over the override (but well below the framework default)
+    //! is rejected via OversizedPacket
+    void testConfiguredMaxPacketSizeOverride();
+
     //! Test spanning packet dropped when a VC frame count gap is detected mid-reassembly
     void testSpanningPacketAbandonedOnVcGap();
 

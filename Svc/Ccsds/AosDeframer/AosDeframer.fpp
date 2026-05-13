@@ -10,6 +10,15 @@ module Ccsds {
 
         constant NumVcs = 1
 
+        @ Default upper bound on the size of a single packet (Space Packet or
+        @ Encapsulation Packet) accepted by the deframer. The packet-length
+        @ field of a CCSDS Space Packet is U16 (max 65535 + 1 byte = 65536),
+        @ and Encapsulation Packets can in principle be larger. Capping at
+        @ 65536 by default keeps a malformed or hostile packet-length read
+        @ from the wire from being passed directly to the buffer allocator.
+        @ Override per-instance via configure().
+        constant DefaultMaxPacketSize = 65536
+
         import Deframer
 
         @ Port to notify of a deframing error

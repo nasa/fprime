@@ -30,6 +30,7 @@ AosDeframer::AosDeframer(const char* const compName)
       m_fixedFrameSize(ComCfg::AosMaxFrameFixedSize),
       m_fecfEnabled(true),
       m_spacecraftId(ComCfg::SpacecraftId),
+      m_maxPacketSize(AosDeframer_DefaultMaxPacketSize),
       m_crcErrorCount(0) {
     // Initialize VC struct
     for (U8 vcInd = 0; vcInd < AosDeframer_NumVcs; vcInd++) {
@@ -39,7 +40,12 @@ AosDeframer::AosDeframer(const char* const compName)
 
 AosDeframer::~AosDeframer() {}
 
-void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16 spacecraftId, U8 vcId, U8 pvnMask) {
+void AosDeframer::configure(U32 fixedFrameSize,
+                            bool frameErrorControlField,
+                            U16 spacecraftId,
+                            U8 vcId,
+                            U8 pvnMask,
+                            FwSizeType maxPacketSize) {
     // Validate frame size is within bounds
     FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize),
               static_cast<FwAssertArgType>(ComCfg::AosMaxFrameFixedSize));
@@ -60,6 +66,10 @@ void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
     FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
+    // maxPacketSize must be large enough to accommodate at least an empty packet header.
+    // We cannot enforce a fixed minimum here (SPP is 6 bytes, EPP is 1) so just require non-zero.
+    FW_ASSERT(maxPacketSize > 0, static_cast<FwAssertArgType>(maxPacketSize));
+
     // Spanning packet reassembly requires dynamic backing via allocator ports
     FW_ASSERT(this->isConnected_allocate_OutputPort(0));
     FW_ASSERT(this->isConnected_deallocate_OutputPort(0));
@@ -67,6 +77,7 @@ void AosDeframer::configure(U32 fixedFrameSize, bool frameErrorControlField, U16
     m_fixedFrameSize = fixedFrameSize;
     m_fecfEnabled = frameErrorControlField;
     m_spacecraftId = spacecraftId;
+    m_maxPacketSize = maxPacketSize;
 
     // Zero out FECF error counter on (re)configure
     m_crcErrorCount = 0;
@@ -162,6 +173,19 @@ void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     vc.spanningPacket.buffer = Fw::Buffer();
     vc.spanningPacket.bytesReceived = 0;
     vc.spanningPacket.context.set_pvn(ComCfg::Pvn::INVALID_UNINITIALIZED);
+}
+
+FwSizeType AosDeframer::abandonAndSeekPast(AosDeframerVc& vc,
+                                           FwSizeType packetSize,
+                                           FwSizeType seekForward,
+                                           FwSizeType size) {
+    // Save remainingBody BEFORE abandon, since abandonSpanningPacket clears bytesReceived
+    const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
+    this->abandonSpanningPacket(vc);
+
+    // Seek past the rejected packet: header bytes already consumed (seekForward) + remaining body
+    const FwSizeType remainingLength = seekForward + remainingBody;
+    return (remainingLength > size) ? 0 : remainingLength;
 }
 
 AosDeframer::AosDeframerVc* AosDeframer::getVcStruct(const U8 vcId) {
@@ -318,26 +342,16 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             return 0;
         }
 
-        // packetSize is derived from the on-the-wire packet header. Cap it at a
-        // mission-defined upper bound (ComCfg::AosMaxPacketSize) before passing
-        // to the allocator. Without this check a malformed or hostile size
-        // field would force allocate_out() to request arbitrarily large
-        // buffers, which exhausts the buffer manager and degrades downlink
-        // throughput across all virtual channels.
-        if (packetSize > ComCfg::AosMaxPacketSize) {
+        // packetSize is derived from the on-the-wire packet header. Cap it at
+        // the configured upper bound (m_maxPacketSize, set via configure())
+        // before passing to the allocator. Without this check a malformed or
+        // hostile size field would force allocate_out() to request arbitrarily
+        // large buffers, which exhausts the buffer manager and degrades
+        // downlink throughput across all virtual channels.
+        if (packetSize > m_maxPacketSize) {
             this->log_WARNING_HI_OversizedPacket(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(), packetSize,
-                                                 ComCfg::AosMaxPacketSize);
-            // Save before abandon clears it -— needed for the correct seek offset below
-            const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
-            this->abandonSpanningPacket(vc);
-
-            // Seek past the rejected packet (header bytes already consumed + remaining body)
-            const FwSizeType remainingLength = seekForward + remainingBody;
-            if (remainingLength > size) {
-                return 0;
-            } else {
-                return remainingLength;
-            }
+                                                 m_maxPacketSize);
+            return this->abandonAndSeekPast(vc, packetSize, seekForward, size);
         }
 
         // Try to allocate a buffer for the whole packet
@@ -345,17 +359,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         if (vc.spanningPacket.buffer.getSize() < packetSize) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
-            // Save before abandon clears it -— needed for the correct seek offset below
-            const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
-            this->abandonSpanningPacket(vc);
-
-            // Seek past the failed packet (header bytes already consumed + remaining body)
-            const FwSizeType remainingLength = seekForward + remainingBody;
-            if (remainingLength > size) {
-                return 0;
-            } else {
-                return remainingLength;
-            }
+            return this->abandonAndSeekPast(vc, packetSize, seekForward, size);
         }
 
         // Load the header into the dynamic buffer

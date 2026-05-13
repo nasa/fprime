@@ -38,10 +38,10 @@
             severity warning high \
             format "Spanning packet allocation failed on VC {} for {} packet of {} bytes; packet dropped"
 
-        @ A wire-read packet size exceeded the configured AosMaxPacketSize bound; packet dropped without allocation
+        @ A wire-read packet size exceeded the configured maxPacketSize bound; packet dropped without allocation
         event OversizedPacket(vcId: U8, pvn: ComCfg.Pvn, packetSize: FwSizeType, maxSize: FwSizeType) \
             severity warning high \
-            format "Oversized packet on VC {} ({}): wire-read size {} exceeds AosMaxPacketSize {}; packet dropped"
+            format "Oversized packet on VC {} ({}): wire-read size {} exceeds configured maxPacketSize {}; packet dropped"
 
         @ Deframing detected a gap/discontinuity in the AOS VC frame count sequence
         event VcFrameCountGap(vcId: U8, received: U32, expected: U32) \

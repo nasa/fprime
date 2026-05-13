@@ -475,10 +475,11 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     this->configureDefault();
 
     U8 payload[64] = {};
-    // Start an EPP packet that declares a payload large enough to exceed
-    // ComCfg::AosMaxPacketSize. With the deframer's bounds check on the
-    // wire-read packet size in place, the packet is rejected up front via
-    // the OversizedPacket event before any allocation is attempted.
+    // Start an EPP packet that declares a payload large enough to exceed the
+    // configured maxPacketSize (default AosDeframer_DefaultMaxPacketSize =
+    // 65536). With the deframer's bounds check on the wire-read packet size
+    // in place, the packet is rejected up front via the OversizedPacket event
+    // before any allocation is attempted.
     payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
     payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
     payload[0] |= 0x02 & EPPSubfields::lengthOfLengthMask;
@@ -486,7 +487,7 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     payload[1] = 0x00;  // Ext Field
 
     payload[2] = 0xFF;
-    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> ComCfg::AosMaxPacketSize=65536)
+    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> default maxPacketSize = 65536)
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
@@ -496,6 +497,33 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_EVENTS_OversizedPacket_SIZE(1);
+}
+
+void AosDeframerTester::testConfiguredMaxPacketSizeOverride() {
+    // Configure with a tight per-instance maxPacketSize (50 bytes). A packet
+    // declaring 100 bytes total should be rejected via OversizedPacket even
+    // though it is well under the framework default of 65536. This verifies
+    // that the configure() override path is wired up correctly.
+    constexpr FwSizeType tightMaxPacketSize = 50;
+    this->component.configure(TEST_FRAME_SIZE, true, ComCfg::SpacecraftId, 0,
+                              PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK, tightMaxPacketSize);
+
+    // Build an SPP packet of 100 total bytes (6-byte header + 94-byte body).
+    // createSppPacket writes SpacePacketHeader::SERIALIZED_SIZE + dataLength bytes,
+    // so payload[] must be at least that big.
+    U8 payload[TEST_DATA_ZONE_SIZE] = {};
+    const FwSizeType sppSize = this->createSppPacket(payload, 0x100, 94);  // 6 + 94 = 100
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, 0);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_OversizedPacket_SIZE(1);
+    // Verify the event reports the configured override, not the default
+    ASSERT_EVENTS_OversizedPacket(0, 0, ComCfg::Pvn::SPACE_PACKET_PROTOCOL, sppSize, tightMaxPacketSize);
 }
 
 void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {

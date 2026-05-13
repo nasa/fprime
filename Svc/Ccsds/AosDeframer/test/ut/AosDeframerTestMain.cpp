@@ -100,6 +100,11 @@ TEST(AosDeframer, testSpanningPacketAllocFailureEvent) {
     tester.testSpanningPacketAllocFailureEvent();
 }
 
+TEST(AosDeframer, testConfiguredMaxPacketSizeOverride) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testConfiguredMaxPacketSizeOverride();
+}
+
 TEST(AosDeframer, testSpanningPacketAbandonedOnVcGap) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testSpanningPacketAbandonedOnVcGap();
