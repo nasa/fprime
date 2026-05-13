@@ -44,17 +44,22 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
     const FwSizeType expected_frame_length =
         static_cast<FwSizeType>((header.get_vcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
-    const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE);
 
     // If the full frame is not yet available, report that more data is needed
     if (data.get_allocated_size() < expected_frame_length) {
         size_out = expected_frame_length;
         return Status::MORE_DATA_NEEDED;
     }
-    // If the deserialized length is too small to even hold the header and trailer, we don't have a valid frame
+    // Validate minimum frame size BEFORE computing data_to_crc_length.
+    // If expected_frame_length < TRAILER_SIZE the subtraction below would underflow to a
+    // near-maximum value, causing the CRC loop to read far beyond the valid frame data.
     if (expected_frame_length < Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE) {
         return Status::NO_FRAME_DETECTED;
     }
+    // Safe: the guard above guarantees expected_frame_length >= TRAILER_SIZE, so this
+    // subtraction cannot underflow. Type is FwSizeType (not U16) to avoid silent truncation
+    // if expected_frame_length ever exceeds 65535.
+    const FwSizeType data_to_crc_length = expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE;
 
     // ---------------- Frame Trailer ----------------
     // Compute CRC on the received data

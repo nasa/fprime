@@ -2,11 +2,6 @@ module Svc {
     @ Dispatches command sequences to available command sequencers
     active component FpySequencer {
 
-        enum BlockState : U8 {
-            BLOCK
-            NO_BLOCK
-        }
-
         enum GoalState : U8 {
             RUNNING
             VALID
@@ -52,6 +47,10 @@ module Svc {
         @ port for requests to run sequences
         # same priority as RUN cmd
         async input port seqRunIn: Svc.CmdSeqIn priority 7 assert
+
+        @ port for requesting to cancel the currently running sequence
+        # same priority as CANCEL cmd
+        async input port seqCancelIn: Svc.CmdSeqCancel priority 8 assert
 
         @ called when a sequence begins running
         output port seqStartOut: Svc.CmdSeqIn

@@ -16,6 +16,7 @@ using namespace Svc::Ccsds;
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 constexpr U16 EXPECTED_START_TOKEN = (0x1 << TCSubfields::BypassFlagOffset) | (ComCfg::SpacecraftId);
+constexpr FwSizeType TC_FRAME_OVERHEAD = TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE;
 
 // Test fixture to set up the detector under test and circular buffer
 class CcsdsFrameDetectorTest : public ::testing::Test {
@@ -145,6 +146,73 @@ TEST_F(CcsdsFrameDetectorTest, TestCorruptedCrc) {
     FwSizeType unused = 0;
     status = this->detector.detect(this->circular_buffer, unused);
     EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
+}
+
+TEST_F(CcsdsFrameDetectorTest, TestRejectsTooSmallExpectedFrameLength) {
+    // length field = 0 -> expected_frame_length = 1, well below TC_FRAME_OVERHEAD.
+    // The minimum-size guard must reject the frame before the subtraction runs.
+    TCHeader header(EXPECTED_START_TOKEN, 0, 0);
+    U8 frame_header[TCHeader::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer header_ser(frame_header, TCHeader::SERIALIZED_SIZE);
+    header.serializeTo(header_ser);
+    this->circular_buffer.serialize(frame_header, TCHeader::SERIALIZED_SIZE);
+    U8 trailer_pad[TCTrailer::SERIALIZED_SIZE] = {};
+    this->circular_buffer.serialize(trailer_pad, TCTrailer::SERIALIZED_SIZE);
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = this->detector.detect(this->circular_buffer, size_out);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
+}
+
+TEST_F(CcsdsFrameDetectorTest, TestRejectsLengthJustBelowOverhead) {
+    // length field = TC_FRAME_OVERHEAD - 2 -> expected_frame_length = TC_FRAME_OVERHEAD - 1.
+    // Boundary just below the minimum valid size — must still be rejected by the guard.
+    const U16 vc_id_and_length = static_cast<U16>(TC_FRAME_OVERHEAD - 2);
+    TCHeader header(EXPECTED_START_TOKEN, vc_id_and_length, 0);
+    U8 frame_header[TCHeader::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer header_ser(frame_header, TCHeader::SERIALIZED_SIZE);
+    header.serializeTo(header_ser);
+    this->circular_buffer.serialize(frame_header, TCHeader::SERIALIZED_SIZE);
+    U8 trailer_pad[TCTrailer::SERIALIZED_SIZE] = {};
+    this->circular_buffer.serialize(trailer_pad, TCTrailer::SERIALIZED_SIZE);
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = this->detector.detect(this->circular_buffer, size_out);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
+}
+
+TEST_F(CcsdsFrameDetectorTest, TestMinimumSizedFrameDetected) {
+    // This tests that a frame with no body can be detected (not disallowed by the TC standard)
+
+    // length token = (TC_FRAME_OVERHEAD - 1) which makes a body size of 0 and expected_frame_length = TC_FRAME_OVERHEAD
+    const U16 vc_id_and_length = static_cast<U16>(TC_FRAME_OVERHEAD - 1);
+    TCHeader header(EXPECTED_START_TOKEN, vc_id_and_length, 0);
+    U8 frame_header[TCHeader::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer header_ser(frame_header, TCHeader::SERIALIZED_SIZE);
+    header.serializeTo(header_ser);
+    this->circular_buffer.serialize(frame_header, TCHeader::SERIALIZED_SIZE);
+
+    // Compute the valid CRC over the header (no body bytes)
+    Svc::Ccsds::Utils::CRC16 crc;
+    for (FwSizeType i = 0; i < TCHeader::SERIALIZED_SIZE; ++i) {
+        U8 byte = 0;
+        this->circular_buffer.peek(byte, i);
+        crc.update(byte);
+    }
+    TCTrailer trailer;
+    trailer.set_fecf(crc.finalize());
+    U8 frame_trailer[TCTrailer::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer trailer_ser(frame_trailer, TCTrailer::SERIALIZED_SIZE);
+    trailer.serializeTo(trailer_ser);
+    this->circular_buffer.serialize(frame_trailer, TCTrailer::SERIALIZED_SIZE);
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = this->detector.detect(this->circular_buffer, size_out);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::FRAME_DETECTED);
+    EXPECT_EQ(size_out, TC_FRAME_OVERHEAD);
 }
 
 int main(int argc, char** argv) {

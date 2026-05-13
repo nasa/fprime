@@ -10,7 +10,7 @@ Understanding the reference application has a few minimal prerequisites.
 
 **Installing F´**
 
-Please follow the [install guide for F´](../docs/getting-started/installing-fprime.md).
+Please follow the [install guide for F´](../../docs/getting-started/installing-fprime.md).
 
 ## Building and Running the Ref Application
 
@@ -19,7 +19,7 @@ Ref directory so that we have a place to build the Ref application.
 
 ```
 git clone https://github.com/nasa/fprime
-cd fprime/Ref
+cd fprime/TestDeploymentsProject
 ```
 
 With the repository cloned and the project's Ref directory entered we can now create a python virtual environment, activate that environment, and then
@@ -53,7 +53,7 @@ automatically. This allows for quick testing on Linux and macOS. Before running 
 that you have built the Ref example.
 
 ```
-cd fprime/Ref
+cd fprime/TestDeploymentsProject
 fprime-gds
 ```
 
@@ -62,14 +62,14 @@ application should an error arise.  See: Logs -> Ref.log to see standard output 
 
 To run the ground system without starting the Ref app:
 ```
-cd fprime/Ref
+cd fprime/TestDeploymentsProject
 fprime-gds --no-app
 ```
 
 The ref app may then be run independently from the created 'bin' directory.
 
 ```
-cd fprime/Ref/build-artifacts/<platform>/bin/
+cd fprime/TestDeploymentsProject/build-artifacts/<platform>/bin/
 ./Ref -a 127.0.0.1 -p 50000
 ```
 
@@ -79,5 +79,5 @@ cd fprime/Ref/build-artifacts/<platform>/bin/
 - The F´ utility's build command can build individual components too.
 - The 'generate' command can take a toolchain argument for quickly generating a cross-compile `fprime-util generate raspberrypi` for example.
 
-Further work with the F´ utility can be found in the [HelloWorld tutorial](../docs/tutorials/index.md) tutorial.
+Further work with the F´ utility can be found in the [HelloWorld tutorial](../../docs/tutorials/index.md) tutorial.
 

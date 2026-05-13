@@ -6,6 +6,10 @@ event InvalidSeqRunCall($state: I32) \
     severity warning high \
     format "Cannot run sequence from a port in state {}"
 
+event InvalidSeqCancelCall($state: I32) \
+    severity warning high \
+    format "Cannot cancel sequence from a port in state {}"
+
 event FileOpenError(
     filePath: string
     errorCode: I32
@@ -214,6 +218,20 @@ event TooManySequenceDirectives(
 ) \
     severity warning high \
     format "A sequence specified it had {} directives but the max was {}"
+
+event ArgSizeMismatch(
+    expected: Fpy.StackSizeType
+    actual: FwSizeType
+    filePath: string
+) \
+    severity warning high \
+    format "Expected {} bytes of arguments, but received {} in sequence file {}"
+
+event ArgTotalSizeExceedsStackLimit(
+    argSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arguments of size {} would exceed max stack size."
 
 event SequencePaused(
     stmtIdx: U32

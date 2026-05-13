@@ -90,6 +90,18 @@ Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
     }
 }
 
+Fw::SerializeStatus Queue::popFront(U8* const message, const FwSizeType size) {
+    FW_ASSERT(m_message_size > 0);
+    FW_ASSERT(m_message_size <= size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(m_message_size));
+    FW_ASSERT(message != nullptr);
+    // Always remove from the front (oldest), regardless of queue mode
+    Fw::SerializeStatus result = m_internal.peek(message, m_message_size, 0);
+    if (result != Fw::FW_SERIALIZE_OK) {
+        return result;
+    }
+    return m_internal.rotate(m_message_size);
+}
+
 FwSizeType Queue::get_high_water_mark() const {
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));
     return m_internal.get_high_water_mark() / m_message_size;

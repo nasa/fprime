@@ -2,6 +2,7 @@ module Svc {
 module Ccsds {
 
     @ Enum representing an error during framing/deframing in the CCSDS protocols
+    @ TODO: Decide whether AOS errors should be merged with TC errors into a unified enum
     enum FrameError: U8 {
         SP_INVALID_PACKET = 0
         SP_INVALID_LENGTH = 1
@@ -9,6 +10,13 @@ module Ccsds {
         TC_INVALID_LENGTH = 3
         TC_INVALID_VCID = 4
         TC_INVALID_CRC = 5
+        AOS_INVALID_SCID = 6      @< CCSDS 732.0-B-5: Spacecraft ID mismatch (4.1.2.2)
+        AOS_INVALID_LENGTH = 7    @< CCSDS 732.0-B-5: Frame length insufficient
+        AOS_INVALID_VCID = 8      @< CCSDS 732.0-B-5: Virtual Channel ID mismatch (4.1.2.3)
+        AOS_INVALID_CRC = 9       @< CCSDS 732.0-B-5: Frame Error Control Field CRC mismatch (4.1.6)
+        AOS_INVALID_VERSION = 10   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
+        AOS_INVALID_EPP = 11      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
+        AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
     }
 
     # ------------------------------------------------
@@ -37,6 +45,36 @@ module Ccsds {
         # Widths
         constant ApidWidth      = 11
         constant SeqCountWidth  = 14
+    }
+
+
+    # ------------------------------------------------
+    # Encapsulation Packet Protocol
+    # ------------------------------------------------
+    @ Bit masks and offsets for Encapsulation Packet Protocol first byte
+    @ Per CCSDS 133.1-B-3 section 4.1.2.1
+    module EPPSubfields {
+        # First octet masks (8 bits)
+        constant packetVersionMask   = 0xE0  @< 0b11100000 - bits [7:5]
+        constant protocolIdMask      = 0x1C  @< 0b00011100 - bits [4:2]
+        constant lengthOfLengthMask  = 0x03  @< 0b00000011 - bits [1:0]
+
+        constant packetVersionOffset = 5
+        constant protocolIdOffset    = 2
+    }
+
+    @ Protocol IDs for EPP encapsulation packets per CCSDS 133.1-B-3 Section 4.1.2.3.3
+    dictionary enum EppProtocolId : U8 {
+        Idle            = 0x00  @< 0b000 - Encapsulation Idle Packet
+        Extended        = 0x06  @< 0b110 - Extended Protocol ID Field Driven
+        MissionSpecific = 0x07  @< Mission-specific
+    } default MissionSpecific
+
+    dictionary enum EppLengthOfLength : U8 {
+        Zero            = 0x00 @< 0b00 - Single Byte Idle Packet
+        One             = 0x01 @< 0b01 - Two Byte Header
+        Two             = 0x02 @< 0b10 - Four Byte Header
+        Four            = 0x03 @< 0b11 - Eight Byte Header
     }
 
     # ------------------------------------------------
@@ -99,25 +137,45 @@ module Ccsds {
             @< 1 bit replay flag | 1 bit VC frame count cycle flag | 2 most significant bits of spacecraft ID | 4 bits VC frame count cycle
     }
 
-    @ Offsets for serializing individual sub-fields in AOS headers
+    @ Offsets and masks for deserializing individual sub-fields in AOS headers
+    @ Per CCSDS 732.0-B-5 Section 4.1.2
     module AOSHeaderSubfields {
-        # globalVcId offsets
+        # globalVcId offsets and masks (16 bits)
         constant frameVersionOffset = 14
         constant spacecraftIdLsbOffset = 6
         constant virtualChannelIdOffset = 0
 
-        # signaling field offsets
+        constant frameVersionMask = 0xC000      @< 0b1100000000000000 - bits [15:14]
+        constant spacecraftIdLsbMask = 0x3FC0   @< 0b0011111111000000 - bits [13:6]
+        constant virtualChannelIdMask = 0x003F  @< 0b0000000000111111 - bits [5:0]
+
+        # signaling field offsets and masks (lower 8 bits of frameCountAndSignaling)
         constant vcFrameCountOffset = 8
         constant replayFlagOffset = 7
         constant cycleCountFlagOffset = 6
         constant spacecraftIdMsbOffset = 4
+        constant vcFrameCountCycleOffset = 0
+
+        constant vcFrameCountMask = 0xFFFFFF00  @< 24 bits of frame count [31:8]
+        constant replayFlagMask = 0x00000080          @< 0b10000000 - bit [7]
+        constant cycleCountFlagMask = 0x00000040      @< 0b01000000 - bit [6]
+        constant spacecraftIdMsbMask = 0x00000030     @< 0b00110000 - bits [5:4]
+        constant vcFrameCountCycleMask = 0x0000000F   @< 0b00001111 - bits [3:0]
+    }
+
+    @ Special values for AOS M_PDU First Header Pointer
+    @ Per CCSDS 732.0-B-5 Section 4.1.4.2.2
+    module M_PDUSubfields {
+        # Special First Header Pointer values per CCSDS 732.0-B-5 Section 4.1.4.2.2.4 & 4.1.4.2.2.5
+        constant FHP_NO_PACKET_START = 0xFFFF     @< No packet starts in this frame
+        constant FHP_IDLE_DATA_ONLY = 0xFFFE      @< Frame contains only idle data
     }
 
     @ Describes the header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) multiplex protocol data unit (M_PDU)
     struct M_PDUHeader {
         firstHeaderPointer: U16     @< bytes to the header of the first new CCSDS Packet
     } default {
-        firstHeaderPointer = 0xFFFF # Set first header pointer to all ones to mean no packet starts here (4.1.4.2.2.4)
+        firstHeaderPointer = M_PDUSubfields.FHP_NO_PACKET_START # Set first header pointer to all ones to mean no packet starts here (4.1.4.2.2.4)
     }
 
     @ Describes the frame trailer format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) Transfer Frame
@@ -125,10 +183,17 @@ module Ccsds {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
 
+    # ------------------------------------------------
+    # CCSDS Enums
+    # ------------------------------------------------
+    @ Bitmask of enabled Packet Version Numbers (PVN)
+    @ Each bit position corresponds to a PVN value (bit N set = PVN N is enabled)
+    @ Used to selectively enable one or multiple protocols for Aos Framers/Deframers
+    @ SPP PVN = 0, EPP PVN = 7 per CCSDS 133.0-B-2 / 133.1-B-3
     module PvnBitfield {
-        constant SPP_MASK = 0x1 @< 1 << 0x0
-        constant EPP_MASK = 0x8 @< 1 << 0x3
-        constant VALID_MASK = SPP_MASK + EPP_MASK
+        constant SPP_MASK   = 0x01  @< 1 << 0 (SPP PVN = 0)
+        constant EPP_MASK   = 0x80  @< 1 << 7 (EPP PVN = 7)
+        constant VALID_MASK = 0x81  @< SPP_MASK | EPP_MASK
     }
 
     @ Transfer Frame Version Numbers are 4 bits long

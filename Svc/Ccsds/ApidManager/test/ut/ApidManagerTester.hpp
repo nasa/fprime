@@ -74,6 +74,7 @@ class ApidManagerTester : public ApidManagerGTestBase {
     //! Rules for the validateApidSeqCountIn port
     FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
     FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Failure);
+    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, NewTableFull);
 };
 
 }  // namespace Ccsds

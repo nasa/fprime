@@ -1,0 +1,138 @@
+# Build, integration test, and unit test verification for the F' Ref deployment.
+
+name: "Ref"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: ""
+      jobs:
+        description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+jobs:
+  build:
+    name: "Build [${{ matrix.runner }}]"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "2"
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Ref"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+      - name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ref-build-artifacts-${{ matrix.runner }}
+          path: TestDeploymentsProject/build-artifacts/
+          retention-days: 1
+
+  integration-tests:
+    name: "Integration Tests [${{ matrix.runner }}]"
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+          - runner: macos-latest
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: ref-build-artifacts-${{ matrix.runner }}
+          path: TestDeploymentsProject/build-artifacts/
+      - name: "Make binary executable"
+        run: chmod +x TestDeploymentsProject/build-artifacts/*/Ref/bin/Ref
+      - name: "Install valgrind"
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y valgrind
+      - name: "Install coreutils (macOS)"
+        if: runner.os == 'macOS'
+        run: brew install coreutils
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "TestDeploymentsProject"
+          test-working-directory: "TestDeploymentsProject/Ref/test/int"
+          binary: "build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: "--deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
+
+  unit-tests:
+    name: "UTs [${{ matrix.runner }}]"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "2"
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
