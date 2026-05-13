@@ -1,0 +1,113 @@
+# Build, unit test, and static analysis verification for the F' framework.
+
+name: "Framework"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: ""
+      jobs:
+        description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+jobs:
+  build:
+    name: "Build [${{ matrix.runner }}]"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "2"
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Framework"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+
+  unit-tests:
+    name: "UTs [${{ matrix.runner }}]"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "2"
+    timeout-minutes: 30
+    runs-on: ${{ github.event.inputs.runner || matrix.runner }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+
+  quality:
+    name: "Quality"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Install clang-tidy"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy-12
+      - name: "Generate with clang-tidy"
+        shell: bash
+        run: |
+          fprime-util generate \
+            -DCMAKE_C_COMPILER=gcc-10 \
+            -DCMAKE_CXX_COMPILER=g++-10 \
+            -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy"
+      - name: "Build (static analysis runs during compilation)"
+        shell: bash
+        run: fprime-util build --all

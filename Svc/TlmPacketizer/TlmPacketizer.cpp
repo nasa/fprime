@@ -187,6 +187,10 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
+            // validate before memcpy
+            FW_ASSERT(val.getSize() <= entry.channelSize, static_cast<FwAssertArgType>(val.getSize()),
+                      static_cast<FwAssertArgType>(entry.channelSize));
+
             (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
             this->m_lock.unLock();
         }
@@ -400,6 +404,8 @@ void TlmPacketizer ::pingIn_handler(const FwIndexType portNum, U32 key) {
 void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FwChanIdType level) {
     if (level > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
         this->log_WARNING_LO_MaxLevelExceed(level, MAX_CONFIGURABLE_TLMPACKETIZER_GROUP);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
     }
     for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
         for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {

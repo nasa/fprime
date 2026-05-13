@@ -4,6 +4,7 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include <unistd.h>
+#include <config/FppConstantsAc.hpp>
 #include <csignal>
 #include <cstdio>
 #include <list>
@@ -17,7 +18,7 @@ namespace FileTest {
 
 std::vector<std::shared_ptr<const std::string> > FILES;
 
-static const U32 MAX_FILES = 100;
+static const U32 MAX_FILES = 500;
 static const char BASE_PATH[] = "/tmp/fprime";
 static const char TEST_FILE[] = "fprime-os-file-test";
 //! Check if we can use the file. F_OK file exists, R_OK, W_OK are read and write.
@@ -33,13 +34,18 @@ bool check_permissions(const char* path, int permission) {
 //!
 std::shared_ptr<std::string> get_test_filename(bool random) {
     const char* filename = TEST_FILE;
-    char full_buffer[_POSIX_PATH_MAX];
-    char buffer[_POSIX_PATH_MAX - sizeof(BASE_PATH)];
+    // FileNameStringSize is the max string length; +1 for null terminator
+    char full_buffer[FileNameStringSize + 1];
+    // Cap random part so full path (BASE_PATH + '/' + random + '\0') fits within FileNameStringSize.
+    // sizeof(BASE_PATH) accounts for strlen(BASE_PATH) + null terminator, which equals the prefix
+    // length (strlen(BASE_PATH) + '/') by coincidence. Subtract 1 to account for the null terminator.
+    static const size_t MAX_RANDOM_LEN = FileNameStringSize - sizeof(BASE_PATH) - 1;
+    char buffer[MAX_RANDOM_LEN + 1];
     // When random, select random characters
     if (random) {
         filename = buffer;
         size_t i = 0;
-        for (i = 0; i < STest::Pick::lowerUpper(2, (sizeof buffer) - 1); i++) {
+        for (i = 0; i < STest::Pick::lowerUpper(2, MAX_RANDOM_LEN); i++) {
             char selected_character = static_cast<char>(STest::Pick::lowerUpper(48, 126));
             selected_character =
                 (selected_character == '/') ? static_cast<char>(selected_character + 1) : selected_character;
@@ -47,7 +53,7 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
         }
         buffer[i] = 0;  // Terminate random string
     }
-    (void)snprintf(full_buffer, _POSIX_PATH_MAX, "%s/%s", BASE_PATH, filename);
+    (void)snprintf(full_buffer, sizeof(full_buffer), "%s/%s", BASE_PATH, filename);
     // Create a shared pointer wrapping our filename buffer
     std::shared_ptr<std::string> pointer(new std::string(full_buffer), std::default_delete<std::string>());
     return pointer;

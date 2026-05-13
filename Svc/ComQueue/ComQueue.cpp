@@ -315,8 +315,34 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+
+    // For buffer queues with DROP_OLDEST, check if the queue is full before enqueuing.
+    // If full, dequeue the oldest entry first so we can return buffer ownership before
+    // Queue::enqueue() silently discards it via rotate.  This prevents buffer-pool leaks.
+    bool preEmptiveOverflow = false;
+    if (queueType == QueueType::BUFFER_QUEUE) {
+        Types::Queue& queue = this->m_queues[queueNum];
+        for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
+            if (this->m_prioritizedList[i].index == queueNum &&
+                this->m_prioritizedList[i].overflowMode == Types::QUEUE_DROP_OLDEST &&
+                queue.getQueueSize() >= this->m_prioritizedList[i].depth) {
+                // Queue is full and will drop oldest; remove the front entry to return ownership.
+                // popFront() always removes from the front (oldest) regardless of queue mode,
+                // matching the rotate-based removal that Queue::enqueue() uses for DROP_OLDEST.
+                Fw::Buffer droppedBuffer;
+                Fw::SerializeStatus dequeueStatus =
+                    queue.popFront(reinterpret_cast<U8*>(&droppedBuffer), sizeof(droppedBuffer));
+                FW_ASSERT(dequeueStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(dequeueStatus));
+                this->bufferReturnOut_out(portNum, droppedBuffer);
+                preEmptiveOverflow = true;
+                break;
+            }
+        }
+    }
+
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT || status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
+    if (preEmptiveOverflow || status == Fw::FW_SERIALIZE_NO_ROOM_LEFT ||
+        status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
         if (!this->m_throttle[queueNum]) {
             this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;

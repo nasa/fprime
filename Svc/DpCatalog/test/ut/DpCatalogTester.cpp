@@ -7,6 +7,8 @@
 #include "DpCatalogTester.hpp"
 #include <algorithm>
 #include <cstdlib>
+#include <set>
+#include <vector>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -64,8 +66,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
 
-    // reset tree
-    this->component.resetBinaryTree();
+    // reset catalog
+    this->component.resetCatalog();
 
     // add entries
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
@@ -75,24 +77,38 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
-    // retrieve entries - they should match expected output
-    for (FwIndexType entry = 0; entry < numEntries + 1; entry++) {
-        if (entry == numEntries) {
-            // final request should indicate empty
-            ASSERT_TRUE(this->component.findNextTreeNode() == nullptr);
-        } else if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
-            // Outputs is only composed of the UNTRANSMITTED data products
-            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
-            ASSERT_TRUE(res != nullptr) << "nullptr findNextTreeNode() at " << entry << " out of " << numEntries;
-
-            //  should match expected entry
-            if (res != nullptr) {
-                ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
-            }
-            // Deallocate the "sent" node
-            this->component.deallocateNode(res);
+    // Collect expected entries (non-transmitted)
+    std::set<DpCatalog::DpStateEntry> expectedEntries;
+    for (FwIndexType entry = 0; entry < numEntries; entry++) {
+        if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            expectedEntries.insert(output[entry]);
         }
     }
+
+    // Collect actual entries from catalog
+    std::vector<DpCatalog::DpStateEntry> actualEntries;
+    DpCatalog::DpStateEntry foundEntry;
+    while (this->component.findNextEntry(foundEntry)) {
+        actualEntries.push_back(foundEntry);
+        // Remove the "sent" entry from catalog
+        Fw::Success status = this->component.m_dpCatalog.remove(foundEntry);
+        ASSERT_EQ(status, Fw::Success::SUCCESS);
+    }
+
+    // Verify we got the right number of entries
+    ASSERT_EQ(actualEntries.size(), expectedEntries.size())
+        << "Expected " << expectedEntries.size() << " entries, got " << actualEntries.size();
+
+    // Verify all entries match
+    size_t i = 0;
+    for (const auto& expectedEntry : expectedEntries) {
+        ASSERT_EQ(actualEntries[i].record, expectedEntry.record) << "Entry mismatch at sorted index " << i;
+        i++;  // Increment the index of the actual entries to walk one at a time in order
+    }
+
+    // Verify catalog is now empty
+    DpCatalog::DpStateEntry testEntry;
+    ASSERT_FALSE(this->component.findNextEntry(testEntry));
 
     this->component.shutdown();
 }
@@ -231,19 +247,25 @@ Fw::String DpCatalogTester::genDP(FwDpIdType id,
                                   bool hdrHashError,
                                   const char* dir) {
     // Fill DP container
-    U8 hdrData[Fw::DpContainer::MIN_PACKET_SIZE];
-    Fw::Buffer hdrBuffer(hdrData, Fw::DpContainer::MIN_PACKET_SIZE);
-    Fw::DpContainer cont(id, hdrBuffer);
+    const FwSizeType packetSize = Fw::DpContainer::getPacketSizeForDataSize(dataSize);
+    std::vector<U8> packetData(packetSize);
+    Fw::Buffer packetBuffer(packetData.data(), packetSize);
+    Fw::DpContainer cont(id, packetBuffer);
     cont.setPriority(prio);
     cont.setTimeTag(time);
     cont.setDpState(dpState);
     cont.setDataSize(dataSize);
-    // serialize file data
-    cont.serializeHeader();
+
     // fill data with ramp
-    U8 dpData[dataSize];
-    for (FwIndexType byte = 0; byte < static_cast<FwIndexType>(dataSize); byte++) {
-        dpData[byte] = byte;
+    U8* const dpData = &packetData[Fw::DpContainer::DATA_OFFSET];
+    for (FwSizeType byte = 0; byte < dataSize; byte++) {
+        dpData[byte] = static_cast<U8>(byte);
+    }
+    // serialize file data and hashes
+    cont.serializeHeader();
+    cont.updateDataHash();
+    if (hdrHashError) {
+        packetData[Fw::DpContainer::HEADER_HASH_OFFSET]++;
     }
     // open file to write data
     Fw::String fileName;
@@ -255,27 +277,15 @@ Fw::String DpCatalogTester::genDP(FwDpIdType id,
         printf("Error opening file %s: status: %d\n", fileName.toChar(), stat);
         return "";
     }
-    FwSizeType size = Fw::DpContainer::Header::SIZE;
-    stat = dpFile.write(hdrData, size);
+    FwSizeType size = packetSize;
+    stat = dpFile.write(packetData.data(), size);
     if (stat != Os::File::Status::OP_OK) {
-        printf("Error writing DP file header %s: status: %d\n", fileName.toChar(), stat);
+        printf("Error writing DP file %s: status: %d\n", fileName.toChar(), stat);
         return "";
     }
-    if (static_cast<FwSizeType>(size) != Fw::DpContainer::Header::SIZE) {
-        printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType "Act: %" PRI_FwSizeType "\n",
-               fileName.toChar(), Fw::DpContainer::Header::SIZE, size);
-        return "";
-    }
-    size = dataSize;
-    stat = dpFile.write(dpData, size);
-    if (stat != Os::File::Status::OP_OK) {
-        printf("Error writing DP file data %s: status: %" PRI_FwEnumStoreType "\n", fileName.toChar(),
-               static_cast<FwEnumStoreType>(stat));
-        return "";
-    }
-    if (static_cast<FwSizeType>(size) != dataSize) {
-        printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType " Act: %" PRI_FwSizeType "\n",
-               fileName.toChar(), dataSize, size);
+    if (static_cast<FwSizeType>(size) != packetSize) {
+        printf("Dp file %s write size didn't match. Req: %" PRI_FwSizeType "Act: %" PRI_FwSizeType "\n",
+               fileName.toChar(), packetSize, size);
         return "";
     }
     dpFile.close();
@@ -752,6 +762,150 @@ void DpCatalogTester::test_ProcessFileInvalidDir() {
     this->component.configure(dirs, 1, stateFile, 100, alloc);
 
     ASSERT_DEATH_IF_SUPPORTED(this->component.processFile("somefile.dp", DP_MAX_DIRECTORIES), "Assert");
+
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_MalformedFile() {
+    // 1. Setup paths and corrupted data
+    Fw::FileNameString stateFile("DpState.dat");
+
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    memset(buffer, 0xFF, sizeof(buffer));  // Force deserialization failure
+
+    // 2. Write the malformed data to disk
+    Os::File f;
+    ASSERT_EQ(Os::File::OP_OK, f.open(stateFile.toChar(), Os::File::OPEN_CREATE, Os::FileInterface::OVERWRITE));
+
+    FwSizeType writeSize = sizeof(buffer);
+    ASSERT_EQ(Os::File::OP_OK, f.write(buffer, writeSize));
+    f.close();
+
+    // 3. Configure the Component
+    Fw::MallocAllocator mockAllocator;
+    Fw::FileNameString dirs[DP_MAX_DIRECTORIES];
+    this->component.configure(dirs, 0, stateFile, 0, mockAllocator);
+
+    // 4. Dispatch the BUILD_CATALOG command
+    this->sendCmd_BUILD_CATALOG(0, 0);
+    this->component.doDispatch();
+
+    // 5. Command should generate event instead of ASSERT
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // High-priority warning event should be caught by this test
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_FileCorruptedDataError_SIZE(1);
+    ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+
+    // 6. Cleanup
+    Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_TruncatedDpRejected() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_TruncatedDpRejected");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+
+    const FwDpIdType id = 0x123;
+    const FwDpPriorityType priority = 10;
+    Fw::Time time(1000, 100);
+    std::vector<U8> packetData(Fw::DpContainer::MIN_PACKET_SIZE);
+    Fw::Buffer packetBuffer(packetData.data(), Fw::DpContainer::MIN_PACKET_SIZE);
+    Fw::DpContainer container(id, packetBuffer);
+    container.setPriority(priority);
+    container.setTimeTag(time);
+    container.setDpState(Fw::DpState::UNTRANSMITTED);
+    container.setDataSize(0);
+    container.serializeHeader();
+    container.updateDataHash();
+
+    Fw::String fileName;
+    fileName.format(DP_FILENAME_FORMAT, dir.toChar(), id, time.getSeconds(), time.getUSeconds());
+    Os::File dpFile;
+    Os::File::Status stat = dpFile.open(fileName.toChar(), Os::File::Mode::OPEN_CREATE);
+    ASSERT_EQ(stat, Os::File::Status::OP_OK);
+    const FwSizeType headerSize = Fw::DpContainer::Header::SIZE;
+    FwSizeType size = headerSize;
+    stat = dpFile.write(packetData.data(), size);
+    ASSERT_EQ(stat, Os::File::Status::OP_OK);
+    ASSERT_EQ(size, headerSize);
+    dpFile.close();
+
+    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_FileReadError_SIZE(1);
+    ASSERT_EVENTS_FileReadError(0, fileName.toChar(), static_cast<I32>(Os::File::BAD_SIZE));
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_from_fileOut_SIZE(0);
+
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_NonCanonicalDpRejected() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_NonCanonicalDpRejected");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time(1000, 100);
+    Fw::String canonicalFile = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(canonicalFile.toChar(), "");
+
+    Fw::String rogueFile;
+    rogueFile.format("%s/rogue.fdp", dir.toChar());
+    ASSERT_EQ(Os::FileSystem::moveFile(canonicalFile.toChar(), rogueFile.toChar()), Os::FileSystem::OP_OK);
+
+    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_InvalidFileName_SIZE(1);
+    ASSERT_EVENTS_InvalidFileName(0, rogueFile.toChar(), canonicalFile.toChar());
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_from_fileOut_SIZE(0);
+
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_BadHeaderHashRejected() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_BadHeaderHashRejected");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+
+    Fw::Time time(1000, 100);
+    Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
+    ASSERT_STRNE(fileName.toChar(), "");
+
+    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EVENTS_FileHdrError_SIZE(1);
+    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 635957387, 652734603);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_from_fileOut_SIZE(0);
 
     this->component.shutdown();
 }

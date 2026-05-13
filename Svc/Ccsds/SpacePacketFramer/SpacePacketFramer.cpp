@@ -72,6 +72,9 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    // Trim to actual frame size in case allocator returned a larger buffer
+    frameBuffer.setSize(static_cast<Fw::Buffer::SizeType>(frameSize));
+
     this->dataOut_out(0, frameBuffer, context);
     this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }
