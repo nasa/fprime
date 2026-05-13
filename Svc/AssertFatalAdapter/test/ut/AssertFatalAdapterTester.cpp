@@ -192,7 +192,7 @@ void AssertFatalAdapterTester::testTruncation() {
     for (FwSizeType i = 0; i < prefixLen; i++) {
         longPath[i] = (i % 10) + 'a';
     }
-    Fw::StringUtils::string_copy(longPath + prefixLen + (maxSize-suffixLen), suffix, suffixLen+1);
+    Fw::StringUtils::string_copy(longPath + prefixLen + (maxSize - suffixLen), suffix, suffixLen + 1);
 
     // Expected truncated result: keeps last (maxSize) characters
     char expectedTruncated[Fw::StringBase::BUFFER_SIZE(maxSize)];

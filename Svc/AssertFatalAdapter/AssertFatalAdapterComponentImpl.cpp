@@ -90,9 +90,8 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                                                    FwAssertArgType arg4,
                                                    FwAssertArgType arg5,
                                                    FwAssertArgType arg6) {
-
     constexpr FwSizeType outputSize = FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
-                                                    static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
+                                             static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
     FwSizeType len = Fw::StringUtils::string_length(file, FileNameStringSize);
 
     // Calculate start index. If string is shorter than N, keep whole string.
