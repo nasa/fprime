@@ -18,6 +18,7 @@
 #include <Os/Task.hpp>
 
 #include <termios.h>
+#include <atomic>
 
 namespace Drv {
 
@@ -91,14 +92,22 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
+    //! Handler implementation for run
+    //!
+    //! The rate group input for sending telemetry
+    void run_handler(FwIndexType portNum,  //!< The port number
+                     U32 context           //!< The call order
+                     ) override;
+
     //! Handler implementation for serialSend
     //!
-    Drv::SendStatus send_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                 Fw::Buffer& serBuffer);
+    Drv::SendStatus send_handler(FwIndexType portNum,    //!< The port number
+                                 Fw::Buffer& sendBuffer  //!< Data to send
+                                 ) override;
 
 
     NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
-    U32 m_allocationSize; //!< size of allocation request to memory manager
+    U32 m_allocationSize;  //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 
     //! This method will be called by the new thread to wait for input on the serial port.
@@ -106,9 +115,9 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
     Os::Task m_readTask;  //!< task instance for thread to read serial port
 
-    U32 m_bytesSent;        //!< number of bytes sent
-    U32 m_bytesReceived;    //!< number of bytes received
-    bool m_quitReadThread;  //!< flag to quit thread
+    std::atomic<U32> m_bytesSent;      //!< number of bytes sent
+    std::atomic<U32> m_bytesReceived;  //!< number of bytes received
+    bool m_quitReadThread;             //!< flag to quit thread
 };
 
 }  // end namespace Drv
