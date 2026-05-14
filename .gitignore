@@ -93,7 +93,6 @@ docs/reference/api/cpp
 docs/reference/api/cmake
 temp_dir/
 
-
 # Prerequisites
 *.d
 
@@ -125,9 +124,3 @@ temp_dir/
 *.exe
 *.out
 *.app
-
-# FPrime items
-cmake-build-*
-*-template
-*.template.cpp
-*.template.hpp
