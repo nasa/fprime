@@ -17,19 +17,16 @@ F´ does not require an operating system. Applications can be written entirely a
 
 The baremetal pattern provides a solution that allows F´ core components to be used in baremetal deployments while adapting to the constraints of the environment. It provides information on how to support baremetal with components written for complete OSAL adaptations.
 
-In a typical baremetal F´ system, a single hardware timer drives the rate group at a fixed interval. Systems may use multiple hardware timers or a single timer with prescalers to generate different rates, but ultimately the execution model is a single-threaded loop: all component invocations occur synchronously, one after another, within the same execution context. There is no concurrent scheduling — the system behaves as a sequential queue of work dispatched on each timer tick.
-
-> [!TIP]
-> For real-world examples of baremetal F´ deployments, see the [fprime-baremetal-reference](https://github.com/fprime-community/fprime-baremetal-reference) repository.
+In a typical baremetal F´ system, a single hardware timer drives the rate groups, through the `Svc.RateGroupDriver` component, at a fixed interval. There is no concurrent scheduling — the system behaves as a sequential queue of work dispatched on each timer tick.
 
 ### The Joy of Passive Components
 
-First and foremost, baremetal F´ systems should avoid using **Active Components** where possible because these components require quasi-asynchronous execution contexts in which to run. Active components own a thread and a message queue, which means they need OS-level threading support to execute concurrently — something unavailable on baremetal. This means using `passive` or `queued` components driven by rate groups or cycled on the main thread.
+First and foremost, baremetal F´ systems should avoid using **Active Components** where possible. This is because active components own a thread and a message queue, which means they need OS-level threading support to execute concurrently — something unavailable on baremetal. This means using `passive` or `queued` components driven by rate groups or cycled on the main thread.
+
+To understand the tradeoffs between `active` components and `passive`/`queued`, as well as design patterns that may allow you to migrate from one type to another, you may refer to the document on [Selecting Component, Port, and Command Kinds](./component-and-port-selection.md).
 
 > [!NOTE]
 > If you **must** use **Active Components** you should thoroughly review the [Thread Virtualization](#thread-virtualization) section of this document.
-
-**Why prefer passive components on baremetal?** Passive components execute synchronously in the caller's thread context, so they require no thread scheduler, no message queue allocation, and no synchronization primitives. This eliminates an entire class of concurrency-related bugs and reduces RAM usage. The trade-off is that passive components cannot perform long-running or blocking operations independently — all work must complete within the caller's time budget (i.e., within a single rate group cycle). Active components, by contrast, can process work asynchronously and absorb timing jitter via their message queues, but they require threading infrastructure that is not natively available on baremetal.
 
 If your system can be entirely defined by `passive` and `queued` components then implicitly every port **invocation** would be eventually run in a synchronous call and the execution context would be entirely delegated to every component. Thus the need for a thread scheduler would disappear. A discussion of the source of that delegated execution context comes next.
 
@@ -56,17 +53,17 @@ F´ provides support for baremetal deployments through the [fprime-community/fpr
 
 ### Baremetal OS
 
-The OS/Baremetal module provides an implementation of the OS abstraction layer (OSAL) to emulate threads, message queues, and other OS features. This allows the use of F´ core components that depend on OS abstractions without requiring a full operating system.
+The Os/Baremetal module provides an implementation of the OS abstraction layer (OSAL) to emulate threads, message queues, and other OS features. This allows the use of F´ core components that depend on OS abstractions without requiring a full operating system.
 
 Key characteristics:
 
-- Emulates OS features like threads and message queues in a single-threaded environment
-- Provides compatibility with the F´ OSAL model so that components written for a full OS can be reused on baremetal
+- Emulates OS features like threads
+- Provides compatibility with the F´ OSAL model
 
 > [!CAUTION]
 > Users requiring thread emulation should read [Thread Virtualization](#thread-virtualization) for an experimental approach using protothreading.
 
-**Baremetal vs. RTOS:** Running F´ on baremetal gives developers full control over timing and eliminates OS overhead, which is ideal for tightly resource-constrained processors (e.g., small microcontrollers with limited RAM). However, a full RTOS provides preemptive scheduling, priority-based task management, and mature synchronization primitives, which simplify the development of systems with complex timing requirements or many independent tasks. Choose baremetal when your system can be expressed as a set of passive components driven by rate groups and when minimizing code size and memory footprint is critical. Choose an RTOS when you need preemptive multitasking, priority inversion handling, or when using a large number of active components.
+**Baremetal vs. RTOS:** Running F´ on baremetal gives developers full control over timing and eliminates OS overhead, which is ideal for tightly resource-constrained processors (e.g., small microcontrollers with limited RAM). However, a full RTOS provides robust scheduling, task management, and synchronization, which simplify the development of systems with complex timing requirements or many independent tasks. Choose baremetal when your system can be expressed as a set of passive components driven by rate groups and when minimizing code size and memory footprint is critical. Choose an RTOS when you need preemptive multitasking, priority inversion handling, or when using a large number of active components.
 
 ### MicroFs
 
@@ -88,19 +85,16 @@ F´ has numerous configuration options to scale the size of F´ down for resourc
 
 Example configuration options include the following:
 
-- Toggle features on and off (e.g., disable text logging to save code space)
-- Specify buffer and storage sizes (e.g., command dispatch table size, telemetry packet buffer size)
+- Toggle features on and off
+- Specify buffer and storage sizes
 - Adjust maximum string lengths, queue depths, and object name lengths
-- Disable health checking or other optional services not needed in the deployment
+- Disable components and services not needed in the deployment
 
 See [User Guide: Configuring F´](../framework/configuring-fprime.md) for the full list of options.
 
 ### Port Call Optimization
 
-F´ provides alternate code generation for port connections to eliminate some of the abstraction layers, reducing overhead in resource-constrained environments.
-
-> [!NOTE]
-> This feature is currently in alpha. It may change or be removed in future releases.
+F´ provides alternate code generation for port connections to eliminate some of the abstraction layers, reducing overhead and code size in resource-constrained environments. This is an advanced feature that can be enabled by using the `FW_DIRECT_PORT_CALLS` compile option. Interested projects can investigate on their own, this is all part of the autocoded code in the build cache. As a note, this option may be enabled by default in the future.
 
 ## Implementation Suggestions
 
@@ -169,7 +163,7 @@ When using the thread virtualization technology, care should be taken with custo
 
 1. The function shall not loop
 2. The function shall never block execution
-3. The function shall perform "one slice" of the thread and then return — that is, it should do a small, bounded unit of work (e.g., check for and dispatch one message) and then yield control by returning
+3. The function shall perform "one slice" of the thread and then return — that is, it should do a small, bounded unit of work and then yield control by returning
 
 This is a form of cooperative scheduling: each function performs a small unit of work and voluntarily yields control by returning, allowing the next function to run. Unlike preemptive threading where the OS can interrupt a thread at any time, cooperative scheduling relies on each task being well-behaved. If any function loops indefinitely or blocks, no other task will get a chance to execute, causing the system to lock up or behave erratically.
 
