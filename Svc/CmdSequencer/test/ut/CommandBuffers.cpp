@@ -18,8 +18,9 @@ namespace CommandBuffers {
 
 void create(Fw::ComBuffer& comBuff, const FwOpcodeType opcode, const U32 argument) {
     comBuff.resetSer();
-    const FwPacketDescriptorType descriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(descriptor));
+    // After splitting the packet descriptor from the payload, the command buffer
+    // begins directly with the opcode; the descriptor is passed separately on
+    // the port invocation.
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(opcode));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(argument));
 }

@@ -125,7 +125,9 @@ void FprimeFramerTester::testOversizedAllocatorBufferIsTrimmed() {
     ASSERT_from_dataReturnOut_SIZE(1);
 
     Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
-    FwSizeType expectedSize = sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
+    // Frame layout: header + descriptor (APID, injected from context) + payload + trailer.
+    FwSizeType expectedSize = sizeof(bufferData) + sizeof(FwPacketDescriptorType) +
+                              FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
                               FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     ASSERT_EQ(outputBuffer.getSize(), expectedSize);
 }

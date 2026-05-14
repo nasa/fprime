@@ -44,8 +44,11 @@ void SpacePacketDeframerTester ::testDataReturnPassthrough() {
 void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    // dataLength is the size of the SP user-data field, which on the wire is:
+    // [descriptor (2 bytes)][packet body]
     U16 dataLength =
-        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+        static_cast<U8>(STest::Random::lowerUpper(static_cast<U16>(sizeof(FwPacketDescriptorType) + 1),
+                                                  MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U8 data[dataLength];
     U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
@@ -57,14 +60,16 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
-    // Check output packet payload
+    // Check output packet payload: the descriptor is stripped from the front
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_validateApidSeqCount_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);  // only two port calls in nominal case
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ASSERT_EQ(outBuffer.getSize(), static_cast<Fw::Buffer::SizeType>(dataLength));
-    for (U32 i = 0; i < dataLength; ++i) {
-        ASSERT_EQ(outBuffer.getData()[i], data[i]);
+    const Fw::Buffer::SizeType expectedSize =
+        static_cast<Fw::Buffer::SizeType>(dataLength - sizeof(FwPacketDescriptorType));
+    ASSERT_EQ(outBuffer.getSize(), expectedSize);
+    for (U32 i = 0; i < expectedSize; ++i) {
+        ASSERT_EQ(outBuffer.getData()[i], data[i + sizeof(FwPacketDescriptorType)]);
     }
     // Check output context (header info)
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;

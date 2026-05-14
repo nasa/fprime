@@ -180,7 +180,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
-    );
+                        ) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -341,11 +341,11 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
                 // Queue is full and will drop oldest; remove the front entry to return ownership.
                 // popFront() always removes from the front (oldest) regardless of queue mode,
                 // matching the rotate-based removal that Queue::enqueue() uses for DROP_OLDEST.
-                Fw::Buffer droppedBuffer;
+                BufferQueueEntry droppedEntry;
                 Fw::SerializeStatus dequeueStatus =
-                    queue.popFront(reinterpret_cast<U8*>(&droppedBuffer), sizeof(droppedBuffer));
+                    queue.popFront(reinterpret_cast<U8*>(&droppedEntry), sizeof(droppedEntry));
                 FW_ASSERT(dequeueStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(dequeueStatus));
-                this->bufferReturnOut_out(portNum, droppedBuffer);
+                this->bufferReturnOut_out(portNum, droppedEntry.buffer);
                 preEmptiveOverflow = true;
                 break;
             }
