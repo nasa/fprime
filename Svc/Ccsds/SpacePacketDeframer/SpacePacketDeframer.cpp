@@ -52,13 +52,21 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
-    // Length is valid, so deserialization here should succeed
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // Deserialization can still fail if the buffer is malformed despite passing the size check
+    if (status != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
 
-    // Space Packet protocol defines the Data Length as number of bytes minus 1
-    // so we need to add 1 to the length to get the actual data size
-    U16 pkt_length = static_cast<U16>(header.get_packetDataLength() + 1);
-    if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
+    // Widen to U32 before adding 1 to prevent U16 truncation to 0 when packetDataLength == 0xFFFF (max U16 value).
+    // This is a undefined behavior condition in C++.
+    const U32 pkt_length = static_cast<U32>(header.get_packetDataLength()) + 1U;
+    if ((pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) ||
+        (pkt_length > std::numeric_limits<FwSizeType>::max())) {
         FwSizeType maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
         if (this->isConnected_errorNotify_OutputPort(0)) {

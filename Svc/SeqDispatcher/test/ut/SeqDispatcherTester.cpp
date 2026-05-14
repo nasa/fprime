@@ -30,7 +30,7 @@ SeqDispatcherTester ::~SeqDispatcherTester() {
 void SeqDispatcherTester ::testDispatch() {
     // test that it fails when we dispatch too many sequences
     for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
-        sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+        sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
         this->component.doDispatch();
         // no response cuz blocking
         ASSERT_CMD_RESPONSE_SIZE(0);
@@ -39,7 +39,7 @@ void SeqDispatcherTester ::testDispatch() {
     ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 1, 0);
     this->clearHistory();
     // all sequencers should be busy
-    sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+    sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
@@ -56,7 +56,7 @@ void SeqDispatcherTester ::testDispatch() {
     this->clearHistory();
     // ok now we should be able to send another sequence
     // let's test non blocking now
-    sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::NO_WAIT);
+    sendCmd_RUN(0, 0, Fw::String("test"), BlockState::NO_BLOCK);
     this->component.doDispatch();
 
     // should immediately return
@@ -74,7 +74,7 @@ void SeqDispatcherTester ::testDispatch() {
 }
 
 void SeqDispatcherTester::testLogStatus() {
-    this->sendCmd_RUN(0, 0, Fw::String("test"), Fw::Wait::WAIT);
+    this->sendCmd_RUN(0, 0, Fw::String("test"), BlockState::BLOCK);
     this->component.doDispatch();
     this->clearHistory();
     this->sendCmd_LOG_STATUS(0, 0);
@@ -96,12 +96,12 @@ void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,             //!
 void SeqDispatcherTester::testRunArgsWithValidArguments() {
     // Create test arguments with some data
     // Note: Keep size small to fit within FW_CMD_ARG_BUFFER_MAX_SIZE constraints
-    // Total command payload must fit: filename (~44 bytes) + Fw::Wait (4 bytes) + SeqArgs
+    // Total command payload must fit: filename (~44 bytes) + BlockState (4 bytes) + SeqArgs
     // With FW_CMD_ARG_BUFFER_MAX_SIZE ~= 500 bytes, SeqArgs should be < 400 bytes total
     Svc::SeqArgs testArgs{0, 0};
 
     // Send RUN_ARGS command with non-blocking mode
-    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), Fw::Wait::NO_WAIT, testArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::NO_BLOCK, testArgs);
     this->component.doDispatch();
 
     // Should get immediate response for non-blocking
@@ -127,7 +127,7 @@ void SeqDispatcherTester::testRunArgsWithMaxSizedArguments() {
     }
 
     // Send RUN_ARGS command with large arguments (use short filename to save space)
-    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), Fw::Wait::NO_WAIT, largeArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::NO_BLOCK, largeArgs);
     this->component.doDispatch();
 
     // Should get immediate response for non-blocking
@@ -147,7 +147,7 @@ void SeqDispatcherTester::testRunArgsNoSequencersAvailable() {
     // Fill all sequencers
     Svc::SeqArgs emptyArgs{0, 0};
     for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
-        sendCmd_RUN_ARGS(0, 0, Fw::String("test"), Fw::Wait::WAIT, emptyArgs);
+        sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::BLOCK, emptyArgs);
         this->component.doDispatch();
         // no response because blocking
         ASSERT_CMD_RESPONSE_SIZE(0);
@@ -159,7 +159,7 @@ void SeqDispatcherTester::testRunArgsNoSequencersAvailable() {
     Svc::SeqArgs testArgs;
     testArgs.set_size(0);
 
-    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), Fw::Wait::WAIT, testArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::BLOCK, testArgs);
     this->component.doDispatch();
 
     // Should get error response
@@ -179,7 +179,7 @@ void SeqDispatcherTester::testRunArgsBlockingVsNonBlocking() {
     Svc::SeqArgs testArgs{0, 0};
 
     // Test non-blocking mode - should get immediate response
-    sendCmd_RUN_ARGS(0, 0, Fw::String("nonblocking"), Fw::Wait::NO_WAIT, testArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("nonblocking"), BlockState::NO_BLOCK, testArgs);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -193,7 +193,7 @@ void SeqDispatcherTester::testRunArgsBlockingVsNonBlocking() {
     this->clearHistory();
 
     // Test blocking mode - should NOT get immediate response
-    sendCmd_RUN_ARGS(0, 0, Fw::String("blocking"), Fw::Wait::WAIT, testArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("blocking"), BlockState::BLOCK, testArgs);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(0);  // No response yet
@@ -210,7 +210,7 @@ void SeqDispatcherTester::testRunArgsBlockingVsNonBlocking() {
 
     // Test blocking mode with error response
     this->clearHistory();
-    sendCmd_RUN_ARGS(0, 0, Fw::String("blocking_error"), Fw::Wait::WAIT, testArgs);
+    sendCmd_RUN_ARGS(0, 0, Fw::String("blocking_error"), BlockState::BLOCK, testArgs);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(0);  // No response yet

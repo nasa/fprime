@@ -22,12 +22,19 @@ ApidManager ::ApidManager(const char* const compName) : ApidManagerComponentBase
 // ----------------------------------------------------------------------
 
 U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 receivedSeqCount) {
-    U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
-    if (receivedSeqCount != expectedSequenceCount && receivedSeqCount != SEQUENCE_COUNT_ERROR) {
+    const U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
+    if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
+        // APID could not be tracked (table full); nothing to validate or sync against
+        return receivedSeqCount;
+    }
+    if (receivedSeqCount != expectedSequenceCount) {
         // Likely a packet was dropped or out of order
         this->log_WARNING_LO_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
-        // Synchronize onboard count with received number so that count can keep going
-        this->setNextSeqCount(apid, this->calculateNextSeqCount(receivedSeqCount));
+        // Sync onboard count to what was received so counting can keep going. Insert cannot fail:
+        // getAndIncrementSeqCount above inserted the APID already, we would have returned early
+        // due to SEQUENCE_COUNT_ERROR
+        const Fw::Success insertStatus = m_apidSequences.insert(apid, this->calculateNextSeqCount(receivedSeqCount));
+        FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
     }
     return receivedSeqCount;
 }
@@ -42,23 +49,16 @@ U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::A
 
 U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     U16 seqCount = 0;
-    // Find sequence count if exists, otherwise use 0
+    // Find current sequence count if APID is tracked; otherwise default to 0 (first count for a new APID)
     (void)m_apidSequences.find(apid, seqCount);
-    // Increment sequence count for next call
-    U16 updatedSeqCount = this->calculateNextSeqCount(seqCount);
-
-    Fw::Success insertStatus = m_apidSequences.insert(apid, updatedSeqCount);
-    if (insertStatus == Fw::Success::SUCCESS) {
-        return seqCount;  // Return the current sequence count
+    // Store the next sequence count for this APID. If the APID is not yet tracked, this
+    // also registers it; insert can only fail when registering a new APID into a full table.
+    const Fw::Success insertStatus = m_apidSequences.insert(apid, this->calculateNextSeqCount(seqCount));
+    if (insertStatus != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_ApidTableFull(apid);
+        return SEQUENCE_COUNT_ERROR;
     }
-
-    this->log_WARNING_HI_ApidTableFull(apid);
-    return SEQUENCE_COUNT_ERROR;
-}
-
-void ApidManager::setNextSeqCount(ComCfg::Apid::T apid, U16 seqCount) {
-    Fw::Success insertStatus = m_apidSequences.insert(apid, seqCount);
-    FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
+    return seqCount;
 }
 
 U16 ApidManager::calculateNextSeqCount(const U16 seqCount) const {

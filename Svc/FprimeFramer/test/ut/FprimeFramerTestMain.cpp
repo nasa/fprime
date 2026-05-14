@@ -21,6 +21,11 @@ TEST(Nominal, testNominalFraming) {
     tester.testNominalFraming();
 }
 
+TEST(OffNominal, OversizedAllocatorBufferIsTrimmed) {
+    Svc::FprimeFramerTester tester;
+    tester.testOversizedAllocatorBufferIsTrimmed();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

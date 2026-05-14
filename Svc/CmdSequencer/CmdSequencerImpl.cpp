@@ -35,7 +35,7 @@ CmdSequencerComponentImpl::CmdSequencerComponentImpl(const char* name)
       m_totalExecutedCount(0),
       m_sequencesCompletedCount(0),
       m_timeout(0),
-      m_blockState(Svc::CmdSequencer_BlockState::NO_BLOCK),
+      m_blockState(Svc::BlockState::NO_BLOCK),
       m_opCode(0),
       m_cmdSeq(0),
       m_join_waiting(false) {}
@@ -74,7 +74,7 @@ CmdSequencerComponentImpl::~CmdSequencerComponentImpl() {}
 void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   const Fw::CmdStringArg& fileName,
-                                                  Svc::CmdSequencer_BlockState block) {
+                                                  Svc::BlockState block) {
     if (not this->requireRunMode(STOPPED)) {
         if (m_join_waiting) {
             // Inform user previous seq file is not complete
@@ -108,7 +108,7 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
         this->performCmd_Step();
     }
 
-    if (Svc::CmdSequencer_BlockState::NO_BLOCK == this->m_blockState) {
+    if (Svc::BlockState::NO_BLOCK == this->m_blockState) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }
@@ -256,13 +256,13 @@ void CmdSequencerComponentImpl::performCmd_Cancel() {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
+    if (Svc::BlockState::BLOCK == this->m_blockState || m_join_waiting) {
         // Do not wait if sequence was canceled or a cmd failed
         this->m_join_waiting = false;
         this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
 }
 
 void CmdSequencerComponentImpl ::cmdResponseIn_handler(FwIndexType portNum,
@@ -326,7 +326,7 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
         return;
     }
 
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
     this->m_runMode = RUNNING;
     this->performCmd_Step();
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
@@ -425,12 +425,12 @@ void CmdSequencerComponentImpl::sequenceComplete() {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::OK);
     }
 
-    if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
+    if (Svc::BlockState::BLOCK == this->m_blockState || m_join_waiting) {
         this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::OK);
     }
 
     m_join_waiting = false;
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {

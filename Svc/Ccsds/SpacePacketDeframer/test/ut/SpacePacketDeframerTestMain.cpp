@@ -21,6 +21,30 @@ TEST(SpacePacketDeframer, testDeframingIncorrectLength) {
     tester.testDeframingIncorrectLength();
 }
 
+TEST(SpacePacketDeframer, testPacketDataLengthMaxU16Overflow) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testPacketDataLengthMaxU16Overflow();
+}
+
+// ----------------------------------------------------------------------
+// Tests for graceful handling of undersized buffers
+// ----------------------------------------------------------------------
+
+TEST(SpacePacketDeframer, testBufferExactlyHeaderSize) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testBufferExactlyHeaderSize();
+}
+
+TEST(SpacePacketDeframer, testBufferSmallerThanHeaderSize) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testBufferSmallerThanHeaderSize();
+}
+
+TEST(SpacePacketDeframer, testBufferSingleByte) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testBufferSingleByte();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

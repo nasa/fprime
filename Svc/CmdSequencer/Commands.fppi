@@ -3,7 +3,7 @@
 @ Run a command sequence file
 async command CS_RUN(
                       fileName: string size FileNameStringSize @< The name of the sequence file
-                      $block: BlockState @< Return command status when complete or not
+                      $block: Svc.BlockState @< Return command status when complete or not
                     ) \
   opcode 0
 

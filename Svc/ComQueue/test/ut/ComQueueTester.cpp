@@ -829,10 +829,8 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     // Verify we only have 2 messages
     ASSERT_from_dataOut_SIZE(2);
 
-    // Verify buffers were returned (2 sent + dropped buffer1)
-    // Note: When DROP_OLDEST happens, the dropped buffer should NOT be returned
-    // since it was consumed by the queue
-    ASSERT_from_bufferReturnOut_SIZE(2);
+    // Verify buffers were returned (2 sent + 1 dropped buffer1 returned for ownership)
+    ASSERT_from_bufferReturnOut_SIZE(3);
 
     component.cleanup();
 }
