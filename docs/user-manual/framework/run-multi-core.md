@@ -60,13 +60,13 @@ interface is defined in `Os/Task.hpp` as part of the `Arguments` class used when
 ```cpp
 //! \param cpuAffinity: (optional) cpu affinity of this task
 Arguments(
-    const Os::Task::taskRoutine routine,
+    const Fw::ConstStringBase& name,
+    const taskRoutine routine,
     void* const routine_argument = nullptr,
-    const Fw::StringBase& name = emptyString,
-    const ParamType stackSize = TASK_DEFAULT,
-    const ParamType priority = TASK_DEFAULT,
-    const ParamType cpuAffinity = TASK_DEFAULT,  // Set to a core index (0, 1, 2, ...) to pin this task
-    const ParamType groupNumber = TASK_DEFAULT
+    const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
+    const FwSizeType stackSize = TASK_DEFAULT,
+    const FwSizeType cpuAffinity = TASK_DEFAULT,  // Set to a core index (0, 1, 2, ...) to pin this task
+    const FwTaskIdType identifier = static_cast<FwTaskIdType>(TASK_DEFAULT)
 );
 ```
 
