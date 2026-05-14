@@ -27,6 +27,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: "Build [${{ matrix.runner }}]"

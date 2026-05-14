@@ -25,6 +25,9 @@ env:
   ARM_TOOLS_PATH: /tmp/aarch64-toolchain
   FPRIME_LOCATION: ./lib/fprime
 
+permissions:
+  contents: read
+
 jobs:
   get-branch:
     name: "Get target branch"
