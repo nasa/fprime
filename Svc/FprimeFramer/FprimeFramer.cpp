@@ -35,7 +35,7 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     FwSizeType frameSize =
         FprimeProtocol::FrameHeader::SERIALIZED_SIZE + bodySize + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     FW_ASSERT(bodySize <= std::numeric_limits<FprimeProtocol::TokenType>::max(),
-              static_cast<FwAssertArgType>(frameSize));
+              static_cast<FwAssertArgType>(bodySize));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
     // Allocate frame buffer
