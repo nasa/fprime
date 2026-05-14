@@ -584,7 +584,8 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         packetDataLength = (packetDataLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    totalPacketSize = headerLength + packetDataLength;
+    // Widen before adding so a near-UINT32_MAX length cannot wrap past m_maxPacketSize
+    totalPacketSize = static_cast<FwSizeType>(headerLength) + packetDataLength;
 
     return totalPacketSize;
 }
