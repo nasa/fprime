@@ -67,14 +67,8 @@ void AosDeframer::configure(U32 fixedFrameSize,
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
     FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
-    // maxPacketSize must accommodate the smallest valid packet of EVERY
-    // enabled protocol; otherwise a legitimate packet of one of the enabled
-    // protocols would be silently rejected by the oversize cap. The binding
-    // minimum is therefore the LARGER of the enabled protocol minimums:
-    // EPP can be as small as a single idle byte (CCSDS 133.1-B-3 §4.1.2.1),
-    // SPP is 7 octets minimum (CCSDS 133.0-B-2 §4.1.2.2: 6-byte header +
-    // 1-byte minimum data field). When both are enabled the SPP minimum is
-    // the binding constraint.
+    // maxPacketSize must accommodate the smallest valid packet of every
+    // enabled protocol (EPP min: 1 byte; SPP min: 7 bytes).
     FwSizeType minPacketSize = 0;
     if (pvnMask & PvnBitfield::EPP_MASK) {
         minPacketSize = std::max(minPacketSize,

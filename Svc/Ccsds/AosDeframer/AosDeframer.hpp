@@ -48,15 +48,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param spacecraftId The spacecraft ID to accept (10 bits, per Section 4.1.2.2)
     //! \param vcId The virtual channel ID to accept (6 bits, per Section 4.1.2.3)
     //! \param pvnMask Bitmask of Packet Version Numbers to extract (SPP=0x01, EPP=0x80)
-    //! \param maxPacketSize Upper bound on a single deframed packet (Space Packet
-    //!                      or Encapsulation Packet). The wire-read packet size
-    //!                      is compared against this before the buffer allocator
-    //!                      is asked for storage; oversized packets are dropped
-    //!                      and reported via OversizedPacket. Defaults to
-    //!                      Svc::Ccsds::SpacePacketMaxLength (per CCSDS 133.0-B-2
-    //!                      Section 4.1.2.2: the largest legal Space Packet),
-    //!                      which is the natural upper bound for a deframer
-    //!                      configured to accept SPP traffic.
+    //! \param maxPacketSize Upper bound (bytes) on a single deframed packet; oversized packets are dropped
     //!
     void configure(U32 fixedFrameSize,
                    bool frameErrorControlField,
@@ -112,19 +104,13 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Abandon an in-progress spanning packet, deallocating backing storage if needed
     void abandonSpanningPacket(AosDeframerVc& vc);
 
-    //! Drop a spanning packet that cannot be accepted and compute how far to
-    //! seek forward in the current data block. Shared between the oversize
-    //! reject path and the allocator-failure reject path; the caller is
-    //! responsible for emitting the appropriate warning event before calling
-    //! and for performing the returned seek by propagating it up through the
-    //! caller chain. This function abandons the spanning packet but does not
-    //! itself advance any read pointer.
+    //! Drop a spanning packet and compute how far to seek past it in the current data block.
+    //! Caller must emit the appropriate warning event before calling.
     //! \param vc The virtual channel state
     //! \param packetSize Declared total size of the rejected packet (header + body)
     //! \param seekForward Bytes already consumed in the current data block before this packet
     //! \param size Bytes available in the current data block
-    //! \return Bytes to seek forward in the current data block, or 0 if the rejected packet
-    //!         body would extend past the available data
+    //! \return Bytes to seek forward, or 0 if the rejected packet body extends past available data
     FwSizeType abandonAndComputeSeek(AosDeframerVc& vc,
                                      FwSizeType packetSize,
                                      FwSizeType seekForward,
