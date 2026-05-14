@@ -250,7 +250,7 @@ TEST_F(FpySequencerTester, cmd) {
     ASSERT_EQ(expected.serializeFrom(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
               Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);
-    ASSERT_from_cmdOut(0, expected, 0);
+    ASSERT_from_cmdOut(0, expected, ComCfg::Apid::FW_PACKET_COMMAND, 0);
     this->clearHistory();
 
     // try dispatching again, make sure cmd uid is right
@@ -258,7 +258,7 @@ TEST_F(FpySequencerTester, cmd) {
     result = tester_constCmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
-    ASSERT_from_cmdOut(0, expected, tester_get_m_statementsDispatched());
+    ASSERT_from_cmdOut(0, expected, ComCfg::Apid::FW_PACKET_COMMAND, tester_get_m_statementsDispatched());
     this->clearHistory();
 
     // modify sequences started, make sure correct
@@ -267,7 +267,7 @@ TEST_F(FpySequencerTester, cmd) {
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(
-        0, expected,
+        0, expected, ComCfg::Apid::FW_PACKET_COMMAND,
         (((tester_get_m_sequencesStarted() & 0xFFFF) << 16) | (tester_get_m_statementsDispatched() & 0xFFFF)));
 }
 

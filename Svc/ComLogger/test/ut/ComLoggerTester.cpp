@@ -157,7 +157,7 @@ void ComLoggerTester ::testLogging() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -165,7 +165,7 @@ void ComLoggerTester ::testLogging() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -283,7 +283,7 @@ void ComLoggerTester ::testLoggingNoLength() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -291,7 +291,7 @@ void ComLoggerTester ::testLoggingNoLength() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -373,7 +373,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
@@ -397,7 +397,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -420,7 +420,7 @@ void ComLoggerTester ::openError() {
              testTime.getSeconds(), testTime.getUSeconds());
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     }
@@ -442,7 +442,7 @@ void ComLoggerTester ::writeError() {
     setTestTime(testTime);
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -452,7 +452,7 @@ void ComLoggerTester ::writeError() {
 
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -477,7 +477,7 @@ void ComLoggerTester ::writeError() {
     // Try to write and make sure it succeeds:
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -491,7 +491,7 @@ void ComLoggerTester ::writeError() {
 
     // Send 2 packets:
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -541,7 +541,7 @@ void ComLoggerTester ::closeFileCommand() {
     Fw::ComBuffer buffer(data, sizeof(data));
 
     for (int i = 0; i < 3; i++) {
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     }
@@ -622,7 +622,7 @@ void ComLoggerTester ::testLoggingWithInit() {
 
         // Write to file:
         for (int i = 0; i < MAX_ENTRIES_PER_FILE - 1; i++) {
-            invoke_to_comIn(0, buffer, 0);
+            invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
             dispatchAll();
             ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
         }
@@ -630,7 +630,7 @@ void ComLoggerTester ::testLoggingWithInit() {
         // OK a new file should be opened after this final invoke, set a new test time so that a file
         // with a new name gets opened:
         setTestTime(testTimeNext);
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
 
@@ -700,7 +700,7 @@ void ComLoggerTester ::noInitError() {
     U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
     Fw::ComBuffer buffer(&data[0], sizeof(data));
 
-    this->invoke_to_comIn(0, buffer, 0);
+    this->invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
     ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_FileNotInitialized_SIZE(1);
@@ -708,7 +708,7 @@ void ComLoggerTester ::noInitError() {
     this->comLogger.init_log_file(FILE_STR, MAX_BYTES_PER_FILE);
 
     this->clearHistory();
-    this->invoke_to_comIn(0, buffer, 0);
+    this->invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
     ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
     ASSERT_EVENTS_FileNotInitialized_SIZE(0);

@@ -337,8 +337,7 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
 
 Os::File::Status FileDownlink ::sendDataPacket(U32& byteOffset) {
     FW_ASSERT(byteOffset < this->m_endOffset);
-    const U32 maxDataSize =
-        FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType);
+    const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
     const U32 dataSize =
         (byteOffset + maxDataSize > this->m_endOffset) ? (this->m_endOffset - byteOffset) : maxDataSize;
     U8 buffer[maxDataSize];
@@ -373,20 +372,13 @@ void FileDownlink ::sendCancelPacket() {
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
     this->getBuffer(buffer, CANCEL_PACKET);
-    FW_ASSERT(buffer.getSize() >= filePacket.bufferSize() + sizeof(FwPacketDescriptorType),
-              static_cast<FwAssertArgType>(buffer.getSize()),
-              static_cast<FwAssertArgType>(filePacket.bufferSize() + sizeof(FwPacketDescriptorType)));
+    FW_ASSERT(buffer.getSize() >= filePacket.bufferSize(), static_cast<FwAssertArgType>(buffer.getSize()),
+              static_cast<FwAssertArgType>(filePacket.bufferSize()));
 
-    // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status =
-        buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
-                            buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(FwPacketDescriptorType)));
     // Serialize the filePacket content into the buffer
-    status = filePacket.toBuffer(offsetBuffer);
+    Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    this->bufferSendOut_out(0, buffer);
+    this->bufferSendOut_out(0, buffer, ComCfg::Apid::FW_PACKET_FILE);
     this->m_packetsSent.packetSent();
 }
 
@@ -412,23 +404,16 @@ void FileDownlink ::sendStartPacket() {
 }
 
 void FileDownlink ::sendFilePacket(const Fw::FilePacket& filePacket) {
-    const U32 bufferSize = filePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
+    const U32 bufferSize = filePacket.bufferSize();
     FW_ASSERT(this->m_buffer.getData() != nullptr);
     FW_ASSERT(this->m_buffer.getSize() >= bufferSize, static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(this->m_buffer.getSize()));
-    // Serialize packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status = this->m_buffer.getSerializer().serializeFrom(
-        static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    // Serialize the filePacket content into the buffer, offset by the size of the packet descriptor
-    Fw::Buffer offsetBuffer(
-        this->m_buffer.getData() + sizeof(FwPacketDescriptorType),
-        this->m_buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(FwPacketDescriptorType)));
-    status = filePacket.toBuffer(offsetBuffer);
+    // Serialize the filePacket content into the buffer
+    Fw::SerializeStatus status = filePacket.toBuffer(this->m_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // set the buffer size to the packet size
     this->m_buffer.setSize(bufferSize);
-    this->bufferSendOut_out(0, this->m_buffer);
+    this->bufferSendOut_out(0, this->m_buffer, ComCfg::Apid::FW_PACKET_FILE);
     // restore buffer size to max
     this->m_buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
     this->m_packetsSent.packetSent();

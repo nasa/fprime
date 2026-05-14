@@ -83,7 +83,9 @@ ComLogger ::~ComLogger() {
 // Handler implementations
 // ----------------------------------------------------------------------
 
-void ComLogger ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void ComLogger ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, const ComCfg::Apid& packetType, U32 context) {
+    (void)packetType;
+    (void)context;
     FW_ASSERT(portNum == 0);
 
     // Get length of buffer:

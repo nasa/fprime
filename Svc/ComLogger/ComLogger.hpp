@@ -56,7 +56,7 @@ class ComLogger final : public ComLoggerComponentBase {
     // ----------------------------------------------------------------------
 
   private:
-    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context);
+    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, const ComCfg::Apid& packetType, U32 context) override;
 
     void CloseFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
 

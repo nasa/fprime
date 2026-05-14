@@ -68,7 +68,7 @@ Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeT
     U32 cmdUid =
         static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
 
-    this->cmdOut_out(0, cmdBuf, cmdUid);
+    this->cmdOut_out(0, cmdBuf, ComCfg::Apid::FW_PACKET_COMMAND, cmdUid);
 
     return Fw::Success::SUCCESS;
 }

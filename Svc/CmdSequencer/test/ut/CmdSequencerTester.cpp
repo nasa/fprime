@@ -52,8 +52,11 @@ void CmdSequencerTester ::from_seqDone_handler(const FwIndexType portNum,
     this->pushFromPortEntry_seqDone(opCode, cmdSeq, response);
 }
 
-void CmdSequencerTester ::from_comCmdOut_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_comCmdOut(data, context);
+void CmdSequencerTester ::from_comCmdOut_handler(const FwIndexType portNum,
+                                                 Fw::ComBuffer& data,
+                                                 const ComCfg::Apid& packetType,
+                                                 U32 context) {
+    this->pushFromPortEntry_comCmdOut(data, packetType, context);
 }
 
 void CmdSequencerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
@@ -304,7 +307,7 @@ void CmdSequencerTester ::parameterizedSequenceTimeout(SequenceFiles::File& file
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 0, 1);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Assert that timer is set
     ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimeoutTimer.m_state);
     // Set the test time to be after the timeout

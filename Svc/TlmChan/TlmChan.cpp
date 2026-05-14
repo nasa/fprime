@@ -213,7 +213,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
 
             // check to see if this packet is full, if so, send it
             if (Fw::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
-                this->PktSend_out(0, pkt.getBuffer(), 0);
+                this->PktSend_out(0, pkt.getBuffer(), ComCfg::Apid::FW_PACKET_TELEM, 0);
                 // reset packet for more entries
                 pkt.resetPktSer();
                 // add entry to new packet
@@ -234,7 +234,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
 
     // send remnant entries
     if (pkt.getNumEntries() > 0) {
-        this->PktSend_out(0, pkt.getBuffer(), 0);
+        this->PktSend_out(0, pkt.getBuffer(), ComCfg::Apid::FW_PACKET_TELEM, 0);
     }
 }  // end run handler
 

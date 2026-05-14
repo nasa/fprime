@@ -435,21 +435,16 @@ void FileUplinkTester ::initComponents() {
 void FileUplinkTester ::sendFilePacket(const Fw::FilePacket& filePacket) {
     this->clearHistory();
 
-    const size_t bufferSize = filePacket.bufferSize() + sizeof(FwPacketDescriptorType);
+    const size_t bufferSize = filePacket.bufferSize();
     U8 bufferData[bufferSize];
     Fw::Buffer buffer(bufferData, bufferSize);
 
-    // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status =
-        buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    // Serialize the filePacket content into the buffer after the packet descriptor token
-    Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
-                            bufferSize - sizeof(FwPacketDescriptorType));
-    status = filePacket.toBuffer(offsetBuffer);
+    // Serialize the filePacket content into the buffer. The packet descriptor is no
+    // longer prepended to the buffer; it is passed as an explicit port argument.
+    Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
 
-    this->invoke_to_bufferSendIn(0, buffer);
+    this->invoke_to_bufferSendIn(0, buffer, ComCfg::Apid::FW_PACKET_FILE);
     this->component.doDispatch();
 
     ASSERT_from_bufferSendOut_SIZE(1);

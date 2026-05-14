@@ -21,7 +21,7 @@ module Svc {
     output port seqCmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
 
     @ Command buffer input port for sequencers or other sources of command buffers
-    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com hook
+    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Svc.ComBufferSend hook
 
     @ Ping input port
     async input port pingIn: Svc.Ping

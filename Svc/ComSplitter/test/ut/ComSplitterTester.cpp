@@ -36,7 +36,7 @@ void ComSplitterTester ::test_nominal() {
     for (U8 i = 0; i < 3; i++) {
         d[0] = i;
         Fw::ComBuffer buffer(d, sizeof(d));
-        invoke_to_comIn(0, buffer, 0);
+        invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
     }
 
     ASSERT_from_comOut_SIZE(9);
@@ -64,8 +64,11 @@ void ComSplitterTester ::assert_comOut(const U32 index, const Fw::ComBuffer& dat
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void ComSplitterTester ::from_comOut_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_comOut(data, context);
+void ComSplitterTester ::from_comOut_handler(const FwIndexType portNum,
+                                             Fw::ComBuffer& data,
+                                             const ComCfg::Apid& packetType,
+                                             U32 context) {
+    this->pushFromPortEntry_comOut(data, packetType, context);
 }
 
 // ----------------------------------------------------------------------

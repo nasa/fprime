@@ -70,7 +70,10 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param portNum the number of the incoming port.
     //!  \param data the buffer containing the command.
     //!  \param context a user value returned with the status
-    void seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+    void seqCmdBuff_handler(FwIndexType portNum,
+                            Fw::ComBuffer& data,
+                            const ComCfg::Apid& packetType,
+                            U32 context) override;
     //!  \brief component command registration handler
     //!
     //!  The command registration handler is called to register
@@ -142,7 +145,10 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param portNum the number of the incoming port.
     //!  \param data the buffer containing the command.
     //!  \param context call value defined by user
-    void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+    void seqCmdBuff_overflowHook(FwIndexType portNum,
+                                 Fw::ComBuffer& data,
+                                 const ComCfg::Apid& packetType,
+                                 U32 context) override;
 
     //! \brief map from opcode to output port index
     //!

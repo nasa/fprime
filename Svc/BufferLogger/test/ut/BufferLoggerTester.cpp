@@ -145,7 +145,7 @@ void BufferLoggerTester ::setTestTimeSeconds(const U32 seconds) {
 void BufferLoggerTester ::sendComBuffers(const U32 n) {
     Fw::ComBuffer buffer(data, sizeof(data));
     for (U32 i = 0; i < n; ++i) {
-        this->invoke_to_comIn(0, buffer, 0);
+        this->invoke_to_comIn(0, buffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         this->dispatchOne();
     }
 }

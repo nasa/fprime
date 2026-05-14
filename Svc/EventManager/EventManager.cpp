@@ -106,7 +106,7 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 
     if (this->isConnected_PktSend_OutputPort(0)) {
-        this->PktSend_out(0, this->m_comBuffer, 0);
+        this->PktSend_out(0, this->m_comBuffer, ComCfg::Apid::FW_PACKET_LOG, 0);
     }
 }
 

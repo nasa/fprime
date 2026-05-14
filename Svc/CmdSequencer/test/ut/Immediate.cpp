@@ -144,7 +144,7 @@ void CmdSequencerTester ::executeCommandsManual(const char* const fileName, cons
         Fw::ComBuffer comBuff;
         CommandBuffers::create(comBuff, i, i + 1);
         ASSERT_from_comCmdOut_SIZE(1);
-        ASSERT_from_comCmdOut(0, comBuff, 0U);
+        ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
         // Assert that timer is clear
         ASSERT_EQ(CmdSequencerComponentImpl::Timer::CLEAR, this->component.m_cmdTimeoutTimer.m_state);
         // Send command response

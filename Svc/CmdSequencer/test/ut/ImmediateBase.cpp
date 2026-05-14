@@ -119,7 +119,7 @@ void CmdSequencerTester ::parameterizedInvalidManualCommands(SequenceFiles::File
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 0, 1);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Assert that timer is set
     ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimeoutTimer.m_state);
     // Attempt to start a manual sequence - should fail
@@ -275,7 +275,7 @@ void CmdSequencerTester ::executeCommandsAuto(const char* const fileName,
         Fw::ComBuffer comBuff;
         CommandBuffers::create(comBuff, i, i + 1);
         ASSERT_from_comCmdOut_SIZE(1);
-        ASSERT_from_comCmdOut(0, comBuff, 0U);
+        ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
         // Assert that timer is set
         ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimeoutTimer.m_state);
         // Start a new sequence if necessary
@@ -311,7 +311,7 @@ void CmdSequencerTester ::executeCommandsError(const char* const fileName, const
         Fw::ComBuffer comBuff;
         CommandBuffers::create(comBuff, i, i + 1);
         ASSERT_from_comCmdOut_SIZE(1);
-        ASSERT_from_comCmdOut(0, comBuff, 0U);
+        ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
         if (i == 0) {
             // Send good status back
             this->invoke_to_cmdResponseIn(0, i, 0, Fw::CmdResponse(Fw::CmdResponse::OK));

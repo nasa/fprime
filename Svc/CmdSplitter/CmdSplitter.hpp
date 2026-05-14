@@ -38,10 +38,11 @@ class CmdSplitter final : public CmdSplitterComponentBase {
 
     //! Handler implementation for CmdBuff
     //!
-    void CmdBuff_handler(const FwIndexType portNum, /*!< The port number */
-                         Fw::ComBuffer& data,       /*!< Buffer containing packet data */
-                         U32 context                /*!< Call context value; meaning chosen by user */
-    );
+    void CmdBuff_handler(const FwIndexType portNum,      /*!< The port number */
+                         Fw::ComBuffer& data,            /*!< Buffer containing command */
+                         const ComCfg::Apid& packetType, /*!< APID of the packet */
+                         U32 context                     /*!< User context */
+                         ) override;
 
     //! Handler implementation for seqCmdStatus
     //!
@@ -49,7 +50,7 @@ class CmdSplitter final : public CmdSplitterComponentBase {
                               FwOpcodeType opCode,            /*!< Command Op Code */
                               U32 cmdSeq,                     /*!< Command Sequence */
                               const Fw::CmdResponse& response /*!< The command response argument */
-    );
+                              ) override;
 
     FwOpcodeType m_remoteBase;  // Opcodes greater than or equal than this value will route remotely
 };

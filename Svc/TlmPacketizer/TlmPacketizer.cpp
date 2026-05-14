@@ -65,9 +65,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     // table
     FwChanIdType maxLevel = 0;
     for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
-        // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
-        FwSizeType packetLen =
-            sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
+        // Initial size is time tag + sizeof packet ID (descriptor is no longer in the buffer;
+        // it is passed as an explicit argument to the PktSend output port).
+        FwSizeType packetLen = Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
         FW_ASSERT(packetList.list[pktEntry]->list, static_cast<FwAssertArgType>(pktEntry));
         // add up entries for each defined packet
         for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
@@ -101,11 +101,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                   static_cast<FwAssertArgType>(pktEntry));
         // clear contents
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
-        // serialize packet descriptor and packet ID now since it will always be the same
-        Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
-            static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-        stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packetList.list[pktEntry]->id);
+        // serialize packet ID now since it will always be the same; the descriptor is no longer
+        // in the buffer (passed as an explicit argument to PktSend)
+        Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packetList.list[pktEntry]->id);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
         // set packet buffer length
         stat = this->m_fillBuffers[pktEntry].buffer.setBuffLen(packetLen);
@@ -356,9 +354,10 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             this->m_lock.unLock();
 
             // serialize time into time offset in packet
-            Fw::ExternalSerializeBuffer buff(
-                &sendBuffer.buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
-                Fw::Time::SERIALIZED_SIZE);
+            // The buffer layout is now: [packet ID][time][channel data...]; descriptor is sent
+            // as an explicit argument to PktSend rather than embedded in the buffer.
+            Fw::ExternalSerializeBuffer buff(&sendBuffer.buffer.getBuffAddr()[sizeof(FwTlmPacketizeIdType)],
+                                             Fw::Time::SERIALIZED_SIZE);
             (void)buff.serializeFrom(sendBuffer.latestTime);
 
             for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -366,7 +365,8 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
                     PktSendCounters& pktEntryFlags = this->m_packetFlags[section][pkt];
                     FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
 
-                    this->PktSend_out(outIndex, sendBuffer.buffer, pktEntryFlags.prevSentCounter);
+                    this->PktSend_out(outIndex, sendBuffer.buffer, ComCfg::Apid::FW_PACKET_PACKETIZED_TLM,
+                                      pktEntryFlags.prevSentCounter);
 
                     pktEntryFlags.prevSentCounter = 0;
                     pktEntryFlags.updateFlag = UpdateFlag::PAST;

@@ -12,8 +12,7 @@
 #define QUEUE_DEPTH 10
 
 static const FwChanIdType TEST_CHAN_SIZE = sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
-static const FwChanIdType CHANS_PER_COMBUFFER =
-    (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType)) / TEST_CHAN_SIZE;
+static const FwChanIdType CHANS_PER_COMBUFFER = FW_COM_BUFFER_MAX_SIZE / TEST_CHAN_SIZE;
 static constexpr FwSizeType INTEGER_DIVISION_ROUNDED_UP(FwSizeType a, FwSizeType b) {
     return ((a % b) == 0) ? (a / b) : (a / b) + 1;
 }
@@ -139,8 +138,11 @@ void TlmChanTester::runOffNominal() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_PktSend(data, context);
+void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum,
+                                          Fw::ComBuffer& data,
+                                          const ComCfg::Apid& packetType,
+                                          U32 context) {
+    this->pushFromPortEntry_PktSend(data, packetType, context);
     this->m_bufferRecv = true;
     this->m_rcvdBuffer[this->m_numBuffs] = data;
     this->m_numBuffs++;
@@ -184,11 +186,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
     for (FwChanIdType packet = 0; packet < this->m_numBuffs; packet++) {
         // Look at packet descriptor for current packet
         this->m_rcvdBuffer[packet].resetDeser();
-        // first piece should be tlm packet descriptor
-        FwPacketDescriptorType desc;
-        stat = this->m_rcvdBuffer[packet].deserializeTo(desc);
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-        ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
+        // packet descriptor is now carried as a port argument, not in the buffer
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID

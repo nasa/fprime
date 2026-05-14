@@ -60,6 +60,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
     // -------- Attempt to extract APID from Payload --------
     ComCfg::FrameContext contextCopy = context;
+    bool descriptorExtracted = false;
     if (deserializer.getDeserializeSizeLeft() <
         FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
         // Not enough data to read a valid FwPacketDescriptor, emit event and skip attempting to read an APID
@@ -74,6 +75,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
             contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
         }
+        descriptorExtracted = true;
     }
 
     // ---------------- Validate Frame Trailer ----------------
@@ -100,10 +102,15 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
 
     // ---------------- Extract payload from frame ----------------
-    // Shift data pointer to effectively remove the header
-    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    // Shrink size to effectively remove the trailer (also removes the header)
-    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
+    // Shift data pointer to remove the header and (if extracted) the packet
+    // descriptor. When a valid descriptor was read, it has been extracted into
+    // contextCopy above and the downstream consumer receives a buffer that
+    // starts at the packet body proper. Otherwise (payload too short to contain
+    // a descriptor) we keep the original payload.
+    const FwSizeType descriptorBytes = descriptorExtracted ? sizeof(FwPacketDescriptorType) : 0;
+    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + descriptorBytes);
+    // Shrink size to remove header, descriptor (if extracted), and trailer.
+    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - descriptorBytes -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);

@@ -20,7 +20,7 @@ module Svc {
     async input port bufferReturn: Fw.BufferSend
 
     @ Buffer send output port
-    output port bufferSendOut: Fw.BufferSend
+    output port bufferSendOut: Svc.ComPacketSend
 
     @ Ping input port
     async input port pingIn: Svc.Ping

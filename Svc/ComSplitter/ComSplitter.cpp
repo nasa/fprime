@@ -21,7 +21,10 @@ ComSplitter ::~ComSplitter() {}
 // Handler implementations
 // ----------------------------------------------------------------------
 
-void ComSplitter ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void ComSplitter ::comIn_handler(FwIndexType portNum,
+                                 Fw::ComBuffer& data,
+                                 const ComCfg::Apid& packetType,
+                                 U32 context) {
     FW_ASSERT(portNum == 0);
 
     FwIndexType numPorts = getNum_comOut_OutputPorts();
@@ -31,7 +34,7 @@ void ComSplitter ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
         if (isConnected_comOut_OutputPort(i)) {
             // Need to make a copy because we are passing by reference!:
             Fw::ComBuffer dataToSend = data;
-            comOut_out(i, dataToSend, 0);
+            comOut_out(i, dataToSend, packetType, context);
         }
     }
 }

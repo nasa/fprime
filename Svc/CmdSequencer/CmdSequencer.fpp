@@ -83,7 +83,7 @@ module Svc {
     async input port seqDispatchIn: Svc.FileDispatch
 
     @ Port for sending sequence commands
-    output port comCmdOut: Fw.Com
+    output port comCmdOut: Svc.ComBufferSend
 
     @ Schedule in port
     async input port schedIn: Svc.Sched

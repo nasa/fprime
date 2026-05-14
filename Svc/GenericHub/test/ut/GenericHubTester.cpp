@@ -153,12 +153,12 @@ void GenericHubTester ::test_command_dispatch() {
     clearFromPortHistory();
     random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
 
-    invoke_to_cmdDispIn(0, buffer, 279);
+    invoke_to_cmdDispIn(0, buffer, ComCfg::Apid::FW_PACKET_COMMAND, 279);
 
     // **must** return buffer
     ASSERT_from_fromBufferDriverReturn_SIZE(1);
     ASSERT_from_cmdDispOut_SIZE(1);
-    ASSERT_from_cmdDispOut(0, buffer, 279);
+    ASSERT_from_cmdDispOut(0, buffer, ComCfg::Apid::FW_PACKET_COMMAND, 279);
     clearFromPortHistory();
 }
 

@@ -69,7 +69,7 @@ void CmdSequencerTester ::executeCommand1(const char* const fileName) {
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 0, 1);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Send status back
     this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
     this->clearAndDispatch();
@@ -88,7 +88,7 @@ void CmdSequencerTester ::executeCommand2(const char* const fileName) {
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 2, 3);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Send status back
     this->invoke_to_cmdResponseIn(0, 2, 0, Fw::CmdResponse::OK);
     this->clearAndDispatch();
@@ -115,7 +115,7 @@ void CmdSequencerTester ::executeCommand3(const char* const fileName) {
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 4, 5);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Send status back
     this->invoke_to_cmdResponseIn(0, 4, 0, Fw::CmdResponse::OK);
     this->clearAndDispatch();
@@ -136,7 +136,7 @@ void CmdSequencerTester ::executeCommand4(const char* const fileName) {
     Fw::ComBuffer comBuff;
     CommandBuffers::create(comBuff, 6, 7);
     ASSERT_from_comCmdOut_SIZE(1);
-    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_from_comCmdOut(0, comBuff, ComCfg::Apid::FW_PACKET_COMMAND, 0U);
     // Send status back
     this->invoke_to_cmdResponseIn(0, 6, 0, Fw::CmdResponse::OK);
     this->clearAndDispatch();
