@@ -64,8 +64,9 @@ void GenericHub ::cmdDispIn_handler(FwIndexType portNum,
                                     const ComCfg::Apid& packetType,
                                     U32 context) {
     Fw::SerializeStatus status;
-    // Buffer to send and a buffer used to write to it
-    U8 buffer[Fw::ComBuffer::SERIALIZED_SIZE];
+    // Buffer sized for: payload (no length prefix; OMIT_LENGTH) + APID + context word.
+    // The receiver in fromBufferDriver_handler decodes the same layout.
+    U8 buffer[FW_COM_BUFFER_MAX_SIZE + ComCfg::Apid::SERIALIZED_SIZE + sizeof(U32)];
 
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
