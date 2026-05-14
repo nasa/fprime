@@ -105,7 +105,6 @@ class AosDeframer : public AosDeframerComponentBase {
     void abandonSpanningPacket(AosDeframerVc& vc);
 
     //! Drop a spanning packet and compute how far to seek past it in the current data block.
-    //! Caller must emit the appropriate warning event before calling.
     //! \param vc The virtual channel state
     //! \param packetSize Declared total size of the rejected packet (header + body)
     //! \param seekForward Bytes already consumed in the current data block before this packet

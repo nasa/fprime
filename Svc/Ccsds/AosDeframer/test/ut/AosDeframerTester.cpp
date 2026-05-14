@@ -475,13 +475,8 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     this->configureDefault();
 
     U8 payload[64] = {};
-    // Start an EPP packet whose declared total size exceeds the framework
-    // default maxPacketSize (Svc::Ccsds::SpacePacketMaxLength = 65542). With
-    // the deframer's bounds check on the wire-read packet size in place, the
-    // packet is rejected up front via the OversizedPacket event before any
-    // allocation is attempted. We use a 4-byte EPP length field (Four = 0b11)
-    // so the encoded total can exceed 65542 (a 2-byte length field is limited
-    // to 65539 bytes total, which is below the default cap).
+    // EPP packet declaring a total size above the default maxPacketSize, expected
+    // to trip OversizedPacket before any allocation.
     payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
     payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
     payload[0] |= 0x03 & EPPSubfields::lengthOfLengthMask;  // lengthOfLength = Four (0b11 = 4 bytes)
