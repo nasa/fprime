@@ -5,7 +5,7 @@ Every reviewer agent must classify each finding as either:
 - **Introduced by this PR** (line added or modified, OR a new caller
   added by the PR widens reachability) → eligible for `**must fix**` /
   `**suggestion**` / `**could fix**` per `triage-classifier.skill.md`.
-- **Pre-existing** (the PR did not introduce or widen the offending
+- **Preexisting** (the PR did not introduce or widen the offending
   behavior) → must be tagged `**future work**`, never blocking.
 
 This skill defines the test.
@@ -30,7 +30,7 @@ Apply in order:
    PR widened the set of execution paths that hit the line.
 
 3. **The offending line is unchanged AND no new caller exists.**
-   The finding is **pre-existing** → `**future work**`.
+   The finding is **preexisting** → `**future work**`.
 
 Rules 1 and 2 are sufficient conditions for "introduced". Rule 3 is
 the negative case.
@@ -60,7 +60,7 @@ treats this as **introduced** and additionally appends a
 maintainer-ping per `maintainer-lookup.skill.md`.
 
 When in doubt, prefer **introduced**. The cost of a false positive
-(flagging a pre-existing issue as introduced) is small — the
+(flagging a preexisting issue as introduced) is small — the
 contributor pushes back, the agent escalates to a maintainer per the
 disagreement-handling flow in the review contract §11. The cost of a
 false negative (missing a regression because the agent classified it
@@ -74,7 +74,7 @@ If the offending line lives in a file not in the PR diff:
 
 - It can still be **introduced** under rule 2 (new caller from
   another file).
-- Otherwise it is **pre-existing**.
+- Otherwise it is **preexisting**.
 
 The agent does not flag completely-untouched, never-newly-reached
 behavior unless its scope explicitly covers latent issues (most
@@ -112,7 +112,7 @@ though the offending body is unchanged, the PR widened its reach.
 The PR refactors a different component. The agent walks the codebase
 and finds a ground-reachable assert in a third component. The
 offending line is unchanged and no caller is added by the PR.
-**Pre-existing.** Tag `**future work**`.
+**Preexisting.** Tag `**future work**`.
 
 ### Example D — modification, not addition
 
@@ -157,5 +157,5 @@ grep.
 ## 6. One-line summary
 
 `added/modified line ⇒ introduced; new caller in diff that widens
-reach to the offending line ⇒ introduced; otherwise pre-existing →
+reach to the offending line ⇒ introduced; otherwise preexisting →
 future work. When in doubt, prefer introduced and ping a maintainer.`

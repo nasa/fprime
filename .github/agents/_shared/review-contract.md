@@ -18,7 +18,7 @@ Each inline comment starts with exactly one bolded tag:
 | `**must fix**` | New, in-scope problem this PR introduced (or widened). | Yes |
 | `**suggestion**` | Non-blocking, in-scope improvement with a concrete fix. MUST include a fenced ` ```suggestion ` block. | No |
 | `**could fix**` | Minor, in-scope issue worth fixing but not severity-worthy enough for the suggestion tier. | No |
-| `**future work**` | Pre-existing in-scope issue the PR touches but did not introduce or widen. | No |
+| `**future work**` | Preexisting in-scope issue the PR touches but did not introduce or widen. | No |
 
 **Suggestion-block usage is decoupled from the tag.** A fenced
 ` ```suggestion ` block may be attached to `must fix`, `suggestion`, OR
@@ -104,7 +104,7 @@ Lives in `skills/pr-diff-scoping.skill.md`. Summary:
 2. Offending line is unchanged, but a new caller added by the PR widens
    its reach → introduced.
 3. Offending line is unchanged and reachable only by paths that
-   existed before → pre-existing → `**future work**` (never
+   existed before → preexisting → `**future work**` (never
    `**must fix**`).
 
 ---

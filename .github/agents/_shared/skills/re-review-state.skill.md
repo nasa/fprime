@@ -259,7 +259,7 @@ If the prior commits the agent reviewed are no longer in the PR
 history, the GitHub comments are likely orphaned (their line
 positions are no longer valid). The agent treats every prior comment
 as if its `finding-key` is absent from `current_keys` ONLY if
-GitHub's response indicates the comment is on a non-existent commit;
+GitHub's response indicates the comment is on a nonexistent commit;
 otherwise the comments are still attached to the rewritten history
 and the normal flow applies.
 

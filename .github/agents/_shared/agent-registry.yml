@@ -61,7 +61,7 @@ agents:
       section, outstanding must-fix bullets, and a since-last-run
       delta table.
 
-  # The pre-existing C/C++ code review agent. Kept registered for
+  # The preexisting C/C++ code review agent. Kept registered for
   # reference; the multi-agent review flow does not invoke it. The
   # orchestrator's `role: reviewer` iteration skips entries with
   # `invoked_by_orchestrator: false`.
@@ -72,7 +72,7 @@ agents:
     invocable_by_humans: true
     invoked_by_orchestrator: false
     notes: >
-      Pre-existing C/C++ code review agent. After the surgical edit
+      Preexisting C/C++ code review agent. After the surgical edit
       that removed its runner-safety and supply-chain bullets, this
       agent focuses on C/C++ rules 1-30 and prompt-injection rule 32.
       The multi-agent review flow does not currently invoke it; it

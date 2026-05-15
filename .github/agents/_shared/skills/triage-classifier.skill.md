@@ -22,7 +22,7 @@ finding is in-scope; this skill picks the tag.
                           ▼                     ▼
                   ╔═══════════════╗     ┌──────────────────────┐
                   ║ future work   ║     │ How severe is the    │
-                  ║ (pre-existing)║     │ behavior?            │
+                  ║ (preexisting)║     │ behavior?            │
                   ╚═══════════════╝     └─────────┬────────────┘
                                                   │
                                                   ▼
@@ -191,13 +191,13 @@ impact.
 **Tag:** `**could fix**`. Suggestion block optional (probably
 attached, since the fix is trivial).
 
-### Example D: pre-existing latent issue (future work)
+### Example D: preexisting latent issue (future work)
 
 The PR refactors a function but does not touch a separate assert that
 the agent thinks is reachable by ground input. The assert was there
 before the PR and the PR did not add a new caller.
 
-- Pre-existing.
+- Preexisting.
 - The PR neither introduced nor widened it.
 
 **Tag:** `**future work**`. No suggestion block. Mention in the
@@ -221,6 +221,6 @@ component's lifecycle contract is, which the agent can't infer.
 ## 6. One-line summary
 
 `introduced ↦ severity-driven (must fix / suggestion / could fix);
-pre-existing ↦ future work; no defaulting; suggestion blocks are
+preexisting ↦ future work; no defaulting; suggestion blocks are
 orthogonal to tags; low confidence → ping the maintainer at the
 tagged severity, never below.`

@@ -21,7 +21,7 @@ and the shared skills.
 
 You flag findings that fit one of these eight categories. The
 "introduced by this PR" test (`_shared/skills/pr-diff-scoping.skill.md`)
-applies to all eight; pre-existing instances become `**future work**`.
+applies to all eight; preexisting instances become `**future work**`.
 
 ### 1. Ground-reachable asserts (DoS)
 
@@ -136,7 +136,7 @@ For each touched file in the PR diff:
    `_shared/skills/ci-test-run-nefariousness.skill.md`. Category 8.
 
 For each finding, classify the offending behavior as introduced or
-pre-existing per `_shared/skills/pr-diff-scoping.skill.md`, then
+preexisting per `_shared/skills/pr-diff-scoping.skill.md`, then
 triage per `_shared/skills/triage-classifier.skill.md`, then format
 the comment per the review contract §9.
 
