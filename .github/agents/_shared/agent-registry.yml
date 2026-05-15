@@ -46,6 +46,66 @@ agents:
       changes, generators, container images, runner-safety surfaces,
       and prompt-injection fingerprints.
 
+  - name: F Prime C/C++ Design Reviewer
+    short_name: fprime-code-review
+    role: reviewer
+    path: .github/agents/fprime-code-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      C/C++ design-rule conformance (CPP-1 through CPP-27 in
+      `_shared/skills/fprime-cpp-design.skill.md`): no dynamic memory
+      post-init, Fw::Buffer ownership, FW_ASSERT scope, C++14
+      language subset, F Prime type idioms (Fw::String,
+      Fw/DataStructures, FPP modeled types on ground-facing
+      interfaces), and JPL / style-guide conformance. Does not
+      contribute to CI safety.
+
+  - name: F Prime Stale Documentation Reviewer
+    short_name: stale-documentation-review
+    role: reviewer
+    path: .github/agents/stale-documentation-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Eight categories: component SDDs (`*/docs/sdd.md`), user manual
+      (`docs/user-manual/`), how-to guides (`docs/how-to/`),
+      reference catalogs (`docs/reference/`), tutorials
+      (`docs/tutorials/`, plus external `fprime-community/*`),
+      top-level project docs (README / INSTALL / CONTRIBUTING),
+      public-API Doxygen comments, and missing-doc-for-new-surface.
+      Does not contribute to CI safety.
+
+  - name: F Prime Design Reviewer
+    short_name: design-review
+    role: reviewer
+    path: .github/agents/design-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Five design categories — design-vs-intent mismatch, code-vs-
+      design mismatch, F Prime pattern violations, scope creep /
+      under-scoped, FPP-vs-C++ divergence — plus the special
+      `design-needs-human-adjudication` finding class that always
+      pings code owners (README maintainer table + git-log
+      approvers) when the PR's design should be settled by a human
+      before deeper review is worthwhile. Does not contribute to CI
+      safety.
+
+  - name: F Prime Test Quality Reviewer
+    short_name: test-quality-review
+    role: reviewer
+    path: .github/agents/test-quality-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Ten test categories: missing tests for newly-added FPP
+      surface, stale tests on modified FPP elements, invocations
+      without assertions, missing doDispatch() on async paths,
+      tautological assertions, count-only assertions without
+      payload check, newly-introduced weakening (DISABLED_,
+      GTEST_SKIP, removed asserts), missing failure-path coverage
+      on new commands, multi-instance ports tested only at index 0,
+      and missing throttle / update-on-change verification. Draws
+      on the proposal at nasa/fprime#5160. Does not contribute to
+      CI safety.
+
   - name: F Prime PR Review Summary Aggregator
     short_name: review-summary
     role: aggregator
@@ -58,20 +118,3 @@ agents:
       verdict, merge readiness verdict, optional Recommend Close
       section, outstanding must-fix bullets, and a since-last-run
       delta table.
-
-  # The preexisting C/C++ code review agent. Kept registered for
-  # reference; the multi-agent review flow does not invoke it. The
-  # orchestrator's `role: reviewer` iteration skips entries with
-  # `invoked_by_orchestrator: false`.
-  - name: F Prime Code Review Expert
-    short_name: fprime-code-review
-    role: reviewer
-    path: .github/agents/fprime-code-review.agent.md
-    invocable_by_humans: true
-    invoked_by_orchestrator: false
-    notes: >
-      Preexisting C/C++ code review agent. After the surgical edit
-      that removed its runner-safety and supply-chain bullets, this
-      agent focuses on C/C++ rules 1-30 and prompt-injection rule 31.
-      The multi-agent review flow does not currently invoke it; it
-      remains available for direct human invocation.

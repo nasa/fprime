@@ -1,5 +1,5 @@
 ---
-description: "Entry point for the F Prime multi-agent PR review. Invokes the security reviewer and the supply-chain / runner-safety reviewer in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
+description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, and test-quality reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
 name: "F Prime PR Review Orchestrator"
 tools: [read, search]
 user-invocable: true
@@ -37,6 +37,15 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    set is exactly:
    - `security-review` (`security-review.agent.md`)
    - `supply-chain-review` (`supply-chain-review.agent.md`)
+   - `fprime-code-review` (`fprime-code-review.agent.md`)
+   - `stale-documentation-review` (`stale-documentation-review.agent.md`)
+   - `design-review` (`design-review.agent.md`)
+   - `test-quality-review` (`test-quality-review.agent.md`)
+
+   Invoke them in the order listed above. Security and supply-chain
+   come first because they are the two CI-safety contributors
+   (`contributes_to_ci_safety: true` in the registry); the remaining
+   four are merge-readiness contributors only and run after.
 2. Compute the run ordinal for each reviewer by counting prior
    summary reviews on PR `#N` whose HTML marker matches that
    reviewer's name. The orchestrator's count is independent per
@@ -108,6 +117,88 @@ Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
 ```
 
+### Template — F Prime C/C++ Design reviewer
+
+```
+Thanks for taking this on. You're the F Prime C/C++ Design
+Reviewer. Please run a full C/C++ design-rule review of PR #<N>
+in <owner>/<repo> at head <sha>. This is run
+#<fprime-code-review-run-ordinal> of your reviews on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from `fprime-code-review.agent.md`
+and the rule set in `_shared/skills/fprime-cpp-design.skill.md`.
+Post inline review comments and your per-agent summary review per
+the contract.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
+### Template — stale-documentation reviewer
+
+```
+Thanks for taking this on. You're the F Prime Stale Documentation
+Reviewer. Please run a full documentation-currency review of PR
+#<N> in <owner>/<repo> at head <sha>. This is run
+#<stale-documentation-review-run-ordinal> of your reviews on this
+PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from
+`stale-documentation-review.agent.md`. Reason about which doc
+surfaces (component SDDs, user manual, how-tos, reference,
+tutorials, top-level docs, public-API comments) the PR's changes
+impact, then post inline review comments anchored on the doc files
+that need updating, plus your per-agent summary review.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
+### Template — design reviewer
+
+```
+Thanks for taking this on. You're the F Prime Design Reviewer.
+Please run a full design-fit review of PR #<N> in <owner>/<repo>
+at head <sha>. This is run #<design-review-run-ordinal> of your
+reviews on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from `design-review.agent.md`.
+Read the PR description, any linked issues, the FPP / topology /
+SDD baseline, and the diff; answer (1) is the design reasonable
+given the stated intent, (2) does the code match the design, (3)
+does the design match the intent. When a human design-owner
+should intervene before deeper review is worthwhile, emit a
+`design-needs-human-adjudication` finding and ping code owners per
+your agent file. Post inline review comments and your per-agent
+summary review per the contract.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
+### Template — test-quality reviewer
+
+```
+Thanks for taking this on. You're the F Prime Test Quality
+Reviewer. Please run a full test-quality review of PR #<N> in
+<owner>/<repo> at head <sha>. This is run
+#<test-quality-review-run-ordinal> of your reviews on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from `test-quality-review.agent.md`.
+Determine whether new / modified FPP surface has corresponding
+test references, and whether the tests that exist actually assert
+observable behavior (vs. passing by construction). Post inline
+review comments and your per-agent summary review per the
+contract.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
 ### Template — aggregator
 
 ```
@@ -119,14 +210,20 @@ PR comment per `review-summary.agent.md` and the contract.
 Per-reviewer status from this run:
 - security-review: <completed | FAILED: <reason>>
 - supply-chain-review: <completed | FAILED: <reason>>
+- fprime-code-review: <completed | FAILED: <reason>>
+- stale-documentation-review: <completed | FAILED: <reason>>
+- design-review: <completed | FAILED: <reason>>
+- test-quality-review: <completed | FAILED: <reason>>
 
 This is run #<aggregator-run-ordinal> of your aggregations on this
 PR.
 
 Render FAILED reviewers as ERROR rows in the per-agent results
 table per contract / review-summary.agent.md §5. Force `CI safety:
-No-Go` and `Merge readiness: No-Go` whenever a reviewer FAILED or
-did not run; no silent fallback.
+No-Go` and `Merge readiness: No-Go` whenever a CI-safety reviewer
+(security-review or supply-chain-review) FAILED or did not run;
+force `Merge readiness: No-Go` whenever any reviewer FAILED, did
+not run, or has outstanding must-fix findings. No silent fallback.
 
 Run the spam / garbage check per review-summary.agent.md §5e. If
 fired, emit Recommend: Close at the top of the summary, ping the

@@ -6,9 +6,7 @@ Every agent that participates in the multi-agent review flow — the
 orchestrator plus every `role: reviewer` or `role: aggregator` entry in
 `_shared/agent-registry.yml` whose `invoked_by_orchestrator` is not
 `false` — opens its body with "Apply the review contract in
-`_shared/review-contract.md`." and follows the rules below. The
-preexisting `fprime-code-review.agent.md` is registered for reference
-but is **not** part of this flow and is not bound by this contract.
+`_shared/review-contract.md`." and follows the rules below.
 
 If a per-agent file in the multi-agent flow disagrees with this
 contract, the contract wins.

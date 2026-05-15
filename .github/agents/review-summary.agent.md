@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent summary reviews on a PR (from the security and supply-chain reviewers) and emits ONE top-level PR comment with a combined results table, CI safety verdict, merge readiness verdict, outstanding must-fix bullets, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent summary reviews on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, and test-quality reviewers) and emits ONE top-level PR comment with a combined results table, CI safety verdict, merge readiness verdict, outstanding must-fix bullets, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -81,6 +81,10 @@ Reasoning:
 |---|---:|---:|---:|---:|---:|---:|
 | Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
 | Supply Chain / Runner Safety | 0 | 0 | 0 | 0 | 0 | 0 |
+| F Prime C/C++ Design | 2 | 1 | 0 | 0 | 0 | 0 |
+| Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
+| Design | 0 | 1 | 0 | 0 | 0 | 0 |
+| Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
 
 (omit this section on run #1)
 
@@ -90,12 +94,26 @@ Reasoning:
 |---|---:|---:|---:|---:|---:|---|
 | Security Vulnerabilities | 5 | 1 | 0 | 1 | 3 | No-Go |
 | Supply Chain / Runner Safety | 0 | 0 | 1 | 0 | 1 | Go |
-| **Totals** | 5 | 1 | 1 | 1 | 4 | **No-Go** |
+| F Prime C/C++ Design | 2 | 4 | 1 | 0 | 2 | No-Go |
+| Documentation Currency | 1 | 2 | 0 | 0 | 1 | No-Go |
+| Design | 1 | 0 | 0 | 0 | 1 | No-Go |
+| Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
+| **Totals** | 9 | 8 | 2 | 1 | 8 | **No-Go** |
 
 ### Outstanding must-fix items
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
 - ...
+
+**F Prime C/C++ Design**
+- <terse must-fix summary> — <link>
+
+**Documentation Currency**
+- <terse must-fix summary> — <link>
+
+**Design**
+- **Human design adjudication required.** See the `design-needs-human-adjudication` bullet below.
+- <terse must-fix summary> — <link>
 
 ### Merge readiness
 **Merge readiness: No-Go** — security agent has 3 outstanding must-fix items.
@@ -205,7 +223,11 @@ Example:
 |---|---:|---:|---:|---:|---:|---|
 | Security Vulnerabilities | 5 | 1 | 0 | 1 | 3 | No-Go |
 | Supply Chain / Runner Safety | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
-| **Totals** | 5 | 1 | 0 | 1 | 3 | **No-Go** |
+| F Prime C/C++ Design | 0 | 2 | 0 | 0 | 0 | Go |
+| Documentation Currency | 0 | 1 | 0 | 0 | 0 | Go |
+| Design | 0 | 0 | 0 | 0 | 0 | Go |
+| Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
+| **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
 ```
 
 The CI safety section additionally cites the failure on the relevant
