@@ -281,7 +281,7 @@ fptosi
 fptoui
 fptr
 fptrunc
-fputil
+FPUTIL
 fpy
 fpyc
 FPYSEQUENCER

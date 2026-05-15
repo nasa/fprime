@@ -15,6 +15,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
+permissions:
+  contents: read
+
 jobs:
   pip-install:
     runs-on: ${{ matrix.runner }}

@@ -145,18 +145,36 @@ Fw::Success FpySequencer::readHeader() {
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
-    // deser body:
-    // deser arg mappings
-    for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.get_header().get_argumentCount(); argMappingIdx++) {
-        // serializable register index of arg $argMappingIdx
-        // TODO should probably check that this serReg is inside range
-        deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_args()[argMappingIdx]);
-        if (deserStatus != Fw::FW_SERIALIZE_OK) {
+
+    const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
+    this->m_totalExpectedArgSize = 0;
+
+    // deser arguments
+    // Read and deserialize each arg_spec incrementally since they're variable-length
+    for (U8 i = 0; i < argumentCount; i++) {
+        Fpy::ArgSpec& argSpec = this->m_sequenceObj.get_args()[i];
+        deserStatus = this->m_sequenceBuffer.deserializeTo(argSpec);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
+
+        m_totalExpectedArgSize += argSpec.get_argSize();
+    }
+
+    // Check for overflow
+    if (m_totalExpectedArgSize > Fpy::MAX_STACK_SIZE) {
+        this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(m_totalExpectedArgSize);
+        return Fw::Success::FAILURE;
+    }
+
+    // Validate total argument size
+    if (this->m_totalExpectedArgSize != this->m_sequenceArgs.get_size()) {
+        this->log_WARNING_HI_ArgSizeMismatch(this->m_totalExpectedArgSize, this->m_sequenceArgs.get_size(),
+                                             this->m_sequenceFilePath);
+        return Fw::Success::FAILURE;
     }
 
     // deser statements

@@ -23,6 +23,9 @@ env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
   FPRIME_LOCATION: ./lib/fprime
 
+permissions:
+  contents: read
+
 jobs:
   get-branch:
     name: "Get target branch"

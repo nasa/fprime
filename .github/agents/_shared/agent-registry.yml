@@ -1,0 +1,77 @@
+# F Prime Multi-Agent PR Review — Agent Registry
+#
+# Authoritative list of the agents that participate in the multi-agent
+# PR review flow. The orchestrator iterates over `role: reviewer`
+# entries to drive reviewers, then invokes the `role: aggregator`
+# entry. The `role: orchestrator` entry is the single human entry
+# point.
+#
+# Adding a new reviewer agent in the future is a matter of adding a
+# new entry here with `role: reviewer` plus the agent file. No code
+# changes elsewhere are required.
+
+agents:
+
+  - name: F Prime PR Review Orchestrator
+    short_name: review-orchestrator
+    role: orchestrator
+    path: .github/agents/review-orchestrator.agent.md
+    invocable_by_humans: true
+    notes: >
+      Single human entry point. Drives the reviewer agents in
+      sequence, then the aggregator. Owns kickoff prompts (with the
+      orchestrator->agent thanks convention) and error handling.
+
+  - name: F Prime Security Vulnerability Reviewer
+    short_name: security-review
+    role: reviewer
+    path: .github/agents/security-review.agent.md
+    invocable_by_humans: true
+    contributes_to_ci_safety: true
+    scope_summary: >
+      Eight categories: ground-input asserts (DoS), ground-input
+      overflow (DDoS), ground-input validation gaps, the same three
+      for hardware inputs, general security vulnerabilities, and CI
+      test-runtime policy enforcement.
+
+  - name: F Prime Supply Chain / Runner Safety Reviewer
+    short_name: supply-chain-review
+    role: reviewer
+    path: .github/agents/supply-chain-review.agent.md
+    invocable_by_humans: true
+    contributes_to_ci_safety: true
+    scope_summary: >
+      Dependency manifests, third-party / vendored / submodule
+      changes, build/test infrastructure, workflow / action / script
+      changes, generators, container images, runner-safety surfaces,
+      and prompt-injection fingerprints.
+
+  - name: F Prime PR Review Summary Aggregator
+    short_name: review-summary
+    role: aggregator
+    path: .github/agents/review-summary.agent.md
+    invocable_by_humans: true
+    notes: >
+      Consumes per-agent summary reviews on the PR (matched by HTML
+      marker plus the orchestrator-provided status list) and posts
+      ONE top-level PR comment with the consolidated table, CI safety
+      verdict, merge readiness verdict, optional Recommend Close
+      section, outstanding must-fix bullets, and a since-last-run
+      delta table.
+
+  # The preexisting C/C++ code review agent. Kept registered for
+  # reference; the multi-agent review flow does not invoke it. The
+  # orchestrator's `role: reviewer` iteration skips entries with
+  # `invoked_by_orchestrator: false`.
+  - name: F Prime Code Review Expert
+    short_name: fprime-code-review
+    role: reviewer
+    path: .github/agents/fprime-code-review.agent.md
+    invocable_by_humans: true
+    invoked_by_orchestrator: false
+    notes: >
+      Preexisting C/C++ code review agent. After the surgical edit
+      that removed its runner-safety and supply-chain bullets, this
+      agent focuses on C/C++ rules 1-30 and prompt-injection rule 31.
+      The multi-agent review flow does not currently invoke it; it
+      remains available for direct human invocation.
