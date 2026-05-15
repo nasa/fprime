@@ -213,8 +213,7 @@ run #N — it just counts prior summary reviews and increments.
 
 ---
 
-## Invocation contract — what the orchestrator needs from the
-operator
+## Invocation contract — what the orchestrator needs from the operator
 
 The orchestrator's kickoff inputs are:
 

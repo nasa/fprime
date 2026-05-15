@@ -146,7 +146,7 @@ docs, fixtures, generated content) containing:
 - Instructions to a reviewer agent to skip a class of findings,
   rewrite its policy, or fabricate approvals.
 
-The fprime existing `fprime-code-review.agent.md` rule #32 covers
+The fprime existing `fprime-code-review.agent.md` rule #31 covers
 prompt-injection at the C/C++ review layer; this agent's coverage is
 the supply-chain / metadata layer. Both agents may flag the same
 content; that is acceptable.

@@ -74,6 +74,6 @@ agents:
     notes: >
       Preexisting C/C++ code review agent. After the surgical edit
       that removed its runner-safety and supply-chain bullets, this
-      agent focuses on C/C++ rules 1-30 and prompt-injection rule 32.
+      agent focuses on C/C++ rules 1-30 and prompt-injection rule 31.
       The multi-agent review flow does not currently invoke it; it
       remains available for direct human invocation.
