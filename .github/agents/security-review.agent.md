@@ -149,8 +149,9 @@ the comment per the review contract §9.
 - Supply-chain review of dependencies, workflows, actions, vendored
   / submodule changes — handled by `supply-chain-review.agent.md`.
 - SDD / documentation completeness — handled by
-  `fprime-code-review.agent.md`.
-- Generic test coverage — handled by `fprime-code-review.agent.md`.
+  `stale-documentation-review.agent.md`.
+- Generic test coverage and test substance — handled by
+  `test-quality-review.agent.md`.
 
 The security agent's flagging of category-8 findings on the CI
 test-run path is a complement to the supply-chain agent's
