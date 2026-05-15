@@ -311,7 +311,7 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 ### Maintainer ping
 
 `Recommend: Close` is a high-stakes call; ping maintainers per
-`_shared/skills/maintainer-lookup.skill.md` (steps 1, 3, 4, 5) so a
+`_shared/skills/maintainer-lookup.skill.md` (steps 1, 3, 4) so a
 human decides whether to close or hold for discussion. This ping is
 always posted (not gated on confidence) because the close decision
 is human territory.

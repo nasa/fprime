@@ -135,9 +135,8 @@ in each agent's `.agent.md`):
       product (`F Prime → @LeStarch, @thomas-bc`).
    2. Security agent additionally consults "Role / Team Member" →
       `Security Overseer @bitWarrior`.
-   3. `.github/CODEOWNERS` if present (fprime has none today).
-   4. `git log` recent approvers on the touched path.
-   5. Fallback: `@LeStarch, @thomas-bc`.
+   3. `git log` recent approvers on the touched path.
+   4. Fallback: `@LeStarch, @thomas-bc`.
 
 A maintainer ping is required on every low-confidence finding. The tag
 itself is never downgraded by the ping; the ping is additive.
@@ -430,7 +429,7 @@ is the whole point.
 1. **Reply once** on the thread using the disagreement-escalation
    reply shape (§9). One reply, no further back-and-forth.
 2. **Tag the code owner / maintainer** via
-   `skills/maintainer-lookup.skill.md` (same 5-step lookup as §4).
+   `skills/maintainer-lookup.skill.md` (same 4-step lookup as §4).
 3. **Do not resolve the thread.** Leave it open for the maintainer.
 4. **Increment `disagreements escalated`** in the per-agent summary's
    Since-last-run counter (§7 phase D).
