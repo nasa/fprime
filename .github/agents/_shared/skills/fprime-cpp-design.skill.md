@@ -472,7 +472,7 @@ from scratch for every finding.
   when a concrete fix is expressible. The external references are
   authoritative for the specific clause — cite the section.
 
-### Pre-existing violations
+### Preexisting violations
 
 Any rule violation that the PR did not introduce or widen (per
 `_shared/skills/pr-diff-scoping.skill.md`) is `**future work**`,

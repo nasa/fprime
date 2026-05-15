@@ -52,7 +52,7 @@ catching the same issues pre-submit.
 ## Scope — ten categories
 
 The "introduced by this PR" test (`_shared/skills/pr-diff-scoping.skill.md`)
-applies to all ten categories; pre-existing test weaknesses become
+applies to all ten categories; preexisting test weaknesses become
 `**future work**`.
 
 ### 1. Missing test for newly-added FPP surface

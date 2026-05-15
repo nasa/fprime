@@ -23,7 +23,7 @@ You reason about **where in the F Prime documentation surface a code
 change would create staleness or a documentation gap**, then flag the
 specific files / sections that need to be updated in this PR or
 explicitly deferred. The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies: pre-existing
+(`_shared/skills/pr-diff-scoping.skill.md`) applies: preexisting
 staleness becomes `**future work**`.
 
 The documentation surfaces you cover, in priority order:
