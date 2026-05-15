@@ -10,8 +10,6 @@
 # new entry here with `role: reviewer` plus the agent file. No code
 # changes elsewhere are required.
 
-version: 1
-
 agents:
 
   - name: F Prime PR Review Orchestrator
@@ -34,7 +32,7 @@ agents:
       Eight categories: ground-input asserts (DoS), ground-input
       overflow (DDoS), ground-input validation gaps, the same three
       for hardware inputs, general security vulnerabilities, and CI
-      test-run nefariousness.
+      test-runtime policy enforcement.
 
   - name: F Prime Supply Chain / Runner Safety Reviewer
     short_name: supply-chain-review

@@ -1,3 +1,8 @@
+---
+name: triage-classifier
+description: Use when picking one of the four review triage tags (must fix, suggestion, could fix, future work) for a finding, including the suggestion-block-versus-tag decoupling rule.
+---
+
 # Skill: Triage a finding into one of the four tags
 
 Every inline comment posted by an F Prime review agent starts with

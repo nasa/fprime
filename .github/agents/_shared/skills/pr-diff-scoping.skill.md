@@ -1,3 +1,8 @@
+---
+name: pr-diff-scoping
+description: Use when determining whether a finding was introduced by the current PR (must-fix candidate) or is preexisting and unrelated (future-work candidate).
+---
+
 # Skill: Decide whether a finding is "introduced by this PR"
 
 Every reviewer agent must classify each finding as either:
@@ -44,9 +49,9 @@ A new caller exists when ANY of the following is true on the PR diff:
 - A `+` line in another file contains a direct call site of the
   enclosing symbol (function call, port invocation, command
   dispatch, port connection in a topology).
-- A `+` line modifies a topology file (`.fpp`, `Topology.fpp`,
-  `*Topology*.cpp`) to wire a port to a component / handler whose
-  body contains the offending line.
+- A `+` line modifies a topology file (`topology.fpp`,
+  `instances.fpp`, `*Topology.cpp`) to wire a port to a component /
+  handler whose body contains the offending line.
 - A `+` line registers a new command dispatch, parameter handler,
   event handler, or telemetry channel that reaches the offending
   line.

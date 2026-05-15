@@ -1,3 +1,8 @@
+---
+name: re-review-state
+description: Use when re-running a review on a PR that already has prior comments; computes stable finding-keys and decides per finding whether to do nothing, reply-fixed and resolve, escalate as improperly resolved, escalate as a disagreement, or post an incorrect-fix follow-up.
+---
+
 # Skill: Re-review state (phases A–D, finding-keys, decision table)
 
 This skill is the procedural mechanics of how a reviewer agent

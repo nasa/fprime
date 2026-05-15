@@ -271,9 +271,9 @@ closing line (§5f) is still rendered.
    any outstanding finding (any tier — must fix / suggestion /
    could fix) whose finding-class is `prompt-injection`. Even a
    single suspected injection is a strong spam signal.
-2. **CI-test-run nefariousness with must-fix severity.** The
-   security agent reports any outstanding category-8 (`ci-test-run-
-   nefariousness` finding-class) `**must fix**`.
+2. **CI test-runtime policy violation with must-fix severity.** The
+   security agent reports any outstanding category-8
+   (`ci-test-runtime-policy-violation` finding-class) `**must fix**`.
 3. **Two or more "soft" indicators all true:**
    a. Supply-chain reports a new dependency flagged as a likely
       typo-squat or with unverified provenance, at any tier

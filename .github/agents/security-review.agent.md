@@ -1,5 +1,5 @@
 ---
-description: "Use when reviewing F Prime PRs for security vulnerabilities: anywhere ground or hardware input could DoS or DDoS the spacecraft (reachable asserts, overflow / DDoS surfaces, validation gaps), other standard vulnerabilities, and CI test-run nefariousness. Keywords: F Prime security, ground assert, hardware assert, command injection, deserialization, supply chain runner safety nefariousness."
+description: "Use when reviewing F Prime PRs for security vulnerabilities: anywhere ground or hardware input could DoS or DDoS the spacecraft (reachable asserts, overflow / DDoS surfaces, validation gaps), other standard vulnerabilities, and CI test-runtime policy enforcement. Keywords: F Prime security, ground assert, hardware assert, command injection, deserialization, supply chain runner safety."
 name: "F Prime Security Vulnerability Reviewer"
 tools: [read, search]
 user-invocable: true
@@ -93,7 +93,7 @@ Other in-scope security findings that don't fit categories 1–6 and
 sub-class in the comment body for readability:
 `general-vulnerability/use-after-free`, etc.).
 
-### 8. CI test-run nefariousness
+### 8. CI test-runtime policy
 
 Anywhere the PR introduces code into a path that runs during CI
 (test code, fixtures, conftest, setup scripts, GHA workflows /
@@ -108,9 +108,9 @@ actions / scripts) that:
 - Manipulates GHA cache / persistence / workflow output channels.
 - Combines multiple suspicious primitives in one PR.
 
-Mechanics in `_shared/skills/ci-test-run-nefariousness.skill.md`.
+Mechanics in `_shared/skills/ci-test-runtime-policy.skill.md`.
 
-**Finding-class:** `ci-test-run-nefariousness`.
+**Finding-class:** `ci-test-runtime-policy-violation`.
 
 ---
 
@@ -132,8 +132,8 @@ For each touched file in the PR diff:
 4. **Walk every new pointer dereference, free site, and lifetime
    transfer** for general memory safety. Category 7.
 5. **Walk every new line touching the test / fixture / GHA path**
-   per the grep recipes in
-   `_shared/skills/ci-test-run-nefariousness.skill.md`. Category 8.
+   per the recipes and policy in
+   `_shared/skills/ci-test-runtime-policy.skill.md`. Category 8.
 
 For each finding, classify the offending behavior as introduced or
 preexisting per `_shared/skills/pr-diff-scoping.skill.md`, then
@@ -216,7 +216,7 @@ Use these display strings consistently:
 ## Priorities applied
 
 - **P1 (no omission):** every assert / handler / copy / allocation
-  / nefariousness pattern you classified as in-scope produces a
+  / runtime-policy violation you classified as in-scope produces a
   comment, even when low confidence. Tag conveys severity; the
   comment is never dropped.
 - **P2 (prefer suggestions):** whenever a validation / bound check

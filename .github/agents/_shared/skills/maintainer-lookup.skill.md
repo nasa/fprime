@@ -1,3 +1,8 @@
+---
+name: maintainer-lookup
+description: Use when an agent needs to ping the right maintainer for a finding (low-confidence finding, improper resolution, disagreement escalation, or recommend-close).
+---
+
 # Skill: Maintainer lookup (whom to ping)
 
 Every F Prime review agent that needs to escalate a finding —
@@ -12,7 +17,7 @@ themselves (the wording varies by trigger).
 
 ---
 
-## 1. Five-step resolution
+## 1. Four-step resolution
 
 Apply in order; stop at the first step that yields at least one
 handle. Always include the fallback as a safety net unless the
@@ -47,16 +52,7 @@ entry to the maintainer list. For `fprime` this is `@bitWarrior`.
 
 Non-security agents skip this step.
 
-### Step 3 — `.github/CODEOWNERS`
-
-If `.github/CODEOWNERS` exists in the repo, parse it for any pattern
-that matches the touched file path. Add the listed handles.
-
-As of the v1 deployment, `fprime` does not have a `CODEOWNERS` file.
-This step is a no-op until one is added; the skill should not fail
-when the file is absent.
-
-### Step 4 — `git log` recent approvers
+### Step 3 — `git log` recent approvers
 
 ```bash
 git log --merges --first-parent -n 20 \
@@ -72,9 +68,9 @@ Add these handles to the list.
 This step is best-effort; when grepping the log produces no clear
 handles, skip.
 
-### Step 5 — Fallback
+### Step 4 — Fallback
 
-If none of steps 1–4 yielded a single handle, return the project
+If none of steps 1–3 yielded a single handle, return the project
 fallback set:
 
 ```
@@ -102,10 +98,10 @@ Callers format the `cc` line according to the trigger:
 ## 3. De-duplication
 
 If the same maintainer is returned by multiple steps (e.g., README
-and CODEOWNERS both list `@LeStarch`), include them once.
+and git-log both list `@LeStarch`), include them once.
 
 Order the handles by the order steps yielded them (README first,
-then CODEOWNERS, then git-log).
+then Security Overseer where applicable, then git-log).
 
 ---
 
@@ -113,11 +109,10 @@ then CODEOWNERS, then git-log).
 
 1. Step 1: `README.md` → `@LeStarch, @thomas-bc`.
 2. Step 2: Security Overseer → `@bitWarrior`.
-3. Step 3: `.github/CODEOWNERS` absent → skip.
-4. Step 4: `git log -- Svc/CmdDispatcher/CmdDispatcher.cpp` →
+3. Step 3: `git log -- Svc/CmdDispatcher/CmdDispatcher.cpp` →
    suppose the recent merges are by `@thomas-bc` (already in list)
    and `@SterlingPeet`. Add `@SterlingPeet`.
-5. Returned list: `[@LeStarch, @thomas-bc, @bitWarrior,
+4. Returned list: `[@LeStarch, @thomas-bc, @bitWarrior,
    @SterlingPeet]`.
 
 Caller formats:
@@ -137,15 +132,14 @@ preserved.
 
 1. Step 1: `README.md` → `@LeStarch, @thomas-bc`.
 2. Step 2: Supply-chain is not the security agent → skip.
-3. Step 3: `.github/CODEOWNERS` absent → skip.
-4. Step 4: `git log -- .github/workflows/cmake-test.yml` → recent
+3. Step 3: `git log -- .github/workflows/cmake-test.yml` → recent
    approvers are `@thomas-bc` (already in list) and `@kevin-f-ortega`.
-5. Returned list: `[@LeStarch, @thomas-bc, @kevin-f-ortega]`.
+4. Returned list: `[@LeStarch, @thomas-bc, @kevin-f-ortega]`.
 
 ---
 
 ## 6. One-line summary
 
 `README "Core Maintainer(s)" first → +Security Overseer for security
-agent → CODEOWNERS if present → recent merge approvers from git log →
+agent → recent merge approvers from git log →
 fallback @LeStarch, @thomas-bc. De-duplicate, preserve order.`

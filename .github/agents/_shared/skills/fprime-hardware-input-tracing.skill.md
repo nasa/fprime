@@ -1,3 +1,8 @@
+---
+name: fprime-hardware-input-tracing
+description: Use when tracing a value in F Prime code back to determine whether it originates from hardware input (driver receive paths, hardware registers, interrupt context, or POSIX/Linux device reads).
+---
+
 # Skill: Trace a value back to determine if it is hardware-controlled
 
 Counterpart to `fprime-ground-input-tracing.skill.md`. The security

@@ -1,3 +1,8 @@
+---
+name: fprime-ground-input-tracing
+description: Use when tracing a value in F Prime code back to determine whether it originates from ground input (commands, parameters, uplink, telemetry filters, file uplink, or any uplink-stack component).
+---
+
 # Skill: Trace a value back to determine if it is ground-controlled
 
 The security agent flags asserts, overflow paths, and validation
@@ -34,6 +39,11 @@ The following F Prime constructs receive ground input directly:
 | **Telemetry filter / packet selection** | `Svc::TlmPacketizer`, `Svc::ComLogger` configurations that ground can influence. |
 | **Cmd opcodes / sequencing** | `Svc::CmdDispatcher` dispatch path; opcode is ground-controlled, dispatch args inherit. |
 | **Async input ports labeled "from ground" in the topology** | Any `async input port` wired in the topology from a ground-facing component (CmdDispatcher, ComQueue, FileUplink, etc.). |
+| **Deframer / framing layer** | `Svc::Deframer` and any `*Deframer`-suffix component; the deframed buffer originates from the uplink byte stream and is ground-controlled. |
+| **Router** | `Svc::Router`, `Svc::FprimeRouter`, and other router components that route uplink frames to handlers; routed payload inherits ground-input class. |
+| **Accumulator components** | Uplink accumulators that gather partial frames before forwarding; their accumulated buffer is ground-input. |
+| **Detector components** | `Svc::CmdSequencer` and similar detectors that scan an uplink buffer for sentinels / patterns; detected payload is ground-input. |
+| **ByteStream drivers (conditionally)** | `Drv::ByteStreamDriverModel`-derived components carry ground-origin OR hardware-origin data depending on the topology wiring. The agent MUST consult the topology before deciding which tracing skill applies; see §4. |
 
 Each handler parameter at one of these entry points is **ground-
 input** at the moment it enters the agent's component. The trace
@@ -92,20 +102,41 @@ in the topology:
 1. From the offending line, identify the variable's origin within
    the local component.
 2. If the origin is an input port handler argument, look up the
-   port in the topology file (`.fpp` or `Topology.cpp`) to find the
-   source component and port.
+   port in the topology files (`topology.fpp` / `instances.fpp` /
+   `*Topology.cpp`) to find the source component and port.
 3. Recurse on the source component's output port: what value does
    it pass? Apply §2 within that component.
 4. Continue until reaching a §1 entry point (→ `ground-input`), a
    §3 primitive (→ classify), or a hardware-input port (→ hand off
    to `fprime-hardware-input-tracing.skill.md`).
 
-The topology files relevant to the trace usually live in:
+The topology files relevant to the trace live in:
 
-- `<Project>/Top/Topology.fpp`
-- `<Project>/Top/Topology.cpp`
+- `Ref/Top/topology.fpp` — the F Prime reference deployment's
+  topology declaration.
+- `Ref/Top/RefTopology.cpp` — the reference topology's generated
+  C++ wiring.
+- `Ref/Top/instances.fpp` — instance declarations for the reference
+  deployment.
+- `Svc/Subtopologies/*/topology.fpp` and
+  `Svc/Subtopologies/*/instances.fpp` — subtopologies that are
+  composed into deployment topologies.
 - `Svc/<Component>/<Component>.fpp` (for component-internal port
-  declarations)
+  declarations).
+
+Other deployments (mission-specific) use the same file naming inside
+their own `<Deployment>/Top/` directory.
+
+**ByteStream driver disambiguation.** When the trace reaches a port
+wired to a `Drv::ByteStreamDriverModel`-derived component, the agent
+must read the topology to determine whether that driver is the
+uplink-side (ground) or a hardware-side (radio, serial, network)
+byte stream. Same code, different upstream — the trace continues in
+this skill or hands off to `fprime-hardware-input-tracing.skill.md`
+accordingly. If the topology is ambiguous (e.g., the same
+ByteStream driver is shared between ground and hardware paths), the
+agent classifies as `ground-input` (the more dangerous class) and
+adds a maintainer ping.
 
 ---
 
@@ -185,9 +216,10 @@ The agent reports `low confidence` when:
 - The trace crosses ≥ 4 component boundaries.
 - The trace involves dynamic dispatch (function pointers, virtual
   calls into a base class with multiple subclasses).
-- The agent cannot resolve a topology wiring (the relevant `.fpp` or
-  `Topology.cpp` is not in the agent's read scope, or the wiring is
-  conditional on a build option).
+- The agent cannot resolve a topology wiring (the relevant
+  `topology.fpp` / `instances.fpp` / `*Topology.cpp` is not in the
+  agent's read scope, or the wiring is conditional on a build
+  option).
 
 Low confidence → tag at the right severity + maintainer ping per
 `maintainer-lookup.skill.md`.

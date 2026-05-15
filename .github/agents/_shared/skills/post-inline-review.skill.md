@@ -1,3 +1,8 @@
+---
+name: post-inline-review
+description: Use when posting inline review comments, the per-agent summary review, or interacting with GitHub review threads (resolve, un-resolve, reply) for an F Prime PR review agent.
+---
+
 # Skill: Post an inline review on a GitHub PR
 
 Reusable procedure for any F Prime review agent that needs to post
@@ -249,3 +254,33 @@ The agent uses this to:
    re-run, POST the inline comments as a fresh review and PUT the
    summary review body in place.
 7. Return success to the orchestrator.
+
+---
+
+## External references
+
+The endpoints and mutations referenced in this skill are documented
+on the GitHub developer site. If a request behaves differently from
+what this skill describes, the GitHub documentation is authoritative;
+open a PR to update this skill so the next agent sees the corrected
+behavior.
+
+- GitHub REST API — Pulls: Reviews:
+  https://docs.github.com/en/rest/pulls/reviews
+- GitHub REST API — Pulls: Comments (inline review comments):
+  https://docs.github.com/en/rest/pulls/comments
+- GitHub REST API — Issues: Comments (top-level PR comments via the
+  shared issue-comments endpoint):
+  https://docs.github.com/en/rest/issues/comments
+- GitHub GraphQL — `PullRequestReviewThread` object
+  (`resolveReviewThread` / `unresolveReviewThread` mutations):
+  https://docs.github.com/en/graphql/reference/objects#pullrequestreviewthread
+- GitHub GraphQL — Mutations index:
+  https://docs.github.com/en/graphql/reference/mutations
+- GitHub REST API — Rate limiting and conditional requests:
+  https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
+
+When the API surface evolves (endpoint paths, scope requirements,
+response shapes), update the relevant section of this skill in the
+same PR that addresses the change so downstream agents inherit the
+new behavior automatically.

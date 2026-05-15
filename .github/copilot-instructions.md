@@ -15,7 +15,7 @@ invoke the individual agents directly.
 | Agent | File | Purpose |
 |---|---|---|
 | **F Prime PR Review Orchestrator** | [review-orchestrator.agent.md](agents/review-orchestrator.agent.md) | Entry point. Drives all reviewers, then the aggregator. |
-| F Prime Security Vulnerability Reviewer | [security-review.agent.md](agents/security-review.agent.md) | Eight-category security review (ground/hardware asserts, overflow, validation, general vulns, CI nefariousness). |
+| F Prime Security Vulnerability Reviewer | [security-review.agent.md](agents/security-review.agent.md) | Eight-category security review (ground/hardware asserts, overflow, validation, general vulns, CI test-runtime policy). |
 | F Prime Supply Chain / Runner Safety Reviewer | [supply-chain-review.agent.md](agents/supply-chain-review.agent.md) | Dependency, vendored/submodule, build infra, workflow/action, generator, and prompt-injection review. |
 | F Prime PR Review Summary Aggregator | [review-summary.agent.md](agents/review-summary.agent.md) | Produces the one consolidated summary PR comment from per-agent reviews. |
 
