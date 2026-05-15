@@ -101,6 +101,9 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Emit an errorNotify port message if the port is connected
     void notifyErrorIfConnected(Ccsds::FrameError error);
 
+    //! Smallest valid packet across all PVNs enabled in pvnMask
+    static FwSizeType minPacketSizeForPvnMask(U8 pvnMask);
+
     //! Abandon an in-progress spanning packet, deallocating backing storage if needed
     void abandonSpanningPacket(AosDeframerVc& vc);
 
@@ -110,10 +113,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param seekForward Bytes already consumed in the current data block before this packet
     //! \param size Bytes available in the current data block
     //! \return Bytes to seek forward, or 0 if the rejected packet body extends past available data
-    FwSizeType abandonAndComputeSeek(AosDeframerVc& vc,
-                                     FwSizeType packetSize,
-                                     FwSizeType seekForward,
-                                     FwSizeType size);
+    FwSizeType abandonAndComputeSeek(AosDeframerVc& vc, FwSizeType packetSize, FwSizeType seekForward, FwSizeType size);
 
     //! Parse the M_PDU header and extract packets per CCSDS 732.0-B-5 Section 4.1.4.2
     //! \param vc The virtual channel state
@@ -189,9 +189,9 @@ class AosDeframer : public AosDeframerComponentBase {
     // ----------------------------------------------------------------------
 
     // Frame-level configuration parameters (set via configure())
-    U32 m_fixedFrameSize = 0;          //!< Fixed frame size in bytes
-    bool m_fecfEnabled = true;         //!< Whether FECF is enabled
-    U16 m_spacecraftId = 0;            //!< Expected spacecraft ID (10 bits)
+    U32 m_fixedFrameSize = 0;                                       //!< Fixed frame size in bytes
+    bool m_fecfEnabled = true;                                      //!< Whether FECF is enabled
+    U16 m_spacecraftId = 0;                                         //!< Expected spacecraft ID (10 bits)
     FwSizeType m_maxPacketSize = Svc::Ccsds::SpacePacketMaxLength;  //!< Upper bound on accepted packet size
 
     //! FECF CRC error counter - per physical channel (not per-VC)

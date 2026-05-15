@@ -67,17 +67,7 @@ void AosDeframer::configure(U32 fixedFrameSize,
     FW_ASSERT((pvnMask & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(pvnMask));
     FW_ASSERT((pvnMask & ~PvnBitfield::VALID_MASK) == 0, static_cast<FwAssertArgType>(pvnMask));
 
-    // maxPacketSize must accommodate the smallest valid packet of every
-    // enabled protocol (EPP min: 1 byte; SPP min: 7 bytes).
-    FwSizeType minPacketSize = 0;
-    if (pvnMask & PvnBitfield::EPP_MASK) {
-        minPacketSize = std::max(minPacketSize,
-                                 static_cast<FwSizeType>(Svc::Ccsds::EncapsulationPacketMinLength));
-    }
-    if (pvnMask & PvnBitfield::SPP_MASK) {
-        minPacketSize = std::max(minPacketSize,
-                                 static_cast<FwSizeType>(Svc::Ccsds::SpacePacketMinLength));
-    }
+    const FwSizeType minPacketSize = minPacketSizeForPvnMask(pvnMask);
     FW_ASSERT(maxPacketSize >= minPacketSize, static_cast<FwAssertArgType>(maxPacketSize),
               static_cast<FwAssertArgType>(minPacketSize));
 
@@ -174,6 +164,19 @@ void AosDeframer::notifyErrorIfConnected(Ccsds::FrameError error) {
     }
 }
 
+FwSizeType AosDeframer::minPacketSizeForPvnMask(U8 pvnMask) {
+    // Lower bound is the smallest valid packet across enabled protocols
+    // (EPP min: 1 byte; SPP min: 7 bytes).
+    FwSizeType minPacketSize = 0;
+    if (pvnMask & PvnBitfield::EPP_MASK) {
+        minPacketSize = std::max(minPacketSize, static_cast<FwSizeType>(Svc::Ccsds::EncapsulationPacketMinLength));
+    }
+    if (pvnMask & PvnBitfield::SPP_MASK) {
+        minPacketSize = std::max(minPacketSize, static_cast<FwSizeType>(Svc::Ccsds::SpacePacketMinLength));
+    }
+    return minPacketSize;
+}
+
 void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
     if (vc.spanningPacket.buffer.isValid()) {
         this->log_WARNING_HI_SpanningPacketAbandoned(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
@@ -187,9 +190,12 @@ void AosDeframer::abandonSpanningPacket(AosDeframerVc& vc) {
 }
 
 FwSizeType AosDeframer::abandonAndComputeSeek(AosDeframerVc& vc,
-                                           FwSizeType packetSize,
-                                           FwSizeType seekForward,
-                                           FwSizeType size) {
+                                              FwSizeType packetSize,
+                                              FwSizeType seekForward,
+                                              FwSizeType size) {
+    FW_ASSERT(packetSize >= vc.spanningPacket.bytesReceived, static_cast<FwAssertArgType>(packetSize),
+              static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived));
+
     // Save remainingBody BEFORE abandon, since abandonSpanningPacket clears bytesReceived
     const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
     this->abandonSpanningPacket(vc);
