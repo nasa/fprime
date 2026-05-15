@@ -35,6 +35,13 @@ class TlmChanTester : public TlmChanGTestBase {
     void runMultiChannel();
     void runOffNominal();
 
+    //! Verify that Run_handler's CPU processing guard fires correctly when the
+    //! number of updated telemetry entries exceeds TLMCHAN_MAX_ENTRIES_PER_RUN.
+    //! Checks that deferred entries are counted, a guard packet is appended to
+    //! the downlink stream, and m_procCapCount increments cumulatively across
+    //! successive capped invocations.
+    void runProcGuard();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -71,6 +78,12 @@ class TlmChanTester : public TlmChanGTestBase {
     void checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val);
 
     void clearBuffs();
+
+    //! Verify the ProcCapReached event emitted by Run_handler when the
+    //! processing cap was reached.  Asserts that exactly one event was
+    //! emitted for the current run and that its parameters match.
+    //!
+    void checkGuardEvent(U32 expectedDeferred, U32 expectedCapCount);
 
     // dump functions
     void dumpHash();

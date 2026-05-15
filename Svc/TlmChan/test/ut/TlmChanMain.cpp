@@ -44,22 +44,12 @@ TEST(TlmChanTest, OffNominal) {
     tester.runOffNominal();
 }
 
-// TEST(TlmChanTest,TooManyChannels) {
+TEST(TlmChanTest, ProcGuardTest) {
+    TEST_CASE(107.3.1, "Off-nominal Run_handler processing limit (per epoch)");
+    COMMENT("Verify Run_handler defers entries beyond TLMCHAN_MAX_ENTRIES_PER_RUN to next epoch.");
 
-//     COMMENT("Too Many Channel Test");
+    Svc::TlmChanTester tester;
 
-//     Svc::TlmChanImpl impl("TlmChanImpl");
-
-//     impl.init(10,0);
-
-//     Svc::TlmChanImplTester tester(impl);
-
-//     tester.init();
-
-//     // connect ports
-//     connectPorts(impl,tester);
-
-//     // run test
-//     tester.runTooManyChannels();
-
-// }
+    // run test
+    tester.runProcGuard();
+}

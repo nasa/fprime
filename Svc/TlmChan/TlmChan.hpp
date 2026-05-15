@@ -27,7 +27,6 @@ class TlmChan final : public TlmChanComponentBase {
     virtual ~TlmChan();
 
   protected:
-    // can be overridden for alternate algorithms
     FwChanIdType doHash(FwChanIdType id);
 
   private:
@@ -58,6 +57,10 @@ class TlmChan final : public TlmChanComponentBase {
     } m_tlmEntries[2];
 
     U32 m_activeBuffer;  // !< which buffer is active for storing telemetry
+
+    U32 m_hashSeed;  // !< per-boot random seed for telemetry hash
+
+    U32 m_procCapCount;  // !< per-epoch processing guard for Run_handler
 };
 
 }  // namespace Svc

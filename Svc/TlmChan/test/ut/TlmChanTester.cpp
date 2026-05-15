@@ -6,10 +6,17 @@
 
 #include "TlmChanTester.hpp"
 #include <Fw/Test/UnitTest.hpp>
+#include <config/TlmChanImplCfg.hpp>
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
+
+// MAX_HISTORY_SIZE must cover the worst-case number of PktSend port calls in
+// a single doRun invocation.  In ProcGuardTest, Run_handler sends up to
+// ceil(TLMCHAN_MAX_ENTRIES_PER_RUN / CHANS_PER_COMBUFFER) app packets in one
+// call.  TLMCHAN_HASH_BUCKETS is a safe upper bound since
+// TLMCHAN_MAX_ENTRIES_PER_RUN < TLMCHAN_HASH_BUCKETS.
+#define MAX_HISTORY_SIZE (TLMCHAN_HASH_BUCKETS + 1)
 
 static const FwChanIdType TEST_CHAN_SIZE = sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
 static const FwChanIdType CHANS_PER_COMBUFFER =
@@ -85,7 +92,6 @@ void TlmChanTester::runMultiChannel() {
 
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
-        // printf("#: %d\n",n);
         this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_0), ID_0[n], static_cast<U32>(n));
     }
 
@@ -112,7 +118,6 @@ void TlmChanTester::runMultiChannel() {
 
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
-        // printf("#: %d\n",n);
         this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_1), ID_1[n], static_cast<U32>(n));
     }
 }
@@ -133,6 +138,88 @@ void TlmChanTester::runOffNominal() {
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, timeTag, buff);
     ASSERT_EQ(0u, buff.getSize());
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
+}
+
+void TlmChanTester::runProcGuard() {
+    // This test only has meaning when the per-run cap is set below the total
+    // bucket count.  If TLMCHAN_MAX_ENTRIES_PER_RUN equals TLMCHAN_HASH_BUCKETS
+    // the guard can never fire.
+    if (TLMCHAN_MAX_ENTRIES_PER_RUN >= TLMCHAN_HASH_BUCKETS) {
+        printf(
+            "SKIP: TLMCHAN_MAX_ENTRIES_PER_RUN (%u) >= TLMCHAN_HASH_BUCKETS (%u); "
+            "guard cannot fire with current config\n",
+            static_cast<unsigned>(TLMCHAN_MAX_ENTRIES_PER_RUN), static_cast<unsigned>(TLMCHAN_HASH_BUCKETS));
+        return;
+    }
+
+    // Fill every bucket to guarantee the cap is exceeded regardless of its
+    // exact value.  Channel IDs start at 0x3000 to avoid collisions with
+    // other tests.
+    const U32 numToSend = TLMCHAN_HASH_BUCKETS;
+    const U32 expectedDeferred = TLMCHAN_HASH_BUCKETS - TLMCHAN_MAX_ENTRIES_PER_RUN;
+
+    printf("ProcGuard config: TLMCHAN_HASH_BUCKETS=%u  TLMCHAN_MAX_ENTRIES_PER_RUN=%u  expectedDeferred=%u\n",
+           static_cast<unsigned>(TLMCHAN_HASH_BUCKETS), static_cast<unsigned>(TLMCHAN_MAX_ENTRIES_PER_RUN),
+           static_cast<unsigned>(expectedDeferred));
+
+    // Expected app packets: only the processed (non-deferred) entries are serialized.
+    // With events replacing the guard packet, m_numBuffs must equal exactly this
+    // value — no extra guard packet is injected into the downlink stream.
+    const FwChanIdType appPackets =
+        static_cast<FwChanIdType>(INTEGER_DIVISION_ROUNDED_UP(TLMCHAN_MAX_ENTRIES_PER_RUN, CHANS_PER_COMBUFFER));
+
+    // -----------------------------------------------------------------------
+    // First run: fill all buckets — guard must fire for the first time
+    // -----------------------------------------------------------------------
+    this->clearBuffs();
+
+    for (U32 n = 0; n < numToSend; n++) {
+        this->sendBuff(static_cast<FwChanIdType>(0x3000u + n), n);
+    }
+
+    this->clearHistory();
+    this->doRun(true);
+
+    // Internal cap counter must have incremented
+    ASSERT_EQ(1u, this->component.m_procCapCount);
+
+    // Only app packets in downlink — no extra guard packet
+    ASSERT_EQ(appPackets, this->m_numBuffs);
+
+    // Exactly one ProcCapReached event with correct parameters
+    this->checkGuardEvent(expectedDeferred, 1u);
+
+    // -----------------------------------------------------------------------
+    // Second run: no channels updated (buffer swap cleared them all).
+    // Guard must NOT fire and m_procCapCount must remain at 1.
+    // -----------------------------------------------------------------------
+    this->clearBuffs();
+    this->clearHistory();
+    this->doRun(false);
+
+    ASSERT_EQ(1u, this->component.m_procCapCount);
+    ASSERT_EVENTS_SIZE(0);
+
+    // -----------------------------------------------------------------------
+    // Third run: update same channels again to verify cumulative count.
+    // TlmRecv finds existing buckets by ID so no new allocation occurs.
+    // -----------------------------------------------------------------------
+    this->clearBuffs();
+
+    for (U32 n = 0; n < numToSend; n++) {
+        this->sendBuff(static_cast<FwChanIdType>(0x3000u + n), n + 100u);
+    }
+
+    this->clearHistory();
+    this->doRun(true);
+
+    // m_procCapCount must be 2 — cumulative across both capped invocations
+    ASSERT_EQ(2u, this->component.m_procCapCount);
+
+    ASSERT_EQ(appPackets, this->m_numBuffs);
+
+    // deferred count same each cycle; cumulative count is now 2
+    this->checkGuardEvent(expectedDeferred, 2u);
 }
 
 // ----------------------------------------------------------------------
@@ -168,7 +255,6 @@ bool TlmChanTester::doRun(bool check) {
 
 void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val) {
     Fw::Time timeTag;
-    // deserialize packet
     Fw::SerializeStatus stat;
 
     static bool tlc004 = false;
@@ -180,28 +266,23 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
 
     FwChanIdType currentChan = 0;
 
-    // Search for channel ID
     for (FwChanIdType packet = 0; packet < this->m_numBuffs; packet++) {
-        // Look at packet descriptor for current packet
         this->m_rcvdBuffer[packet].resetDeser();
-        // first piece should be tlm packet descriptor
         FwPacketDescriptorType desc;
         stat = this->m_rcvdBuffer[packet].deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
         ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
-            // decode channel ID
             FwEventIdType sentId;
             stat = this->m_rcvdBuffer[packet].deserializeTo(sentId);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
-            // next piece is time tag
             Fw::Time recTimeTag(TimeBase::TB_NONE, 0, 0);
             stat = this->m_rcvdBuffer[packet].deserializeTo(recTimeTag);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
             ASSERT_TRUE(timeTag == recTimeTag);
-            // next piece is event argument
+
             U32 readVal;
             stat = this->m_rcvdBuffer[packet].deserializeTo(readVal);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
@@ -211,7 +292,6 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
                 ASSERT_EQ(val, readVal);
             }
 
-            // quit if we are at max channel entry
             if (currentChan == (totalChan - 1)) {
                 break;
             }
@@ -219,9 +299,17 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
             currentChan++;
         }
 
-        // packet should be empty
         ASSERT_EQ(0, this->m_rcvdBuffer[packet].getDeserializeSizeLeft());
     }
+}
+
+void TlmChanTester::checkGuardEvent(U32 expectedDeferred, U32 expectedCapCount) {
+    // Exactly one ProcCapReached event must have been emitted this run
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TlmChanEpochProcessingCapReached_SIZE(1);
+
+    // Verify both event parameters
+    ASSERT_EVENTS_TlmChanEpochProcessingCapReached(0, expectedDeferred, expectedCapCount);
 }
 
 void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
@@ -231,7 +319,6 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
     Fw::Time timeTag;
     U32 retestVal;
 
-    // create telemetry item
     buff.resetSer();
     stat = buff.serializeFrom(val);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
@@ -244,7 +331,7 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
     }
 
     this->invoke_to_TlmRecv(0, id, timeTag, buff);
-    // Read back value
+
     static bool tlc002 = false;
 
     if (not tlc002) {
@@ -253,7 +340,6 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
     }
 
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, id, timeTag, readBack);
-    // deserialize value
     retestVal = 0;
     readBack.deserializeTo(retestVal);
     ASSERT_EQ(retestVal, val);
@@ -276,7 +362,6 @@ void TlmChanTester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
 }
 
 void TlmChanTester::dumpHash() {
-    //        printf("**Buffer 0\n");
     for (FwChanIdType slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
         printf("Slot: %" PRI_FwChanIdType "\n", slot);
         if (this->component.m_tlmEntries[0].slots[slot]) {
@@ -294,32 +379,6 @@ void TlmChanTester::dumpHash() {
         }
     }
     printf("\n");
-    //        for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-    //            printf("Bucket: %d ",bucket);
-    //            dumpTlmEntry(&m_impl.m_tlmEntries[0].buckets[bucket]);
-    //        }
-    //        printf("**Buffer 1\n");
-    //        for (FwChanIdType slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
-    //            printf("Slot: %d\n",slot);
-    //            if (m_impl.m_tlmEntries[1].slots[slot]) {
-    //                TlmChanImpl::TlmEntry* entry = m_impl.m_tlmEntries[1].slots[slot];
-    //                for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-    //                    dumpTlmEntry(entry);
-    //                    if (entry->next == 0) {
-    //                        break;
-    //                    } else {
-    //                        entry = entry->next;
-    //                    }
-    //                }
-    //            } else {
-    //                printf("EMPTY\n");
-    //            }
-    //        }
-    //        printf("\n");
-    //        for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-    //            printf("Bucket: %d\n",bucket);
-    //            dumpTlmEntry(&m_impl.m_tlmEntries[1].buckets[bucket]);
-    //        }
 }
 
 void TlmChanTester ::connectPorts() {
@@ -340,6 +399,13 @@ void TlmChanTester ::connectPorts() {
 
     // pingOut
     this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
+
+    // Event infrastructure: wire time, event, and text event ports so that
+    // log_WARNING_HI_ProcCapReached() is captured in the test event history.
+    // Without these connections the event fires into unconnected ports and
+    // ASSERT_EVENTS_ProcCapReached will always see an empty history.
+    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
+    this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
 }
 
 void TlmChanTester ::initComponents() {
