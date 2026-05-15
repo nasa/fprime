@@ -29,7 +29,7 @@ a human design-owner should intervene **before deeper code review is
 worthwhile**, flag this explicitly so the orchestrator-driven review
 flow surfaces the design question to the maintainers up front rather
 than letting the other reviewer agents grind through detailed
-findings on something that may need re-architecting. This special
+findings on something that may need to be redesigned. This special
 finding-class (`design-needs-human-adjudication`) always carries a
 code-owner ping, never silently.
 

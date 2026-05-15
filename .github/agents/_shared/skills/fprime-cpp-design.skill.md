@@ -117,9 +117,9 @@ constructor, copy assignment, and — under Rule of Five — move
 constructor and move assignment. Don't leave one defaulted and the
 other defined.
 
-Most F Prime component classes are non-copyable; the corresponding
-copy ops are typically `= delete`d explicitly. Make the deletion
-visible rather than relying on implicit deletion.
+Most F Prime component classes are not intended to be copied; the
+corresponding copy operations are typically `= delete`d explicitly.
+Make the deletion visible rather than relying on implicit deletion.
 
 #### CPP-19 — Initialize all variables
 
@@ -228,9 +228,10 @@ state. Use a named functor or a free function.
 
 Templates are allowed, but **keep them simple**: function templates
 with one or two type parameters, or simple class templates with
-straightforward instantiations. Template-metaprogramming gymnastics,
-SFINAE forests, and Variadic template-parameter-pack tricks are not
-acceptable in F Prime flight code.
+straightforward instantiations. Complex template machinery — heavy
+meta-programming, substitution-failure-based dispatch, and deep
+parameter-pack manipulation — is not acceptable in F Prime flight
+code.
 
 #### CPP-8 — Prefer typed constants over `#define`
 
@@ -308,7 +309,7 @@ are not used in F Prime. The only acceptable multiple inheritance
 shape is inheriting from multiple **pure-virtual interface** classes
 (no state, no implementation in the interface).
 
-#### CPP-15 — Mark overrides with `override`; only override virtuals
+#### CPP-15 — Mark overrides with `override`; only override virtual functions
 
 ```cpp
 class Derived : public Base {
@@ -344,7 +345,8 @@ in the member-initializer list, not relied on to default-construct.
 
 #### CPP-25 — No exceptions, RTTI, STL, `std::string`
 
-F Prime flight code is built with `-fno-exceptions -fno-rtti` and
+F Prime flight code is compiled with exceptions and RTTI disabled
+(`-fno-exceptions` and the corresponding no-RTTI flag) and
 deliberately avoids the STL.
 
 - `try` / `catch` / `throw`: forbidden.
@@ -410,7 +412,7 @@ these names when their work overlaps the C/C++ design surface.
 | CPP-22 | `cpp-bare-container-not-fw-data-structure` | |
 | CPP-23 | `cpp-non-fpp-modeled-ground-interface` | |
 | CPP-24 | `cpp-char-pointer-where-fw-string-fits` | |
-| CPP-25 | `cpp-stl-or-exception-or-rtti` (with one of the sub-tokens `/exceptions`, `/rtti`, `/stl`, `/std-string` for readability) | |
+| CPP-25 | `cpp-banned-cxx-feature` (suffix with the specific feature, e.g., `/exceptions`, `/RTTI`, `/STL`, `/std-string`) | |
 | CPP-26 | `cpp-style-guide-violation`       | Catch-all for style-guide hits not covered above; cite the wiki section. |
 | CPP-27 | `cpp-jpl-c-standard-violation`    | Catch-all for JPL C standard hits; cite the section. |
 

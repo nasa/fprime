@@ -38,14 +38,13 @@ classes in §"Scope" below.
 ## Inspiration / prior art
 
 The rubric below traces its lineage to the developer-side proposal
-at <https://github.com/nasa/fprime/discussions/5160>
-("Developer-side AI tooling under .claude/ for catching weak/missing
-tests pre-submit"), which separated test-coverage auditing from
-test-quality reviewing. This agent unifies both dimensions under the
-multi-agent review flow's contract so the maintainer sees a single
-test-side verdict. The developer-side `.claude/` tooling, when
-present in a contributor's environment, complements this agent by
-catching the same issues pre-submit.
+at <https://github.com/nasa/fprime/discussions/5160>, which separated
+test-coverage auditing from test-quality reviewing in a pair of
+developer-side AI agents. This agent unifies both dimensions under
+the multi-agent review flow's contract so the maintainer sees a
+single test-side verdict. The developer-side tooling proposed in
+that discussion, when present in a contributor's environment,
+complements this agent by catching the same issues pre-submit.
 
 ---
 

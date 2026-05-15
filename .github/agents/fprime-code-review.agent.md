@@ -79,8 +79,8 @@ reference (the skill is authoritative):
 - `cpp-bare-container-not-fw-data-structure` (CPP-22)
 - `cpp-non-fpp-modeled-ground-interface` (CPP-23)
 - `cpp-char-pointer-where-fw-string-fits` (CPP-24)
-- `cpp-stl-or-exception-or-rtti` (CPP-25; sub-tokens
-  `/exceptions`, `/rtti`, `/stl`, `/std-string` for readability)
+- `cpp-banned-cxx-feature` (CPP-25; suffix with the specific
+  feature, e.g., `/exceptions`, `/RTTI`, `/STL`, `/std-string`)
 - `cpp-style-guide-violation` (CPP-26)
 - `cpp-jpl-c-standard-violation` (CPP-27)
 

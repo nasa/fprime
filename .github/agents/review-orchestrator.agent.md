@@ -256,8 +256,15 @@ When a reviewer agent reports `FAILED`:
 5. **Ensure the aggregator output reflects failure.** The aggregator
    MUST render FAILED reviewers as ERROR rows in the per-agent
    results table per the contract and review-summary.agent.md §5,
-   and force `Merge readiness: No-Go` AND `CI safety: No-Go` per
-   the verdict rules in §5c.
+   and force the appropriate verdicts per the verdict rules in §5c.
+   Specifically:
+   - A failed **CI-safety** reviewer (`security-review` or
+     `supply-chain-review`, the two `contributes_to_ci_safety: true`
+     entries) forces both `CI safety: No-Go` AND
+     `Merge readiness: No-Go`.
+   - A failed **non-CI-safety** reviewer (any other registered
+     reviewer) forces only `Merge readiness: No-Go`; CI safety is
+     determined solely by the two CI-safety reviewers.
 
 If the aggregator itself FAILS:
 
@@ -267,8 +274,9 @@ If the aggregator itself FAILS:
    operator can re-invoke the orchestrator after the cause is
    addressed, or invoke the aggregator directly.
 
-A failed reviewer **never produces a Go on either axis.** No silent
-fallback, no "good-enough" verdict.
+A failed CI-safety reviewer **never produces a Go on either axis.**
+A failed non-CI-safety reviewer never produces a Go on the
+merge-readiness axis. No silent fallback, no "good-enough" verdict.
 
 ---
 

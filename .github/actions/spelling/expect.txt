@@ -19,7 +19,6 @@ APacket
 apid
 APIDOCS
 APPENDFILE
-architecting
 arduino
 ARef
 argcomplete
@@ -45,6 +44,7 @@ Bies
 binaryfile
 BINDIR
 bitfield
+Bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -94,7 +94,6 @@ CHIPINFO
 CHK
 CHNG
 CIRCULARSTATE
-claude
 CLOSEFILE
 cloudbees
 CMDDISP
@@ -126,7 +125,6 @@ COMSTUB
 constexpr
 cookiecutter
 cooldown
-copyable
 coravy
 coreutils
 Coverity
@@ -223,6 +221,7 @@ endmacro
 endraw
 enduml
 EPP
+epp
 ERRORCHECK
 errornum
 ert
@@ -392,9 +391,9 @@ jobrestrictions
 jpl
 jplffs
 jre
-kermit
 kessler
 kevin
+kermit
 kubiak
 Lammert
 lammertbies
@@ -446,7 +445,6 @@ MEMTEST
 mentations
 mereweth
 Merewether
-metaprogramming
 microcontrollers
 mkdocs
 mlc
@@ -626,7 +624,6 @@ ROOTDIR
 rowspan
 rpi
 rptr
-rtti
 SAlias
 sanitizers
 sats
@@ -652,7 +649,6 @@ setschedpolicy
 setstacksize
 settime
 sev
-sfinae
 sfregoso
 sge
 SGN
@@ -692,7 +688,7 @@ stdbool
 stddef
 stdint
 stest
-stl
+Stl
 stmtidx
 STREQ
 STREQUAL
@@ -738,11 +734,11 @@ tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
-timcanham
 timebase
 timerfd
 timetag
 timeval
+timcanham
 Tinternal
 tions
 tjh
@@ -765,6 +761,7 @@ TPP
 trinomials
 tts
 Tumbar
+tumbar
 typedef
 typedef'ed
 uart
@@ -794,7 +791,6 @@ VCx
 vendored
 VFILE
 VID
-virtuals
 vla
 VOXL
 vwong

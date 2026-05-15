@@ -171,12 +171,17 @@ Reasoning:
 - Supply chain: <verdict> — <one-line rationale, taken from the supply-chain agent's CI safety line>
 ```
 
-For a FAILED reviewer, the `Reasoning:` line reads
+The CI safety section reports verdicts for the two CI-safety
+contributors only (`security-review` and `supply-chain-review`).
+Other reviewer failures are reported in the Merge readiness section
+and the per-agent results table, not here.
+
+For a FAILED CI-safety reviewer, the `Reasoning:` line reads
 `<agent>: ERROR — failed: <reason>` (quoting the orchestrator's
 failure reason verbatim).
 
-For a reviewer that simply did not run, the `Reasoning:` line reads
-`<agent>: ERROR — agent did not run`.
+For a CI-safety reviewer that simply did not run, the `Reasoning:`
+line reads `<agent>: ERROR — agent did not run`.
 
 ### Since last run section
 
@@ -252,10 +257,22 @@ run.`).
   (i.e., zero outstanding must-fix across all agents). Any FAILED
   or did-not-run reviewer forces `No-Go` regardless of what the
   remaining reviewers found.
-- CI safety and merge readiness are independent on the `Go` side;
-  on the `No-Go` side, a sub-agent failure forces both.
-- **A failed reviewer never produces a Go on either axis.** No
-  silent fallback, no "good-enough" verdict.
+- CI safety and merge readiness are independent on the `Go` side.
+  On the `No-Go` side, the two axes have different blast radii:
+  - A failure (or did-not-run) of a **CI-safety** reviewer
+    (`security-review` or `supply-chain-review`, the two entries
+    with `contributes_to_ci_safety: true` in the registry) forces
+    **both** `CI safety: No-Go` AND `Merge readiness: No-Go`.
+  - A failure (or did-not-run) of any **other** reviewer
+    (`fprime-code-review`, `stale-documentation-review`,
+    `design-review`, `test-quality-review`) forces only
+    `Merge readiness: No-Go`. CI safety is unaffected by those
+    failures and is determined solely by the two CI-safety
+    reviewers per the first bullet above.
+- **A failed CI-safety reviewer never produces a Go on either
+  axis.** A failed non-CI-safety reviewer never produces a Go on
+  the merge-readiness axis. No silent fallback, no "good-enough"
+  verdict.
 - **`Recommend: Close` (§5e) forces both** `CI safety: No-Go` AND
   `Merge readiness: No-Go`. Don't run CI on a PR the aggregator
   thinks is spam; don't recommend merge of a PR the aggregator
