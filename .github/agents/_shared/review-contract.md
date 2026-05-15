@@ -2,10 +2,16 @@
 
 This file is the **single source of truth** for how every F Prime PR
 review agent (reviewer or aggregator) behaves on the GitHub side.
-Every agent in `.github/agents/` opens its body with "Apply the review
-contract in `_shared/review-contract.md`." and follows the rules below.
+Every agent that participates in the multi-agent review flow — the
+orchestrator plus every `role: reviewer` or `role: aggregator` entry in
+`_shared/agent-registry.yml` whose `invoked_by_orchestrator` is not
+`false` — opens its body with "Apply the review contract in
+`_shared/review-contract.md`." and follows the rules below. The
+preexisting `fprime-code-review.agent.md` is registered for reference
+but is **not** part of this flow and is not bound by this contract.
 
-If a per-agent file disagrees with this contract, the contract wins.
+If a per-agent file in the multi-agent flow disagrees with this
+contract, the contract wins.
 
 ---
 
