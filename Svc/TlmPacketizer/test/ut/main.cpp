@@ -25,13 +25,6 @@ TEST(TestNominal, SendPackets) {
     tester.sendPacketsTest();
 }
 
-// TEST(TestNominal,SendPacketLevels) {
-//
-//     TEST_CASE(100.1.3,"Send Packets with levels");
-//     Svc::TlmPacketizerTester tester;
-//     tester.sendPacketLevelsTest();
-// }
-
 TEST(TestNominal, UpdatePacketsTest) {
     TEST_CASE(100.1.4, "Update Packets");
     Svc::TlmPacketizerTester tester;
@@ -67,6 +60,12 @@ TEST(TestOffNominal, NonPacketizedChannelTest) {
     TEST_CASE(100.2.1, "Non-packetized Channels");
     Svc::TlmPacketizerTester tester;
     tester.nonPacketizedChannelTest();
+}
+
+TEST(TestOffNominal, SetLevelInvalidTest) {
+    TEST_CASE(100.2.2, "SET_LEVEL with out-of-range level");
+    Svc::TlmPacketizerTester tester;
+    tester.setLevelInvalidTest();
 }
 
 TEST(TestNominal, TlmGetTest) {

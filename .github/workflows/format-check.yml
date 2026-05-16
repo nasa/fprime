@@ -12,6 +12,9 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
 
+permissions:
+  contents: read
+
 jobs:
   cpp-formatting:
     name: C++ Formatting
