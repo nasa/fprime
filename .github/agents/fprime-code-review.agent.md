@@ -155,7 +155,7 @@ per the review contract §9.
 - Design fit (does the FPP / topology / pattern make sense given
   intent) — handled by `design-review.agent.md`.
 
-The five reviewer agents are designed to partition the review
+The six reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 
