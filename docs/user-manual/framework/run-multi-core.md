@@ -86,7 +86,7 @@ implementation.
 multi-core operation. Developers must understand the threading model and synchronization requirements of their
 specific deployment.
 
-**Atomic operations**: An atomic operation is one that completes in a single, indivisible step from the perspective of other threads — no other thread can observe the operation in a partially completed state. Some portions of F´ use `U32` (unsigned 32-bit integer) types to synchronize state between threads, relying on the assumption that reads and writes of 32-bit values are atomic on the target platform. This is commonly true on 32-bit and 64-bit architectures with aligned access, but it is not guaranteed by the C++ standard on all systems (e.g., some 8-bit or 16-bit microcontrollers). Projects should verify that their target platform provides atomic 32-bit access. These usages are under review and will be replaced with proper atomic primitives over time.
+**Atomic operations**: An atomic operation is one that completes in a single, indivisible step from the perspective of other threads — no other thread can observe the operation in a partially completed state. Projects should use proper synchronization primitives (e.g., `Os::Mutex`) rather than relying on raw integer types for thread synchronization. Using a `U32` or similar type as a synchronization mechanism is an anti-pattern — the C++ standard does not guarantee that reads and writes of these types are atomic across all platforms. Some legacy portions of F´ contain this anti-pattern, but these usages are being actively removed.
 
 ## Multi-Core Processing Guidelines
 

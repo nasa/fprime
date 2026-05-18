@@ -26,7 +26,7 @@ First and foremost, baremetal F´ systems should avoid using **Active Components
 To understand the tradeoffs between `active` components and `passive`/`queued`, as well as design patterns that may allow you to migrate from one type to another, you may refer to the document on [Selecting Component, Port, and Command Kinds](./component-and-port-selection.md).
 
 > [!NOTE]
-> If you **must** use **Active Components** you should thoroughly review the [Thread Virtualization](#thread-virtualization) section of this document.
+> If you **must** use **Active Components**, first consider using an RTOS instead of baremetal. Thread virtualization (described [below](#thread-virtualization)) is intended as a stepping stone for developers as they either migrate to a full RTOS or replace active components with `queued` equivalents.
 
 If your system can be entirely defined by `passive` and `queued` components then implicitly every port **invocation** would be eventually run in a synchronous call and the execution context would be entirely delegated to every component. Thus the need for a thread scheduler would disappear. A discussion of the source of that delegated execution context comes next.
 
