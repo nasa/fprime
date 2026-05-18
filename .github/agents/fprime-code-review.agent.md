@@ -17,7 +17,7 @@ and the shared skills.
 
 The C/C++ design rules this agent enforces live in
 `_shared/skills/fprime-cpp-design.skill.md`. That skill is the
-single source of truth for the rule set (CPP-1 through CPP-27) and
+single source of truth for the rule set (CPP-1 through CPP-28) and
 the finding-class vocabulary; this agent file specifies how the
 multi-agent flow applies it on a PR.
 
@@ -26,7 +26,7 @@ multi-agent flow applies it on a PR.
 ## Scope
 
 You flag findings on touched C/C++ source where the offending
-construct violates one of the rules CPP-1 through CPP-27 in
+construct violates one of the rules CPP-1 through CPP-28 in
 `_shared/skills/fprime-cpp-design.skill.md`. The "introduced by this
 PR" test (`_shared/skills/pr-diff-scoping.skill.md`) applies; pre-
 existing rule violations become `**future work**`.
@@ -52,12 +52,12 @@ sources.
 ## Finding classes
 
 Use the finding-class names defined in
-`_shared/skills/fprime-cpp-design.skill.md` §3 verbatim. Quick
+`_shared/skills/fprime-cpp-design.skill.md` §2 verbatim. Quick
 reference (the skill is authoritative):
 
 - `cpp-dynamic-memory-post-init` (CPP-1)
 - `cpp-fw-buffer-ownership` (CPP-2)
-- `cpp-bare-type-where-fw-type-exists` (CPP-3)
+- `cpp-non-fixed-size-numerical-type` (CPP-3)
 - `cpp-fw-assert-on-untrusted-input` (CPP-4)
 - `cpp-cxx14-violation` (CPP-5)
 - `cpp-null-vs-nullptr` (CPP-6)
@@ -83,6 +83,7 @@ reference (the skill is authoritative):
   feature, e.g., `/exceptions`, `/RTTI`, `/STL`, `/std-string`)
 - `cpp-style-guide-violation` (CPP-26)
 - `cpp-jpl-c-standard-violation` (CPP-27)
+- `cpp-bare-fixed-size-where-configurable-fits` (CPP-28)
 
 The agent's per-finding inline comment cites the CPP-N rule number
 in the body so reviewers can map back to the skill.
@@ -117,9 +118,13 @@ For each touched file in the PR diff, scan in this order:
    `std::vector`, `std::map`, `std::string`, `dynamic_cast`,
    `typeid`), then verify each hit in context.
 4. **`+` lines for F Prime type idioms (CPP-3, CPP-21, CPP-22,
-   CPP-23, CPP-24)**. Scan signatures and member declarations for
-   bare C/C++ types where an `Fw*` type exists. Particularly check
-   public APIs and ground-facing interfaces (CPP-23).
+   CPP-23, CPP-24, CPP-28)**. Scan signatures and member
+   declarations for bare C/C++ numerical types where a fixed-size
+   or configurable `Fw*` type belongs (CPP-3, CPP-28); for C-style
+   array interfaces (CPP-21); for bare containers where
+   `Fw/DataStructures` fits (CPP-22); and for `char*` strings where
+   `Fw::String` fits (CPP-24). Particularly check public APIs and
+   ground-facing interfaces (CPP-23).
 5. **External-reference rules (CPP-26, CPP-27)**. Apply where the
    touched lines pattern-match a wiki / JPL clause; cite the
    specific section.
@@ -127,7 +132,7 @@ For each touched file in the PR diff, scan in this order:
 For each finding, classify the offending behavior as introduced or
 preexisting per `_shared/skills/pr-diff-scoping.skill.md`, pick the
 triage tag per the per-cluster hints in
-`_shared/skills/fprime-cpp-design.skill.md` §4 plus
+`_shared/skills/fprime-cpp-design.skill.md` §3 plus
 `_shared/skills/triage-classifier.skill.md`, then format the comment
 per the review contract §9.
 
@@ -190,13 +195,13 @@ Append a maintainer ping per
 ## Triage rules of thumb
 
 The per-cluster severity hints in
-`_shared/skills/fprime-cpp-design.skill.md` §4 are the primary
+`_shared/skills/fprime-cpp-design.skill.md` §3 are the primary
 guide. Summarized here for fast reference:
 
 - **Memory & lifetime (CPP-1, 2, 17, 19, 20)**: default `**must
   fix**`. Memory-safety guarantees do not have a non-blocking tier.
 - **Asserts on untrusted inputs (CPP-4)**: always `**must fix**`.
-- **F Prime type idioms (CPP-3, 21, 22, 23, 24)**: default
+- **F Prime type idioms (CPP-3, 21, 22, 23, 24, 28)**: default
   `**suggestion**` with a fenced suggestion block; upgrade to
   `**must fix**` on ground-facing surfaces (CPP-23).
 - **Language subset (CPP-5–16, 18, 25)**: default `**suggestion**`

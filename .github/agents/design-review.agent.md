@@ -49,6 +49,11 @@ diff:
   and the component-implementation `.cpp` / `.hpp` files.
 - Each touched component's **existing FPP** and **existing SDD**
   (`<Component>/docs/sdd.md`) — the design baseline.
+- The framework selection guide
+  `docs/user-manual/framework/component-and-port-selection.md` —
+  authoritative for choosing active / passive / queued components
+  and sync / async / guarded ports; consult it whenever the PR adds
+  or changes a component kind or a port kind.
 
 If the PR description and any linked issues are jointly empty or
 boilerplate (single word, single emoji, "WIP", "test", etc.), the
@@ -111,8 +116,19 @@ class of bug the PR is risking. Examples:
 - Bypassing the `Fw::Buffer` ownership contract (see
   `_shared/skills/fprime-cpp-design.skill.md` CPP-2 for the C++ side
   of the same concern).
+- Choosing a component kind (active / passive / queued) or port
+  kind (sync / async / guarded) that doesn't match the work being
+  performed — cyclic vs. event-driven vs. background. See
+  `docs/user-manual/framework/component-and-port-selection.md` for
+  the authoritative selection guide.
 
 **Finding-class:** `design-fprime-anti-pattern`.
+
+**Authoritative reference for active / passive / queued and sync /
+async / guarded selection:**
+`docs/user-manual/framework/component-and-port-selection.md`. Cite
+the relevant section when flagging a pattern violation in this
+family.
 
 ### 4. Scope creep / under-scoped
 
