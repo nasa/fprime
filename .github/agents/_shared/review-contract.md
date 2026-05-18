@@ -98,6 +98,40 @@ supply-chain agent): **iff outstanding `**must fix**` count > 0 within
 the agent's CI-safety scope.** Nothing else (could-fix, suggestion,
 future-work) triggers a CI No-Go.
 
+### Supply-chain agent: surfaces emission
+
+The supply-chain agent (only) also emits a structured `**Surfaces:**`
+block below its `CI safety rationale`. The aggregator parses this block
+to render its `Supply-chain surfaces` table. One bullet per supply-chain
+scope category, in this fixed order:
+
+```
+**Surfaces:**
+- Dependencies: clean | <one-line description>
+- Vendored / submodule: clean | <one-line description>
+- Build / test infrastructure: clean | <one-line description>
+- Workflows / actions / scripts: clean | <one-line description>
+- Generator output: clean | <one-line description>
+- Prompt-injection: clean | <one-line description>
+```
+
+Cell-content rules:
+
+- `clean` — the PR diff did not touch this surface, OR it touched the
+  surface and the agent found nothing outstanding.
+- `<N must-fix / suggestion / could-fix> — <one-line description>` —
+  the PR touched the surface and the agent has outstanding findings on
+  it. Counts roll up the current outstanding triage-tag tiers. The
+  one-line description names the worst-tier finding for the surface
+  (e.g., `1 must-fix — action 'org/foo@main' unpinned in build-image.yml`).
+- The bullet order is fixed; every category appears on every run so a
+  reviewer can confirm coverage without inferring from absences.
+
+If the supply-chain agent FAILED (orchestrator reports
+`FAILED: <reason>`), the agent's per-agent summary block is not posted
+and the aggregator handles surfaces emission as an error case
+(see `review-summary.agent.md` §5).
+
 ---
 
 ## 3. "Introduced by this PR"

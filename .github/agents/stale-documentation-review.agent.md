@@ -168,7 +168,7 @@ doc surfaces:
 | `Svc/CmdDispatcher`, `Svc/CmdSequencer`, FPP command-related | `docs/user-manual/framework/ground-interface.md` |
 | Anything reachable from ground / GDS | `docs/user-manual/gds/`; `docs/reference/fpp-json-dict.md` |
 | `Fw/Types/`, `Fw/DataStructures/` | `docs/user-manual/framework/`; `docs/reference/numerical-types.md` |
-| `.github/agents/**`, `.github/untrusted-pr-review-policy.md` | itself plus `docs/user-manual/security/` |
+| `.github/agents/**` | itself plus `docs/user-manual/security/` |
 | `requirements*.txt`, `pyproject.toml`, etc. | `README.md` "System Requirements"; `INSTALL.md` |
 | `CMakeLists.txt` minimum-CMake bump | `INSTALL.md`; `docs/user-manual/build-system/` |
 

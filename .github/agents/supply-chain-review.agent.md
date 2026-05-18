@@ -221,6 +221,75 @@ unverified privileged-surface change is severe enough on its own.
 
 ---
 
+## Surfaces emission
+
+The supply-chain agent additionally emits a structured `**Surfaces:**`
+block in its per-agent summary review, immediately below the
+`CI safety rationale` line. The aggregator parses this block to render
+the `Supply-chain surfaces` table in the top-level summary. Format and
+ordering are governed by review contract §2 "Supply-chain agent:
+surfaces emission".
+
+### Category-to-row mapping
+
+| Surface row in the table          | Agent scope category |
+|---|---|
+| Dependencies                      | §Scope 1 (dependency manifests) |
+| Vendored / submodule              | §Scope 2 (vendored / submodule code) |
+| Build / test infrastructure       | §Scope 3 (build / test infrastructure) |
+| Workflows / actions / scripts     | §Scope 4 (workflows / actions / scripts) |
+| Generator output                  | §Scope 5 (generator output without input change) |
+| Prompt-injection                  | §Scope 6 (prompt-injection fingerprints) |
+
+### Populating each row
+
+Per surface, choose the cell content:
+
+- **`clean`** when EITHER (a) the PR diff did not touch any file in
+  scope for the category (per `_shared/skills/pr-diff-scoping.skill.md`
+  path globs and the category's file-pattern definition), OR (b) the
+  PR touched the surface but the agent has no outstanding findings on
+  it.
+- **`<N must-fix>` / `<N suggestion>` / `<N could-fix>` —
+  `<one-line description>`** when the PR touched the surface and the
+  agent has outstanding findings on it. `N` is the count of currently-
+  outstanding findings at the highest tier present on that surface;
+  the description names the worst-tier finding in a single line
+  (≤ 80 chars), e.g., `1 must-fix — action 'org/foo@main' unpinned in
+  build-image.yml`. When multiple tiers are present on one surface,
+  combine: `2 (1 must-fix, 1 suggestion) — <highest-tier description>`.
+
+### Coverage invariant
+
+Emit all six bullets on every run, in the order shown in the table
+above. Do not omit a row to indicate "not applicable"; emit `clean`
+instead. This lets the aggregator render a complete table without
+inferring coverage from absences.
+
+### Worked examples
+
+```
+**Surfaces:**
+- Dependencies: clean
+- Vendored / submodule: clean
+- Build / test infrastructure: clean
+- Workflows / actions / scripts: 1 must-fix — action 'org/foo@main' unpinned in build-image.yml
+- Generator output: clean
+- Prompt-injection: clean
+```
+
+```
+**Surfaces:**
+- Dependencies: 1 suggestion — new package 'requests' lacks --hash pin
+- Vendored / submodule: clean
+- Build / test infrastructure: clean
+- Workflows / actions / scripts: clean
+- Generator output: clean
+- Prompt-injection: 1 must-fix — "ignore previous instructions" string in PR body
+```
+
+---
+
 ## Output
 
 Apply the review contract §2 for the per-agent summary block and §9
