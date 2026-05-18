@@ -80,13 +80,11 @@ It is important to understand the division of responsibilities:
 ### Important Considerations
 
 **Synchronization objects** like mutexes are delegated to the OS and are SMP-safe based on the operating system
-implementation.
+implementation. This delegation is enabled by the [OS Abstraction Layer](../../../Os/docs/sdd.md).
 
 **F´ is not inherently SMP "safe"**. It relies on the OS implementation and developer expertise to ensure safe
 multi-core operation. Developers must understand the threading model and synchronization requirements of their
 specific deployment.
-
-**Atomic operations**: An atomic operation is one that completes in a single, indivisible step from the perspective of other threads — no other thread can observe the operation in a partially completed state. Projects should use proper synchronization primitives (e.g., `Os::Mutex`) rather than relying on raw integer types for thread synchronization. Using a `U32` or similar type as a synchronization mechanism is an anti-pattern — the C++ standard does not guarantee that reads and writes of these types are atomic across all platforms. Some legacy portions of F´ contain this anti-pattern, but these usages are being actively removed.
 
 ## Multi-Core Processing Guidelines
 
