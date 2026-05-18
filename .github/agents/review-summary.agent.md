@@ -87,13 +87,13 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | Agent | must fix | suggestion | could fix | future work | outstanding | Verdict |
 |---|---:|---:|---:|---:|---:|---|
 | Security Vulnerabilities | 5 | 1 | 0 | 1 | 3 | No-Go |
-| Supply Chain / Runner Safety | 0 | 0 | 1 | 0 | 1 | Go |
+| Supply Chain / Runner Safety | 1 | 0 | 1 | 0 | 2 | No-Go |
 | F Prime C/C++ Design | 2 | 4 | 1 | 0 | 2 | No-Go |
 | Documentation Currency | 1 | 2 | 0 | 0 | 1 | No-Go |
 | Design | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 9 | 8 | 2 | 1 | 8 | **No-Go** |
+| **Totals** | 10 | 8 | 2 | 1 | 9 | **No-Go** |
 
 ### Supply-chain surfaces
 
@@ -110,6 +110,9 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
 - ...
+
+**Supply Chain / Runner Safety**
+- action `org/foo@main` unpinned in `build-image.yml` — <link>
 
 **F Prime C/C++ Design**
 - <terse must-fix summary> — <link>
