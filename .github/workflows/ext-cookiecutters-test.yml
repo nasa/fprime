@@ -22,6 +22,9 @@ concurrency:
 # a new project, deployment and component and building them
 # This uses the `expect` utility to feed input into the various cookiecutter prompts
 
+permissions:
+  contents: read
+
 jobs:
 
   # -------- Retrieve target branches for fprime-tools and fprime-bootstrap --------

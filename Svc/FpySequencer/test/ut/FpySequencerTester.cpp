@@ -63,21 +63,31 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     Fw::ExternalSerializeBuffer buf;
     buf.setExtBuffer(data, sizeof(data));
 
-    // first let's calculate the size of the body. do this by just writing the body,
-    // then calculating how big that was, then clearing and writing the header, then writing the body again
+    // Calculate body size (arg_specs and statements)
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+
     seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();
 
+    // Write header using FPP auto-generated serialization
     ASSERT_EQ(buf.serializeFrom(seq.get_header()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    // Write arg_specs in Fpy variable-length format
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
-        ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        const Fpy::ArgSpec& argSpec = seq.get_args()[ii];
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_argName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_typeName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        // Write size
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_argSize()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+
+    // Write statements
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -102,6 +112,27 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
 
 void FpySequencerTester::removeFile(const char* name) {
     Os::FileSystem::removeFile(name);
+}
+
+void FpySequencerTester::addArgumentSpec(Fw::String argName, Fw::String typeName, Fpy::StackSizeType argSize) {
+    U8 argCount = seq.get_header().get_argumentCount();
+    FW_ASSERT(argCount < Fpy::MAX_SEQUENCE_ARG_COUNT);
+
+    Fpy::ArgSpec& argSpec = seq.get_args()[argCount];
+
+    // Set arg_name
+    FW_ASSERT(argName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_argName(argName);
+
+    // Set type_name
+    FW_ASSERT(typeName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_typeName(typeName);
+
+    // Set size
+    argSpec.set_argSize(argSize);
+
+    // Increment argument count
+    seq.get_header().set_argumentCount(++argCount);
 }
 
 void FpySequencerTester::resetRuntime() {
@@ -633,6 +664,10 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
     this->cmp.m_computedCRC = crc;
+}
+
+void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {
+    this->cmp.m_sequenceArgs = args;
 }
 
 // Get cmp member pointers

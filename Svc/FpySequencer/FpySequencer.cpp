@@ -20,14 +20,17 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_sequenceFilePath("<invalid_seq>"),
       m_sequenceObj(),
       m_computedCRC(0),
+      m_totalExpectedArgSize(0),
       m_sequenceBlockState(),
       m_savedOpCode(0),
       m_savedCmdSeq(0),
+      m_sequenceArgs(0, 0),
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
       m_runtime(),
       m_breakpoint(),
+      m_debug(),
       m_tlm() {}
 
 FpySequencer ::~FpySequencer() {}
@@ -47,8 +50,8 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
 void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                         U32 cmdSeq,                        //!< The command sequence number
                                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                        BlockState block,  //!< Return command status when complete or not
-                                        Svc::SeqArgs args  //!< Arguments to pass to the sequencer
+                                        Svc::BlockState block,  //!< Return command status when complete or not
+                                        Svc::SeqArgs args       //!< Arguments to pass to the sequencer
 ) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {

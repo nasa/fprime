@@ -20,6 +20,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
+permissions:
+  contents: read
+
 jobs:
   Framework:
     runs-on: ubuntu-latest
@@ -58,7 +61,7 @@ jobs:
     - uses: ./.github/actions/setup
     - name: Build Ref
       run: |
-        cd Ref
+        cd TestDeploymentsProject
         fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         fprime-util build -j4
 

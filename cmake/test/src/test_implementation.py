@@ -14,7 +14,7 @@ _ = cmake.get_build(
     "IMPLEMENTATION_TEST",
     settings.DATA_DIR / "test-implementations" / "Deployment",
     {
-        "FPRIME_FRAMEWORK_PATH": settings.REF_APP_PATH.parent,
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
         "FPRIME_PROJECT_ROOT": settings.DATA_DIR / "test-implementations",
         "FPRIME_LIBRARY_LOCATIONS": ";".join(
             [
