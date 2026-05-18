@@ -160,8 +160,7 @@ MUST render its row as an ERROR row (see §5b).
 
 ### Table columns and rows
 
-- One row per reviewer in the registry's `role: reviewer` entry
-  set, EXCLUDING entries with `invoked_by_orchestrator: false`.
+- One row per reviewer in the registry's `role: reviewer` entry set.
 - A `CI safety` row immediately above `Totals`, rendered per the
   "CI safety row in the per-agent results table" subsection below.
   Its tag-count cells are `—` and do not contribute to `Totals`.

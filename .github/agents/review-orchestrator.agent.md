@@ -33,8 +33,7 @@ reviewer agents and the aggregator do all the GitHub-side posting.
 For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
 
 1. Read `_shared/agent-registry.yml`. Filter entries to
-   `role: reviewer` AND `invoked_by_orchestrator != false`. Today this
-   set is exactly:
+   `role: reviewer`. Today this set is exactly:
    - `security-review` (`security-review.agent.md`)
    - `supply-chain-review` (`supply-chain-review.agent.md`)
    - `fprime-code-review` (`fprime-code-review.agent.md`)
