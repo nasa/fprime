@@ -123,22 +123,24 @@ Replies are used for:
 
 ## 4. Per-agent hidden metadata review
 
-After the inline comments, post one PR review that carries the
-hidden metadata block from review-contract.md §2. This review is
-`event: COMMENT` and has no `comments[]` array. The review body
-contains **only** HTML-comment metadata (counts, verdict, run
-ordinal, since-last-run) — no visible summary table.
+On first run, the metadata block lives in the `body` of the
+combined review described in §2 (which also carries the inline
+`comments[]` array). There is no separate metadata-only review on
+first run.
 
-On re-run, locate the prior metadata review by the HTML marker
-(`<!-- fprime-agent: <name> v1 -->`) and dismiss it via:
+On re-run, the inline comments are posted as a fresh review per §2,
+and the metadata is handled separately: dismiss the prior metadata
+review via:
 
 ```http
 PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals
 ```
 
-Then post a fresh review with the updated metadata body. The HTML
-marker is the de-dup key. Dismiss + resubmit is the primary
-mechanism (since the review body may change between runs).
+Then submit a new metadata-only review (`event: COMMENT`, no
+`comments[]` array) with the updated body. The review body contains
+**only** HTML-comment metadata (counts, verdict, run ordinal,
+since-last-run) — no visible summary table. The HTML marker is
+the de-dup key.
 
 ---
 

@@ -213,9 +213,8 @@ This is a one-way orchestrator→agent prompt-level convention.
 
 Per-agent reviews are identified by their HTML comment marker
 (`<!-- fprime-agent: <name> v1 -->`); when re-running, the agent
-dismisses its prior review and submits a new one (since inline
-comments belong to the review and a new review carries the updated
-metadata).
+dismisses its prior review and submits a new one (since the
+review body carrying the metadata may change between runs).
 
 Inline comments are identified by `(file_path, finding-key)` — see §7
 for finding-key.
