@@ -471,17 +471,14 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     state.assert_file_consistent();
     state.assert_file_closed();
 
-    // Perform action using the ConstStringBase open overload
-    Fw::String path(filename->c_str());
-    Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
-    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
-    ASSERT_EQ(status, s2);
-
-    // After open, m_path points to the local Fw::String buffer which will be destroyed
-    // when this action returns. Reset m_path to point to the persistent filename string
-    // kept alive in the FILES vector to avoid a dangling pointer.
-    if (Os::File::Status::OP_OK == status) {
-        state.m_file.m_path = filename->c_str();
+    // Perform action using the ConstStringBase open overload. The path object is scoped so it is
+    // destroyed before the assertions below, proving File keeps its own copy and m_path never dangles.
+    Os::File::Status status;
+    {
+        Fw::String path(filename->c_str());
+        status = state.m_file.open(path, m_mode, this->m_overwrite);
+        Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+        ASSERT_EQ(status, s2);
     }
 
     // Extra check to ensure file is consistently open

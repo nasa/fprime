@@ -7,6 +7,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/Os.hpp>
 
 // Forward declaration for UTs
@@ -584,8 +585,9 @@ class File final : public FileInterface {
   private:
     static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
 
-    Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
-    const CHAR* m_path = nullptr;      //!< Path last opened
+    Mode m_mode = Mode::OPEN_NO_MODE;   //!< Stores mode for error checking
+    Fw::FileNameString m_path_storage;  //!< Owned copy of the path last opened
+    const CHAR* m_path = nullptr;       //!< Path last opened, points into m_path_storage when open
 
     U32 m_crc = File::INITIAL_CRC;  //!< Current CRC calculation
     U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];

@@ -27,18 +27,21 @@ File::~File() {
 
 File::File(const File& other)
     : m_mode(other.m_mode),
-      m_path(other.m_path),
+      m_path_storage(other.m_path_storage),
       m_crc(other.m_crc),
       m_crc_buffer(),
       m_handle_storage(),
       m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
+    // Re-point m_path into this object's own storage so it does not alias the source
+    this->m_path = (other.m_path != nullptr) ? this->m_path_storage.toChar() : nullptr;
 }
 
 File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
-        this->m_path = other.m_path;
+        this->m_path_storage = other.m_path_storage;
+        this->m_path = (other.m_path != nullptr) ? this->m_path_storage.toChar() : nullptr;
         this->m_crc = other.m_crc;
         this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
@@ -76,7 +79,9 @@ File::Status File::open(const CHAR* filepath,
     File::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
-        this->m_path = filepath;
+        // Store an owned copy of the path so m_path never dangles when the caller's string is freed
+        this->m_path_storage = filepath;
+        this->m_path = this->m_path_storage.toChar();
         // Reset any open CRC calculations
         this->m_crc = File::INITIAL_CRC;
     }
