@@ -5,7 +5,7 @@ module Svc {
 #Events
 #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-      @Epoch Processing cap reached; one or more telemetry entries were deferred this cycle
+    @Epoch Processing cap reached; one or more telemetry entries were deferred this cycle
     event TlmChanEpochProcessingCapReached(
         numDeferred: U32 @< Entries skipped (dropped) this invocation
         numTimesDeferredCountReached: U32 @< Cumulative invocations where cap was reached

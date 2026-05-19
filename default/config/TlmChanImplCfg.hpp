@@ -51,11 +51,6 @@ enum {
 
     // Maximum number of updated telemetry entries Run_handler will serialize per invocation.
     TLMCHAN_MAX_ENTRIES_PER_RUN = (TLMCHAN_HASH_BUCKETS / 2),
-
-    // Reserved channel IDs for Run_handler's internal CPU guard metrics.
-    // Must not overlap any application-defined channel IDs.
-    TLMCHAN_NUM_DEFERRED_CHAN_ID = 0xFFFEU,
-    TLMCHAN_PROC_CAP_CHAN_ID = 0xFFFFU
 };
 
 }
