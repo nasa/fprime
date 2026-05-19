@@ -165,9 +165,6 @@ analysis of any prompt-injection content in the diff and metadata.
 
 </details>
 
-**Architecture**
-- <terse must-fix summary> — <link>
-
 ### Merge readiness
 **Merge readiness: No-Go** — security agent has 3 outstanding must-fix items.
 
