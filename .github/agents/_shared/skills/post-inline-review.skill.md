@@ -51,7 +51,8 @@ full range (`start_line` + `line`) rather than a single line.
 
 A single PR review can carry many inline comments. Prefer one review
 per agent run rather than many small reviews — the GitHub UI groups
-them and the per-agent summary review (see §4) acts as the umbrella.
+them and the per-agent hidden metadata review (see §4) acts as the
+umbrella.
 
 ```http
 POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
@@ -62,7 +63,7 @@ Content-Type: application/json
 {
   "commit_id": "<head SHA>",
   "event": "COMMENT",
-  "body": "<per-agent summary block — see §4>",
+  "body": "<per-agent hidden metadata block — see §4>",
   "comments": [
     {
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
@@ -243,7 +244,7 @@ The agent uses this to:
 ## 8. Worked example: the full flow on one PR
 
 1. Read PR head SHA. Bind every subsequent call to this SHA.
-2. Fetch the agent's prior summary review by HTML marker (review
+2. Fetch the agent's prior metadata review by HTML marker (review
    contract §6). Note its review ID, run count, and the
    `finding-key` index.
 3. Run the agent's analysis on the new head. Compute the new
@@ -252,8 +253,8 @@ The agent uses this to:
    action list: `post-new`, `reply-fixed`, `resolve-thread`,
    `reply-improper`, `unresolve-thread`, `reply-disagreement`,
    `post-incorrect-fix-followup`, `do-nothing`.
-5. Execute the action list. Compose the per-agent summary block from
-   the resulting state.
+5. Execute the action list. Compose the per-agent hidden metadata
+   block from the resulting state.
 6. POST the umbrella review (inline comments + hidden metadata body)
    or, on re-run, POST the inline comments as a fresh review, dismiss
    the prior metadata review, and submit a new one with the updated

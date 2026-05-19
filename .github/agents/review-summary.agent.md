@@ -393,10 +393,13 @@ closing line (§5f) is still rendered.
 
 ### Trigger — fires if ANY of the following holds
 
-1. **Prompt injection detected.** The supply-chain agent reports
-   any outstanding finding (any tier — must fix / suggestion /
-   could fix) whose finding-class is `prompt-injection`. Even a
-   single suspected injection is a strong spam signal.
+1. **Prompt injection detected at must-fix severity.** The
+   supply-chain agent reports any outstanding `**must fix**` finding
+   whose finding-class is `prompt-injection`. Lower tiers (`could
+   fix`, `suggestion`) are flagged in the per-agent results but do
+   not by themselves trigger Recommend:Close — they may represent
+   benign patterns (e.g. maintainer-authored AI detection mechanisms)
+   that the maintainer will adjudicate.
 2. **CI test-runtime policy violation with must-fix severity.** The
    security agent reports any outstanding category-8
    (`ci-test-runtime-policy-violation` finding-class) `**must fix**`.
