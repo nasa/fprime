@@ -121,6 +121,17 @@ The design of `CfdpManager` assumes the following:
 
 8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`).
 
+### Security Considerations
+
+CfdpManager follows a layered security architecture where authentication and authorization are enforced at lower network protocol layers rather than at the application layer:
+
+- **Physical/Network Layer Security**: Hardware encryption at the radio level, or network-layer protocols like Bundle Protocol Security or IPsec
+- **Application Layer**: CfdpManager assumes CFDP traffic originates from authenticated sources validated at lower layers
+
+CfdpManager accepts destination file paths as specified in incoming CFDP Metadata PDUs without application-layer path validation. This approach is consistent with the CCSDS 727.0-B-5 CFDP standard, which assumes operation over authenticated communication channels.
+
+For mission deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
