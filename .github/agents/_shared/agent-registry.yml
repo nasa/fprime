@@ -95,6 +95,20 @@ agents:
       before deeper review is worthwhile. Does not contribute to CI
       safety.
 
+  - name: F Prime Architecture Reviewer
+    short_name: architecture-review
+    role: reviewer
+    path: .github/agents/architecture-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Seven categories: sync port on async component, async port on
+      passive component, component-kind / port-kind incoherence,
+      rate-group pattern violation, unclassifiable component, F Prime
+      architectural primitive misuse, and undocumented architectural
+      departure. Classifies each touched component's prevailing
+      architecture (cyclic, event-driven, background, hybrid) and
+      flags changes that erode it. Does not contribute to CI safety.
+
   - name: F Prime Test Quality Reviewer
     short_name: test-quality-review
     review_label: Test Quality
