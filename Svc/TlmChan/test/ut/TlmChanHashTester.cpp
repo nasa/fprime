@@ -406,7 +406,7 @@ void TlmChanTester::runHashDistribution() {
         << " (threshold=" << static_cast<unsigned>(hotSpotThreshold) << ").";
 
     // ---- Assertion 2: no dead-zone (empty) slots ----
-    // With 50× oversampling, every slot must receive at least one hit.
+    // With 50× over sampling, every slot must receive at least one hit.
     EXPECT_GT(minCount, 0u)
         << "At least one slot received zero hits from " << sampleSize
         << " sequential IDs.  The hash has a dead-zone.";

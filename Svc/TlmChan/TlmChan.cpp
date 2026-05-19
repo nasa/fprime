@@ -37,6 +37,8 @@ static_assert(TLMCHAN_MAX_ENTRIES_PER_RUN <= TLMCHAN_HASH_BUCKETS,
               "TLMCHAN_MAX_ENTRIES_PER_RUN cannot exceed TLMCHAN_HASH_BUCKETS");
 
 TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(0), m_procCapCount(0) {
+    FW_ASSERT(name != nullptr);
+
     // clear slot pointers
     for (FwChanIdType entry = 0; entry < TLMCHAN_NUM_TLM_HASH_SLOTS; entry++) {
         this->m_tlmEntries[0].slots[entry] = nullptr;
@@ -65,10 +67,10 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     // non-deterministic random source for seed
     U32 seed = 0;
 
-    const auto timeNs =
+    const I64 timeNs = static_cast<I64>(
         std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
-            .count();
-    const U32 foldedNs = static_cast<U32>(timeNs) ^ static_cast<U32>(static_cast<U64>(timeNs) >> 32);
+            .count());
+    const U32 foldedNs = static_cast<U32>(timeNs) ^ (static_cast<U32>(static_cast<U64>(timeNs) >> 32));
 
     U32 rdVal = 0;
     std::random_device rd;
@@ -100,6 +102,8 @@ TlmChan::~TlmChan() {}
 constexpr size_t FwChanIdSize = sizeof(FwChanIdType);
 
 FwChanIdType TlmChan::doHash(FwChanIdType id) {
+    // Validate input before use
+    FW_ASSERT(id < TLMCHAN_HASH_MOD_VALUE, static_cast<FwAssertArgType>(id));
     FwChanIdType result;
 
     if (FwChanIdSize >= 4) {
@@ -114,7 +118,7 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
     } else if (FwChanIdSize == 2) {
-        U16 h = static_cast<U16>(id) ^ static_cast<U16>(this->m_hashSeed & 0xFFFFU);
+        U16 h = (static_cast<U16>(id)) ^ (static_cast<U16>(this->m_hashSeed) & static_cast<U16>(0xFFFFU));
 
         // Wang 16-bit
         h = static_cast<U16>(h ^ (h >> 7));
@@ -127,7 +131,7 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
     } else {
         // FwChanIdType is smaller than 16 bits (at most 255 distinct channel IDs).
         // XOR with the low byte of the seed before reduction to maintain consistency
-        const U8 h = static_cast<U8>(id) ^ static_cast<U8>(this->m_hashSeed & 0xFFU);
+        const U8 h = static_cast<U8>(id) ^ (static_cast<U8>(this->m_hashSeed) & static_cast<U8>(0xFFU));
         result = static_cast<FwChanIdType>((h % TLMCHAN_HASH_MOD_VALUE) % TLMCHAN_NUM_TLM_HASH_SLOTS);
     }
     return result;

@@ -12,7 +12,7 @@
 #include "TlmChanTester.hpp"
 
 // ============================================================================
-// Functional tests (pre-existing)
+// Functional tests (preexisting)
 // ============================================================================
 
 TEST(TlmChanTest, InitTest) {
@@ -83,8 +83,9 @@ TEST(TlmChanTest, ProcGuardTest) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashSizeIdentification) {
     TEST_CASE(107.4.1, "doHash width-branch identification and range check");
-    COMMENT("Identify the active hash algorithm (Murmur3 / Wang / XOR) and verify "
-            "all outputs are in [0, TLMCHAN_NUM_TLM_HASH_SLOTS).");
+    COMMENT(
+        "Identify the active hash algorithm (Murmur3 / Wang / XOR) and verify "
+        "all outputs are in [0, TLMCHAN_NUM_TLM_HASH_SLOTS).");
 
     Svc::TlmChanTester tester;
     tester.runHashSizeIdentification();
@@ -98,8 +99,9 @@ TEST(TlmChanHashTest, HashSizeIdentification) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashDeterminism) {
     TEST_CASE(107.4.2, "doHash within-session determinism");
-    COMMENT("Verify that repeated calls to doHash() with the same channel ID "
-            "always return the same slot within one component lifetime.");
+    COMMENT(
+        "Verify that repeated calls to doHash() with the same channel ID "
+        "always return the same slot within one component lifetime.");
 
     Svc::TlmChanTester tester;
     tester.runHashDeterminism();
@@ -117,8 +119,9 @@ TEST(TlmChanHashTest, HashDeterminism) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashSeedDiversity) {
     TEST_CASE(107.4.3, "doHash per-boot seed diversity");
-    COMMENT("Verify that two TlmChan instances receive statistically independent "
-            "seeds so offline pre-computation of collision lists is infeasible.");
+    COMMENT(
+        "Verify that two TlmChan instances receive statistically independent "
+        "seeds so offline pre-computation of collision lists is infeasible.");
 
     Svc::TlmChanTester tester;
     tester.runHashSeedDiversity();
@@ -137,8 +140,9 @@ TEST(TlmChanHashTest, HashSeedDiversity) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashAvalanche) {
     TEST_CASE(107.4.4, "doHash avalanche effect (non-linearity)");
-    COMMENT("Verify that a 1-bit change in the channel ID changes the output slot "
-            "for the majority of cases, confirming non-linear diffusion.");
+    COMMENT(
+        "Verify that a 1-bit change in the channel ID changes the output slot "
+        "for the majority of cases, confirming non-linear diffusion.");
 
     Svc::TlmChanTester tester;
     tester.runHashAvalanche();
@@ -157,8 +161,9 @@ TEST(TlmChanHashTest, HashAvalanche) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashCollisionHardening) {
     TEST_CASE(107.4.5, "doHash collision-hardening: original DoS/shadowing attack regression");
-    COMMENT("Verify that the known linear-collision attack sequence (k * SLOTS) "
-            "no longer fills any hash slot, neutralising the original DoS vector.");
+    COMMENT(
+        "Verify that the known linear-collision attack sequence (k * SLOTS) "
+        "no longer fills any hash slot, improving cyber.");
 
     Svc::TlmChanTester tester;
     tester.runCollisionHardening();
@@ -174,8 +179,9 @@ TEST(TlmChanHashTest, HashCollisionHardening) {
 // ----------------------------------------------------------------------------
 TEST(TlmChanHashTest, HashDistribution) {
     TEST_CASE(107.4.6, "doHash slot-distribution uniformity");
-    COMMENT("Hash 50 × SLOTS sequential IDs and verify no slot is a hot-spot "
-            "(> 3× average) or dead-zone (0 hits).");
+    COMMENT(
+        "Hash 50 × SLOTS sequential IDs and verify no slot is a hot-spot "
+        "(> 3× average) or dead-zone (0 hits).");
 
     Svc::TlmChanTester tester;
     tester.runHashDistribution();
