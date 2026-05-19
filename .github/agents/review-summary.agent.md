@@ -500,7 +500,7 @@ closing line is not templated.
 
 ## Status returned to the orchestrator
 
-After posting (or dismissing + reposting) the review, return:
+After posting (or dismissing and submitting a new) review, return:
 
 - `completed` on success.
 - `FAILED: <one-line reason>` on an unrecoverable error (e.g.,
