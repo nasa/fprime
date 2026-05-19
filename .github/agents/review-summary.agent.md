@@ -84,9 +84,7 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 
 (omit this entire section unless the spam check in §5e fires)
 
-<details>
-<summary>Since last run (N changes)</summary>
-
+### Since last run
 | Agent | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
 |---|---:|---:|---:|---:|---:|---:|
 | Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
@@ -95,8 +93,6 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
 | Design | 0 | 1 | 0 | 0 | 0 | 0 |
 | Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
-
-</details>
 
 (omit this section on run #1)
 
@@ -372,13 +368,12 @@ Runner Safety failed to run.`).
 
 ### § `<details>` block usage
 
-The `Outstanding must-fix items` section and (when present) the
-`Since last run` table are each wrapped in a `<details>` /
-`<summary>` block. The `<summary>` line includes a count so
-maintainers can see at a glance how many items are inside without
-expanding. The `Per-agent results` table and `Supply-chain surfaces`
-table are always visible (not collapsed) because they are the
-primary verdicts.
+The `Outstanding must-fix items` section is wrapped in a
+`<details>` / `<summary>` block. The `<summary>` line includes a
+count so maintainers can see at a glance how many items are inside
+without expanding. The `Since last run` table, `Per-agent results`
+table, and `Supply-chain surfaces` table are always visible (not
+collapsed) because they are primary verdicts and deltas.
 
 ---
 
