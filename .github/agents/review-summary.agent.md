@@ -135,8 +135,7 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 - <terse must-fix summary> — <link>
 
 **Design**
-- **Human design adjudication required.** See the `design-needs-human-adjudication` bullet below.
-- <terse must-fix summary> — <link>
+- **Human design adjudication required.** <terse must-fix summary> — <link>
 
 ### Merge readiness
 **Merge readiness: No-Go** — security agent has 3 outstanding must-fix items.
@@ -162,7 +161,7 @@ in this comment.
 - Parse each reviewer's hidden metadata: tag counts,
   outstanding, verdict, run ordinal, since-last-run counters,
   optional CI-safety fields, and (supply-chain agent only)
-  the `**Surfaces:**` bullet block.
+  the `<!-- surfaces: ... -->` block.
 
 The orchestrator's per-reviewer status list is the authoritative
 failure signal. If a reviewer is listed as `FAILED: <reason>` you
@@ -223,8 +222,8 @@ agent (per review contract §2 "Supply-chain agent: surfaces emission"):
 `Dependencies`, `Vendored / submodule`, `Build / test infrastructure`,
 `Workflows / actions / scripts`, `Generator output`, `Prompt-injection`.
 
-The aggregator parses the `**Surfaces:**` bullet block from the
-supply-chain agent's review submission and copies each bullet's
+The aggregator parses the `<!-- surfaces: ... -->` block from the
+supply-chain agent's review body and copies each bullet's
 content verbatim into the `Outstanding` cell of the matching row.
 `clean` is the most common cell value; non-clean cells carry a count
 (`1 must-fix`, `2 (1 must-fix, 1 suggestion)`, etc.) and a one-line
@@ -235,7 +234,7 @@ Edge cases:
 - **Supply-chain agent FAILED or did not run** — replace the entire
   table with one line: `Supply-chain agent did not run; surfaces not
   assessed.`
-- **Supply-chain agent emitted no `**Surfaces:**` block** (treat as a
+- **Supply-chain agent emitted no `<!-- surfaces: ... -->` block** (treat as a
   contract violation) — render the six rows with `unknown — surfaces
   emission missing` in every `Outstanding` cell and treat as a
   did-not-run for CI-safety rationale purposes.

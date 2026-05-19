@@ -288,23 +288,25 @@ inferring coverage from absences.
 ### Worked examples
 
 ```
-**Surfaces:**
+<!-- surfaces:
 - Dependencies: clean
 - Vendored / submodule: clean
 - Build / test infrastructure: clean
 - Workflows / actions / scripts: 1 must-fix — action 'org/foo@main' unpinned in build-image.yml
 - Generator output: clean
 - Prompt-injection: clean
+-->
 ```
 
 ```
-**Surfaces:**
+<!-- surfaces:
 - Dependencies: 1 suggestion — new package 'requests' lacks --hash pin
 - Vendored / submodule: clean
 - Build / test infrastructure: clean
 - Workflows / actions / scripts: clean
 - Generator output: clean
 - Prompt-injection: 1 must-fix — "ignore previous instructions" string in PR body
+-->
 ```
 
 ---

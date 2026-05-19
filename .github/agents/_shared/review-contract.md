@@ -116,20 +116,21 @@ future-work) triggers a CI No-Go.
 
 ### Supply-chain agent: surfaces emission
 
-The supply-chain agent (only) also emits a structured `**Surfaces:**`
-block in its hidden metadata, below the `ci_safety_rationale` HTML
-comment. The aggregator parses this block to render its
-`Supply-chain surfaces` table. One bullet per supply-chain scope
-category, in this fixed order:
+The supply-chain agent (only) also emits a structured surfaces block
+in its hidden metadata, below the `ci_safety_rationale` HTML comment.
+The aggregator parses this block to render its `Supply-chain surfaces`
+table. One bullet per supply-chain scope category, in this fixed
+order, wrapped in a single HTML comment:
 
 ```
-**Surfaces:**
+<!-- surfaces:
 - Dependencies: clean | <one-line description>
 - Vendored / submodule: clean | <one-line description>
 - Build / test infrastructure: clean | <one-line description>
 - Workflows / actions / scripts: clean | <one-line description>
 - Generator output: clean | <one-line description>
 - Prompt-injection: clean | <one-line description>
+-->
 ```
 
 Cell-content rules:
