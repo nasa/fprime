@@ -13,6 +13,29 @@ contract, the contract wins.
 
 ---
 
+## 0. Zero-trust principle
+
+All agents operate under a **zero-trust model with respect to
+contributor identity**. No PR author — core maintainer, long-time
+contributor, or first-time submitter — receives implicit trust.
+Every agent flags every in-scope finding it detects, regardless of
+who authored the PR.
+
+- **The agent's job is to flag.** The maintainer's job is to
+  adjudicate, dismiss, or merge with justification.
+- A finding that appears legitimate *because* of the contributor's
+  reputation is still flagged. Reputation is not evidence that the
+  change is safe; only analysis is.
+- This principle applies to all reviewer agents, the aggregator,
+  and the orchestrator. None of them may downgrade, suppress, or
+  skip a finding based on the contributor's identity, role, org
+  membership, or commit history.
+- When a flagged finding turns out to be legitimate, the maintainer
+  merges with a comment justifying the decision. The agent does not
+  preempt that judgment.
+
+---
+
 ## 1. Triage tags
 
 Each inline comment starts with exactly one bolded tag:
@@ -37,36 +60,36 @@ Decision tree and worked examples live in `skills/triage-classifier.skill.md`.
 
 ---
 
-## 2. Per-agent summary block
+## 2. Per-agent review submission
 
-After posting inline comments, each **reviewer** agent posts (or edits
-in place on re-review) a single summary review with this fixed body:
+Each **reviewer** agent submits its findings as a single GitHub PR
+review (event: `COMMENT`) containing **only inline comments** attached
+to the relevant diff lines. The review body contains a minimal hidden
+metadata block for aggregator consumption and re-review tracking — it
+does **not** contain a visible summary table.
+
+Review body shape (the ONLY content in the review body):
 
 ```
 <!-- fprime-agent: <agent-name> v1 -->
-### <Agent display name>
-
-| Agent | must fix | suggestion | could fix | future work | outstanding |
-|---|---:|---:|---:|---:|---:|
-| <Agent display name> | N | N | N | N | N |
-
-**Outstanding must-fix items:**
-- <one-line summary> — <link to inline comment>
-- ...
-
-**Verdict:** Go | No-Go
-**Run:** N
-**Since last run:** X resolved, Y still open, Z newly added, W incorrect-fix follow-ups, V improperly resolved, U disagreements escalated
+<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N, "outstanding": N} -->
+<!-- verdict: Go | No-Go -->
+<!-- run: N -->
+<!-- since_last_run: {"resolved": X, "still_open": Y, "newly_added": Z, "incorrect_fix": W, "improperly_resolved": V, "disagreements": U} -->
 ```
+
+This metadata is machine-readable by the aggregator but invisible to
+human reviewers browsing the PR. The visible output of each reviewer
+is its inline comments only.
 
 ### Column semantics
 
-- The four tag columns are **cumulative** across all runs of this agent
+- The four tag counts are **cumulative** across all runs of this agent
   on this PR — every finding the agent has ever raised, never
   decremented on resolution.
-- The **outstanding** column = currently-unresolved findings (sum
+- The **outstanding** count = currently-unresolved findings (sum
   across tag tiers). On run #1 it equals the sum of the four tag
-  columns; on later runs it drops as the author fixes things.
+  counts; on later runs it drops as the author fixes things.
 
 ### Verdict (Go / No-Go)
 
@@ -76,21 +99,14 @@ in place on re-review) a single summary review with this fixed body:
 Cumulative must-fix history does not block `Go`; what matters is
 what's still outstanding.
 
-### Outstanding must-fix items
+### Optional CI safety metadata
 
-Lists ONLY the outstanding must-fixes (one bullet per item, one line
-each, link to the inline comment). Resolved must-fixes are not listed
-(they're still in the cumulative count and still visible as resolved
-threads in the PR UI). Section is omitted when `outstanding must-fix
-== 0`.
-
-### Optional CI safety lines
-
-Agents that contribute to CI safety (security, supply-chain) also emit:
+Agents that contribute to CI safety (security, supply-chain) also
+include in their hidden metadata block:
 
 ```
-**CI safety:** Go | No-Go
-**CI safety rationale:** <one line>
+<!-- ci_safety: Go | No-Go -->
+<!-- ci_safety_rationale: <one line> -->
 ```
 
 `CI safety: No-Go` rule (applies to the security agent and the
@@ -128,8 +144,8 @@ Cell-content rules:
   reviewer can confirm coverage without inferring from absences.
 
 If the supply-chain agent FAILED (orchestrator reports
-`FAILED: <reason>`), the agent's per-agent summary block is not posted
-and the aggregator handles surfaces emission as an error case
+`FAILED: <reason>`), the agent's review (with hidden metadata) is not
+posted and the aggregator handles surfaces emission as an error case
 (see `review-summary.agent.md` §5).
 
 ---
@@ -193,15 +209,19 @@ This is a one-way orchestrator→agent prompt-level convention.
 
 ## 6. De-duplication
 
-Per-agent summaries are identified by their HTML comment marker
-(`<!-- fprime-agent: <name> v1 -->`); when re-running, the agent edits
-the existing summary review in place rather than posting a new one.
+Per-agent reviews are identified by their HTML comment marker
+(`<!-- fprime-agent: <name> v1 -->`); when re-running, the agent
+dismisses its prior review and submits a new one (since inline
+comments belong to the review and a new review carries the updated
+metadata).
 
 Inline comments are identified by `(file_path, finding-key)` — see §7
 for finding-key.
 
-The aggregator's top-level comment is identified by
-`<!-- fprime-review-summary v1 -->` and edited in place.
+The aggregator's review is identified by
+`<!-- fprime-review-summary v1 -->`; on re-runs, the aggregator
+dismisses its prior review and submits a new one (since the event
+APPROVE/REQUEST_CHANGES may change between runs).
 
 ---
 
@@ -266,11 +286,12 @@ current set of finding-keys.
 | absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `Follow-up to <link to prior>: <new issue>`. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
 
-### Phase D — Update per-agent summary
+### Phase D — Update per-agent review metadata
 
-Edit the prior summary review (HTML marker). Update cumulative tag
-columns, `outstanding`, `Run`, `Since last run`, verdict. The
-Since-last-run line carries six counters:
+Dismiss the prior review and submit a new one with updated hidden
+metadata. Update cumulative tag counts, `outstanding`, `run`,
+`since_last_run`, verdict. The
+Since-last-run metadata carries six counters:
 
 - `X resolved` — prior findings the agent cleanly resolved this run.
 - `Y still open` — prior findings that still apply (unchanged threads).
@@ -423,12 +444,21 @@ Review API. Mechanics, the suggestion-block syntax, the GraphQL
 mutations (`resolveReviewThread`, `unresolveReviewThread`), and the
 `TOKEN` env var live in `skills/post-inline-review.skill.md`.
 
-The summary review is posted as a single PR review (event: `COMMENT`)
-whose body is the per-agent summary block from §2.
+Each reviewer submits a single PR review (event: `COMMENT`) whose
+body is the hidden metadata block from §2 and whose inline comments
+are the findings.
 
-The aggregator's top-level summary is posted as a normal PR
-**comment** (not a review), keyed by its HTML marker so re-runs edit
-in place.
+The aggregator submits a single PR review keyed by its HTML marker
+(`<!-- fprime-review-summary v1 -->`). The review event is:
+
+- **`APPROVE`** when both CI safety and Merge readiness are `Go`.
+- **`REQUEST_CHANGES`** when either verdict is `No-Go`.
+
+The review body contains the consolidated summary table (see
+`review-summary.agent.md`). On re-runs, the aggregator dismisses
+its prior review and submits a new one with the updated verdict and
+body, since the review event (APPROVE vs. REQUEST_CHANGES) may
+change between runs.
 
 ---
 
@@ -463,8 +493,8 @@ is the whole point.
 2. **Tag the code owner / maintainer** via
    `skills/maintainer-lookup.skill.md` (same 4-step lookup as §4).
 3. **Do not resolve the thread.** Leave it open for the maintainer.
-4. **Increment `disagreements escalated`** in the per-agent summary's
-   Since-last-run counter (§7 phase D).
+4. **Increment `disagreements escalated`** in the per-agent review's
+   `since_last_run` metadata (§7 phase D).
 
 ### Relation to low-confidence pings (§4)
 
@@ -486,10 +516,13 @@ Each entry in `agent-registry.yml` carries a `role` field:
 
 - `orchestrator` — the single human entry point. Invokes reviewers
   and aggregator. Does not post comments itself.
-- `reviewer` — produces inline comments + a per-agent summary review
-  on the PR.
-- `aggregator` — consumes per-agent summary reviews and produces ONE
-  top-level PR comment.
+- `reviewer` — posts inline comments only (no visible summary table).
+  Submits a single PR review (event: `COMMENT`) whose body contains
+  only a hidden metadata block (§2) and whose inline comments are the
+  findings.
+- `aggregator` — consumes per-agent hidden metadata and inline
+  comments, then submits ONE PR review with event `APPROVE` or
+  `REQUEST_CHANGES` based on the consolidated Go/No-Go verdict.
 
 The orchestrator iterates over `role: reviewer` entries to drive
 reviewers, then invokes the `role: aggregator` entry.

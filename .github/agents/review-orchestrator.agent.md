@@ -21,7 +21,7 @@ file specifies the orchestration layer on top of it.
 Your role per `_shared/agent-registry.yml` is `orchestrator`.
 
 You **do not** analyze code yourself. You **do not** post inline
-comments. You **do not** post the summary comment. Your job is to
+comments. You **do not** post the summary review. Your job is to
 invoke the reviewer agents (in fixed order), gather their completion
 status, and invoke the aggregator with the gathered status. The
 reviewer agents and the aggregator do all the GitHub-side posting.
@@ -92,8 +92,9 @@ your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `security-review.agent.md`.
-Post inline review comments and your per-agent summary review per
-the contract.
+Post inline review comments per the contract. Your review body
+contains only the hidden metadata block (§2); no visible summary
+table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -109,8 +110,9 @@ This is run #<supply-chain-run-ordinal> of your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `supply-chain-review.agent.md`.
-Post inline review comments and your per-agent summary review per
-the contract.
+Post inline review comments per the contract. Your review body
+contains only the hidden metadata block (§2); no visible summary
+table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -127,8 +129,9 @@ in <owner>/<repo> at head <sha>. This is run
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `fprime-code-review.agent.md`
 and the rule set in `_shared/skills/fprime-cpp-design.skill.md`.
-Post inline review comments and your per-agent summary review per
-the contract.
+Post inline review comments per the contract. Your review body
+contains only the hidden metadata block (§2); no visible summary
+table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -149,7 +152,8 @@ your scope and finding classes from
 surfaces (component SDDs, user manual, how-tos, reference,
 tutorials, top-level docs, public-API comments) the PR's changes
 impact, then post inline review comments anchored on the doc files
-that need updating, plus your per-agent summary review.
+that need updating. Your review body contains only the hidden
+metadata block (§2); no visible summary table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -171,8 +175,9 @@ given the stated intent, (2) does the code match the design, (3)
 does the design match the intent. When a human design-owner
 should intervene before deeper review is worthwhile, emit a
 `design-needs-human-adjudication` finding and ping code owners per
-your agent file. Post inline review comments and your per-agent
-summary review per the contract.
+your agent file. Post inline review comments per the contract.
+Your review body contains only the hidden metadata block (§2); no
+visible summary table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -191,8 +196,8 @@ your scope and finding classes from `test-quality-review.agent.md`.
 Determine whether new / modified FPP surface has corresponding
 test references, and whether the tests that exist actually assert
 observable behavior (vs. passing by construction). Post inline
-review comments and your per-agent summary review per the
-contract.
+review comments per the contract. Your review body contains only
+the hidden metadata block (§2); no visible summary table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
@@ -202,9 +207,10 @@ Return when finished. Report `completed` on success, or
 
 ```
 Thanks for closing this out. You're the F Prime PR Review Summary
-Aggregator. Please consume the per-agent summary reviews on PR #<N>
-in <owner>/<repo> at head <sha> and produce the top-level summary
-PR comment per `review-summary.agent.md` and the contract.
+Aggregator. Please consume the per-agent hidden metadata and inline
+comments on PR #<N> in <owner>/<repo> at head <sha> and produce
+the consolidated PR review (APPROVE or REQUEST_CHANGES) per
+`review-summary.agent.md` and the contract.
 
 Per-reviewer status from this run:
 - security-review: <completed | FAILED: <reason>>
@@ -287,8 +293,8 @@ No special-case logic. On the second-and-later run on the same PR:
   kickoff prompt.
 - Each reviewer handles re-review state internally per the contract
   §7 (phases A–D) and `_shared/skills/re-review-state.skill.md`.
-- The aggregator edits its prior top-level comment in place (HTML
-  marker keyed) and updates the Since-last-run table.
+- The aggregator dismisses its prior review and submits a new one
+  (since the event APPROVE/REQUEST_CHANGES may change between runs).
 
 The orchestrator does not need to know whether this is run #1 or
 run #N — it just counts prior summary reviews and increments.
