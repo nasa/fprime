@@ -13,6 +13,7 @@
 #include <Svc/Ccsds/CfdpManager/Utils.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
+#include <Fw/Com/ComPacket.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <cstring>
@@ -83,6 +84,16 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
     return entry.fwBuffer;
 }
 
+bool CfdpManagerTester::getPduData(const Fw::Buffer& buffer, const U8*& pduData, FwSizeType& pduSize) {
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    if (buffer.getSize() < descriptorSize) {
+        return false;
+    }
+    pduData = buffer.getData() + descriptorSize;
+    pduSize = buffer.getSize() - descriptorSize;
+    return true;
+}
+
 // ----------------------------------------------------------------------
 // PDU Verify Functions
 // ----------------------------------------------------------------------
@@ -97,10 +108,22 @@ void CfdpManagerTester::verifyMetadataPdu(
     const char* expectedDestFilename,
     Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::MetadataPdu metadataPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = metadataPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize Metadata PDU";
 
@@ -145,10 +168,22 @@ void CfdpManagerTester::verifyFileDataPdu(
     const char* filename,
     Svc::Ccsds::Cfdp::Class::T expectedClass
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::FileDataPdu fileDataPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = fileDataPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize File Data PDU";
 
@@ -203,10 +238,22 @@ void CfdpManagerTester::verifyEofPdu(
     FileSize expectedFileSize,
     const char* sourceFilename
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::EofPdu eofPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = eofPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize EOF PDU";
 
@@ -262,10 +309,22 @@ void CfdpManagerTester::verifyFinPdu(
     Cfdp::FinDeliveryCode expectedDeliveryCode,
     Cfdp::FinFileStatus expectedFileStatus
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::FinPdu finPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = finPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize FIN PDU";
 
@@ -294,10 +353,22 @@ void CfdpManagerTester::verifyAckPdu(
     Cfdp::ConditionCode expectedConditionCode,
     Cfdp::AckTxnStatus expectedTransactionStatus
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::AckPdu ackPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = ackPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize ACK PDU";
 
@@ -326,10 +397,22 @@ void CfdpManagerTester::verifyNakPdu(
     U8 expectedNumSegments,
     const Cfdp::SegmentRequest* expectedSegments
 ) {
-    // Deserialize PDU
+    // Validate and strip packet descriptor
+    ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
+
+    // Deserialize packet descriptor (big-endian U16)
+    const U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>((bufferData[0] << 8) | bufferData[1]);
+    EXPECT_EQ(Fw::ComPacketType::FW_PACKET_FILE, descriptor) << "Expected FW_PACKET_FILE descriptor";
+
+    // Deserialize PDU after descriptor
     Cfdp::NakPdu nakPdu;
-    Fw::SerialBuffer sb(const_cast<U8*>(pduBuffer.getData()), pduBuffer.getSize());
-    sb.setBuffLen(pduBuffer.getSize());
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    const U8* pduStart = bufferData + descriptorSize;
+    const FwSizeType pduSize = pduBuffer.getSize() - descriptorSize;
+
+    Fw::SerialBuffer sb(const_cast<U8*>(pduStart), pduSize);
+    sb.setBuffLen(pduSize);
     Fw::SerializeStatus status = nakPdu.deserializeFrom(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to deserialize NAK PDU";
 
@@ -392,15 +475,23 @@ void CfdpManagerTester::sendMetadataPdu(
         closureRequested
     );
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = metadataPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = metadataPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize Metadata PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -429,15 +520,23 @@ void CfdpManagerTester::sendFileDataPdu(
         data
     );
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = fileDataPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = fileDataPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize File Data PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -466,15 +565,23 @@ void CfdpManagerTester::sendEofPdu(
         fileSize
     );
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = eofPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = eofPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize EOF PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -502,15 +609,23 @@ void CfdpManagerTester::sendFinPdu(
         fileStatus
     );
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = finPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = finPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize FIN PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -540,15 +655,23 @@ void CfdpManagerTester::sendAckPdu(
         transactionStatus
     );
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = ackPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = ackPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize ACK PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);
@@ -585,15 +708,23 @@ void CfdpManagerTester::sendNakPdu(
         ASSERT_TRUE(success) << "Failed to add segment " << static_cast<int>(i) << " to NAK PDU";
     }
 
-    // Allocate buffer for PDU
+    // Allocate buffer for PDU + packet descriptor
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = nakPdu.getBufferSize();
-    Fw::Buffer pduBuffer(m_internalDataBuffer, pduSize);
+    U32 totalSize = descriptorSize + pduSize;
+    Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
-    // Serialize PDU to buffer
-    Fw::SerialBuffer sb(pduBuffer.getData(), pduBuffer.getSize());
+    // Write packet descriptor (big-endian U16)
+    U8* bufferData = pduBuffer.getData();
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    // Serialize PDU after descriptor
+    Fw::SerialBuffer sb(bufferData + descriptorSize, pduSize);
     Fw::SerializeStatus status = nakPdu.serializeTo(sb);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status) << "Failed to serialize NAK PDU";
-    pduBuffer.setSize(sb.getSize());
+    pduBuffer.setSize(descriptorSize + sb.getSize());
 
     // Send PDU to CfdpManager via dataIn port
     invoke_to_dataIn(channelId, pduBuffer);

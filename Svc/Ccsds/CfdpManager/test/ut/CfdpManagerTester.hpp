@@ -227,6 +227,13 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @return Pointer to transaction or nullptr if not found
     Transaction* findTransaction(U8 chanNum, TransactionSeq seqNum);
 
+    //! Helper to get pointer and size for PDU data (after packet descriptor)
+    //! @param buffer Buffer containing packet descriptor + PDU
+    //! @param pduData Output pointer to PDU data (after descriptor)
+    //! @param pduSize Output size of PDU data
+    //! @return true if successful, false if buffer too small
+    bool getPduData(const Fw::Buffer& buffer, const U8*& pduData, FwSizeType& pduSize);
+
     // ----------------------------------------------------------------------
     // PDU Uplink Helper Functions
     // ----------------------------------------------------------------------

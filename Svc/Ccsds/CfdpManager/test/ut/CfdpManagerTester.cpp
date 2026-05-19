@@ -751,10 +751,14 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(
                 FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
                 Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
                 Cfdp::NakPdu nakPdu;
-                Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
-                sb.setBuffLen(lastPdu.getSize());
-                if (nakPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
-                    foundNak = true;
+                const U8* pduData;
+                FwSizeType pduSize;
+                if (this->getPduData(lastPdu, pduData, pduSize)) {
+                    Fw::SerialBuffer sb(const_cast<U8*>(pduData), pduSize);
+                    sb.setBuffLen(pduSize);
+                    if (nakPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
+                        foundNak = true;
+                    }
                 }
             }
         }
@@ -785,10 +789,14 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(
                 FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
                 Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
                 Cfdp::FinPdu finPdu;
-                Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
-                sb.setBuffLen(lastPdu.getSize());
-                if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
-                    foundFin = true;
+                const U8* pduData;
+                FwSizeType pduSize;
+                if (this->getPduData(lastPdu, pduData, pduSize)) {
+                    Fw::SerialBuffer sb(const_cast<U8*>(pduData), pduSize);
+                    sb.setBuffLen(pduSize);
+                    if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
+                        foundFin = true;
+                    }
                 }
             }
         }
@@ -807,10 +815,14 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(
                 FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
                 Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
                 Cfdp::FinPdu finPdu;
-                Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
-                sb.setBuffLen(lastPdu.getSize());
-                if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
-                    foundFin = true;
+                const U8* pduData;
+                FwSizeType pduSize;
+                if (this->getPduData(lastPdu, pduData, pduSize)) {
+                    Fw::SerialBuffer sb(const_cast<U8*>(pduData), pduSize);
+                    sb.setBuffLen(pduSize);
+                    if (finPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
+                        foundFin = true;
+                    }
                 }
             }
         }
@@ -968,10 +980,14 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(
                 FwIndexType lastIndex = static_cast<FwIndexType>(this->fromPortHistory_dataOut->size() - 1);
                 Fw::Buffer lastPdu = this->getSentPduBuffer(lastIndex);
                 Cfdp::EofPdu eofPdu;
-                Fw::SerialBuffer sb(const_cast<U8*>(lastPdu.getData()), lastPdu.getSize());
-                sb.setBuffLen(lastPdu.getSize());
-                if (eofPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
-                    foundSecondEof = true;
+                const U8* pduData;
+                FwSizeType pduSize;
+                if (this->getPduData(lastPdu, pduData, pduSize)) {
+                    Fw::SerialBuffer sb(const_cast<U8*>(pduData), pduSize);
+                    sb.setBuffLen(pduSize);
+                    if (eofPdu.deserializeFrom(sb) == Fw::FW_SERIALIZE_OK) {
+                        foundSecondEof = true;
+                    }
                 }
             }
         }
