@@ -24,7 +24,7 @@ fprime-gds==4.2.0
 fprime-tools==4.2.0
 fprime-visual==1.0.2
 gcovr==8.2
-idna==3.10
+idna==3.15
 importlib-metadata==6.7.0
 iniconfig==2.0.0
 itsdangerous==2.2.0
