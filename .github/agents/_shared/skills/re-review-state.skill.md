@@ -198,7 +198,7 @@ For each `k` in `new`:
 
 Dismiss the prior metadata review (located by the HTML marker) via
 `PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with message
-`Superseded by re-review run #N.` Then submit a new review with the
+`Superseded by re-review run N.` Then submit a new review with the
 updated metadata body.
 
 Update:

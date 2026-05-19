@@ -71,7 +71,7 @@ Body shape:
 
 ```
 <!-- fprime-review-summary v1 -->
-## Automated review summary  (run #N)
+## Automated review summary  (run N)
 
 ### Recommend: Close
 **Recommend: Close** — <one-line summary, e.g., "prompt-injection attempt in PR-authored content; PR appears non-substantive">.
@@ -83,18 +83,6 @@ Indicators:
 cc @<maintainer1> @<maintainer2> — please confirm close.
 
 (omit this entire section unless the spam check in §5e fires)
-
-### Since last run
-| Agent | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
-|---|---:|---:|---:|---:|---:|---:|
-| Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
-| Supply Chain / Runner Safety | 0 | 0 | 0 | 0 | 0 | 0 |
-| F Prime C/C++ Design | 2 | 1 | 0 | 0 | 0 | 0 |
-| Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
-| Design | 0 | 1 | 0 | 0 | 0 | 0 |
-| Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
-
-(omit this section on run #1)
 
 ### Per-agent results
 
@@ -109,7 +97,24 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
 | **Totals** | 10 | 8 | 2 | 1 | 9 | **No-Go** |
 
-### Supply-chain surfaces
+<details>
+<summary>Since last run</summary>
+
+| Agent | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
+|---|---:|---:|---:|---:|---:|---:|
+| Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
+| Supply Chain / Runner Safety | 0 | 0 | 0 | 0 | 0 | 0 |
+| F Prime C/C++ Design | 2 | 1 | 0 | 0 | 0 | 0 |
+| Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
+| Design | 0 | 1 | 0 | 0 | 0 | 0 |
+| Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
+
+</details>
+
+(omit the Since last run block on run 1)
+
+<details>
+<summary>Supply-chain surfaces</summary>
 
 | Surface | Outstanding |
 |---|---|
@@ -119,6 +124,8 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | Workflows / actions / scripts | 1 must-fix — action `org/foo@main` unpinned in `build-image.yml` |
 | Generator output | clean |
 | Prompt-injection | clean |
+
+</details>
 
 <details>
 <summary>Outstanding must-fix items (9)</summary>
@@ -219,8 +226,9 @@ There is no separate `### CI safety` section in the comment body.
 
 ### Supply-chain surfaces table
 
-A second small table rendered immediately after the per-agent results
-table. Drills down the supply-chain agent's coverage by scope category.
+A second small table wrapped in a `<details>` block, rendered after
+the Since last run block. Drills down the supply-chain agent's
+coverage by scope category.
 One row per surface, in the fixed order emitted by the supply-chain
 agent (per review contract §2 "Supply-chain agent: surfaces emission"):
 `Dependencies`, `Vendored / submodule`, `Build / test infrastructure`,
@@ -250,8 +258,10 @@ Edge cases:
 ### Since last run section
 
 Six counters (per review contract §7 phase D) summed from each
-reviewer's since-last-run line. Omitted on run #1 (no prior summary
-to delta against).
+reviewer's since-last-run line. Wrapped in a `<details>` block.
+Placed between the Per-agent results table and the Supply-chain
+surfaces table. Omitted on run 1 (no prior summary to delta
+against).
 
 ### Outstanding must-fix items
 
@@ -356,7 +366,7 @@ Runner Safety failed to run.`).
 - Locate the prior aggregator review by HTML marker.
 - Dismiss the prior review via
   `PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with
-  message `Superseded by re-review run #N.`
+  message `Superseded by re-review run N.`
 - Submit a new PR review with the updated body and the correct
   event (`APPROVE` or `REQUEST_CHANGES` based on the new verdicts).
 - Read each per-agent review's `since_last_run` metadata and
@@ -368,12 +378,15 @@ Runner Safety failed to run.`).
 
 ### § `<details>` block usage
 
-The `Outstanding must-fix items` section is wrapped in a
-`<details>` / `<summary>` block. The `<summary>` line includes a
-count so maintainers can see at a glance how many items are inside
-without expanding. The `Since last run` table, `Per-agent results`
-table, and `Supply-chain surfaces` table are always visible (not
-collapsed) because they are primary verdicts and deltas.
+The `Outstanding must-fix items`, `Since last run`, and
+`Supply-chain surfaces` sections are each wrapped in a
+`<details>` / `<summary>` block so maintainers can expand them on
+demand without cluttering the default view. The `<summary>` line
+for `Outstanding must-fix items` includes a count so maintainers
+can see at a glance how many items are inside without expanding.
+The `Per-agent results` table and `Merge readiness` verdict are
+always visible (not collapsed) because they are the primary
+verdicts.
 
 ---
 

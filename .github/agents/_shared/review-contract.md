@@ -88,7 +88,7 @@ is its inline comments only.
   on this PR — every finding the agent has ever raised, never
   decremented on resolution.
 - The **outstanding** count = currently-unresolved findings (sum
-  across tag tiers). On run #1 it equals the sum of the four tag
+  across tag tiers). On run 1 it equals the sum of the four tag
   counts; on later runs it drops as the author fixes things.
 
 ### Verdict (Go / No-Go)

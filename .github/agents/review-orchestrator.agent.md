@@ -87,7 +87,7 @@ as the opening of the orchestrator's request to it.
 ```
 Thanks for taking this on. You're the F Prime Security Vulnerability
 Reviewer. Please run a full security review of PR #<N> in
-<owner>/<repo> at head <sha>. This is run #<security-run-ordinal> of
+<owner>/<repo> at head <sha>. This is run <security-run-ordinal> of
 your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
@@ -106,7 +106,7 @@ Return when finished. Report `completed` on success, or
 Thanks for taking this on. You're the F Prime Supply Chain /
 Runner Safety Reviewer. Please run a full supply-chain and
 runner-safety review of PR #<N> in <owner>/<repo> at head <sha>.
-This is run #<supply-chain-run-ordinal> of your reviews on this PR.
+This is run <supply-chain-run-ordinal> of your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `supply-chain-review.agent.md`.
@@ -124,7 +124,7 @@ Return when finished. Report `completed` on success, or
 Thanks for taking this on. You're the F Prime C/C++ Design
 Reviewer. Please run a full C/C++ design-rule review of PR #<N>
 in <owner>/<repo> at head <sha>. This is run
-#<fprime-code-review-run-ordinal> of your reviews on this PR.
+<fprime-code-review-run-ordinal> of your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `fprime-code-review.agent.md`
@@ -143,7 +143,7 @@ Return when finished. Report `completed` on success, or
 Thanks for taking this on. You're the F Prime Stale Documentation
 Reviewer. Please run a full documentation-currency review of PR
 #<N> in <owner>/<repo> at head <sha>. This is run
-#<stale-documentation-review-run-ordinal> of your reviews on this
+<stale-documentation-review-run-ordinal> of your reviews on this
 PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
@@ -164,7 +164,7 @@ Return when finished. Report `completed` on success, or
 ```
 Thanks for taking this on. You're the F Prime Design Reviewer.
 Please run a full design-fit review of PR #<N> in <owner>/<repo>
-at head <sha>. This is run #<design-review-run-ordinal> of your
+at head <sha>. This is run <design-review-run-ordinal> of your
 reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
@@ -189,7 +189,7 @@ Return when finished. Report `completed` on success, or
 Thanks for taking this on. You're the F Prime Test Quality
 Reviewer. Please run a full test-quality review of PR #<N> in
 <owner>/<repo> at head <sha>. This is run
-#<test-quality-review-run-ordinal> of your reviews on this PR.
+<test-quality-review-run-ordinal> of your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `test-quality-review.agent.md`.
@@ -220,7 +220,7 @@ Per-reviewer status from this run:
 - design-review: <completed | FAILED: <reason>>
 - test-quality-review: <completed | FAILED: <reason>>
 
-This is run #<aggregator-run-ordinal> of your aggregations on this
+This is run <aggregator-run-ordinal> of your aggregations on this
 PR.
 
 Render FAILED reviewers as ERROR rows in the per-agent results
@@ -296,8 +296,8 @@ No special-case logic. On the second-and-later run on the same PR:
 - The aggregator dismisses its prior review and submits a new one
   (since the event APPROVE/REQUEST_CHANGES may change between runs).
 
-The orchestrator does not need to know whether this is run #1 or
-run #N — it just counts prior summary reviews and increments.
+The orchestrator does not need to know whether this is run 1 or
+run N — it just counts prior summary reviews and increments.
 
 ---
 
