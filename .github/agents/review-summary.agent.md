@@ -128,7 +128,7 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 </details>
 
 <details>
-<summary>Outstanding must-fix items (9)</summary>
+<summary>Outstanding must-fix items (7)</summary>
 
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
@@ -382,8 +382,10 @@ The `Outstanding must-fix items`, `Since last run`, and
 `Supply-chain surfaces` sections are each wrapped in a
 `<details>` / `<summary>` block so maintainers can expand them on
 demand without cluttering the default view. The `<summary>` line
-for `Outstanding must-fix items` includes a count so maintainers
-can see at a glance how many items are inside without expanding.
+for `Outstanding must-fix items` includes the count of outstanding
+**must-fix** findings specifically (not total outstanding across all
+tiers) so maintainers can see at a glance how many blocking items
+are inside without expanding.
 The `Per-agent results` table and `Merge readiness` verdict are
 always visible (not collapsed) because they are the primary
 verdicts.
@@ -487,8 +489,9 @@ closing line that the aggregator composes itself. Instructions:
 - Make it genuine — written for this PR, this run, this set of
   sub-agents. Not a slogan, not a static catchphrase.
 - Keep it professional and on-mission for flight software.
-- Vary the wording across runs — if it edits a prior summary in
-  place, the closing line should change to reflect the current run.
+- Vary the wording across runs — each re-review dismisses and
+  resubmits the summary, so the closing line should change to
+  reflect the current run.
 - **Lean into space / Star Trek / NASA flavor.** Tasteful nods to
   spaceflight, exploration, mission control, or the Trek canon
   are welcome — the audience is nerds. Keep it tasteful and on-
