@@ -32,6 +32,7 @@
 // ======================================================================
 
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
+#include <config/CfdpCfg.hpp>
 
 #include <Fw/Types/Assert.hpp>
 
@@ -155,11 +156,18 @@ void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context)
 {
     CListNode *node = start;
     CListNode *node_next;
-    bool           last = false;
+    bool last = false;
+    // Safety bound: maximum possible list size based on transaction pool configuration
+    // Prevents infinite loop if list becomes corrupted
+    constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
+                                   CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+                                   (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+                                   (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
     if (node)
     {
-        do
+        U32 i;
+        for (i = 0; i < maxIterations && !last; ++i)
         {
             /* set node_next in case callback removes this node from the list */
             node_next = node->next;
@@ -181,7 +189,7 @@ void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context)
             }
             node = node_next;
         }
-        while (!last);
+        FW_ASSERT(last, static_cast<FwAssertArgType>(i));
     }
 }
 
@@ -189,11 +197,18 @@ void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, 
 {
     CListNode *node = start;
     CListNode *node_next;
-    bool           last = false;
+    bool last = false;
+    // Safety bound: maximum possible list size based on transaction pool configuration
+    // Prevents infinite loop if list becomes corrupted
+    constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
+                                   CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+                                   (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+                                   (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
     if (node)
     {
-        do
+        U32 i;
+        for (i = 0; i < maxIterations && !last; ++i)
         {
             /* set node_next in case callback removes this node from the list */
             node_next = node->next;
@@ -215,7 +230,7 @@ void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, 
             }
             node = node_next;
         }
-        while (!last);
+        FW_ASSERT(last, static_cast<FwAssertArgType>(i));
     }
 }
 
@@ -225,13 +240,20 @@ void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context)
     {
         CListNode *node = end->prev;
         CListNode *node_next;
-        bool           last = false;
+        bool last = false;
+        // Safety bound: maximum possible list size based on transaction pool configuration
+        // Prevents infinite loop if list becomes corrupted
+        constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
+                                       CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+                                       (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+                                       (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
         if (node)
         {
             end = node;
+            U32 i;
 
-            do
+            for (i = 0; i < maxIterations && !last; ++i)
             {
                 /* set node_next in case callback removes this node from the list */
                 node_next = node->prev;
@@ -255,7 +277,7 @@ void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context)
                 }
                 node = node_next;
             }
-            while (!last);
+            FW_ASSERT(last, static_cast<FwAssertArgType>(i));
         }
     }
 }

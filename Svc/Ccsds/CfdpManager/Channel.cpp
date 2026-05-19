@@ -270,7 +270,14 @@ void Channel::tickTransactions()
     {
         TickArgs args = {this, fns[m_tickType], 0, 0};
 
-        do
+        // Safety bound: retry loop should not exceed the number of transactions in the queue
+        // Each retry processes one transaction that may request continuation
+        constexpr U32 maxRetries = CFDP_MAX_SIMULTANEOUS_RX +
+                                    CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+                                    (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+                                    (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+
+        for (U32 retry = 0; retry < maxRetries; ++retry)
         {
             args.cont = 0;
             CfdpCListTraverse(m_qs[qs[m_tickType]],
@@ -303,8 +310,12 @@ void Channel::tickTransactions()
 
                 break;
             }
+
+            if (!args.cont)
+            {
+                break;  // No continuation requested, exit retry loop
+            }
         }
-        while (args.cont);
 
         if (!reset)
         {

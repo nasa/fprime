@@ -230,57 +230,58 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
 }
 
 PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
-    PduTypeEnum::T pduTypeEnum;
+    PduTypeEnum::T pduTypeEnum = PduTypeEnum::NONE;
 
     // Check minimum size for a PDU header
-    if (buffer.getSize() < PduHeader::MIN_HEADERSIZE) {
-        return PduTypeEnum::NONE;
-    }
+    if (buffer.getSize() >= PduHeader::MIN_HEADERSIZE) {
+        const U8* data = buffer.getData();
+        FW_ASSERT(data != nullptr);
 
-    const U8* data = buffer.getData();
-    FW_ASSERT(data != nullptr);
+        // Byte 0: flags
+        // Bit 4 is PDU type: 0 = FILE_DATA, 1 = FILE_DIRECTIVE
+        U8 flags = data[0];
+        PduType pduType = static_cast<PduType>((flags >> 4) & 0x01);
 
-    // Byte 0: flags
-    // Bit 4 is PDU type: 0 = FILE_DATA, 1 = FILE_DIRECTIVE
-    U8 flags = data[0];
-    PduType pduType = static_cast<PduType>((flags >> 4) & 0x01);
+        if (pduType == PDU_TYPE_FILE_DATA) {
+            pduTypeEnum = PduTypeEnum::FILE_DATA;
+        }
+        else
+        {
+            // For directive PDUs, we need to read the directive code
+            // Parse byte 3 to get EID and TSN lengths
+            U8 eidTsnLengths = data[3];
+            U8 eidSize = ((eidTsnLengths >> 4) & 0x07) + 1;  // Bits 6-4: EID length - 1
+            U8 tsnSize = (eidTsnLengths & 0x07) + 1;         // Bits 2-0: TSN length - 1
 
-    if (pduType == PDU_TYPE_FILE_DATA) {
-        pduTypeEnum = PduTypeEnum::FILE_DATA;
-    }
-    else
-    {
-        // For directive PDUs, we need to read the directive code
-        // Parse byte 3 to get EID and TSN lengths
-        U8 eidTsnLengths = data[3];
-        U8 eidSize = ((eidTsnLengths >> 4) & 0x07) + 1;  // Bits 6-4: EID length - 1
-        U8 tsnSize = (eidTsnLengths & 0x07) + 1;         // Bits 2-0: TSN length - 1
+            // Calculate offset to directive code: 4 (fixed header) + eidSize + tsnSize + eidSize
+            U32 directiveCodeOffset = 4 + (2 * eidSize) + tsnSize;
 
-        // Calculate offset to directive code: 4 (fixed header) + eidSize + tsnSize + eidSize
-        U32 directiveCodeOffset = 4 + (2 * eidSize) + tsnSize;
+            // Validate offset is within buffer bounds before reading
+            if (directiveCodeOffset < buffer.getSize()) {
+                // Read directive code
+                U8 directiveCode = data[directiveCodeOffset];
 
-        // Read directive code
-        U8 directiveCode = data[directiveCodeOffset];
-
-        // Map directive code to PduTypeEnum
-        switch (directiveCode) {
-            case FILE_DIRECTIVE_METADATA:
-                pduTypeEnum = PduTypeEnum::METADATA;
-                break;
-            case FILE_DIRECTIVE_END_OF_FILE:
-                pduTypeEnum = PduTypeEnum::END_OF_FILE;
-                break;
-            case FILE_DIRECTIVE_FIN:
-                pduTypeEnum = PduTypeEnum::FINISHED;
-                break;
-            case FILE_DIRECTIVE_ACK:
-                pduTypeEnum = PduTypeEnum::ACKNOWLEDGMENT;
-                break;
-            case FILE_DIRECTIVE_NAK:
-                pduTypeEnum = PduTypeEnum::NEGATIVE_ACK;
-                break;
-            default:
-                pduTypeEnum = PduTypeEnum::NONE;  // Unknown directive code
+                // Map directive code to PduTypeEnum
+                switch (directiveCode) {
+                    case FILE_DIRECTIVE_METADATA:
+                        pduTypeEnum = PduTypeEnum::METADATA;
+                        break;
+                    case FILE_DIRECTIVE_END_OF_FILE:
+                        pduTypeEnum = PduTypeEnum::END_OF_FILE;
+                        break;
+                    case FILE_DIRECTIVE_FIN:
+                        pduTypeEnum = PduTypeEnum::FINISHED;
+                        break;
+                    case FILE_DIRECTIVE_ACK:
+                        pduTypeEnum = PduTypeEnum::ACKNOWLEDGMENT;
+                        break;
+                    case FILE_DIRECTIVE_NAK:
+                        pduTypeEnum = PduTypeEnum::NEGATIVE_ACK;
+                        break;
+                    default:
+                        pduTypeEnum = PduTypeEnum::NONE;  // Unknown directive code
+                }
+            }
         }
     }
     return pduTypeEnum;

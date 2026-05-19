@@ -37,15 +37,15 @@ class PduBase : public Fw::Serializable {
     //! @param buffer The buffer to serialize to
     //! @param mode The endianness mode (default: BIG)
     //! @return Serialization status
-    virtual Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
-                                            Fw::Endianness mode = Fw::Endianness::BIG) const override = 0;
+    Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override = 0;
 
     //! Fw::Serializable interface - deserialize from buffer
     //! @param buffer The buffer to deserialize from
     //! @param mode The endianness mode (default: BIG)
     //! @return Deserialization status
-    virtual Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
-                                                Fw::Endianness mode = Fw::Endianness::BIG) override = 0;
+    Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override = 0;
 
     //! Get the buffer size needed to hold this PDU
     //! @return Buffer size in bytes

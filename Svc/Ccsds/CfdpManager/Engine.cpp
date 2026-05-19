@@ -660,7 +660,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
 
 void Engine::setChannelFlowState(U8 channelId, Flow::T flowState)
 {
-    FW_ASSERT(channelId <= Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
     m_channels[channelId]->setFlowState(flowState);
 }
 
