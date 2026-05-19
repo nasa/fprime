@@ -103,7 +103,7 @@ constexpr size_t FwChanIdSize = sizeof(FwChanIdType);
 
 FwChanIdType TlmChan::doHash(FwChanIdType id) {
     // Validate input before use
-    FW_ASSERT(id < TLMCHAN_HASH_MOD_VALUE, static_cast<FwAssertArgType>(id));
+    FW_ASSERT(TLMCHAN_NUM_TLM_HASH_SLOTS > 0);
     FwChanIdType result;
 
     if (FwChanIdSize >= 4) {

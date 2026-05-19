@@ -27,13 +27,13 @@
 //
 // ======================================================================
 
-#include "TlmChanTester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 #include <config/TlmChanImplCfg.hpp>
+#include "TlmChanTester.hpp"
 
 // ---- compile-time size of FwChanIdType (used to label the active branch) ----
 static constexpr size_t FW_CHAN_ID_BYTES = sizeof(FwChanIdType);
-static constexpr U32    FW_CHAN_ID_BITS  = static_cast<U32>(FW_CHAN_ID_BYTES * 8u);
+static constexpr U32 FW_CHAN_ID_BITS = static_cast<U32>(FW_CHAN_ID_BYTES * 8u);
 
 namespace Svc {
 
@@ -64,8 +64,7 @@ void TlmChanTester::runHashSizeIdentification() {
     for (U32 id = 0; id < probeLimit; id++) {
         const FwChanIdType slot = this->component.doHash(static_cast<FwChanIdType>(id));
         ASSERT_LT(slot, static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS))
-            << "Out-of-range slot " << static_cast<unsigned>(slot)
-            << " returned for id=" << id
+            << "Out-of-range slot " << static_cast<unsigned>(slot) << " returned for id=" << id
             << "  (TLMCHAN_NUM_TLM_HASH_SLOTS=" << TLMCHAN_NUM_TLM_HASH_SLOTS << ")";
     }
 
@@ -82,8 +81,7 @@ void TlmChanTester::runHashSizeIdentification() {
     for (FwChanIdType id : largeIds) {
         const FwChanIdType slot = this->component.doHash(id);
         ASSERT_LT(slot, static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS))
-            << "Out-of-range slot for large id=0x" << std::hex
-            << static_cast<unsigned>(id);
+            << "Out-of-range slot for large id=0x" << std::hex << static_cast<unsigned>(id);
     }
 }
 
@@ -115,8 +113,8 @@ void TlmChanTester::runHashDeterminism() {
         // uninitialized-memory bug.
         for (U32 rep = 0; rep < 200u; rep++) {
             EXPECT_EQ(reference, this->component.doHash(id))
-                << "doHash() returned a different value on repetition " << rep
-                << " for id=0x" << std::hex << static_cast<unsigned>(id);
+                << "doHash() returned a different value on repetition " << rep << " for id=0x" << std::hex
+                << static_cast<unsigned>(id);
         }
 
         // Confirm the result is still in range.
@@ -142,12 +140,10 @@ void TlmChanTester::runHashSeedDiversity() {
     TlmChan second("TlmChanSecondary");
 
     printf("[SeedDiversity] component.m_hashSeed = 0x%08X   second.m_hashSeed = 0x%08X\n",
-           static_cast<unsigned>(this->component.m_hashSeed),
-           static_cast<unsigned>(second.m_hashSeed));
+           static_cast<unsigned>(this->component.m_hashSeed), static_cast<unsigned>(second.m_hashSeed));
 
-    EXPECT_NE(this->component.m_hashSeed, second.m_hashSeed)
-        << "Both TlmChan instances received the same seed — "
-           "entropy source may be broken or stubbed out.";
+    EXPECT_NE(this->component.m_hashSeed, second.m_hashSeed) << "Both TlmChan instances received the same seed — "
+                                                                "entropy source may be broken or stubbed out.";
 
     // With different seeds the two instances must produce different slot mappings
     // for most inputs.  Sample a diverse set of IDs and count disagreements.
@@ -163,16 +159,16 @@ void TlmChanTester::runHashSeedDiversity() {
         }
     }
 
-    printf("[SeedDiversity] %u/%u sampled IDs hashed to different slots\n",
-           differences, sampleSize);
+    printf("[SeedDiversity] %u/%u sampled IDs hashed to different slots\n", differences, sampleSize);
 
     // Even a weak hash with independent seeds should disagree on at least half
     // the sample.  Murmur3 / Wang in practice disagrees on ~(1 - 1/SLOTS) of
     // inputs, which for typical SLOTS values is well above 90 %.
-    EXPECT_GT(differences, sampleSize / 2u)
-        << "Instances with different seeds produced too many identical slot "
-           "mappings (" << differences << "/" << sampleSize << " differed).  "
-           "The seed may not be influencing the hash output.";
+    EXPECT_GT(differences, sampleSize / 2u) << "Instances with different seeds produced too many identical slot "
+                                               "mappings ("
+                                            << differences << "/" << sampleSize
+                                            << " differed).  "
+                                               "The seed may not be influencing the hash output.";
 }
 
 // ============================================================================
@@ -199,22 +195,22 @@ void TlmChanTester::runHashAvalanche() {
     // Murmur3 and Wang both typically exceed 85 % for typical SLOTS values.
 
     static const FwChanIdType bases[] = {
-        0x00000001u,  // low bit set
-        0x12345678u,  // arbitrary mixed pattern
-        0xABCD1234u,  // high bits active
-        0xFFFF0000u,  // upper half only
-        0x00010001u,  // sparse bits
+        0x00000001u,                                                      // low bit set
+        0x12345678u,                                                      // arbitrary mixed pattern
+        0xABCD1234u,                                                      // high bits active
+        0xFFFF0000u,                                                      // upper half only
+        0x00010001u,                                                      // sparse bits
         static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS * 3u + 7u),  // near a slot boundary
     };
 
-    U32 totalFlips   = 0u;
+    U32 totalFlips = 0u;
     U32 outputChanged = 0u;
 
     for (FwChanIdType base : bases) {
         const FwChanIdType baseSlot = this->component.doHash(base);
 
         for (U32 bit = 0u; bit < FW_CHAN_ID_BITS; bit++) {
-            const FwChanIdType flipped     = base ^ (static_cast<FwChanIdType>(1u) << bit);
+            const FwChanIdType flipped = base ^ (static_cast<FwChanIdType>(1u) << bit);
             const FwChanIdType flippedSlot = this->component.doHash(flipped);
 
             if (flippedSlot != baseSlot) {
@@ -226,14 +222,14 @@ void TlmChanTester::runHashAvalanche() {
 
     const U32 threshold = totalFlips * 40u / 100u;  // 40 % lower bound
 
-    printf("[Avalanche] %u/%u single-bit flips changed the output slot  "
-           "(threshold >= %u)\n",
-           outputChanged, totalFlips, threshold);
+    printf(
+        "[Avalanche] %u/%u single-bit flips changed the output slot  "
+        "(threshold >= %u)\n",
+        outputChanged, totalFlips, threshold);
 
-    EXPECT_GT(outputChanged, threshold)
-        << "Poor avalanche: only " << outputChanged << "/" << totalFlips
-        << " 1-bit flips changed the hash slot.  "
-           "The hash may still be near-linear.";
+    EXPECT_GT(outputChanged, threshold) << "Poor avalanche: only " << outputChanged << "/" << totalFlips
+                                        << " 1-bit flips changed the hash slot.  "
+                                           "The hash may still be near-linear.";
 }
 
 // ============================================================================
@@ -280,9 +276,9 @@ void TlmChanTester::runCollisionHardening() {
         // Reproduce the exact attack sequence: multiples of SLOTS.
         // Cast through U32 to suppress potential overflow warnings; wrapping
         // is harmless here because we are testing the hash of those IDs.
-        const U32 rawId            = k * static_cast<U32>(TLMCHAN_NUM_TLM_HASH_SLOTS);
+        const U32 rawId = k * static_cast<U32>(TLMCHAN_NUM_TLM_HASH_SLOTS);
         const FwChanIdType attackId = static_cast<FwChanIdType>(rawId);
-        const FwChanIdType slot     = this->component.doHash(attackId);
+        const FwChanIdType slot = this->component.doHash(attackId);
 
         ASSERT_LT(slot, static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS))
             << "Hash returned out-of-range slot during collision-hardening probe";
@@ -301,28 +297,23 @@ void TlmChanTester::runCollisionHardening() {
     }
 
     // Expected hits per slot under ideal uniform distribution.
-    const FwChanIdType expectedPerSlot =
-        static_cast<FwChanIdType>(probeCount / TLMCHAN_NUM_TLM_HASH_SLOTS);
+    const FwChanIdType expectedPerSlot = static_cast<FwChanIdType>(probeCount / TLMCHAN_NUM_TLM_HASH_SLOTS);
 
-    printf("[CollisionHardening] probed %u IDs (old attack pattern: k*%u)\n"
-           "  TLMCHAN_HASH_BUCKETS=%u  TLMCHAN_NUM_TLM_HASH_SLOTS=%u\n"
-           "  expected per slot ~%u  max hits=%u (slot %u)  slot-0 hits=%u\n",
-           probeCount,
-           static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS),
-           static_cast<unsigned>(TLMCHAN_HASH_BUCKETS),
-           static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS),
-           static_cast<unsigned>(expectedPerSlot),
-           static_cast<unsigned>(maxHits),
-           static_cast<unsigned>(maxSlot),
-           static_cast<unsigned>(slotHits[0]));
+    printf(
+        "[CollisionHardening] probed %u IDs (old attack pattern: k*%u)\n"
+        "  TLMCHAN_HASH_BUCKETS=%u  TLMCHAN_NUM_TLM_HASH_SLOTS=%u\n"
+        "  expected per slot ~%u  max hits=%u (slot %u)  slot-0 hits=%u\n",
+        probeCount, static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS), static_cast<unsigned>(TLMCHAN_HASH_BUCKETS),
+        static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS), static_cast<unsigned>(expectedPerSlot),
+        static_cast<unsigned>(maxHits), static_cast<unsigned>(maxSlot), static_cast<unsigned>(slotHits[0]));
 
     // ---- Assertion 1: attack cannot fill any single slot ----
     // Under the old hash, slot 0 received ALL probeCount hits (probeCount >> BUCKETS).
     // With the new hash the most-hit slot must stay below BUCKETS.
     EXPECT_LT(maxHits, static_cast<FwChanIdType>(TLMCHAN_HASH_BUCKETS))
-        << "The old-attack ID sequence still fills slot " << static_cast<unsigned>(maxSlot)
-        << " (" << static_cast<unsigned>(maxHits) << " hits >= TLMCHAN_HASH_BUCKETS="
-        << TLMCHAN_HASH_BUCKETS << ").  "
+        << "The old-attack ID sequence still fills slot " << static_cast<unsigned>(maxSlot) << " ("
+        << static_cast<unsigned>(maxHits) << " hits >= TLMCHAN_HASH_BUCKETS=" << TLMCHAN_HASH_BUCKETS
+        << ").  "
            "The seeded hash did not break the linear collision pattern.";
 
     // ---- Assertion 2: slot 0 is not a hot-spot ----
@@ -331,8 +322,7 @@ void TlmChanTester::runCollisionHardening() {
     const FwChanIdType slot0Tolerance = expectedPerSlot * 3u;
     EXPECT_LE(slotHits[0], slot0Tolerance)
         << "Slot 0 received " << static_cast<unsigned>(slotHits[0])
-        << " hits from the attack sequence but no more than "
-        << static_cast<unsigned>(slot0Tolerance)
+        << " hits from the attack sequence but no more than " << static_cast<unsigned>(slot0Tolerance)
         << " (3 × expected) should land there after hardening.";
 }
 
@@ -357,15 +347,15 @@ void TlmChanTester::runHashDistribution() {
     // These are very generous bounds; a broken hash (pure modulo) would have
     // every ID fall into just one slot, a ratio of SLOTS:1 over expected.
 
-    const U32 multiplier  = 50u;
-    const U32 sampleSize  = multiplier * static_cast<U32>(TLMCHAN_NUM_TLM_HASH_SLOTS);
+    const U32 multiplier = 50u;
+    const U32 sampleSize = multiplier * static_cast<U32>(TLMCHAN_NUM_TLM_HASH_SLOTS);
     const FwChanIdType expectedPerSlot =
         static_cast<FwChanIdType>(sampleSize / TLMCHAN_NUM_TLM_HASH_SLOTS);  // = multiplier
 
     FwChanIdType counts[TLMCHAN_NUM_TLM_HASH_SLOTS] = {};
 
     for (U32 i = 0u; i < sampleSize; i++) {
-        const FwChanIdType id   = static_cast<FwChanIdType>(i);
+        const FwChanIdType id = static_cast<FwChanIdType>(i);
         const FwChanIdType slot = this->component.doHash(id);
 
         ASSERT_LT(slot, static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS))
@@ -377,39 +367,34 @@ void TlmChanTester::runHashDistribution() {
     // Find min / max occupancy.
     FwChanIdType minCount = counts[0];
     FwChanIdType maxCount = counts[0];
-    FwChanIdType maxSlot  = 0u;
+    FwChanIdType maxSlot = 0u;
     for (FwChanIdType s = 1u; s < static_cast<FwChanIdType>(TLMCHAN_NUM_TLM_HASH_SLOTS); s++) {
         if (counts[s] < minCount) {
             minCount = counts[s];
         }
         if (counts[s] > maxCount) {
             maxCount = counts[s];
-            maxSlot  = s;
+            maxSlot = s;
         }
     }
 
-    printf("[HashDistribution] %u IDs across %u slots  "
-           "expected=%u/slot  min=%u  max=%u (slot %u)\n",
-           sampleSize,
-           static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS),
-           static_cast<unsigned>(expectedPerSlot),
-           static_cast<unsigned>(minCount),
-           static_cast<unsigned>(maxCount),
-           static_cast<unsigned>(maxSlot));
+    printf(
+        "[HashDistribution] %u IDs across %u slots  "
+        "expected=%u/slot  min=%u  max=%u (slot %u)\n",
+        sampleSize, static_cast<unsigned>(TLMCHAN_NUM_TLM_HASH_SLOTS), static_cast<unsigned>(expectedPerSlot),
+        static_cast<unsigned>(minCount), static_cast<unsigned>(maxCount), static_cast<unsigned>(maxSlot));
 
     // ---- Assertion 1: no hot-spot slots ----
     const FwChanIdType hotSpotThreshold = expectedPerSlot * 3u;
     EXPECT_LE(maxCount, hotSpotThreshold)
-        << "Slot " << static_cast<unsigned>(maxSlot) << " is a hot-spot: "
-        << static_cast<unsigned>(maxCount) << " hits vs expected "
-        << static_cast<unsigned>(expectedPerSlot)
+        << "Slot " << static_cast<unsigned>(maxSlot) << " is a hot-spot: " << static_cast<unsigned>(maxCount)
+        << " hits vs expected " << static_cast<unsigned>(expectedPerSlot)
         << " (threshold=" << static_cast<unsigned>(hotSpotThreshold) << ").";
 
     // ---- Assertion 2: no dead-zone (empty) slots ----
     // With 50× over sampling, every slot must receive at least one hit.
-    EXPECT_GT(minCount, 0u)
-        << "At least one slot received zero hits from " << sampleSize
-        << " sequential IDs.  The hash has a dead-zone.";
+    EXPECT_GT(minCount, 0u) << "At least one slot received zero hits from " << sampleSize
+                            << " sequential IDs.  The hash has a dead-zone.";
 }
 
 }  // namespace Svc
