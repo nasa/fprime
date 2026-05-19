@@ -348,24 +348,18 @@ CI-safety agents).
 ### Outstanding must-fix items — surfacing adjudication-required findings
 
 When at least one `design-needs-human-adjudication` finding is
-outstanding, the design reviewer's per-agent summary block adds a
-prefix line **above** the "Outstanding must-fix items:" header:
+outstanding, the design reviewer ensures its inline comment for that
+finding includes the prefix:
 
 ```
-**Human design adjudication required.** See the
-`design-needs-human-adjudication` bullets below.
+**Human design adjudication required.**
 ```
 
-This prefix is the same content the inline comment carries, but
-mirrored into the summary review so a reviewer reading the per-agent
-summary first sees the adjudication signal without having to scroll
-into the inline thread.
-
-The aggregator surfaces this prefix verbatim into its top-level
-summary's "Outstanding must-fix items" section per
-`review-summary.agent.md` §5b — no special aggregator logic is
-required beyond what already renders outstanding must-fix bullets
-per agent.
+The aggregator picks up this finding from the inline comments and
+surfaces it in the top-level summary's "Outstanding must-fix items"
+section per `review-summary.agent.md` §5b — no special aggregator
+logic is required beyond what already renders outstanding must-fix
+bullets per agent.
 
 ---
 

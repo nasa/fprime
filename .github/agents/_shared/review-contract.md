@@ -117,9 +117,10 @@ future-work) triggers a CI No-Go.
 ### Supply-chain agent: surfaces emission
 
 The supply-chain agent (only) also emits a structured `**Surfaces:**`
-block below its `CI safety rationale`. The aggregator parses this block
-to render its `Supply-chain surfaces` table. One bullet per supply-chain
-scope category, in this fixed order:
+block in its hidden metadata, below the `ci_safety_rationale` HTML
+comment. The aggregator parses this block to render its
+`Supply-chain surfaces` table. One bullet per supply-chain scope
+category, in this fixed order:
 
 ```
 **Surfaces:**

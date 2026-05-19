@@ -188,8 +188,8 @@ The security agent contributes to `CI safety` per review contract
 the metadata are:
 
 ```
-**CI safety:** Go | No-Go
-**CI safety rationale:** <one line>
+<!-- ci_safety: Go | No-Go -->
+<!-- ci_safety_rationale: <one line> -->
 ```
 
 Rule: `CI safety: No-Go` iff outstanding **category-8** `**must

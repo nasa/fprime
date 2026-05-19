@@ -230,8 +230,8 @@ The supply-chain agent contributes to `CI safety` per review contract
 the metadata are:
 
 ```
-**CI safety:** Go | No-Go
-**CI safety rationale:** <one line>
+<!-- ci_safety: Go | No-Go -->
+<!-- ci_safety_rationale: <one line> -->
 ```
 
 Rule: `CI safety: No-Go` iff outstanding `**must fix**` count > 0
@@ -243,11 +243,11 @@ unverified privileged-surface change is severe enough on its own.
 ## Surfaces emission
 
 The supply-chain agent additionally emits a structured `**Surfaces:**`
-block as a standalone inline review comment (not attached to a
-specific diff line) at the end of its review submission. The
-aggregator parses this block to render the `Supply-chain surfaces`
-table in the top-level summary. Format and ordering are governed by
-review contract §2 "Supply-chain agent: surfaces emission".
+block in its hidden metadata (review body), below the
+`ci_safety_rationale` HTML comment. The aggregator parses this block
+to render the `Supply-chain surfaces` table in the top-level summary.
+Format and ordering are governed by review contract §2 "Supply-chain
+agent: surfaces emission".
 
 ### Category-to-row mapping
 

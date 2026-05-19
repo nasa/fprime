@@ -112,9 +112,10 @@ agents:
     path: .github/agents/review-summary.agent.md
     invocable_by_humans: true
     notes: >
-      Consumes per-agent summary reviews on the PR (matched by HTML
-      marker plus the orchestrator-provided status list) and posts
-      ONE top-level PR comment with the consolidated table, CI safety
+      Consumes per-agent hidden metadata and inline comments on the
+      PR (matched by HTML marker plus the orchestrator-provided
+      status list) and submits ONE PR review (APPROVE or
+      REQUEST_CHANGES) with the consolidated table, CI safety
       verdict, merge readiness verdict, optional Recommend Close
       section, outstanding must-fix bullets, and a since-last-run
       delta table.
