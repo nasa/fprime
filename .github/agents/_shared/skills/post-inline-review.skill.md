@@ -51,8 +51,10 @@ full range (`start_line` + `line`) rather than a single line.
 
 A single PR review can carry many inline comments. Prefer one review
 per agent run rather than many small reviews — the GitHub UI groups
-them and the per-agent hidden metadata review (see §4) acts as the
-umbrella.
+them together.
+
+**First run** — the metadata block (see §4) goes in `body` alongside
+the inline `comments[]`:
 
 ```http
 POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
@@ -80,6 +82,19 @@ Content-Type: application/json
       "body": "**suggestion** … \n\n```suggestion\n…\n```\n\n<!-- fprime-agent: security-review; finding-key: def; v1 -->"
     }
   ]
+}
+```
+
+**Re-run** — the inline-comments review has an **empty `body`** (no
+metadata); the metadata is dismissed and resubmitted separately per
+§4:
+
+```json
+{
+  "commit_id": "<head SHA>",
+  "event": "COMMENT",
+  "body": "",
+  "comments": [ ... ]
 }
 ```
 
@@ -128,9 +143,9 @@ combined review described in §2 (which also carries the inline
 `comments[]` array). There is no separate metadata-only review on
 first run.
 
-On re-run, the inline comments are posted as a fresh review per §2,
-and the metadata is handled separately: dismiss the prior metadata
-review via:
+On re-run, the inline comments go in a fresh review with an empty
+`body` (see §2 re-run template). The metadata is handled
+separately: dismiss the prior metadata review via:
 
 ```http
 PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals
