@@ -242,10 +242,11 @@ unverified privileged-surface change is severe enough on its own.
 
 ## Surfaces emission
 
-The supply-chain agent additionally emits a structured `**Surfaces:**`
-block in its hidden metadata (review body), below the
-`ci_safety_rationale` HTML comment. The aggregator parses this block
-to render the `Supply-chain surfaces` table in the top-level summary.
+The supply-chain agent additionally emits a structured
+`<!-- surfaces: ... -->` block in its hidden metadata (review body),
+below the `ci_safety_rationale` HTML comment. The aggregator parses
+this block to render the `Supply-chain surfaces` table in the
+top-level summary.
 Format and ordering are governed by review contract §2 "Supply-chain
 agent: surfaces emission".
 

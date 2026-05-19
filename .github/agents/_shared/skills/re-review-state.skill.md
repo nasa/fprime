@@ -194,9 +194,12 @@ For each `k` in `new`:
 
 ---
 
-## 4. Phase D — Update the per-agent summary
+## 4. Phase D — Update the per-agent metadata review
 
-Edit the prior summary review (located by the HTML marker) in place.
+Dismiss the prior metadata review (located by the HTML marker) via
+`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with message
+`Superseded by re-review run #N.` Then submit a new review with the
+updated metadata body.
 
 Update:
 
@@ -300,4 +303,4 @@ B: re-run analysis, compute current finding-keys.
 C: decide per row of the contract §7 table — do-nothing,
 resolve, reply-improper-resolution, reply-disagreement, post-new,
 post-incorrect-fix-follow-up.
-D: update the summary block in place.`
+D: dismiss prior metadata review, submit new one.`

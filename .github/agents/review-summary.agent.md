@@ -84,7 +84,9 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 
 (omit this entire section unless the spam check in §5e fires)
 
-### Since last run
+<details>
+<summary>Since last run (N changes)</summary>
+
 | Agent | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
 |---|---:|---:|---:|---:|---:|---:|
 | Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
@@ -93,6 +95,8 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
 | Design | 0 | 1 | 0 | 0 | 0 | 0 |
 | Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
+
+</details>
 
 (omit this section on run #1)
 
@@ -120,7 +124,9 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 | Generator output | clean |
 | Prompt-injection | clean |
 
-### Outstanding must-fix items
+<details>
+<summary>Outstanding must-fix items (9)</summary>
+
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
 - ...
@@ -136,6 +142,8 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 
 **Design**
 - **Human design adjudication required.** <terse must-fix summary> — <link>
+
+</details>
 
 ### Merge readiness
 **Merge readiness: No-Go** — security agent has 3 outstanding must-fix items.
