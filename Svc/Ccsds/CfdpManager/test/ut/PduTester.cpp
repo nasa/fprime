@@ -106,7 +106,7 @@ void CfdpManagerTester::verifyMetadataPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = metadataPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_METADATA, header.getType()) << "Expected T_METADATA type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::METADATA, header.getType()) << "Expected T_METADATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -154,7 +154,7 @@ void CfdpManagerTester::verifyFileDataPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = fileDataPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -212,7 +212,7 @@ void CfdpManagerTester::verifyEofPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = eofPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_EOF, header.getType()) << "Expected T_EOF type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::END_OF_FILE, header.getType()) << "Expected T_EOF type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
     // Note: Can be either acknowledged or unacknowledged depending on class
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -271,7 +271,7 @@ void CfdpManagerTester::verifyFinPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = finPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_FIN, header.getType()) << "Expected T_FIN type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::FINISHED, header.getType()) << "Expected T_FIN type";
     EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
@@ -303,7 +303,7 @@ void CfdpManagerTester::verifyAckPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = ackPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_ACK, header.getType()) << "Expected T_ACK type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::ACKNOWLEDGMENT, header.getType()) << "Expected T_ACK type";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -335,7 +335,7 @@ void CfdpManagerTester::verifyNakPdu(
 
     // Validate header fields
     const Cfdp::PduHeader& header = nakPdu.asHeader();
-    EXPECT_EQ(Cfdp::T_NAK, header.getType()) << "Expected T_NAK type";
+    EXPECT_EQ(Cfdp::PduTypeEnum::NEGATIVE_ACK, header.getType()) << "Expected T_NAK type";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
