@@ -246,8 +246,9 @@ prevailing architecture (cyclic, event-driven, background, hybrid)
 using the full baseline FPP and the selection guide in
 `docs/user-manual/framework/component-and-port-selection.md`, then
 check whether the PR's changes erode that architecture or misuse
-F Prime architectural primitives. Post inline review comments and
-your per-agent summary review per the contract.
+F Prime architectural primitives. Post inline review comments per
+the contract. Your review body contains only the hidden metadata
+block (§2); no visible summary table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.

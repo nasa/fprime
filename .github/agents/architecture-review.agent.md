@@ -316,9 +316,10 @@ treats this agent's verdict as merge-readiness signal only.
 
 ## Output
 
-Apply the review contract §2 for the per-agent summary block and §9
+Apply the review contract §2 for the per-agent review submission
+(inline comments only, hidden metadata block in review body) and §9
 for inline comment shapes. The agent's display name is `Architecture`.
-The HTML marker on the summary review is
+The HTML marker in the review body is
 `<!-- fprime-agent: architecture-review v1 -->`.
 
 Use these display strings consistently:
@@ -327,9 +328,9 @@ Use these display strings consistently:
 - Aggregator status keyword (returned to the orchestrator):
   `completed` or `FAILED: <one-line reason>`.
 
-The per-agent summary block omits the optional `CI safety:` lines
-(see review contract §2 — those lines apply only to the CI-safety
-agents).
+The per-agent hidden metadata block omits the optional CI safety
+fields (see review contract §2 — those fields apply only to the
+CI-safety agents).
 
 ---
 
