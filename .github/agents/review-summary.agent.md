@@ -524,7 +524,7 @@ When the orchestrator's kickoff prompt includes
 `precheck_verdict: flagged`, the aggregator renders a
 `Pre-run prompt-injection alert` section in the review body.
 This section is placed **after** `Recommend: Close` (if present)
-and **before** `Since last run`.
+and **before** `Per-agent results`.
 
 ### Output shape
 
@@ -579,8 +579,8 @@ The alert section slots into the review body in this order:
 1. HTML marker + heading
 2. Recommend: Close (§5e) — if fired
 3. **Pre-run prompt-injection alert (§5g) — if flagged or error**
-4. Since last run (§5d) — if run > 1
-5. Per-agent results
+4. Per-agent results
+5. Since last run (§5d) — if run > 1
 6. Supply-chain surfaces
 7. Outstanding must-fix items
 8. Merge readiness
