@@ -13,7 +13,7 @@ The baremetal pattern enables F´ applications to run on processors without an o
 
 ## F´ and Baremetal
 
-F´ does not require an operating system. Applications can be written entirely as a set of passive components with one Timer component driving the entire application through passive rate groups. However, using many of the standard F´ components (e.g. `active` components) do require operating system abstraction (OSAL) support.
+F´ does not require an operating system. Applications can be written entirely as a set of passive components with one Timer component driving the entire application through passive rate groups. However, using many of the standard F´ `active` components requires a Task abstraction, as provided by the operating system abstraction layer (OSAL).
 
 The baremetal pattern provides a solution that allows F´ core components to be used in baremetal deployments while adapting to the constraints of the environment. It provides information on how to support baremetal with components written for complete OSAL adaptations.
 
@@ -21,7 +21,7 @@ In a typical baremetal F´ system, a single hardware timer drives the rate group
 
 ### The Joy of Passive Components
 
-First and foremost, baremetal F´ systems should avoid using **Active Components** where possible. This is because active components own a thread and a message queue, which means they need OS-level threading support to execute concurrently — something unavailable on baremetal. This means using `passive` or `queued` components driven by rate groups or cycled on the main thread.
+First and foremost, baremetal F´ systems should avoid using **Active Components** where possible. This is because active components own a thread, which means they need OS-level threading support to execute concurrently — something unavailable on baremetal. This means using `passive` or `queued` components driven by rate groups or cycled on the main thread.
 
 To understand the tradeoffs between `active` components and `passive`/`queued`, as well as design patterns that may allow you to migrate from one type to another, you may refer to the document on [Selecting Component, Port, and Command Kinds](./component-and-port-selection.md).
 
