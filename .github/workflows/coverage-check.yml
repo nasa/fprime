@@ -1,0 +1,68 @@
+# Per-module + global code coverage check for pull requests.
+#
+# Generates coverage for every module that calls register_fprime_module(),
+# compares against the matching coverage/<base_ref> baseline branch, and
+# posts a sticky per-module delta comment on the PR.
+#
+# Top-level permissions are scoped to exactly what the action needs:
+#   contents: read           — checkout sources + fetch baseline branch
+#   pull-requests: write     — post / update the sticky comment
+#
+# The push-side counterpart that writes the baseline branch lives in
+# .github/workflows/coverage-update.yml and runs with contents: write.
+#
+# See nasa/fprime-actions/coverage-check/README.md for input documentation.
+
+name: "Coverage Check"
+
+on:
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  coverage-check:
+    name: "Coverage [PR]"
+    # ubuntu-24.04 ships gcov-13, which is required: gcov-11 (Ubuntu
+    # 22.04 default) has counter-overflow bugs and pathological slowness
+    # on heavily-templated test code that can turn a 30 s coverage run
+    # into a 30+ min one.  See nasa/fprime-actions/coverage-common's
+    # README for details.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Generate + Build UTs"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          run-check: 'false'
+          jobs: random
+      - name: "Coverage (common)"
+        id: cov
+        uses: nasa/fprime-actions/coverage-common@devel
+        with:
+          working-directory: ${{ github.workspace }}
+      - name: "Coverage check"
+        uses: nasa/fprime-actions/coverage-check@devel
+        with:
+          working-directory: ${{ github.workspace }}
+          modules-jsonl: ${{ steps.cov.outputs.modules-jsonl }}
