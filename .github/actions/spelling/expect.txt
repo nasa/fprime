@@ -28,7 +28,6 @@ arpa
 ASize
 ATL
 AUTOBRIEF
-autobot
 autocode
 autocoded
 autocoders

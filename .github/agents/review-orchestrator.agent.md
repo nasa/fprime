@@ -53,7 +53,7 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
 3. **Pre-run prompt-injection metadata scan.** Before invoking any
    reviewer, run the `_shared/skills/prompt-injection-precheck.skill.md`
    skill against the PR's metadata surfaces (title, body, commit
-   messages, branch name, file paths, labels). Record the result
+   messages, branch name, file paths, labels, diff content). Record the result
    as `precheck_verdict: clean` or `precheck_verdict: flagged`
    with the list of flagged surfaces.
 
