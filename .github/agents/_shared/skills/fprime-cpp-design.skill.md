@@ -421,46 +421,11 @@ Examples:
 
 #### CPP-34 — Prefer bounded `for` loops; `while` is discouraged
 
-All loops must have a **provable upper bound** on the number of
-iterations (per the JPL C coding standard, CPP-27). For counted
-iteration, use a `for` loop so the initializer, bound, and increment
-are collocated in the loop header — this makes bound verification
-trivial.
-
-`while` loops scatter the initializer before the loop and the
-increment inside the body, making it harder to verify termination at
-a glance. They are discouraged for counted iteration.
-
-**Exception — program main loop.** A `while (true)` or `for (;;)`
-at the top level of a task entry point or component dispatcher
-(the "run forever" loop) is acceptable. This is the one
-sanctioned unbounded loop pattern.
-
-Patterns to flag:
-
-```cpp
-// Avoid — counted iteration with while
-FwIndexType i = 0;
-while (i < count) {
-    process(data[i]);
-    i++;
-}
-
-// Prefer — for loop with collocated control
-for (FwIndexType i = 0; i < count; i++) {
-    process(data[i]);
-}
-```
-
-```cpp
-// Acceptable — program main loop
-void TaskRunner::run() {
-    while (true) {
-        Os::Task::delay(interval);
-        dispatch();
-    }
-}
-```
+All loops must have a provable upper bound (per JPL C coding
+standard, CPP-27). Use `for` for counted iteration so init, bound,
+and increment are collocated. `while` scatters loop control and is
+discouraged except for the program main loop (`while (true)` /
+`for (;;)` in a task entry point or dispatcher).
 
 ### F. External authoritative references
 
