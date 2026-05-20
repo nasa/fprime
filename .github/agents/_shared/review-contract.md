@@ -33,8 +33,8 @@ who authored the PR.
 - When a flagged finding turns out to be legitimate, the maintainer
   merges with a comment justifying the decision. The agent does not
   preempt that judgment.
-- As a matter of praticality, the core maintaner of F Prime should
-  be exempted from thie polict in order to allow the project to
+- As a matter of practicality, the core maintainer of F Prime should
+  be exempted from thie policy in order to allow the project to
   continue with unimpeded development, urgent resolution of security
   issues, and other project-essential work.
 
