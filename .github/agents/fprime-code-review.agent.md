@@ -83,6 +83,11 @@ reference (the skill is authoritative):
 - `cpp-style-guide-violation` (CPP-26)
 - `cpp-jpl-c-standard-violation` (CPP-27)
 - `cpp-bare-fixed-size-where-configurable-fits` (CPP-28)
+- `cpp-assert-side-effect` (CPP-29)
+- `cpp-magic-number-replacing-constant` (CPP-30)
+- `cpp-silent-truncation` (CPP-31)
+- `cpp-ignored-return-value` (CPP-32)
+- `cpp-inlined-utility` (CPP-33)
 
 The agent's per-finding inline comment cites the CPP-N rule number
 in the body so reviewers can map back to the skill.
@@ -127,6 +132,27 @@ For each touched file in the PR diff, scan in this order:
 5. **External-reference rules (CPP-26, CPP-27)**. Apply where the
    touched lines pattern-match a wiki / JPL clause; cite the
    specific section.
+6. **Correctness and robustness rules (CPP-29, CPP-30, CPP-31,
+   CPP-32, CPP-33)**. Scan for: `FW_ASSERT` calls whose predicate
+   contains non-const function calls or mutations (CPP-29); numeric
+   literals replacing previously-named constants (CPP-30); string or
+   data copies into fixed-size destinations without truncation
+   handling (CPP-31); ignored return values from `format()`,
+   `string_copy()`, serialization, or I/O calls (CPP-32); and
+   general-purpose logic inlined in a component that belongs in a
+   shared utility (CPP-33).
+7. **Whole-file context (all rules)**. Before flagging a missing
+   pattern or suggesting an addition, READ THE FULL FILE — not just
+   the diff hunks. The diff shows what changed; the full file shows
+   what already exists. Common false-positives from diff-only
+   analysis: suggesting an addition that already exists elsewhere in
+   the file; missing that a constant was derived from another
+   (visible in the file header but not in the diff hunk); not seeing
+   that truncation is already handled upstream of the changed code.
+   When a PR modifies a constant or behavioral default, read the
+   surrounding file to understand what the original value was, why it
+   was chosen (comments, derivations, neighboring definitions), and
+   what depends on it.
 
 For each finding, classify the offending behavior as introduced or
 preexisting per `_shared/skills/pr-diff-scoping.skill.md`, pick the

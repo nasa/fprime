@@ -82,6 +82,24 @@ The actual phrasing of the thanks line may vary across runs; what
 follows is the canonical shape. Each agent must perceive the thanks
 as the opening of the orchestrator's request to it.
 
+### Context mandate (prepended to all reviewer kickoff prompts)
+
+The following paragraph is prepended to every reviewer kickoff prompt
+(it is not repeated in each template below for brevity, but it is
+always present):
+
+```
+CONTEXT MANDATE: For any file touched by the PR, you MUST read the
+full file (not just the diff hunks) before: (1) suggesting additions
+(something may already exist in the file), (2) assessing behavioral
+changes (the original value/derivation may be visible in context you
+haven't read), (3) evaluating truncation or data-loss risk (handling
+may exist upstream of the changed lines). The diff shows what changed;
+the full file shows what already exists. False positives from
+diff-only analysis waste maintainer time and erode trust in the
+review system.
+```
+
 ### Template — security reviewer
 
 ```

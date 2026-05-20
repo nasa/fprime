@@ -282,7 +282,144 @@ STL.
 Trivial `<algorithm>` helpers (`std::min`, `std::max`,
 `std::numeric_limits`) and `<cstdint>` types are acceptable.
 
-### E. External authoritative references
+### F. Correctness and robustness
+
+#### CPP-29 — FW_ASSERT predicates must be side-effect-free
+
+The expression inside `FW_ASSERT(...)` must have no observable side-effects.
+`FW_ASSERT` can be compiled away entirely (`FW_ASSERT_LEVEL == 0`), so any
+side-effect in the predicate — function calls that mutate state, I/O
+operations, increments, assignments — would silently disappear from the
+production binary.
+
+Patterns to flag:
+
+```cpp
+FW_ASSERT(file.read(...) == OK);      // read() is side-effecting
+FW_ASSERT(counter++ < MAX);           // increment is side-effecting
+FW_ASSERT(init() == SUCCESS);         // init() mutates state
+FW_ASSERT(queue.pop(item) == OK);     // pop() modifies queue
+```
+
+Correct pattern — separate the effect from the check:
+
+```cpp
+Status s = file.read(...);
+FW_ASSERT(s == OK);
+```
+
+Pure accessors (const methods, getters, sizeof, static queries) are
+acceptable inside `FW_ASSERT`.
+
+#### CPP-30 — Numeric literals must not replace named constants without derivation
+
+When a configuration value was previously expressed as a named constant or
+derived from one, replacing it with a bare numeric literal is a finding.
+The replacement must either:
+
+- (a) derive from named constants with visible arithmetic
+  (e.g., `FwAssertTextSize - TIMESTAMP_OVERHEAD`), or
+- (b) be itself a new named constant with a documenting comment explaining
+  how the value was chosen.
+
+Bare numeric literals in configuration are acceptable only for truly
+universal values (0, 1, nullptr) or when accompanied by an inline
+derivation comment showing how the number was computed.
+
+```cpp
+// Avoid
+constant AssertFatalAdapterEventFileSize = 150
+
+// Prefer
+@ Derived: FwAssertTextSize(256) - max_timestamp(40) - max_args(66) = 150
+constant AssertFatalAdapterEventFileSize = FwAssertTextSize - 106
+```
+
+#### CPP-31 — No silent truncation on string/data copy
+
+When copying variable-length data into a fixed-size destination, the code
+must handle potential truncation explicitly. Silent truncation — where
+the stored value differs from the input with no indication to the caller
+— is a finding.
+
+Acceptable handling:
+
+- (a) Check the return value of the copy/format function and propagate
+  an error or emit a warning event if truncation occurred.
+- (b) Validate the input length BEFORE the copy and reject/error on
+  oversized inputs.
+- (c) Document (with an inline comment AND a note in the PR description)
+  why truncation is acceptable in this specific case (e.g., the
+  truncated value is only used for display/logging).
+
+Patterns to flag:
+
+```cpp
+// Truncation with no check
+m_path_storage = filepath;  // FileNameString silently truncates if |filepath| > max
+Fw::StringUtils::string_copy(dst, src, dstSize);  // return value ignored
+```
+
+Common F Prime APIs that can truncate and whose return values must be
+checked or whose preconditions must be validated:
+
+- `Fw::String::operator=(const CHAR*)` — truncates to StringBase capacity
+- `Fw::StringUtils::string_copy()` — returns actual bytes copied
+- `Fw::StringBase::format()` — truncates if result exceeds buffer
+- `Fw::ExternalString::operator=()` — truncates to external buffer size
+
+#### CPP-32 — Check return values of fallible operations
+
+Functions that return a status, size, or success indicator must have their
+return value checked — or explicitly cast to `(void)` with an inline
+comment explaining why the result is intentionally discarded.
+
+Patterns to flag:
+
+```cpp
+str.format("...", args);                    // format() returns bool/size — ignored
+Fw::StringUtils::string_copy(d, s, n);     // returns actual length — ignored
+file.read(buf, size);                       // returns Status — ignored
+serialBuffer.serialize(value);             // returns SerializeStatus — ignored
+```
+
+Correct patterns:
+
+```cpp
+bool ok = str.format("...", args);
+FW_ASSERT(ok);  // or handle truncation
+
+FwSizeType copied = Fw::StringUtils::string_copy(d, s, n);
+// Use copied or assert it equals expected
+
+// Intentional discard (acceptable when documented):
+(void)str.format("...", args);  // truncation acceptable for log-only string
+```
+
+This rule does NOT apply to functions documented as infallible
+(pure setters, void returns, trivial accessors). It applies specifically
+to operations that can fail or produce partial results.
+
+#### CPP-33 — Extract general-purpose logic to shared utilities
+
+If a PR introduces logic in a component implementation that:
+
+- (a) operates on general data types (strings, buffers, numeric arrays), AND
+- (b) has no dependency on the component's specific state or ports, AND
+- (c) would be useful in more than one component,
+
+then it should be implemented in (or proposed for) the appropriate utility
+module (`Fw::StringUtils`, `Fw/DataStructures`, `Utils/`, `Os/`) rather
+than inlined in the component.
+
+Examples:
+
+- String truncation (leading or trailing) → `Fw::StringUtils`
+- CRC computation → `Utils/Hash`
+- Bounded queue logic → `Fw/DataStructures`
+- Path manipulation (dirname, basename) → `Os` or `Fw::StringUtils`
+
+### G. External authoritative references
 
 #### CPP-26 — F Prime style guidelines
 
@@ -331,6 +468,11 @@ linked in §4 is authoritative. F Prime adopts it where applicable.
 | CPP-26 | `cpp-style-guide-violation` | Catch-all; cite the wiki section. |
 | CPP-27 | `cpp-jpl-c-standard-violation` | Catch-all; cite the section. |
 | CPP-28 | `cpp-bare-fixed-size-where-configurable-fits` | Numerical fields where range varies across projects. |
+| CPP-29 | `cpp-assert-side-effect` | `**must fix**` always. |
+| CPP-30 | `cpp-magic-number-replacing-constant` | `**must fix**` when behavioral; `**could fix**` for new code. |
+| CPP-31 | `cpp-silent-truncation` | `**must fix**` for paths/keys/identifiers; `**could fix**` for display. |
+| CPP-32 | `cpp-ignored-return-value` | `**must fix**` for I/O/serialization; `**could fix**` for display. |
+| CPP-33 | `cpp-inlined-utility` | `**suggestion**` for one-liners; `**could fix**` for multi-line. |
 
 Finding-class names are stable strings: they appear in the inline
 comment HTML footer (`finding-key` hash inputs). Renaming a class
@@ -364,6 +506,18 @@ is authoritative; this section narrows the decision per cluster.
 - **External references (CPP-26, 27):** default `**could fix**` for
   cosmetic style hits; `**suggestion**` when a concrete fix is
   expressible.
+- **Correctness and robustness (CPP-29, 30, 31, 32, 33):**
+  - CPP-29 (assert side-effects): always `**must fix**`.
+  - CPP-30 (magic numbers): `**must fix**` when replacing a named
+    constant with a behavioral change; `**could fix**` for new code.
+  - CPP-31 (silent truncation): `**must fix**` when the truncated
+    value is used for logic (paths, keys, identifiers); `**could
+    fix**` when used only for human-readable display.
+  - CPP-32 (ignored return values): `**must fix**` for I/O,
+    serialization, and path-building operations; `**could fix**`
+    for display-only formatting.
+  - CPP-33 (inlined utilities): `**suggestion**` for small
+    one-liners; `**could fix**` for multi-line logic blocks.
 
 **Preexisting violations.** Any violation the PR did not introduce
 or widen (per `_shared/skills/pr-diff-scoping.skill.md`) is

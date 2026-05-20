@@ -188,6 +188,38 @@ not exercised by default; the test must fire them.
 
 **Finding-class:** `test-throttle-or-update-on-change-untested`.
 
+### 11. Repetitive test structure (copy-paste blocks)
+
+The test file contains multiple test methods (or a single long
+method) that repeat the same structural pattern with only argument
+or setup variations. This pattern:
+
+- (a) makes the test hard to read and review,
+- (b) makes maintenance error-prone (a fix must be applied N times),
+- (c) obscures which behavior each repetition is actually testing.
+
+Flag when a test method exceeds ~50 lines of repeated structure OR
+when 3+ test cases follow an identical invoke → assert template with
+different arguments.
+
+**Preferred alternatives (in order of preference):**
+
+1. **Rule-Based Testing (RBT)** via `STest::Rule` — the gold standard
+   when the component has internal state and the tests explore state-
+   space coverage. See `docs/how-to/rule-based-testing.md`.
+2. **Parameterized helper functions** — factor the repeated pattern
+   into a helper that takes the varying inputs/expectations as
+   arguments. Each test case becomes a one-liner call.
+3. **GTest parameterized tests** (`TEST_P` / `INSTANTIATE_TEST_SUITE_P`)
+   — when the variation is purely in input data with identical
+   assertion structure.
+
+**Finding-class:** `test-copy-paste-structure`.
+
+**Default triage:** `**suggestion**` for 3–5 repetitions;
+`**could fix**` for 6+ repetitions or when the test file exceeds
+300 lines of repeated structure.
+
 ---
 
 ## Heuristics — what the agent reads, how it reasons
