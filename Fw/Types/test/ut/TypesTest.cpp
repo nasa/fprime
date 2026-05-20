@@ -46,6 +46,18 @@ class SerializeTestBuffer : public Fw::LinearBufferBase {
     U8 m_testBuff[255];
 };
 
+TEST(SerializationTest, SerializeSizeLeftStartsAtCapacity) {
+    SerializeTestBuffer buff;
+
+    ASSERT_EQ(buff.getCapacity(), buff.getSerializeSizeLeft());
+
+    const U8 value = 0xAB;
+    const Fw::SerializeStatus status = buff.serializeFrom(value);
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
+    ASSERT_EQ(buff.getCapacity() - sizeof(value), buff.getSerializeSizeLeft());
+}
+
 TEST(SerializationTest, Serialization1) {
     printf("Testing Serialization code\n");
 
