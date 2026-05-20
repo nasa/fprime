@@ -282,7 +282,7 @@ STL.
 Trivial `<algorithm>` helpers (`std::min`, `std::max`,
 `std::numeric_limits`) and `<cstdint>` types are acceptable.
 
-### F. Correctness and robustness
+### E. Correctness and robustness
 
 #### CPP-29 — FW_ASSERT predicates must be side-effect-free
 
@@ -419,7 +419,7 @@ Examples:
 - Bounded queue logic → `Fw/DataStructures`
 - Path manipulation (dirname, basename) → `Os` or `Fw::StringUtils`
 
-### G. External authoritative references
+### F. External authoritative references
 
 #### CPP-26 — F Prime style guidelines
 
