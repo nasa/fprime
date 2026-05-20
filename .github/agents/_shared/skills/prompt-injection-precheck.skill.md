@@ -156,7 +156,7 @@ Markdown-style comments or hidden content that contains behavioral
 instructions for automated actors. This includes any `[//]: #`
 constructs or other markdown comment patterns containing
 instruction-override phrases from §2a or references to automated
-actors per §2b.
+actors per §2e.
 
 ---
 
