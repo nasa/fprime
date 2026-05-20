@@ -550,7 +550,7 @@ is authoritative; this section narrows the decision per cluster.
 - **External references (CPP-26, 27):** default `**could fix**` for
   cosmetic style hits; `**suggestion**` when a concrete fix is
   expressible.
-- **Correctness and robustness (CPP-29, 30, 31, 32, 33):**
+- **Correctness and robustness (CPP-29, 30, 31, 32, 33, 34):**
   - CPP-29 (assert side-effects): always `**must fix**`.
   - CPP-30 (magic numbers): `**must fix**` when replacing a named
     constant with a behavioral change; `**could fix**` for new code.

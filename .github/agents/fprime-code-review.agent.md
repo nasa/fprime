@@ -16,7 +16,7 @@ and the shared skills.
 
 The C/C++ design rules this agent enforces live in
 `_shared/skills/fprime-cpp-design.skill.md`. That skill is the
-single source of truth for the rule set (CPP-1 through CPP-33) and
+single source of truth for the rule set (CPP-1 through CPP-34) and
 the finding-class vocabulary; this agent file specifies how the
 multi-agent flow applies it on a PR.
 
@@ -25,7 +25,7 @@ multi-agent flow applies it on a PR.
 ## Scope
 
 You flag findings on touched C/C++ source where the offending
-construct violates one of the rules CPP-1 through CPP-33 in
+construct violates one of the rules CPP-1 through CPP-34 in
 `_shared/skills/fprime-cpp-design.skill.md`. The "introduced by this
 PR" test (`_shared/skills/pr-diff-scoping.skill.md`) applies; pre-
 existing rule violations become `**future work**`.
@@ -88,6 +88,8 @@ reference (the skill is authoritative):
 - `cpp-silent-truncation` (CPP-31)
 - `cpp-ignored-return-value` (CPP-32)
 - `cpp-inlined-utility` (CPP-33)
+- `cpp-while-loop-for-counted-iteration` /
+  `cpp-unbounded-loop` (CPP-34)
 
 The agent's per-finding inline comment cites the CPP-N rule number
 in the body so reviewers can map back to the skill.
@@ -133,14 +135,17 @@ For each touched file in the PR diff, scan in this order:
    touched lines pattern-match a wiki / JPL clause; cite the
    specific section.
 6. **Correctness and robustness rules (CPP-29, CPP-30, CPP-31,
-   CPP-32, CPP-33)**. Scan for: `FW_ASSERT` calls whose predicate
-   contains non-const function calls or mutations (CPP-29); numeric
-   literals replacing previously-named constants (CPP-30); string or
-   data copies into fixed-size destinations without truncation
-   handling (CPP-31); ignored return values from `format()`,
-   `string_copy()`, serialization, or I/O calls (CPP-32); and
-   general-purpose logic inlined in a component that belongs in a
-   shared utility (CPP-33).
+   CPP-32, CPP-33, CPP-34)**. Scan for: `FW_ASSERT` calls whose
+   predicate contains non-const function calls or mutations (CPP-29);
+   numeric literals replacing previously-named constants (CPP-30);
+   string or data copies into fixed-size destinations without
+   truncation handling (CPP-31); ignored return values from
+   `format()`, `string_copy()`, serialization, or I/O calls
+   (CPP-32); general-purpose logic inlined in a component that
+   belongs in a shared utility (CPP-33); and `while` loops used for
+   counted iteration where a `for` loop would collocate control, or
+   any loop with no provable upper bound that is not a program main
+   loop (CPP-34).
 7. **Whole-file context (all rules)**. Before flagging a missing
    pattern or suggesting an addition, READ THE FULL FILE — not just
    the diff hunks. The diff shows what changed; the full file shows
@@ -238,7 +243,7 @@ guide. Summarized here for fast reference:
 - **External references (CPP-26, 27)**: default `**could fix**`
   unless a one-or-two-line fix is expressible, in which case
   `**suggestion**` with a fenced block.
-- **Correctness and robustness (CPP-29, 30, 31, 32, 33)**:
+- **Correctness and robustness (CPP-29, 30, 31, 32, 33, 34)**:
   CPP-29 (assert side-effects) always `**must fix**`; CPP-30
   (magic numbers) `**must fix**` when replacing a named constant
   with behavioral change, else `**could fix**`; CPP-31 (silent
@@ -246,7 +251,9 @@ guide. Summarized here for fast reference:
   fix**` for display-only; CPP-32 (ignored return values) `**must
   fix**` for I/O and serialization, `**could fix**` for display;
   CPP-33 (inlined utilities) `**suggestion**` for one-liners,
-  `**could fix**` for multi-line blocks.
+  `**could fix**` for multi-line blocks; CPP-34 (while / unbounded
+  loops) `**suggestion**` for mechanical while-to-for conversions,
+  `**must fix**` for loops with no provable bound.
 
 ---
 
