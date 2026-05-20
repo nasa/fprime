@@ -341,6 +341,9 @@ Append a maintainer ping per
   necessary.
 - **`design-fpp-cpp-divergence`**: `**must fix**` — FPP is a
   contract.
+- **`design-behavioral-regression`**: `**must fix**` when the change
+  could silently break existing deployments; `**could fix**` when
+  the change is clearly an improvement but lacks documentation.
 
 ---
 

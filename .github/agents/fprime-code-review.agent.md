@@ -238,6 +238,15 @@ guide. Summarized here for fast reference:
 - **External references (CPP-26, 27)**: default `**could fix**`
   unless a one-or-two-line fix is expressible, in which case
   `**suggestion**` with a fenced block.
+- **Correctness and robustness (CPP-29, 30, 31, 32, 33)**:
+  CPP-29 (assert side-effects) always `**must fix**`; CPP-30
+  (magic numbers) `**must fix**` when replacing a named constant
+  with behavioral change, else `**could fix**`; CPP-31 (silent
+  truncation) `**must fix**` for paths/keys/identifiers, `**could
+  fix**` for display-only; CPP-32 (ignored return values) `**must
+  fix**` for I/O and serialization, `**could fix**` for display;
+  CPP-33 (inlined utilities) `**suggestion**` for one-liners,
+  `**could fix**` for multi-line blocks.
 
 ---
 
