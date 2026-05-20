@@ -419,6 +419,49 @@ Examples:
 - Bounded queue logic → `Fw/DataStructures`
 - Path manipulation (dirname, basename) → `Os` or `Fw::StringUtils`
 
+#### CPP-34 — Prefer bounded `for` loops; `while` is discouraged
+
+All loops must have a **provable upper bound** on the number of
+iterations (per the JPL C coding standard, CPP-27). For counted
+iteration, use a `for` loop so the initializer, bound, and increment
+are collocated in the loop header — this makes bound verification
+trivial.
+
+`while` loops scatter the initializer before the loop and the
+increment inside the body, making it harder to verify termination at
+a glance. They are discouraged for counted iteration.
+
+**Exception — program main loop.** A `while (true)` or `for (;;)`
+at the top level of a task entry point or component dispatcher
+(the "run forever" loop) is acceptable. This is the one
+sanctioned unbounded loop pattern.
+
+Patterns to flag:
+
+```cpp
+// Avoid — counted iteration with while
+FwIndexType i = 0;
+while (i < count) {
+    process(data[i]);
+    i++;
+}
+
+// Prefer — for loop with collocated control
+for (FwIndexType i = 0; i < count; i++) {
+    process(data[i]);
+}
+```
+
+```cpp
+// Acceptable — program main loop
+void TaskRunner::run() {
+    while (true) {
+        Os::Task::delay(interval);
+        dispatch();
+    }
+}
+```
+
 ### F. External authoritative references
 
 #### CPP-26 — F Prime style guidelines
@@ -473,6 +516,7 @@ linked in §4 is authoritative. F Prime adopts it where applicable.
 | CPP-31 | `cpp-silent-truncation` | `**must fix**` for paths/keys/identifiers; `**could fix**` for display. |
 | CPP-32 | `cpp-ignored-return-value` | `**must fix**` for I/O/serialization; `**could fix**` for display. |
 | CPP-33 | `cpp-inlined-utility` | `**suggestion**` for one-liners; `**could fix**` for multi-line. |
+| CPP-34 | `cpp-while-loop-for-counted-iteration` / `cpp-unbounded-loop` | Two sub-classes. |
 
 Finding-class names are stable strings: they appear in the inline
 comment HTML footer (`finding-key` hash inputs). Renaming a class
@@ -518,6 +562,10 @@ is authoritative; this section narrows the decision per cluster.
     for display-only formatting.
   - CPP-33 (inlined utilities): `**suggestion**` for small
     one-liners; `**could fix**` for multi-line logic blocks.
+  - CPP-34 (while / unbounded loops): `**suggestion**` when a
+    `while` is used for simple counted iteration and the fix is a
+    mechanical conversion to `for`. `**must fix**` when a loop
+    has no provable upper bound and is not a program main loop.
 
 **Preexisting violations.** Any violation the PR did not introduce
 or widen (per `_shared/skills/pr-diff-scoping.skill.md`) is
