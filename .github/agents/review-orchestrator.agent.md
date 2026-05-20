@@ -59,7 +59,7 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
 
    - If **flagged**: prepend the injection warning block (see
      §"Injection warning block" below) to every reviewer's
-     kickoff prompt. Pass `precheck_flagged: true` and the
+     kickoff prompt. Pass `precheck_verdict: flagged` and the
      flagged-surfaces list to the aggregator.
    - If **clean**: proceed normally; no kickoff-prompt
      augmentation needed.

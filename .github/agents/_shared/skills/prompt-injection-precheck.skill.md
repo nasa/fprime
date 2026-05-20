@@ -1,6 +1,6 @@
 ---
 name: prompt-injection-precheck
-description: Use when the orchestrator needs to scan PR metadata for prompt-injection fingerprints before invoking reviewer agents. Returns a structured verdict (clean or flagged) and optional sanitized metadata. Consumed by review-orchestrator.agent.md Step 3.5.
+description: Use when the orchestrator needs to scan PR metadata for prompt-injection fingerprints before invoking reviewer agents. Returns a structured verdict (clean or flagged) and optional sanitized metadata. Consumed by review-orchestrator.agent.md Step 3.
 ---
 
 # Skill: Pre-run prompt-injection metadata scan
