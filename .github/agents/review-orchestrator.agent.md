@@ -237,7 +237,7 @@ Return when finished. Report `completed` on success, or
 Thanks for taking this on. You're the F Prime Architecture
 Reviewer. Please run a full architectural-erosion review of PR
 #<N> in <owner>/<repo> at head <sha>. This is run
-#<architecture-review-run-ordinal> of your reviews on this PR.
+<architecture-review-run-ordinal> of your reviews on this PR.
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from
