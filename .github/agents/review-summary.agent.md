@@ -84,6 +84,20 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 
 (omit this entire section unless the spam check in §5e fires)
 
+### Pre-run prompt-injection alert
+⚠️ The orchestrator's pre-run metadata scan flagged potential
+prompt-injection in PR-authored content before reviewers were
+invoked. All reviewers were warned via their kickoff prompts.
+
+Flagged surfaces:
+- <surface>: <pattern> — "<excerpt>"
+
+The supply-chain reviewer's inline findings below include full
+analysis of any prompt-injection content in the diff and metadata.
+
+(omit this entire section unless precheck_verdict is "flagged" or
+"error"; see §5g for the error variant)
+
 ### Per-agent results
 
 | Agent | must fix | suggestion | could fix | future work | outstanding | Verdict |
@@ -501,6 +515,77 @@ closing line that the aggregator composes itself. Instructions:
 
 There is no static thanks block in the review body, and the
 closing line is not templated.
+
+---
+
+## §5g. Pre-run prompt-injection alert
+
+When the orchestrator's kickoff prompt includes
+`precheck_verdict: flagged`, the aggregator renders a
+`Pre-run prompt-injection alert` section in the review body.
+This section is placed **after** `Recommend: Close` (if present)
+and **before** `Since last run`.
+
+### Output shape
+
+```
+### Pre-run prompt-injection alert
+⚠️ The orchestrator's pre-run metadata scan flagged potential
+prompt-injection in PR-authored content before reviewers were
+invoked. All reviewers were warned via their kickoff prompts.
+
+Flagged surfaces:
+- <surface>: <pattern> — "<≤120-char excerpt>"
+- ...
+
+The supply-chain reviewer's inline findings below include full
+analysis of any prompt-injection content in the diff and metadata.
+```
+
+The `flagged_surfaces` list is copied verbatim from the
+orchestrator's kickoff prompt.
+
+### When precheck_verdict is "error"
+
+Replace the alert section with:
+
+```
+### Pre-run prompt-injection alert
+⚠️ The orchestrator's pre-run metadata scan encountered an error
+and could not complete. Reviewers were NOT warned. The supply-chain
+reviewer's §6 analysis is the sole prompt-injection coverage for
+this run.
+```
+
+### When precheck_verdict is "clean"
+
+Omit the section entirely. Do not render a "clean" confirmation —
+the absence of the section signals clean.
+
+### Interaction with Recommend: Close (§5e)
+
+The pre-run alert and Recommend: Close are independent. A flagged
+pre-check does not by itself trigger Recommend: Close; that is
+still governed by §5e's trigger criteria (e.g., supply-chain
+must-fix `prompt-injection` findings). However, both may appear
+on the same PR — the pre-check alert provides early-warning
+context; the Recommend: Close reflects the supply-chain reviewer's
+full analysis.
+
+### Interaction with body shape (§Output)
+
+The alert section slots into the review body in this order:
+
+1. HTML marker + heading
+2. Recommend: Close (§5e) — if fired
+3. **Pre-run prompt-injection alert (§5g) — if flagged or error**
+4. Since last run (§5d) — if run > 1
+5. Per-agent results
+6. Supply-chain surfaces
+7. Outstanding must-fix items
+8. Merge readiness
+9. Agents that did not run
+10. Closing line (§5f)
 
 ---
 
