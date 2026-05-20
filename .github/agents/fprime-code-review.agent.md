@@ -16,7 +16,7 @@ and the shared skills.
 
 The C/C++ design rules this agent enforces live in
 `_shared/skills/fprime-cpp-design.skill.md`. That skill is the
-single source of truth for the rule set (CPP-1 through CPP-28) and
+single source of truth for the rule set (CPP-1 through CPP-33) and
 the finding-class vocabulary; this agent file specifies how the
 multi-agent flow applies it on a PR.
 
@@ -25,7 +25,7 @@ multi-agent flow applies it on a PR.
 ## Scope
 
 You flag findings on touched C/C++ source where the offending
-construct violates one of the rules CPP-1 through CPP-28 in
+construct violates one of the rules CPP-1 through CPP-33 in
 `_shared/skills/fprime-cpp-design.skill.md`. The "introduced by this
 PR" test (`_shared/skills/pr-diff-scoping.skill.md`) applies; pre-
 existing rule violations become `**future work**`.

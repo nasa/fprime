@@ -52,7 +52,7 @@ agents:
     path: .github/agents/fprime-code-review.agent.md
     invocable_by_humans: true
     scope_summary: >
-      C/C++ design-rule conformance (CPP-1 through CPP-28 in
+      C/C++ design-rule conformance (CPP-1 through CPP-33 in
       `_shared/skills/fprime-cpp-design.skill.md`): no dynamic memory
       post-init, Fw::Buffer ownership, FW_ASSERT scope, C++14
       language subset, F Prime type idioms (Fw::String,

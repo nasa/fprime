@@ -263,9 +263,9 @@ trigger-specific line.
 For all OTHER design finding-classes (`design-intent-mismatch`,
 `design-code-mismatch`, `design-fprime-anti-pattern`,
 `design-scope-creep`, `design-under-scoped`,
-`design-fpp-cpp-divergence`), the standard low-confidence /
-disagreement-escalation ping mechanism from the review contract
-applies, with no special always-on behavior.
+`design-fpp-cpp-divergence`, `design-behavioral-regression`), the
+standard low-confidence / disagreement-escalation ping mechanism
+from the review contract applies, with no special always-on behavior.
 
 ---
 
