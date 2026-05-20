@@ -241,7 +241,7 @@ For each touched component in the PR diff:
    whether any test file was updated alongside; if not, the test
    coverage is stale → category-2 finding.
 5. **For each touched test file**, walk the diff and apply the
-   per-pattern checks (categories 3–10):
+   per-pattern checks (categories 3–11):
    - For every `invoke_to_*` / `sendCmd_*` added in the diff, look
      for the closest following `ASSERT_*` in the same TEST body.
    - For every `async`-port invocation, look for a `doDispatch()`
@@ -256,6 +256,10 @@ For each touched component in the PR diff:
    - For each FPP element with a `throttle` or `update on change`
      modifier, scan the test for the corresponding multi-call
      pattern (category 10).
+   - Scan the full test file for 3+ test methods (or a single method
+     exceeding ~50 lines) that follow an identical invoke → assert
+     template differing only in arguments or setup values. Flag as
+     category 11 (`test-copy-paste-structure`).
 
 The agent tolerates the legacy `<C>Impl` naming pattern alongside
 the current `<C>` pattern when locating the Tester.
