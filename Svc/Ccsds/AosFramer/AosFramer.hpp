@@ -88,11 +88,13 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Configure Managed Parameters for this AOS Framer
     //!
-    void configure(U32 fixedFixedSize,                  //!< Number of bytes in each AOS SDL Frame
-                   bool frameErrorControlField,         //!< Whether to enable the frame error control field
-                   U8 idlePvns = PvnBitfield::SPP_MASK  //!< Bitfield of which Packet Version Numbers to use
-                                                        //!< for idle packets
-                                                        //!< Default to SPP
+    void configure(U32 fixedFixedSize,                       //!< Number of bytes in each AOS SDL Frame
+                   bool frameErrorControlField,              //!< Whether to enable the frame error control field
+                   U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
+                   U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
+                   U8 idlePvns = PvnBitfield::SPP_MASK       //!< Bitfield of which Packet Version Numbers to use
+                                                             //!< for idle packets
+                                                             //!< Default to SPP
     );
 
   private:
@@ -170,7 +172,8 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
   private:
     // Config Parameters
-    bool m_fecf = true;  //!< AOS Frame Error Control Field presence
+    bool m_fecf = true;      //!< AOS Frame Error Control Field presence
+    U16 m_spacecraftId = 0;  //!< Expected spacecraft ID (10 bits)
 
     AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
 };
