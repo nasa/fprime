@@ -372,7 +372,7 @@ namespace Svc {
                     size += 1;
                     break;
                 case FILE_DATA_ERROR:
-                    buffer[0] += 1;
+                    buffer[0] += 0x81;
                     break;
                 default:
                     break;
@@ -424,11 +424,11 @@ namespace Svc {
                     break;
                 case 1:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(U32) + 1);
+                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_SIZE, 0, sizeof(FwSizeStoreType) + 1);
                     break;
                 case 2:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                    ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::PARAMETER_ID_SIZE, 0, sizeof(FwPrmIdType) + 1);
+                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::PARAMETER_ID_SIZE, 0, sizeof(FwPrmIdType) + 1);
                     break;
                 case 3:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
@@ -489,14 +489,15 @@ namespace Svc {
             switch (i) {
                 case 0:
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-                    // Parameter read error caused by adding one to the expected read
-                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_VALUE, 0, PRMDB_ENTRY_DELIMITER + 1);
+                    // Parameter read error caused by adding 0x81 to the expected read
+                    ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::DELIMITER_VALUE, 0, static_cast<U8>(PRMDB_ENTRY_DELIMITER + 0x81));
                     break;
                 case 1: {
-                    // Data in this test is corrupted by adding 1 to the first data byte read. Since data is stored in
-                    // big-endian format the highest order byte of the record size (U32) must have one added to it.
-                    // Expected result of '8' inherited from original design of test.
-                    U32 expected_error_value = 8 + (1 << ((sizeof(U32) - 1) * 8));
+                    // This test corrupts the recordSize by adding 0x81 to the first byte read after the delimiter. Since data is stored
+                    // in big-endian format, the highest order byte of the record size (FwSizeStoreType) must have 0x81 added to it.
+                    // The 0x81 value was chosen to still give an improbably large buffer size even when FwSizeStoreType == U16.
+                    // Expected result of 'sizeof(FwPrmIdType) + sizeof(U32)' inherited from original design of test.
+                    FwSizeStoreType expected_error_value = sizeof(FwPrmIdType) + sizeof(U32) + (0x81 << ((sizeof(FwSizeStoreType) - 1) * 8));
                     ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                     ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::RECORD_SIZE_VALUE, 0, expected_error_value);
                     break;
@@ -548,7 +549,7 @@ namespace Svc {
                     break;
                 case 1:
                     ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-                    ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::RECORD_SIZE_SIZE, 0, sizeof(U32) + 1);
+                    ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::RECORD_SIZE_SIZE, 0, sizeof(FwSizeStoreType) + 1);
                     break;
                 case 2:
                     ASSERT_EVENTS_PrmFileWriteError_SIZE(1);

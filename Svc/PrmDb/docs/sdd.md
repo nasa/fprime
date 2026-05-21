@@ -46,8 +46,8 @@ The fields for each parameter value as stored in the parameter file are as follo
 
 Description | Size (in bytes) | Value
 ----------- | ---- | -----
-Entry Delimiter | 1 | 0xA5
-Record Size | 4 | Id type size + number of bytes in parameter value
+Entry Delimiter | 1 | Configurable by setting `PRMDB_ENTRY_DELIMITER` (default 0xA5)
+Record Size | Size of FwSizeStoreType | Id type size + number of bytes in parameter value
 Parameter ID | Size of FwPrmIdType | Value of parameter ID
 Parameter value | number of bytes in parameter | serialized bytes of value
 
