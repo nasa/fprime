@@ -12,6 +12,8 @@ The system functional documentation provides a functional or capability descript
 
 - __Telemetry__ - Functionality related to the capability of the system to produce telemetry data. 
 
+- __Command Dispatch__ - Command decoding, routing, and status tracking
+
 - __Sequencing__ - Command sequencing functionality
 
 
