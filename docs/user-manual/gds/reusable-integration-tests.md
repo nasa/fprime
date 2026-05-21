@@ -24,12 +24,11 @@ Create one JSON file in your deployment (typical location: `<MyDeployment>/test/
 
 ```json
 {
-    "Svc.CommandDispatcher": "MyTopology.cmdDisp",
-    "Svc.EventManager": "MyTopology.events",
-    "Svc.TlmChan": "MyTopology.tlmSend",
-    "Svc.FileManager": "MyTopology.fileManager",
-    "Svc.PrmDb": "MyTopology.prmDb",
-    "Svc.PrmDb.filename": "/tmp/PrmDb.dat"
+    "Svc.CommandDispatcher": "CdhCore.cmdDisp",
+    "Svc.CmdSequencer": "Ref.cmdSeq",
+    "Svc.FileDownlink": "FileHandling.fileDownlink",
+    "Svc.FileManager": "FileHandling.fileManager",
+    ... add more as needed per the tests you want to run ...
 }
 ```
 
