@@ -75,7 +75,6 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     const U32 tsSec = clockOk ? static_cast<U32>(ts.tv_sec) : 0U;
     const U32 tsUs = clockOk ? static_cast<U32>(ts.tv_nsec / 1000U) : 0U;
     const U32 foldedUs = tsSec ^ tsUs;
-    const U32 foldedUs = tsSec ^ tsUs;
 
     U32 rdVal = 0;
     std::random_device rd;
