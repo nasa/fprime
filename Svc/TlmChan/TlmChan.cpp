@@ -70,10 +70,12 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     // non-deterministic random source for seed
     U32 seed = 0;
 
-    struct timespec ts;
-    const U32 foldedUs = (clock_gettime(CLOCK_MONOTONIC, &ts) == 0)
-                             ? (static_cast<U32>(ts.tv_sec) ^ static_cast<U32>(ts.tv_nsec / 1000U))
-                             : 0U;
+    struct timespec ts = {};
+    const bool clockOk = (clock_gettime(CLOCK_MONOTONIC, &ts) == 0);
+    const U32 tsSec = clockOk ? static_cast<U32>(ts.tv_sec) : 0U;
+    const U32 tsUs = clockOk ? static_cast<U32>(ts.tv_nsec / 1000U) : 0U;
+    const U32 foldedUs = tsSec ^ tsUs;
+    const U32 foldedUs = tsSec ^ tsUs;
 
     U32 rdVal = 0;
     std::random_device rd;
@@ -112,6 +114,9 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
     FwChanIdType result;
 
     if (this->m_chanIdSize >= 4) {
+        // Verify id fits in U16 before narrowing cast
+        FW_ASSERT(id <= static_cast<FwChanIdType>(std::numeric_limits<U32>::max()), static_cast<FwAssertArgType>(id));
+
         U32 h = static_cast<U32>(id) ^ static_cast<U32>(this->m_hashSeed);
 
         // Murmur3 32-bit
@@ -123,6 +128,9 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
     } else if (this->m_chanIdSize == 2) {
+        // Verify id fits in U16 before narrowing cast
+        FW_ASSERT(id <= static_cast<FwChanIdType>(std::numeric_limits<U16>::max()), static_cast<FwAssertArgType>(id));
+
         U16 h = (static_cast<U16>(id)) ^ (static_cast<U16>(this->m_hashSeed) & static_cast<U16>(0xFFFFU));
 
         // Wang 16-bit
@@ -134,6 +142,9 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
     } else {
+        // Verify id fits in U8 before narrowing cast
+        FW_ASSERT(id <= static_cast<FwChanIdType>(std::numeric_limits<U8>::max()), static_cast<FwAssertArgType>(id));
+
         // FwChanIdType is smaller than 16 bits (at most 255 distinct channel IDs).
         // XOR with the low byte of the seed before reduction to maintain consistency
         const U8 h = static_cast<U8>(id) ^ (static_cast<U8>(this->m_hashSeed) & static_cast<U8>(0xFFU));
