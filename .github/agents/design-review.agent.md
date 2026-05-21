@@ -350,9 +350,11 @@ Append a maintainer ping per
   exists to prevent; `**suggestion**` when the deviation is
   acceptable and the agent can express the standard form in a
   fenced suggestion block.
-- **`design-scope-creep`**: `**suggestion**` with a maintainer ping
-  asking the author to either split the PR or update the PR
-  description / linked issue to acknowledge the larger scope.
+- **`design-scope-creep`**: `**must fix**` when the PR exhibits
+  title-washing (trivial title/description with substantive changes);
+  `**suggestion**` with a maintainer ping otherwise, asking the
+  author to either split the PR or update the PR description /
+  linked issue to acknowledge the larger scope.
 - **`design-under-scoped`**: `**suggestion**` with the agent's
   rationale for why the deeper architectural change appears
   necessary.
