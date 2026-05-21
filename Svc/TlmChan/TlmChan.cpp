@@ -13,7 +13,6 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/TlmChan/TlmChan.hpp>
-#include <chrono>
 #include <random>
 
 namespace Svc {
@@ -67,10 +66,8 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     // non-deterministic random source for seed
     U32 seed = 0;
 
-    const I64 timeNs = static_cast<I64>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch())
-            .count());
-    const U32 foldedNs = static_cast<U32>(timeNs) ^ (static_cast<U32>(static_cast<U64>(timeNs) >> 32));
+    const Fw::Time curTime = this->getTime();
+    const U32 foldedUs = static_cast<U32>(curTime.getSeconds()) ^ static_cast<U32>(curTime.getUSeconds());
 
     U32 rdVal = 0;
     std::random_device rd;
@@ -85,10 +82,10 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
         rdVal = static_cast<U32>(std::hash<const char*>{}(__FILE__) ^ __LINE__);
     }
 
-    const uintptr_t raw = reinterpret_cast<uintptr_t>(&seed);
+    const U64 raw = reinterpret_cast<U64>(&seed);
     const U32 foldedStack = static_cast<U32>(raw ^ (raw >> 32));
 
-    seed = foldedNs ^ rdVal ^ foldedStack;
+    seed = foldedUs ^ rdVal ^ foldedStack;
 
     // check for a zero seed
     if (seed == 0) {
@@ -99,21 +96,28 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 }
 
 TlmChan::~TlmChan() {}
-constexpr size_t FwChanIdSize = sizeof(FwChanIdType);
+constexpr U32 FwChanIdSize = static_cast<U32>(sizeof(FwChanIdType));
 
 FwChanIdType TlmChan::doHash(FwChanIdType id) {
     // Validate input before use
-    FW_ASSERT(TLMCHAN_NUM_TLM_HASH_SLOTS > 0);
-    FwChanIdType result;
+    static_assert(std::is_unsigned<FwChanIdType>::value, "FwChanIdType must be unsigned");
+    static_assert(sizeof(FwChanIdType) <= sizeof(U32), "FwChanIdType must fit within U32 for safe hash cast");
+
+    static constexpr U32 MURMUR3_C1 = 0x85EBCA6BU;  // Murmur3 32-bit finalizer multiplier 1
+    static constexpr U32 MURMUR3_C2 = 0xC2B2AE35U;  // Murmur3 32-bit finalizer multiplier 2
+    static constexpr U16 WANG16_C1 = 0x2993U;       // Wang 16-bit hash multiplier 1
+    static constexpr U16 WANG16_C2 = 0xE877U;       // Wang 16-bit hash multiplier 2
+
+    FwChanIdType result = 0;
 
     if (FwChanIdSize >= 4) {
         U32 h = static_cast<U32>(id) ^ static_cast<U32>(this->m_hashSeed);
 
         // Murmur3 32-bit
         h ^= (h >> 16);
-        h *= 0x85EBCA6B;
+        h *= MURMUR3_C1;
         h ^= (h >> 13);
-        h *= 0xC2B2AE35;
+        h *= MURMUR3_C2;
         h ^= (h >> 16);
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
@@ -122,9 +126,9 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 
         // Wang 16-bit
         h = static_cast<U16>(h ^ (h >> 7));
-        h = static_cast<U16>(h * 0x2993U);
+        h = static_cast<U16>(h * WANG16_C1);
         h = static_cast<U16>(h ^ (h >> 5));
-        h = static_cast<U16>(h * 0xE877U);
+        h = static_cast<U16>(h * WANG16_C2);
         h = static_cast<U16>(h ^ (h >> 3));
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
