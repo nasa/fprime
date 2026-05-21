@@ -2,11 +2,16 @@
 #
 # Generates coverage for every module that calls register_fprime_module(),
 # compares against the matching coverage/<base_ref> baseline branch, and
-# posts a sticky per-module delta comment on the PR.
+# uploads the resulting comment body as a workflow artifact.  The
+# sticky PR comment itself is posted by a separate workflow_run job
+# (.github/workflows/coverage-comment.yml) that runs with
+# pull-requests: write under the base repo's token.
 #
-# Top-level permissions are scoped to exactly what the action needs:
-#   contents: read           — checkout sources + fetch baseline branch
-#   pull-requests: write     — post / update the sticky comment
+# This two-stage split is the GitHub-recommended pattern for
+# commenting on PRs opened from forks: GitHub strips write permissions
+# from GITHUB_TOKEN on fork-triggered pull_request events, so this
+# workflow (which runs on fork content) only ever needs read access.
+# See nasa/fprime-actions/coverage-comment/README.md for the rationale.
 #
 # The push-side counterpart that writes the baseline branch lives in
 # .github/workflows/coverage-update.yml and runs with contents: write.
@@ -25,7 +30,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
