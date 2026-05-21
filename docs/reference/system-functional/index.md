@@ -18,7 +18,7 @@ The system functional documentation provides a functional or capability descript
 - __[Command Dispatch](command-dispatch.md)__ - Command decoding, routing, and status tracking
 - __Dictionary__ - Dictionary (commands, telemetry, events, data products, parameters)
 - __Sequencing__ - Command sequencing functionality
-- __[Telemetry](telemetry.md)__ - Telemetry channel collection and downlink
+- __Telemetry__ - [Channel-based (TlmChan)](telemetry-chan.md) | [Packetized (TlmPacketizer)](telemetry-packetizer.md)
 - __[Event Management](event-management.md)__ - Event collection, distribution, text logging, and fatal handling
 - __[Rate Group Scheduling](rate-group-scheduling.md)__ - Periodic execution of components at configurable rates
 - __[Health Monitoring](health-monitoring.md)__ - Component liveness verification and watchdog stroking
