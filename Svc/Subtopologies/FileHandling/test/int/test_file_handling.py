@@ -9,7 +9,6 @@ Should projects require to run on different systems, they are encouraged to adap
 """
 
 import tempfile
-import time
 from pathlib import Path
 import random
 
