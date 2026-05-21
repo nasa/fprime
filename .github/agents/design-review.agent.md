@@ -77,6 +77,16 @@ fulfilled by the design changes the PR makes. Examples:
   coupling.
 - Linked issue's accepted-resolution criteria mention three
   behaviors; PR addresses one and silently drops the other two.
+- PR title says "fix typos" or "formatting cleanup"; the diff adds
+  substantive new code, new files, or behavioral changes unrelated
+  to typo/formatting fixes.
+
+**Scope note:** This category applies to ALL files in the PR diff,
+not only F Prime component/topology/FPP files. When the PR
+description claims a narrow intent (e.g., "fix typos," "formatting
+cleanup," "minor doc update") but the diff adds new files, new
+classes, new policy, or changes to unrelated areas, the mismatch is
+a design finding regardless of the file types involved.
 
 **Finding-class:** `design-intent-mismatch`.
 
@@ -140,10 +150,17 @@ expressed intent. Examples:
   component's state machine.
 - Intent is "rename function Foo"; PR also changes behavior in two
   unrelated handlers.
+- Intent is "fix typos in README"; PR adds entirely new source
+  files with substantive logic.
 
 Scope creep can be legitimate (the author found the right scope was
 larger than the issue specified), but the PR description should
 acknowledge it. Silent scope expansion is the design finding.
+
+**Title-washing detection:** When the PR title/description claims a
+trivial scope (typo fix, formatting, cleanup, docs) but the diff
+contains substantive additions or behavioral changes, this is a
+strong scope-creep signal that warrants `**must fix**`.
 
 The under-scoped case is the inverse: a tiny diff that addresses a
 small visible symptom while the linked issue clearly asks for a

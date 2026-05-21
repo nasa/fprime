@@ -57,16 +57,28 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    as `precheck_verdict: clean` or `precheck_verdict: flagged`
    with the list of flagged surfaces.
 
+   The orchestrator MUST verify that all input surfaces from §1 of
+   the precheck skill were actually scanned and report any surfaces
+   that could not be fetched or scanned. The structured output (§3
+   of the skill) includes a `surfaces_scanned` list confirming each
+   surface was processed. If commit messages could not be fetched,
+   the precheck verdict is `error` (not `clean`).
+
    - If **flagged**: prepend the injection warning block (see
      §"Injection warning block" below) to every reviewer's
      kickoff prompt. Pass `precheck_verdict: flagged` and the
      flagged-surfaces list to the aggregator.
    - If **clean**: proceed normally; no kickoff-prompt
-     augmentation needed.
+     augmentation needed. The orchestrator confirms the
+     `surfaces_scanned` list is complete before accepting a
+     `clean` verdict.
    - If the **skill itself errors** (API failure, timeout): log
      the error, set `precheck_verdict: error`, and proceed
      without warnings. Pass `precheck_verdict: error` to the
      aggregator so it can note the gap.
+   - If any surface shows `error` in the `surfaces_scanned`
+     list: treat as `precheck_verdict: error` and surface the
+     gap to the aggregator.
 4. Invoke each reviewer in order using the kickoff prompt template
    from §"Kickoff prompts" below. Wait for each to complete before
    moving on. Record the completion status as one of:

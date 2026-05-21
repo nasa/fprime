@@ -138,6 +138,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Workflows / actions / scripts | 1 must-fix — action `org/foo@main` unpinned in `build-image.yml` |
 | Generator output | clean |
 | Prompt-injection | clean |
+| Review-system integrity | clean |
 
 </details>
 
@@ -246,7 +247,8 @@ coverage by scope category.
 One row per surface, in the fixed order emitted by the supply-chain
 agent (per review contract §2 "Supply-chain agent: surfaces emission"):
 `Dependencies`, `Vendored / submodule`, `Build / test infrastructure`,
-`Workflows / actions / scripts`, `Generator output`, `Prompt-injection`.
+`Workflows / actions / scripts`, `Generator output`, `Prompt-injection`,
+`Review-system integrity`.
 
 The aggregator parses the `<!-- surfaces: ... -->` block from the
 supply-chain agent's review body and copies each bullet's
@@ -261,11 +263,11 @@ Edge cases:
   table with one line: `Supply-chain agent did not run; surfaces not
   assessed.`
 - **Supply-chain agent emitted no `<!-- surfaces: ... -->` block** (treat as a
-  contract violation) — render the six rows with `unknown — surfaces
+  contract violation) — render the seven rows with `unknown — surfaces
   emission missing` in every `Outstanding` cell and treat as a
   did-not-run for CI-safety rationale purposes.
-- **Supply-chain agent ran successfully and all six surfaces are
-  `clean`** — still render the full six-row table; the explicit
+- **Supply-chain agent ran successfully and all seven surfaces are
+  `clean`** — still render the full seven-row table; the explicit
   per-surface confirmation is the policy substitute the table exists
   to carry.
 

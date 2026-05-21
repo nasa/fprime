@@ -130,6 +130,7 @@ order, wrapped in a single HTML comment:
 - Workflows / actions / scripts: clean | <one-line description>
 - Generator output: clean | <one-line description>
 - Prompt-injection: clean | <one-line description>
+- Review-system integrity: clean | <one-line description>
 -->
 ```
 

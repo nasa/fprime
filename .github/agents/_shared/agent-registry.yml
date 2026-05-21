@@ -44,7 +44,8 @@ agents:
       Dependency manifests, third-party / vendored / submodule
       changes, build/test infrastructure, workflow / action / script
       changes, generators, container images, runner-safety surfaces,
-      and prompt-injection fingerprints.
+      prompt-injection fingerprints, and review-system integrity
+      (changes to agent specs, contract, skills, and registry).
 
   - name: F Prime C/C++ Design Reviewer
     short_name: fprime-code-review
