@@ -13,6 +13,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/TlmChan/TlmChan.hpp>
+#include <ctime>
 #include <random>
 
 namespace Svc {
@@ -60,14 +61,19 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     this->m_tlmEntries[0].free = 0;
     this->m_tlmEntries[1].free = 0;
 
+    // determine deployed channel size
+    this->m_chanIdSize = static_cast<U32>(sizeof(FwChanIdType));
+
     // ------- Set random telemetry hash seed -------
 
     // use timestamp, hardware random source and stack address for
     // non-deterministic random source for seed
     U32 seed = 0;
 
-    const Fw::Time curTime = this->getTime();
-    const U32 foldedUs = static_cast<U32>(curTime.getSeconds()) ^ static_cast<U32>(curTime.getUSeconds());
+    struct timespec ts;
+    const U32 foldedUs = (clock_gettime(CLOCK_MONOTONIC, &ts) == 0)
+                             ? (static_cast<U32>(ts.tv_sec) ^ static_cast<U32>(ts.tv_nsec / 1000U))
+                             : 0U;
 
     U32 rdVal = 0;
     std::random_device rd;
@@ -96,21 +102,16 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 }
 
 TlmChan::~TlmChan() {}
-constexpr U32 FwChanIdSize = static_cast<U32>(sizeof(FwChanIdType));
 
 FwChanIdType TlmChan::doHash(FwChanIdType id) {
-    // Validate input before use
+    // Validate input before use.
     static_assert(std::is_unsigned<FwChanIdType>::value, "FwChanIdType must be unsigned");
     static_assert(sizeof(FwChanIdType) <= sizeof(U32), "FwChanIdType must fit within U32 for safe hash cast");
+    static_assert(TLMCHAN_NUM_TLM_HASH_SLOTS > 0, "TLMCHAN_NUM_TLM_HASH_SLOTS must be greater than zero");
 
-    static constexpr U32 MURMUR3_C1 = 0x85EBCA6BU;  // Murmur3 32-bit finalizer multiplier 1
-    static constexpr U32 MURMUR3_C2 = 0xC2B2AE35U;  // Murmur3 32-bit finalizer multiplier 2
-    static constexpr U16 WANG16_C1 = 0x2993U;       // Wang 16-bit hash multiplier 1
-    static constexpr U16 WANG16_C2 = 0xE877U;       // Wang 16-bit hash multiplier 2
+    FwChanIdType result;
 
-    FwChanIdType result = 0;
-
-    if (FwChanIdSize >= 4) {
+    if (this->m_chanIdSize >= 4) {
         U32 h = static_cast<U32>(id) ^ static_cast<U32>(this->m_hashSeed);
 
         // Murmur3 32-bit
@@ -121,7 +122,7 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
         h ^= (h >> 16);
 
         result = static_cast<FwChanIdType>(h % TLMCHAN_NUM_TLM_HASH_SLOTS);
-    } else if (FwChanIdSize == 2) {
+    } else if (this->m_chanIdSize == 2) {
         U16 h = (static_cast<U16>(id)) ^ (static_cast<U16>(this->m_hashSeed) & static_cast<U16>(0xFFFFU));
 
         // Wang 16-bit
