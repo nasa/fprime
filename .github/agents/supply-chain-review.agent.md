@@ -285,7 +285,7 @@ the metadata are:
 ```
 
 Rule: `CI safety: No-Go` iff outstanding `**must fix**` count > 0
-across the agent's full scope (any of categories 1–6). Even a single
+across the agent's full scope (any of categories 1–7). Even a single
 unverified privileged-surface change is severe enough on its own.
 
 ---
