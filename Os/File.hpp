@@ -50,6 +50,7 @@ class FileInterface {
         INVALID_MODE,       //!< Mode for file access is invalid for current operation
         INVALID_ARGUMENT,   //!< Invalid argument passed in
         NO_MORE_RESOURCES,  //!< No more available resources
+        TRUNCATED,          //!< Path exceeds Fw::FileNameString capacity and would be silently truncated
         OTHER_ERROR,        //!<  A catch-all for other errors. Have to look in implementation-specific code
         MAX_STATUS          //!< Maximum value of status
     };
@@ -262,7 +263,8 @@ class File final : public FileInterface {
     //!
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
-    //! \return: status of the open
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, Mode mode);
 
@@ -279,7 +281,8 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
-    //! \return: status of the open
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode);
 
@@ -364,7 +367,8 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return: status of the open
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
@@ -384,7 +388,8 @@ class File final : public FileInterface {
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return: status of the open
+    //! \return: status of the open. Returns `TRUNCATED` without opening (and leaves the file closed
+    //!          and `m_path` null) when the path exceeds `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode, OverwriteType overwrite);
 

@@ -68,6 +68,10 @@ File::Status File::open(const CHAR* filepath,
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
     const FwSizeType string_len = static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, length));
+    // Refuse oversize paths before touching the delegate so m_path_storage never silently truncates
+    if (string_len > static_cast<FwSizeType>(FileNameStringSize)) {
+        return File::Status::TRUNCATED;
+    }
     FW_ASSERT(string_len < length, static_cast<FwAssertArgType>(string_len), static_cast<FwAssertArgType>(length));
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
