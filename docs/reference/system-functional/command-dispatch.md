@@ -4,8 +4,6 @@
 ## References
 
 - [F Prime Command Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdDispatcher/docs/sdd.md)
-- [F Prime Command Sequencer SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSequencer/docs/sdd.md)
-- [F Prime Sequence Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/sdd.md)
 
 ## Overview
 
