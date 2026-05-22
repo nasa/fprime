@@ -27,10 +27,9 @@ SpacePacketFramer ::~SpacePacketFramer() {}
 void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     SpacePacketHeader header;
     Fw::SerializeStatus status;
-    // Body on the wire is: [packet descriptor][packet body]. The descriptor is no longer
-    // embedded in the incoming buffer; it is injected here from context.apid so the wire
-    // format remains unchanged.
-    const FwSizeType bodySize = sizeof(FwPacketDescriptorType) + data.getSize();
+    // The CCSDS Space Packet primary header already carries the APID, so the SP user data
+    // field on the wire is just the payload (no in-buffer packet descriptor).
+    const FwSizeType bodySize = data.getSize();
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + bodySize;
     FW_ASSERT(bodySize <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(bodySize));
@@ -71,10 +70,6 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // Serialize the packet
     // -----------------------------------------------
     status = frameSerializer.serializeFrom(header);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    // Serialize the packet descriptor (APID from context) ahead of the body
-    const FwPacketDescriptorType packetDescriptor = static_cast<FwPacketDescriptorType>(apid);
-    status = frameSerializer.serializeFrom(packetDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

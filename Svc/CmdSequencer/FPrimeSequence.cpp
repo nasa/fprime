@@ -286,8 +286,11 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecor
     }
     // recordSize on disk includes the descriptor + command bytes; the command bytes
     // alone must fit in a ComBuffer's storage capacity.
-    if (status == Fw::FW_SERIALIZE_OK and recordSize >= sizeof(FwPacketDescriptorType) and
-        recordSize - sizeof(FwPacketDescriptorType) > FW_COM_BUFFER_MAX_SIZE) {
+    if (status == Fw::FW_SERIALIZE_OK and recordSize < sizeof(FwPacketDescriptorType)) {
+        // Record is too small to contain a packet descriptor
+        status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+    if (status == Fw::FW_SERIALIZE_OK and recordSize - sizeof(FwPacketDescriptorType) > FW_COM_BUFFER_MAX_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }

@@ -86,22 +86,10 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
     contextCopy.set_sequenceCount(receivedSequenceCount);
 
-    // The wire format places a redundant packet descriptor at the start of the SP
-    // user data field (after the SP header). With the App<->Com interface split,
-    // downstream consumers receive a buffer that begins at the packet body proper,
-    // so we strip the descriptor here. When the payload is too short to contain a
-    // descriptor we forward as-is and emit a warning.
-    bool descriptorStripped = false;
-    if (pkt_length < sizeof(FwPacketDescriptorType)) {
-        this->log_WARNING_LO_PayloadTooShort();
-    } else {
-        descriptorStripped = true;
-    }
-    const FwSizeType descriptorBytes = descriptorStripped ? sizeof(FwPacketDescriptorType) : 0;
-
-    // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | DESCRIPTOR (optional) | PACKET DATA
-    data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE + descriptorBytes);
-    data.setSize(static_cast<Fw::Buffer::SizeType>(pkt_length - descriptorBytes));
+    // The CCSDS Space Packet primary header already carries the APID, so the SP user
+    // data field on the wire is just the payload. Forward it downstream as-is.
+    data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
+    data.setSize(static_cast<Fw::Buffer::SizeType>(pkt_length));
 
     this->dataOut_out(0, data, contextCopy);
 }
