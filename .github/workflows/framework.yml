@@ -12,6 +12,7 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
   workflow_dispatch:
     inputs:
       runner:

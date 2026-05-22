@@ -692,7 +692,8 @@ Serializable::SizeType LinearBufferBase::getDeserializeSizeLeft() const {
 }
 
 Serializable::SizeType LinearBufferBase::getSerializeSizeLeft() const {
-    FW_ASSERT(static_cast<FwAssertArgType>(this->m_serLoc));
+    FW_ASSERT(this->getCapacity() >= this->m_serLoc, static_cast<FwAssertArgType>(this->getCapacity()),
+              static_cast<FwAssertArgType>(this->m_serLoc));
     return this->getCapacity() - this->m_serLoc;
 }
 

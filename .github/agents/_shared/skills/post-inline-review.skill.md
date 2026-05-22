@@ -51,7 +51,10 @@ full range (`start_line` + `line`) rather than a single line.
 
 A single PR review can carry many inline comments. Prefer one review
 per agent run rather than many small reviews — the GitHub UI groups
-them and the per-agent summary review (see §4) acts as the umbrella.
+them together.
+
+**First run** — the metadata block (see §4) goes in `body` alongside
+the inline `comments[]`:
 
 ```http
 POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
@@ -62,7 +65,7 @@ Content-Type: application/json
 {
   "commit_id": "<head SHA>",
   "event": "COMMENT",
-  "body": "<per-agent summary block — see §4>",
+  "body": "<per-agent hidden metadata block — see §4>",
   "comments": [
     {
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
@@ -82,10 +85,26 @@ Content-Type: application/json
 }
 ```
 
-`event: COMMENT` is correct for all multi-agent reviewers — never
-`APPROVE` (auto-approval is out of scope) and never
-`REQUEST_CHANGES` (the merge-readiness verdict is the aggregator's
-job, not the individual agent's).
+**Re-run** — the inline-comments review has an **empty `body`** (no
+metadata); the metadata is dismissed and resubmitted separately per
+§4:
+
+```json
+{
+  "commit_id": "<head SHA>",
+  "event": "COMMENT",
+  "body": "",
+  "comments": [ ... ]
+}
+```
+
+`event: COMMENT` is correct for all **reviewer** agents — never
+`APPROVE` and never `REQUEST_CHANGES` (the merge-readiness verdict
+is the aggregator's job, not the individual reviewer's).
+
+The **aggregator** (`review-summary`) uses `APPROVE` or
+`REQUEST_CHANGES` based on its CI safety and merge readiness
+verdicts — see review-contract.md §10.
 
 `commit_id` MUST be the head SHA the agent analyzed; this is what
 binds the comments to specific line positions.
@@ -117,23 +136,26 @@ Replies are used for:
 
 ---
 
-## 4. Per-agent summary review
+## 4. Per-agent hidden metadata review
 
-After the inline comments, post (or edit on re-run) one PR review
-that carries the per-agent summary block from review-contract.md §2.
-This review is `event: COMMENT` and has no `comments[]` array.
+On first run, the metadata block lives in the `body` of the
+combined review described in §2 (which also carries the inline
+`comments[]` array). There is no separate metadata-only review on
+first run.
 
-On re-run, locate the prior summary review by the HTML marker
-(`<!-- fprime-agent: <name> v1 -->`) and edit it in place via:
+On re-run, the inline comments go in a fresh review with an empty
+`body` (see §2 re-run template). The metadata is handled
+separately: dismiss the prior metadata review via:
 
 ```http
-PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}
+PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals
 ```
 
-If the GitHub API does not support editing a review's body directly
-in the deployment environment, the acceptable fallback is to dismiss
-the prior review (PUT … /dismissals) and post a fresh one with the
-updated body. The HTML marker is still the de-dup key.
+Then submit a new metadata-only review (`event: COMMENT`, no
+`comments[]` array) with the updated body. The review body contains
+**only** HTML-comment metadata (counts, verdict, run ordinal,
+since-last-run) — no visible summary table. The HTML marker is
+the de-dup key.
 
 ---
 
@@ -239,7 +261,7 @@ The agent uses this to:
 ## 8. Worked example: the full flow on one PR
 
 1. Read PR head SHA. Bind every subsequent call to this SHA.
-2. Fetch the agent's prior summary review by HTML marker (review
+2. Fetch the agent's prior metadata review by HTML marker (review
    contract §6). Note its review ID, run count, and the
    `finding-key` index.
 3. Run the agent's analysis on the new head. Compute the new
@@ -248,11 +270,12 @@ The agent uses this to:
    action list: `post-new`, `reply-fixed`, `resolve-thread`,
    `reply-improper`, `unresolve-thread`, `reply-disagreement`,
    `post-incorrect-fix-followup`, `do-nothing`.
-5. Execute the action list. Compose the per-agent summary block from
-   the resulting state.
-6. POST the umbrella review (inline comments + summary body) or, on
-   re-run, POST the inline comments as a fresh review and PUT the
-   summary review body in place.
+5. Execute the action list. Compose the per-agent hidden metadata
+   block from the resulting state.
+6. POST the umbrella review (inline comments + hidden metadata body)
+   or, on re-run, POST the inline comments as a fresh review, dismiss
+   the prior metadata review, and submit a new one with the updated
+   metadata.
 7. Return success to the orchestrator.
 
 ---
