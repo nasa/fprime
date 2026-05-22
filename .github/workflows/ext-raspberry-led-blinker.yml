@@ -55,7 +55,7 @@ jobs:
         with:
           location: ${{ env.FPRIME_LOCATION }}
       - name: "Setup RPI Toolchain"
-        uses: fprime-community/setup-rpi-sysroot@main
+        uses: fprime-community/setup-rpi-sysroot@320798b23716fddfe710cd791f317827e607789d # main (pin to SHA)
       - name: "Generate RPI Build Cache"
         run: |
           fprime-util generate raspberrypi

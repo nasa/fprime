@@ -88,7 +88,7 @@ jobs:
     steps:
       - name: check-spelling
         id: spelling
-        uses: check-spelling/check-spelling@v0.0.26
+        uses: check-spelling/check-spelling@cfb6f7e75bbfc89c71eaa30366d0c166f1bd9c8c # v0.0.26 (pin to SHA)
         with:
           suppress_push_for_open_pull_request: ${{ github.actor != 'dependabot[bot]' && 1 }}
           checkout: true
