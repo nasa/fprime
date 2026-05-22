@@ -67,16 +67,18 @@ class CmdSplitterTester : public CmdSplitterGTestBase {
 
     //! Handler for from_LocalCmd
     //!
-    void from_LocalCmd_handler(const FwIndexType portNum, /*!< The port number*/
-                               Fw::ComBuffer& data,       /*!< Buffer containing packet data */
-                               U32 context                /*!< Call context value; meaning chosen by user */
+    void from_LocalCmd_handler(const FwIndexType portNum,      /*!< The port number*/
+                               Fw::ComBuffer& data,            /*!< Buffer containing packet data */
+                               const ComCfg::Apid& packetType, /*!< Packet APID */
+                               U32 context                     /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler for from_RemoteCmd
     //!
-    void from_RemoteCmd_handler(const FwIndexType portNum, /*!< The port number*/
-                                Fw::ComBuffer& data,       /*!< Buffer containing packet data */
-                                U32 context                /*!< Call context value; meaning chosen by user */
+    void from_RemoteCmd_handler(const FwIndexType portNum,      /*!< The port number*/
+                                Fw::ComBuffer& data,            /*!< Buffer containing packet data */
+                                const ComCfg::Apid& packetType, /*!< Packet APID */
+                                U32 context                     /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler for from_forwardSeqCmdStatus

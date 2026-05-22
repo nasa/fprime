@@ -302,8 +302,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    if (status == Fw::FW_SERIALIZE_OK and
-        sizeof(FwPacketDescriptorType) + sizeof(U16) + cmdLength > Fw::ComBuffer::SERIALIZED_SIZE) {
+    if (status == Fw::FW_SERIALIZE_OK and sizeof(U16) + cmdLength > Fw::ComBuffer::SERIALIZED_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
@@ -313,15 +312,15 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
 Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, const Record::CmdLength::t cmdLength) {
     Fw::LinearBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
-    // Serialize the command packet descriptor
-    const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
-    Fw::SerializeStatus status = comBuffer.serializeFrom(cmdDescriptor);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // The packet descriptor is no longer serialized into the buffer body; it is passed
+    // separately as a port argument by the dispatcher. The buffer now begins directly
+    // with the opcode.
     // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
     FW_ASSERT(sizeof(FwOpcodeType) >= 2);
     U32 sizeOfZeros = 0;
     const FwIndexType bytesToExtend = sizeof(FwOpcodeType) - 2;
     const U8 zeros = 0;
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     for (FwIndexType i = 0; i < bytesToExtend; i++) {
         status = comBuffer.serializeFrom(zeros);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
@@ -329,7 +328,7 @@ Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, c
     }
     // Set the buffer length
     const U32 fixedBuffLen = static_cast<U32>(comBuffer.getSize());
-    FW_ASSERT(fixedBuffLen == sizeof(cmdDescriptor) + sizeOfZeros, static_cast<FwAssertArgType>(fixedBuffLen));
+    FW_ASSERT(fixedBuffLen == sizeOfZeros, static_cast<FwAssertArgType>(fixedBuffLen));
     const U32 totalBuffLen = fixedBuffLen + cmdLength;
     status = comBuffer.setBuffLen(totalBuffLen);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

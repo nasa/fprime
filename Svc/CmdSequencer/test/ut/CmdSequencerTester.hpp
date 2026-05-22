@@ -189,9 +189,10 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
 
     //! Handler for from_comCmdOut
     //!
-    void from_comCmdOut_handler(const FwIndexType portNum,  //!< The port number
-                                Fw::ComBuffer& data,        //!< Buffer containing packet data
-                                U32 context                 //!< Call context value; meaning chosen by user
+    void from_comCmdOut_handler(const FwIndexType portNum,       //!< The port number
+                                Fw::ComBuffer& data,             //!< Buffer containing packet data
+                                const ComCfg::Apid& packetType,  //!< Packet APID
+                                U32 context                      //!< Call context value; meaning chosen by user
                                 ) override;
 
     //! Handler for from_pingOut

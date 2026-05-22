@@ -29,11 +29,13 @@ EventManagerTester::~EventManagerTester() {
     this->m_impl.deinit();
 }
 
-void EventManagerTester::from_PktSend_handler(const FwIndexType portNum,  //!< The port number
-                                              Fw::ComBuffer& data,        //!< Buffer containing packet data
-                                              U32 context                 //!< context; not used
+void EventManagerTester::from_PktSend_handler(const FwIndexType portNum,       //!< The port number
+                                              Fw::ComBuffer& data,             //!< Buffer containing packet data
+                                              const ComCfg::Apid& packetType,  //!< Packet APID
+                                              U32 context                      //!< context; not used
 ) {
     this->m_sentPacket = data;
+    this->m_sentApid = packetType;
     this->m_receivedPacket = true;
 }
 
@@ -106,12 +108,9 @@ void EventManagerTester::runWithFilters(Fw::LogSeverity filter) {
     // should have received packet
     ASSERT_TRUE(this->m_receivedPacket);
     // verify contents
-    // first piece should be log packet descriptor
-    FwPacketDescriptorType desc;
-    stat = this->m_sentPacket.deserializeTo(desc);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-    ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
-    // next piece should be event ID
+    // APID is carried as a port argument now, not in the buffer
+    ASSERT_EQ(this->m_sentApid, ComCfg::Apid::FW_PACKET_LOG);
+    // first piece should be event ID
     FwEventIdType sentId;
     stat = this->m_sentPacket.deserializeTo(sentId);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
@@ -376,12 +375,9 @@ void EventManagerTester::runEventFatal() {
     // should have received packet
     ASSERT_TRUE(this->m_receivedPacket);
     // verify contents
-    // first piece should be log packet descriptor
-    FwPacketDescriptorType desc;
-    stat = this->m_sentPacket.deserializeTo(desc);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-    ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
-    // next piece should be event ID
+    // APID is carried as a port argument now, not in the buffer
+    ASSERT_EQ(this->m_sentApid, ComCfg::Apid::FW_PACKET_LOG);
+    // first piece should be event ID
     FwEventIdType sentId;
     stat = this->m_sentPacket.deserializeTo(sentId);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
@@ -423,11 +419,9 @@ void EventManagerTester::runEventFatal() {
     // should have received packet
     ASSERT_TRUE(this->m_receivedPacket);
     // verify contents
-    // first piece should be log packet descriptor
-    stat = this->m_sentPacket.deserializeTo(desc);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-    ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
-    // next piece should be event ID
+    // APID is carried as a port argument now, not in the buffer
+    ASSERT_EQ(this->m_sentApid, ComCfg::Apid::FW_PACKET_LOG);
+    // first piece should be event ID
     stat = this->m_sentPacket.deserializeTo(sentId);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
     ASSERT_EQ(sentId, id);
@@ -470,12 +464,9 @@ void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, 
     // should have received packet
     ASSERT_TRUE(this->m_receivedPacket);
     // verify contents
-    // first piece should be log packet descriptor
-    FwPacketDescriptorType desc;
-    stat = this->m_sentPacket.deserializeTo(desc);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-    ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
-    // next piece should be event ID
+    // APID is carried as a port argument now, not in the buffer
+    ASSERT_EQ(this->m_sentApid, ComCfg::Apid::FW_PACKET_LOG);
+    // first piece should be event ID
     FwEventIdType sentId;
     stat = this->m_sentPacket.deserializeTo(sentId);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
@@ -506,7 +497,9 @@ void EventManagerTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U
     // next is LogPacket
     Fw::ComBuffer comBuff;
     // size is specific to this test
-    readSize = sizeof(FwPacketDescriptorType) + sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
+    // LogPacket no longer serializes the packet descriptor; it is carried on
+    // the port arg instead.
+    readSize = sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
     ASSERT_EQ(file.read(comBuff.getBuffAddr(), readSize, Os::File::WaitType::WAIT), Os::File::OP_OK);
     comBuff.setBuffLen(readSize);
 

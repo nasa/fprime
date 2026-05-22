@@ -67,13 +67,16 @@ void SpacePacketFramerTester::testNominalFraming() {
 
     this->invoke_to_dataIn(0, data, context);
 
-    // Check dataOut
+    // Check dataOut. Frame layout: header + descriptor (APID, injected from context) + payload.
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ASSERT_EQ(outBuffer.getSize(), sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE);
-    // Check that the payload is present at the correct offset
+    const FwSizeType expectedFrameSize =
+        sizeof(payload) + sizeof(FwPacketDescriptorType) + SpacePacketHeader::SERIALIZED_SIZE;
+    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+    // Check that the payload is present at the correct offset (after header + descriptor)
+    const FwSizeType payloadOffset = SpacePacketHeader::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType);
     for (U32 i = 0; i < sizeof(payload); ++i) {
-        ASSERT_EQ(outBuffer.getData()[SpacePacketHeader::SERIALIZED_SIZE + i], payload[i]);
+        ASSERT_EQ(outBuffer.getData()[payloadOffset + i], payload[i]);
     }
     // Check that dataReturnOut is called for the original buffer
     ASSERT_from_dataReturnOut_SIZE(1);
@@ -100,7 +103,9 @@ void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataReturnOut_SIZE(1);
 
-    const FwSizeType expectedFrameSize = sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE;
+    // Frame layout: header + descriptor (APID, injected from context) + payload.
+    const FwSizeType expectedFrameSize =
+        sizeof(payload) + sizeof(FwPacketDescriptorType) + SpacePacketHeader::SERIALIZED_SIZE;
 
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     // If setSize() is missing from SpacePacketFramer, getSize() returns the

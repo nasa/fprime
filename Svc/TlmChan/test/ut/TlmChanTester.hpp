@@ -42,9 +42,10 @@ class TlmChanTester : public TlmChanGTestBase {
 
     //! Handler for from_PktSend
     //!
-    void from_PktSend_handler(const FwIndexType portNum,  //!< The port number
-                              Fw::ComBuffer& data,        //!< Buffer containing packet data
-                              U32 context                 //!< Call context value; meaning chosen by user
+    void from_PktSend_handler(const FwIndexType portNum,       //!< The port number
+                              Fw::ComBuffer& data,             //!< Buffer containing packet data
+                              const ComCfg::Apid& packetType,  //!< Packet APID
+                              U32 context                      //!< Call context value; meaning chosen by user
     );
 
     //! Handler for from_pingOut

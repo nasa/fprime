@@ -171,15 +171,16 @@ class FileUplink final : public FileUplinkComponentBase {
 
     //! Handler implementation for bufferSendIn
     //!
-    void bufferSendIn_handler(const FwIndexType portNum,  //!< The port number
-                              Fw::Buffer& buffer          //!< Buffer wrapping data
-    );
+    void bufferSendIn_handler(const FwIndexType portNum,      //!< The port number
+                              Fw::Buffer& buffer,             //!< Buffer wrapping data
+                              const ComCfg::Apid& packetType  //!< APID of the packet (must be FW_PACKET_FILE)
+                              ) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
-    );
+                        ) override;
 
   private:
     // ----------------------------------------------------------------------

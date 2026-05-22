@@ -59,15 +59,21 @@ void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuff
     fromBufferDriverReturn_out(0, fwBuffer);
 }
 
-void GenericHub ::cmdDispIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void GenericHub ::cmdDispIn_handler(FwIndexType portNum,
+                                    Fw::ComBuffer& data,
+                                    const ComCfg::Apid& packetType,
+                                    U32 context) {
     Fw::SerializeStatus status;
-    // Buffer to send and a buffer used to write to it
-    U8 buffer[Fw::ComBuffer::SERIALIZED_SIZE];
+    // Buffer sized for: payload (no length prefix; OMIT_LENGTH) + APID + context word.
+    // The receiver in fromBufferDriver_handler decodes the same layout.
+    U8 buffer[FW_COM_BUFFER_MAX_SIZE + ComCfg::Apid::SERIALIZED_SIZE + sizeof(U32)];
 
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
 
     status = serializer.serializeFrom(data.getBuffAddr(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    status = serializer.serializeFrom(packetType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serializer.serializeFrom(context);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
@@ -200,24 +206,30 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             // Return the received buffer
             fromBufferDriverReturn_out(0, fwBuffer);
         } else if (type == HUB_TYPE_CMD_DISP) {
+            ComCfg::Apid packetType;
             U32 context;
-            // Check that the size is sufficient for the context
-            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > Fw::ComBuffer::SERIALIZED_SIZE) {
+            const FwSizeType trailerSize = ComCfg::Apid::SERIALIZED_SIZE + sizeof(U32);
+            // Check that the size is sufficient for the trailer (apid + context)
+            // and that the command payload fits inside the Fw::ComBuffer storage.
+            if (rawSize < trailerSize || (rawSize - trailerSize) > FW_COM_BUFFER_MAX_SIZE) {
                 status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
             }
-            // Shift the command buffer out and deserialize the context
+            // Shift the command buffer out and deserialize the trailer
             if (status == Fw::FW_SERIALIZE_OK) {
-                Fw::ComBuffer wrapper(rawData, (rawSize - sizeof(U32)));
-                status = wrapper.setBuffLen(rawSize - sizeof(U32));
+                Fw::ComBuffer wrapper(rawData, (rawSize - trailerSize));
+                status = wrapper.setBuffLen(rawSize - trailerSize);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
                 // Skip the command buffer that has already been wrapped
-                status = incoming.deserializeSkip(rawSize - sizeof(U32));
+                status = incoming.deserializeSkip(rawSize - trailerSize);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-                status = incoming.deserializeTo(context);
+                status = incoming.deserializeTo(packetType);
+                if (status == Fw::FW_SERIALIZE_OK) {
+                    status = incoming.deserializeTo(context);
+                }
                 // Send it!
                 if ((status == Fw::FW_SERIALIZE_OK) && (port < this->getNum_cmdDispOut_OutputPorts()) &&
                     this->isConnected_cmdDispOut_OutputPort(static_cast<FwIndexType>(port))) {
-                    this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, context);
+                    this->cmdDispOut_out(static_cast<FwIndexType>(port), wrapper, packetType, context);
                 }
             }
             // Deallocate the existing buffer

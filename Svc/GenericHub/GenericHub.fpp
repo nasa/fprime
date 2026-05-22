@@ -104,7 +104,7 @@ module Svc {
     match bufferIn with bufferInReturn
 
     @ for sending remote commands 
-    sync input port cmdDispIn: [CmdDispatcherSequencePorts] Fw.Com
+    sync input port cmdDispIn: [CmdDispatcherSequencePorts] Svc.ComBufferSend
 
     @ Command response back from remote hub
     output port cmdRespOut: [CmdDispatcherSequencePorts] Fw.CmdResponse
@@ -204,7 +204,7 @@ module Svc {
     match bufferOut with bufferOutReturn
 
     @ handling remote commands
-    output port cmdDispOut: [CmdDispatcherSequencePorts] Fw.Com
+    output port cmdDispOut: [CmdDispatcherSequencePorts] Svc.ComBufferSend
 
     @ remote command response 
     sync input port cmdRespIn: [CmdDispatcherSequencePorts] Fw.CmdResponse

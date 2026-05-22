@@ -21,30 +21,13 @@ SerializeStatus TlmPacket::resetPktSer() {
     this->m_tlmBuffer.resetSer();
     // reset packet count
     this->m_numEntries = 0;
-    // make sure packet type is correct before serializing. It should
-    // never be anything but FW_PACKET_TELEM, so assert.
+    // make sure packet type is correct. It should never be anything but FW_PACKET_TELEM.
     FW_ASSERT(ComPacketType::FW_PACKET_TELEM == this->m_type, static_cast<FwAssertArgType>(this->m_type));
-    // serialize descriptor
-    // The function serializeBase inherited from ComPacket converts this->m_type
-    // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.
-    return this->serializeBase(this->m_tlmBuffer);
+    return Fw::FW_SERIALIZE_OK;
 }
 
 SerializeStatus TlmPacket::resetPktDeser() {
     this->m_tlmBuffer.resetDeser();
-    // deserialize descriptor
-    // The function deserializeBase inherited from ComPacket deserializes a
-    // value of type FwPacketDescriptorType from this->m_tlmBuffer and stores it
-    // into this->m_type.
-    Fw::SerializeStatus stat = this->deserializeBase(this->m_tlmBuffer);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-    // make sure that this->m_tlmBuffer stores a telemetry packet
-    if (this->m_type != ComPacketType::FW_PACKET_TELEM) {
-        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
-    }
-
     return Fw::FW_SERIALIZE_OK;
 }
 

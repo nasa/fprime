@@ -51,11 +51,11 @@ void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
         Fw::ComBuffer comBuffer(buffer.getData(), buffer.getSize());
         portNum = queueNum;
         queueType = QueueType::COM_QUEUE;
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
     } else {
         portNum = queueNum - ComQueue::COM_PORT_COUNT;
         queueType = QueueType::BUFFER_QUEUE;
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
     }
 }
 
@@ -86,13 +86,13 @@ void ComQueueTester ::testQueueSend() {
     configure();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getSize());
     }
     clearFromPortHistory();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
         ASSERT_from_bufferReturnOut(portNum, buffer);
     }
@@ -109,7 +109,7 @@ void ComQueueTester ::testQueueFlush() {
 
     // Iterate over queues dispatch and flush each
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::COM_QUEUE, portNum);
         this->dispatchAll();
         ASSERT_from_dataOut_SIZE(0);
@@ -117,7 +117,7 @@ void ComQueueTester ::testQueueFlush() {
     clearFromPortHistory();
     // Similar for buffer queues but the buffer should be returned
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, portNum);
         this->dispatchAll();
         ASSERT_from_bufferReturnOut(portNum, buffer);
@@ -137,12 +137,12 @@ void ComQueueTester ::testQueueFlushAll() {
 
     // Iterate over queues and queue a message to each
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         this->dispatchAll();
     }
     // Same with buffer queues
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         this->dispatchAll();
     }
     // Flush everything ensuring nothing is sent
@@ -169,7 +169,7 @@ void ComQueueTester ::testQueuePause() {
     configure();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
         invoke_to_comStatusIn(0, state);
@@ -180,7 +180,7 @@ void ComQueueTester ::testQueuePause() {
     clearFromPortHistory();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
         invoke_to_comStatusIn(0, state);
@@ -215,12 +215,12 @@ void ComQueueTester ::testPrioritySend() {
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
     }
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         Fw::Buffer buffer(&data[portNum + ComQueue::COM_PORT_COUNT][0], BUFFER_LENGTH);
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
     }
 
     // Check that nothing has yet been sent
@@ -358,7 +358,7 @@ void ComQueueTester ::testReadyFirst() {
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
         emitOne();
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         dispatchAll();
 
         Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(portNum).data;
@@ -371,7 +371,7 @@ void ComQueueTester ::testReadyFirst() {
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         emitOne();
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         dispatchAll();
         Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(portNum).data;
         ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize());
@@ -390,7 +390,7 @@ void ComQueueTester ::testContextData() {
     configure();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
-        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, ComCfg::Apid::FW_PACKET_TELEM, 0);
         emitOne();
         // Currently, the APID is set to the queue index, which is the same as the port number for COM ports
         FwIndexType expectedApid = portNum;
@@ -400,7 +400,7 @@ void ComQueueTester ::testContextData() {
     clearFromPortHistory();
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
-        invoke_to_bufferQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer, ComCfg::Apid::FW_PACKET_FILE);
         emitOne();
         // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
         FwIndexType expectedApid = portNum + ComQueue::COM_PORT_COUNT;
@@ -451,9 +451,9 @@ void ComQueueTester ::testFIFOMode() {
     Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
 
     // Enqueue three messages
-    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer1, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Dequeue and verify FIFO order: 1, 2, 3
@@ -495,9 +495,9 @@ void ComQueueTester ::testLIFOMode() {
     Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
 
     // Enqueue three messages
-    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer1, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Dequeue and verify LIFO order: 3, 2, 1 (newest first)
@@ -539,12 +539,12 @@ void ComQueueTester ::testDropNewestMode() {
     Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
 
     // Fill the queue (depth = 2)
-    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer1, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Try to enqueue when full - should cause overflow event
-    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Verify overflow event was emitted
@@ -592,12 +592,12 @@ void ComQueueTester ::testDropOldestMode() {
     Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
 
     // Fill the queue (depth = 2)
-    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer1, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Enqueue when full - should succeed by dropping oldest (message 1)
-    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Verify overflow event was emitted
@@ -645,12 +645,12 @@ void ComQueueTester ::testLIFOWithDropOldest() {
     Fw::ComBuffer comBuffer3(&data3[0], sizeof(data3));
 
     // Fill the queue (depth = 2)
-    invoke_to_comPacketQueueIn(0, comBuffer1, 0);
-    invoke_to_comPacketQueueIn(0, comBuffer2, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer1, ComCfg::Apid::FW_PACKET_TELEM, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer2, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Enqueue when full - should drop oldest (message 1)
-    invoke_to_comPacketQueueIn(0, comBuffer3, 0);
+    invoke_to_comPacketQueueIn(0, comBuffer3, ComCfg::Apid::FW_PACKET_TELEM, 0);
     dispatchAll();
 
     // Verify overflow event was emitted
@@ -704,9 +704,9 @@ void ComQueueTester ::testBufferQueueFIFOMode() {
     Fw::Buffer buffer3(&data3[0], sizeof(data3));
 
     // Enqueue three buffer messages
-    invoke_to_bufferQueueIn(0, buffer1);
-    invoke_to_bufferQueueIn(0, buffer2);
-    invoke_to_bufferQueueIn(0, buffer3);
+    invoke_to_bufferQueueIn(0, buffer1, ComCfg::Apid::FW_PACKET_FILE);
+    invoke_to_bufferQueueIn(0, buffer2, ComCfg::Apid::FW_PACKET_FILE);
+    invoke_to_bufferQueueIn(0, buffer3, ComCfg::Apid::FW_PACKET_FILE);
     dispatchAll();
 
     // Dequeue and verify FIFO order: 1, 2, 3
@@ -757,9 +757,9 @@ void ComQueueTester ::testBufferQueueLIFOMode() {
     Fw::Buffer buffer3(&data3[0], sizeof(data3));
 
     // Enqueue three buffer messages
-    invoke_to_bufferQueueIn(0, buffer1);
-    invoke_to_bufferQueueIn(0, buffer2);
-    invoke_to_bufferQueueIn(0, buffer3);
+    invoke_to_bufferQueueIn(0, buffer1, ComCfg::Apid::FW_PACKET_FILE);
+    invoke_to_bufferQueueIn(0, buffer2, ComCfg::Apid::FW_PACKET_FILE);
+    invoke_to_bufferQueueIn(0, buffer3, ComCfg::Apid::FW_PACKET_FILE);
     dispatchAll();
 
     // Dequeue and verify LIFO order: 3, 2, 1
@@ -810,12 +810,12 @@ void ComQueueTester ::testBufferQueueDropOldestMode() {
     Fw::Buffer buffer3(&data3[0], sizeof(data3));
 
     // Fill the buffer queue (depth = 2)
-    invoke_to_bufferQueueIn(0, buffer1);
-    invoke_to_bufferQueueIn(0, buffer2);
+    invoke_to_bufferQueueIn(0, buffer1, ComCfg::Apid::FW_PACKET_FILE);
+    invoke_to_bufferQueueIn(0, buffer2, ComCfg::Apid::FW_PACKET_FILE);
     dispatchAll();
 
     // Enqueue when full - should drop oldest (buffer1)
-    invoke_to_bufferQueueIn(0, buffer3);
+    invoke_to_bufferQueueIn(0, buffer3, ComCfg::Apid::FW_PACKET_FILE);
     dispatchAll();
 
     // Verify overflow event was emitted

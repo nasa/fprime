@@ -110,11 +110,10 @@ void CommandDispatcherTester::runNominalDispatch() {
     U32 testContext = 110;
     this->clearEvents();
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     REQUIREMENT("CD-002");
@@ -171,13 +170,11 @@ void CommandDispatcherTester::runNopCommands() {
     // send NO_OP command
     this->m_seqStatusRcvd = false;
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
-              Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),
               Fw::FW_SERIALIZE_OK);
 
     this->clearEvents();
-    this->invoke_to_seqCmdBuff(0, buff, 12);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, 12);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -200,13 +197,12 @@ void CommandDispatcherTester::runNopCommands() {
     this->clearEvents();
     this->m_seqStatusRcvd = false;
     buff.resetSer();
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(FwOpcodeType(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING)), Fw::FW_SERIALIZE_OK);
     // serialize arg1
     Fw::CmdStringArg argString("BOO!");
     ASSERT_EQ(buff.serializeFrom(argString), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, 13);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, 13);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -227,8 +223,6 @@ void CommandDispatcherTester::runNopCommands() {
     // send TEST_CMD_1 command
     this->m_seqStatusRcvd = false;
     buff.resetSer();
-    ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
-              Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1)),
               Fw::FW_SERIALIZE_OK);
     // serialize arg1
@@ -239,7 +233,7 @@ void CommandDispatcherTester::runNopCommands() {
     ASSERT_EQ(buff.serializeFrom(static_cast<U8>(4)), Fw::FW_SERIALIZE_OK);
 
     this->clearEvents();
-    this->invoke_to_seqCmdBuff(0, buff, 14);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, 14);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -317,12 +311,11 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     this->clearEvents();
     this->m_seqStatusRcvd = false;
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(FwOpcodeType(testOpCode + 1)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
     this->clearEvents();
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -364,11 +357,10 @@ void CommandDispatcherTester::runFailedCommand() {
     U32 testContext = 13;
     this->clearEvents();
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -415,11 +407,10 @@ void CommandDispatcherTester::runFailedCommand() {
     currSeq++;
     this->clearEvents();
     buff.resetSer();
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -465,11 +456,10 @@ void CommandDispatcherTester::runFailedCommand() {
     // dispatch a test command
     this->clearEvents();
     buff.resetSer();
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -518,25 +508,20 @@ void CommandDispatcherTester::runInvalidCommand() {
     // clear reg events
     this->clearEvents();
 
-    // dispatch a flawed command
-    U32 testCmdArg = 100;
+    // dispatch a flawed command: the buffer is too short to contain an opcode,
+    // which causes CmdPacket deserialization to fail.
     U32 testContext = 13;
-    FwOpcodeType testOpCode = 0x50;
-    this->clearEvents();
     Fw::ComBuffer buff;
-    // Serialize a log packet type instead of command packet type to cause flawed command
-    ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG)),
-              Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
+    U8 truncated = 0x00;
+    ASSERT_EQ(buff.serializeFrom(truncated), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_MalformedCommand_SIZE(1);
-    ASSERT_EVENTS_MalformedCommand(0, Fw::DeserialStatus::TYPE_MISMATCH);
+    ASSERT_EVENTS_MalformedCommand(0, Fw::DeserialStatus::SIZE_MISMATCH);
 }
 
 void CommandDispatcherTester::runOverflowCommands() {
@@ -573,12 +558,10 @@ void CommandDispatcherTester::runOverflowCommands() {
         U32 testContext = 13;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),
-                  Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-        this->invoke_to_seqCmdBuff(0, buff, testContext);
+        this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
         if (disp < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE) {
@@ -635,11 +618,10 @@ void CommandDispatcherTester::runClearCommandTracking() {
     U32 testCmdArg = 100;
     this->clearEvents();
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
@@ -667,11 +649,10 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // dispatch command to clear sequence tracker table
 
     buff.resetSer();
-    ASSERT_EQ(buff.serializeFrom(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING)),
               Fw::FW_SERIALIZE_OK);
 
-    this->invoke_to_seqCmdBuff(0, buff, testContext);
+    this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, testContext);
     // send buffer to command dispatcher
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
@@ -721,12 +702,10 @@ void CommandDispatcherTester::runCommandQueueOverflow() {
         // send NO_OP command
         this->m_seqStatusRcvd = false;
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
-                  Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),
                   Fw::FW_SERIALIZE_OK);
 
-        this->invoke_to_seqCmdBuff(0, buff, 12);
+        this->invoke_to_seqCmdBuff(0, buff, ComCfg::Apid::FW_PACKET_COMMAND, 12);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     }
     this->dispatchCurrentMessages(this->m_impl);

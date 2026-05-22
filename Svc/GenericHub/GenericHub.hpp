@@ -67,9 +67,10 @@ class GenericHub final : public GenericHubComponentBase {
     //! Handler implementation for cmdDispIn
     //!
     //! Command buffer input port for sequencers or other sources of command buffers
-    void cmdDispIn_handler(FwIndexType portNum,  //!< The port number
-                           Fw::ComBuffer& data,  //!< Buffer containing packet data
-                           U32 context           //!< Call context value; meaning chosen by user
+    void cmdDispIn_handler(FwIndexType portNum,             //!< The port number
+                           Fw::ComBuffer& data,             //!< Buffer containing packet data
+                           const ComCfg::Apid& packetType,  //!< APID of the packet
+                           U32 context                      //!< Call context value; meaning chosen by user
                            ) override;
 
     //! Handler implementation for cmdRespIn

@@ -56,15 +56,15 @@ class ComLogger final : public ComLoggerComponentBase {
     // ----------------------------------------------------------------------
 
   private:
-    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context);
+    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, const ComCfg::Apid& packetType, U32 context) override;
 
-    void CloseFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+    void CloseFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
-    );
+                        ) override;
 
     // The filename data:
     Fw::FileNameString m_filePrefix;

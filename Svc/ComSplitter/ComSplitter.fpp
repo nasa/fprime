@@ -4,10 +4,10 @@ module Svc {
   passive component ComSplitter {
 
     @ Com input port
-    sync input port comIn: Fw.Com
+    sync input port comIn: Svc.ComBufferSend
 
     @ Com output port
-    output port comOut: [5] Fw.Com
+    output port comOut: [5] Svc.ComBufferSend
 
   }
 

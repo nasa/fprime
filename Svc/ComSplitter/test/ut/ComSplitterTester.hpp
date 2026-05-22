@@ -45,9 +45,10 @@ class ComSplitterTester : public ComSplitterGTestBase {
 
     //! Handler for from_comOut
     //!
-    void from_comOut_handler(const FwIndexType portNum, /*!< The port number*/
-                             Fw::ComBuffer& data,       /*!< Buffer containing packet data*/
-                             U32 context                /*!< Call context value; meaning chosen by user*/
+    void from_comOut_handler(const FwIndexType portNum,      /*!< The port number*/
+                             Fw::ComBuffer& data,            /*!< Buffer containing packet data*/
+                             const ComCfg::Apid& packetType, /*!< Packet APID */
+                             U32 context                     /*!< Call context value; meaning chosen by user*/
     );
 
     void assert_comOut(const U32 index, const Fw::ComBuffer& data) const;

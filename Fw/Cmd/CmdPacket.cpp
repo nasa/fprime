@@ -25,17 +25,7 @@ SerializeStatus CmdPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness 
 }
 
 SerializeStatus CmdPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
-    SerializeStatus stat = ComPacket::deserializeBase(buffer);
-    if (stat != FW_SERIALIZE_OK) {
-        return stat;
-    }
-
-    // double check packet type
-    if (this->m_type != ComPacketType::FW_PACKET_COMMAND) {
-        return FW_DESERIALIZE_TYPE_MISMATCH;
-    }
-
-    stat = buffer.deserializeTo(this->m_opcode, mode);
+    SerializeStatus stat = buffer.deserializeTo(this->m_opcode, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }

@@ -29,9 +29,10 @@ class EventManagerTester : public Svc::EventManagerGTestBase {
     void runFileDumpErrors();
 
   private:
-    void from_PktSend_handler(const FwIndexType portNum,  //!< The port number
-                              Fw::ComBuffer& data,        //!< Buffer containing packet data
-                              U32 context                 //!< context (not used)
+    void from_PktSend_handler(const FwIndexType portNum,       //!< The port number
+                              Fw::ComBuffer& data,             //!< Buffer containing packet data
+                              const ComCfg::Apid& packetType,  //!< Packet APID
+                              U32 context                      //!< context (not used)
                               ) override;
     void from_FatalAnnounce_handler(const FwIndexType portNum,  //!< The port number
                                     FwEventIdType Id            //!< The ID of the FATAL event
@@ -41,6 +42,7 @@ class EventManagerTester : public Svc::EventManagerGTestBase {
 
     bool m_receivedPacket;
     Fw::ComBuffer m_sentPacket;
+    ComCfg::Apid m_sentApid;
 
     bool m_receivedFatalEvent;
     FwEventIdType m_fatalID;

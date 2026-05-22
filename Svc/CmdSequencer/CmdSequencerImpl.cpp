@@ -313,7 +313,7 @@ void CmdSequencerComponentImpl ::schedIn_handler(FwIndexType portNum, U32 order)
     Fw::Time currTime = this->getTime();
     // check to see if a command time is pending
     if (this->m_cmdTimer.isExpiredAt(currTime)) {
-        this->comCmdOut_out(0, m_record.m_command, 0);
+        this->comCmdOut_out(0, m_record.m_command, ComCfg::Apid::FW_PACKET_COMMAND, 0);
         this->m_cmdTimer.clear();
         // start command timeout timer
         this->setCmdTimeout(currTime);
@@ -457,7 +457,7 @@ void CmdSequencerComponentImpl ::performCmd_Step_RELATIVE(Fw::Time& currentTime)
 
 void CmdSequencerComponentImpl ::performCmd_Step_ABSOLUTE(Fw::Time& currentTime) {
     if (currentTime >= this->m_record.m_timeTag) {
-        this->comCmdOut_out(0, m_record.m_command, 0);
+        this->comCmdOut_out(0, m_record.m_command, ComCfg::Apid::FW_PACKET_COMMAND, 0);
         this->setCmdTimeout(currentTime);
     } else {
         this->m_cmdTimer.set(this->m_record.m_timeTag);

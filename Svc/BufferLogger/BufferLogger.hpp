@@ -183,26 +183,27 @@ class BufferLogger final : public BufferLoggerComponentBase {
     //! Handler implementation for bufferSendIn
     //!
     void bufferSendIn_handler(const FwIndexType portNum,  //!< The port number
-                              Fw::Buffer& fwBuffer);
+                              Fw::Buffer& fwBuffer) override;
 
     //! Handler implementation for comIn
     //!
-    void comIn_handler(const FwIndexType portNum,  //!< The port number
-                       Fw::ComBuffer& data,        //!< Buffer containing packet data
-                       U32 context                 //!< Call context value; meaning chosen by user
-    );
+    void comIn_handler(const FwIndexType portNum,       //!< The port number
+                       Fw::ComBuffer& data,             //!< Buffer containing packet data
+                       const ComCfg::Apid& packetType,  //!< APID of the packet
+                       U32 context                      //!< Call context value; meaning chosen by user
+                       ) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum,  //!< The port number
                         U32 key                     //!< Value to return to pinger
-    );
+                        ) override;
 
     //! Handler implementation for schedIn
     //!
     void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
                          U32 context                /*!< The call order*/
-    );
+                         ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -213,25 +214,25 @@ class BufferLogger final : public BufferLoggerComponentBase {
     //! Open a new log file with specified name; required before activating logging
     void BL_OpenFile_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                 const U32 cmdSeq,          /*!< The command sequence number*/
-                                const Fw::CmdStringArg& file);
+                                const Fw::CmdStringArg& file) override;
 
     //! Implementation for BL_CloseFile command handler
     //! Close the currently open log file, if any
     void BL_CloseFile_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                  const U32 cmdSeq           /*!< The command sequence number*/
-    );
+                                 ) override;
 
     //! Implementation for BL_SetLogging command handler
     //! Sets the volatile logging state
     void BL_SetLogging_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                   const U32 cmdSeq,          /*!< The command sequence number*/
-                                  BufferLogger_LogState state);
+                                  BufferLogger_LogState state) override;
 
     //! Implementation for BL_FlushFile command handler
     //! Flushes the current open log file to disk
     void BL_FlushFile_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                  const U32 cmdSeq           /*!< The command sequence number*/
-    );
+                                 ) override;
 
   private:
     // ----------------------------------------------------------------------

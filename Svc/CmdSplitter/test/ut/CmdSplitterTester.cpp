@@ -31,8 +31,8 @@ CmdSplitterTester ::~CmdSplitterTester() {}
 
 Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcode) {
     Fw::ComBuffer comBuffer;
-    EXPECT_EQ(comBuffer.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
-              Fw::FW_SERIALIZE_OK);
+    // Packet descriptor is no longer serialized into the buffer; it is passed
+    // as the explicit Apid argument on the input port.
     EXPECT_EQ(comBuffer.serializeFrom(opcode), Fw::FW_SERIALIZE_OK);
 
     Fw::CmdArgBuffer args;
@@ -69,10 +69,10 @@ void CmdSplitterTester ::test_local_routing() {
 
     U32 context = static_cast<U32>(STest::Pick::any());
     this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdSplitterPorts));
-    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
-    ASSERT_from_LocalCmd(0, testBuffer, context);
+    ASSERT_from_LocalCmd(0, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
 }
 
 void CmdSplitterTester ::test_remote_routing() {
@@ -85,10 +85,10 @@ void CmdSplitterTester ::test_remote_routing() {
 
     U32 context = static_cast<U32>(STest::Pick::any());
     this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdSplitterPorts));
-    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
     ASSERT_from_LocalCmd_SIZE(0);
     ASSERT_from_RemoteCmd_SIZE(1);
-    ASSERT_from_RemoteCmd(0, testBuffer, context);
+    ASSERT_from_RemoteCmd(0, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
 }
 
 void CmdSplitterTester ::test_error_routing() {
@@ -98,10 +98,10 @@ void CmdSplitterTester ::test_error_routing() {
     Fw::ComBuffer testBuffer;  // Intentionally left empty
     U32 context = static_cast<U32>(STest::Pick::any());
     this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdDispatcherSequencePorts));
-    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
+    this->invoke_to_CmdBuff(this->active_command_source, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
-    ASSERT_from_LocalCmd(0, testBuffer, context);
+    ASSERT_from_LocalCmd(0, testBuffer, ComCfg::Apid::FW_PACKET_COMMAND, context);
 }
 
 void CmdSplitterTester ::test_response_forwarding() {
@@ -125,14 +125,20 @@ void CmdSplitterTester ::test_response_forwarding() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void CmdSplitterTester ::from_LocalCmd_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_LocalCmd_handler(const FwIndexType portNum,
+                                               Fw::ComBuffer& data,
+                                               const ComCfg::Apid& packetType,
+                                               U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
-    this->pushFromPortEntry_LocalCmd(data, context);
+    this->pushFromPortEntry_LocalCmd(data, packetType, context);
 }
 
-void CmdSplitterTester ::from_RemoteCmd_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_RemoteCmd_handler(const FwIndexType portNum,
+                                                Fw::ComBuffer& data,
+                                                const ComCfg::Apid& packetType,
+                                                U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
-    this->pushFromPortEntry_RemoteCmd(data, context);
+    this->pushFromPortEntry_RemoteCmd(data, packetType, context);
 }
 
 void CmdSplitterTester ::from_forwardSeqCmdStatus_handler(const FwIndexType portNum,

@@ -33,7 +33,7 @@ class ComSplitter final : public ComSplitterComponentBase {
     // ----------------------------------------------------------------------
 
   private:
-    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context);
+    void comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, const ComCfg::Apid& packetType, U32 context) override;
 };
 
 }  // namespace Svc

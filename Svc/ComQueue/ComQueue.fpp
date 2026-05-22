@@ -21,11 +21,11 @@ module Svc {
       @ Port for receiving the status signal
       async input port comStatusIn: Fw.SuccessCondition
 
-      @ Port array for receiving Fw::ComBuffers
-      async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
+      @ Port array for receiving Fw::ComBuffers (with the packet's APID)
+      async input port comPacketQueueIn: [ComQueueComPorts] Svc.ComBufferSend drop
 
-      @ Port array for receiving Fw::Buffers
-      async input port bufferQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
+      @ Port array for receiving Fw::Buffers (with the packet's APID)
+      async input port bufferQueueIn: [ComQueueBufferPorts] Svc.ComPacketSend hook
 
       @ Port array for returning ownership of Fw::Buffer to its original sender
       output port bufferReturnOut: [ComQueueBufferPorts] Fw.BufferSend

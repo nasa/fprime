@@ -28,20 +28,23 @@ void CmdSplitter ::configure(const FwOpcodeType remoteBaseOpcode) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void CmdSplitter ::CmdBuff_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitter ::CmdBuff_handler(const FwIndexType portNum,
+                                   Fw::ComBuffer& data,
+                                   const ComCfg::Apid& packetType,
+                                   U32 context) {
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
 
     FW_ASSERT(portNum < CmdSplitterPorts);
     if (stat != Fw::FW_SERIALIZE_OK) {
         // Let the local command dispatcher deal with it
-        this->LocalCmd_out(portNum, data, context);
+        this->LocalCmd_out(portNum, data, packetType, context);
     } else {
         // Check if local or remote
         if (cmdPkt.getOpCode() < this->m_remoteBase) {
-            this->LocalCmd_out(portNum, data, context);
+            this->LocalCmd_out(portNum, data, packetType, context);
         } else {
-            this->RemoteCmd_out(portNum, data, context);
+            this->RemoteCmd_out(portNum, data, packetType, context);
         }
     }
 }

@@ -36,31 +36,19 @@ FileUplink::~FileUplink() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
-    // If packet is too small to contain a packet type, log + deallocate and return
-    if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {
-        this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
+void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::Apid& packetType) {
+    // If packet type is not a file packet, log + deallocate and return.
+    // The buffer no longer carries the descriptor at its head; the APID is now an
+    // explicit port argument.
+    if (packetType != ComCfg::Apid::FW_PACKET_FILE) {
+        this->log_WARNING_HI_InvalidPacketReceived(static_cast<FwPacketDescriptorType>(packetType.e));
         this->bufferSendOut_out(0, buffer);
         return;
     }
 
-    // Read the packet type from the packet buffer
-    FwPacketDescriptorType packetType = 0;
-    Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(packetType);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-
-    // If packet type is not a file packet, log + deallocate and return
-    if (packetType != Fw::ComPacketType::FW_PACKET_FILE) {
-        this->log_WARNING_HI_InvalidPacketReceived(packetType);
-        this->bufferSendOut_out(0, buffer);
-        return;
-    }
-
-    // Deserialize the file packet contents into Fw::FilePacket (remove packet type token)
-    Fw::Buffer packetBuffer(buffer.getData() + sizeof(packetType),
-                            buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(packetType)));
+    // Deserialize the file packet contents into Fw::FilePacket
     Fw::FilePacket filePacket;
-    status = filePacket.fromBuffer(packetBuffer);
+    Fw::SerializeStatus status = filePacket.fromBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_DecodeError(status);
     } else {

@@ -115,7 +115,8 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //! Handler for from_bufferSendOut
     //!
     void from_bufferSendOut_handler(const FwIndexType portNum,  //!< The port number
-                                    Fw::Buffer& buffer);
+                                    Fw::Buffer& buffer,
+                                    const ComCfg::Apid& packetType);
 
     //! Handler for from_bufferSendOut
     //!
