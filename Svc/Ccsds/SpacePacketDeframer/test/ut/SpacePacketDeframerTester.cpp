@@ -44,14 +44,8 @@ void SpacePacketDeframerTester ::testDataReturnPassthrough() {
 void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
-    // dataLength is the size of the SP user-data field, which on the wire is:
-    // [descriptor (2 bytes)][packet body]. Use a fixed lower bound large enough
-    // that the static analyzer can see dataLength > sizeof(FwPacketDescriptorType).
-    constexpr FwSizeType kDescriptorSize = sizeof(FwPacketDescriptorType);
-    constexpr U16 kMinDataLength = static_cast<U16>(kDescriptorSize + 1);
-    U16 randomLen = static_cast<U16>(STest::Random::lowerUpper(kMinDataLength, MAX_TEST_PACKET_DATA_SIZE));
-    // Clamp so the analyzer can reason about the invariant explicitly.
-    const U16 dataLength = (randomLen < kMinDataLength) ? kMinDataLength : randomLen;
+    // The SP user-data field on the wire is the payload itself (no descriptor).
+    U16 dataLength = static_cast<U16>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));
     U8 data[dataLength];
     U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
@@ -63,17 +57,14 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
-    // Check output packet payload: the descriptor is stripped from the front
+    // Output payload is exactly the SP user-data bytes (no descriptor strip).
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_validateApidSeqCount_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);  // only two port calls in nominal case
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    // dataLength >= kMinDataLength = kDescriptorSize + 1 by construction above,
-    // so the subtraction below cannot underflow.
-    const Fw::Buffer::SizeType expectedSize = static_cast<Fw::Buffer::SizeType>(dataLength - kDescriptorSize);
-    ASSERT_EQ(outBuffer.getSize(), expectedSize);
-    for (FwSizeType i = 0; i < expectedSize; ++i) {
-        ASSERT_EQ(outBuffer.getData()[i], data[i + kDescriptorSize]);
+    ASSERT_EQ(outBuffer.getSize(), static_cast<Fw::Buffer::SizeType>(dataLength));
+    for (FwSizeType i = 0; i < dataLength; ++i) {
+        ASSERT_EQ(outBuffer.getData()[i], data[i]);
     }
     // Check output context (header info)
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;

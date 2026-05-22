@@ -21,11 +21,6 @@ module Ccsds {
             severity warning high \
             format "Invalid length received. Header specified packet byte size of {} | Actual received data length: {}"
 
-        @ Deframed packet payload was too short to contain a FwPacketDescriptor; forwarded as-is
-        event PayloadTooShort() \
-            severity warning low \
-            format "Payload too short to extract a packet descriptor; forwarding as-is"
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
