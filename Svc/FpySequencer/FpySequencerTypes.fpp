@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 5;
+        constant SCHEMA_VERSION = 6;
 
         @ the type which everything referencing a size or offset on the stack is represented in
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
@@ -130,6 +130,19 @@ module Svc {
             CMD_FAIL = 17
         }
 
+        @ Maximum length for argument or type names in arg_specs
+        @ Fpy serializes these as U8 length prefix, so max is 255
+        constant MAX_ARG_SPEC_NAME_LEN = 255
+
+        @ Argument specification describing an input argument's name, type, and stack size
+        @ NOTE: This struct does use FPP's auto-generated serialization!
+        struct ArgSpec {
+            argName: string size MAX_ARG_SPEC_NAME_LEN
+            typeName: string size MAX_ARG_SPEC_NAME_LEN
+            @ Size of this argument on the stack in bytes
+            argSize: StackSizeType
+        } default {argName = "", typeName = "", argSize = 0 }
+
         struct Header {
             @ the major version of the FSW
             majorVersion: U8
@@ -165,7 +178,7 @@ module Svc {
             header: Header
             @ an array of size m_header.argumentCount mapping argument position to local
             @ variable index
-            args: [MAX_SEQUENCE_ARG_COUNT] U8
+            args: [MAX_SEQUENCE_ARG_COUNT] ArgSpec
             statements: [MAX_SEQUENCE_STATEMENT_COUNT] Statement
             footer: Footer
         }

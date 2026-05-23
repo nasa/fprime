@@ -93,7 +93,7 @@ module Svc {
                           ) \
       opcode 1
 
-    @ Enable / disable telemetry of a group on a section
+    @ Enable / disable a telemetry section
     async command ENABLE_SECTION(
                                 section: TelemetrySection   @< Section grouping to configure
                                 enable: Fw.Enabled          @< Section enabled or disabled

@@ -7,7 +7,8 @@ Settings for the CMake tests. Mostly constants that must be tracked.
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
-REF_APP_PATH = Path(__file__).parent.parent.parent.parent / "Ref"
+FRAMEWORK_PATH = Path(__file__).parent.parent.parent.parent
+REF_APP_PATH = FRAMEWORK_PATH / "TestDeploymentsProject"
 
 
 FRAMEWORK_MODULES = [

@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <list>
 #include "DpCatalogTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(NominalManual, initTest) {
     Svc::DpCatalogTester tester;
@@ -326,5 +327,6 @@ TEST(OffNominal, MalformedFile) {
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    // TODO: https://github.com/nasa/fprime/issues/5104 STest::Random::seed();
     return RUN_ALL_TESTS();
 }

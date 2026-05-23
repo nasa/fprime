@@ -11,16 +11,21 @@ applications.
 - [Multi-Core Processing Guidelines](#multi-core-processing-guidelines)
 - [Deployment Patterns](#deployment-patterns)
 - [Multi-Device Systems](#multi-device-systems)
-- [Related Topics](#related-topics)
+- [Resources](#resources)
 
 ## Multi-Core Processing Overview
 
 Many modern processors have multiple processing cores. Each core executes its own code, allowing multiple execution
-contexts to run simultaneously. There are two main architectural approaches for managing multi-core systems:
+contexts to run simultaneously. Before diving in, it is important to understand two key concepts:
+
+- **Process**: An independent program in execution with its own address space (memory), file descriptors, and OS-managed resources. Processes are isolated from each other by the operating system.
+- **Thread**: A lightweight unit of execution within a process. Threads share the same address space and resources as their parent process, which makes communication between threads faster but requires explicit synchronization (e.g., mutexes) to avoid data corruption.
+
+There are two main architectural approaches for managing multi-core systems:
 
 ### SMP (Symmetric Multi-Core)
 
-SMP is where one operating system manages all cores as a compute resource. The OS provides APIs to "pin" a thread to a particular
+SMP is where one operating system manages all cores as a shared pool of processors. The OS provides APIs to "pin" a thread to a particular
 core, or to allow the OS to dynamically assign threads based on loading.
 
 In an SMP system:
@@ -42,6 +47,8 @@ In an AMP system:
 - A hypervisor manages core allocation and isolation
 - Inter-OS communication requires special middleware
 
+**AMP trade-offs:** AMP provides strong isolation between partitions, which is valuable for safety-critical or mixed-criticality systems. However, it introduces significant complexity: inter-partition communication requires specialized drivers or middleware, debugging across partitions is harder, and developers must manage separate OS configurations and deployments for each partition. AMP is typically chosen when strong fault isolation or mixed-criticality requirements justify the added complexity.
+
 The operating system provides APIs to control thread-to-core assignment, enabling developers to optimize for specific
 performance characteristics.
 
@@ -51,24 +58,33 @@ F´ provides an API in the OS abstraction layer that allows a thread to be pinne
 interface is defined in `Os/Task.hpp` as part of the `Arguments` class used when starting a task:
 
 ```cpp
-    //! \param cpuAffinity: (optional) cpu affinity of this task
+//! \param cpuAffinity: (optional) cpu affinity of this task
+Arguments(
+    const Fw::ConstStringBase& name,
+    const taskRoutine routine,
+    void* const routine_argument = nullptr,
+    const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
+    const FwSizeType stackSize = TASK_DEFAULT,
+    const FwSizeType cpuAffinity = TASK_DEFAULT,  // Set to a core index (0, 1, 2, ...) to pin this task
+    const FwTaskIdType identifier = static_cast<FwTaskIdType>(TASK_DEFAULT)
+);
 ```
 
-The default behavior is to let the OS dynamically assign the thread to cores. The `cpuAffinity` parameter is delegated to the operating
-system implementation, which handles the platform-specific details of core affinity. For example, the Posix OSAL implementation delegates to the `pthread_attr_setaffinity_np` function (see [source]((https://github.com/nasa/fprime/blob/5e1a22edce86133957dfeb54a31ac135b42bb92b/Os/Posix/Task.cpp#L108-L127))).
+The default behavior (`TASK_DEFAULT`) is to let the OS dynamically assign the thread to cores. When a specific core index is provided via `cpuAffinity`, F´ delegates the pinning to the platform's OS abstraction layer. For example, the POSIX implementation calls `pthread_attr_setaffinity_np` to set the CPU affinity mask (see [source](https://github.com/nasa/fprime/blob/5e1a22edce86133957dfeb54a31ac135b42bb92b/Os/Posix/Task.cpp#L108-L127)).
+
+It is important to understand the division of responsibilities:
+
+- **F´'s role**: Provides an abstraction layer (`Os::Task`) that lets component developers specify thread properties (priority, stack size, CPU affinity) in a platform-independent way. F´ also provides synchronization primitives (`Os::Mutex`, `Os::Queue`) and the component threading model (active components with message queues).
+- **The OS's role**: Handles the actual thread scheduling, context switching, core assignment, memory protection, and synchronization enforcement. F´ delegates all of these to the underlying OS implementation.
 
 ### Important Considerations
 
 **Synchronization objects** like mutexes are delegated to the OS and are SMP-safe based on the operating system
-implementation.
+implementation. This delegation is enabled by the [OS Abstraction Layer](../../../Os/docs/sdd.md).
 
 **F´ is not inherently SMP "safe"**. It relies on the OS implementation and developer expertise to ensure safe
 multi-core operation. Developers must understand the threading model and synchronization requirements of their
 specific deployment.
-
-**Atomic operations**: Some portions of F´ use `U32` types to synchronize between threads. In many systems this is a
-safe atomic operation; however, this is not guaranteed in all systems. Projects should verify that their system
-behaves as expected. These usages are under review and will be corrected over time.
 
 ## Multi-Core Processing Guidelines
 
@@ -188,7 +204,7 @@ flowchart LR
 ### SMP Across Multiple Processes
 
 For SMP across multiple processes, use an F´ Generic Hub with a Linux named message queue or a pipe to pass data
-between processes.
+between processes. The Generic Hub is an F´ component that serializes port calls on one side of a communication boundary, transports them over an inter-process or inter-partition channel, and deserializes them on the other side — making cross-boundary communication transparent to the rest of the topology. For more details, see the [Hub Pattern](../design-patterns/hub-pattern.md) documentation.
 
 **Characteristics:**
 
@@ -309,8 +325,9 @@ users want F´ execution across these deployments to look like a single F´ depl
 This approach is similar to the multi-process and AMP patterns described above, but operates across physically
 separate processors rather than partitions or processes on the same processor.
 
-## Related Topics
+## Resources
 
 - [F´ on Baremetal Systems](run-baremetal.md) - Design pattern for baremetal F´ applications
 - [Hub Pattern](../design-patterns/hub-pattern.md) - Design pattern for connecting deployments
 - [Configuring F´](configuring-fprime.md) - General F´ configuration options
+- [`Os::Task` API (source)](https://github.com/nasa/fprime/blob/devel/Os/Task.hpp) - Task creation and CPU affinity interface

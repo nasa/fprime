@@ -7,6 +7,7 @@
 #include "DpCatalogTester.hpp"
 #include <algorithm>
 #include <cstdlib>
+#include <set>
 #include <vector>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
@@ -65,8 +66,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
 
-    // reset tree
-    this->component.resetBinaryTree();
+    // reset catalog
+    this->component.resetCatalog();
 
     // add entries
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
@@ -76,24 +77,38 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
-    // retrieve entries - they should match expected output
-    for (FwIndexType entry = 0; entry < numEntries + 1; entry++) {
-        if (entry == numEntries) {
-            // final request should indicate empty
-            ASSERT_TRUE(this->component.findNextTreeNode() == nullptr);
-        } else if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
-            // Outputs is only composed of the UNTRANSMITTED data products
-            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
-            ASSERT_TRUE(res != nullptr) << "nullptr findNextTreeNode() at " << entry << " out of " << numEntries;
-
-            //  should match expected entry
-            if (res != nullptr) {
-                ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
-            }
-            // Deallocate the "sent" node
-            this->component.deallocateNode(res);
+    // Collect expected entries (non-transmitted)
+    std::set<DpCatalog::DpStateEntry> expectedEntries;
+    for (FwIndexType entry = 0; entry < numEntries; entry++) {
+        if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            expectedEntries.insert(output[entry]);
         }
     }
+
+    // Collect actual entries from catalog
+    std::vector<DpCatalog::DpStateEntry> actualEntries;
+    DpCatalog::DpStateEntry foundEntry;
+    while (this->component.findNextEntry(foundEntry)) {
+        actualEntries.push_back(foundEntry);
+        // Remove the "sent" entry from catalog
+        Fw::Success status = this->component.m_dpCatalog.remove(foundEntry);
+        ASSERT_EQ(status, Fw::Success::SUCCESS);
+    }
+
+    // Verify we got the right number of entries
+    ASSERT_EQ(actualEntries.size(), expectedEntries.size())
+        << "Expected " << expectedEntries.size() << " entries, got " << actualEntries.size();
+
+    // Verify all entries match
+    size_t i = 0;
+    for (const auto& expectedEntry : expectedEntries) {
+        ASSERT_EQ(actualEntries[i].record, expectedEntry.record) << "Entry mismatch at sorted index " << i;
+        i++;  // Increment the index of the actual entries to walk one at a time in order
+    }
+
+    // Verify catalog is now empty
+    DpCatalog::DpStateEntry testEntry;
+    ASSERT_FALSE(this->component.findNextEntry(testEntry));
 
     this->component.shutdown();
 }

@@ -1,0 +1,121 @@
+# F Prime Multi-Agent PR Review — Agent Registry
+#
+# Authoritative list of the agents that participate in the multi-agent
+# PR review flow. The orchestrator iterates over `role: reviewer`
+# entries to drive reviewers, then invokes the `role: aggregator`
+# entry. The `role: orchestrator` entry is the single human entry
+# point.
+#
+# Adding a new reviewer agent in the future is a matter of adding a
+# new entry here with `role: reviewer` plus the agent file. No code
+# changes elsewhere are required.
+
+agents:
+
+  - name: F Prime PR Review Orchestrator
+    short_name: review-orchestrator
+    role: orchestrator
+    path: .github/agents/review-orchestrator.agent.md
+    invocable_by_humans: true
+    notes: >
+      Single human entry point. Drives the reviewer agents in
+      sequence, then the aggregator. Owns kickoff prompts (with the
+      orchestrator->agent thanks convention) and error handling.
+
+  - name: F Prime Security Vulnerability Reviewer
+    short_name: security-review
+    role: reviewer
+    path: .github/agents/security-review.agent.md
+    invocable_by_humans: true
+    contributes_to_ci_safety: true
+    scope_summary: >
+      Eight categories: ground-input asserts (DoS), ground-input
+      overflow (DDoS), ground-input validation gaps, the same three
+      for hardware inputs, general security vulnerabilities, and CI
+      test-runtime policy enforcement.
+
+  - name: F Prime Supply Chain / Runner Safety Reviewer
+    short_name: supply-chain-review
+    role: reviewer
+    path: .github/agents/supply-chain-review.agent.md
+    invocable_by_humans: true
+    contributes_to_ci_safety: true
+    scope_summary: >
+      Dependency manifests, third-party / vendored / submodule
+      changes, build/test infrastructure, workflow / action / script
+      changes, generators, container images, runner-safety surfaces,
+      and prompt-injection fingerprints.
+
+  - name: F Prime C/C++ Design Reviewer
+    short_name: fprime-code-review
+    role: reviewer
+    path: .github/agents/fprime-code-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      C/C++ design-rule conformance (CPP-1 through CPP-34 in
+      `_shared/skills/fprime-cpp-design.skill.md`): no dynamic memory
+      post-init, Fw::Buffer ownership, FW_ASSERT scope, C++14
+      language subset, F Prime type idioms (Fw::String,
+      Fw/DataStructures, FPP modeled types on ground-facing
+      interfaces), and JPL / style-guide conformance. Does not
+      contribute to CI safety.
+
+  - name: F Prime Stale Documentation Reviewer
+    short_name: stale-documentation-review
+    role: reviewer
+    path: .github/agents/stale-documentation-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Eight categories: component SDDs (`*/docs/sdd.md`), user manual
+      (`docs/user-manual/`), how-to guides (`docs/how-to/`),
+      reference catalogs (`docs/reference/`), tutorials
+      (`docs/tutorials/`, plus external `fprime-community/*`),
+      top-level project docs (README / INSTALL / CONTRIBUTING),
+      public-API Doxygen comments, and missing-doc-for-new-surface.
+      Does not contribute to CI safety.
+
+  - name: F Prime Design Reviewer
+    short_name: design-review
+    role: reviewer
+    path: .github/agents/design-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Five design categories — design-vs-intent mismatch, code-vs-
+      design mismatch, F Prime pattern violations, scope creep /
+      under-scoped, FPP-vs-C++ divergence — plus the special
+      `design-needs-human-adjudication` finding class that always
+      pings code owners (README maintainer table + git-log
+      approvers) when the PR's design should be settled by a human
+      before deeper review is worthwhile. Does not contribute to CI
+      safety.
+
+  - name: F Prime Test Quality Reviewer
+    short_name: test-quality-review
+    role: reviewer
+    path: .github/agents/test-quality-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Ten test categories: missing tests for newly-added FPP
+      surface, stale tests on modified FPP elements, invocations
+      without assertions, missing doDispatch() on async paths,
+      tautological assertions, count-only assertions without
+      payload check, newly-introduced weakening (DISABLED_,
+      GTEST_SKIP, removed asserts), missing failure-path coverage
+      on new commands, multi-instance ports tested only at index 0,
+      and missing throttle / update-on-change verification. Draws
+      on the proposal at nasa/fprime#5160. Does not contribute to
+      CI safety.
+
+  - name: F Prime PR Review Summary Aggregator
+    short_name: review-summary
+    role: aggregator
+    path: .github/agents/review-summary.agent.md
+    invocable_by_humans: true
+    notes: >
+      Consumes per-agent hidden metadata and inline comments on the
+      PR (matched by HTML marker plus the orchestrator-provided
+      status list) and submits ONE PR review (APPROVE or
+      REQUEST_CHANGES) with the consolidated table, CI safety
+      verdict, merge readiness verdict, optional Recommend Close
+      section, outstanding must-fix bullets, and a since-last-run
+      delta table.

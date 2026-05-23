@@ -144,14 +144,14 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        BlockState block                   //!< Return command status when complete or not
+                        Svc::BlockState block              //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command RUN_ARGS
     void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                              U32 cmdSeq,                        //!< The command sequence number
                              const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                             BlockState block,                  //!< Return command status when complete or not
+                             Svc::BlockState block,             //!< Return command status when complete or not
                              Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
                              ) override;
 
@@ -641,9 +641,13 @@ class FpySequencer : public FpySequencerComponentBase {
     // live running computation of CRC (updated as we read)
     U32 m_computedCRC;
 
+    // Size of arguments read in current sequence. Used for validation between
+    // User provided arguments and what is requested of the sequence.
+    Fpy::StackSizeType m_totalExpectedArgSize;
+
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
-    BlockState m_sequenceBlockState;
+    Svc::BlockState m_sequenceBlockState;
     // if we are to block on completion, save the opCode and cmdSeq we should
     // return
     FwOpcodeType m_savedOpCode;

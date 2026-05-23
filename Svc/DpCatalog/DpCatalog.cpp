@@ -36,41 +36,23 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
 
     this->m_stateFile = stateFile;
 
-    // request memory for catalog which is DP_MAX_FILES * slot size.
-    //
-    // A "slot" consists of a set of two memory locations for each data product consisting
-    // an entry in the binary tree and
-    // an entry in the state file data. These may not be fully used in a given
-    // situation based on the number of actual data products, but this provides room for the
-    // maximum possible.
-    static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpDstateFileEntry);
+    // Request memory for state file data storage.
+    // RedBlackTreeSet storage is allocated as a member variable, so we only need
+    // to allocate memory for the state file tracking array.
+    static const FwSizeType slotSize = sizeof(DpDstateFileEntry);
     this->m_memSize = DP_MAX_FILES * slotSize;
     bool notUsed;  // we don't need to recover the catalog.
     // request memory. this->m_memSize will be modified if there is less than we requested
     this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
-    // adjust to actual size if less allocated and only initialize
-    // if there is enough room for at least one record and memory
-    // was allocated.
 
-    // Since we are given a monolithic block of memory, the data structures
-    // are interspersed in the memory using the following method:
-    //
-    // 1) Recompute how many slots can fit in the provided memory if we
-    // don't get the full amount requested. This allows for graceful degradation
-    // if there are memory issues.
-    //
-    // 2) Place the binary tree free list at the beginning of the memory.
-    //
-    // 3) Place the state file data in memory after the binary free list
-    // by indexing the free list to one element past the end of
-    // the free list.
-
+    // Initialize if there is enough room for at least one record and memory was allocated
     if ((this->m_memSize >= slotSize) and (this->m_memPtr != nullptr)) {
         // set the number of available record slots based on how much memory we actually got
-        this->m_numDpSlots = this->m_memSize / slotSize;  // Step 1.
-        this->resetBinaryTree();                          // Step 2
-        // assign pointer for the state file storage - Step 3
-        this->m_stateFileData = reinterpret_cast<DpDstateFileEntry*>(&this->m_freeListHead[this->m_numDpSlots]);
+        this->m_numDpSlots = this->m_memSize / slotSize;
+        // Initialize the catalog
+        this->resetCatalog();
+        // assign pointer for the state file storage
+        this->m_stateFileData = static_cast<DpDstateFileEntry*>(this->m_memPtr);
     } else {
         // if we don't have enough memory, set the number of records
         // to zero for later detection
@@ -89,24 +71,12 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
     this->m_initialized = true;
 }
 
-void DpCatalog::resetBinaryTree() {
-    // initialize data structures in the free list
-    // Step 2 in memory partition (see configure() comments)
-    FW_ASSERT(this->m_memPtr);
-    this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
-    for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
-        // overlay new instance of the DpState entry on the memory
-        (void)new (&this->m_freeListHead[slot]) DpBtreeNode();
-        this->m_freeListHead[slot].left = nullptr;
-        this->m_freeListHead[slot].right = nullptr;
-        // link the free list
-        if (slot > 0) {
-            this->m_freeListHead[slot - 1].left = &this->m_freeListHead[slot];
-        }
-    }
-    // clear binary tree
-    this->m_dpTree = nullptr;
-    // reset number of records
+void DpCatalog::resetCatalog() {
+    // Clear the catalog
+    this->m_dpCatalog.clear();
+    // Clear transmission state
+    this->m_hasCurrentXmit = false;
+    // Reset counters
     this->m_pendingFiles = 0;
     this->m_pendingDpBytes = 0;
     // Mark the catalog as un-built
@@ -344,14 +314,14 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // load state data from file
     Fw::CmdResponse response = this->loadStateFile();
 
-    // reset free list for entries
-    this->resetBinaryTree();
+    // reset catalog
+    this->resetCatalog();
 
-    // fill the binary tree with DP files
+    // fill the catalog with DP files
     response = this->fillBinaryTree();
     if (response != Fw::CmdResponse::OK) {
-        // clean up the binary tree
-        this->resetBinaryTree();
+        // clean up the catalog
+        this->resetCatalog();
         this->resetStateFileData();
         return response;
     }
@@ -576,9 +546,9 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // check the state file to see if there is transmit state
     this->getFileState(entry);
 
-    // insert entry into sorted list. if can't insert, quit
-    DpBtreeNode* addedEntry = this->insertEntry(entry);
-    if (addedEntry == nullptr) {
+    // insert entry into sorted catalog. if can't insert, quit
+    bool inserted = this->insertEntry(entry);
+    if (!inserted) {
         this->log_WARNING_HI_DpInsertError(entry.record);
         // return and hope new slots open up later
         return -1;
@@ -596,14 +566,8 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
 
     this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
 
-    // Compute relative priority to current exploration node
-    // For Handling adding a node to a catalog that has
-    // already moved past the inserted node's priority
-    if (this->m_currentNode == nullptr) {
-        this->m_currentNode = addedEntry;
-    } else if (entry < this->m_currentNode->entry) {
-        this->m_currentNode = addedEntry;
-    }
+    // No need to track iterator state - begin() always gives us the highest priority entry
+    // and we remove entries as we transmit them
 
     return 1;
 }
@@ -660,226 +624,11 @@ bool DpCatalog::DpStateEntry::operator<(const DpStateEntry& other) const {
     return compareEntries(*this, other) < 0;
 }
 
-DpCatalog::DpBtreeNode* DpCatalog::insertEntry(DpStateEntry& entry) {
-    // the tree is filled in the following priority order:
-    // 1. DP priority - lower number is higher priority
-    // 2. DP time - older is higher priority
-    // 3. DP ID - lower number is higher priority
-
-    // Higher priority is to the left of the tree
-
-    // if the tree is empty, add the first entry
-    if (this->m_dpTree == nullptr) {
-        bool goodInsert = this->allocateNode(this->m_dpTree, entry);
-        if (not goodInsert) {
-            return nullptr;
-        }
-
-        return this->m_dpTree;
-
-        // otherwise, search depth-first to sort the entry
-    } else {
-        // to avoid recursion, loop through a max of the number of available records
-        DpBtreeNode* node = this->m_dpTree;
-        for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
-            CheckStat stat = CheckStat::CHECK_CONT;
-            stat = this->checkLeftRight(entry < node->entry, node, entry);
-
-            // act on status
-            if (stat == CheckStat::CHECK_ERROR) {
-                return nullptr;
-            } else if (stat == CheckStat::CHECK_OK) {
-                return node;
-            }
-        }  // end for each possible record
-
-        return nullptr;
-    }
-}
-
-DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode*& node, const DpStateEntry& newEntry) {
-    if (condition) {
-        if (node->left == nullptr) {
-            bool allocated = this->allocateNode(node->left, newEntry);
-            if (not allocated) {
-                return CheckStat::CHECK_ERROR;
-            }
-            node->left->parent = node;
-            // Let the caller know where node ended up
-            node = node->left;
-            return CheckStat::CHECK_OK;
-        } else {
-            node = node->left;
-            return CheckStat::CHECK_CONT;
-        }
-    } else {
-        if (node->right == nullptr) {
-            bool allocated = this->allocateNode(node->right, newEntry);
-            if (not allocated) {
-                return CheckStat::CHECK_ERROR;
-            }
-            node->right->parent = node;
-            // Let the caller know where node ended up
-            node = node->right;
-            return CheckStat::CHECK_OK;
-        } else {
-            node = node->right;
-            return CheckStat::CHECK_CONT;
-        }
-    }
-}
-
-bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry) {
-    // should always be null since we are allocating an empty slot
-    FW_ASSERT(newNode == nullptr);
-    // make sure there is an entry from the free list
-    if (this->m_freeListHead == nullptr) {
-        this->log_WARNING_HI_DpCatalogFull(newEntry.record);
-        return false;
-    }
-
-    // get a new node from the free list
-    newNode = this->m_freeListHead;
-    // move the head of the free list to the next node
-    // If we've at the bottom of the free list, head will now be nullptr
-    this->m_freeListHead = this->m_freeListHead->left;
-
-    // initialize the new node
-    newNode->left = nullptr;
-    newNode->right = nullptr;
-    newNode->parent = nullptr;
-    newNode->entry = newEntry;
-
-    // we got one, so return success
-    return true;
-}
-
-void DpCatalog::deallocateNode(DpBtreeNode* node) {
-    DpBtreeNode* parent = node->parent;
-
-    // since nodes are deallocated after xmit, left should be gone
-    // However, left node could be added during xmit
-    if (node->left != nullptr) {
-        // Since we aren't limited to adding just 1 node during file transfer
-        // the left child might not be a leaf
-        // Instead, find the node of closest (but higher) priority to this node
-        // This is the lowest priority node on the left branch
-        // Which is the rightmost node of the left branch
-        DpBtreeNode* rightmostNode = node->left;
-
-        // (i.e. node->left->right->right ... ->right until we hit null)
-
-        // bounded while loop (in case we're linked onto the free list somehow)
-        for (FwSizeType record = 0; record < this->m_numDpSlots && rightmostNode->right != nullptr; record++) {
-            rightmostNode = rightmostNode->right;
-
-            // I really hope these never fire
-            FW_ASSERT(rightmostNode != this->m_freeListHead);
-            FW_ASSERT(rightmostNode != nullptr);
-        }
-
-        FW_ASSERT(rightmostNode != nullptr);
-        FW_ASSERT(rightmostNode->parent != nullptr);
-
-        // We can then swap the node to be deallocated w/ the rightmost
-        // (since it is immediately higher priority than us)
-
-        // Make the "parent" of the deallocated node point at the rightmost
-        if (parent == nullptr) {
-            // this is the root node: has no parent, but needs the root pointer to shift
-            this->m_dpTree = rightmostNode;
-        } else {
-            // patch onto the appropriate parent branch
-            if (parent->left == node) {
-                parent->left = rightmostNode;
-            } else {
-                parent->right = rightmostNode;
-            }
-        }
-
-        // Handle the children of the rightmost node
-        if (rightmostNode == node->left) {
-            // The rightmost node is the immediate left child of the deallocated node
-            // Since it only has left children, shift the left branch up
-            // with node->left taking the place of the deallocated node
-
-            // Nothing we need to do
-            // Just avoid the infinite loop that would occur in this case
-            // on the other branch
-        } else {
-            // If the rightmost node isn't the node to be deallocated's left child,
-            // we can stitch its left branch onto its parent in its place
-            rightmostNode->parent->right = rightmostNode->left;
-
-            // Now connect the deallocated node's left branch onto rightmostNode
-            rightmostNode->left = node->left;
-            node->left->parent = rightmostNode;
-        }
-
-        // Regardless, connect the deallocated node's right branch onto rightmostNode
-        rightmostNode->right = node->right;
-
-        if (node->right != nullptr) {
-            node->right->parent = rightmostNode;
-        }
-
-        // Now that we're done using the parent of rightmost node
-        // Point at actual parent or nullptr if this is the new root
-        rightmostNode->parent = parent;
-
-        // Ensure the Left node no longer points at us
-        FW_ASSERT(node->left->parent != node);
-    } else {
-        // This node only had a right branch
-        // cut out this node and shift the right branch up
-
-        // The root node has no parent, but needs the tree root pointer to shift
-        if (parent == nullptr) {
-            this->m_dpTree = node->right;
-        } else {
-            // Patch the right branch onto
-            // the appropriate parent branch of this node
-            if (parent->left == node) {
-                parent->left = node->right;
-            } else {
-                parent->right = node->right;
-            }
-        }
-
-        // If there is a right branch
-        // Point it at the parent of the removed node
-        if (node->right != nullptr) {
-            FW_ASSERT(node->right->parent != nullptr);
-            node->right->parent = parent;
-        }
-    }
-
-    // clear out the entry
-    node->entry = {};
-    // point this node @ the old head of the free list
-    node->left = m_freeListHead;
-
-    // Ensure the Right node no longer points at us
-    if (node->right != nullptr) {
-        FW_ASSERT(node->right->parent != node);
-    }
-
-    // clear out our right reference
-    node->right = nullptr;
-
-    DpBtreeNode* oldFreeListHead = this->m_freeListHead;
-    // make this node the new head of the free list
-    this->m_freeListHead = node;
-
-    // Node is the head of the free list
-    FW_ASSERT(this->m_freeListHead == node);
-
-    node->parent = nullptr;
-
-    // Ensure this Node only points at next in free list
-    FW_ASSERT(node->left == oldFreeListHead);
-    FW_ASSERT(node->right == nullptr);
-    FW_ASSERT(node->parent == nullptr);
+bool DpCatalog::insertEntry(DpStateEntry& entry) {
+    // Insert into the RedBlackTreeSet
+    // The tree maintains sorting by priority, time, and ID via DpStateEntry comparison operators
+    Fw::Success status = this->m_dpCatalog.insert(entry);
+    return (status == Fw::Success::SUCCESS);
 }
 
 void DpCatalog::sendNextEntry() {
@@ -888,72 +637,52 @@ void DpCatalog::sendNextEntry() {
         return;
     }
 
-    // look in the tree for the next entry to send
-    this->m_currentXmitNode = this->findNextTreeNode();
-
-    if (this->m_currentXmitNode == nullptr) {
+    // Look for the next entry to send
+    DpStateEntry entry;
+    if (!this->findNextEntry(entry)) {
         // if no entry found, we are done
         this->m_xmitInProgress = false;
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         this->dispatchWaitedResponse(Fw::CmdResponse::OK);
         return;
-    } else {
-        // build file name based on the found entry
-        this->m_currXmitFileName.format(
-            DP_FILENAME_FORMAT, this->m_directories[this->m_currentXmitNode->entry.dir].toChar(),
-            this->m_currentXmitNode->entry.record.get_id(), this->m_currentXmitNode->entry.record.get_tSec(),
-            this->m_currentXmitNode->entry.record.get_tSub());
-        this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName,
-                                             static_cast<U32>(this->m_currentXmitNode->entry.record.get_size()),
-                                             this->m_currentXmitNode->entry.record.get_priority());
-        Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
-        if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
-            // warn, but keep going since it may be an issue with this file but others could
-            // make it
-            this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
-        }
     }
 
+    // Save current entry for fileDone_handler
+    this->m_currentXmitEntry = entry;
+    this->m_hasCurrentXmit = true;
+
+    // Build file name based on the found entry
+    this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(), entry.record.get_id(),
+                                    entry.record.get_tSec(), entry.record.get_tSub());
+    this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
+                                         entry.record.get_priority());
+    Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
+    if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
+        // warn, but keep going since it may be an issue with this file but others could
+        // make it
+        this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
+    }
 }  // end sendNextEntry()
 
-DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
-    // check some asserts
-    FW_ASSERT(this->m_xmitInProgress);
-
-    if (this->m_dpTree == nullptr) {
-        // We've run out of entries, we are done
-        this->m_xmitInProgress = false;
-        return nullptr;
+bool DpCatalog::findNextEntry(DpStateEntry& entry) {
+    // If catalog is empty, return false
+    if (this->m_dpCatalog.getSize() == 0) {
+        return false;
     }
 
-    // start back at the top
-    if (this->m_currentNode == nullptr) {
-        this->m_currentNode = this->m_dpTree;
+    // Get the highest priority entry (begin() returns highest priority)
+    // Since we remove entries as we transmit them, begin() always gives us the next entry
+    typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+
+    // Verify iterator is valid
+    if (iter == this->m_dpCatalog.end()) {
+        return false;
     }
 
-    // Nav left until nullptr
-    // Leads to highest priority node
-    // bounded while loop (in case we're linked onto the free list somehow)
-    for (FwSizeType record = 0; record < this->m_numDpSlots && this->m_currentNode->left != nullptr; record++) {
-        this->m_currentNode = this->m_currentNode->left;
+    // Get the entry
+    entry = *iter;
 
-        // I really hope these never fire
-        FW_ASSERT(this->m_currentNode != this->m_freeListHead);
-        FW_ASSERT(this->m_currentNode != nullptr);
-    }
-
-    // save the high prio & find next best
-    DpBtreeNode* found = this->m_currentNode;
-
-    // On the next cycle, explore the node to the right, if available,
-    // otherwise the node above
-    if (this->m_currentNode->right != nullptr) {
-        this->m_currentNode = this->m_currentNode->right;
-    } else {
-        this->m_currentNode = this->m_currentNode->parent;
-    }
-
-    return found;
+    return true;
 }
 
 bool DpCatalog::checkInit() {
@@ -987,6 +716,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        return;
     }
 
     // Catalog cleared while this file was sent
@@ -994,24 +724,28 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         return;
     }
 
-    // Since catalog built flag is true
-    // we should have a tree w/ at least one element
-    FW_ASSERT(this->m_dpTree);
+    // Should have a valid current transmit entry
+    FW_ASSERT(this->m_hasCurrentXmit);
 
     // Reduce pending
-    this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
+    this->m_pendingDpBytes -= this->m_currentXmitEntry.record.get_size();
     this->m_pendingFiles--;
     // Log File Complete & pending
     this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName, this->m_pendingFiles, this->m_pendingDpBytes);
 
     // mark the entry as transmitted
-    this->m_currentXmitNode->entry.record.set_state(Fw::DpState::TRANSMITTED);
+    this->m_currentXmitEntry.record.set_state(Fw::DpState::TRANSMITTED);
     // update the transmitted state in the state file
-    this->appendFileState(this->m_currentXmitNode->entry);
+    this->appendFileState(this->m_currentXmitEntry);
     // add the size
-    this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
-    // deallocate this node
-    this->deallocateNode(this->m_currentXmitNode);
+    this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
+
+    // Remove from catalog
+    Fw::Success status = this->m_dpCatalog.remove(this->m_currentXmitEntry);
+    FW_ASSERT(status == Fw::Success::SUCCESS);
+
+    this->m_hasCurrentXmit = false;
+
     // send the next entry, if it exists
     this->sendNextEntry();
 }
@@ -1062,7 +796,6 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     if (ret > 0) {
         // If we already finished, sendNext only if remainingActive
         if (!this->m_xmitInProgress && this->m_remainActive) {
-            this->m_currentNode = this->m_dpTree;
             this->m_xmitInProgress = true;
             this->sendNextEntry();
         }
@@ -1155,7 +888,7 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->resetBinaryTree();
+    this->resetCatalog();
     this->resetStateFileData();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

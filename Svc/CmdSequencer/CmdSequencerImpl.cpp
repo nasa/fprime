@@ -236,6 +236,16 @@ bool CmdSequencerComponentImpl ::loadFile(const Fw::ConstStringBase& fileName) {
         this->log_ACTIVITY_LO_CS_SequenceLoaded(logFileName);
         ++this->m_loadCmdCount;
         this->tlmWrite_CS_LoadCommands(this->m_loadCmdCount);
+    } else {
+        // A partial load may have populated m_buffer before an intermediate
+        // validation step (e.g. CRC, time, record structure) failed. Without
+        // an explicit reset, FPrimeSequence::hasMoreRecords() still returns
+        // true because getDeserializeSizeLeft() > 0, so a subsequent CS_START
+        // bypasses the "no sequence active" guard and reaches
+        // FPrimeSequence::nextRecord, which asserts on the failed deserialize
+        // and aborts the FSW. Clearing the sequence on every load failure
+        // closes that window.
+        this->m_sequence->clear();
     }
     return status;
 }
