@@ -31,9 +31,17 @@ void FileWorker ::cancelIn_handler(FwIndexType portNum) {
 }
 
 void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer) {
-    FW_ASSERT(path != nullptr);
-    FW_ASSERT(path.length() > 0);
-    FW_ASSERT(buffer.getData() != nullptr);
+    // Validate inputs before processing file
+    if (path == nullptr || path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("null path"));
+        this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    if (buffer.getData() == nullptr) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("null buffer"));
+        this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
 
     const char* const fileName = path.toChar();
     FwSizeType fileSize = 0;
@@ -73,8 +81,12 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 }
 
 void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& path, U32 crc) {
-    FW_ASSERT(path != nullptr);
-    FW_ASSERT(path.length() > 0);
+    // Validate inputs before processing file
+    if (path == nullptr || path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("verifyIn"), Fw::LogStringArg("null path"));
+        this->verifyDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
 
     const char* const fileName = path.toChar();
     FwSizeType fileSize = 0;
@@ -109,10 +121,22 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
                                   Fw::Buffer& buffer,
                                   FwSizeType offsetBytes,
                                   bool append) {
-    FW_ASSERT(path != nullptr);
-    FW_ASSERT(path.length() > 0);
-    FW_ASSERT(buffer.getData() != nullptr);
-    FW_ASSERT(offsetBytes <= buffer.getSize());
+    // Validate inputs before processing file
+    if (path == nullptr || path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("null path"));
+        this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    if (buffer.getData() == nullptr) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("null buffer"));
+        this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    if (offsetBytes > buffer.getSize()) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("invalid offset"));
+        this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
 
     char fileName[FileNameStringSize];
 
