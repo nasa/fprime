@@ -86,8 +86,8 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
     contextCopy.set_sequenceCount(receivedSequenceCount);
 
-    // The CCSDS Space Packet primary header already carries the APID, so the SP user
-    // data field on the wire is just the payload. Forward it downstream as-is.
+    // APID is carried in the SP primary header (already extracted into contextCopy).
+    // Forward the SP user data field downstream as the payload.
     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
     data.setSize(static_cast<Fw::Buffer::SizeType>(pkt_length));
 

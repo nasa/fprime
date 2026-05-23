@@ -33,9 +33,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
         case Fw::ComPacketType::FW_PACKET_COMMAND: {
             // Allocate a com buffer on the stack
             Fw::ComBuffer com;
-            // Copy the contents of the packet buffer into the com buffer.
-            // The deframer strips the packet descriptor bytes from packetBuffer before
-            // forwarding, so commandOut receives a buffer that starts at the opcode.
+            // Copy the packet body (which starts at the opcode) into the com buffer.
             status = com.setBuff(packetBuffer.getData(), packetBuffer.getSize());
             if (status == Fw::FW_SERIALIZE_OK) {
                 // Send the com buffer - critical functionality so it is considered an error not to

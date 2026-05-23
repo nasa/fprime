@@ -496,9 +496,7 @@ void EventManagerTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U
     ASSERT_EQ(delimiter, de);
     // next is LogPacket
     Fw::ComBuffer comBuff;
-    // size is specific to this test
-    // LogPacket no longer serializes the packet descriptor; it is carried on
-    // the port arg instead.
+    // LogPacket on the wire is [event ID][time tag][U32 argument]; the APID travels on the port arg.
     readSize = sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
     ASSERT_EQ(file.read(comBuff.getBuffAddr(), readSize, Os::File::WaitType::WAIT), Os::File::OP_OK);
     comBuff.setBuffLen(readSize);

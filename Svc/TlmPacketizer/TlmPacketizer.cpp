@@ -65,8 +65,8 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     // table
     FwChanIdType maxLevel = 0;
     for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
-        // Initial size is time tag + sizeof packet ID (descriptor is no longer in the buffer;
-        // it is passed as an explicit argument to the PktSend output port).
+        // Packet body layout: [time tag][packet ID][channel data...]. The APID is supplied
+        // as a separate argument on the PktSend output port.
         FwSizeType packetLen = Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
         FW_ASSERT(packetList.list[pktEntry]->list, static_cast<FwAssertArgType>(pktEntry));
         // add up entries for each defined packet
@@ -101,8 +101,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                   static_cast<FwAssertArgType>(pktEntry));
         // clear contents
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
-        // serialize packet ID now since it will always be the same; the descriptor is no longer
-        // in the buffer (passed as an explicit argument to PktSend)
+        // Serialize the packet ID at the head of the buffer; it is constant for this packet.
         Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packetList.list[pktEntry]->id);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
         // set packet buffer length
@@ -357,9 +356,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             BufferEntry sendBuffer = this->m_fillBuffers[pkt];
             this->m_lock.unLock();
 
-            // serialize time into time offset in packet
-            // The buffer layout is now: [packet ID][time][channel data...]; descriptor is sent
-            // as an explicit argument to PktSend rather than embedded in the buffer.
+            // Serialize time into its slot in the packet body ([packet ID][time][channel data...]).
             Fw::ExternalSerializeBuffer buff(&sendBuffer.buffer.getBuffAddr()[sizeof(FwTlmPacketizeIdType)],
                                              Fw::Time::SERIALIZED_SIZE);
             (void)buff.serializeFrom(sendBuffer.latestTime);
