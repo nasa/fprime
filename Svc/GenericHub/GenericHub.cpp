@@ -59,6 +59,7 @@ void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuff
     fromBufferDriverReturn_out(0, fwBuffer);
 }
 
+// REVIEW NOTE: GenericHub needs further review... maybe test with the reference...
 void GenericHub ::cmdDispIn_handler(FwIndexType portNum,
                                     Fw::ComBuffer& data,
                                     const ComCfg::Apid& packetType,

@@ -51,8 +51,6 @@ void BufferLogger ::comIn_handler(FwIndexType portNum,
                                   Fw::ComBuffer& data,
                                   const ComCfg::Apid& packetType,
                                   U32 context) {
-    (void)packetType;
-    (void)context;
     if (m_state == LogState::LOGGING_ON) {
         const U8* const addr = data.getBuffAddr();
         const FwSizeType size = data.getSize();

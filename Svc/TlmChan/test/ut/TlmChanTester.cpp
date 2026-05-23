@@ -186,7 +186,6 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
     for (FwChanIdType packet = 0; packet < this->m_numBuffs; packet++) {
         // Look at packet descriptor for current packet
         this->m_rcvdBuffer[packet].resetDeser();
-        // packet descriptor is now carried as a port argument, not in the buffer
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID

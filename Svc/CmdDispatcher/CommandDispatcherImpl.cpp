@@ -72,7 +72,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum,
                                                Fw::ComBuffer& data,
                                                const ComCfg::Apid& packetType,
                                                U32 context) {
-    (void)packetType;  // CmdDispatcher only handles command packets; APID is informational
+    // REVIEW NOTE: check value of packetType ? Maybe EVR, likely don't assert
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
 
