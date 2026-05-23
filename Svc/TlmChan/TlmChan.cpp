@@ -11,10 +11,10 @@
  */
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Time/Time.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Os/RawTime.hpp>
 #include <Svc/TlmChan/TlmChan.hpp>
-#include <ctime>
-#include <random>
 
 namespace Svc {
 
@@ -65,38 +65,33 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     this->m_chanIdSize = static_cast<U32>(sizeof(FwChanIdType));
 
     // ------- Set random telemetry hash seed -------
-
-    // use timestamp, hardware random source and stack address for
-    // non-deterministic random source for seed
     U32 seed = 0;
 
-    struct timespec ts = {};
-    const bool clockOk = (clock_gettime(CLOCK_MONOTONIC, &ts) == 0);
-    const U32 tsSec = clockOk ? static_cast<U32>(ts.tv_sec) : 0U;
-    const U32 tsUs = clockOk ? static_cast<U32>(ts.tv_nsec / 1000U) : 0U;
-    const U32 foldedUs = tsSec ^ tsUs;
+    // get current time and use as non-determinsitic source for seed
+    Os::RawTime rawTime;
+    rawTime.now();
+    U8 timeBuf[FW_RAW_TIME_SERIALIZATION_MAX_SIZE] = {};
+    Fw::ExternalSerializeBuffer serBuf(timeBuf, sizeof(timeBuf));
+    (void)rawTime.serializeTo(serBuf);
 
-    U32 rdVal = 0;
-    std::random_device rd;
-
-    // check for hardware platform specific entropy (random source)
-    if (rd.entropy() > 0.0) {
-        // True hardware entropy available
-        rdVal = static_cast<U32>(rd());
-    } else {
-        // Platform has no entropy source
-        // Fall back to a hash of the type name as a static distinguisher
-        rdVal = static_cast<U32>(std::hash<const char*>{}(__FILE__) ^ __LINE__);
+    U32 foldedTime = 0;
+    for (U32 i = 0; i < static_cast<U32>(serBuf.getSize()); i++) {
+        // Rotate-and-XOR each byte to avoid cancellation when bytes are equal
+        foldedTime = (foldedTime << 8) | (foldedTime >> 24);
+        foldedTime ^= static_cast<U32>(timeBuf[i]);
     }
 
+    // read stack-address - address varies per boot
     const U64 raw = reinterpret_cast<U64>(&seed);
     const U32 foldedStack = static_cast<U32>(raw ^ (raw >> 32));
 
-    seed = foldedUs ^ rdVal ^ foldedStack;
+    seed = foldedTime ^ foldedStack;
 
-    // check for a zero seed
+    // A zero seed causes the hash to degenerate — all channel IDs collapse to
+    // the same bucket. Replace with a known non-zero constant to ensure a
+    // valid distribution on all supported platforms.
     if (seed == 0) {
-        seed = std::numeric_limits<U32>::max();
+        seed = 0xDEADBEEFU;
     }
 
     this->m_hashSeed = seed;
