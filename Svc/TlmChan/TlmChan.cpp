@@ -67,7 +67,7 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
     // ------- Set random telemetry hash seed -------
     U32 seed = 0;
 
-    // get current time and use as non-determinsitic source for seed
+    // get current time and use as non-deterministic source for seed
     Os::RawTime rawTime;
     rawTime.now();
     U8 timeBuf[FW_RAW_TIME_SERIALIZATION_MAX_SIZE] = {};
