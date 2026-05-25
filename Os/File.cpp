@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/File.cpp
-// \brief common function implementation for Os::File
+// 	itle Os/File.cpp
+// rief common function implementation for Os::File
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
@@ -33,15 +33,12 @@ File::File(const File& other)
       m_handle_storage(),
       m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
-    // Re-point m_path into this object's own storage so it does not alias the source
-    this->m_path = (other.m_path != nullptr) ? this->m_path_storage.toChar() : nullptr;
 }
 
 File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
         this->m_path_storage = other.m_path_storage;
-        this->m_path = (other.m_path != nullptr) ? this->m_path_storage.toChar() : nullptr;
         this->m_crc = other.m_crc;
         this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
@@ -83,9 +80,8 @@ File::Status File::open(const CHAR* filepath,
     File::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
-        // Store an owned copy of the path so m_path never dangles when the caller's string is freed
+        // Store an owned copy of the path so it survives the caller freeing the original string
         this->m_path_storage = filepath;
-        this->m_path = this->m_path_storage.toChar();
         // Reset any open CRC calculations
         this->m_crc = File::INITIAL_CRC;
     }
@@ -108,7 +104,6 @@ void File::close() {
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     this->m_delegate.close();
     this->m_mode = Mode::OPEN_NO_MODE;
-    this->m_path = nullptr;
 }
 
 bool File::isOpen() const {
@@ -322,10 +317,12 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
             size = i;
             return Os::File::Status::OP_OK;
         }
-        // Loop from i to i + current_chunk_size looking for `\n`
+        // Loop from i to i + current_chunk_size looking for `
+`
         for (FwSizeType j = i; j < (i + read); j++) {
             // Newline seek back to after it, return the size read
-            if (buffer[j] == '\n') {
+            if (buffer[j] == '
+') {
                 size = j + 1;
                 // Ensure that the computation worked and there is not overflow
                 FW_ASSERT(size <= requested_size);
