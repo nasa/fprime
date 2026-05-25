@@ -1,6 +1,6 @@
 // ======================================================================
-// 	itle Os/File.hpp
-// rief common function definitions for Os::File
+// \title Os/File.hpp
+// \brief common function definitions for Os::File
 // ======================================================================
 #ifndef Os_File_hpp_
 #define Os_File_hpp_
@@ -21,7 +21,7 @@ struct Tester;
 
 namespace Os {
 
-//! rief base implementation of FileHandle
+//! \brief base implementation of FileHandle
 //!
 struct FileHandle {};
 
@@ -75,7 +75,7 @@ class FileInterface {
 
     virtual ~FileInterface() = default;
 
-    //! rief open file with supplied path and mode
+    //! \brief open file with supplied path and mode
     //!
     //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
     //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
@@ -89,34 +89,34 @@ class FileInterface {
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! eturn: status of the open
+    //! \return: status of the open
     //!
     virtual Status open(const char* path, Mode mode, OverwriteType overwrite) = 0;
 
-    //! rief close the file, if not opened then do nothing
+    //! \brief close the file, if not opened then do nothing
     //!
     //! Closes the file, if open. Otherwise this function does nothing. Delegates to the chosen implementation's
     //! `closeInternal` function. `mode` is set to `OPEN_NO_MODE`.
     //!
     virtual void close() = 0;
 
-    //! rief get size of currently open file
+    //! \brief get size of currently open file
     //!
     //! Get the size of the currently open file and fill the size parameter. Return status of the operation.
     //! \param size: output parameter for size.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status size(FwSizeType& size_result) = 0;
 
-    //! rief get file pointer position of the currently open file
+    //! \brief get file pointer position of the currently open file
     //!
     //! Get the current position of the read/write pointer of the open file.
     //! \param position: output parameter for size.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status position(FwSizeType& position_result) = 0;
 
-    //! rief pre-allocate file storage
+    //! \brief pre-allocate file storage
     //!
     //! Pre-allocates file storage with at least `length` storage starting at `offset`. No-op on implementations
     //! that cannot pre-allocate.
@@ -126,31 +126,31 @@ class FileInterface {
     //!
     //! \param offset: offset into file
     //! \param length: length after offset to preallocate
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status preallocate(FwSizeType offset, FwSizeType length) = 0;
 
-    //! rief seek the file pointer to the given offset
+    //! \brief seek the file pointer to the given offset
     //!
     //! Seek the file pointer to the given `offset`. If `seekType` is set to `ABSOLUTE` then the offset is calculated
     //! from the start of the file, and if it is set to `RELATIVE` it is calculated from the current position.
     //!
     //! \param offset: offset to seek to
     //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status seek(FwSignedSizeType offset, SeekType seekType) = 0;
 
-    //! rief flush file contents to storage
+    //! \brief flush file contents to storage
     //!
     //! Flushes the file contents to storage (i.e. out of the OS cache to disk). Does nothing in implementations
     //! that do not support flushing.
     //!
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status flush() = 0;
 
-    //! rief read data from this file into supplied buffer bounded by size
+    //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Read data from this file up to the `size` and store it in `buffer`.  When `wait` is set to `WAIT`, this
     //! will block until the requested size has been read successfully read or the end of the file has been
@@ -166,11 +166,11 @@ class FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status read(U8* buffer, FwSizeType& size, WaitType wait) = 0;
 
-    //! rief read data from this file into supplied buffer bounded by size
+    //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Write data to this file up to the `size` from the `buffer`.  When `wait` is set to `WAIT`, this
     //! will block until the requested size has been written successfully to disk. When `wait` is set to
@@ -186,20 +186,20 @@ class FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     virtual Status write(const U8* buffer, FwSizeType& size, WaitType wait) = 0;
 
-    //! rief returns the raw file handle
+    //! \brief returns the raw file handle
     //!
     //! Gets the raw file handle from the implementation. Note: users must include the implementation specific
     //! header to make any real use of this handle. Otherwise it will be as an opaque type.
     //!
-    //! eturn raw file handle
+    //! \return raw file handle
     //!
     virtual FileHandle* getHandle() = 0;
 
-    //! rief provide a pointer to a file delegate object
+    //! \brief provide a pointer to a file delegate object
     //!
     //! This function must return a pointer to a `FileInterface` object that contains the real implementation of the
     //! file functions as defined by the implementor.  This function must do several things to be considered correctly
@@ -219,7 +219,7 @@ class FileInterface {
     //! 6. Return the result of the placement new
     //!    e.g. `return interface;`
     //!
-    //! eturn result of placement new, must be equivalent to `aligned_placement_new_memory`
+    //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
     //!
     static FileInterface* getDelegate(FileHandleStorage& aligned_placement_new_memory,
                                       const FileInterface* to_copy = nullptr);
@@ -229,22 +229,22 @@ class File final : public FileInterface {
     friend struct Os::Test::FileTest::Tester;
 
   public:
-    //! rief constructor
+    //! \brief constructor
     //!
     File();
-    //! rief destructor
+    //! \brief destructor
     //!
     //! Destructor closes the file if it is open
     ~File() final;
 
-    //! rief copy constructor that copies the internal representation
+    //! \brief copy constructor that copies the internal representation
     File(const File& other);
 
-    //! rief assignment operator that copies the internal representation
+    //! \brief assignment operator that copies the internal representation
     File& operator=(const File& other);
 
-    //! rief determine if the file is open
-    //! eturn true if file is open, false otherwise
+    //! \brief determine if the file is open
+    //! \return true if file is open, false otherwise
     //!
     bool isOpen() const;
 
@@ -252,7 +252,7 @@ class File final : public FileInterface {
     // Functions supplying default values
     // ------------------------------------
 
-    //! rief open file with supplied path and mode
+    //! \brief open file with supplied path and mode
     //!
     //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
     //! files. Use other `open` method to set overwrite flag and clobber existing files. The status of the open
@@ -263,12 +263,12 @@ class File final : public FileInterface {
     //!
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
-    //! eturn: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
     //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, Mode mode);
 
-    //! rief open file with supplied path, bounded length, and mode
+    //! \brief open file with supplied path, bounded length, and mode
     //!
     //! Open the file passed in with the given mode. The path length is bounded by `length`.
     //! Opening files with `OPEN_CREATE` mode will not clobber existing files. Use the overload
@@ -281,12 +281,12 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
-    //! eturn: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
     //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode);
 
-    //! rief open file with supplied string path and mode
+    //! \brief open file with supplied string path and mode
     //!
     //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
     //! files. Use the overload accepting `OverwriteType` to set overwrite flag and clobber existing files.
@@ -295,11 +295,11 @@ class File final : public FileInterface {
     //!
     //! \param path: ConstStringBase reference of path to open
     //! \param mode: file operation mode
-    //! eturn: status of the open
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode);
 
-    //! rief open file with supplied string path, mode, and overwrite type
+    //! \brief open file with supplied string path, mode, and overwrite type
     //!
     //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
     //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
@@ -310,11 +310,11 @@ class File final : public FileInterface {
     //! \param path: ConstStringBase reference of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! eturn: status of the open
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const Fw::ConstStringBase& path, Mode mode, OverwriteType overwrite);
 
-    //! rief read data from this file into supplied buffer bounded by size
+    //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Read data from this file up to the `size` and store it in `buffer`.  This version will
     //! will block until the requested size has been read successfully read or the end of the file has been
@@ -328,11 +328,11 @@ class File final : public FileInterface {
     //!
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status read(U8* buffer, FwSizeType& size);
 
-    //! rief write data to this file from the supplied buffer bounded by size
+    //! \brief write data to this file from the supplied buffer bounded by size
     //!
     //! Write data from `buffer` up to the `size` and store it in this file. This call
     //! will block until the requested size has been written. Otherwise, this call will write without blocking.
@@ -345,7 +345,7 @@ class File final : public FileInterface {
     //!
     //! \param buffer: memory location of data to write to file
     //! \param size: size of data to write
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status write(const U8* buffer, FwSizeType& size);
 
@@ -353,7 +353,7 @@ class File final : public FileInterface {
     // Functions overrides
     // ------------------------------------
 
-    //! rief open file with supplied path and mode
+    //! \brief open file with supplied path and mode
     //!
     //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
     //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
@@ -367,12 +367,12 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! eturn: status of the open. Returns `TRUNCATED` without opening when the path exceeds
+    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
     //!          `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
-    //! rief open file with supplied path, bounded length, mode, and overwrite type
+    //! \brief open file with supplied path, bounded length, mode, and overwrite type
     //!
     //! Open the file passed in with the given mode. The path length is bounded by `length`.
     //! If overwrite is set to OVERWRITE, then opening files in OPEN_CREATE mode will clobber
@@ -388,35 +388,35 @@ class File final : public FileInterface {
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! eturn: status of the open. Returns `TRUNCATED` without opening (and leaves the file closed
+    //! \return: status of the open. Returns `TRUNCATED` without opening (and leaves the file closed
     //!          closed state) when the path exceeds `Fw::FileNameString` capacity.
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode, OverwriteType overwrite);
 
-    //! rief close the file, if not opened then do nothing
+    //! \brief close the file, if not opened then do nothing
     //!
     //! Closes the file, if open. Otherwise this function does nothing. Delegates to the chosen implementation's
     //! `closeInternal` function. `mode` is set to `OPEN_NO_MODE`.
     //!
     void close() override;
 
-    //! rief get size of currently open file
+    //! \brief get size of currently open file
     //!
     //! Get the size of the currently open file and fill the size parameter. Return status of the operation.
     //! \param size: output parameter for size.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status size(FwSizeType& size_result) override;
 
-    //! rief get file pointer position of the currently open file
+    //! \brief get file pointer position of the currently open file
     //!
     //! Get the current position of the read/write pointer of the open file.
     //! \param position: output parameter for size.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status position(FwSizeType& position_result) override;
 
-    //! rief pre-allocate file storage
+    //! \brief pre-allocate file storage
     //!
     //! Pre-allocates file storage with at least `length` storage starting at `offset`. No-op on implementations
     //! that cannot pre-allocate.
@@ -426,22 +426,22 @@ class File final : public FileInterface {
     //!
     //! \param offset: offset into file
     //! \param length: length after offset to preallocate
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status preallocate(FwSizeType offset, FwSizeType length) override;
 
-    //! rief seek the file pointer to the given offset
+    //! \brief seek the file pointer to the given offset
     //!
     //! Seek the file pointer to the given `offset`. If `seekType` is set to `ABSOLUTE` then the offset is calculated
     //! from the start of the file, and if it is set to `RELATIVE` it is calculated from the current position.
     //!
     //! \param offset: offset to seek to
     //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
 
-    //! rief seek the file pointer to the given offset absolutely with the full range
+    //! \brief seek the file pointer to the given offset absolutely with the full range
     //!
     //! Seek the file pointer to the given `offset` absolutely from the beginning of the file. This function is
     //! equivalent to calling `seek` with `ABSOLUTE` as the `seekType` with the exception that it can handle the
@@ -451,19 +451,19 @@ class File final : public FileInterface {
     //! limit of the basic `seek` function.
     //!
     //! \param offset_unsigned: offset to absolutely seek to
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     Status seek_absolute(FwSizeType offset_unsigned);
 
-    //! rief flush file contents to storage
+    //! \brief flush file contents to storage
     //!
     //! Flushes the file contents to storage (i.e. out of the OS cache to disk). Does nothing in implementations
     //! that do not support flushing.
     //!
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status flush() override;
 
-    //! rief read data from this file into supplied buffer bounded by size
+    //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Read data from this file up to the `size` and store it in `buffer`.  When `wait` is set to `WAIT`, this
     //! will block until the requested size has been read successfully read or the end of the file has been
@@ -483,7 +483,7 @@ class File final : public FileInterface {
     //!
     Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
-    //! rief read a line from the file using `
+    //! \brief read a line from the file using `
 ` as the delimiter
     //!
     //! Reads a single line from the file including the terminating '
@@ -503,10 +503,10 @@ class File final : public FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: maximum size of buffer to store the new line
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     Status readline(U8* buffer, FwSizeType& size, WaitType wait);
 
-    //! rief read data from this file into supplied buffer bounded by size
+    //! \brief read data from this file into supplied buffer bounded by size
     //!
     //! Write data to this file up to the `size` from the `buffer`.  When `wait` is set to `WAIT`, this
     //! will block until the requested size has been written successfully to disk. When `wait` is set to
@@ -522,20 +522,20 @@ class File final : public FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
 
-    //! rief returns the raw file handle
+    //! \brief returns the raw file handle
     //!
     //! Gets the raw file handle from the implementation. Note: users must include the implementation specific
     //! header to make any real use of this handle. Otherwise it//!must* be passed as an opaque type.
     //!
-    //! eturn raw file handle
+    //! \return raw file handle
     //!
     FileHandle* getHandle() override;
 
-    //! rief calculate the CRC32 of the entire file
+    //! \brief calculate the CRC32 of the entire file
     //!
     //! Calculates the CRC32 of the file's contents. The `crc` parameter will be updated to contain the CRC or 0 on
     //! failure. Status will represent failure conditions. This call will be decomposed into calculations on
@@ -545,8 +545,7 @@ class File final : public FileInterface {
     //!
     //! On error crc will be set to 0.
     //!
-    //! 
-ote: the file pointer will be positioned at the end of the file after this call.
+    //! \note: the file pointer will be positioned at the end of the file after this call.
     //!
     //! This function is equivalent to the following pseudo-code:
     //!
@@ -559,11 +558,11 @@ ote: the file pointer will be positioned at the end of the file after this call.
     //! m_file.finalize(crc);
     //! ```
     //! \param crc: U32 bit value to fill with CRC
-    //! eturn OP_OK on success otherwise error status
+    //! \return OP_OK on success otherwise error status
     //!
     Status calculateCrc(U32& crc);
 
-    //! rief calculate the CRC32 of the next section of data
+    //! \brief calculate the CRC32 of the next section of data
     //!
     //! Starting at the current file pointer, this will add `size` bytes of data to the currently calculated CRC.
     //! Call `finalizeCrc` to retrieve the CRC or `calculateCrc` to perform a CRC on the entire file. This call will
@@ -576,11 +575,11 @@ ote: the file pointer will be positioned at the end of the file after this call.
     //! It is illegal for size to be less than or equal to 0 or greater than FW_FILE_CHUNK_SIZE.
     //!
     //! \param size: size of data to read for CRC
-    //! eturn: status of the CRC calculation
+    //! \return: status of the CRC calculation
     //!
     Status incrementalCrc(FwSizeType& size);
 
-    //! rief finalize and retrieve the CRC value
+    //! \brief finalize and retrieve the CRC value
     //!
     //! Finalizes the CRC computation and returns the CRC value. The `crc` value will be modified to contain the
     //! crc or 0 on error. Note: this will reset any active CRC calculation and effectively re-initializes any
@@ -589,7 +588,7 @@ ote: the file pointer will be positioned at the end of the file after this call.
     //! On error crc will be set to 0.
     //!
     //! \param crc: value to fill
-    //! eturn status of the CRC calculation
+    //! \return status of the CRC calculation
     //!
     Status finalizeCrc(U32& crc);
 

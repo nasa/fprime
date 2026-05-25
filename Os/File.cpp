@@ -1,6 +1,6 @@
 // ======================================================================
-// 	itle Os/File.cpp
-// rief common function implementation for Os::File
+// \title Os/File.cpp
+// \brief common function implementation for Os::File
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
