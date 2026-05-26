@@ -4,7 +4,7 @@ register_fprime_module(
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/MaxHeap.hpp"
   DEPENDS
-    "Fw_Types"
+    Fw_Types
 )
 
 # Rules based unit testing

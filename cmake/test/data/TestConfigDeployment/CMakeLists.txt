@@ -9,9 +9,9 @@ cmake_minimum_required(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 project(TestConfigDeployment VERSION 1.0.0 LANGUAGES C CXX)
 
-include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")  #TODO:mstarch:TODO
+include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
-include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")  #TODO:mstarch:TODO
+include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/override/project")
 
 register_fprime_library(

@@ -1,21 +1,11 @@
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/Harness.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/TestAbsType.cpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/Guard.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Harness.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/History.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/NoArgGuard.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Pick.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SignalValueHistory.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/TestAbsType.hpp"
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Harness.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/TestAbsType.cpp"
 )
+register_fprime_module()
 
-register_fprime_ut(
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  DEPENDS
-    STest
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
+set(UT_MOD_DEPS STest)
+register_fprime_ut()

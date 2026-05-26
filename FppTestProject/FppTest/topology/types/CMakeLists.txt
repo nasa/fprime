@@ -1,9 +1,6 @@
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.hpp"
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
 )
+
+register_fprime_module()

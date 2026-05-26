@@ -1,7 +1,5 @@
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/sync.fpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/SyncTopologyDefs.hpp"
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/sync.fpp"
 )
+
+register_fprime_module()

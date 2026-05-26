@@ -1,29 +1,20 @@
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/SmTest.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/SmTest.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/HackSm.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SMEvents.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SmTest.hpp"
-  DEPENDS
-    Fw_Sm
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SmTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SmTest.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
 )
+set(MOD_DEPS Fw/Sm)
 
-register_fprime_ut(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/SmTest.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SmTestTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SmTestTester.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
-  DEPENDS
-    STest
-  UT_AUTO_HELPERS
+register_fprime_module()
+
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SmTest.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SmTestTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SmTestTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/DeviceSm.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/HackSm.cpp"
 )
+set(UT_MOD_DEPS STest)
+set(UT_AUTO_HELPERS ON)
+register_fprime_ut()

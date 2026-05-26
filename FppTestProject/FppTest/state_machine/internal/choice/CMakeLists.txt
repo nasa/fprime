@@ -1,34 +1,24 @@
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/Basic.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/BasicU32.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToChoice.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToState.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/InputPairU16U32.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Sequence.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.fpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/Basic.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/BasicU32.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToChoice.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToState.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/InputPairU16U32.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Sequence.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.hpp"
-  DEPENDS
-    FppTest_state_machine_internal_harness
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Basic.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BasicU32.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ChoiceToChoice.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ChoiceToState.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/InputPairU16U32.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sequence.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.fpp"
 )
+set(MOD_DEPS FppTest/state_machine/internal/harness)
+register_fprime_module()
 
-register_fprime_ut(
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/Basic.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/BasicU32.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToChoice.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ChoiceToState.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/InputPairU16U32.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Sequence.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  DEPENDS
-    STest
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Basic.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BasicU32.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ChoiceToChoice.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ChoiceToState.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/InputPairU16U32.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Sequence.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SequenceU32.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )
+set(UT_MOD_DEPS STest)
+register_fprime_ut()

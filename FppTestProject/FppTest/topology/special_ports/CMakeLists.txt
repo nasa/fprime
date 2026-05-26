@@ -1,21 +1,21 @@
-
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/SpecialPortsTopologyDefs.hpp"
-  DEPENDS
-    ${PROJECT_NAME}_topology_ports
-    ${PROJECT_NAME}_topology_components_Comp
-    ${PROJECT_NAME}_topology_components_Framework
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
 )
+
+set(MOD_DEPS
+        ${PROJECT_NAME}/topology/ports
+        ${PROJECT_NAME}/topology/components/Comp
+        ${PROJECT_NAME}/topology/components/Framework
+)
+
+register_fprime_module()
 
 # Declare dependencies on test modules
-
-register_fprime_ut(
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-  DEPENDS
-    STest
+set(UT_MOD_DEPS
+        STest
 )
+
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+)
+register_fprime_ut()

@@ -19,9 +19,9 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TcpClient.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpClientComponentImpl.hpp"
   DEPENDS
-    "Fw_Logger"
-    "Drv_ByteStreamDriverModel"
-    "Drv_Ip"
+    Fw_Logger
+    Drv_ByteStreamDriverModel
+    Drv_Ip
 )
 
 ### UTs ###

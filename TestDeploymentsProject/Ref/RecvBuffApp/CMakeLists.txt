@@ -18,6 +18,6 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/RecvBuff.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.hpp"
   DEPENDS
-    "Os"
-    "Fw_Cmd"
+    Os
+    Fw_Cmd
 )

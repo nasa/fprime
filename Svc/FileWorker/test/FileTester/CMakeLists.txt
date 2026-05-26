@@ -6,8 +6,8 @@ register_fprime_implementation(
         Os_File
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/FileTester.cpp"
-        "${FPRIME_FRAMEWORK_PATH}/Os/Posix/FileSystem.cpp"  #TODO:mstarch:TODO
-        "${FPRIME_FRAMEWORK_PATH}/Os/Posix/Directory.cpp"  #TODO:mstarch:TODO
+        "${FPRIME_FRAMEWORK_PATH}/Os/Posix/FileSystem.cpp"
+        "${FPRIME_FRAMEWORK_PATH}/Os/Posix/Directory.cpp"
     DEPENDS
         Fw_Types
         Fw_Time

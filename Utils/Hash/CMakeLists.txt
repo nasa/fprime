@@ -18,5 +18,5 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/libcrc/CRC32.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/libcrc/lib_crc.h"
   DEPENDS
-    "Fw_Types"
+    Fw_Types
 )

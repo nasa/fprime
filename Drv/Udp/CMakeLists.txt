@@ -19,9 +19,9 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Udp.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/UdpComponentImpl.hpp"
   DEPENDS
-    "Fw_Logger"
-    "Drv_ByteStreamDriverModel"
-    "Drv_Ip"
+    Fw_Logger
+    Drv_ByteStreamDriverModel
+    Drv_Ip
 )
 
 ### UTs ###

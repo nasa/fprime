@@ -11,7 +11,7 @@ project(TestImplementation VERSION 1.0.0 LANGUAGES C CXX)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../../../../../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
-include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")  #TODO:mstarch:TODO
+include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TestModule")
 set(FPRIME_CURRENT_MODULE Deployment)

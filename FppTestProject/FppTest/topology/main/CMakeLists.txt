@@ -1,25 +1,22 @@
-
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/FppTestTopologyDefs.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ReceiverTopologyDefs.hpp"
-  DEPENDS
-    ${PROJECT_NAME}_topology_ports
-    ${PROJECT_NAME}_topology_components_Sender
-    ${PROJECT_NAME}_topology_components_Receiver
+set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
 )
+
+set(MOD_DEPS
+        ${PROJECT_NAME}/topology/ports
+        ${PROJECT_NAME}/topology/components/Sender
+        ${PROJECT_NAME}/topology/components/Receiver
+)
+
+register_fprime_module()
 
 # Declare dependencies on test modules
+set(UT_MOD_DEPS STest)
 
-register_fprime_ut(
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../../component/types/FormalParamTypes.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
-  DEPENDS
-    STest
+set(UT_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../../component/types/FormalParamTypes.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
 )
+register_fprime_ut()

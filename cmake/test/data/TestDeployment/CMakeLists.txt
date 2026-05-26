@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 project(TestDeployment VERSION 1.0.0 LANGUAGES C CXX)
 
-include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")  #TODO:mstarch:TODO
+include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 
 register_fprime_build_autocoder("autocoder/test_build_autocoder" FALSE)
 register_fprime_build_autocoder("autocoder/test_header_autocoder" FALSE)
@@ -20,7 +20,7 @@ register_fprime_target("target/test_chained_autocoder") # Test chained autocoder
 register_fprime_target("target/test_rerun_autocoder") # Test rerun autocoder
 
 # NOTE: register custom targets between these two lines
-include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")  #TODO:mstarch:TODO
+include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 run_sub_build(test-sub-build target/sub)
 
 add_fprime_subdirectory(./TestBuildAutocoder)

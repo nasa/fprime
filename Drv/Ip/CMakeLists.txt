@@ -31,8 +31,8 @@ if (BUILD_TESTING)
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PortSelector.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/SocketTestHelper.cpp")
     target_include_directories(SocketTestHelper PUBLIC
-            "${FPRIME_FRAMEWORK_PATH}/STest"  #TODO:mstarch:TODO
-            "${FPRIME_FRAMEWORK_PATH}/googletest/googletest/include"  #TODO:mstarch:TODO
+            "${FPRIME_FRAMEWORK_PATH}/STest"
+            "${FPRIME_FRAMEWORK_PATH}/googletest/googletest/include"
     )
     add_dependencies(SocketTestHelper STest Fw_Buffer)
     target_link_libraries(SocketTestHelper STest Fw_Buffer)
@@ -40,14 +40,14 @@ endif()
 
 
 ### UTs ###
-register_fprime_ut("Drv_Ip_Tcp_test"
+register_fprime_ut(Drv_Ip_Tcp_test
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestTcp.cpp"
   DEPENDS
     SocketTestHelper
 )
 
-register_fprime_ut("Drv_Ip_Udp_test"
+register_fprime_ut(Drv_Ip_Udp_test
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestUdp.cpp"
   DEPENDS

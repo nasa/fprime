@@ -8,7 +8,7 @@ register_fprime_module(
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamBufferAdapter.hpp"
   DEPENDS
-    "Fw_Logger"
+    Fw_Logger
 )
 
 register_fprime_ut(
