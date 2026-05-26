@@ -1,13 +1,15 @@
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Sender.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Sender.fpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Sender.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Sender.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/Sender.hpp"
+  DEPENDS
+    Fw_Comp
+    Fw_Types
+    Os
+    ${PROJECT_NAME}_topology_ports
 )
-set(MOD_DEPS
-  Fw/Comp
-  Fw/Types
-  Os
-  ${PROJECT_NAME}/topology/ports
-)
-register_fprime_module()
 
 target_link_libraries(FppTest_topology_components_Sender PRIVATE gtest)

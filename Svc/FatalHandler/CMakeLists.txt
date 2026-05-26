@@ -7,21 +7,25 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
-)
-
+set(PLATFORM_SOURCES)
 if(FPRIME_USE_BAREMETAL_SCHEDULER)
-  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentBaremetalImpl.cpp")
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks") 
-  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentVxWorksImpl.cpp")
+  list(APPEND PLATFORM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentBaremetalImpl.cpp")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks")
+  list(APPEND PLATFORM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentVxWorksImpl.cpp")
 else()
-  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp")
+  list(APPEND PLATFORM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp")
 endif()
 
-set(MOD_DEPS
-  Os
-  Fw/Logger
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
+    ${PLATFORM_SOURCES}
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentImpl.hpp"
+  DEPENDS
+    Os
+    Fw_Logger
 )
-register_fprime_module()

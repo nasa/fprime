@@ -1,16 +1,22 @@
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Basic.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Choice.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Nested.fpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Basic.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Choice.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Nested.fpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/BasicTester.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ChoiceTester.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/NestedTester.hpp"
+  DEPENDS
+    FppTest_state_machine_internal_harness
 )
-set(MOD_DEPS FppTest/state_machine/internal/harness)
-register_fprime_module()
 
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/BasicTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ChoiceTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/NestedTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/BasicTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ChoiceTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/NestedTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  DEPENDS
+    STest
 )
-set(UT_MOD_DEPS STest)
-register_fprime_ut()

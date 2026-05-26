@@ -27,32 +27,33 @@ endif ()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/topology/")
 
-set(SOURCE_FILES "source.cpp")
-set(MOD_DEPS
-    ${PROJECT_NAME}/array
-    ${PROJECT_NAME}/component/active
-    ${PROJECT_NAME}/component/empty
-    ${PROJECT_NAME}/component/passive
-    ${PROJECT_NAME}/component/queued
-    ${PROJECT_NAME}/dp
-    ${PROJECT_NAME}/enum
-    ${PROJECT_NAME}/interfaces
-    ${PROJECT_NAME}/state_machine/external_instance
-    ${PROJECT_NAME}/state_machine/internal/initial
-    ${PROJECT_NAME}/state_machine/internal/state
-    ${PROJECT_NAME}/state_machine/internal_instance/choice
-    ${PROJECT_NAME}/state_machine/internal_instance/initial
-    ${PROJECT_NAME}/state_machine/internal_instance/state
-    ${PROJECT_NAME}/sizeof
-    ${PROJECT_NAME}/struct
-    ${PROJECT_NAME}/topology/ports
-    ${PROJECT_NAME}/topology/components/Comp
-    ${PROJECT_NAME}/topology/components/Sender
-    ${PROJECT_NAME}/topology/components/Receiver
-    ${PROJECT_NAME}/topology/main
-    ${PROJECT_NAME}/topology/special_ports
-    ${PROJECT_NAME}/topology/top_ports
-)
 
-register_fprime_deployment()
+register_fprime_deployment(
+  SOURCES
+    "source.cpp"
+  DEPENDS
+    ${PROJECT_NAME}_array
+    ${PROJECT_NAME}_component_active
+    ${PROJECT_NAME}_component_empty
+    ${PROJECT_NAME}_component_passive
+    ${PROJECT_NAME}_component_queued
+    ${PROJECT_NAME}_dp
+    ${PROJECT_NAME}_enum
+    ${PROJECT_NAME}_interfaces
+    ${PROJECT_NAME}_state_machine_external_instance
+    ${PROJECT_NAME}_state_machine_internal_initial
+    ${PROJECT_NAME}_state_machine_internal_state
+    ${PROJECT_NAME}_state_machine_internal_instance_choice
+    ${PROJECT_NAME}_state_machine_internal_instance_initial
+    ${PROJECT_NAME}_state_machine_internal_instance_state
+    ${PROJECT_NAME}_sizeof
+    ${PROJECT_NAME}_struct
+    ${PROJECT_NAME}_topology_ports
+    ${PROJECT_NAME}_topology_components_Comp
+    ${PROJECT_NAME}_topology_components_Sender
+    ${PROJECT_NAME}_topology_components_Receiver
+    ${PROJECT_NAME}_topology_main
+    ${PROJECT_NAME}_topology_special_ports
+    ${PROJECT_NAME}_topology_top_ports
+)
 

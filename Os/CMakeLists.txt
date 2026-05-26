@@ -141,18 +141,21 @@ add_named_os_module(Memory)
 add_named_os_module(RawTime Fw_Buffer)
 
 ### UTS ### Note: 3 separate UTs registered here.
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
-register_fprime_ut()
 
 if (BUILD_TESTING)
-    set(SOURCE_FILES
+    register_fprime_module(Os_Test_File_SyntheticFileSystem
+      SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.hpp"
+      DEPENDS
+        Fw_Types
     )
-    set(MOD_DEPS Fw_Types)
-    register_fprime_module(Os_Test_File_SyntheticFileSystem)
 endif()
