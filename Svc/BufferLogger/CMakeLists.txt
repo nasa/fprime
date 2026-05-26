@@ -27,7 +27,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Logging.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Errors.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferLoggerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferLoggerMain.cpp"
 )
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
