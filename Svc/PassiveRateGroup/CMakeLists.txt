@@ -13,14 +13,9 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.hpp"
-  DEPENDS
-    ...
 )
 
 # Specifies the sources specifically associated with unit tests in this module
-
-
-# Specifies any unit test modules
 
 # Registers this module with the fprime build system
 register_fprime_ut(
@@ -29,6 +24,4 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveRateGroupTester.cpp"
-  DEPENDS
-    ...
 )

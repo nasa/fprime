@@ -7,22 +7,27 @@
 ####
 restrict_platforms(Linux Darwin)
 
-set(PLATFORM_SOURCES)
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  list(APPEND PLATFORM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerTaskDelay.cpp")
+  register_fprime_module(
+    AUTOCODER_INPUTS
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerCommon.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerTaskDelay.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.hpp"
+  )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  list(APPEND PLATFORM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerFd.cpp")
+  register_fprime_module(
+    AUTOCODER_INPUTS
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerCommon.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerFd.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.hpp"
+  )
 endif()
-
-register_fprime_module(
-  AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimerCommon.cpp"
-    ${PLATFORM_SOURCES}
-  HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.hpp"
-)
 
 register_fprime_ut(
   AUTOCODER_INPUTS

@@ -12,11 +12,11 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/HashBufferCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/HashCommon.cpp"
   HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/CRC32.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/Hash.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/HashBuffer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/HashConfig.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/lib_crc.h"
+    "${CMAKE_CURRENT_LIST_DIR}/libcrc/CRC32.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/libcrc/lib_crc.h"
   DEPENDS
     "Fw_Types"
 )

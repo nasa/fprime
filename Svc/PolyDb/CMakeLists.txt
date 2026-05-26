@@ -27,5 +27,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTester.cpp"
   UT_AUTO_HELPERS
 )
