@@ -10,10 +10,6 @@ add_compile_options(
     -Wno-double-promotion
     -Wno-shadow
 )
-set(HEADER_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SignalGen.hpp"
-)
-
 register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
@@ -24,9 +20,6 @@ register_fprime_module(
 )
 
 ### UTs ###
-set(UT_HEADER_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SignalGenTester.hpp"
-)
 register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/SignalGen.fpp"
