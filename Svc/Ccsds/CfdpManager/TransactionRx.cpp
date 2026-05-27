@@ -229,7 +229,7 @@ void Transaction::rAckTimerTick() {
             ack_limit = this->m_cfdpManager->getAckLimitParam(this->m_chan_num);
             if (this->m_state_data.receive.r2.acknak_count >= ack_limit)
             {
-                this->m_cfdpManager->log_WARNING_HI_RxAckLimitReached(
+                this->m_cfdpManager->log_WARNING_LO_RxAckLimitReached(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
@@ -394,7 +394,7 @@ void Transaction::rInit() {
     status = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
     if (status != Os::File::OP_OK)
     {
-        this->m_cfdpManager->log_WARNING_HI_RxFileCreateFailed(
+        this->m_cfdpManager->log_WARNING_LO_RxFileCreateFailed(
             this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num,
@@ -450,7 +450,7 @@ Status::T Transaction::rCheckCrc(U32 expected_crc) {
     crc_result = this->m_crc.getValue();
     if (crc_result != expected_crc)
     {
-        this->m_cfdpManager->log_WARNING_HI_RxCrcMismatch(
+        this->m_cfdpManager->log_WARNING_LO_RxCrcMismatch(
             this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num,
@@ -504,7 +504,7 @@ void Transaction::r2Complete(I32 ok_to_send_nak) {
             nack_limit = this->m_cfdpManager->getNackLimitParam(this->m_chan_num);
             if (this->m_state_data.receive.r2.acknak_count >= nack_limit)
             {
-                this->m_cfdpManager->log_WARNING_HI_RxNakLimitReached(
+                this->m_cfdpManager->log_WARNING_LO_RxNakLimitReached(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
@@ -570,7 +570,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
             Os::File::Status status = this->m_fd.seek(offset, Os::File::SeekType::ABSOLUTE);
             if (status != Os::File::OP_OK)
             {
-                this->m_cfdpManager->log_WARNING_HI_RxSeekFailed(
+                this->m_cfdpManager->log_WARNING_LO_RxSeekFailed(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
@@ -590,7 +590,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
         Os::File::Status status = this->m_fd.write(dataPtr, write_size, Os::File::WaitType::WAIT);
         if (status != Os::File::OP_OK)
         {
-            this->m_cfdpManager->log_WARNING_HI_RxWriteFailed(
+            this->m_cfdpManager->log_WARNING_LO_RxWriteFailed(
                 this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
@@ -633,7 +633,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
             /* only check size if MD received, otherwise it's still OK */
             if (this->m_flags.rx.md_recv && (eof.getFileSize() != this->m_fsize))
             {
-                this->m_cfdpManager->log_WARNING_HI_RxFileSizeMismatch(
+                this->m_cfdpManager->log_WARNING_LO_RxFileSizeMismatch(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
@@ -799,7 +799,7 @@ void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
     if (this->m_state_data.receive.r2.rx_crc_calc_bytes > 0)
     {
         // Silently ignore - file is complete and we're calculating CRC
-        // TODO BPC: do we want a throttled EVR here?
+        // No EVR needed - late retransmissions are expected in CFDP Class 2
         return;
     }
 
@@ -988,7 +988,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                 fileStatus = this->m_fd.seek(this->m_state_data.receive.r2.rx_crc_calc_bytes, Os::File::SeekType::ABSOLUTE);
                 if (fileStatus != Os::File::OP_OK)
                 {
-                    this->m_cfdpManager->log_WARNING_HI_RxSeekCrcFailed(
+                    this->m_cfdpManager->log_WARNING_LO_RxSeekCrcFailed(
                         this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
@@ -1005,7 +1005,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                 fileStatus = this->m_fd.read(buf, read_size, Os::File::WaitType::WAIT);
                 if (fileStatus != Os::File::OP_OK)
                 {
-                    this->m_cfdpManager->log_WARNING_HI_RxReadCrcFailed(
+                    this->m_cfdpManager->log_WARNING_LO_RxReadCrcFailed(
                         this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
@@ -1142,7 +1142,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             /* EOF was received, so check that md and EOF sizes match */
             if (this->m_state_data.receive.r2.eof_size != this->m_fsize)
             {
-                this->m_cfdpManager->log_WARNING_HI_RxEofMdSizeMismatch(
+                this->m_cfdpManager->log_WARNING_LO_RxEofMdSizeMismatch(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
@@ -1163,7 +1163,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                                                      this->m_history->fnames.dst_filename.toChar());
             if (fileSysStatus != Os::FileSystem::OP_OK)
             {
-                this->m_cfdpManager->log_WARNING_HI_RxFileRenameFailed(
+                this->m_cfdpManager->log_WARNING_LO_RxFileRenameFailed(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
@@ -1180,7 +1180,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                 fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
                 if (fileStatus != Os::File::OP_OK)
                 {
-                    this->m_cfdpManager->log_WARNING_HI_RxFileReopenFailed(
+                    this->m_cfdpManager->log_WARNING_LO_RxFileReopenFailed(
                         this->getClass(),
                         this->m_history->src_eid,
                         this->m_history->seq_num,
@@ -1204,7 +1204,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
 }
 
 void Transaction::rSendInactivityEvent() {
-    this->m_cfdpManager->log_WARNING_HI_RxInactivityTimeout(
+    this->m_cfdpManager->log_WARNING_LO_RxInactivityTimeout(
         this->getClass(),
         this->m_history->src_eid,
         this->m_history->seq_num);

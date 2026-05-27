@@ -543,13 +543,6 @@ class Engine {
     // Transaction Management
 
     /**
-     * @brief Send an end of transaction packet
-     *
-     * @param txn  Pointer to the transaction object
-     */
-    void sendEotPkt(Transaction *txn);
-
-    /**
      * @brief Cancels a transaction
      *
      * @param txn  Pointer to the transaction state

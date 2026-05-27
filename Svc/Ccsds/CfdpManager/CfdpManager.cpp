@@ -28,8 +28,10 @@ CfdpManager ::~CfdpManager() {
     // Clean up the queue resources allocated during initialization
     this->deinit();
 
-    delete this->m_engine;
-    this->m_engine = nullptr;
+    // If cleanup() was not called, clean up manually
+    if (this->m_engine != nullptr) {
+        this->cleanup();
+    }
 }
 
 void CfdpManager ::configure(Fw::MemAllocator& allocator, FwEnumStoreType memId)
@@ -55,7 +57,11 @@ void CfdpManager ::cleanup()
 {
     // Only try to deallocate if both pointers are non-null
     if ((this->m_allocator != nullptr) && (this->m_engine != nullptr)) {
+        // Manually call destructor since we used placement new
+        this->m_engine->~Engine();
+        // Deallocate the memory
         this->m_allocator->deallocate(this->m_allocatorId, this->m_engine);
+        this->m_engine = nullptr;
     }
 }
 
@@ -134,7 +140,8 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(
     Svc::SendFileResponse response;
     FW_ASSERT(this->m_engine != nullptr);
 
-    // TODO BPC: CFDP engine does not support partial file retransmit at this time
+    // CFDP engine does not support partial file retransmit at this time
+    // Offset and length must be 0 to send the entire file
     if(offset > 0 || length > 0)
     {
         response.set_status(Svc::SendFileStatus::STATUS_INVALID);
@@ -298,9 +305,7 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 chann
     }
     else
     {
-        // TODO BPC: Was failure reason already emitted?
-        // Do we need this EVR?
-        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+        // Engine emits specific failure reason EVR (e.g., MaxTxTransactionsReached)
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 
@@ -325,9 +330,7 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
     }
     else
     {
-        // TODO BPC: Was failure reason already emitted?
-        // Do we need this EVR?
-        this->log_WARNING_LO_PlaybackInitiateFail(sourceDirectory);
+        // Engine emits specific failure reason EVR (e.g., PlaybackDirOpenFailed, PlaybackDirSlotUnavailable)
         rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
     }
 

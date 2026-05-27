@@ -24,6 +24,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
   friend class CfdpManagerTester;
   // Give access to protected functions for EVRs and Telemetry
   friend class Engine;
+  friend class Channel;
   friend class Transaction;
 
   public:

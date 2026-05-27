@@ -389,7 +389,7 @@ Status::T Engine::recvFd(Transaction *txn, const FileDataPdu& fd)
     if (header.hasSegmentMetadata())
     {
         /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
-        this->m_manager->log_WARNING_HI_FileDataSegmentMetadata();
+        this->m_manager->log_WARNING_LO_FileDataSegmentMetadata();
         this->setTxnStatus(txn, TXN_STATUS_PROTOCOL_ERROR);
         this->m_manager->incrementRecvErrors(txn->getChannelId());
         ret = Cfdp::Status::ERROR;
@@ -407,9 +407,8 @@ Status::T Engine::recvEof(Transaction *txn, const EofPdu& eofPdu)
     for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
         const Cfdp::Tlv& tlv = tlvList.getTlv(i);
         if (tlv.getType() == Cfdp::TLV_TYPE_ENTITY_ID) {
-            // Entity ID TLV present - could validate entity ID matches expected
-            // Future enhancement: Add validation or logging
-            // TODO BPC: What does GSW what to do with these if anything
+            // Entity ID TLV present - validation not currently performed
+            // Future enhancement: Add validation or logging if required
         }
         // Other TLV types can be processed here in the future
     }
@@ -426,9 +425,8 @@ Status::T Engine::recvFin(Transaction *txn, const FinPdu& finPdu)
     for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
         const Cfdp::Tlv& tlv = tlvList.getTlv(i);
         if (tlv.getType() == Cfdp::TLV_TYPE_ENTITY_ID) {
-            // Entity ID TLV present - could validate entity ID matches expected
-            // Future enhancement: Add validation or logging
-            // TODO BPC: What does GSW what to do with these if anything
+            // Entity ID TLV present - validation not currently performed
+            // Future enhancement: Add validation or logging if required
         }
         // Other TLV types can be processed here in the future
     }
@@ -525,7 +523,7 @@ void Engine::recvInit(Transaction *txn, const Fw::Buffer& buffer)
         }
         if (txn->m_chunks == NULL)
         {
-            this->m_manager->log_WARNING_HI_ChunklistUnavailable(transactionSeq);
+            this->m_manager->log_WARNING_LO_ChunklistUnavailable(transactionSeq);
         }
         else
         {
@@ -630,7 +628,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
                 txn = this->startRxTransaction(chan->getChannelId());
                 if (txn == NULL)
                 {
-                    this->m_manager->log_WARNING_HI_RxTransactionLimitReached(
+                    this->m_manager->log_WARNING_LO_RxTransactionLimitReached(
                         sourceEid,
                         transactionSeq);
                 }
@@ -648,8 +646,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer)
         }
         else
         {
-            // TODO BPC: Add throttled EVR
-            // TODO JMP: One of the two EVRs above get sent right before an EVR here (throttle those too?)
+            // Transaction limit reached - EVR already emitted by findOrStartRxTransaction
         }
     } else {
         // Invalid PDU header, drop packet
@@ -754,7 +751,7 @@ Status::T Engine::txFile(const Fw::String& src_filename, const Fw::String& dst_f
 
     if (txn == NULL)
     {
-        this->m_manager->log_WARNING_HI_MaxTxTransactionsReached();
+        this->m_manager->log_WARNING_LO_MaxTxTransactionsReached();
         ret = Cfdp::Status::ERROR;
     }
     else
@@ -791,7 +788,7 @@ Transaction *Engine::startRxTransaction(U8 chan_num)
     // {
     //     txn = NULL;
     // }
-    // TODO BPC: Do I need to limit receive transactions?
+    // Receive transactions are limited by MaxRxTransactions parameter
     txn = chan->findUnusedTransaction(DIRECTION_RX);
 
     if (txn != NULL)
@@ -818,7 +815,7 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
     dirStatus = pb->dir.open(src_filename.toChar(), Os::Directory::READ);
     if (dirStatus != Os::Directory::OP_OK)
     {
-        this->m_manager->log_WARNING_HI_PlaybackDirOpenFailed(
+        this->m_manager->log_WARNING_LO_PlaybackDirOpenFailed(
             src_filename,
             dirStatus);
         this->m_manager->incrementFaultDirectoryRead(chan);
@@ -861,7 +858,7 @@ Status::T Engine::playbackDir(const Fw::String& src_filename, const Fw::String& 
 
     if (i == CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN)
     {
-        this->m_manager->log_WARNING_HI_PlaybackDirSlotUnavailable();
+        this->m_manager->log_WARNING_LO_PlaybackDirSlotUnavailable();
         status = Cfdp::Status::ERROR;
     }
     else
@@ -900,7 +897,8 @@ Status::T Engine::startPollDir(U8 chanId, U8 pollId, const Fw::String& srcDir, c
     }
     else
     {
-        // TODO BPC: emit EVR here
+        // Poll directory slot already in use
+        this->m_manager->log_WARNING_LO_PollDirBusy(chanId, pollId);
         status = Cfdp::Status::ERROR;
     }
 
@@ -933,7 +931,8 @@ Status::T Engine::stopPollDir(U8 chanId, U8 pollId)
     }
     else
     {
-        // TODO BPC: emit EVR here
+        // Poll directory not active - cannot stop
+        this->m_manager->log_WARNING_LO_PollDirNotActive(chanId, pollId);
         status = Cfdp::Status::ERROR;
     }
 
@@ -1032,8 +1031,6 @@ void Engine::finishTransaction(Transaction *txn, bool keep_history)
             }
         }
 
-        this->sendEotPkt(txn);
-
         // extra bookkeeping for tx direction only
         if (txn->m_history->dir == DIRECTION_TX && txn->m_flags.tx.cmd_tx)
         {
@@ -1081,44 +1078,6 @@ void Engine::setTxnStatus(Transaction *txn, TxnStatus txn_stat)
     {
         txn->m_history->txn_stat = txn_stat;
     }
-}
-
-void Engine::sendEotPkt(Transaction *txn)
-{
-    // TODO BPC: This is sending a telemetry packet at the end of a completed transaction
-    // How do we want to handle this in F' telemetry?
-
-    // CF_EotPacket_t * EotPktPtr;
-    // CFE_SB_Buffer_t *BufPtr;
-
-    // /*
-    // ** Get a Message block of memory and initialize it
-    // */
-    // BufPtr = CFE_SB_AllocateMessageBuffer(sizeof(*EotPktPtr));
-
-    // if (BufPtr != NULL)
-    // {
-    //     EotPktPtr = (void *)BufPtr;
-
-    //     CFE_MSG_Init(CFE_MSG_PTR(EotPktPtr->TelemetryHeader), CFE_SB_ValueToMsgId(CF_EOT_TLM_MID), sizeof(*EotPktPtr));
-
-    //     EotPktPtr->Payload.channel    = txn->getChannelId();
-    //     EotPktPtr->Payload.direction  = txn->m_history->dir;
-    //     EotPktPtr->Payload.fnames     = txn->m_history->fnames;
-    //     EotPktPtr->Payload.state      = txn->m_state;
-    //     EotPktPtr->Payload.txn_stat   = txn->m_history->txn_stat;
-    //     EotPktPtr->Payload.src_eid    = txn->m_history->src_eid;
-    //     EotPktPtr->Payload.peer_eid   = txn->m_history->peer_eid;
-    //     EotPktPtr->Payload.seq_num    = txn->m_history->seq_num;
-    //     EotPktPtr->Payload.fsize      = txn->m_fsize;
-    //     EotPktPtr->Payload.crc_result = txn->m_crc.getValue();
-
-    //     /*
-    //     ** Timestamp and send eod of transaction telemetry
-    //     */
-    //     CFE_SB_TimeStampMsg(CFE_MSG_PTR(EotPktPtr->TelemetryHeader));
-    //     CFE_SB_TransmitBuffer(BufPtr, true);
-    // }
 }
 
 void Engine::cancelTransaction(Transaction *txn)

@@ -170,7 +170,7 @@ void Transaction::sAckTimerTick() {
         ack_limit = this->m_cfdpManager->getAckLimitParam(this->m_chan_num);
         if (this->m_state_data.send.s2.acknak_count >= ack_limit)
         {
-            this->m_cfdpManager->log_WARNING_HI_TxAckLimitReached(
+            this->m_cfdpManager->log_WARNING_LO_TxAckLimitReached(
                 this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
@@ -234,7 +234,7 @@ void Transaction::sTick(I32 *cont /* unused */) {
             // inactivity is abnormal in any other state
             if (this->m_state != TXN_STATE_HOLD && this->m_state == TXN_STATE_S2)
             {
-                this->m_cfdpManager->log_WARNING_HI_TxInactivityTimeout(
+                this->m_cfdpManager->log_WARNING_LO_TxInactivityTimeout(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num);
@@ -558,7 +558,7 @@ void Transaction::sSubstateSendMetadata() {
         fileStatus = this->m_fd.open(this->m_history->fnames.src_filename.toChar(), Os::File::OPEN_READ);
         if (fileStatus != Os::File::OP_OK)
         {
-            this->m_cfdpManager->log_WARNING_HI_TxFileOpenFailed(
+            this->m_cfdpManager->log_WARNING_LO_TxFileOpenFailed(
                 this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num,
@@ -575,7 +575,7 @@ void Transaction::sSubstateSendMetadata() {
             this->m_fsize = static_cast<FileSize>(file_size);
             if (fileStatus != Os::File::Status::OP_OK)
             {
-                this->m_cfdpManager->log_WARNING_HI_TxFileSeekFailed(
+                this->m_cfdpManager->log_WARNING_LO_TxFileSeekFailed(
                     this->getClass(),
                     this->m_history->src_eid,
                     this->m_history->seq_num,
@@ -597,7 +597,7 @@ void Transaction::sSubstateSendMetadata() {
         if (status == Cfdp::Status::SEND_PDU_ERROR)
         {
             /* failed to send md */
-            this->m_cfdpManager->log_WARNING_HI_TxSendMetadataFailed(
+            this->m_cfdpManager->log_WARNING_LO_TxSendMetadataFailed(
                 this->getClass(),
                 this->m_history->src_eid,
                 this->m_history->seq_num);
@@ -640,7 +640,7 @@ Status::T Transaction::sSendFinAck() {
 
 void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     // received early fin, so just cancel
-    this->m_cfdpManager->log_WARNING_HI_TxEarlyFinReceived(
+    this->m_cfdpManager->log_WARNING_LO_TxEarlyFinReceived(
         this->getClass(),
         this->m_history->src_eid,
         this->m_history->seq_num);
@@ -752,7 +752,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
     }
     else
     {
-        this->m_cfdpManager->log_WARNING_HI_TxInvalidNakPdu(
+        this->m_cfdpManager->log_WARNING_LO_TxInvalidNakPdu(
             this->getClass(),
             this->m_history->src_eid,
             this->m_history->seq_num);

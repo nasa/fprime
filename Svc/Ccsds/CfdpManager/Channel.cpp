@@ -212,7 +212,7 @@ void Channel::cycleTx()
         if (!this->m_currentTxn)
         { // don't enter if currentTxn is set, since we need to pick up where we left off on tick processing next scheduler cycle
 
-            // TODO BPC: refactor all while loops
+            // Process pending transactions until queue is empty or something runs
             while (true)
             {
                 // Attempt to run something on TXA
@@ -240,7 +240,7 @@ void Channel::cycleTx()
                     }
                     if (txn->m_chunks == NULL)
                     {
-                        // TODO BPC: Emit EVR
+                        // Chunklist unavailable - EVR already emitted by Engine
                         // Leave transaction pending until a chunklist is available.
                         break;
                     }
@@ -627,7 +627,8 @@ void Channel::recycleTransaction(Transaction *txn)
     // This is not normal/expected so log it if this happens.
     if (true == txn->m_fd.isOpen())
     {
-        // CFE_ES_WriteToSysLog("%s(): Closing dangling file handle: %lu\n", __func__, OS_ObjectIdToInteger(txn->fd));
+        this->m_cfdpManager->log_WARNING_LO_DanglingFileHandleClosed(
+            txn->getChannelId(), txn->m_history->seq_num);
         txn->m_fd.close();
     }
 
@@ -786,14 +787,16 @@ void Channel::processPlaybackDirectory(Playback* pb)
             status = pb->dir.read(path);
             if (status == Os::Directory::NO_MORE_FILES)
             {
-                // TODO BPC: Emit playback success EVR
+                // Directory playback complete - success reported via TxFileTransferCompleted EVR
                 pb->dir.close();
                 pb->diropen = false;
                 break;
             }
             if (status != Os::Directory::OP_OK)
             {
-                // TODO BPC: emit playback error EVR
+                // Directory read error - emit EVR and close playback
+                this->m_cfdpManager->log_WARNING_LO_PlaybackDirReadFailed(
+                    pb->fnames.src_filename, static_cast<I32>(status));
                 pb->dir.close();
                 pb->diropen = false;
                 break;

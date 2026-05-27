@@ -59,6 +59,20 @@ event PollDirStopped(
     severity activity low \
     format "Successfully stopped directory poll for channel {}, index {}"
 
+event PollDirBusy(
+    channelId: U8 @< Channel index
+    pollId: U8 @< Poll index that is busy
+) \
+    severity warning low \
+    format "Cannot start directory poll - channel {} poll {} already in use"
+
+event PollDirNotActive(
+    channelId: U8 @< Channel index
+    pollId: U8 @< Poll index requested
+) \
+    severity warning low \
+    format "Cannot stop directory poll - channel {} poll {} is not active"
+
 event SetFlowState(
     channelId: U8 @< Channel being set
     flowState: Cfdp.Flow @< Flow state set
@@ -151,7 +165,7 @@ event RxAckLimitReached(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} ACK limit reached for transaction {}:{}, no fin-ack sent"
 
 event RxTempFileCreated(
@@ -170,7 +184,7 @@ event RxFileCreateFailed(
     filename: string size MaxFilePathSize @< File that failed to create
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to create file {}, error={}"
 
 event RxCrcMismatch(
@@ -180,7 +194,7 @@ event RxCrcMismatch(
     expected: U32 @< Expected CRC value
     actual: U32 @< Actual CRC value
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} CRC mismatch: expected 0x{x} actual 0x{x}"
 
 event RxNakLimitReached(
@@ -188,7 +202,7 @@ event RxNakLimitReached(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} NAK limit reached"
 
 event RxSeekFailed(
@@ -198,7 +212,7 @@ event RxSeekFailed(
     offset: U32 @< Offset that failed to seek
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to seek to offset {}, error={}"
 
 event RxWriteFailed(
@@ -208,7 +222,7 @@ event RxWriteFailed(
     expected: U32 @< Expected bytes to write
     actual: I32 @< Actual bytes written
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} write failed: expected {} bytes, got {}"
 
 event RxFileSizeMismatch(
@@ -218,7 +232,7 @@ event RxFileSizeMismatch(
     expected: U32 @< Expected file size from metadata
     actual: U32 @< Actual file size from EOF
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} EOF file size mismatch: expected {} got {}"
 
 event RxInvalidEofPdu(
@@ -236,7 +250,7 @@ event RxSeekCrcFailed(
     offset: U32 @< Offset that failed during CRC calculation
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to seek offset {} during CRC calculation, error={}"
 
 event RxReadCrcFailed(
@@ -246,7 +260,7 @@ event RxReadCrcFailed(
     expected: U32 @< Expected bytes to read
     actual: I32 @< Actual bytes read
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to read during CRC calculation: expected {} bytes, got {}"
 
 event RxEofMdSizeMismatch(
@@ -256,7 +270,7 @@ event RxEofMdSizeMismatch(
     mdSize: U32 @< File size from metadata
     eofSize: U32 @< File size from EOF
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} EOF/metadata size mismatch: metadata={}, EOF={}"
 
 event RxFileRenameFailed(
@@ -267,7 +281,7 @@ event RxFileRenameFailed(
     finalFile: string size MaxFilePathSize @< Final file path
     status: I32 @< File system operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to rename {} to {}, error={}"
 
 event RxFileReopenFailed(
@@ -277,7 +291,7 @@ event RxFileReopenFailed(
     filename: string size MaxFilePathSize @< File that failed to reopen
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} failed to reopen file {} after rename, error={}"
 
 event RxInactivityTimeout(
@@ -285,7 +299,7 @@ event RxInactivityTimeout(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} inactivity timer expired"
 
 event RxInvalidDirectiveCode(
@@ -303,7 +317,7 @@ event TxAckLimitReached(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} ACK limit reached, no eof-ack received"
 
 event TxInactivityTimeout(
@@ -311,7 +325,7 @@ event TxInactivityTimeout(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} inactivity timer expired"
 
 event TxFileOpenFailed(
@@ -321,7 +335,7 @@ event TxFileOpenFailed(
     filename: string size MaxFilePathSize @< File that failed to open
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} failed to open file {}, error={}"
 
 event TxFileSeekFailed(
@@ -330,7 +344,7 @@ event TxFileSeekFailed(
     seqNum: U32 @< Transaction sequence number
     status: I32 @< File operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} failed to seek to beginning of file, error={}"
 
 event TxSendMetadataFailed(
@@ -338,7 +352,7 @@ event TxSendMetadataFailed(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} failed to send metadata PDU"
 
 event TxEarlyFinReceived(
@@ -346,7 +360,7 @@ event TxEarlyFinReceived(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} received early FIN, cancelling transfer"
 
 event TxInvalidNakPdu(
@@ -354,7 +368,7 @@ event TxInvalidNakPdu(
     srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "TX class {} transaction {}:{} received invalid NAK PDU"
 
 event TxInvalidSegmentRequests(
@@ -424,13 +438,13 @@ event MetadataReceived(
     severity activity low \
     format "Metadata received for source: {}, dest: {}"
 
-event FileDataSegmentMetadata severity warning high \
+event FileDataSegmentMetadata severity warning low \
     format "File data PDU with unsupported segment metadata received"
 
 event ChunklistUnavailable(
     transactionSeq: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "Cannot get chunklist, abandoning transaction {}"
 
 event UnhandledPduInIdleState severity warning low \
@@ -440,7 +454,7 @@ event RxTransactionLimitReached(
     srcEid: U32 @< Source entity ID
     transactionSeq: U32 @< Transaction sequence number
 ) \
-    severity warning high \
+    severity warning low \
     format "Dropping packet from {} transaction {} due to max RX transactions reached"
 
 event InvalidDestinationEid(
@@ -449,18 +463,32 @@ event InvalidDestinationEid(
     severity warning low \
     format "Dropping packet for invalid destination EID {}"
 
-event MaxTxTransactionsReached severity warning high \
+event MaxTxTransactionsReached severity warning low \
     format "Maximum number of commanded TX files reached"
 
 event PlaybackDirOpenFailed(
     directory: string size MaxFilePathSize @< Directory that failed to open
     status: I32 @< Directory operation status
 ) \
-    severity warning high \
+    severity warning low \
     format "Failed to open playback directory {}, error={}"
 
-event PlaybackDirSlotUnavailable severity warning high \
+event PlaybackDirSlotUnavailable severity warning low \
     format "No playback directory slot available"
+
+event DanglingFileHandleClosed(
+    channelId: U8 @< Channel ID
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "Closed dangling file handle for channel {} transaction {}"
+
+event PlaybackDirReadFailed(
+    directory: string size MaxFilePathSize @< Directory being read
+    status: I32 @< Directory operation status
+) \
+    severity warning low \
+    format "Failed to read from playback directory {}, error={}"
 
 event ResetFreedTransaction severity diagnostic \
     format "Attempt to reset a transaction that has already been freed"
