@@ -20,7 +20,7 @@ include(utilities)
 # Args: None
 # Returns: None
 ####
-function(fprime__validate_platform)
+function(fprime_validate_platform)
     get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
     # Native toolchains use the system name for the toolchain and FPRIME_PLATFORM
     if (NOT TOOLCHAIN_NAME)
@@ -44,9 +44,10 @@ endfunction()
 ####
 # Function `fprime_find_platform_file`:
 #
-# Loop through the standard locations for a platform file (**/cmake/platform/${FPRIME_PLATFORM}.cmake) and select the
-# first one. If multiple are found, warn the user and use the first one. If none are found, error and exit. The results
-# are cached in FPRIME_CACHED_PLATFORM_FILE to avoid re-searching for the platform file.
+# Search standard locations for a platform file (**/cmake/platform/${FPRIME_PLATFORM}.cmake) using file globs.
+# Searches in order: project root, project libs, declared libraries, then framework. Selects the first match.
+# If multiple are found, warn the user. If none are found, error and exit. Results are cached in
+# FPRIME_CACHED_PLATFORM_FILE to avoid re-searching.
 #
 # Args: None
 # Returns: None
@@ -61,21 +62,30 @@ function(fprime_find_platform_file)
         return()
     endif()
 
-    # Build list of search paths from standard locations: project, libraries, then framework
-    set(PLATFORM_SEARCH_GLOBS
-        "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-    )
-    foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-        list(APPEND PLATFORM_SEARCH_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    endforeach()
-    list(APPEND PLATFORM_SEARCH_GLOBS "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-
+    # Search standard locations using globs: project root, project libs, declared libraries, then framework
     set(POSSIBLE_PLATFORM_FILES)
-    foreach(SEARCH_GLOB IN LISTS PLATFORM_SEARCH_GLOBS)
-        if (EXISTS "${SEARCH_GLOB}")
-            list(APPEND POSSIBLE_PLATFORM_FILES "${SEARCH_GLOB}")
+
+    # 1. Direct project root platform file
+    if (EXISTS "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+        list(APPEND POSSIBLE_PLATFORM_FILES "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+    endif()
+
+    # 2. Glob for platform files under project root libs (e.g. libs/*/cmake/platform/)
+    file(GLOB _PROJECT_LIB_PLATFORM_FILES "${FPRIME_PROJECT_ROOT}/libs/*/cmake/platform/${FPRIME_PLATFORM}.cmake")
+    list(APPEND POSSIBLE_PLATFORM_FILES ${_PROJECT_LIB_PLATFORM_FILES})
+
+    # 3. Declared library locations
+    foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+        if (EXISTS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+            list(APPEND POSSIBLE_PLATFORM_FILES "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
         endif()
     endforeach()
+
+    # 4. Framework path
+    if (EXISTS "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+        list(APPEND POSSIBLE_PLATFORM_FILES "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+    endif()
+
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
 
@@ -107,7 +117,7 @@ endfunction()
 # Returns: None
 ####
 macro(fprime_setup_platform)
-    fprime__validate_platform()
+    fprime_validate_platform()
     fprime_find_platform_file()
 
     # Output directories internal to the build cache should be relative to the toolchain
@@ -121,3 +131,12 @@ macro(fprime_setup_platform)
     fprime_cmake_debug_message("Platform file: ${FPRIME_CACHED_PLATFORM_FILE}")
     include("${FPRIME_CACHED_PLATFORM_FILE}")
 endmacro()
+
+# Run validation at include-time so TOOLCHAIN_NAME and FPRIME_PLATFORM are available early
+fprime_validate_platform()
+
+# Set output directories at include-time (matches original behavior)
+fprime_cmake_status("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_PLATFORM}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${TOOLCHAIN_NAME}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
