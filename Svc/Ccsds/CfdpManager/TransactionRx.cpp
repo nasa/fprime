@@ -848,7 +848,7 @@ void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
 }
 
 void Transaction::r2GapCompute(const Chunk *chunk, NakPdu& nak) {
-    FW_ASSERT(chunk->size > 0, chunk->size);
+    FW_ASSERT(chunk->size > 0, static_cast<FwAssertArgType>(chunk->size));
 
     // Calculate segment offsets relative to scope start
     FileSize offsetStart = chunk->offset - nak.getScopeStart();

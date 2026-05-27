@@ -423,7 +423,7 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
     // Update CRC and bytes_processed
     if (status == Cfdp::Status::SUCCESS) {
 
-        FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, foffs, static_cast<FwAssertArgType>(actual_bytes), this->m_fsize);
+        FW_ASSERT((foffs + actual_bytes) <= this->m_fsize, static_cast<FwAssertArgType>(foffs), static_cast<FwAssertArgType>(actual_bytes), static_cast<FwAssertArgType>(this->m_fsize));
 
         if (calc_crc) {
             this->m_crc.update(fileDataBuffer, foffs, static_cast<U32>(actual_bytes));
@@ -586,7 +586,7 @@ void Transaction::sSubstateSendMetadata() {
             else
             {
                 // Check that file size is well formed
-                FW_ASSERT(this->m_fsize > 0, this->m_fsize);
+                FW_ASSERT(this->m_fsize > 0, static_cast<FwAssertArgType>(this->m_fsize));
             }
         }
     }

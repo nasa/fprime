@@ -88,8 +88,7 @@ namespace Cfdp {
  *  @par Limits:
  *
  */
-#define CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION \
-    { CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS }
+#define CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION {CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS}
 
 /**
  *  @brief TX chunks per transaction (per channel)
@@ -110,8 +109,7 @@ namespace Cfdp {
  *  @par Limits:
  *
  */
-#define CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION \
-    { CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS }
+#define CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION {CFDP_NAK_MAX_SEGMENTS, CFDP_NAK_MAX_SEGMENTS}
 
 // ==================================================================
 // Resource Pool Configuration
