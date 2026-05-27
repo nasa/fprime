@@ -37,7 +37,7 @@ U32 EofPdu::getBufferSize() const {
     // Condition code: 1 byte
     // Checksum: 4 bytes (U32)
     // File size: sizeof(FileSize) bytes
-    size += sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(FileSize);
+    size += static_cast<U32>(sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(FileSize));
 
     // Add TLV size
     size += this->m_tlvList.getEncodedSize();

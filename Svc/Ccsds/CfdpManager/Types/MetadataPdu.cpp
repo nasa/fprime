@@ -47,7 +47,7 @@ U32 MetadataPdu::getBufferSize() const {
     // Directive code: 1 byte
     // Segmentation control byte (includes closure requested and checksum type): 1 byte
     // File size: variable
-    size += sizeof(U8) + sizeof(U8) + sizeof(FileSize);
+    size += static_cast<U32>(sizeof(U8) + sizeof(U8) + sizeof(FileSize));
 
     // Source filename LV: length(1) + value(n)
     size += 1 + static_cast<U32>(this->m_sourceFilename.length());
@@ -121,7 +121,7 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
     // bits 6-4: reserved (000b)
     // bits 3-0: checksum_type
     U8 segmentationControl = 0;
-    segmentationControl |= (this->m_closureRequested & 0x01) << 7;
+    segmentationControl |= static_cast<U8>((this->m_closureRequested & 0x01) << 7);
     segmentationControl |= (static_cast<U8>(this->m_checksumType) & 0x0F);
 
     status = serialBuffer.serializeFrom(segmentationControl);

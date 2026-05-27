@@ -33,9 +33,9 @@ U32 FileDataPdu::getBufferSize() const {
 
     // Offset field size depends on large file flag
     if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
-        size += sizeof(U64);  // 8-byte offset
+        size += static_cast<U32>(sizeof(U64));  // 8-byte offset
     } else {
-        size += sizeof(U32);  // 4-byte offset
+        size += static_cast<U32>(sizeof(U32));  // 4-byte offset
     }
 
     size += this->m_dataSize;  // actual data
@@ -47,9 +47,9 @@ U32 FileDataPdu::getMaxFileDataSize() {
 
     // Offset field size depends on large file flag
     if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
-        size += sizeof(U64);  // 8-byte offset
+        size += static_cast<U32>(sizeof(U64));  // 8-byte offset
     } else {
-        size += sizeof(U32);  // 4-byte offset
+        size += static_cast<U32>(sizeof(U32));  // 4-byte offset
     }
 
     return MaxPduSize - size;

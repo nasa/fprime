@@ -109,12 +109,12 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     // bit 1: crc_flag (0=not present, 1=present)
     // bit 0: large_file_flag (0=32-bit, 1=64-bit)
     U8 flags = 0;
-    flags |= (this->m_version & 0x07) << 5;
-    flags |= (this->m_pduType & 0x01) << 4;
-    flags |= (this->m_direction & 0x01) << 3;
-    flags |= (this->m_class & 0x01) << 2;
-    flags |= (this->m_crcFlag & 0x01) << 1;
-    flags |= (this->m_largeFileFlag & 0x01);
+    flags |= static_cast<U8>((this->m_version & 0x07) << 5);
+    flags |= static_cast<U8>((this->m_pduType & 0x01) << 4);
+    flags |= static_cast<U8>((this->m_direction & 0x01) << 3);
+    flags |= static_cast<U8>((this->m_class & 0x01) << 2);
+    flags |= static_cast<U8>((this->m_crcFlag & 0x01) << 1);
+    flags |= static_cast<U8>(this->m_largeFileFlag & 0x01);
 
     status = serialBuffer.serializeFrom(flags);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -193,9 +193,9 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
     }
 
     this->m_segmentationControl = (eidTsnLengths >> 7) & 0x01;
-    U8 eidSize = ((eidTsnLengths >> 4) & 0x07) + 1;
+    U8 eidSize = static_cast<U8>(((eidTsnLengths >> 4) & 0x07) + 1);
     this->m_segmentMetadataFlag = (eidTsnLengths >> 3) & 0x01;
-    U8 tsnSize = (eidTsnLengths & 0x07) + 1;
+    U8 tsnSize = static_cast<U8>((eidTsnLengths & 0x07) + 1);
 
     // Validate that the sizes are within bounds (1-8 bytes)
     FW_ASSERT(eidSize >= 1 && eidSize <= 8, static_cast<FwAssertArgType>(eidSize));
@@ -250,8 +250,8 @@ PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
             // For directive PDUs, we need to read the directive code
             // Parse byte 3 to get EID and TSN lengths
             U8 eidTsnLengths = data[3];
-            U8 eidSize = ((eidTsnLengths >> 4) & 0x07) + 1;  // Bits 6-4: EID length - 1
-            U8 tsnSize = (eidTsnLengths & 0x07) + 1;         // Bits 2-0: TSN length - 1
+            U8 eidSize = static_cast<U8>(((eidTsnLengths >> 4) & 0x07) + 1);  // Bits 6-4: EID length - 1
+            U8 tsnSize = static_cast<U8>((eidTsnLengths & 0x07) + 1);         // Bits 2-0: TSN length - 1
 
             // Calculate offset to directive code: 4 (fixed header) + eidSize + tsnSize + eidSize
             U32 directiveCodeOffset = 4 + (2 * eidSize) + tsnSize;
