@@ -140,11 +140,6 @@ macro(fprime_setup_platform)
     fprime_validate_platform()
     fprime_find_platform_file()
 
-    # Output directories internal to the build cache should be relative to the toolchain
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${TOOLCHAIN_NAME}")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
-
     # Include platform file based on system name
     fprime_cmake_debug_message("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_CACHED_PLATFORM}")
     fprime_cmake_debug_message("Toolchain file: ${CMAKE_TOOLCHAIN_FILE}")

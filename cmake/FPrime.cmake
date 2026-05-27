@@ -48,6 +48,12 @@ fprime_cmake_status("[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
 include(platform/platform) # Now that module locations are known, load platform settings
 fprime_validate_platform()
 
+# Output directories must be set at file scope (not inside a function) so they persist for all
+# project-level targets. TOOLCHAIN_NAME is available here as a cache variable.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${TOOLCHAIN_NAME}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
+
 # Module setup functions, attaches targets to modules, etc.
 include(module)
 # Support for autocoder implementations
