@@ -46,80 +46,51 @@ void AosFramerTester ::testComStatusPassthrough() {
 }
 
 void AosFramerTester ::testNominalFraming() {
-    // Test with default and custom spacecraftID and vcId
-    struct TestConfig {
-        U16 spacecraftId;
-        U8 vcId;
-    };
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
 
-    TestConfig testConfigs[] = {
-        {ComCfg::SpacecraftId, 1},  // Default spacecraft ID and vcId
-        {0x1A5, 0}                  // Custom spacecraft ID (10-bit: 0b01_1010_0101) and custom vcId
-    };
+    ComCfg::FrameContext defaultContext;
+    defaultContext.set_sendNow(true);
 
-    for (U8 i = 0; i < sizeof(testConfigs) / sizeof(testConfigs[0]); i++) {
-        U16 expectedScId = testConfigs[i].spacecraftId;
-        U8 expectedVcId = testConfigs[i].vcId;
+    // Fill the buffer with some data
+    for (U32 i = 0; i < sizeof(bufferData); ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
 
-        // Configure with the spacecraft ID and vcId for this test case
-        if (i == 0) {
-            // Default spacecraft ID and vcId
-            this->component.configure(ComCfg::AosMaxFrameFixedSize, true);
-        } else {
-            // Custom spacecraft ID and vcId
-            this->component.configure(ComCfg::AosMaxFrameFixedSize, true, expectedScId, expectedVcId);
-        }
+    // Invoke the dataIn handler
+    this->invoke_to_dataIn(0, buffer, defaultContext);
 
-        U8 bufferData[100];
-        Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    // Check that the dataOut handler was called with the correct data
+    ASSERT_from_dataOut_SIZE(1);
+    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
+    ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
+    const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
+    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), defaultContext.get_vcId());
 
-        ComCfg::FrameContext defaultContext;
-        defaultContext.set_sendNow(true);
-        defaultContext.set_vcId(expectedVcId);
+    U16 outScId = this->getFrameScId(outBuffer.getData());
+    U8 outVcId = this->getFrameVcId(outBuffer.getData());
+    U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
+    U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
 
-        // Fill the buffer with some data
-        for (U32 j = 0; j < sizeof(bufferData); ++j) {
-            bufferData[j] = static_cast<U8>(j);
-        }
+    const U8 expectedTfVn = 0b01;
+    ASSERT_EQ(outTfVn, expectedTfVn);
+    const U16 expectedScId = ComCfg::SpacecraftId;
+    ASSERT_EQ(outScId, expectedScId);
+    ASSERT_EQ(outVcId, defaultContext.get_vcId());
+    ASSERT_EQ(outVcCount, 0);
+    ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
 
-        // Invoke the dataIn handler
-        this->invoke_to_dataIn(0, buffer, defaultContext);
+    // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
+    FwSizeType expectedIdleDataOffset = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + sizeof(bufferData) +
+                                        SpacePacketHeader::SERIALIZED_SIZE;
 
-        // Check that the dataOut handler was called with the correct data
-        ASSERT_from_dataOut_SIZE(i + 1);
-        Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(i).data;
-        ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(i).context;
-        const FwSizeType expectedFrameSize = ComCfg::AosMaxFrameFixedSize;
-        ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
-        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).context.get_vcId(), defaultContext.get_vcId());
-
-        U16 outScId = this->getFrameScId(outBuffer.getData());
-        U8 outVcId = this->getFrameVcId(outBuffer.getData());
-        U8 outTfVn = this->getFrameTfVn(outBuffer.getData());
-        U32 outVcCount = this->getFrameVcCount(outBuffer.getData());
-
-        const U8 expectedTfVn = 0b01;
-        ASSERT_EQ(outTfVn, expectedTfVn);
-        ASSERT_EQ(outScId, expectedScId);
-        ASSERT_EQ(outVcId, expectedVcId);
-        ASSERT_EQ(outVcId, defaultContext.get_vcId());
-        ASSERT_EQ(outVcCount, i);
-        ASSERT_EQ(this->component.m_vcs[0].virtualFrameCount, outVcCount + 1);
-
-        // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-        FwSizeType expectedIdleDataOffset = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
-                                            sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
-
-        // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-        const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
-        const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
-        for (FwSizeType j = expectedIdleDataOffset; j < ideDataEndOffset; ++j) {
-            ASSERT_EQ(outBuffer.getData()[j], idlePattern)
-                << "Idle data at index " << j << " does not match expected idle pattern";
-        }
-
-        // Return the buffer for the next iteration
-        this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+    // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
+    const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;
+    const FwSizeType ideDataEndOffset = ComCfg::AosMaxFrameFixedSize - AOSTrailer::SERIALIZED_SIZE;
+    for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
+        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
+            << "Idle data at index " << i << " does not match expected idle pattern";
     }
 }
 

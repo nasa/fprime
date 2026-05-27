@@ -16,8 +16,7 @@ namespace Ccsds {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-AosFramer ::AosFramer(const char* const compName)
-    : AosFramerComponentBase(compName), m_spacecraftId(ComCfg::SpacecraftId) {
+AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compName) {
     // Default to FECF on, Max Sized if you don't override w/ another configure call
     configure(ComCfg::AosMaxFrameFixedSize, true);
 }
@@ -36,6 +35,12 @@ void AosFramer::configure(const U32 fixedFrameSize,
     FW_ASSERT(fixedFrameSize > AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE +
                                    (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0),
               static_cast<FwAssertArgType>(fixedFrameSize));
+
+    // Spacecraft ID is 10 bits (per CCSDS 732.0-B-5 Section 4.1.2.2)
+    FW_ASSERT((spacecraftId & 0xFC00) == 0, static_cast<FwAssertArgType>(spacecraftId));
+
+    // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
+    FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
 
     // AOS Framer must be provided with a protocol to use for Idle Packets
     // Currently, only SPP idle packing is supported

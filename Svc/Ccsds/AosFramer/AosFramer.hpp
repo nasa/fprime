@@ -42,7 +42,7 @@ class AosFramer final : public AosFramerComponentBase {
 
     struct AosVc {
         U8 vc_struct_index = 0xFF;  //!< Index into VC Array for this vc struct
-        U8 virtualChannelId = 1;    //!< VCID for this particular virtual channel
+        U8 virtualChannelId = 0;    //!< VCID for this particular virtual channel
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
