@@ -152,4 +152,3 @@ macro(fprime_setup_platform)
     include("${FPRIME_CACHED_PLATFORM_FILE}")
 endmacro()
 
-fprime_validate_platform()
