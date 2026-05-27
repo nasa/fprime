@@ -18,6 +18,7 @@ Core services are those that directly wrap OS primitives and are implemented by 
 | Service | Purpose |
 |---|---|
 | **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
+| **CountingSemaphore** | Counting semaphore for resource counting and thread synchronization with configurable max count. |
 | **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
