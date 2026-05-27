@@ -132,7 +132,7 @@ macro(fprime_setup_platform)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
 
     # Include platform file based on system name
-    fprime_cmake_status("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_CACHED_PLATFORM}")
+    fprime_cmake_debug_message("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_CACHED_PLATFORM}")
     fprime_cmake_debug_message("Toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
     fprime_cmake_debug_message("Platform file: ${FPRIME_CACHED_PLATFORM_FILE}")
     include("${FPRIME_CACHED_PLATFORM_FILE}")
