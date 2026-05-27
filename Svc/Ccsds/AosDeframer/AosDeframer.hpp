@@ -20,6 +20,7 @@
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/M_PDUHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TfvnEnumAc.hpp"
+#include "config/FppConstantsAc.hpp"
 #include "config/PvnEnumAc.hpp"
 
 namespace Svc {

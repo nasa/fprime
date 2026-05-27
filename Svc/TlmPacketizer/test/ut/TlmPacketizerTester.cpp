@@ -1719,6 +1719,139 @@ void TlmPacketizerTester ::sectionConfigParameterTest() {
     this->paramSave_SECTION_CONFIGS(0, 0);
 }
 
+void TlmPacketizerTester::pushAllChannels(Fw::Time& ts, Fw::TlmBuffer& buff) {
+    // channel 10 — packet1, packet2, packet4
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAB)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    // channel 100 — packet1
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0xCD)));
+    this->invoke_to_TlmRecv(0, 100, ts, buff);
+
+    // channel 333 — packet1
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0xEF)));
+    this->invoke_to_TlmRecv(0, 333, ts, buff);
+
+    // channel 13 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0x1122334455667788ULL)));
+    this->invoke_to_TlmRecv(0, 13, ts, buff);
+
+    // channel 250 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(0x5566)));
+    this->invoke_to_TlmRecv(0, 250, ts, buff);
+
+    // channel 22 — packet2
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0x77)));
+    this->invoke_to_TlmRecv(0, 22, ts, buff);
+
+    // channel 67 — packet3
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0x99)));
+    this->invoke_to_TlmRecv(0, 67, ts, buff);
+
+    // channel 60 — packet4
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xAA)));
+    this->invoke_to_TlmRecv(0, 60, ts, buff);
+}
+
+void TlmPacketizerTester::setLevelInvalidTest() {
+    this->stockConfiguration();
+    // packetList2 contains four packets at levels 1, 2, 2, 3
+    // (packet1 id=4, packet2 id=8, packet3 id=12, packet4 id=16)
+    this->component.setPacketList(packetList2, IGNORE_OMIT_LIST, 3);
+
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+
+    // ----------------------------------------------------------------
+    // Step 1: Establish a known restricted state via SET_LEVEL(1).
+    //         Only groups 0 and 1 become enabled; groups 2 and 3 are
+    //         disabled.  With the four packets at levels 1, 2, 2, 3,
+    //         only packet1 (level 1, group 1) qualifies to send.
+    // ----------------------------------------------------------------
+    this->sendCmd_SET_LEVEL(0, 1, 1);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_SET_LEVEL, 1, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_LevelSet_SIZE(1);
+    ASSERT_EVENTS_LevelSet(0, static_cast<FwChanIdType>(1));
+    this->clearHistory();
+
+    // ----------------------------------------------------------------
+    // Step 2 & 3: Push data, run, confirm only the group-1 packet
+    //             (packet1, replicated once per enabled section) is
+    //             sent.  All other group (2 and 3) packets are silent.
+    // ----------------------------------------------------------------
+    this->pushAllChannels(ts, buff);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Only packet1 at level 1 should be emitted — one copy per section.
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+    this->clearHistory();
+
+    // ----------------------------------------------------------------
+    // Step 4: Issue SET_LEVEL with an out-of-range value.
+    //         MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1 is guaranteed
+    //         to exceed the valid ceiling.
+    // ----------------------------------------------------------------
+    const FwChanIdType invalidLevel = static_cast<FwChanIdType>(MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) + 1u;
+
+    this->sendCmd_SET_LEVEL(0, 2, invalidLevel);
+    this->component.doDispatch();
+
+    // ----------------------------------------------------------------
+    // Step 5: Command must respond with VALIDATION_ERROR, not OK.
+    // ----------------------------------------------------------------
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_SET_LEVEL, 2, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // ----------------------------------------------------------------
+    // Step 6: MaxLevelExceed warning event must be fired.
+    // ----------------------------------------------------------------
+    ASSERT_EVENTS_MaxLevelExceed_SIZE(1);
+    ASSERT_EVENTS_MaxLevelExceed(0, invalidLevel, static_cast<FwChanIdType>(MAX_CONFIGURABLE_TLMPACKETIZER_GROUP));
+
+    // ----------------------------------------------------------------
+    // Step 7: LevelSet activity event must NOT be fired — the handler
+    //         returned early before the success path.
+    // ----------------------------------------------------------------
+    ASSERT_EVENTS_LevelSet_SIZE(0);
+
+    this->clearHistory();
+
+    // ----------------------------------------------------------------
+    // Steps 8 & 9: Push data again and run.
+    //
+    //   Fixed code  → group enable state is UNCHANGED from SET_LEVEL(1).
+    //                 Only packet1 (group 1) is sent.
+    //                 Expected port-send count = 1 * NUM_SECTIONS.
+    //
+    //   Buggy code  → the invalid SET_LEVEL enabled ALL groups before
+    //                 returning, so packets 1–4 would ALL be sent.
+    //                 Expected port-send count = 4 * NUM_SECTIONS.
+    //
+    // The assertion below would FAIL against the old buggy implementation.
+    // ----------------------------------------------------------------
+    this->pushAllChannels(ts, buff);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Only the group-1 packet should be sent — exactly as before the
+    // bad SET_LEVEL call.  Any additional packets prove the bug is
+    // still present.
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

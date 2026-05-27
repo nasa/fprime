@@ -5,12 +5,16 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(MOD_DEPS
-    Fw/Com
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Cmd.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/CmdArgBuffer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CmdPacket.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/CmdArgBuffer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CmdPacket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CmdString.hpp"
+  DEPENDS
+    Fw_Com
 )
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CmdArgBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CmdPacket.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Cmd.fpp"
-)
-register_fprime_module()
