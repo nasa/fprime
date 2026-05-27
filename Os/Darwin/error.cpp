@@ -10,24 +10,24 @@
 namespace Os {
 namespace Darwin {
 
-CountingSemaphore::Status kern_return_to_semaphore_status(long kern_status) {
-    CountingSemaphore::Status status = CountingSemaphore::Status::ERROR_OTHER;
+Os::CountingSemaphore::Status kern_return_to_semaphore_status(long kern_status) {
+    Os::CountingSemaphore::Status status = Os::CountingSemaphore::Status::ERROR_OTHER;
     
     switch (kern_status) {
         case KERN_SUCCESS:
-            status = CountingSemaphore::Status::OP_OK;
+            status = Os::CountingSemaphore::Status::OP_OK;
             break;
         case KERN_OPERATION_TIMED_OUT:
-            status = CountingSemaphore::Status::ERROR_TIMEOUT;
+            status = Os::CountingSemaphore::Status::ERROR_TIMEOUT;
             break;
         case KERN_INVALID_ARGUMENT:
         case KERN_SEMAPHORE_DESTROYED:
-            status = CountingSemaphore::Status::ERROR_INVALID;
+            status = Os::CountingSemaphore::Status::ERROR_INVALID;
             break;
         case KERN_ABORTED:
         case KERN_TERMINATED:
         default:
-            status = CountingSemaphore::Status::ERROR_OTHER;
+            status = Os::CountingSemaphore::Status::ERROR_OTHER;
             break;
     }
     

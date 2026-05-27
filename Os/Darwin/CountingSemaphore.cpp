@@ -25,14 +25,14 @@ DarwinCountingSemaphore::~DarwinCountingSemaphore() {
     this->m_handle.m_semaphore = nullptr;
 }
 
-CountingSemaphore::Status DarwinCountingSemaphore::wait() {
+Os::CountingSemaphore::Status DarwinCountingSemaphore::wait() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, DISPATCH_TIME_FOREVER);
     FW_ASSERT(result == 0, static_cast<FwAssertArgType>(result));
     return kern_return_to_semaphore_status(result);
 }
 
-CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(U32 timeout_ms) {
+Os::CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(U32 timeout_ms) {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     FW_ASSERT(timeout_ms > 0);
     
@@ -42,7 +42,7 @@ CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(U32 timeout_ms) {
     return kern_return_to_semaphore_status(result);
 }
 
-CountingSemaphore::Status DarwinCountingSemaphore::tryWait() {
+Os::CountingSemaphore::Status DarwinCountingSemaphore::tryWait() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, DISPATCH_TIME_NOW);
     FW_ASSERT(result >= 0);
@@ -50,11 +50,11 @@ CountingSemaphore::Status DarwinCountingSemaphore::tryWait() {
     return kern_return_to_semaphore_status(result);
 }
 
-CountingSemaphore::Status DarwinCountingSemaphore::post() {
+Os::CountingSemaphore::Status DarwinCountingSemaphore::post() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_signal(this->m_handle.m_semaphore);
     FW_ASSERT(result <= 0);
-    return CountingSemaphore::Status::OP_OK;
+    return Os::CountingSemaphore::Status::OP_OK;
 }
 
 CountingSemaphoreHandle* DarwinCountingSemaphore::getHandle() {

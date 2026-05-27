@@ -23,13 +23,13 @@ class DarwinCountingSemaphore : public CountingSemaphoreInterface {
 
     CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
 
-    CountingSemaphoreInterface::Status wait() override;
+    Status wait() override;
 
-    CountingSemaphoreInterface::Status waitTimeout(U32 timeout_ms) override;
+    Status waitTimeout(U32 timeout_ms) override;
 
-    CountingSemaphoreInterface::Status tryWait() override;
+    Status tryWait() override;
 
-    CountingSemaphoreInterface::Status post() override;
+    Status post() override;
 
     CountingSemaphoreHandle* getHandle() override;
 
