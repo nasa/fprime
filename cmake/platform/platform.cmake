@@ -61,12 +61,12 @@ function(fprime_find_platform_file)
         return()
     endif()
 
-    # Search project locations first (highest priority), then framework as fallback.
-    # This ensures project platform overrides always take priority over the framework default.
+    # Build a single list of glob patterns, then search once.
     set(EXPECTED_PLATFORM_FILE)
-    file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
+    set(_PLATFORM_GLOBS
         "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
 
     # ---- BACKWARDS COMPATIBILITY ----
@@ -74,33 +74,39 @@ function(fprime_find_platform_file)
     # FPRIME_PROJECT_ROOT or FPRIME_LIBRARY_LOCATIONS rather than PROJECT_SOURCE_DIR. These exist
     # to avoid breaking existing projects during the transition to convention-based discovery.
     # TODO: Remove these patterns once all projects have migrated to the standard layout.
-    set(_COMPAT_GLOBS)
     if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL ""
             AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
-        list(APPEND _COMPAT_GLOBS
+        list(APPEND _PLATFORM_GLOBS
             "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
             "${FPRIME_PROJECT_ROOT}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         )
     endif()
     if (DEFINED FPRIME_LIBRARY_LOCATIONS AND NOT "${FPRIME_LIBRARY_LOCATIONS}" STREQUAL "")
         foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-            list(APPEND _COMPAT_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+            list(APPEND _PLATFORM_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
         endforeach()
-    endif()
-    if (_COMPAT_GLOBS)
-        file(GLOB_RECURSE _COMPAT_PLATFORM_FILES ${_COMPAT_GLOBS})
-        list(APPEND POSSIBLE_PLATFORM_FILES ${_COMPAT_PLATFORM_FILES})
     endif()
     # ---- END BACKWARDS COMPATIBILITY ----
 
-    # Framework is the lowest-priority fallback — only added if no project-level file was found
-    if (NOT POSSIBLE_PLATFORM_FILES)
-        file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
-            "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        )
-    endif()
+    file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES ${_PLATFORM_GLOBS})
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
+
+    # When multiple files match, prefer project-level files over framework defaults.
+    # GLOB_RECURSE returns lexicographic order which may put framework files first.
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
+    if (NUM_POSSIBLE_PLATFORM_FILES GREATER 1)
+        set(_NON_FRAMEWORK_FILES)
+        foreach(_FILE IN LISTS POSSIBLE_PLATFORM_FILES)
+            string(FIND "${_FILE}" "${FPRIME_FRAMEWORK_PATH}/cmake/platform/" _FW_IDX)
+            if (_FW_IDX EQUAL -1)
+                list(APPEND _NON_FRAMEWORK_FILES "${_FILE}")
+            endif()
+        endforeach()
+        if (_NON_FRAMEWORK_FILES)
+            set(POSSIBLE_PLATFORM_FILES ${_NON_FRAMEWORK_FILES})
+            list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
+        endif()
+    endif()
 
     # Check if any platform file was found
     if (NUM_POSSIBLE_PLATFORM_FILES EQUAL 0)
