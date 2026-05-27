@@ -44,11 +44,19 @@ endfunction()
 ####
 # Function `fprime_find_platform_file`:
 #
-# Search standard locations for a platform file (**/cmake/platform/${FPRIME_PLATFORM}.cmake) using file globs.
-# Standard locations searched: PROJECT_SOURCE_DIR/*/cmake/platform/, PROJECT_SOURCE_DIR/lib/*/cmake/platform/,
-# and FPRIME_FRAMEWORK_PATH/cmake/platform/. Also searches backwards-compatible locations via FPRIME_PROJECT_ROOT
-# and FPRIME_LIBRARY_LOCATIONS for older project structures. Selects the first match. If multiple are found,
-# warn the user. If none are found, error and exit. Results are cached in FPRIME_CACHED_PLATFORM_FILE.
+# Search for a platform file (cmake/platform/${FPRIME_PLATFORM}.cmake) using ordered glob patterns.
+# Each pattern group is searched individually via fprime_glob_ordered so that earlier groups take
+# priority over later groups. Within a single group, matches are equally valid.
+#
+# Priority order:
+#   1. PROJECT_SOURCE_DIR/cmake/platform/       (project-level direct)
+#   2. FPRIME_PROJECT_ROOT/cmake/platform/      (backwards compat — project root differs from PROJECT_SOURCE_DIR)
+#   3. PROJECT_SOURCE_DIR/lib/*/cmake/platform/  (project libraries)
+#   4. PROJECT_SOURCE_DIR/*/cmake/platform/      (project subdirectories)
+#   5. FPRIME_LIBRARY_LOCATIONS/cmake/platform/  (backwards compat — explicit library locations)
+#   6. FPRIME_FRAMEWORK_PATH/cmake/platform/     (framework fallback)
+#
+# Results are cached in FPRIME_CACHED_PLATFORM_FILE to avoid re-searching.
 #
 # Args: None
 # Returns: None
@@ -61,12 +69,10 @@ function(fprime_find_platform_file)
         return()
     endif()
 
-    # Build a single list of glob patterns, then search once.
-    set(EXPECTED_PLATFORM_FILE)
+    # Build the ordered list of glob patterns. Each pattern is globbed individually by
+    # fprime_glob_ordered (utilities.cmake) so earlier patterns take priority over later ones.
     set(_PLATFORM_GLOBS
-        "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        "${PROJECT_SOURCE_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
 
     # ---- BACKWARDS COMPATIBILITY ----
@@ -77,36 +83,34 @@ function(fprime_find_platform_file)
     if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL ""
             AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
         list(APPEND _PLATFORM_GLOBS
-            "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+            "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
             "${FPRIME_PROJECT_ROOT}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+            "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         )
     endif()
+    # ---- END BACKWARDS COMPATIBILITY (project root) ----
+
+    list(APPEND _PLATFORM_GLOBS
+        "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+    )
+
+    # ---- BACKWARDS COMPATIBILITY ----
+    # TODO: Remove these patterns once all projects have migrated to the standard layout.
     if (DEFINED FPRIME_LIBRARY_LOCATIONS AND NOT "${FPRIME_LIBRARY_LOCATIONS}" STREQUAL "")
         foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
             list(APPEND _PLATFORM_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
         endforeach()
     endif()
-    # ---- END BACKWARDS COMPATIBILITY ----
+    # ---- END BACKWARDS COMPATIBILITY (library locations) ----
 
-    file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES ${_PLATFORM_GLOBS})
+    list(APPEND _PLATFORM_GLOBS
+        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
+    )
+
+    fprime_glob_ordered(POSSIBLE_PLATFORM_FILES ${_PLATFORM_GLOBS})
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
-
-    # When multiple files match, prefer project-level files over framework defaults.
-    # GLOB_RECURSE returns lexicographic order which may put framework files first.
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
-    if (NUM_POSSIBLE_PLATFORM_FILES GREATER 1)
-        set(_NON_FRAMEWORK_FILES)
-        foreach(_FILE IN LISTS POSSIBLE_PLATFORM_FILES)
-            string(FIND "${_FILE}" "${FPRIME_FRAMEWORK_PATH}/cmake/platform/" _FW_IDX)
-            if (_FW_IDX EQUAL -1)
-                list(APPEND _NON_FRAMEWORK_FILES "${_FILE}")
-            endif()
-        endforeach()
-        if (_NON_FRAMEWORK_FILES)
-            set(POSSIBLE_PLATFORM_FILES ${_NON_FRAMEWORK_FILES})
-            list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
-        endif()
-    endif()
 
     # Check if any platform file was found
     if (NUM_POSSIBLE_PLATFORM_FILES EQUAL 0)
