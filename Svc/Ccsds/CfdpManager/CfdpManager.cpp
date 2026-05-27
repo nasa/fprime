@@ -32,17 +32,30 @@ CfdpManager ::~CfdpManager() {
     this->m_engine = nullptr;
 }
 
-void CfdpManager ::configure(void)
+void CfdpManager ::configure(Fw::MemAllocator& allocator, FwEnumStoreType memId)
 {
-    // TODO BPC: Update to use a mem allocator
-    // Create and initialize the CFDP engine
-    this->m_engine = new Engine(this);
+    // Allocate and initialize the CFDP engine
+    FwSizeType engineSize = sizeof(Engine);
+    this->m_engine = static_cast<Engine*>(allocator.allocate(memId, engineSize));
     FW_ASSERT(this->m_engine != nullptr);
+    (void) new (this->m_engine) Engine(this);
     this->m_engine->init();
+
+    // Store allocator for cleanup
+    this->m_allocator = &allocator;
+    this->m_allocatorId = memId;
 
     // Initialize telemetry counters to zero
     for (U8 i = 0; i < Cfdp::NumChannels; i++) {
         this->m_channelTelemetry[i] = Cfdp::ChannelTelemetry();
+    }
+}
+
+void CfdpManager ::cleanup()
+{
+    // Only try to deallocate if both pointers are non-null
+    if ((this->m_allocator != nullptr) && (this->m_engine != nullptr)) {
+        this->m_allocator->deallocate(this->m_allocatorId, this->m_engine);
     }
 }
 

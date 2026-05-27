@@ -9,7 +9,10 @@ module FileHandlingCfdp {
         priority FileHandlingCfdpConfig.Priorities.cfdpManager \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        FileHandlingCfdp::cfdpManager.configure();
+        FileHandlingCfdp::cfdpManager.configure(FileHandlingCfdp::Allocation::memAllocator);
+        """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        FileHandlingCfdp::cfdpManager.cleanup();
         """
     }
 

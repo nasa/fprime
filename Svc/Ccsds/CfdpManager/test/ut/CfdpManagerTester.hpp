@@ -13,6 +13,7 @@
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -594,6 +595,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! The component under test
     CfdpManager component;
+
+    //! Memory allocator for component
+    Fw::MallocAllocator m_allocator;
 
     //! Reusable buffer for allocation handler
     U8 m_internalDataBuffer[MaxPduSize];

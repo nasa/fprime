@@ -218,7 +218,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
     // Null-terminate before assigning to Fw::String
     sourceFilenameBuffer[sourceFilenameLength] = '\0';
-    this->m_sourceFilename = reinterpret_cast<const char*>(sourceFilenameBuffer);
+    this->m_sourceFilename = reinterpret_cast<const CHAR*>(sourceFilenameBuffer);
 
     // Destination filename LV
     U8 destFilenameLength;
@@ -246,7 +246,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
     // Null-terminate before assigning to Fw::String
     destFilenameBuffer[destFilenameLength] = '\0';
-    this->m_destFilename = reinterpret_cast<const char*>(destFilenameBuffer);
+    this->m_destFilename = reinterpret_cast<const CHAR*>(destFilenameBuffer);
 
     return Fw::FW_SERIALIZE_OK;
 }

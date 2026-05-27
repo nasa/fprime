@@ -9,6 +9,7 @@
 
 #include <Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
+#include <Fw/Types/MemAllocator.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -42,7 +43,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Initializes the CFDP engine and allocates all memory resources needed
     //! for CFDP operations including transactions, chunks, and histories.
     //! Must be called once after construction and before any CFDP operations.
-    void configure(void);
+    //!
+    //! \param allocator Memory allocator to use for Engine allocation
+    //! \param memId Allocator ID for deallocation
+    void configure(Fw::MemAllocator& allocator, FwEnumStoreType memId = 0);
+
+    //! Cleanup CFDP engine and deallocate resources
+    void cleanup();
 
   public:
   // ----------------------------------------------------------------------
@@ -473,6 +480,10 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     //! Telemetry array for all CFDP channels
     Cfdp::ChannelTelemetryArray m_channelTelemetry;
+
+    //! Stored for cleanup
+    FwEnumStoreType m_allocatorId = 0;
+    Fw::MemAllocator* m_allocator = nullptr;
 
 };
 

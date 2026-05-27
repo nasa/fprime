@@ -33,10 +33,12 @@ CfdpManagerTester ::CfdpManagerTester()
     this->component.loadParameters();
 
     // Configure CFDP engine after parameters are loaded
-    this->component.configure();
+    this->component.configure(this->m_allocator);
 }
 
-CfdpManagerTester ::~CfdpManagerTester() { }
+CfdpManagerTester ::~CfdpManagerTester() {
+    this->component.cleanup();
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed from ports
