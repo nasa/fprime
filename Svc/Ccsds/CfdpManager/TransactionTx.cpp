@@ -213,7 +213,7 @@ void Transaction::sAckTimerTick() {
     }
 }
 
-void Transaction::sTick(int *cont /* unused */) {
+void Transaction::sTick(I32 *cont /* unused */) {
     bool pending_send;
 
     pending_send = true; // maybe; tbd, will be reset if not
@@ -287,7 +287,7 @@ void Transaction::sTick(int *cont /* unused */) {
     }
 }
 
-void Transaction::sTickNak(int *cont) {
+void Transaction::sTickNak(I32 *cont) {
     bool nakProcessed = false;
     Status::T status;
 

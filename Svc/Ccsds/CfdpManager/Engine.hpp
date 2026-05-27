@@ -61,7 +61,7 @@ namespace Cfdp {
 struct CycleTxArgs
 {
     Channel *chan;    /**< \brief channel object */
-    int          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
+    I32          ran_one; /**< \brief should be set to 1 if a transaction was cycled */
 };
 
 /**
@@ -70,9 +70,9 @@ struct CycleTxArgs
 struct TickArgs
 {
     Channel *chan;                                /**< \brief channel object */
-    void (Transaction::*fn)(int *);               /**< \brief member function pointer */
+    void (Transaction::*fn)(I32 *);               /**< \brief member function pointer */
     bool early_exit;                                  /**< \brief early exit result */
-    int  cont;                                        /**< \brief if 1, then re-traverse the list */
+    I32  cont;                                        /**< \brief if 1, then re-traverse the list */
 };
 
 /**
@@ -656,7 +656,7 @@ class Engine {
      *
      * @retval true/false
      */
-    bool isPollingDir(const char *src_file, U8 chan_num);
+    bool isPollingDir(const Fw::StringBase& src_file, U8 chan_num);
 
     /**
      * @brief Remove/Move file after transaction

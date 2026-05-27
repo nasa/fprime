@@ -255,7 +255,7 @@ void Transaction::rAckTimerTick() {
     }
 }
 
-void Transaction::rTick(int *cont /* unused */) {
+void Transaction::rTick(I32 *cont /* unused */) {
     /* Steven is not real happy with this function. There should be a better way to separate out
      * the logic by state so that it isn't a bunch of if statements for different flags
      */
@@ -463,7 +463,7 @@ Status::T Transaction::rCheckCrc(U32 expected_crc) {
     return ret;
 }
 
-void Transaction::r2Complete(int ok_to_send_nak) {
+void Transaction::r2Complete(I32 ok_to_send_nak) {
     U32 ret;
     bool send_nak = false;
     bool send_fin = false;

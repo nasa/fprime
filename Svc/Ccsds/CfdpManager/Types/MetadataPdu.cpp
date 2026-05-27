@@ -210,15 +210,15 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char sourceFilenameBuffer[MaxFilePathSize + 1];
+    U8 sourceFilenameBuffer[MaxFilePathSize + 1];
     FwSizeType actualLength = sourceFilenameLength;
-    status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(sourceFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
+    status = serialBuffer.deserializeTo(sourceFilenameBuffer, actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
     // Null-terminate before assigning to Fw::String
     sourceFilenameBuffer[sourceFilenameLength] = '\0';
-    this->m_sourceFilename = sourceFilenameBuffer;
+    this->m_sourceFilename = reinterpret_cast<const char*>(sourceFilenameBuffer);
 
     // Destination filename LV
     U8 destFilenameLength;
@@ -238,15 +238,15 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
     }
 
     // Read filename into temporary buffer
-    char destFilenameBuffer[MaxFilePathSize + 1];
+    U8 destFilenameBuffer[MaxFilePathSize + 1];
     actualLength = destFilenameLength;
-    status = serialBuffer.deserializeTo(reinterpret_cast<U8*>(destFilenameBuffer), actualLength, Fw::Serialization::OMIT_LENGTH);
+    status = serialBuffer.deserializeTo(destFilenameBuffer, actualLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
     // Null-terminate before assigning to Fw::String
     destFilenameBuffer[destFilenameLength] = '\0';
-    this->m_destFilename = destFilenameBuffer;
+    this->m_destFilename = reinterpret_cast<const char*>(destFilenameBuffer);
 
     return Fw::FW_SERIALIZE_OK;
 }

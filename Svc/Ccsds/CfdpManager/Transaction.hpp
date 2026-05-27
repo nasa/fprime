@@ -301,7 +301,7 @@ class Transaction {
      *
      * @param cont Unused, exists for compatibility with tick processor
      */
-    void sTick(int *cont);
+    void sTick(I32 *cont);
 
     /************************************************************************/
     /** @brief Perform NAK response for TX transactions
@@ -312,7 +312,7 @@ class Transaction {
      *
      * @param cont Set to 1 if a NAK was generated
      */
-    void sTickNak(int *cont);
+    void sTickNak(I32 *cont);
 
     /************************************************************************/
     /** @brief Cancel an S transaction.
@@ -457,7 +457,7 @@ class Transaction {
      *
      * @param cont Ignored/Unused
      */
-    void rTick(int *cont);
+    void rTick(I32 *cont);
 
     /************************************************************************/
     /** @brief Cancel an R transaction.
@@ -514,7 +514,7 @@ class Transaction {
      *
      * @param ok_to_send_nak If set to 0, suppress sending of a NAK packet
      */
-    void r2Complete(int ok_to_send_nak);
+    void r2Complete(I32 ok_to_send_nak);
 
     // ----------------------------------------------------------------------
     // Dispatch Methods (ported from cf_cfdp_dispatch.c)

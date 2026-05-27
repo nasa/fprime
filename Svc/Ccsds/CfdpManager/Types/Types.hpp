@@ -11,6 +11,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
+#include <Fw/Types/StringTemplate.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
 #include <Os/File.hpp>
 #include <Os/Directory.hpp>
@@ -296,7 +297,7 @@ struct Playback
     U16 num_ts; /**< \brief number of transactions */
     U8 priority;
     EntityId dest_id;
-    char pending_file[MaxFilePathSize];
+    Fw::StringTemplate<MaxFilePathSize> pending_file;
 
     bool busy;
     bool diropen;

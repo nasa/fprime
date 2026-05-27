@@ -83,7 +83,7 @@ constexpr Container* container_of_cpp(Member* member_ptr,
                                       Member Container::*member)
 {
     return reinterpret_cast<Container*>(
-        reinterpret_cast<char*>(member_ptr) - reinterpret_cast<std::ptrdiff_t>(&(reinterpret_cast<Container*>(0)->*member))
+        reinterpret_cast<U8*>(member_ptr) - reinterpret_cast<std::ptrdiff_t>(&(reinterpret_cast<Container*>(0)->*member))
     );
 }
 

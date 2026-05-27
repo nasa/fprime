@@ -36,7 +36,12 @@ class MetadataPdu : public PduBase {
 
   public:
     //! Constructor
-    MetadataPdu() : m_sourceFilename(""), m_destFilename("") {}
+    MetadataPdu() :
+        m_closureRequested(0),
+        m_checksumType(CHECKSUM_TYPE_MODULAR),
+        m_fileSize(0),
+        m_sourceFilename(""),
+        m_destFilename("") {}
 
     //! Initialize a Metadata PDU
     void initialize(PduDirection direction,

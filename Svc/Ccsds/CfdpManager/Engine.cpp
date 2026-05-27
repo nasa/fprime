@@ -845,7 +845,7 @@ Status::T Engine::playbackDirInitiate(Playback *pb, const Fw::String& src_filena
 Status::T Engine::playbackDir(const Fw::String& src_filename, const Fw::String& dst_filename, Class::T cfdp_class,
                                   Keep::T keep, U8 chan, U8 priority, EntityId dest_id)
 {
-    int i;
+    U32 i;
     Playback *pb;
     Status::T status;
 
@@ -942,7 +942,7 @@ Status::T Engine::stopPollDir(U8 chanId, U8 pollId)
 
 void Engine::cycle(void)
 {
-    int i;
+    U32 i;
 
     for (i = 0; i < Cfdp::NumChannels; ++i)
     {
@@ -1141,23 +1141,31 @@ void Engine::cancelTransaction(Transaction *txn)
     }
 }
 
-bool Engine::isPollingDir(const char *src_file, U8 chan_num)
+bool Engine::isPollingDir(const Fw::StringBase& src_file, U8 chan_num)
 {
     bool return_code = false;
-    char src_dir[MaxFilePathSize] = "\0";
+    Fw::String src_dir;
     CfdpPollDir * pd;
-    int i;
+    U32 i;
 
-    const char* last_slash = strrchr(src_file, '/');
-    if (last_slash != NULL)
-    {
-        strncpy(src_dir, src_file, last_slash - src_file);
+    // Extract directory portion (everything before last '/')
+    FwSizeType lastSlashPos = 0;
+    bool foundSlash = false;
+    for (FwSizeType pos = 0; pos < src_file.length(); ++pos) {
+        if (src_file.toChar()[pos] == '/') {
+            lastSlashPos = pos;
+            foundSlash = true;
+        }
+    }
+
+    if (foundSlash) {
+        src_dir.format("%.*s", static_cast<int>(lastSlashPos), src_file.toChar());
     }
 
     for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i)
     {
         pd = m_channels[chan_num]->getPollDir(i);
-        if (strcmp(src_dir, pd->srcDir.toChar()) == 0)
+        if (src_dir == pd->srcDir)
         {
             return_code = true;
             break;
@@ -1203,7 +1211,7 @@ void Engine::handleNotKeepFile(Transaction *txn)
         else
         {
             // file inside a polling directory
-            if (this->isPollingDir(txn->m_history->fnames.src_filename.toChar(), txn->getChannelId()))
+            if (this->isPollingDir(txn->m_history->fnames.src_filename, txn->getChannelId()))
             {
                 // If fail directory is defined attempt move
                 failDir = m_manager->getFailDirParam(txn->getChannelId());

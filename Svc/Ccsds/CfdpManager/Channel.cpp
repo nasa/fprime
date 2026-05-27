@@ -81,7 +81,7 @@ Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager) :
         m_polldir[i].pb.diropen = false;
         m_polldir[i].pb.counted = false;
         m_polldir[i].pb.num_ts = 0;
-        m_polldir[i].pb.pending_file[0] = '\0';
+        m_polldir[i].pb.pending_file = "";
     }
 
     // Initialize playback structures
@@ -90,7 +90,7 @@ Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager) :
         m_playback[i].diropen = false;
         m_playback[i].counted = false;
         m_playback[i].num_ts = 0;
-        m_playback[i].pending_file[0] = '\0';
+        m_playback[i].pending_file = "";
     }
 
     // Allocate and initialize per-channel resources
@@ -260,9 +260,9 @@ void Channel::tickTransactions()
 {
     bool reset = true;
 
-    void (Transaction::*fns[CFDP_TICK_TYPE_NUM_TYPES])(int*) = {&Transaction::rTick, &Transaction::sTick,
+    void (Transaction::*fns[CFDP_TICK_TYPE_NUM_TYPES])(I32*) = {&Transaction::rTick, &Transaction::sTick,
                                                                   &Transaction::sTickNak};
-    int qs[CFDP_TICK_TYPE_NUM_TYPES]                              = {QueueId::RX, QueueId::TXW, QueueId::TXW};
+    I32 qs[CFDP_TICK_TYPE_NUM_TYPES]                              = {QueueId::RX, QueueId::TXW, QueueId::TXW};
 
     FW_ASSERT(m_tickType < CFDP_TICK_TYPE_NUM_TYPES, m_tickType);
 
@@ -774,18 +774,16 @@ CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir)
 void Channel::processPlaybackDirectory(Playback* pb)
 {
     Transaction* txn;
-    char path[MaxFilePathSize];
+    Fw::StringTemplate<MaxFilePathSize> path;
     Os::Directory::Status status;
 
     // either there's no transaction (first one) or the last one was finished, so check for a new one
 
-    memset(&path, 0, sizeof(path));
-
     while (pb->diropen && (pb->num_ts < CFDP_NUM_TRANSACTIONS_PER_PLAYBACK))
     {
-        if (pb->pending_file[0] == 0)
+        if (pb->pending_file.length() == 0)
         {
-            status = pb->dir.read(path, MaxFilePathSize);
+            status = pb->dir.read(path);
             if (status == Os::Directory::NO_MORE_FILES)
             {
                 // TODO BPC: Emit playback success EVR
@@ -801,8 +799,7 @@ void Channel::processPlaybackDirectory(Playback* pb)
                 break;
             }
 
-            strncpy(pb->pending_file, path, sizeof(pb->pending_file) - 1);
-            pb->pending_file[sizeof(pb->pending_file) - 1] = 0;
+            pb->pending_file = path;
         }
         else
         {
@@ -830,7 +827,7 @@ void Channel::processPlaybackDirectory(Playback* pb)
             txn->m_pb = pb;
             ++pb->num_ts;
 
-            pb->pending_file[0] = 0; // continue reading dir
+            pb->pending_file = ""; // continue reading dir
         }
     }
 
@@ -842,7 +839,7 @@ void Channel::processPlaybackDirectory(Playback* pb)
     }
 }
 
-void Channel::updatePollPbCounted(Playback* pb, int up, U8* counter)
+void Channel::updatePollPbCounted(Playback* pb, I32 up, U8* counter)
 {
     if (pb->counted != up)
     {

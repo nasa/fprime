@@ -74,6 +74,11 @@ class Channel {
      */
     ~Channel();
 
+    // Disable copy constructor and assignment operator
+    // Channel manages dynamic resources and should not be copied
+    Channel(const Channel&) = delete;
+    Channel& operator=(const Channel&) = delete;
+
     // ----------------------------------------------------------------------
     // Channel Processing
     // ----------------------------------------------------------------------
@@ -431,7 +436,7 @@ class Channel {
      * @param up      Whether to increment (1) or decrement (0)
      * @param counter Counter to update
      */
-    void updatePollPbCounted(Playback* pb, int up, U8* counter);
+    void updatePollPbCounted(Playback* pb, I32 up, U8* counter);
 
   private:
     // ----------------------------------------------------------------------
