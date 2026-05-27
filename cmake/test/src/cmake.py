@@ -102,7 +102,9 @@ def run_make(build_directory, target):
     return subprocess_helper(args, build_directory)
 
 
-def assert_process_success(data_object, errors_ok=False, warnings_ok=False, targets=None):
+def assert_process_success(
+    data_object, errors_ok=False, warnings_ok=False, targets=None
+):
     """Assert the subprocess runs worked as expected"""
     for field in ["source", "build", "install", "cmake", "targets"]:
         assert field in data_object, f"Data object malformed: missing '{field}' field"
@@ -113,7 +115,10 @@ def assert_process_success(data_object, errors_ok=False, warnings_ok=False, targ
     assert stdout, "CMake generated no standard out process"
     if stderr and not errors_ok:
         if warnings_ok:
-            has_errors = any("CMake Error" in line or "CMake Fatal Error" in line for line in stderr)
+            has_errors = any(
+                "CMake Error" in line or "CMake Fatal Error" in line
+                for line in stderr
+            )
             assert not has_errors, f"CMake generated errors:\n{''.join(stderr)}"
         else:
             assert False, f"CMake generated errors:\n{''.join(stderr)}"
