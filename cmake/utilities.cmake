@@ -644,7 +644,8 @@ endfunction(resolve_path_variables)
 #
 # Runs file(GLOB_RECURSE) for each pattern in a list individually and appends results in order. This
 # preserves the priority of earlier patterns over later ones, unlike a single GLOB_RECURSE call which
-# returns all results in lexicographic order regardless of pattern ordering.
+# returns all results in lexicographic order regardless of pattern ordering. Duplicates are removed
+# while preserving the order of first occurrence.
 #
 # - **OUTPUT_VAR**: variable name to store the accumulated results in (set in PARENT_SCOPE)
 # - **ARGN**: glob patterns to search, in priority order
@@ -655,6 +656,7 @@ function(fprime_glob_ordered OUTPUT_VAR)
         file(GLOB_RECURSE _MATCHES "${_PATTERN}")
         list(APPEND _ACCUMULATED ${_MATCHES})
     endforeach()
+    list(REMOVE_DUPLICATES _ACCUMULATED)
     set(${OUTPUT_VAR} ${_ACCUMULATED} PARENT_SCOPE)
 endfunction()
 

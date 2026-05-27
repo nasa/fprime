@@ -49,8 +49,8 @@ endfunction()
 # priority over later groups. Within a single group, matches are equally valid.
 #
 # Priority order:
-#   1. PROJECT_SOURCE_DIR/cmake/platform/       (project-level direct)
-#   2. FPRIME_PROJECT_ROOT/cmake/platform/      (backwards compat — project root differs from PROJECT_SOURCE_DIR)
+#   1. PROJECT_SOURCE_DIR/cmake/platform/        (project-level direct)
+#   2. FPRIME_PROJECT_ROOT/cmake/platform/       (backwards compat — project root differs from PROJECT_SOURCE_DIR)
 #   3. PROJECT_SOURCE_DIR/lib/*/cmake/platform/  (project libraries)
 #   4. PROJECT_SOURCE_DIR/*/cmake/platform/      (project subdirectories)
 #   5. FPRIME_LIBRARY_LOCATIONS/cmake/platform/  (backwards compat — explicit library locations)
@@ -84,8 +84,6 @@ function(fprime_find_platform_file)
             AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
         list(APPEND _PLATFORM_GLOBS
             "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-            "${FPRIME_PROJECT_ROOT}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
-            "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         )
     endif()
     # ---- END BACKWARDS COMPATIBILITY (project root) ----
@@ -109,16 +107,7 @@ function(fprime_find_platform_file)
     )
 
     fprime_glob_ordered(POSSIBLE_PLATFORM_FILES ${_PLATFORM_GLOBS})
-    list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
-
-    # The framework default is always found as the last entry. When higher-priority matches exist,
-    # drop the framework entry so it doesn't trigger a spurious "multiple files" warning.
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
-    set(_FRAMEWORK_PLATFORM_FILE "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    if (NUM_POSSIBLE_PLATFORM_FILES GREATER 1 AND "${_FRAMEWORK_PLATFORM_FILE}" IN_LIST POSSIBLE_PLATFORM_FILES)
-        list(REMOVE_ITEM POSSIBLE_PLATFORM_FILES "${_FRAMEWORK_PLATFORM_FILE}")
-        list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
-    endif()
 
     # Check if any platform file was found
     if (NUM_POSSIBLE_PLATFORM_FILES EQUAL 0)
