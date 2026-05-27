@@ -151,6 +151,11 @@ macro(fprime_setup_override_targets)
 endmacro(fprime_setup_override_targets)
 
 macro(fprime_initialize_build_system)
+    # Ensure that the build system is loaded only once
+    get_property(FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
+    if (FPRIME_BUILD_SYSTEM_LOADED)
+        return()
+    endif()
     cmake_minimum_required(VERSION 3.18)
     fprime_setup_global_includes()
     fprime_detect_libraries()
@@ -211,7 +216,7 @@ function(fprime_setup_included_code)
     # add_fprime_subdirectory cannot be run until later in the build process. Otherwise detection
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
-    fprime__include_platform_file()
+    fprime_setup_platform()
     # Add "all" target to top level and a target to match all tests
     fprime_util_metadata_add_build_target("all")
     if (BUILD_TESTING)
@@ -243,8 +248,4 @@ function(fprime_setup_included_code)
 endfunction(fprime_setup_included_code)
 
 
-# Load the build system exactly one time
-get_property(FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
-if (NOT FPRIME_BUILD_SYSTEM_LOADED)
-    fprime_initialize_build_system()
-endif ()
+fprime_initialize_build_system()
