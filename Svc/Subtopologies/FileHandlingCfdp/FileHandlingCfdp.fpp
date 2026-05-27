@@ -3,7 +3,7 @@ module FileHandlingCfdp {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance cfdpManager: Svc.Ccsds.CfdpManager base id FileHandlingCfdpConfig.BASE_ID + 0x00000 \
+    instance cfdpManager: Svc.Ccsds.Cfdp.CfdpManager base id FileHandlingCfdpConfig.BASE_ID + 0x00000 \
         queue size FileHandlingCfdpConfig.QueueSizes.cfdpManager \
         stack size FileHandlingCfdpConfig.StackSizes.cfdpManager \
         priority FileHandlingCfdpConfig.Priorities.cfdpManager \
