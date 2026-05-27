@@ -75,15 +75,18 @@ function(fprime_find_platform_file)
     # to avoid breaking existing projects during the transition to convention-based discovery.
     # TODO: Remove these patterns once all projects have migrated to the standard layout.
     set(_COMPAT_GLOBS)
-    if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
+    if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL ""
+            AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
         list(APPEND _COMPAT_GLOBS
             "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
             "${FPRIME_PROJECT_ROOT}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         )
     endif()
-    foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-        list(APPEND _COMPAT_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    endforeach()
+    if (DEFINED FPRIME_LIBRARY_LOCATIONS AND NOT "${FPRIME_LIBRARY_LOCATIONS}" STREQUAL "")
+        foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+            list(APPEND _COMPAT_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+        endforeach()
+    endif()
     if (_COMPAT_GLOBS)
         file(GLOB_RECURSE _COMPAT_PLATFORM_FILES ${_COMPAT_GLOBS})
         list(APPEND POSSIBLE_PLATFORM_FILES ${_COMPAT_PLATFORM_FILES})
