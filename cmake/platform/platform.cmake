@@ -37,6 +37,8 @@ function(fprime__validate_platform)
         message(WARNING "Toolchain '${TOOLCHAIN_NAME}' should set CMAKE_SYSTEM_NAME to 'Generic' and set FPRIME_PLATFORM")
         set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}" CACHE INTERNAL "Set the platform name to the system name for random toolchain builds" FORCE)
     endif()
+    # Always cache TOOLCHAIN_NAME so it is available after this function returns
+    set(TOOLCHAIN_NAME "${TOOLCHAIN_NAME}" CACHE INTERNAL "Toolchain name derived from toolchain file" FORCE)
 endfunction()
 
 ####
@@ -59,14 +61,14 @@ function(fprime_find_platform_file)
         return()
     endif()
 
-    # Build list of search globs from standard locations: project, libraries, then framework
+    # Build list of search paths from standard locations: project, libraries, then framework
     set(PLATFORM_SEARCH_GLOBS
         "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
     foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
         list(APPEND PLATFORM_SEARCH_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
     endforeach()
+    list(APPEND PLATFORM_SEARCH_GLOBS "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
 
     set(POSSIBLE_PLATFORM_FILES)
     foreach(SEARCH_GLOB IN LISTS PLATFORM_SEARCH_GLOBS)
