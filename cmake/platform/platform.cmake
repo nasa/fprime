@@ -45,7 +45,7 @@ endfunction()
 # Function `fprime_find_platform_file`:
 #
 # Search standard locations for a platform file (**/cmake/platform/${FPRIME_PLATFORM}.cmake) using file globs.
-# Searches in order: project root, project libs, declared libraries, then framework. Selects the first match.
+# Searches project root (recursively), framework, and declared library locations. Selects the first match.
 # If multiple are found, warn the user. If none are found, error and exit. Results are cached in
 # FPRIME_CACHED_PLATFORM_FILE to avoid re-searching.
 #
@@ -53,45 +53,31 @@ endfunction()
 # Returns: None
 ####
 function(fprime_find_platform_file)
-    if (DEFINED FPRIME_CACHED_PLATFORM AND NOT FPRIME_PLATFORM STREQUAL FPRIME_CACHED_PLATFORM)
-        message(FATAL_ERROR "FPRIME_PLATFORM changed. Please regenerate the build cache.")
-    endif()
+    fprime_cmake_ASSERT("FPRIME_PLATFORM changed. Please regenerate the build cache." FPRIME_PLATFORM STREQUAL FPRIME_CACHED_PLATFORM OR NOT DEFINED FPRIME_CACHED_PLATFORM)
 
     # Use the cached platform file to avoid the expense of glob-searching for platform files again
     if (DEFINED FPRIME_CACHED_PLATFORM_FILE)
         return()
     endif()
 
-    # Search standard locations using globs: project root, project libs, declared libraries, then framework
-    set(POSSIBLE_PLATFORM_FILES)
-
-    # 1. Direct project root platform file
-    if (EXISTS "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-        list(APPEND POSSIBLE_PLATFORM_FILES "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    endif()
-
-    # 2. Glob for platform files under project root libs (e.g. libs/*/cmake/platform/)
-    file(GLOB _PROJECT_LIB_PLATFORM_FILES "${FPRIME_PROJECT_ROOT}/libs/*/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    list(APPEND POSSIBLE_PLATFORM_FILES ${_PROJECT_LIB_PLATFORM_FILES})
-
-    # 3. Declared library locations
+    # Build library search glob patterns from FPRIME_LIBRARY_LOCATIONS
+    set(LIBRARY_SEARCH_GLOBS)
     foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-        if (EXISTS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-            list(APPEND POSSIBLE_PLATFORM_FILES "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-        endif()
+        list(APPEND LIBRARY_SEARCH_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
     endforeach()
 
-    # 4. Framework path
-    if (EXISTS "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-        list(APPEND POSSIBLE_PLATFORM_FILES "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-    endif()
-
+    set(EXPECTED_PLATFORM_FILE)
+    file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
+        "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        ${LIBRARY_SEARCH_GLOBS}
+    )
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
 
     # Check if any platform file was found
     if (NUM_POSSIBLE_PLATFORM_FILES EQUAL 0)
-        message(FATAL_ERROR "\n[F-PRIME] No platform config for '${FPRIME_PLATFORM}'. Please create: '${FPRIME_PLATFORM}.cmake'\n")
+        fprime_cmake_fatal_error("No platform config for '${FPRIME_PLATFORM}'. Please create: '${FPRIME_PLATFORM}.cmake'")
     endif()
     # Grab the first platform file found and warn if multiple were available
     list(GET POSSIBLE_PLATFORM_FILES 0 FIRST_FOUND_PLATFORM_FILE)
