@@ -70,7 +70,7 @@ void CfdpChunkList::add(FileSize offset, FileSize size)
     // PTFO: files won't be so big we need to gracefully handle overflow,
     // and in that case the user should change everything in chunks
     // to use 64-bit numbers
-    FW_ASSERT((offset + size) >= offset, offset, size);
+    FW_ASSERT((offset + size) >= offset, static_cast<FwAssertArgType>(offset), static_cast<FwAssertArgType>(size));
 
     insert(i, &chunk);
 }
@@ -113,7 +113,7 @@ U32 CfdpChunkList::computeGaps(ChunkIdx maxGaps,
     Chunk chunk;
 
     FW_ASSERT(total); /* does it make sense to have a 0 byte file? */
-    FW_ASSERT(start < total, start, total);
+    FW_ASSERT(start < total, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(total));
 
     /* simple case: there is no chunk data, which means there is a single gap of the entire size */
     if (!m_count)
@@ -239,7 +239,7 @@ bool CfdpChunkList::combineNext(ChunkIdx i, const Chunk* chunk)
     FileSize chunk_end = chunk->offset + chunk->size;
 
     /* Assert no rollover, only possible as a bug */
-    FW_ASSERT(chunk_end > chunk->offset, chunk_end, chunk->offset);
+    FW_ASSERT(chunk_end > chunk->offset, static_cast<FwAssertArgType>(chunk_end), static_cast<FwAssertArgType>(chunk->offset));
 
     /* Determine how many can be combined */
     for (; combined_i < m_count; ++combined_i)
