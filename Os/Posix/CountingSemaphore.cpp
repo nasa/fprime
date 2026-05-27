@@ -1,0 +1,66 @@
+// ======================================================================
+// \title Os/Posix/CountingSemaphore.cpp
+// \brief Posix implementations for Os::CountingSemaphore
+// ======================================================================
+#include "Os/Posix/CountingSemaphore.hpp"
+#include <errno.h>
+#include <time.h>
+#include "Fw/Types/Assert.hpp"
+#include "Os/Posix/error.hpp"
+namespace Os {
+namespace Posix {
+namespace Semaphore {
+
+PosixCountingSemaphore::PosixCountingSemaphore(U32 initial_count, int pshared) {
+    int status = sem_init(&this->m_handle.m_semaphore, pshared, initial_count);
+    FW_ASSERT(status == 0, static_cast<FwAssertArgType>(status));
+}
+
+PosixCountingSemaphore::~PosixCountingSemaphore() {
+    (void)sem_destroy(&this->m_handle.m_semaphore);
+}
+
+PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
+    int status = sem_wait(&this->m_handle.m_semaphore);
+    FW_ASSERT(status == 0 || errno != 0, status);
+    return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
+}
+
+PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(U32 timeout_ms) {
+    FW_ASSERT(timeout_ms > 0);
+    struct timespec abstime;
+    int clock_status = clock_gettime(CLOCK_REALTIME, &abstime);
+    FW_ASSERT(clock_status == 0, static_cast<FwAssertArgType>(clock_status));
+
+    abstime.tv_sec += timeout_ms / 1000;
+    abstime.tv_nsec += (timeout_ms % 1000) * 1000000L;
+
+    if (abstime.tv_nsec >= 1000000000L) {
+        abstime.tv_sec += 1;
+        abstime.tv_nsec -= 1000000000L;
+    }
+
+    int status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);
+    FW_ASSERT(status == 0 || errno != 0, status);
+    return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
+}
+
+PosixCountingSemaphore::Status PosixCountingSemaphore::tryWait() {
+    int status = sem_trywait(&this->m_handle.m_semaphore);
+    FW_ASSERT(status == 0 || errno != 0, status);
+    return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
+}
+
+PosixCountingSemaphore::Status PosixCountingSemaphore::post() {
+    int status = sem_post(&this->m_handle.m_semaphore);
+    FW_ASSERT(status == 0 || errno != 0, status);
+    return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
+}
+
+CountingSemaphoreHandle* PosixCountingSemaphore::getHandle() {
+    return &m_handle;
+}
+
+}  // namespace Semaphore
+}  // namespace Posix
+}  // namespace Os

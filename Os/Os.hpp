@@ -15,6 +15,7 @@ typedef U8 TaskHandleStorage[FW_TASK_HANDLE_MAX_SIZE];
 typedef U8 DirectoryHandleStorage[FW_DIRECTORY_HANDLE_MAX_SIZE];
 typedef U8 FileSystemHandleStorage[FW_FILESYSTEM_HANDLE_MAX_SIZE];
 typedef U8 ConditionVariableHandleStorage[FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE];
+typedef U8 CountingSemaphoreHandleStorage[FW_COUNTING_SEMAPHORE_HANDLE_MAX_SIZE];
 typedef U8 CpuHandleStorage[FW_CPU_HANDLE_MAX_SIZE];
 typedef U8 MemoryHandleStorage[FW_MEMORY_HANDLE_MAX_SIZE];
 typedef U8 RawTimeHandleStorage[FW_RAW_TIME_HANDLE_MAX_SIZE];

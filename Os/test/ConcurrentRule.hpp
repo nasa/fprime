@@ -160,14 +160,16 @@ class AggregatedConcurrentRule : public STest::Rule<State> {
 
     // Notify a rule by name
     void notify(std::string& name) {
-        // Notify all matching rules
-        for (auto pair : m_rule_map) {
-            if (std::string(pair.second->getName()) == name) {
-                pair.second->step();
-                return;
+        // Notify all matching rules (for CountingSemaphore semantics)
+        // Use m_rules list since m_rule_map only stores one rule per name
+        bool found = false;
+        for (ConcurrentRule<State>* rule : m_rules) {
+            if (std::string(rule->getName()) == name) {
+                rule->step();
+                found = true;
             }
         }
-        ASSERT_TRUE(false) << "Failed to find rule to notify";
+        ASSERT_TRUE(found) << "Failed to find rule to notify";
     }
 
     Os::Mutex& getLock() { return this->m_lock; }

@@ -35,6 +35,7 @@ register_os_implementation("Console" Posix)
 
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
+register_os_implementation("CountingSemaphore" Posix Os_Posix_Shared)
 register_os_implementation("RawTime" Posix Os_Posix_Shared)
 
 # -----------------------------------------
@@ -148,6 +149,23 @@ register_fprime_ut(
     STest
   CHOOSES_IMPLEMENTATIONS
     "Os_Mutex_Posix"
+)
+
+# -----------------------------------------
+### Os/CountingSemaphore/Posix Test Section
+# -----------------------------------------
+
+register_fprime_ut(
+     PosixCountingSemaphoreTest 
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/countingsemaphore/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/countingsemaphore/CountingSemaphoreRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixCountingSemaphoreTests.cpp"     
+  DEPENDS
+    Fw_Types
+    STest
+  CHOOSES_IMPLEMENTATIONS
+    "Os_CountingSemaphore_Posix"
 )
 
 # -----------------------------------------
