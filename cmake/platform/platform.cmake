@@ -110,7 +110,15 @@ function(fprime_find_platform_file)
 
     fprime_glob_ordered(POSSIBLE_PLATFORM_FILES ${_PLATFORM_GLOBS})
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
+
+    # The framework default is always found as the last entry. When higher-priority matches exist,
+    # drop the framework entry so it doesn't trigger a spurious "multiple files" warning.
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
+    set(_FRAMEWORK_PLATFORM_FILE "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+    if (NUM_POSSIBLE_PLATFORM_FILES GREATER 1 AND "${_FRAMEWORK_PLATFORM_FILE}" IN_LIST POSSIBLE_PLATFORM_FILES)
+        list(REMOVE_ITEM POSSIBLE_PLATFORM_FILES "${_FRAMEWORK_PLATFORM_FILE}")
+        list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
+    endif()
 
     # Check if any platform file was found
     if (NUM_POSSIBLE_PLATFORM_FILES EQUAL 0)
