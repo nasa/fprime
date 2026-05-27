@@ -75,13 +75,13 @@ void TlmChanTester::runMultiChannel() {
         this->sendBuff(ID_0[n], static_cast<U32>(n));
     }
 
-    ASSERT_EQ(0, this->component.m_activeBuffer);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_0, this->component.m_activeBuffer);
 
     // do a run, and all the packets should be sent
     this->doRun(true);
     ASSERT_TRUE(this->m_bufferRecv);
     ASSERT_EQ(INTEGER_DIVISION_ROUNDED_UP(FW_NUM_ARRAY_ELEMENTS(ID_0), CHANS_PER_COMBUFFER), this->m_numBuffs);
-    ASSERT_EQ(1, this->component.m_activeBuffer);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_1, this->component.m_activeBuffer);
 
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
@@ -102,13 +102,13 @@ void TlmChanTester::runMultiChannel() {
         this->sendBuff(ID_1[n], static_cast<U32>(n));
     }
 
-    ASSERT_EQ(1, this->component.m_activeBuffer);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_1, this->component.m_activeBuffer);
 
     // do a run, and all the packets should be sent
     this->doRun(true);
     ASSERT_TRUE(this->m_bufferRecv);
     ASSERT_EQ(INTEGER_DIVISION_ROUNDED_UP(FW_NUM_ARRAY_ELEMENTS(ID_1), CHANS_PER_COMBUFFER), this->m_numBuffs);
-    ASSERT_EQ(0, this->component.m_activeBuffer);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_0, this->component.m_activeBuffer);
 
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
