@@ -24,7 +24,7 @@ function(fprime_validate_platform)
     get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
     # Native toolchains use the system name for the toolchain and FPRIME_PLATFORM
     if (NOT TOOLCHAIN_NAME)
-        set(TOOLCHAIN_NAME "${CMAKE_SYSTEM_NAME}" CACHE INTERNAL "Set the toolchain name to the system name for native builds" FORCE)
+        set(TOOLCHAIN_NAME "${CMAKE_SYSTEM_NAME}")
         set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}" CACHE INTERNAL "Set the platform name to the system name for native builds" FORCE)
     # It is an error to use a "Generic" toolchain without setting FPRIME_PLATFORM correctly
     elseif (CMAKE_SYSTEM_NAME STREQUAL "Generic" AND NOT FPRIME_PLATFORM)
@@ -152,23 +152,4 @@ macro(fprime_setup_platform)
     include("${FPRIME_CACHED_PLATFORM_FILE}")
 endmacro()
 
-# Run validation at include-time so TOOLCHAIN_NAME and FPRIME_PLATFORM are available early.
-# These must be normal variables (not just cache) so they are visible in the including scope.
-get_filename_component(TOOLCHAIN_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME_WE)
-if (NOT TOOLCHAIN_NAME)
-    set(TOOLCHAIN_NAME "${CMAKE_SYSTEM_NAME}")
-    set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}")
-elseif (CMAKE_SYSTEM_NAME STREQUAL "Generic" AND NOT FPRIME_PLATFORM)
-    message(FATAL_ERROR "Toolchain '${TOOLCHAIN_NAME}' set CMAKE_SYSTEM_NAME to 'Generic' without setting FPRIME_PLATFORM")
-elseif (NOT CMAKE_SYSTEM_NAME AND NOT FPRIME_PLATFORM)
-    message(FATAL_ERROR "Toolchain '${TOOLCHAIN_NAME}' should set CMAKE_SYSTEM_NAME to 'Generic' and set FPRIME_PLATFORM")
-elseif (NOT FPRIME_PLATFORM)
-    message(WARNING "Toolchain '${TOOLCHAIN_NAME}' should set CMAKE_SYSTEM_NAME to 'Generic' and set FPRIME_PLATFORM")
-    set(FPRIME_PLATFORM "${CMAKE_SYSTEM_NAME}")
-endif()
-
-# Set output directories at include-time (matches original behavior)
-fprime_cmake_status("Target build toolchain/platform: ${TOOLCHAIN_NAME}/${FPRIME_PLATFORM}")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${TOOLCHAIN_NAME}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
+fprime_validate_platform()
