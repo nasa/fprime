@@ -68,6 +68,7 @@ function(fprime_find_platform_file)
 
     set(EXPECTED_PLATFORM_FILE)
     file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
+        "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
         ${LIBRARY_SEARCH_GLOBS}
