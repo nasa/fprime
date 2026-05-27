@@ -293,7 +293,7 @@ fptosi
 fptoui
 fptr
 fptrunc
-fputil
+FPUTIL
 fpy
 fpyc
 FPYSEQUENCER
@@ -354,6 +354,7 @@ HPSC
 htags
 HTH
 HTMLHELP
+IAMAI
 ibd
 ieeetr
 ieq

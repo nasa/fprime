@@ -5,16 +5,15 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/TestSerializable.fpp"
-)
-set(MOD_DEPS
-  Fw/Types
-  Fw/Comp
-  Fw/Port
-)
 
-register_fprime_module()
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/TestSerializable.fpp"
+  DEPENDS
+    Fw_Types
+    Fw_Comp
+    Fw_Port
+)
 
 # Sets MODULE_NAME to unique name based on path
 get_module_name(${CMAKE_CURRENT_LIST_DIR})

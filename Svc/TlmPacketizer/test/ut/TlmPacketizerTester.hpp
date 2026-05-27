@@ -95,6 +95,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //!
     void sectionConfigParameterTest(void);
 
+    //! Commanding test: verify SET_LEVEL invalid-level returns VALIDATION_ERROR
+    void setLevelInvalidTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();
@@ -127,6 +130,8 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
+
+    void pushAllChannels(Fw::Time& ts, Fw::TlmBuffer& buff);
 
     //! Connect ports
     //!
