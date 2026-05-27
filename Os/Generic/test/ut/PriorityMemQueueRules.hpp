@@ -88,6 +88,12 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
     void action(Ref::Test::PriorityMemQueue::Tester& state) {
         QueueMessage msg = state.generateRandomMessage();
 
+        // Ensure we only send to enabled priorities to avoid deadlock
+        // (disabled priorities can hold messages but won't be scanned by receive)
+        while (!state.isPriorityEnabled(msg.priority)) {
+            msg.randomize();  // Regenerate until we get an enabled priority
+        }
+
         // Choose a random blocking type
         Os::QueueInterface::BlockingType blockType = (STest::Random::lowerUpper(0, 1) == 0)
                                                          ? Os::QueueInterface::BlockingType::NONBLOCKING

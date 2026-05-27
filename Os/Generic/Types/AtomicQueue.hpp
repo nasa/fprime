@@ -61,10 +61,7 @@ class AtomicQueue {
     //! \param bufferSize size of each message buffer in bytes
     //! \param allocator memory allocator for dynamic allocation
     //! \param allocatorId allocator identifier for tracking
-    void create(FwSizeType numBuffers, 
-                FwSizeType bufferSize, 
-                Fw::MemAllocator& allocator, 
-                FwEnumStoreType allocatorId);
+    void create(FwSizeType numBuffers, FwSizeType bufferSize, Fw::MemAllocator& allocator, FwEnumStoreType allocatorId);
 
     //! \brief Teardown the queue and free allocated memory
     void teardown();
@@ -138,15 +135,7 @@ class AtomicQueue {
     //!
     //! \return buffer size in bytes
     FwSizeType getBufferSize() const;
-    
-    //! \brief Enable/disable diagnostic logging at runtime
-    //!
-    //! \param enable true to enable logging, false to disable
-    static void setDebugLogging(bool enable);
-    
-    //! \brief Get queue ID for logging (set during create)
-    FwEnumStoreType getId() const { return this->m_id; }
-    
+
     //! \brief Check if queue has been successfully created
     //!
     //! \return true if create() completed successfully, false otherwise
@@ -167,9 +156,9 @@ class AtomicQueue {
     //! Memory layout: Natural alignment (~24 bytes on 64-bit platforms)
     //! For large slot counts (>20K), this saves significant memory vs cache line alignment
     struct Slot {
-        U8* buffer;                       // Embedded message buffer
-        FwSizeType size;                  // Actual message size stored
-        std::atomic<FwSizeType> sequence; // Coordination sequence number
+        U8* buffer;                        // Embedded message buffer
+        FwSizeType size;                   // Actual message size stored
+        std::atomic<FwSizeType> sequence;  // Coordination sequence number
     };
 
     //! \brief Calculate slot index from position
@@ -195,19 +184,17 @@ class AtomicQueue {
     bool enqueueInternal(const U8* buffer, FwSizeType size);
 
     // Private members:
-    Slot* m_slots;                        // Circular slot array
-    U8* m_bufferMemory;                   // Contiguous buffer memory block
-    FwSizeType m_capacity;                // Number of message buffers
-    FwSizeType m_bufferSize;              // Size of each message buffer
-    FwSizeType m_mask;                    // Bitmask if power-of-2, else 0
-    std::atomic<FwSizeType> m_enqueuePos; // Next enqueue position (producer cursor)
-    std::atomic<FwSizeType> m_dequeuePos; // Next dequeue position (consumer cursor)
-    Fw::MemAllocator* m_allocator;        // Memory allocator (nullptr if not using allocator)
-    FwEnumStoreType m_allocatorId;        // Allocator identifier for deallocation
-    Os::CountingSemaphore* m_notFullSem;  // Semaphore for blocking enqueue (all platforms)
-    FwEnumStoreType m_id;                 // Queue identifier for logging
-    
-    static std::atomic<bool> s_debugEnabled; // Runtime debug logging flag
+    Slot* m_slots;                         // Circular slot array
+    U8* m_bufferMemory;                    // Contiguous buffer memory block
+    FwSizeType m_capacity;                 // Number of message buffers
+    FwSizeType m_bufferSize;               // Size of each message buffer
+    FwSizeType m_mask;                     // Bitmask if power-of-2, else 0
+    std::atomic<FwSizeType> m_enqueuePos;  // Next enqueue position (producer cursor)
+    std::atomic<FwSizeType> m_dequeuePos;  // Next dequeue position (consumer cursor)
+    Fw::MemAllocator* m_allocator;         // Memory allocator (nullptr if not using allocator)
+    FwEnumStoreType m_allocatorId;         // Allocator identifier for deallocation
+    Os::CountingSemaphore* m_notFullSem;   // Semaphore for blocking enqueue (all platforms)
+    FwEnumStoreType m_id;                  // Queue identifier for logging
 };
 
 }  // namespace Types

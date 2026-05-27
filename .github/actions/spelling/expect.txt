@@ -15,6 +15,8 @@ ampcs
 ANamespace
 Aos
 abstime
+atomically
+atomics
 aosmpdu
 APacket
 apid
@@ -49,6 +51,8 @@ Bitfield
 bitmaps
 bitshifts
 bitwidth
+bitmask
+bitmasks
 bocchino
 boolt
 BSB
@@ -126,6 +130,7 @@ COMSTUB
 constexpr
 COUNTINGSEMAPHORE
 countingsemaphore
+CMPXCHG
 cookiecutter
 cooldown
 coravy
@@ -167,6 +172,7 @@ deframe
 deframed
 deframer
 deframing
+dequeue
 Deinitialization
 deployables
 DEPRECATEDLIST
@@ -207,6 +213,7 @@ DSL
 dspal
 DSSC
 Dstate
+DWCAS
 DVI
 DWN
 eabi
@@ -218,11 +225,13 @@ EHAs
 eip
 Elts
 emptydir
+embOS
 endcond
 endfunction
 endmacro
 endraw
 enduml
+enqueue
 EPP
 epp
 ERRORCHECK
@@ -403,6 +412,9 @@ lammertbies
 LASTLOG
 LBLOCK
 LCHILD
+LDARX
+LDXR
+LDREX
 leisher
 lestarch
 lflag
@@ -459,11 +471,13 @@ MOVEFILE
 mpdu
 Mpu
 Msb
+MPMC
 msc
 mscfile
 mseconds
 mstarch
 mstat
+msgQ
 MState
 multiarch
 multitool
@@ -476,6 +490,7 @@ nasafprime
 nbits
 ncsl
 newtio
+Neutrino
 nmsgs
 NOBLOCK
 NODELABEL
@@ -630,6 +645,7 @@ rpi
 rptr
 SAlias
 sanitizers
+SafeRTOS
 sats
 SBF
 SBINDIR
@@ -680,6 +696,8 @@ sourcing
 spdx
 spi
 spidev
+spinlock
+spinlocks
 spsc
 sqa
 srandom
@@ -691,6 +709,7 @@ startuml
 stdbool
 stddef
 stdint
+STDCX
 stest
 Stl
 stmtidx
@@ -698,6 +717,8 @@ STREQ
 STREQUAL
 STRINGUTILS
 STRNE
+STREX
+STXR
 strnlen
 subgrouping
 subhist
@@ -737,6 +758,7 @@ testwriteoffset
 tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
+ThreadX
 Thu
 timebase
 timerfd
@@ -818,3 +840,4 @@ xxxx
 XXYY
 ziext
 zimri
+Zephyr

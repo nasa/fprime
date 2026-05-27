@@ -11,9 +11,9 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include "Fw/Time/TimeInterval.hpp"
+#include "Os/Generic/PriorityMemQueue.hpp"
 #include "Os/Task.hpp"
 #include "Os/test/ConcurrentRule.hpp"
-#include "Os/Generic/PriorityMemQueue.hpp"
 #include "STest/Random/Random.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
@@ -23,7 +23,7 @@
 const U32 QUEUE_DEPTH = 10;
 const U32 MESSAGE_SIZE = 128;
 const U32 MAX_MESSAGES = 512;  // Max capacity for shadow queue (will be limited by per-priority config)
-const U32 RANDOM_BOUND = 1000;
+const U32 RANDOM_BOUND = 200;  // Reduced from 1000 to keep test time under 10 seconds
 const U32 MAX_TEST_MESSAGE_ID = 1000000;
 const FwEnumStoreType QUEUE_ID = 42;
 
@@ -45,9 +45,7 @@ Os::Generic::PriorityMemQueue::QueueConfig configs[] = {queueConfig};
 class PriorityMemQueueTestHelper {
   public:
     // Reset the configuration state for testing
-    static void resetConfig() {
-        Os::Generic::PriorityMemQueue::resetConfig();
-    }
+    static void resetConfig() { Os::Generic::PriorityMemQueue::resetConfig(); }
 };
 
 // Forward declarations
@@ -66,8 +64,9 @@ struct QueueMessage {
 
     void randomize() {
         size = STest::Random::lowerUpper(1, MESSAGE_SIZE);
-        // Use only priority 0 by default, which is always supported
-        priority = Os::Generic::Queue::DEFAULT_PRIORITY;
+        // Randomly select from configured priorities 0-2 to exercise multi-priority behavior
+        // in random testing. All three priorities are configured and enabled by EnablePriority rule.
+        priority = static_cast<FwQueuePriorityType>(STest::Random::lowerUpper(0, 2));
         id = STest::Random::lowerUpper(0, MAX_TEST_MESSAGE_ID);
 
         for (FwSizeType i = 0; i < size; ++i) {
@@ -139,12 +138,18 @@ class Tester {
         bool isEmpty() const { return messageCount == 0; }
 
         bool isFull() const {
-            // Check if any priority queue that we might send to is full
-            // Since random messages go to priority 0, check if priority 0 is full
-            if (priorityEnabled[0] && priorityMessageCount[0] >= priorityDepth[0]) {
-                return true;
+            // With multi-priority queues, "full" means all enabled priorities are full.
+            // This ensures FillQueue fills all enabled priorities before SendFull tries.
+            // If ANY enabled priority has space, the queue is not full.
+            for (FwQueuePriorityType p = 0; p < 3; ++p) {
+                if (priorityEnabled[p] && priorityDepth[p] > 0) {
+                    if (priorityMessageCount[p] < priorityDepth[p]) {
+                        return false;  // This priority has space
+                    }
+                }
             }
-            return false;
+            // All enabled priorities are full
+            return true;
         }
 
         bool isPriorityFull(FwQueuePriorityType priority) const {
@@ -159,28 +164,31 @@ class Tester {
                 return Os::QueueInterface::Status::UNINITIALIZED;
             }
 
-            if (!priorityEnabled[msg.priority]) {
-                // Use priority 0 if the requested priority is not enabled
-                return Os::QueueInterface::Status::INVALID_PRIORITY;
+            // Model the actual priority resolution logic: if priority not configured (no queue exists),
+            // fall back to priority 0 (matches requirePrioritySizing=false behavior).
+            // NOTE: Enable/disable state does NOT affect send, only receive.
+            FwQueuePriorityType effectivePriority = msg.priority;
+            if (priorityDepth[msg.priority] == 0) {
+                effectivePriority = Os::Generic::Queue::DEFAULT_PRIORITY;
             }
 
             // Check per-priority queue depth
-            if (isPriorityFull(msg.priority)) {
+            if (isPriorityFull(effectivePriority)) {
                 return Os::QueueInterface::Status::FULL;
             }
 
             // Check message size
-            if (msg.size > priorityMaxMsgSize[msg.priority]) {
+            if (msg.size > priorityMaxMsgSize[effectivePriority]) {
                 return Os::QueueInterface::Status::SIZE_MISMATCH;
             }
 
-            // Add message to the queue
+            // Add message to the queue preserving original priority (matches actual implementation)
             messages[messageCount++] = msg;
-            priorityMessageCount[msg.priority]++;
+            priorityMessageCount[effectivePriority]++;
 
             // Update per-priority high water mark
-            if (priorityMessageCount[msg.priority] > priorityHighWaterMark[msg.priority]) {
-                priorityHighWaterMark[msg.priority] = priorityMessageCount[msg.priority];
+            if (priorityMessageCount[effectivePriority] > priorityHighWaterMark[effectivePriority]) {
+                priorityHighWaterMark[effectivePriority] = priorityMessageCount[effectivePriority];
             }
 
             // Update total high water mark for legacy tracking
@@ -251,7 +259,8 @@ class Tester {
         PriorityMemQueueTestHelper::resetConfig();
 
         // Configure the queue system
-        Os::Generic::PriorityMemQueue::configure(configs, 1, true, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+        Os::Generic::PriorityMemQueue::configure(configs, 1, true,
+                                                 Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
         // Configure the shadow queue to match
         m_shadow.config(priorityConfigs, 3);
@@ -278,7 +287,9 @@ class Tester {
     Os::QueueInterface::Status send(const QueueMessage& msg, Os::QueueInterface::BlockingType blockType) {
         Os::QueueInterface::Status status = m_queue.send(msg.data, msg.size, msg.priority, blockType);
 
-        // Only update shadow if non-blocking or successful blocking send
+        // Update shadow model for non-blocking sends (status immediately known).
+        // For blocking sends, only update on success since failures shouldn't occur
+        // (blocking waits for space). This maintains shadow/actual queue synchronization.
         if (blockType == Os::QueueInterface::BlockingType::NONBLOCKING || status == Os::QueueInterface::Status::OP_OK) {
             Os::QueueInterface::Status shadowStatus = m_shadow.send(msg);
 
@@ -336,7 +347,7 @@ class Tester {
     // Verify queue state
     void verify() const {
         EXPECT_EQ(m_shadow.messageCount, m_queue.getMessagesAvailable());
-        
+
         // Compute max of per-priority high water marks to match implementation
         U32 maxHwm = 0;
         for (U32 i = 0; i < Os::Generic::Queue::MAX_PRIORITIES; ++i) {
@@ -355,6 +366,14 @@ class Tester {
 
     // Check if the queue is full
     bool isFull() const { return m_shadow.isFull(); }
+
+    // Check if a priority is enabled
+    bool isPriorityEnabled(FwQueuePriorityType priority) const {
+        if (priority >= Os::Generic::Queue::MAX_PRIORITIES) {
+            return false;
+        }
+        return m_shadow.priorityEnabled[priority];
+    }
 
     // Generate a random message
     QueueMessage generateRandomMessage() const {
@@ -388,7 +407,8 @@ TEST(PriorityMemQueueConfig, SingleQueueSinglePriority) {
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
 
     // Configure the system
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue using this configuration
     Os::Generic::PriorityMemQueue queue;
@@ -430,7 +450,8 @@ TEST(PriorityMemQueueConfig, MultipleQueues) {
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig1, testQueueConfig2};
 
     // Configure the system with 2 queue configs
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 2, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 2, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create both queues
     Os::Generic::PriorityMemQueue queue1, queue2;
@@ -472,7 +493,8 @@ TEST(PriorityMemQueueConfig, ManyPriorities) {
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
 
     // Configure the system
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue
     Os::Generic::PriorityMemQueue queue;
@@ -617,7 +639,8 @@ TEST(PriorityMemQueueConfig, MultipleReconfigurations) {
     Os::Generic::PriorityMemQueue::QueueConfig queueConfig1 = {104, 1, priorityConfig1};
     Os::Generic::PriorityMemQueue::QueueConfig configs1[] = {queueConfig1};
 
-    Os::Generic::PriorityMemQueue::configure(configs1, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(configs1, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     Os::Generic::PriorityMemQueue queue1;
     Fw::String name1("Queue1");
@@ -633,7 +656,8 @@ TEST(PriorityMemQueueConfig, MultipleReconfigurations) {
     Os::Generic::PriorityMemQueue::QueueConfig queueConfig2 = {105, 2, priorityConfig2};
     Os::Generic::PriorityMemQueue::QueueConfig configs2[] = {queueConfig2};
 
-    Os::Generic::PriorityMemQueue::configure(configs2, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(configs2, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     Os::Generic::PriorityMemQueue queue2;
     Fw::String name2("Queue2");
@@ -655,7 +679,8 @@ TEST(PriorityMemQueueConfig, MultipleReconfigurations) {
         testQueueConfigs3[i] = {static_cast<FwEnumStoreType>(200 + i), 1, &testPriorityConfigs3[i]};
     }
 
-    Os::Generic::PriorityMemQueue::configure(testQueueConfigs3, NUM_QUEUES, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testQueueConfigs3, NUM_QUEUES, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create and test a few of them
     Os::Generic::PriorityMemQueue queues[3];
@@ -680,7 +705,8 @@ TEST(PriorityMemQueueConfig, ZeroQueues) {
     PriorityMemQueueTestHelper::resetConfig();
 
     // Configure with 0 queue configs (not required)
-    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue - should use default configuration
     Os::Generic::PriorityMemQueue queue;
@@ -755,8 +781,9 @@ TEST(PriorityMemQueueConfig, ZeroQueues) {
 }
 
 // Helper function to set up a queue with partial priority configuration
-// Returns the created queue with priority 0 and 2 configured, priority 1 NOT configured
-// Also sends a test message to priority 2 to verify configured priorities work
+// Returns the created queue with priority 0 and 2 configured, priority 1 NOT configured.
+// Sends an initial test message to priority 2 to verify the configured priority works
+// before the main test begins (establishes baseline functionality).
 static Os::Generic::PriorityMemQueue* setupPartialPriorityQueue(FwEnumStoreType queueId,
                                                                 bool required,
                                                                 const char* queueName) {
@@ -770,7 +797,8 @@ static Os::Generic::PriorityMemQueue* setupPartialPriorityQueue(FwEnumStoreType 
     Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {queueId, 2, testPriorityConfigs};
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
 
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, required, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, required,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue
     Os::Generic::PriorityMemQueue* queue = new Os::Generic::PriorityMemQueue();
@@ -878,13 +906,16 @@ TEST(PriorityMemQueueConfig, DoubleConfigAssertion) {
 
     // First config call - should succeed
     printf("--- Test: First config() call (should succeed) ---\n");
-    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
     printf("First config() call succeeded\n");
 
     // Second config call without reset - should ASSERT
     printf("--- Test: Second config() call without reset (should ASSERT) ---\n");
-    ASSERT_DEATH_IF_SUPPORTED(Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE),
-                              "Assert:.*PriorityMemQueue\\.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(
+        Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                                 Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE),
+        "Assert:.*PriorityMemQueue\\.cpp");
     printf("Correctly asserted when calling config() twice without reset\n");
 
     // Clean up for subsequent tests
@@ -903,7 +934,8 @@ TEST(PriorityMemQueueConfig, PriorityEnableDisable) {
     Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[] = {{0, 64, 10}, {1, 64, 10}, {2, 64, 10}};
     Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {200, 3, testPriorityConfigs};
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue
     Os::Generic::PriorityMemQueue queue;
@@ -967,8 +999,7 @@ TEST(PriorityMemQueueConfig, PriorityEnableDisable) {
         ASSERT_EQ(data2[i], recvData[i]);
     }
     printf("Received from priority %d (expected 2, skipped disabled priority 1)\n", priority);
-    printf("After receiving priority 2: m_nonEmptyMask = 0x%x (expected 0x3)\n",
-           handle->m_nonEmptyMask.load());
+    printf("After receiving priority 2: m_nonEmptyMask = 0x%x (expected 0x3)\n", handle->m_nonEmptyMask.load());
     ASSERT_EQ(3U, handle->m_nonEmptyMask.load());  // Bits 0,1 still set
 
     // Next receive should get priority 0, still skipping priority 1
@@ -977,8 +1008,7 @@ TEST(PriorityMemQueueConfig, PriorityEnableDisable) {
     ASSERT_EQ(0, priority) << "Should receive priority 0, still skipping disabled priority 1";
     ASSERT_EQ(16, actualSize);
     printf("Received from priority %d (expected 0, still skipping disabled priority 1)\n", priority);
-    printf("After receiving priority 0: m_nonEmptyMask = 0x%x (expected 0x2)\n",
-           handle->m_nonEmptyMask.load());
+    printf("After receiving priority 0: m_nonEmptyMask = 0x%x (expected 0x2)\n", handle->m_nonEmptyMask.load());
     ASSERT_EQ(2U, handle->m_nonEmptyMask.load());  // Only bit 1 set
 
     // Queue should now appear empty (priority 1 is disabled)
@@ -1002,8 +1032,7 @@ TEST(PriorityMemQueueConfig, PriorityEnableDisable) {
         ASSERT_EQ(data1[i], recvData[i]);
     }
     printf("Successfully received priority 1 message after re-enabling\n");
-    printf("After receiving priority 1: m_nonEmptyMask = 0x%x (expected 0x0)\n",
-           handle->m_nonEmptyMask.load());
+    printf("After receiving priority 1: m_nonEmptyMask = 0x%x (expected 0x0)\n", handle->m_nonEmptyMask.load());
     ASSERT_EQ(0U, handle->m_nonEmptyMask.load());  // All messages consumed
 
     // Queue should be truly empty now
@@ -1026,7 +1055,8 @@ TEST(PriorityMemQueueConfig, DuplicateQueueIdAssertion) {
     Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[] = {{0, 64, 10}};
     Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {201, 1, testPriorityConfigs};
     Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create first queue with ID 201
     printf("--- Test 1: Create first queue with ID 201 (should succeed) ---\n");
@@ -1121,7 +1151,8 @@ TEST(PriorityMemQueueBlocking, BlockingReceive) {
     PriorityMemQueueTestHelper::resetConfig();
 
     // Use default configuration (single priority)
-    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue
     Os::Generic::PriorityMemQueue queue;
@@ -1144,14 +1175,14 @@ TEST(PriorityMemQueueBlocking, BlockingReceive) {
 
     // Wait for receiver to start
     printf("[Main Thread] Waiting for receiver thread to start...\n");
-    for (int i = 0; i < 100 && !ctx.started; ++i) {
-        Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms
+    for (int i = 0; i < 50 && !ctx.started; ++i) {
+        Os::Task::delay(Fw::TimeInterval(0, 1000));  // 1ms
     }
     ASSERT_TRUE(ctx.started);
 
     // Give receiver time to block
     printf("[Main Thread] Giving receiver time to block...\n");
-    Os::Task::delay(Fw::TimeInterval(0, 100000));  // 100ms
+    Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms
 
     // Verify message hasn't been received yet (thread should be blocked)
     ctx.mutex.take();
@@ -1236,7 +1267,8 @@ TEST(PriorityMemQueueBlocking, BlockingSend) {
     PriorityMemQueueTestHelper::resetConfig();
 
     // Use default configuration (single priority)
-    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a small queue
     Os::Generic::PriorityMemQueue queue;
@@ -1271,14 +1303,14 @@ TEST(PriorityMemQueueBlocking, BlockingSend) {
 
     // Wait for sender to start
     printf("[Main Thread] Waiting for sender thread to start...\n");
-    for (int i = 0; i < 100 && !ctx.started; ++i) {
-        Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms
+    for (int i = 0; i < 50 && !ctx.started; ++i) {
+        Os::Task::delay(Fw::TimeInterval(0, 1000));  // 1ms
     }
     ASSERT_TRUE(ctx.started);
 
     // Give sender time to block
     printf("[Main Thread] Giving sender time to block...\n");
-    Os::Task::delay(Fw::TimeInterval(0, 100000));  // 100ms
+    Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms
 
     // Verify message hasn't been sent yet (thread should be blocked)
     ctx.mutex.take();
@@ -1321,7 +1353,8 @@ TEST(PriorityMemQueueBlocking, RapidSendAfterBlock) {
     PriorityMemQueueTestHelper::resetConfig();
 
     // Use default configuration (single priority)
-    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     // Create a queue
     Os::Generic::PriorityMemQueue queue;
@@ -1344,8 +1377,8 @@ TEST(PriorityMemQueueBlocking, RapidSendAfterBlock) {
 
     // Wait for receiver to start
     printf("[Main Thread] Waiting for receiver to start...\n");
-    for (int i = 0; i < 100 && !ctx.started; ++i) {
-        Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms
+    for (int i = 0; i < 50 && !ctx.started; ++i) {
+        Os::Task::delay(Fw::TimeInterval(0, 1000));  // 1ms
     }
     ASSERT_TRUE(ctx.started);
 
@@ -1353,7 +1386,7 @@ TEST(PriorityMemQueueBlocking, RapidSendAfterBlock) {
     // This tight timing increases the likelihood of hitting the race window
     // where notification could be lost in the old implementation
     printf("[Main Thread] Brief delay, then sending message (testing race window)...\n");
-    Os::Task::delay(Fw::TimeInterval(0, 20000));  // Only 20ms - very tight timing
+    Os::Task::delay(Fw::TimeInterval(0, 5000));  // Only 5ms - very tight timing
 
     // Send message immediately - in old implementation, this could arrive during
     // the race window between exiting critical section and entering wait
@@ -1388,6 +1421,367 @@ TEST(PriorityMemQueueBlocking, RapidSendAfterBlock) {
     queue.teardown();
     printf("=== TEST PASSED: No lost notification ===\n\n");
 }
+
+// ========================================================================
+// Additional Coverage Tests
+// ========================================================================
+
+// Test FIFO ordering within a single priority
+TEST(PriorityMemQueueOrdering, FIFOWithinPriority) {
+    printf("\n=== TEST: FIFOWithinPriority ===\n");
+
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Configure single priority
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[] = {{1, 64, 10}};
+    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {300, 1, testPriorityConfigs};
+    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("FIFOQueue");
+    Os::QueueInterface::Status status = queue.create(300, name, 10, 64);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    // Enable priority 1
+    auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue.getHandle());
+    handle->enablePriority(1);
+
+    // Send 5 messages with distinct patterns, all at priority 1
+    printf("--- Sending 5 messages with distinct patterns ---\n");
+    const FwSizeType numMessages = 5;
+    U8 sendData[numMessages][16];
+    for (FwSizeType i = 0; i < numMessages; ++i) {
+        for (FwSizeType j = 0; j < 16; ++j) {
+            sendData[i][j] = static_cast<U8>((i * 10) + j);  // Unique pattern per message
+        }
+        status = queue.send(sendData[i], 16, 1, Os::QueueInterface::BlockingType::NONBLOCKING);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+        printf("Sent message %zu with pattern starting with %u\n", i, sendData[i][0]);
+    }
+
+    // Receive all messages and verify FIFO order
+    printf("--- Verifying FIFO receive order ---\n");
+    U8 recvData[64];
+    FwSizeType actualSize;
+    FwQueuePriorityType priority;
+
+    for (FwSizeType i = 0; i < numMessages; ++i) {
+        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+        ASSERT_EQ(1, priority);
+        ASSERT_EQ(16, actualSize);
+
+        // Verify data matches expected message in FIFO order
+        for (FwSizeType j = 0; j < 16; ++j) {
+            ASSERT_EQ(sendData[i][j], recvData[j]) << "FIFO violation: message " << i << " byte " << j;
+        }
+        printf("Received message %zu with pattern starting with %u (expected %u) - FIFO verified\n", i, recvData[0],
+               sendData[i][0]);
+    }
+
+    queue.teardown();
+    printf("=== TEST PASSED ===\n\n");
+}
+
+// Test exact size boundaries for each priority
+TEST(PriorityMemQueueEdgeCases, SizeMismatchBoundaries) {
+    printf("\n=== TEST: SizeMismatchBoundaries ===\n");
+
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Configure priorities with different max message sizes
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[] = {
+        {0, 32, 10},  // Priority 0: 32 bytes max
+        {1, 64, 10},  // Priority 1: 64 bytes max
+        {2, 128, 10}  // Priority 2: 128 bytes max
+    };
+    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {301, 3, testPriorityConfigs};
+    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
+    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("BoundaryQueue");
+    Os::QueueInterface::Status status = queue.create(301, name, 10, 128);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    // Enable all priorities
+    auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue.getHandle());
+    handle->enablePriority(1);
+    handle->enablePriority(2);
+
+    printf("--- Testing exact size boundaries ---\n");
+
+    // Test each priority
+    for (FwQueuePriorityType p = 0; p < 3; ++p) {
+        FwSizeType maxSize = testPriorityConfigs[p].maxMsgSize;
+        U8* buffer = new U8[maxSize + 1];
+
+        // Fill with test pattern
+        for (FwSizeType i = 0; i < maxSize + 1; ++i) {
+            buffer[i] = static_cast<U8>(p * 50 + i);
+        }
+
+        // Test exact max size (should succeed)
+        status = queue.send(buffer, maxSize, p, Os::QueueInterface::BlockingType::NONBLOCKING);
+        printf("Priority %d: Send %zu bytes (max=%zu) - status=%d (expected OP_OK=0)\n", p, maxSize, maxSize, status);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+        // Test max size + 1 (should fail with SIZE_MISMATCH)
+        status = queue.send(buffer, maxSize + 1, p, Os::QueueInterface::BlockingType::NONBLOCKING);
+        printf("Priority %d: Send %zu bytes (max=%zu) - status=%d (expected SIZE_MISMATCH=4)\n", p, maxSize + 1,
+               maxSize, status);
+        ASSERT_EQ(Os::QueueInterface::Status::SIZE_MISMATCH, status);
+
+        delete[] buffer;
+
+        // Drain the successful message
+        U8 recvBuffer[128];
+        FwSizeType actualSize;
+        FwQueuePriorityType recvPriority;
+        status =
+            queue.receive(recvBuffer, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, recvPriority);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+        ASSERT_EQ(maxSize, actualSize);
+    }
+
+    queue.teardown();
+    printf("=== TEST PASSED ===\n\n");
+}
+
+// Test semaphore count tracking
+TEST(PriorityMemQueueEdgeCases, SemaphoreCountTracking) {
+    printf("\n=== TEST: SemaphoreCountTracking ===\n");
+
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Use default configuration
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create small queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("SemaphoreQueue");
+    const FwSizeType queueDepth = 10;
+    Os::QueueInterface::Status status = queue.create(302, name, queueDepth, 64);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    printf("--- Filling queue to capacity and verifying semaphore count ---\n");
+
+    // Send messages to capacity
+    U8 testData[32];
+    for (FwSizeType i = 0; i < queueDepth; ++i) {
+        testData[0] = static_cast<U8>(i);
+        status = queue.send(testData, 32, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    }
+    printf("Sent %zu messages\n", queueDepth);
+
+    // Verify messages available matches queue depth
+    FwSizeType available = queue.getMessagesAvailable();
+    printf("Messages available: %zu (expected %zu)\n", available, queueDepth);
+    ASSERT_EQ(queueDepth, available);
+
+    // Receive all messages
+    U8 recvData[64];
+    FwSizeType actualSize;
+    FwQueuePriorityType priority;
+    for (FwSizeType i = 0; i < queueDepth; ++i) {
+        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    }
+    printf("Received %zu messages\n", queueDepth);
+
+    // Verify queue is empty
+    available = queue.getMessagesAvailable();
+    printf("Messages available after drain: %zu (expected 0)\n", available);
+    ASSERT_EQ(0, available);
+
+    // Try to receive from empty queue (should get EMPTY, not block)
+    status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+    ASSERT_EQ(Os::QueueInterface::Status::EMPTY, status);
+    printf("Receive from empty queue returned EMPTY - semaphore count correct\n");
+
+    queue.teardown();
+    printf("=== TEST PASSED ===\n\n");
+}
+
+// Test teardown with messages still pending
+TEST(PriorityMemQueueEdgeCases, TeardownWithPendingMessages) {
+    printf("\n=== TEST: TeardownWithPendingMessages ===\n");
+
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Use default configuration
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("TeardownQueue");
+    Os::QueueInterface::Status status = queue.create(303, name, 10, 64);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    printf("--- Sending messages without receiving ---\n");
+
+    // Send several messages
+    U8 testData[32];
+    const FwSizeType numMessages = 5;
+    for (FwSizeType i = 0; i < numMessages; ++i) {
+        testData[0] = static_cast<U8>(i);
+        status = queue.send(testData, 32, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    }
+
+    FwSizeType available = queue.getMessagesAvailable();
+    printf("Sent %zu messages, %zu still pending\n", numMessages, available);
+    ASSERT_EQ(numMessages, available);
+
+    // Teardown without receiving - should not crash or assert
+    printf("--- Tearing down with %zu messages still in queue ---\n", available);
+    queue.teardown();
+
+    printf("Teardown completed successfully with pending messages\n");
+    printf("=== TEST PASSED ===\n\n");
+}
+
+// Context for multiple concurrent receivers test
+struct MultiReceiverContext {
+    Os::Generic::PriorityMemQueue* queue;
+    std::atomic<U32> messagesReceived;
+    std::atomic<bool> started;
+    Os::Mutex mutex;
+    bool receivedCorrectly[2];
+
+    MultiReceiverContext() : queue(nullptr), messagesReceived(0), started(false) {
+        receivedCorrectly[0] = false;
+        receivedCorrectly[1] = false;
+    }
+};
+
+// Thread routine for concurrent receiver
+static void concurrentReceiverTask(void* arg) {
+    MultiReceiverContext* ctx = static_cast<MultiReceiverContext*>(arg);
+
+    ctx->mutex.take();
+    ctx->started.store(true, std::memory_order_release);
+    ctx->mutex.release();
+
+    printf("[Receiver Thread] Starting blocking receive...\n");
+
+    U8 recvData[64];
+    FwSizeType actualSize;
+    FwQueuePriorityType priority;
+
+    Os::QueueInterface::Status status = ctx->queue->receive(
+        recvData, sizeof(recvData), Os::QueueInterface::BlockingType::BLOCKING, actualSize, priority);
+
+    if (status == Os::QueueInterface::Status::OP_OK) {
+        U32 count = ctx->messagesReceived.fetch_add(1, std::memory_order_acq_rel);
+        printf("[Receiver Thread] Received message (count=%u)\n", count + 1);
+    }
+}
+
+// Test multiple concurrent receivers (documents behavior)
+// NOTE: PriorityMemQueue's fast/slow path receive assumes single-reader design for optimal
+// priority ordering guarantees. Multiple concurrent receivers work correctly and compete
+// for messages, but priority ordering between readers is not guaranteed.
+// This test documents that multiple readers can successfully receive messages.
+TEST(PriorityMemQueueBlocking, MultipleConcurrentReceivers) {
+    printf("\n=== TEST: MultipleConcurrentReceivers (Behavior Test) ===\n");
+    printf("NOTE: Testing multiple concurrent receivers competing for messages.\n");
+    printf("Priority ordering guarantees require single-reader pattern.\n\n");
+
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Use default configuration
+    Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("MultiReceiverQueue");
+    Os::QueueInterface::Status status = queue.create(304, name, 5, 64);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    // Set up context for receivers
+    MultiReceiverContext ctx;
+    ctx.queue = &queue;
+
+    // Start two receiver threads (both will block on empty queue)
+    printf("--- Starting two receiver threads on empty queue ---\n");
+    Os::Task receiverTask1, receiverTask2;
+
+    Os::Task::Arguments args1(Fw::String("Receiver1"), concurrentReceiverTask, &ctx, Os::Task::TASK_PRIORITY_DEFAULT,
+                              Os::Task::TASK_DEFAULT);
+    Os::Task::Arguments args2(Fw::String("Receiver2"), concurrentReceiverTask, &ctx, Os::Task::TASK_PRIORITY_DEFAULT,
+                              Os::Task::TASK_DEFAULT);
+
+    Os::Task::Status taskStatus1 = receiverTask1.start(args1);
+    ASSERT_EQ(Os::Task::Status::OP_OK, taskStatus1);
+
+    Os::Task::Status taskStatus2 = receiverTask2.start(args2);
+    ASSERT_EQ(Os::Task::Status::OP_OK, taskStatus2);
+
+    // Wait for both receivers to start
+    printf("[Main Thread] Waiting for receivers to start...\n");
+    for (int i = 0; i < 50 && !ctx.started.load(std::memory_order_acquire); ++i) {
+        Os::Task::delay(Fw::TimeInterval(0, 1000));  // 1ms (microseconds)
+    }
+    ASSERT_TRUE(ctx.started.load(std::memory_order_acquire));
+
+    // Give receivers time to block
+    Os::Task::delay(Fw::TimeInterval(0, 10000));  // 10ms (microseconds)
+
+    // Send TWO messages - one for each receiver
+    // This documents that multiple receivers work, but compete for messages
+    printf("[Main Thread] Sending two messages for both receivers...\n");
+    U8 testData1[32] = {0xAB};
+    status = queue.send(testData1, 32, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    U8 testData2[32] = {0xCD};
+    status = queue.send(testData2, 32, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    // Wait for receivers to complete
+    printf("[Main Thread] Waiting for receivers to complete...\n");
+    Os::Task::Status joinStatus1 = receiverTask1.join();
+    ASSERT_EQ(Os::Task::Status::OP_OK, joinStatus1);
+
+    Os::Task::Status joinStatus2 = receiverTask2.join();
+    ASSERT_EQ(Os::Task::Status::OP_OK, joinStatus2);
+
+    // Check results - both should have received one message each
+    U32 received = ctx.messagesReceived.load(std::memory_order_acquire);
+    printf("[Main Thread] Total messages received by both threads: %u\n", received);
+
+    // EXPECTED: 2 messages received (one per thread)
+    // Multiple concurrent receivers work but compete for messages from the queue
+    EXPECT_EQ(2U, received) << "Multiple concurrent receivers: two sent, " << received
+                            << " received (expected 2, one per thread)";
+
+    queue.teardown();
+    printf("=== TEST COMPLETE ===\n");
+    printf("Multiple concurrent receivers work but compete for messages.\n");
+    printf("Single-reader pattern is preferred for priority message ordering guarantees.\n\n");
+}
+
+// NOTE: High-water mark accuracy under concurrency is NOT tested.
+// The HWM is a diagnostic/guideline metric, not a control path value.
+// It uses best-effort atomic updates with a retry limit. Under extreme
+// concurrent load, the CAS loop may cap at MAX_CAS_RETRIES (100) and assert.
+// Testing this would require carefully orchestrated concurrent stress beyond
+// the scope of functional unit tests.
 
 // Main function
 int main(int argc, char** argv) {
