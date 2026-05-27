@@ -45,9 +45,10 @@ endfunction()
 # Function `fprime_find_platform_file`:
 #
 # Search standard locations for a platform file (**/cmake/platform/${FPRIME_PLATFORM}.cmake) using file globs.
-# Searches relative to PROJECT_SOURCE_DIR (recursively) and FPRIME_FRAMEWORK_PATH. Selects the first match.
-# If multiple are found, warn the user. If none are found, error and exit. Results are cached in
-# FPRIME_CACHED_PLATFORM_FILE to avoid re-searching.
+# Standard locations searched: PROJECT_SOURCE_DIR/*/cmake/platform/, PROJECT_SOURCE_DIR/lib/*/cmake/platform/,
+# and FPRIME_FRAMEWORK_PATH/cmake/platform/. Also searches backwards-compatible locations via FPRIME_PROJECT_ROOT
+# and FPRIME_LIBRARY_LOCATIONS for older project structures. Selects the first match. If multiple are found,
+# warn the user. If none are found, error and exit. Results are cached in FPRIME_CACHED_PLATFORM_FILE.
 #
 # Args: None
 # Returns: None
@@ -60,11 +61,34 @@ function(fprime_find_platform_file)
         return()
     endif()
 
+    # Standard platform file locations: project subdirs, project lib subdirs, and framework
     set(EXPECTED_PLATFORM_FILE)
     file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
         "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
+
+    # ---- BACKWARDS COMPATIBILITY ----
+    # The following patterns support older project structures that place platform files relative to
+    # FPRIME_PROJECT_ROOT or FPRIME_LIBRARY_LOCATIONS rather than PROJECT_SOURCE_DIR. These exist
+    # to avoid breaking existing projects during the transition to convention-based discovery.
+    # TODO: Remove these patterns once all projects have migrated to the standard layout.
+    set(_COMPAT_GLOBS)
+    if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
+        list(APPEND _COMPAT_GLOBS
+            "${FPRIME_PROJECT_ROOT}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+            "${FPRIME_PROJECT_ROOT}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        )
+    endif()
+    foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+        list(APPEND _COMPAT_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
+    endforeach()
+    if (_COMPAT_GLOBS)
+        file(GLOB_RECURSE _COMPAT_PLATFORM_FILES ${_COMPAT_GLOBS})
+        list(APPEND POSSIBLE_PLATFORM_FILES ${_COMPAT_PLATFORM_FILES})
+    endif()
+    # ---- END BACKWARDS COMPATIBILITY ----
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
 
