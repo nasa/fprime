@@ -61,12 +61,12 @@ function(fprime_find_platform_file)
         return()
     endif()
 
-    # Standard platform file locations: project subdirs, project lib subdirs, and framework
+    # Search project locations first (highest priority), then framework as fallback.
+    # This ensures project platform overrides always take priority over the framework default.
     set(EXPECTED_PLATFORM_FILE)
     file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
         "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
 
     # ---- BACKWARDS COMPATIBILITY ----
@@ -92,6 +92,13 @@ function(fprime_find_platform_file)
         list(APPEND POSSIBLE_PLATFORM_FILES ${_COMPAT_PLATFORM_FILES})
     endif()
     # ---- END BACKWARDS COMPATIBILITY ----
+
+    # Framework is the lowest-priority fallback — only added if no project-level file was found
+    if (NOT POSSIBLE_PLATFORM_FILES)
+        file(GLOB_RECURSE POSSIBLE_PLATFORM_FILES
+            "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
+        )
+    endif()
     list(REMOVE_DUPLICATES POSSIBLE_PLATFORM_FILES)
     list(LENGTH POSSIBLE_PLATFORM_FILES NUM_POSSIBLE_PLATFORM_FILES)
 
