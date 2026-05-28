@@ -12,41 +12,41 @@ module FppTest {
     module Enum {
         // Test boundary values for enum isValid() function
         TEST(IsValidTest, IntervalEnum) {
-            Interval e = static_cast<Interval::T>(-1);
-            ASSERT_FALSE(e.isValid());
+            Interval::SerialType es = static_cast<Interval::SerialType>(-1);
+            ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(0);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(0);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(1);
-            ASSERT_FALSE(e.isValid());
+            es = static_cast<Interval::T>(1);
+            ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(2);
-            ASSERT_FALSE(e.isValid());
+            es = static_cast<Interval::T>(2);
+            ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(3);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(3);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(5);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(5);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(6);
-            ASSERT_FALSE(e.isValid());
+            es = static_cast<Interval::T>(6);
+            ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(10);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(10);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(99);
-            ASSERT_FALSE(e.isValid());
+            es = static_cast<Interval::T>(99);
+            ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(100);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(100);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(101);
-            ASSERT_TRUE(e.isValid());
+            es = static_cast<Interval::T>(101);
+            ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(102);
-            ASSERT_FALSE(e.isValid());
+            es = static_cast<Interval::T>(102);
+            ASSERT_FALSE(Interval::isValid(es));
         }
     }
 }
