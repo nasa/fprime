@@ -132,9 +132,9 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     // bits 2-0: tsn_length - 1 (3 bits)
     U8 eidTsnLengths = 0;
     eidTsnLengths |= static_cast<U8>((this->m_segmentationControl & 0x01) << 7);
-    eidTsnLengths |= static_cast<U8>(((eidSize - 1) & 0x07) << 4);
+    eidTsnLengths |= static_cast<U8>((static_cast<U8>(eidSize - 1) & 0x07) << 4);
     eidTsnLengths |= static_cast<U8>((this->m_segmentMetadataFlag & 0x01) << 3);
-    eidTsnLengths |= static_cast<U8>((tsnSize - 1) & 0x07);
+    eidTsnLengths |= static_cast<U8>(static_cast<U8>(tsnSize - 1) & 0x07);
 
     status = serialBuffer.serializeFrom(eidTsnLengths);
     if (status != Fw::FW_SERIALIZE_OK) {

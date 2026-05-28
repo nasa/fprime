@@ -101,7 +101,7 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bits 3-0: Directive subtype code (4 bits)
     U8 directiveAndSubtype = 0;
     directiveAndSubtype |= static_cast<U8>((static_cast<U8>(this->m_directiveCode) & 0x0F) << 4);  // Bits 7-4
-    directiveAndSubtype |= (this->m_directiveSubtypeCode & 0x0F);                                   // Bits 3-0
+    directiveAndSubtype |= (this->m_directiveSubtypeCode & 0x0F);                                  // Bits 3-0
 
     status = serialBuffer.serializeFrom(directiveAndSubtype);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -114,7 +114,7 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bits 1-0: Transaction status (2 bits)
     U8 ccAndStatus = 0;
     ccAndStatus |= static_cast<U8>((static_cast<U8>(this->m_conditionCode) & 0x0F) << 4);  // Bits 7-4
-    ccAndStatus |= (static_cast<U8>(this->m_transactionStatus) & 0x03);                     // Bits 1-0
+    ccAndStatus |= (static_cast<U8>(this->m_transactionStatus) & 0x03);                    // Bits 1-0
 
     status = serialBuffer.serializeFrom(ccAndStatus);
     if (status != Fw::FW_SERIALIZE_OK) {

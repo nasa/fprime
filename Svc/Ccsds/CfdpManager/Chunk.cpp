@@ -174,7 +174,7 @@ void CfdpChunkList::eraseRange(ChunkIdx start, ChunkIdx end) {
 
     if (start < end) {
         memmove(&m_chunks[start], &m_chunks[end], sizeof(*m_chunks) * (m_count - end));
-        m_count -= static_cast<ChunkIdx>(end - start);
+        m_count = static_cast<ChunkIdx>(m_count - static_cast<ChunkIdx>(end - start));
     }
 }
 
@@ -187,10 +187,10 @@ ChunkIdx CfdpChunkList::findInsertPosition(const Chunk* chunk) {
     while (count > 0) {
         i = first;
         step = count / 2;
-        i += step;
+        i = static_cast<ChunkIdx>(i + step);
         if (m_chunks[i].offset < chunk->offset) {
-            first = i + 1;
-            count -= static_cast<ChunkIdx>(step + 1);
+            first = static_cast<ChunkIdx>(i + 1);
+            count = static_cast<ChunkIdx>(count - static_cast<ChunkIdx>(step + 1));
         } else {
             count = step;
         }
@@ -226,7 +226,7 @@ bool CfdpChunkList::combineNext(ChunkIdx i, const Chunk* chunk) {
         m_chunks[i].offset = chunk->offset;
 
         /* Erase the rest of the combined chunks (if any) */
-        eraseRange(i + 1, combined_i);
+        eraseRange(static_cast<ChunkIdx>(i + 1), combined_i);
         ret = true;
     }
 
