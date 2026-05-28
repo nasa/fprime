@@ -462,23 +462,23 @@ void Channel::dequeueTransaction(Transaction* txn) {
     switch (txn->m_flags.com.q_index) {
         case Cfdp::QueueId::FREE:
 
-            tlm.set_queueFree(tlm.get_queueFree() - 1);
+            tlm.set_queueFree(static_cast<U16>(tlm.get_queueFree() - 1));
             break;
         case Cfdp::QueueId::TXA:
 
-            tlm.set_queueTxActive(tlm.get_queueTxActive() - 1);
+            tlm.set_queueTxActive(static_cast<U16>(tlm.get_queueTxActive() - 1));
             break;
         case Cfdp::QueueId::TXW:
 
-            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() - 1);
+            tlm.set_queueTxWaiting(static_cast<U16>(tlm.get_queueTxWaiting() - 1));
             break;
         case Cfdp::QueueId::RX:
 
-            tlm.set_queueRx(tlm.get_queueRx() - 1);
+            tlm.set_queueRx(static_cast<U16>(tlm.get_queueRx() - 1));
             break;
         case Cfdp::QueueId::HIST:
 
-            tlm.set_queueHistory(tlm.get_queueHistory() - 1);
+            tlm.set_queueHistory(static_cast<U16>(tlm.get_queueHistory() - 1));
             break;
         case Cfdp::QueueId::PEND:
         case Cfdp::QueueId::HIST_FREE:
@@ -498,23 +498,23 @@ void Channel::moveTransaction(Transaction* txn, QueueId::T queue) {
     switch (txn->m_flags.com.q_index) {
         case Cfdp::QueueId::FREE:
 
-            tlm.set_queueFree(tlm.get_queueFree() - 1);
+            tlm.set_queueFree(static_cast<U16>(tlm.get_queueFree() - 1));
             break;
         case Cfdp::QueueId::TXA:
 
-            tlm.set_queueTxActive(tlm.get_queueTxActive() - 1);
+            tlm.set_queueTxActive(static_cast<U16>(tlm.get_queueTxActive() - 1));
             break;
         case Cfdp::QueueId::TXW:
 
-            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() - 1);
+            tlm.set_queueTxWaiting(static_cast<U16>(tlm.get_queueTxWaiting() - 1));
             break;
         case Cfdp::QueueId::RX:
 
-            tlm.set_queueRx(tlm.get_queueRx() - 1);
+            tlm.set_queueRx(static_cast<U16>(tlm.get_queueRx() - 1));
             break;
         case Cfdp::QueueId::HIST:
 
-            tlm.set_queueHistory(tlm.get_queueHistory() - 1);
+            tlm.set_queueHistory(static_cast<U16>(tlm.get_queueHistory() - 1));
             break;
         case Cfdp::QueueId::PEND:
         case Cfdp::QueueId::HIST_FREE:
@@ -529,19 +529,19 @@ void Channel::moveTransaction(Transaction* txn, QueueId::T queue) {
     txn->m_flags.com.q_index = queue;
     switch (queue) {
         case Cfdp::QueueId::FREE:
-            tlm.set_queueFree(tlm.get_queueFree() + 1);
+            tlm.set_queueFree(static_cast<U16>(tlm.get_queueFree() + 1));
             break;
         case Cfdp::QueueId::TXA:
-            tlm.set_queueTxActive(tlm.get_queueTxActive() + 1);
+            tlm.set_queueTxActive(static_cast<U16>(tlm.get_queueTxActive() + 1));
             break;
         case Cfdp::QueueId::TXW:
-            tlm.set_queueTxWaiting(tlm.get_queueTxWaiting() + 1);
+            tlm.set_queueTxWaiting(static_cast<U16>(tlm.get_queueTxWaiting() + 1));
             break;
         case Cfdp::QueueId::RX:
-            tlm.set_queueRx(tlm.get_queueRx() + 1);
+            tlm.set_queueRx(static_cast<U16>(tlm.get_queueRx() + 1));
             break;
         case Cfdp::QueueId::HIST:
-            tlm.set_queueHistory(tlm.get_queueHistory() + 1);
+            tlm.set_queueHistory(static_cast<U16>(tlm.get_queueHistory() + 1));
             break;
         case Cfdp::QueueId::PEND:
         case Cfdp::QueueId::HIST_FREE:

@@ -835,7 +835,7 @@ Status::T Transaction::r2CalcCrcChunk() {
 
         while ((ret == Cfdp::Status::SUCCESS) && (count_bytes < rx_crc_calc_bytes_per_cycle) &&
                (this->m_state_data.receive.r2.rx_crc_calc_bytes < this->m_fsize)) {
-            want_offs_size = this->m_state_data.receive.r2.rx_crc_calc_bytes + sizeof(buf);
+            want_offs_size = this->m_state_data.receive.r2.rx_crc_calc_bytes + static_cast<FileSize>(sizeof(buf));
 
             if (want_offs_size > this->m_fsize) {
                 read_size = this->m_fsize - this->m_state_data.receive.r2.rx_crc_calc_bytes;

@@ -159,7 +159,7 @@ Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer)
     // Calculate number of segment requests from remaining buffer size
     // Each segment is 2 * sizeof(FileSize) bytes
     Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
-    U32 segmentSize = sizeof(FileSize) + sizeof(FileSize);
+    U32 segmentSize = static_cast<U32>(sizeof(FileSize) + sizeof(FileSize));
     U32 numSegsCalculated = static_cast<U32>(remainingBytes / segmentSize);
     this->m_numSegments = static_cast<U8>(numSegsCalculated);
 
