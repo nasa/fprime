@@ -263,7 +263,7 @@ TEST_F(PduTest, FileDataBufferSize) {
     // Should include header + offset(4) + data(5)
     ASSERT_GT(size, 0U);
     // Verify expected size
-    U32 expectedSize = pdu.asHeader().getBufferSize() + 4 + sizeof(testData);
+    U32 expectedSize = pdu.asHeader().getBufferSize() + 4 + static_cast<U32>(sizeof(testData));
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -372,7 +372,7 @@ TEST_F(PduTest, EofBufferSize) {
     U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(FileSize))
     ASSERT_GT(size, 0U);
-    U32 expectedSize = pdu.asHeader().getBufferSize() + sizeof(U8) + sizeof(U8) + sizeof(U32) + sizeof(FileSize);
+    U32 expectedSize = pdu.asHeader().getBufferSize() + static_cast<U32>(sizeof(U8)) + static_cast<U32>(sizeof(U8)) + static_cast<U32>(sizeof(U32)) + static_cast<U32>(sizeof(FileSize));
     ASSERT_EQ(expectedSize, size);
 }
 
