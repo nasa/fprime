@@ -5,7 +5,7 @@ endif()
 
 # Ensure project() was called before find_package(FPrime)
 if ("${PROJECT_SOURCE_DIR}" STREQUAL "" OR "${PROJECT_NAME}" STREQUAL "")
-    message(WARNING "[F Prime] find_package(FPrime) called before project(). "
+    message(FATAL_ERROR "[F Prime] find_package(FPrime) called before project(). "
         "Please call project() before find_package(FPrime) so that PROJECT_SOURCE_DIR is available.")
 endif()
 
