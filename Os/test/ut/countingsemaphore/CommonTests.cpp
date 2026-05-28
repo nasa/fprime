@@ -9,7 +9,7 @@
 #include "Os/test/ut/countingsemaphore/RulesHeaders.hpp"
 
 TEST(CountingSemaphore, InitialCount) {
-    Os::CountingSemaphore sem(5, 0);
+    Os::CountingSemaphore sem(5U);
     for (U32 i = 0; i < 5; i++) {
         Os::CountingSemaphore::Status status = sem.wait();
         ASSERT_EQ(status, Os::CountingSemaphore::Status::OP_OK);
@@ -32,7 +32,7 @@ TEST(CountingSemaphore, PostWait) {
 }
 
 TEST(CountingSemaphore, Timeout) {
-    Os::CountingSemaphore sem(0, 0);
+    Os::CountingSemaphore sem(0U);
     Os::CountingSemaphore::Status status = sem.waitTimeout(10);
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
@@ -57,7 +57,7 @@ TEST(CountingSemaphore, MultipleWaiters) {
 
 TEST(CountingSemaphore, InitialCountNonZero) {
     // Test non-zero initial count allows waits without prior posts
-    Os::CountingSemaphore sem(10, 3);
+    Os::CountingSemaphore sem(3U);
     // Should succeed at least initialCount times without any posts
     ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK);
@@ -75,7 +75,7 @@ TEST(CountingSemaphore, InitialCountNonZero) {
 }
 
 TEST(CountingSemaphore, ExceedMaxCount) {
-    Os::CountingSemaphore sem(2, 0);
+    Os::CountingSemaphore sem(0U);
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
     // Third post exceeds maxCount=2, verify behavior
@@ -102,7 +102,7 @@ TEST(CountingSemaphore, TimeoutSuccess) {
 
 TEST(CountingSemaphore, InvalidParameters) {
     // Test invalid maxCount=0
-    Os::CountingSemaphore sem1(0, 0);
+    Os::CountingSemaphore sem1(0U);
     // Should handle gracefully - attempt operations
     Os::CountingSemaphore::Status status1 = sem1.post();
     // Either succeeds or fails gracefully
@@ -111,7 +111,7 @@ TEST(CountingSemaphore, InvalidParameters) {
                 status1 == Os::CountingSemaphore::Status::ERROR_OTHER);
 
     // Test initialCount > maxCount
-    Os::CountingSemaphore sem2(5, 10);
+    Os::CountingSemaphore sem2(10U);
     // Should handle gracefully - verify can at least wait
     Os::CountingSemaphore::Status status2 = sem2.wait();
     ASSERT_TRUE(status2 == Os::CountingSemaphore::Status::OP_OK ||

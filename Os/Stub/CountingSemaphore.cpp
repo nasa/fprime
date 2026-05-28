@@ -9,9 +9,8 @@ namespace Os {
 namespace Stub {
 namespace Semaphore {
 
-StubCountingSemaphore::StubCountingSemaphore(U32 initial_count, int pshared) {
+StubCountingSemaphore::StubCountingSemaphore(U32 initial_count) {
     (void)initial_count;
-    (void)pshared;
 }
 
 StubCountingSemaphore::Status StubCountingSemaphore::wait() {

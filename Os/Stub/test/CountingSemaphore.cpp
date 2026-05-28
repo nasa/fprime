@@ -11,7 +11,7 @@ namespace Test {
 
 StaticData StaticData::data;
 
-TestCountingSemaphore::TestCountingSemaphore(U32 initial_count, int pshared) {
+TestCountingSemaphore::TestCountingSemaphore(U32 initial_count) {
     StaticData::data.lastCalled = StaticData::LastFn::CONSTRUCT_FN;
 }
 

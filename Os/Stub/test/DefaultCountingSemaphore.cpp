@@ -12,9 +12,7 @@ namespace Os {
 //! \return: pointer to delegate
 CountingSemaphoreInterface* CountingSemaphoreInterface::getDelegate(
     CountingSemaphoreHandleStorage& aligned_placement_new_memory,
-    U32 initial_count,
-    int pshared) {
-    return new (aligned_placement_new_memory)
-        Os::Stub::CountingSemaphore::Test::TestCountingSemaphore(initial_count, pshared);
+    U32 initial_count) {
+    return new (aligned_placement_new_memory) Os::Stub::CountingSemaphore::Test::TestCountingSemaphore(initial_count);
 }
 }  // namespace Os

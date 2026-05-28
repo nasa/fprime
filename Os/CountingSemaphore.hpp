@@ -40,13 +40,12 @@ class CountingSemaphoreInterface {
     virtual CountingSemaphoreHandle* getHandle() = 0;
 
     static CountingSemaphoreInterface* getDelegate(CountingSemaphoreHandleStorage& aligned_new_memory,
-                                                   U32 initial_count,
-                                                   int pshared);
+                                                   U32 initial_count);
 };
 
 class CountingSemaphore final : public CountingSemaphoreInterface {
   public:
-    CountingSemaphore(U32 initial_count, int pshared);
+    CountingSemaphore(U32 initial_count);
 
     ~CountingSemaphore() final;
 

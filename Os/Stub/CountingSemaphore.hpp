@@ -14,9 +14,11 @@ struct StubCountingSemaphoreHandle : public CountingSemaphoreHandle {};
 
 class StubCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    StubCountingSemaphore(U32 initial_count, int pshared);
+    StubCountingSemaphore(U32 initial_count);
 
     ~StubCountingSemaphore() override = default;
+
+    StubCountingSemaphore(const StubCountingSemaphore& other) = delete;
 
     CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
 

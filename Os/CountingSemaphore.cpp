@@ -2,8 +2,8 @@
 #include "Fw/Types/Assert.hpp"
 
 namespace Os {
-CountingSemaphore::CountingSemaphore(U32 initial_count, int pshared)
-    : m_delegate(*CountingSemaphoreInterface::getDelegate(m_handle_storage, initial_count, pshared)) {}
+CountingSemaphore::CountingSemaphore(U32 initial_count)
+    : m_delegate(*CountingSemaphoreInterface::getDelegate(m_handle_storage, initial_count)) {}
 
 CountingSemaphore::~CountingSemaphore() {
     m_delegate.~CountingSemaphoreInterface();

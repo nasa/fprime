@@ -8,8 +8,7 @@
 namespace Os {
 
 CountingSemaphoreInterface* CountingSemaphoreInterface::getDelegate(CountingSemaphoreHandleStorage& aligned_new_memory,
-                                                                    U32 initial_count,
-                                                                    int pshared) {
-    return new (aligned_new_memory) Os::Stub::Semaphore::StubCountingSemaphore(initial_count, pshared);
+                                                                    U32 initial_count) {
+    return new (aligned_new_memory) Os::Stub::Semaphore::StubCountingSemaphore(initial_count);
 }
 }  // namespace Os

@@ -39,7 +39,7 @@ class TestCountingSemaphoreHandle : public CountingSemaphoreHandle {};
 class TestCountingSemaphore : public CountingSemaphoreInterface {
   public:
     //! Constructor
-    TestCountingSemaphore(U32 initial_count, int pshared);
+    TestCountingSemaphore(U32 initial_count);
 
     //! Destructor
     ~TestCountingSemaphore() override;

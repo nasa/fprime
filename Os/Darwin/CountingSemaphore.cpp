@@ -10,10 +10,7 @@ namespace Os {
 namespace Darwin {
 namespace Semaphore {
 
-DarwinCountingSemaphore::DarwinCountingSemaphore(U32 initial_count, int pshared) {
-    // Note: GCD semaphores ignore pshared parameter as they are process-local by design
-    (void)pshared;
-    
+DarwinCountingSemaphore::DarwinCountingSemaphore(U32 initial_count) {
     // dispatch_semaphore_create takes initial value (similar to POSIX sem_init)
     this->m_handle.m_semaphore = dispatch_semaphore_create(static_cast<long>(initial_count));
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
@@ -35,10 +32,10 @@ Os::CountingSemaphore::Status DarwinCountingSemaphore::wait() {
 Os::CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(U32 timeout_ms) {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     FW_ASSERT(timeout_ms > 0);
-    
+
     dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(timeout_ms) * 1000000LL);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, timeout);
-    
+
     return kern_return_to_semaphore_status(result);
 }
 
@@ -46,7 +43,7 @@ Os::CountingSemaphore::Status DarwinCountingSemaphore::tryWait() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, DISPATCH_TIME_NOW);
     FW_ASSERT(result >= 0);
-    
+
     return kern_return_to_semaphore_status(result);
 }
 

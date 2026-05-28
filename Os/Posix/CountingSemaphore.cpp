@@ -11,8 +11,9 @@ namespace Os {
 namespace Posix {
 namespace Semaphore {
 
-PosixCountingSemaphore::PosixCountingSemaphore(U32 initial_count, int pshared) {
-    int status = sem_init(&this->m_handle.m_semaphore, pshared, initial_count);
+PosixCountingSemaphore::PosixCountingSemaphore(U32 initial_count) {
+    // Default all pthread semaphores to only be visible to single application (since F' FSW is a single application)
+    int status = sem_init(&this->m_handle.m_semaphore, 0, initial_count);
     FW_ASSERT(status == 0, static_cast<FwAssertArgType>(status));
 }
 
